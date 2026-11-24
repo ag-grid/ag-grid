@@ -1,0 +1,804 @@
+{
+    "meta": {
+        "title": "AG Grid vs TanStack Table: Features, Pricing and Licensing",
+        "description": "Compare AG Grid and TanStack Table feature by feature: framework support, free and paid features, large datasets, pricing and licensing.",
+        "targetTerm": "ag grid vs tanstack table",
+        "monthlySearches": 40,
+        "demandSource": "US monthly Google search volume, Ahrefs and DataForSEO, June 2026 (SE-149)"
+    },
+    "analyticsPrefix": "compare-tanstack-table",
+    "technicalReviewer": "james",
+    "lastUpdated": "2026-11-24",
+    "competitor": {
+        "name": "TanStack Table",
+        "slug": "tanstack-table",
+        "url": "https://tanstack.com/table",
+        "logo": "/images/compare/logos/tanstack-table.png"
+    },
+    "hero": {
+        "heading": "AG Grid vs TanStack Table",
+        "subHeading": "Compare AG Grid vs TanStack Table, a data grid and a headless table library, on framework support, free and paid features, large datasets, pricing and licensing."
+    },
+    "shortAnswer": "AG Grid is a complete data grid that renders its own UI. TanStack Table is a headless library: it provides table state and logic, and you write the markup and CSS. Both have a free, MIT-licensed core. TanStack Table has no built-in virtualisation (it pairs with the separate TanStack Virtual package) and no cell editing in its core, and its built-in features do not include pivoting, CSV or Excel export, or charts. AG Grid Community includes virtualisation, cell editing and CSV export, and [AG Grid Enterprise](/license-pricing/), a paid perpetual licence, adds pivoting, Excel export and integrated charts.",
+    "keyFigures": [
+        {
+            "value": "MIT",
+            "label": "Both free cores",
+            "detail": "AG Grid Community and TanStack Table are both MIT licensed."
+        },
+        {
+            "value": "18",
+            "label": "Features TanStack Table does not include",
+            "detail": "Including a ready-made UI, pivoting, CSV, Excel and PDF export, integrated charts and natural-language grid control."
+        },
+        {
+            "value": "0",
+            "label": "UI shipped by TanStack Table",
+            "detail": "It is headless: you build the table markup and styles yourself."
+        }
+    ],
+    "features": {
+        "subHeading": "Which features each library includes, and which plan they are in.",
+        "groups": [
+            {
+                "name": "Platform",
+                "rows": [
+                    {
+                        "feature": "Frameworks",
+                        "docsUrl": "./getting-started/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "Native React, Angular, Vue and plain JavaScript"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "Official adapters for React, Preact, Octane, Vue, Solid, Svelte, Angular, Ember, Lit and Alpine; plain JavaScript through table-core",
+                            "sourceUrl": "https://tanstack.com/table/latest/docs/overview",
+                            "checkedOn": "2026-11-11"
+                        }
+                    },
+                    {
+                        "feature": "TypeScript",
+                        "docsUrl": "./typescript-generics/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "Typed API and typed to your own data, so field names and values are checked as you code"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "Core logic written in framework-agnostic TypeScript, with typed APIs",
+                            "sourceUrl": "https://tanstack.com/table/latest/docs/overview",
+                            "checkedOn": "2026-11-11"
+                        }
+                    },
+                    {
+                        "feature": "Ready-made grid UI",
+                        "docsUrl": "./theming/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "Complete UI out of the box, including column menus, filters and pagination; Enterprise adds tool panels, the status bar and the context menu"
+                        },
+                        "competitor": {
+                            "status": "no",
+                            "detail": "Headless: you write the markup and CSS",
+                            "sourceUrl": "https://tanstack.com/table/latest/docs/overview",
+                            "checkedOn": "2026-11-11"
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "Data and performance",
+                "rows": [
+                    {
+                        "feature": "Row virtualisation",
+                        "docsUrl": "./dom-virtualisation/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "On by default"
+                        },
+                        "competitor": {
+                            "status": "limited",
+                            "plan": "Limited",
+                            "detail": "No built-in virtualisation; pair it with the separate TanStack Virtual package or another virtualiser",
+                            "sourceUrl": "https://tanstack.com/table/latest/docs/framework/react/guide/virtualization",
+                            "checkedOn": "2026-11-11"
+                        }
+                    },
+                    {
+                        "feature": "Column virtualisation",
+                        "docsUrl": "./dom-virtualisation/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "On by default"
+                        },
+                        "competitor": {
+                            "status": "limited",
+                            "plan": "Limited",
+                            "detail": "Through the separate TanStack Virtual package, with examples provided",
+                            "sourceUrl": "https://tanstack.com/table/latest/docs/framework/react/guide/virtualization",
+                            "checkedOn": "2026-11-11"
+                        }
+                    },
+                    {
+                        "feature": "Server-side data",
+                        "docsUrl": "./row-models/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "Quite mature, with sorting, filtering and pagination via the Infinite Row Model in Community. Enterprise adds grouping, aggregation, pivoting, transactions, selection and dynamic row height via the Server-Side Row Model"
+                        },
+                        "competitor": {
+                            "status": "limited",
+                            "plan": "Limited",
+                            "detail": "Manual mode keeps the table state; your application fetches, sorts and filters on the server",
+                            "sourceUrl": "https://tanstack.com/table/latest/docs/guide/client-side-vs-server-side",
+                            "checkedOn": "2026-11-11"
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "Core grid features",
+                "rows": [
+                    {
+                        "feature": "Sorting",
+                        "docsUrl": "./row-sorting/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "Single and multi-column sorting, with custom comparators, absolute sorting and locale-aware sorting"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "Multi-column sorting with built-in or custom sort functions; you render the clickable headers and sort indicators",
+                            "sourceUrl": "https://tanstack.com/table/latest/docs/framework/react/guide/sorting",
+                            "checkedOn": "2026-11-24"
+                        }
+                    },
+                    {
+                        "feature": "Filtering",
+                        "docsUrl": "./filtering/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "Text, number, date and quick filters; Set, Multi and Advanced filters in Enterprise"
+                        },
+                        "competitor": {
+                            "status": "limited",
+                            "plan": "Limited",
+                            "detail": "Filter logic, faceting and custom functions such as fuzzy matching; no ready-made filter inputs, so you build every one",
+                            "sourceUrl": "https://tanstack.com/table/latest/docs/framework/react/guide/column-filtering",
+                            "checkedOn": "2026-11-24"
+                        }
+                    },
+                    {
+                        "feature": "Set Filter",
+                        "docsUrl": "./filter-set/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "A checkbox list of the values in a column"
+                        },
+                        "competitor": {
+                            "status": "limited",
+                            "plan": "Limited",
+                            "detail": "Lists each column’s unique values with their counts; you build the checkbox list",
+                            "sourceUrl": "https://tanstack.com/table/latest/docs/framework/react/guide/column-faceting",
+                            "checkedOn": "2026-11-24"
+                        }
+                    },
+                    {
+                        "feature": "Advanced Filter",
+                        "docsUrl": "./filter-advanced/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "Conditions across columns, in a type-ahead input or a visual builder with nested AND/OR groups"
+                        },
+                        "competitor": {
+                            "status": "no",
+                            "detail": "No nested AND/OR conditions; per-column and global filters instead",
+                            "sourceUrl": "https://tanstack.com/table/latest/docs/framework/react/guide/column-filtering",
+                            "checkedOn": "2026-11-24"
+                        }
+                    },
+                    {
+                        "feature": "Find",
+                        "docsUrl": "./find/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "Highlights every match and steps between them, like the browser’s Ctrl+F"
+                        },
+                        "competitor": {
+                            "status": "no",
+                            "detail": "Global filter removes rows that don’t match; no highlighting or stepping between matches",
+                            "sourceUrl": "https://tanstack.com/table/latest/docs/framework/react/guide/global-filtering",
+                            "checkedOn": "2026-11-24"
+                        }
+                    },
+                    {
+                        "feature": "Cell editing",
+                        "docsUrl": "./cell-editing/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "Built-in text, large text, number, date, checkbox and select editors, with validation and full-row editing; rich select editor and batch editing in Enterprise"
+                        },
+                        "competitor": {
+                            "status": "limited",
+                            "plan": "Limited",
+                            "detail": "No editors in the core; you build editable cells, with TanStack Form suggested for validation",
+                            "sourceUrl": "https://tanstack.com/table/latest/docs/overview",
+                            "checkedOn": "2026-11-24"
+                        }
+                    },
+                    {
+                        "feature": "Undo / redo",
+                        "docsUrl": "./undo-redo-edits/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "Undoes cell edits, pastes and fill operations"
+                        },
+                        "competitor": {
+                            "status": "no",
+                            "detail": "Not among the built-in features",
+                            "sourceUrl": "https://tanstack.com/table/latest/docs/overview",
+                            "checkedOn": "2026-11-24"
+                        }
+                    },
+                    {
+                        "feature": "Cell notes",
+                        "docsUrl": "./notes/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "Notes attached to cells, shown on hover and edited from the context menu"
+                        },
+                        "competitor": {
+                            "status": "no",
+                            "detail": "Not among the built-in features",
+                            "sourceUrl": "https://tanstack.com/table/latest/docs/overview",
+                            "checkedOn": "2026-11-24"
+                        }
+                    },
+                    {
+                        "feature": "Column pinning",
+                        "docsUrl": "./column-pinning/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "Pin columns left or right in code, from the column menu or by dragging"
+                        },
+                        "competitor": {
+                            "status": "limited",
+                            "plan": "Limited",
+                            "detail": "Pinning state and offsets only; you apply the sticky CSS or split tables, and build the pinning controls",
+                            "sourceUrl": "https://tanstack.com/table/latest/docs/framework/react/guide/column-pinning",
+                            "checkedOn": "2026-11-24"
+                        }
+                    },
+                    {
+                        "feature": "Row numbers",
+                        "docsUrl": "./row-numbers/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "A row number column that also selects rows or cell ranges, resizes rows and is included in exports"
+                        },
+                        "competitor": {
+                            "status": "limited",
+                            "plan": "Limited",
+                            "detail": "Gives each row’s display index; you add the column yourself, with no row selection, resizing or export from it",
+                            "sourceUrl": "https://tanstack.com/table/latest/docs/guide/rows",
+                            "checkedOn": "2026-11-24"
+                        }
+                    },
+                    {
+                        "feature": "Context menu",
+                        "docsUrl": "./context-menu/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "Right-click menu with copy, paste, export and chart items"
+                        },
+                        "competitor": {
+                            "status": "no",
+                            "detail": "Not among the built-in features",
+                            "sourceUrl": "https://tanstack.com/table/latest/docs/overview",
+                            "checkedOn": "2026-11-24"
+                        }
+                    },
+                    {
+                        "feature": "Aligned grids",
+                        "docsUrl": "./aligned-grids/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "Keeps column widths, order and scrolling in step across grids"
+                        },
+                        "competitor": {
+                            "status": "no",
+                            "detail": "Not among the built-in features",
+                            "sourceUrl": "https://tanstack.com/table/latest/docs/overview",
+                            "checkedOn": "2026-11-24"
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "Grouping and analysis",
+                "rows": [
+                    {
+                        "feature": "Row grouping",
+                        "docsUrl": "./grouping/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "Group by any columns, in code or by users dragging columns to the Row Group Panel; multi-level groups with several display types"
+                        },
+                        "competitor": {
+                            "status": "limited",
+                            "plan": "Limited",
+                            "detail": "Multi-level grouping logic; you render the group rows and expand toggles, with no drag-to-group panel",
+                            "sourceUrl": "https://tanstack.com/table/latest/docs/framework/react/guide/grouping",
+                            "checkedOn": "2026-11-24"
+                        }
+                    },
+                    {
+                        "feature": "Aggregation",
+                        "docsUrl": "./aggregation/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "Sum, min, max, count, average, first, last or your own functions, in group and grand total rows; values can be shown as a percentage of a total"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "Built-in and custom functions for group rows and table-wide totals; you render the aggregated cells and footers",
+                            "sourceUrl": "https://tanstack.com/table/latest/docs/framework/react/guide/aggregation",
+                            "checkedOn": "2026-11-24"
+                        }
+                    },
+                    {
+                        "feature": "Pivoting",
+                        "docsUrl": "./pivoting/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "Pivot mode in the grid itself, configured by users from the side bar or the pivot panel, with pivot totals"
+                        },
+                        "competitor": {
+                            "status": "no",
+                            "detail": "Not among the built-in features",
+                            "sourceUrl": "https://tanstack.com/table/latest/docs/overview",
+                            "checkedOn": "2026-11-11"
+                        }
+                    },
+                    {
+                        "feature": "Tree data",
+                        "docsUrl": "./tree-data/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "From paths, parent IDs or nested children; filtering, sorting, aggregation and row dragging work across the tree"
+                        },
+                        "competitor": {
+                            "status": "limited",
+                            "plan": "Limited",
+                            "detail": "From nested child arrays, with tree-aware filtering and sorting; you render the expand toggles",
+                            "sourceUrl": "https://tanstack.com/table/latest/docs/framework/react/guide/expanding",
+                            "checkedOn": "2026-11-24"
+                        }
+                    },
+                    {
+                        "feature": "Master / detail",
+                        "docsUrl": "./master-detail/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "Rows expand into a full detail grid or a custom detail panel; detail grids can nest"
+                        },
+                        "competitor": {
+                            "status": "limited",
+                            "plan": "Limited",
+                            "detail": "Rows can be made expandable; you render the toggles and the detail content, with no built-in detail grid",
+                            "sourceUrl": "https://tanstack.com/table/latest/docs/framework/react/guide/expanding",
+                            "checkedOn": "2026-11-24"
+                        }
+                    },
+                    {
+                        "feature": "Integrated charts",
+                        "docsUrl": "./integrated-charts/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "Users chart a selected range or a pivot from the grid. Community chart types in AG Grid Enterprise; Enterprise chart types also need an AG Charts Enterprise licence, such as the Enterprise Bundle"
+                        },
+                        "competitor": {
+                            "status": "no",
+                            "detail": "Not among the built-in features",
+                            "sourceUrl": "https://tanstack.com/table/latest/docs/overview",
+                            "checkedOn": "2026-11-11"
+                        }
+                    },
+                    {
+                        "feature": "Sparklines",
+                        "docsUrl": "./sparklines-overview/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "Line, area, bar and column charts in cells"
+                        },
+                        "competitor": {
+                            "status": "no",
+                            "detail": "Not among the built-in features",
+                            "sourceUrl": "https://tanstack.com/table/latest/docs/overview",
+                            "checkedOn": "2026-11-24"
+                        }
+                    },
+                    {
+                        "feature": "Formulas",
+                        "docsUrl": "./formulas/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "Spreadsheet formulas in cells, with cell references and custom functions"
+                        },
+                        "competitor": {
+                            "status": "no",
+                            "detail": "Not among the built-in features",
+                            "sourceUrl": "https://tanstack.com/table/latest/docs/overview",
+                            "checkedOn": "2026-11-24"
+                        }
+                    },
+                    {
+                        "feature": "Calculated columns",
+                        "docsUrl": "./calculated-columns/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "Users add columns from an expression, through a dialog"
+                        },
+                        "competitor": {
+                            "status": "no",
+                            "detail": "Developers can derive column values in code; users can’t add columns",
+                            "sourceUrl": "https://tanstack.com/table/latest/docs/guide/column-defs",
+                            "checkedOn": "2026-11-24"
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "Selection and export",
+                "rows": [
+                    {
+                        "feature": "Row selection",
+                        "docsUrl": "./row-selection/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "Row selection using a checkbox or a click, which persists through other interactions"
+                        },
+                        "competitor": {
+                            "status": "limited",
+                            "plan": "Limited",
+                            "detail": "Selection state keyed by row ID, including sub-rows; you render the checkboxes or click handling",
+                            "sourceUrl": "https://tanstack.com/table/latest/docs/framework/react/guide/row-selection",
+                            "checkedOn": "2026-11-24"
+                        }
+                    },
+                    {
+                        "feature": "Column selection",
+                        "docsUrl": "./cell-selection/#via-column-headers",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "Click a column header to select every cell in the column"
+                        },
+                        "competitor": {
+                            "status": "no",
+                            "detail": "Cell ranges are selected from the cells; no selecting a column from its header",
+                            "sourceUrl": "https://tanstack.com/table/latest/docs/framework/react/guide/cell-selection",
+                            "checkedOn": "2026-11-24"
+                        }
+                    },
+                    {
+                        "feature": "Cell range selection",
+                        "docsUrl": "./cell-selection/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "Single cells, ranges and multiple non-adjacent ranges including the range and fill handles"
+                        },
+                        "competitor": {
+                            "status": "limited",
+                            "plan": "Limited",
+                            "detail": "Rectangular and multiple ranges by mouse; no keyboard handling or fill handle, and you render the highlight",
+                            "sourceUrl": "https://tanstack.com/table/latest/docs/framework/react/guide/cell-selection",
+                            "checkedOn": "2026-11-24"
+                        }
+                    },
+                    {
+                        "feature": "Status bar",
+                        "docsUrl": "./status-bar/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "Shows the sum, average and count of selected cells"
+                        },
+                        "competitor": {
+                            "status": "no",
+                            "detail": "Not among the built-in features",
+                            "sourceUrl": "https://tanstack.com/table/latest/docs/overview",
+                            "checkedOn": "2026-11-24"
+                        }
+                    },
+                    {
+                        "feature": "Clipboard",
+                        "docsUrl": "./clipboard/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "Copy, cut and paste cells, ranges and rows, including headers, with hooks to process pasted data"
+                        },
+                        "competitor": {
+                            "status": "limited",
+                            "plan": "Limited",
+                            "detail": "Returns the selected values; writing them to the clipboard is left to your application",
+                            "sourceUrl": "https://tanstack.com/table/latest/docs/framework/react/guide/cell-selection",
+                            "checkedOn": "2026-11-11"
+                        }
+                    },
+                    {
+                        "feature": "CSV export",
+                        "docsUrl": "./csv-export/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "Exports the grid's current data, with options for columns, headers, separators and extra content"
+                        },
+                        "competitor": {
+                            "status": "no",
+                            "detail": "Not among the built-in features",
+                            "sourceUrl": "https://tanstack.com/table/latest/docs/overview",
+                            "checkedOn": "2026-11-11"
+                        }
+                    },
+                    {
+                        "feature": "Excel (.xlsx) export",
+                        "docsUrl": "./excel-export/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "Built-in exporter with comprehensive configuration including styles and formula support"
+                        },
+                        "competitor": {
+                            "status": "no",
+                            "detail": "Not among the built-in features",
+                            "sourceUrl": "https://tanstack.com/table/latest/docs/overview",
+                            "checkedOn": "2026-11-11"
+                        }
+                    },
+                    {
+                        "feature": "PDF export",
+                        "docsUrl": "./pdf-export/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "Built-in exporter with comprehensive configuration including styles and formula support"
+                        },
+                        "competitor": {
+                            "status": "no",
+                            "detail": "Not among the built-in features",
+                            "sourceUrl": "https://tanstack.com/table/latest/docs/overview",
+                            "checkedOn": "2026-11-24"
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "Styling, accessibility and support",
+                "rows": [
+                    {
+                        "feature": "Theming",
+                        "docsUrl": "./theming/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "4 built-in themes, theming variables and a Theme Builder for easy theme editing"
+                        },
+                        "competitor": {
+                            "status": "limited",
+                            "plan": "Limited",
+                            "detail": "Ships no styles; you write the markup and CSS, with any CSS or component library",
+                            "sourceUrl": "https://tanstack.com/table/latest/docs/overview",
+                            "checkedOn": "2026-11-11"
+                        }
+                    },
+                    {
+                        "feature": "Accessibility",
+                        "docsUrl": "./accessibility/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "Keyboard navigation and screen reader support through ARIA attributes; targets WCAG 2.2 Level A and AA"
+                        },
+                        "competitor": {
+                            "status": "limited",
+                            "plan": "Limited",
+                            "detail": "Your application owns the markup and its accessibility; a React Aria example is provided",
+                            "sourceUrl": "https://tanstack.com/table/latest/docs/overview",
+                            "checkedOn": "2026-11-19"
+                        }
+                    },
+                    {
+                        "feature": "AI coding tools",
+                        "docsUrl": "./mcp-server/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "MCP server and AI skills for coding agents such as Claude Code and Codex"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "Agent Skills shipped in the npm package for coding agents such as Claude Code, Cursor and Codex; no MCP server documented",
+                            "sourceUrl": "https://tanstack.com/table/latest/docs/agent-skills",
+                            "checkedOn": "2026-11-24"
+                        }
+                    },
+                    {
+                        "feature": "Natural-language grid control",
+                        "docsUrl": "./ai-toolkit/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "AI Toolkit: connect your own LLM so users can query and change the grid in natural language"
+                        },
+                        "competitor": {
+                            "status": "no",
+                            "detail": "No end-user AI features documented",
+                            "sourceUrl": "https://tanstack.com/table/latest/docs/overview",
+                            "checkedOn": "2026-11-19"
+                        }
+                    },
+                    {
+                        "feature": "Technical support",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "Ticketed support with guaranteed response times; Community support through GitHub"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "Free help on Discord and GitHub Discussions; paid support by email, with no published response times",
+                            "sourceUrl": "https://tanstack.com/paid-support",
+                            "checkedOn": "2026-11-24"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    "pricing": {
+        "subHeading": "The plans each library offers, and how each is licensed. See the pricing pages for prices.",
+        "product": [
+            {
+                "plan": "Community",
+                "cost": "free",
+                "licence": "MIT, including commercial use"
+            },
+            {
+                "plan": "Enterprise",
+                "cost": "paid",
+                "licence": "Perpetual, with one year of updates and support"
+            },
+            {
+                "plan": "Enterprise Bundle (AG Grid + AG Charts)",
+                "cost": "paid",
+                "licence": "Perpetual, with one year of updates and support"
+            }
+        ],
+        "competitor": [
+            {
+                "plan": "TanStack Table",
+                "cost": "free",
+                "licence": "MIT",
+                "sourceUrl": "https://github.com/TanStack/table/blob/main/LICENSE",
+                "checkedOn": "2026-11-11"
+            },
+            {
+                "plan": "Enterprise Support",
+                "cost": "on-request",
+                "licence": "A paid support service, not a licence",
+                "sourceUrl": "https://tanstack.com/paid-support",
+                "checkedOn": "2026-11-11"
+            }
+        ]
+    },
+    "chooseIf": {
+        "product": [
+            "You want a working grid UI without building one.",
+            "You need cell editing, virtualisation and CSV export out of the box.",
+            "You need pivoting, Excel export or integrated charts.",
+            "You want ticketed support with your licence."
+        ],
+        "competitor": [
+            "You want full control of every element of the table's markup and styling.",
+            "You already have a design system and want to render the table with it.",
+            "You use a framework TanStack supports through an adapter, such as Svelte, Solid, Preact or Lit.",
+            "You need row grouping, aggregation, tree data or cell range selection without a paid licence."
+        ]
+    },
+    "faq": [
+        {
+            "question": "What are the key differences between AG Grid and TanStack Table?",
+            "answer": "AG Grid renders a complete grid UI with built-in virtualisation, editing and export. TanStack Table is headless: it provides sorting, filtering, grouping and other table logic, and you write all the markup and CSS. TanStack Table's built-in features do not include pivoting, CSV or Excel export, or charts."
+        },
+        {
+            "question": "Why use a TanStack table?",
+            "answer": "TanStack Table is used when a team wants full control over how a table looks and behaves. It supplies table state and APIs for features such as sorting, filtering and grouping, and leaves rendering to the developer."
+        },
+        {
+            "question": "Is TanStack Table free?",
+            "answer": "Yes. TanStack Table is open source under the MIT licence. TanStack offers paid Enterprise Support as a separate service, with pricing on request."
+        },
+        {
+            "question": "What is the difference between a grid and a table?",
+            "answer": "In JavaScript libraries, a table usually displays rows and columns, while a data grid also handles interaction such as sorting, filtering, editing and keyboard navigation. TanStack Table provides the logic for these features and leaves rendering to you; AG Grid provides both."
+        },
+        {
+            "question": "Can I use AG Grid for free?",
+            "answer": "Yes. AG Grid Community is free and open source under the MIT licence, including for commercial use. AG Grid Enterprise is a paid licence that adds features such as row grouping, pivoting, Excel export and the Server-Side Row Model. See [Community vs Enterprise](./community-vs-enterprise/)."
+        },
+        {
+            "question": "Does AG Grid include virtualisation and cell editing?",
+            "answer": "Yes. AG Grid Community includes row and column virtualisation and built-in cell editors, free under the MIT licence. TanStack Table has neither built in: it pairs with the separate TanStack Virtual package for virtualisation, and its documentation points to TanStack Form for editable cells."
+        }
+    ],
+    "proseClaims": [
+        {
+            "claim": "TanStack Table is headless: it provides table state and logic, and you write the markup and CSS.",
+            "sourceUrl": "https://tanstack.com/table/latest/docs/overview",
+            "checkedOn": "2026-11-11"
+        },
+        {
+            "claim": "TanStack Table has no built-in virtualisation and pairs with the separate TanStack Virtual package.",
+            "sourceUrl": "https://tanstack.com/table/latest/docs/framework/react/guide/virtualization",
+            "checkedOn": "2026-11-11"
+        },
+        {
+            "claim": "TanStack Table has no cell editing in its core, and its built-in features do not include pivoting, CSV or Excel export, or charts.",
+            "sourceUrl": "https://tanstack.com/table/latest/docs/overview",
+            "checkedOn": "2026-11-11"
+        },
+        {
+            "claim": "TanStack Table is MIT licensed.",
+            "sourceUrl": "https://github.com/TanStack/table/blob/main/LICENSE",
+            "checkedOn": "2026-11-11"
+        },
+        {
+            "claim": "TanStack offers paid Enterprise Support as a separate service and publishes no prices for it.",
+            "sourceUrl": "https://tanstack.com/paid-support",
+            "checkedOn": "2026-11-19"
+        },
+        {
+            "claim": "TanStack Table has official adapters for Svelte, Solid, Preact and Lit.",
+            "sourceUrl": "https://tanstack.com/table/latest/docs/overview",
+            "checkedOn": "2026-11-11"
+        }
+    ]
+}

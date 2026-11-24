@@ -1,0 +1,16 @@
+---
+import styles from '../DecisionPage.module.scss';
+
+interface Props {
+    name: string;
+    /** Logo URL. Decorative: the name beside it carries the meaning, so the image has empty alt text. */
+    logo?: string;
+}
+
+const { name, logo } = Astro.props;
+---
+
+<span class={styles.productHeading}>
+    {logo && <img class={styles.productLogo} src={logo} alt="" width="24" height="24" loading="lazy" />}
+    {name}
+</span>

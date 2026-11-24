@@ -1,0 +1,867 @@
+{
+    "meta": {
+        "title": "AG Grid vs MUI X Data Grid: Features, Pricing and Licensing",
+        "description": "Compare AG Grid and MUI X Data Grid (MUI DataGrid) feature by feature: framework support, free and paid features, large datasets, pricing and licensing.",
+        "targetTerm": "ag grid vs mui x",
+        "demandSource": "Google US People Also Ask questions for \"ag grid vs mui data grid\", DataForSEO, October 2026 (SE-149); no US monthly volume reported for the term"
+    },
+    "analyticsPrefix": "compare-mui-x",
+    "technicalReviewer": "james",
+    "lastUpdated": "2026-11-24",
+    "competitor": {
+        "name": "MUI X Data Grid",
+        "slug": "mui-x",
+        "url": "https://mui.com/x/react-data-grid/",
+        "logo": "/images/compare/logos/mui-x.svg"
+    },
+    "hero": {
+        "heading": "AG Grid vs MUI X Data Grid",
+        "subHeading": "Compare AG Grid vs MUI X Data Grid on framework support, free and paid features, large datasets, pricing and licensing."
+    },
+    "shortAnswer": "AG Grid and MUI X Data Grid (the MUI DataGrid) both render a complete grid UI, and both have a free, MIT-licensed version and paid plans. AG Grid works with React, Angular, Vue and plain JavaScript; MUI X Data Grid is built for React only and needs Material UI as a peer dependency. The free version of AG Grid includes unlimited row virtualisation, column pinning and lazy loading from the server, which MUI X puts in its paid Pro plan. Row grouping, aggregation, pivoting and Excel export are paid in both: in [AG Grid Enterprise](/license-pricing/), a perpetual licence, and in MUI X Premium, sold per developer as an annual or a perpetual licence.",
+    "keyFigures": [
+        {
+            "value": "4",
+            "valueSuffix": "vs 1",
+            "label": "Frameworks supported",
+            "detail": "AG Grid: React, Angular, Vue and JavaScript. MUI X Data Grid: React only."
+        },
+        {
+            "value": "100",
+            "label": "Row virtualisation limit in free MUI X Data Grid",
+            "detail": "AG Grid Community virtualises rows and columns by default."
+        },
+        {
+            "value": "8",
+            "label": "Features MUI X Data Grid does not include",
+            "detail": "Including Find, cell notes, the Set Filter, the status bar and PDF export, all in AG Grid."
+        }
+    ],
+    "features": {
+        "subHeading": "Which features each grid includes, and which plan they are in.",
+        "groups": [
+            {
+                "name": "Platform",
+                "rows": [
+                    {
+                        "feature": "Frameworks",
+                        "docsUrl": "./getting-started/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "Native React, Angular, Vue and plain JavaScript"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "React only; built exclusively for React",
+                            "sourceUrl": "https://mui.com/x/react-data-grid/",
+                            "checkedOn": "2026-11-11"
+                        }
+                    },
+                    {
+                        "feature": "TypeScript",
+                        "docsUrl": "./typescript-generics/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "Typed API and typed to your own data, so field names and values are checked as you code"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "Type definitions shipped; theme augmentation types documented",
+                            "sourceUrl": "https://mui.com/x/react-data-grid/quickstart/",
+                            "checkedOn": "2026-11-11"
+                        }
+                    },
+                    {
+                        "feature": "Ready-made grid UI",
+                        "docsUrl": "./theming/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "Complete UI out of the box, including column menus, filters and pagination; Enterprise adds tool panels, the status bar and the context menu"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "Renders its own UI; needs Material UI (@mui/material) as a peer dependency",
+                            "sourceUrl": "https://mui.com/x/react-data-grid/quickstart/",
+                            "checkedOn": "2026-11-11"
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "Data and performance",
+                "rows": [
+                    {
+                        "feature": "Row virtualisation",
+                        "docsUrl": "./dom-virtualisation/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "On by default"
+                        },
+                        "competitor": {
+                            "status": "limited",
+                            "plan": "Limited",
+                            "detail": "Limited to 100 rows in the free MUI X Data Grid; a Pro plan feature beyond that",
+                            "sourceUrl": "https://mui.com/x/react-data-grid/virtualization/",
+                            "checkedOn": "2026-11-11"
+                        }
+                    },
+                    {
+                        "feature": "Column virtualisation",
+                        "docsUrl": "./dom-virtualisation/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "On by default"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "Included in the free MUI X Data Grid",
+                            "sourceUrl": "https://mui.com/x/react-data-grid/virtualization/",
+                            "checkedOn": "2026-11-11"
+                        }
+                    },
+                    {
+                        "feature": "Server-side data",
+                        "docsUrl": "./row-models/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "Quite mature, with sorting, filtering and pagination via the Infinite Row Model in Community. Enterprise adds grouping, aggregation, pivoting, transactions, selection and dynamic row height via the Server-Side Row Model"
+                        },
+                        "competitor": {
+                            "status": "limited",
+                            "plan": "Limited",
+                            "detail": "Data Source layer in the free MUI X Data Grid; lazy loading in Pro; server-side row grouping in Premium",
+                            "sourceUrl": "https://mui.com/x/react-data-grid/server-side-data/",
+                            "checkedOn": "2026-11-11"
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "Core grid features",
+                "rows": [
+                    {
+                        "feature": "Sorting",
+                        "docsUrl": "./row-sorting/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "Single and multi-column sorting, with custom comparators, absolute sorting and locale-aware sorting"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "Single-column sorting with custom comparators; multi-column sorting in Pro",
+                            "sourceUrl": "https://mui.com/x/react-data-grid/sorting/",
+                            "checkedOn": "2026-11-24"
+                        }
+                    },
+                    {
+                        "feature": "Filtering",
+                        "docsUrl": "./filtering/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "Text, number, date and quick filters; Set, Multi and Advanced filters in Enterprise"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "Column filters (one at a time) and quick filter; multi-filters and header filters in Pro",
+                            "sourceUrl": "https://mui.com/x/react-data-grid/filtering/",
+                            "checkedOn": "2026-11-11"
+                        }
+                    },
+                    {
+                        "feature": "Set Filter",
+                        "docsUrl": "./filter-set/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "A checkbox list of the values in a column"
+                        },
+                        "competitor": {
+                            "status": "no",
+                            "detail": "No list of column values to filter by; header filters and custom filter inputs instead",
+                            "sourceUrl": "https://mui.com/x/react-data-grid/filtering/header-filters/",
+                            "checkedOn": "2026-11-17"
+                        }
+                    },
+                    {
+                        "feature": "Advanced Filter",
+                        "docsUrl": "./filter-advanced/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "Conditions across columns, in a type-ahead input or a visual builder with nested AND/OR groups"
+                        },
+                        "competitor": {
+                            "status": "limited",
+                            "plan": "Limited",
+                            "detail": "Pro: several filters joined by a single AND or a single OR, with no nesting",
+                            "sourceUrl": "https://mui.com/x/react-data-grid/filtering/multi-filters/",
+                            "checkedOn": "2026-11-17"
+                        }
+                    },
+                    {
+                        "feature": "Find",
+                        "docsUrl": "./find/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "Highlights every match and steps between them, like the browser’s Ctrl+F"
+                        },
+                        "competitor": {
+                            "status": "no",
+                            "detail": "Quick filter hides rows that don’t match; no highlighting or stepping between matches",
+                            "sourceUrl": "https://mui.com/x/react-data-grid/filtering/quick-filter/",
+                            "checkedOn": "2026-11-17"
+                        }
+                    },
+                    {
+                        "feature": "Cell editing",
+                        "docsUrl": "./cell-editing/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "Built-in text, large text, number, date, checkbox and select editors, with validation and full-row editing; rich select editor and batch editing in Enterprise"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "Cell and full-row editing with validation through your own callbacks",
+                            "sourceUrl": "https://mui.com/x/react-data-grid/editing/",
+                            "checkedOn": "2026-11-24"
+                        }
+                    },
+                    {
+                        "feature": "Undo / redo",
+                        "docsUrl": "./undo-redo-edits/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "Undoes cell edits, pastes and fill operations"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Premium",
+                            "detail": "Undoes cell and row edits, pastes and computed-column changes",
+                            "sourceUrl": "https://mui.com/x/react-data-grid/undo-redo/",
+                            "checkedOn": "2026-11-17"
+                        }
+                    },
+                    {
+                        "feature": "Cell notes",
+                        "docsUrl": "./notes/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "Notes attached to cells, shown on hover and edited from the context menu"
+                        },
+                        "competitor": {
+                            "status": "no",
+                            "detail": "No cell notes or comments",
+                            "sourceUrl": "https://mui.com/x/react-data-grid/cells/",
+                            "checkedOn": "2026-11-17"
+                        }
+                    },
+                    {
+                        "feature": "Column pinning",
+                        "docsUrl": "./column-pinning/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "Pin columns left or right in code, from the column menu or by dragging"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Pro",
+                            "sourceUrl": "https://mui.com/x/react-data-grid/column-pinning/",
+                            "checkedOn": "2026-11-24",
+                            "detail": "Pro: pin left or right in code or from the column menu; pinned columns can't be reordered without unpinning"
+                        }
+                    },
+                    {
+                        "feature": "Row numbers",
+                        "docsUrl": "./row-numbers/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "A row number column that also selects rows or cell ranges, resizes rows and is included in exports"
+                        },
+                        "competitor": {
+                            "status": "no",
+                            "detail": "No row number column",
+                            "sourceUrl": "https://mui.com/x/react-data-grid/column-definition/",
+                            "checkedOn": "2026-11-17"
+                        }
+                    },
+                    {
+                        "feature": "Context menu",
+                        "docsUrl": "./context-menu/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "Right-click menu with copy, paste, export and chart items"
+                        },
+                        "competitor": {
+                            "status": "limited",
+                            "detail": "Built-in column header menu; a right-click row menu is a documented recipe you build yourself",
+                            "sourceUrl": "https://mui.com/x/react-data-grid/components/",
+                            "checkedOn": "2026-11-19",
+                            "plan": "Limited"
+                        }
+                    },
+                    {
+                        "feature": "Aligned grids",
+                        "docsUrl": "./aligned-grids/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "Keeps column widths, order and scrolling in step across grids"
+                        },
+                        "competitor": {
+                            "status": "no",
+                            "detail": "No syncing of column widths or scrolling between grids",
+                            "sourceUrl": "https://mui.com/x/react-data-grid/scrolling/",
+                            "checkedOn": "2026-11-17"
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "Grouping and analysis",
+                "rows": [
+                    {
+                        "feature": "Row grouping",
+                        "docsUrl": "./grouping/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "Group by any columns, in code or by users dragging columns to the Row Group Panel; multi-level groups with several display types"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Premium",
+                            "sourceUrl": "https://mui.com/x/react-data-grid/row-grouping/",
+                            "checkedOn": "2026-11-24",
+                            "detail": "Premium: multi-level groups in one grouping column or one per level; no drag-to-group panel yet"
+                        }
+                    },
+                    {
+                        "feature": "Aggregation",
+                        "docsUrl": "./aggregation/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "Sum, min, max, count, average, first, last or your own functions, in group and grand total rows; values can be shown as a percentage of a total"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Premium",
+                            "sourceUrl": "https://mui.com/x/react-data-grid/aggregation/",
+                            "checkedOn": "2026-11-24",
+                            "detail": "Premium: sum, average, min, max, count or your own functions, in group rows and a footer row; no built-in first or last"
+                        }
+                    },
+                    {
+                        "feature": "Pivoting",
+                        "docsUrl": "./pivoting/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "Pivot mode in the grid itself, configured by users from the side bar or the pivot panel, with pivot totals"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Premium",
+                            "sourceUrl": "https://mui.com/x/react-data-grid/pivoting/",
+                            "checkedOn": "2026-11-24",
+                            "detail": "Premium: users pivot from a toolbar panel by dragging fields; a field can't yet be used more than once in a pivot"
+                        }
+                    },
+                    {
+                        "feature": "Tree data",
+                        "docsUrl": "./tree-data/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "From paths, parent IDs or nested children; filtering, sorting, aggregation and row dragging work across the tree"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Pro",
+                            "sourceUrl": "https://mui.com/x/react-data-grid/tree-data/",
+                            "checkedOn": "2026-11-24",
+                            "detail": "Pro: each row supplies its path in the tree; filtering, sorting and drag reordering work across it, with aggregation in Premium"
+                        }
+                    },
+                    {
+                        "feature": "Master / detail",
+                        "docsUrl": "./master-detail/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "Rows expand into a full detail grid or a custom detail panel; detail grids can nest"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Pro",
+                            "detail": "Pro: an expandable panel per row renders any React content, so a detail grid is one you build and configure yourself",
+                            "sourceUrl": "https://mui.com/x/react-data-grid/master-detail/",
+                            "checkedOn": "2026-11-24"
+                        }
+                    },
+                    {
+                        "feature": "Integrated charts",
+                        "docsUrl": "./integrated-charts/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "Users chart a selected range or a pivot from the grid. Community chart types in AG Grid Enterprise; Enterprise chart types also need an AG Charts Enterprise licence, such as the Enterprise Bundle"
+                        },
+                        "competitor": {
+                            "status": "limited",
+                            "plan": "Limited",
+                            "detail": "Premium: a chart the developer places beside the grid that follows its grouping, aggregation and pivoting; users can’t chart a selected range. Needs @mui/x-charts-premium",
+                            "sourceUrl": "https://mui.com/x/react-data-grid/charts-integration/",
+                            "checkedOn": "2026-11-17"
+                        }
+                    },
+                    {
+                        "feature": "Sparklines",
+                        "docsUrl": "./sparklines-overview/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "Line, area, bar and column charts in cells"
+                        },
+                        "competitor": {
+                            "status": "limited",
+                            "detail": "No built-in sparkline column; a documented recipe renders the @mui/x-charts Sparkline in a custom cell",
+                            "sourceUrl": "https://mui.com/x/react-data-grid/custom-columns/",
+                            "checkedOn": "2026-11-19",
+                            "plan": "Limited"
+                        }
+                    },
+                    {
+                        "feature": "Formulas",
+                        "docsUrl": "./formulas/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "Spreadsheet formulas in cells, with cell references and custom functions"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Premium",
+                            "detail": "Cell formulas with A1 references and custom functions; not with server-side data or pivoting",
+                            "sourceUrl": "https://mui.com/x/react-data-grid/formulas/",
+                            "checkedOn": "2026-11-17"
+                        }
+                    },
+                    {
+                        "feature": "Calculated columns",
+                        "docsUrl": "./calculated-columns/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "Users add columns from an expression, through a dialog"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Premium",
+                            "detail": "Users add read-only computed columns from the toolbar or column menu",
+                            "sourceUrl": "https://mui.com/x/react-data-grid/computed-columns/",
+                            "checkedOn": "2026-11-17"
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "Selection and export",
+                "rows": [
+                    {
+                        "feature": "Row selection",
+                        "docsUrl": "./row-selection/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "Row selection using a checkbox or a click, which persists through other interactions"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "Click or checkbox row selection; Ctrl/Shift-click multi-row selection in Pro",
+                            "sourceUrl": "https://mui.com/x/react-data-grid/row-selection/",
+                            "checkedOn": "2026-11-24"
+                        }
+                    },
+                    {
+                        "feature": "Column selection",
+                        "docsUrl": "./cell-selection/#via-column-headers",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "Click a column header to select every cell in the column"
+                        },
+                        "competitor": {
+                            "status": "no",
+                            "detail": "No header-click column selection; cell range selection (Premium) is by click, drag or keyboard only",
+                            "sourceUrl": "https://mui.com/x/react-data-grid/cell-selection/",
+                            "checkedOn": "2026-11-24"
+                        }
+                    },
+                    {
+                        "feature": "Cell range selection",
+                        "docsUrl": "./cell-selection/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "Single cells, ranges and multiple non-adjacent ranges including the range and fill handles"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Premium",
+                            "detail": "Premium: click, drag or Shift-click a range, or Ctrl-click to add single cells",
+                            "sourceUrl": "https://mui.com/x/react-data-grid/cell-selection/",
+                            "checkedOn": "2026-11-24"
+                        }
+                    },
+                    {
+                        "feature": "Status bar",
+                        "docsUrl": "./status-bar/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "Shows the sum, average and count of selected cells"
+                        },
+                        "competitor": {
+                            "status": "no",
+                            "detail": "Footer shows row counts and pagination; no sum, average or count of selected cells",
+                            "sourceUrl": "https://mui.com/x/react-data-grid/components/#footer",
+                            "checkedOn": "2026-11-19"
+                        }
+                    },
+                    {
+                        "feature": "Clipboard",
+                        "docsUrl": "./clipboard/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "Copy, cut and paste cells, ranges and rows, including headers, with hooks to process pasted data"
+                        },
+                        "competitor": {
+                            "status": "limited",
+                            "plan": "Limited",
+                            "detail": "Copy in all plans; paste and drag to fill in Premium",
+                            "sourceUrl": "https://mui.com/x/react-data-grid/clipboard/",
+                            "checkedOn": "2026-11-11"
+                        }
+                    },
+                    {
+                        "feature": "CSV export",
+                        "docsUrl": "./csv-export/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "Exports the grid's current data, with options for columns, headers, separators and extra content"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "Choose columns and rows, delimiter, file name and encoding; print through the browser",
+                            "sourceUrl": "https://mui.com/x/react-data-grid/export/",
+                            "checkedOn": "2026-11-24"
+                        }
+                    },
+                    {
+                        "feature": "Excel (.xlsx) export",
+                        "docsUrl": "./excel-export/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "Built-in exporter with comprehensive configuration including styles and formula support"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Premium",
+                            "sourceUrl": "https://mui.com/x/react-data-grid/export/",
+                            "checkedOn": "2026-11-24",
+                            "detail": "Premium: per-column styles and workbook customisation, optionally in a web worker; cell formulas escaped unless turned off"
+                        }
+                    },
+                    {
+                        "feature": "PDF export",
+                        "docsUrl": "./pdf-export/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "Built-in exporter with comprehensive configuration including styles and formula support"
+                        },
+                        "competitor": {
+                            "status": "no",
+                            "detail": "No built-in PDF export; only the browser print dialog's save-as-PDF",
+                            "sourceUrl": "https://mui.com/x/react-data-grid/export/",
+                            "checkedOn": "2026-11-24"
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "Styling, accessibility and support",
+                "rows": [
+                    {
+                        "feature": "Theming",
+                        "docsUrl": "./theming/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "4 built-in themes, theming variables and a Theme Builder for easy theme editing"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "Styled with the sx prop, CSS class names and the Material UI theme",
+                            "sourceUrl": "https://mui.com/x/react-data-grid/style/",
+                            "checkedOn": "2026-11-11"
+                        }
+                    },
+                    {
+                        "feature": "Accessibility",
+                        "docsUrl": "./accessibility/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "Keyboard navigation and screen reader support through ARIA attributes; targets WCAG 2.2 Level A and AA"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "Aims for WCAG 2.2 level AA; keyboard navigation follows WAI-ARIA practices",
+                            "sourceUrl": "https://mui.com/x/react-data-grid/accessibility/",
+                            "checkedOn": "2026-11-11"
+                        }
+                    },
+                    {
+                        "feature": "AI coding tools",
+                        "docsUrl": "./mcp-server/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "MCP server and AI skills for coding agents such as Claude Code and Codex"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "MUI MCP server (@mui/mcp), MIT licensed",
+                            "sourceUrl": "https://mui.com/x/introduction/mcp/",
+                            "checkedOn": "2026-11-19"
+                        }
+                    },
+                    {
+                        "feature": "Natural-language grid control",
+                        "docsUrl": "./ai-toolkit/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "AI Toolkit: connect your own LLM so users can query and change the grid in natural language"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Premium",
+                            "detail": "AI Assistant turns natural-language prompts into grid views, through a prompt processor you run on your own server",
+                            "sourceUrl": "https://mui.com/x/react-data-grid/ai-assistant/",
+                            "checkedOn": "2026-11-11"
+                        }
+                    },
+                    {
+                        "feature": "Technical support",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "Ticketed support with guaranteed response times; Community support through GitHub"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Pro",
+                            "detail": "Technical support with a Pro or Premium licence; community support through GitHub and Stack Overflow",
+                            "sourceUrl": "https://mui.com/x/introduction/support/",
+                            "checkedOn": "2026-11-11"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    "pricing": {
+        "subHeading": "The plans each library offers, and how each is licensed. See the pricing pages for prices.",
+        "product": [
+            {
+                "plan": "Community",
+                "cost": "free",
+                "licence": "MIT, including commercial use"
+            },
+            {
+                "plan": "Enterprise",
+                "cost": "paid",
+                "licence": "Perpetual, with one year of updates and support"
+            },
+            {
+                "plan": "Enterprise Bundle (AG Grid + AG Charts)",
+                "cost": "paid",
+                "licence": "Perpetual, with one year of updates and support"
+            }
+        ],
+        "competitor": [
+            {
+                "plan": "Community",
+                "cost": "free",
+                "licence": "MIT",
+                "sourceUrl": "https://mui.com/pricing/",
+                "checkedOn": "2026-11-11"
+            },
+            {
+                "plan": "Pro",
+                "cost": "paid",
+                "licence": "Annual, or perpetual with 12 months of updates and support",
+                "sourceUrl": "https://mui.com/pricing/",
+                "checkedOn": "2026-11-11"
+            },
+            {
+                "plan": "Premium",
+                "cost": "paid",
+                "licence": "Annual, or perpetual with 12 months of updates and support",
+                "sourceUrl": "https://mui.com/pricing/",
+                "checkedOn": "2026-11-11"
+            },
+            {
+                "plan": "Enterprise",
+                "cost": "paid",
+                "licence": "Annual or perpetual, through sales, from 15 developers; includes priority support",
+                "sourceUrl": "https://mui.com/pricing/",
+                "checkedOn": "2026-11-11"
+            }
+        ]
+    },
+    "chooseIf": {
+        "product": [
+            "You build with Angular, Vue or plain JavaScript, or want one grid across several frameworks.",
+            "You want row virtualisation, column pinning and multi-column sorting in the free version.",
+            "You want to load server-side data lazily without a paid plan.",
+            "Your application does not use Material UI."
+        ],
+        "competitor": [
+            "Your application is built with React and already uses Material UI.",
+            "You want the grid to follow your existing Material UI theme.",
+            "You don't need row virtualisation beyond 100 rows in the free version."
+        ]
+    },
+    "faq": [
+        {
+            "question": "Can I use AG Grid for free?",
+            "answer": "Yes. AG Grid Community is free and open source under the MIT licence, including for commercial use. AG Grid Enterprise is a paid licence that adds features such as row grouping, pivoting, Excel export and the Server-Side Row Model."
+        },
+        {
+            "question": "Is MUI Data Grid Pro free?",
+            "answer": "No. MUI X Data Grid has a free, MIT-licensed Community version, but Pro is a paid plan, sold per developer as an annual or a perpetual licence. Row grouping, aggregation, pivoting and Excel export need the Premium plan."
+        },
+        {
+            "question": "What is a Data Grid in MUI?",
+            "answer": "MUI X Data Grid is a React data grid component from MUI, the company behind Material UI. It is built for React only, uses Material UI for its styling, and comes in Community, Pro, Premium and Enterprise plans."
+        },
+        {
+            "question": "Which React data grid is free?",
+            "answer": "AG Grid Community and the MUI X Data Grid Community version are both free under the MIT licence. In AG Grid Community, row virtualisation has no row limit, and column pinning and lazy loading from the server are included. In the free MUI X Data Grid, row virtualisation is limited to 100 rows, and column pinning and lazy loading need the Pro plan."
+        },
+        {
+            "question": "Does MUI X Data Grid work with Angular or Vue?",
+            "answer": "No. MUI X Data Grid is built for React only. AG Grid supports React, Angular, Vue and plain JavaScript."
+        },
+        {
+            "question": "Can I use AG Grid in a Material UI application?",
+            "answer": "Yes. AG Grid renders its own UI and does not depend on Material UI, so it works alongside it in a React application. Its built-in Material theme follows Google's Material Design v2, and the Theming API lets you set colours, fonts and spacing to match the rest of your application."
+        }
+    ],
+    "proseClaims": [
+        {
+            "claim": "MUI X Data Grid has a free, MIT-licensed Community version and paid Pro, Premium and Enterprise plans.",
+            "sourceUrl": "https://mui.com/pricing/",
+            "checkedOn": "2026-11-11"
+        },
+        {
+            "claim": "MUI X Data Grid is built exclusively for React.",
+            "sourceUrl": "https://mui.com/x/react-data-grid/",
+            "checkedOn": "2026-11-11"
+        },
+        {
+            "claim": "MUI X Data Grid has a peer dependency on Material UI (@mui/material).",
+            "sourceUrl": "https://mui.com/x/react-data-grid/quickstart/",
+            "checkedOn": "2026-11-11"
+        },
+        {
+            "claim": "In the free MUI X Data Grid, row virtualisation is limited to 100 rows; row virtualisation is a Pro plan feature.",
+            "sourceUrl": "https://mui.com/x/react-data-grid/virtualization/",
+            "checkedOn": "2026-11-11"
+        },
+        {
+            "claim": "MUI X Data Grid column pinning needs the Pro plan.",
+            "sourceUrl": "https://mui.com/x/react-data-grid/column-pinning/",
+            "checkedOn": "2026-11-11"
+        },
+        {
+            "claim": "MUI X Data Grid multi-column sorting needs the Pro plan.",
+            "sourceUrl": "https://mui.com/x/react-data-grid/sorting/",
+            "checkedOn": "2026-11-11"
+        },
+        {
+            "claim": "MUI X Data Grid server-side lazy loading needs the Pro plan.",
+            "sourceUrl": "https://mui.com/x/react-data-grid/server-side-data/lazy-loading/",
+            "checkedOn": "2026-11-11"
+        },
+        {
+            "claim": "MUI X Data Grid row grouping and Excel export need the Premium plan.",
+            "sourceUrl": "https://mui.com/x/introduction/licensing/",
+            "checkedOn": "2026-11-11"
+        },
+        {
+            "claim": "MUI X Data Grid aggregation needs the Premium plan.",
+            "sourceUrl": "https://mui.com/x/react-data-grid/aggregation/",
+            "checkedOn": "2026-11-11"
+        },
+        {
+            "claim": "MUI X Data Grid pivoting needs the Premium plan.",
+            "sourceUrl": "https://mui.com/x/react-data-grid/pivoting/",
+            "checkedOn": "2026-11-11"
+        },
+        {
+            "claim": "MUI X Data Grid follows the Material UI theme.",
+            "sourceUrl": "https://mui.com/x/react-data-grid/style/",
+            "checkedOn": "2026-11-11"
+        },
+        {
+            "claim": "An MUI X Pro or Premium licence also covers the paid versions of other MUI X components, such as the Date and Time Range Pickers and advanced Charts.",
+            "sourceUrl": "https://mui.com/x/introduction/licensing/",
+            "checkedOn": "2026-11-19"
+        },
+        {
+            "claim": "MUI X Data Grid is made by MUI, the company behind Material UI.",
+            "sourceUrl": "https://mui.com/x/introduction/licensing/",
+            "checkedOn": "2026-11-11"
+        },
+        {
+            "claim": "MUI X Pro and Premium are sold per developer as an annual licence or a perpetual licence with 12 months of updates and support.",
+            "sourceUrl": "https://mui.com/pricing/",
+            "checkedOn": "2026-11-19"
+        }
+    ]
+}
