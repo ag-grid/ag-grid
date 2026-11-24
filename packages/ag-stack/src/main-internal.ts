@@ -219,6 +219,7 @@ export {
     _isElementOverflowingCallback,
     _isFocusableFormField,
     _isHorizontalScrollShowing,
+    _isVerticalScrollShowing,
     _isInDOM,
     _isNodeOrElement,
     _isVisible,
