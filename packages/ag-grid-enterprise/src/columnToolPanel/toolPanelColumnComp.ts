@@ -151,12 +151,21 @@ export class ToolPanelColumnComp extends Component {
             control: 'columnSelect',
             getLocation: () => 'columnToolPanelColumn',
             getAriaElement: () => checkboxInput,
-            getTooltip: () => ({
-                value: cbSelect.getValue()
-                    ? this.getLocaleTextFunc()('tooltipHideColumn', 'Hide column')
-                    : this.getLocaleTextFunc()('tooltipShowColumn', 'Show column'),
-                params: { column },
-            }),
+            getTooltip: () => {
+                const pivotMode = beans.columnStateUpdateStrategy.getPivotMode(isDeferredMode(this.params));
+                const translate = this.getLocaleTextFunc();
+                let value: string;
+                if (pivotMode) {
+                    value = cbSelect.getValue()
+                        ? translate('tooltipDisableColumn', 'Disable column')
+                        : translate('tooltipEnableColumn', 'Enable column');
+                } else {
+                    value = cbSelect.getValue()
+                        ? translate('tooltipHideColumn', 'Hide column')
+                        : translate('tooltipShowColumn', 'Show column');
+                }
+                return { value, params: { column } };
+            },
         });
 
         const onColStateChanged = this.onColumnStateChanged.bind(this);

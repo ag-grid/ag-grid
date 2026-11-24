@@ -13,6 +13,7 @@ import type { ComponentSelector, ElementParams, GridCheckbox, GridInputTextField
 import { AgCheckboxSelector, AgInputTextFieldSelector, Component, KeyCode, _createIconNoSpan } from 'ag-grid-community';
 
 import type { ToolPanelColumnCompParams } from './columnToolPanel';
+import { isDeferredMode } from './toolPanelDeferredUiUtils';
 
 export enum ExpandState {
     EXPANDED,
@@ -101,11 +102,21 @@ export class AgPrimaryColsHeader extends Component<AgPrimaryColsHeaderEvent> {
             control: 'columnSelectAll',
             getLocation: () => 'columnToolPanelColumnGroup',
             getAriaElement: () => this.eSelect.getInputElement(),
-            getTooltip: () => ({
-                value: this.selectState
-                    ? translate('tooltipHideAllColumns', 'Hide all columns')
-                    : translate('tooltipShowAllColumns', 'Show all columns'),
-            }),
+            getTooltip: () => {
+                const pivotMode = this.beans.columnStateUpdateStrategy.getPivotMode(isDeferredMode(this.params));
+                if (pivotMode) {
+                    return {
+                        value: this.selectState
+                            ? translate('tooltipDisableAllColumns', 'Disable all columns')
+                            : translate('tooltipEnableAllColumns', 'Enable all columns'),
+                    };
+                }
+                return {
+                    value: this.selectState
+                        ? translate('tooltipHideAllColumns', 'Hide all columns')
+                        : translate('tooltipShowAllColumns', 'Show all columns'),
+                };
+            },
         });
     }
 

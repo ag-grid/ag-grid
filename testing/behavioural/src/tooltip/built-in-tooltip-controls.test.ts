@@ -14,6 +14,7 @@ import {
     FiltersToolPanelModule,
     MasterDetailModule,
     NewFiltersToolPanelModule,
+    PivotModule,
     RowGroupingModule,
 } from 'ag-grid-enterprise';
 
@@ -79,6 +80,124 @@ describe('Built-in action tooltips', () => {
         expect(headerToggle).not.toHaveAttribute('title');
         expect(collapsedGroupToggle).not.toHaveAttribute('title');
         expect(allCheckbox).not.toHaveAttribute('title');
+    });
+
+    test.each([false, true])(
+        'column selection hints follow pivot mode and selection (deferred=%s)',
+        async (deferred) => {
+            const api = await grids.createGridAndWait(
+                'pivot-column-controls',
+                {
+                    columnDefs: [
+                        { field: 'value', enableValue: true },
+                        { field: 'group', enableRowGroup: true },
+                        { field: 'pivot', enablePivot: true },
+                    ],
+                    rowData: [{ value: 1, group: 'A', pivot: 'B' }],
+                    sideBar: {
+                        toolPanels: [
+                            {
+                                id: 'columns',
+                                labelDefault: 'Columns',
+                                labelKey: 'columns',
+                                iconKey: 'columns',
+                                toolPanel: 'agColumnsToolPanel',
+                                toolPanelParams: { buttons: deferred ? ['apply', 'cancel'] : [] },
+                            },
+                        ],
+                        defaultToolPanel: 'columns',
+                    },
+                    enableBrowserTooltips: true,
+                },
+                { modules: [ColumnsToolPanelModule, RowGroupingModule, PivotModule] }
+            );
+            const grid = getGridElement(api)! as HTMLElement;
+            const columnCheckboxes = () =>
+                Array.from(grid.querySelectorAll<HTMLElement>('.ag-column-select-column .ag-column-select-checkbox'));
+            const allCheckbox = () => grid.querySelector<HTMLElement>('.ag-column-select-header-checkbox')!;
+            const togglePivot = () => getByRole(grid, 'checkbox', { name: 'Pivot Mode' }).click();
+            const expectHints = async (all: string, columns: string[]) => {
+                await waitFor(() => {
+                    expect(allCheckbox()).toHaveAttribute('title', all);
+                    expect(columnCheckboxes().map((element) => element.getAttribute('title'))).toEqual(columns);
+                });
+            };
+
+            await expectHints('Hide all columns', ['Hide column', 'Hide column', 'Hide column']);
+            togglePivot();
+            await expectHints('Enable all columns', ['Enable column', 'Enable column', 'Enable column']);
+            expect(api.isPivotMode()).toBe(!deferred);
+
+            getByRole(columnCheckboxes()[0], 'checkbox').click();
+            await expectHints('Enable all columns', ['Disable column', 'Enable column', 'Enable column']);
+            expect(api.getColumn('value')!.isValueActive()).toBe(!deferred);
+
+            getByRole(allCheckbox(), 'checkbox').click();
+            await expectHints('Disable all columns', ['Disable column', 'Disable column', 'Disable column']);
+            getByRole(allCheckbox(), 'checkbox').click();
+            await expectHints('Enable all columns', ['Enable column', 'Enable column', 'Enable column']);
+            getByRole(allCheckbox(), 'checkbox').click();
+            await expectHints('Disable all columns', ['Disable column', 'Disable column', 'Disable column']);
+
+            if (deferred) {
+                expect(api.getColumn('group')!.isRowGroupActive()).toBe(false);
+                expect(api.getColumn('pivot')!.isPivotActive()).toBe(false);
+                getByRole(grid, 'button', { name: 'Apply' }).click();
+            }
+            await waitFor(() => expect(api.isPivotMode()).toBe(true));
+            expect(api.getColumn('value')!.isValueActive()).toBe(true);
+            expect(api.getColumn('group')!.isRowGroupActive()).toBe(true);
+            expect(api.getColumn('pivot')!.isPivotActive()).toBe(true);
+
+            togglePivot();
+            await expectHints('Hide all columns', ['Hide column', 'Hide column', 'Hide column']);
+            expect(api.isPivotMode()).toBe(deferred);
+            if (deferred) {
+                getByRole(grid, 'button', { name: 'Cancel' }).click();
+                await expectHints('Disable all columns', ['Disable column', 'Disable column', 'Disable column']);
+            }
+        }
+    );
+
+    test('pivot selection hints use their own locale keys in grid tooltips', async () => {
+        const api = await grids.createGridAndWait(
+            'pivot-column-locales',
+            {
+                columnDefs: [{ field: 'value', enableValue: true, aggFunc: 'sum' }],
+                rowData: [{ value: 1 }],
+                pivotMode: true,
+                sideBar: 'columns',
+                tooltipShowDelay: 0,
+                tooltipSwitchShowDelay: 0,
+                localeText: {
+                    tooltipEnableColumn: 'Enable this field',
+                    tooltipDisableColumn: 'Disable this field',
+                    tooltipEnableAllColumns: 'Enable every field',
+                    tooltipDisableAllColumns: 'Disable every field',
+                },
+            },
+            { modules: [ColumnsToolPanelModule, PivotModule, LocaleModule] }
+        );
+        const grid = getGridElement(api)! as HTMLElement;
+        const all = getByRole(grid.querySelector<HTMLElement>('.ag-column-select-header-checkbox')!, 'checkbox');
+        const column = getByRole(
+            grid.querySelector<HTMLElement>('.ag-column-select-column .ag-column-select-checkbox')!,
+            'checkbox'
+        );
+        for (const selected of [true, false]) {
+            api.applyColumnState({ state: [{ colId: 'value', aggFunc: selected ? 'sum' : null }] });
+            all.focus();
+            await waitFor(() =>
+                expect(getVisibleTooltips()[0]).toHaveTextContent(
+                    selected ? 'Disable every field' : 'Enable every field'
+                )
+            );
+            column.focus();
+            await waitFor(() =>
+                expect(getVisibleTooltips()[0]).toHaveTextContent(selected ? 'Disable this field' : 'Enable this field')
+            );
+            column.blur();
+        }
     });
 
     test('row group chevrons show action hints independently of fitting cell text', async () => {

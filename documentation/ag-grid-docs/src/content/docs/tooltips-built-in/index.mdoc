@@ -37,22 +37,26 @@ Floating-filter value tooltips show the full value, including all selected Set F
 
 ### Tool Panels and Grouping
 
-| Control                                          | Tooltip text                             | Locale key                                           |
-| ------------------------------------------------ | ---------------------------------------- | ---------------------------------------------------- |
-| Columns Tool Panel Pivot Mode toggle             | Turn on pivot mode / Turn off pivot mode | `tooltipTurnOnPivotMode` / `tooltipTurnOffPivotMode` |
-| Columns Tool Panel expand / collapse all chevron | Expand all / Collapse all                | `tooltipExpandAll` / `tooltipCollapseAll`            |
-| Columns Tool Panel show / hide all checkbox      | Show all columns / Hide all columns      | `tooltipShowAllColumns` / `tooltipHideAllColumns`    |
-| Columns Tool Panel group chevron                 | Expand group / Collapse group            | `tooltipExpandGroup` / `tooltipCollapseGroup`        |
-| Columns Tool Panel column checkbox               | Show column / Hide column                | `tooltipShowColumn` / `tooltipHideColumn`            |
-| Columns Tool Panel column and group drag handles | Drag to move                             | `tooltipDragToMove`                                  |
-| Filters Tool Panel filter chevron                | Expand filter / Collapse filter          | `tooltipExpandFilter` / `tooltipCollapseFilter`      |
-| Filters Tool Panel column group chevron          | Expand group / Collapse group            | `tooltipExpandGroup` / `tooltipCollapseGroup`        |
-| New Filters Tool Panel filter card chevron       | Expand filter / Collapse filter          | `tooltipExpandFilter` / `tooltipCollapseFilter`      |
-| New Filters Tool Panel filter card remove button | Remove filter                            | `tooltipRemoveFilter`                                |
-| Row Groups, Values and Pivot pill drag handles   | Drag to move                             | `tooltipDragToMove`                                  |
-| Row Groups, Values and Pivot pill remove buttons | Remove                                   | `advancedFilterBuilderRemoveButtonTooltip`           |
-| Columns Side Bar tab                             | Configure columns                        | `columnsToolPanelTooltip`                            |
-| Filters and New Filters Side Bar tabs            | Configure filters                        | `filtersToolPanelTooltip`                            |
+| Control                                                 | Tooltip text                             | Locale key                                             |
+| ------------------------------------------------------- | ---------------------------------------- | ------------------------------------------------------ |
+| Columns Tool Panel Pivot Mode toggle                    | Turn on pivot mode / Turn off pivot mode | `tooltipTurnOnPivotMode` / `tooltipTurnOffPivotMode`   |
+| Columns Tool Panel expand / collapse all chevron        | Expand all / Collapse all                | `tooltipExpandAll` / `tooltipCollapseAll`              |
+| Columns Tool Panel select-all checkbox (Pivot Mode off) | Show all columns / Hide all columns      | `tooltipShowAllColumns` / `tooltipHideAllColumns`      |
+| Columns Tool Panel select-all checkbox (Pivot Mode on)  | Enable all columns / Disable all columns | `tooltipEnableAllColumns` / `tooltipDisableAllColumns` |
+| Columns Tool Panel group chevron                        | Expand group / Collapse group            | `tooltipExpandGroup` / `tooltipCollapseGroup`          |
+| Columns Tool Panel column checkbox (Pivot Mode off)     | Show column / Hide column                | `tooltipShowColumn` / `tooltipHideColumn`              |
+| Columns Tool Panel column checkbox (Pivot Mode on)      | Enable column / Disable column           | `tooltipEnableColumn` / `tooltipDisableColumn`         |
+| Columns Tool Panel column and group drag handles        | Drag to move                             | `tooltipDragToMove`                                    |
+| Filters Tool Panel filter chevron                       | Expand filter / Collapse filter          | `tooltipExpandFilter` / `tooltipCollapseFilter`        |
+| Filters Tool Panel column group chevron                 | Expand group / Collapse group            | `tooltipExpandGroup` / `tooltipCollapseGroup`          |
+| New Filters Tool Panel filter card chevron              | Expand filter / Collapse filter          | `tooltipExpandFilter` / `tooltipCollapseFilter`        |
+| New Filters Tool Panel filter card remove button        | Remove filter                            | `tooltipRemoveFilter`                                  |
+| Row Groups, Values and Pivot pill drag handles          | Drag to move                             | `tooltipDragToMove`                                    |
+| Row Groups, Values and Pivot pill remove buttons        | Remove                                   | `advancedFilterBuilderRemoveButtonTooltip`             |
+| Columns Side Bar tab                                    | Configure columns                        | `columnsToolPanelTooltip`                              |
+| Filters and New Filters Side Bar tabs                   | Configure filters                        | `filtersToolPanelTooltip`                              |
+
+In Pivot Mode, column checkboxes enable or disable aggregation, row grouping or pivoting rather than changing column visibility. With deferred changes, their hints follow the pending Pivot Mode and selection before Apply is clicked.
 
 Custom Side Bar tabs use their configured `tooltipKey` and `tooltipDefault`; they have no tooltip unless one is configured. Tool panel labels can also have [text tooltips](./tooltips-columns/), which are separate from these control hints.
 
