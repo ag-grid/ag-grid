@@ -23,34 +23,10 @@
     background: transparent;
     cursor: pointer;
 
-    :where(.ag-input-field-read-only-overlay) & {
-        position: static;
-        flex: none;
-        pointer-events: auto;
-    }
-
     &:focus-visible {
         outline: var(--ag-internal-accessible-no-outline, revert);
         box-shadow: var(--ag-focus-shadow);
     }
-}
-
-/* a read-only input's clear button follows its text: it sits after a hidden copy of the text */
-.ag-input-field-read-only-overlay {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    pointer-events: none;
-}
-
-.ag-input-field-read-only-text {
-    flex: 0 1 auto;
-    min-width: 0;
-    margin-inline-end: var(--ag-spacing);
-    overflow: hidden;
-    white-space: pre;
-    visibility: hidden;
 }
 
 .ag-input-field-input:where(
@@ -110,15 +86,18 @@
     }
 
     :where(.ag-floating-filter-input) &:where(.ag-input-field-input[readonly]) {
-        /* focus keeps the read-only look, and the browser's own outline shows it */
+        /* focus keeps the read-only look; a plain outline in the text colour shows it */
         --ag-input-focus-background-color: var(--ag-input-read-only-background-color);
         --ag-input-focus-border: var(--ag-input-read-only-border);
         --ag-input-focus-text-color: var(--ag-input-read-only-text-color);
         --ag-input-focus-shadow: none;
 
         color: var(--ag-input-read-only-text-color);
-        outline: revert;
-        padding-inline: 0;
+        padding-inline-start: 0;
+
+        &:where(:focus-visible) {
+            outline: 2px solid currentcolor;
+        }
     }
 
     :where(.ag-floating-filter-input) &:where(.ag-input-field-input-empty) {
@@ -164,8 +143,4 @@
 
 .ag-input-field-input-with-clear-button {
     padding-inline-end: calc(var(--ag-icon-size) + var(--ag-spacing) * 2);
-}
-
-:where(.ag-floating-filter-input) .ag-input-field-input-with-clear-button:where([readonly]) {
-    padding-inline-end: calc(var(--ag-icon-size) + var(--ag-spacing));
 }

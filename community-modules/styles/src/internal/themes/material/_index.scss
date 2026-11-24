@@ -179,7 +179,10 @@
                 color: var(--ag-input-read-only-text-color);
                 background-color: var(--ag-input-read-only-background-color);
                 border-bottom: 2px solid var(--ag-input-read-only-border-color);
-                outline: revert;
+
+                &:focus-visible {
+                    outline: 2px solid currentcolor;
+                }
             }
         }
     }

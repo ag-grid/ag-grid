@@ -81,13 +81,15 @@
             border: var(--ag-borders-input-invalid) var(--ag-input-border-color-invalid);
         }
 
-        // focus keeps the read-only look, and the browser's own outline shows it
         :where(.ag-floating-filter-input) &[readonly] {
             color: var(--ag-input-read-only-text-color);
             background-color: var(--ag-input-read-only-background-color);
             border-color: var(--ag-input-read-only-border-color);
             box-shadow: none;
-            outline: revert;
+
+            &:focus-visible {
+                outline: 2px solid currentcolor;
+            }
         }
 
         :where(.ag-floating-filter-input) &.ag-input-field-input-empty {
@@ -95,55 +97,17 @@
         }
     }
 
-    // read-only floating filter text lines up with the header label, and leaves room only for the clear button
     .ag-floating-filter-input {
         @include ag.text-input {
             &[readonly] {
                 @include ag.unthemed-rtl(
                     (
                         padding-left: 0,
-                        padding-right: 0,
                         border-left-width: 0,
                     )
                 );
             }
-
-            &[readonly].ag-input-field-input-with-clear-button {
-                @include ag.unthemed-rtl(
-                    (
-                        padding-right: calc(var(--ag-icon-size) + var(--ag-grid-size)),
-                    )
-                );
-            }
         }
-    }
-
-    // a read-only input's clear button follows its text: it sits after a hidden copy of the text
-    .ag-input-field-read-only-overlay {
-        position: absolute;
-        inset: 0;
-        display: flex;
-        align-items: center;
-        pointer-events: none;
-
-        .ag-input-field-clear-button {
-            position: static;
-            flex: none;
-            pointer-events: auto;
-        }
-    }
-
-    .ag-input-field-read-only-text {
-        flex: 0 1 auto;
-        min-width: 0;
-        overflow: hidden;
-        white-space: pre;
-        visibility: hidden;
-        @include ag.unthemed-rtl(
-            (
-                margin-right: var(--ag-grid-size),
-            )
-        );
     }
 
     .ag-input-field-clear-button {

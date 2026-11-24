@@ -16,18 +16,6 @@ import type { AgWidgetSelectorType } from './agWidgetSelectorType';
 // date inputs retain their browser-provided clear control; these types need the grid-provided button.
 const CUSTOM_CLEAR_BUTTON_INPUT_TYPES: ReadonlySet<string> = new Set(['number', 'text']);
 
-interface ReadOnlyOverlay {
-    eOverlay: HTMLElement;
-    eText: HTMLElement;
-}
-
-function appendIfElsewhere(parent: HTMLElement, child: HTMLElement): void {
-    if (child.parentElement === parent) {
-        return;
-    }
-    parent.appendChild(child);
-}
-
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface AgInputTextFieldParams<
     TComponentSelectorType extends string,
@@ -61,7 +49,6 @@ export class AgInputTextField<
 > {
     private eClearButton: HTMLButtonElement | undefined;
     private eSearchIcon: HTMLElement | undefined;
-    private readOnlyOverlay: ReadOnlyOverlay | undefined;
     private clearButtonEnabled: boolean = false;
 
     constructor(config?: TConfig, className = 'ag-text-field', inputType = 'text') {
@@ -242,38 +229,6 @@ export class AgInputTextField<
         const canDisplay = supportsClearButton && !this.isDisabled();
         eInput.classList.toggle('ag-input-field-input-with-clear-button', canDisplay);
         _setDisplayed(eClearButton, canDisplay && !!eInput.value);
-        this.placeClearButton(eClearButton);
-    }
-
-    /** A read-only input's clear button follows its text, so it sits after a hidden copy of that text. */
-    private placeClearButton(eClearButton: HTMLButtonElement): void {
-        const { eInput, eWrapper } = this;
-        if (!eInput.readOnly) {
-            this.readOnlyOverlay?.eOverlay.remove();
-            appendIfElsewhere(eWrapper, eClearButton);
-            return;
-        }
-        const { eOverlay, eText } = this.readOnlyOverlay ?? this.createReadOnlyOverlay();
-        eText.textContent = eInput.value;
-        appendIfElsewhere(eOverlay, eClearButton);
-        appendIfElsewhere(eWrapper, eOverlay);
-    }
-
-    private createReadOnlyOverlay(): ReadOnlyOverlay {
-        const eText = _createAgElement({
-            tag: 'span',
-            cls: 'ag-input-field-read-only-text',
-            attrs: { 'aria-hidden': 'true' },
-        });
-        const eOverlay = _createAgElement({
-            tag: 'div',
-            cls: 'ag-input-field-read-only-overlay',
-            role: 'presentation',
-        });
-        eOverlay.appendChild(eText);
-        const readOnlyOverlay = { eOverlay, eText };
-        this.readOnlyOverlay = readOnlyOverlay;
-        return readOnlyOverlay;
     }
 }
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
