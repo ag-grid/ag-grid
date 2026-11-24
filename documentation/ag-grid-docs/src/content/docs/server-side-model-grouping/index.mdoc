@@ -8,17 +8,20 @@ This section covers Row Grouping in the Server-Side Row Model (SSRM).
 ## Enabling Row Grouping
 
 Row Grouping is enabled in the grid via the `rowGroup` column definition attribute.
-The snippet below groups rows by 'country':
+The example below groups rows by 'country':
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         { field: 'country', rowGroup: true },
+        { field: 'athlete' },
         { field: 'sport' },
         { field: 'year' },
     ]
 }
 ```
+
+{% gridExampleRunner title="Enabling Row Grouping" name="enabling-row-grouping" /%}
 
 For more configuration details see the section on [Row Grouping](./grouping/).
 
