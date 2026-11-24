@@ -25,8 +25,7 @@
 
     /* the grid must shrink to its columns rather than the width measured from
        the container, otherwise the print engine scales the whole page down.
-       The scrollable area keeps its inline width (the columns' width): an empty
-       grid has nothing else in flow to size it, and would collapse to zero */
+       The scrollable area is left out: its inline width is the columns' width */
     .ag-grid-scrolling-container,
     .ag-header-row,
     .ag-full-width-anchor {
