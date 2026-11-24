@@ -59,7 +59,9 @@ export class ColumnIndicatorIconsFeature extends BeanStub {
         this.eName.classList.toggle('ag-column-indicator-name', show);
         if (show) {
             eShowValuesAs.classList.toggle('ag-show-values-as-dormant', !showValuesAsSvc.isApplying(column));
-            eShowValuesAs.title = showValuesAsSvc.getActiveModeTooltip(column) ?? '';
+            // The icon can fill the rest of a list row, so the tooltip goes on the glyph alone.
+            const eTooltipTarget = eShowValuesAs.firstElementChild ?? eShowValuesAs;
+            eTooltipTarget.setAttribute('title', showValuesAsSvc.getActiveModeTooltip(column) ?? '');
         }
     }
 

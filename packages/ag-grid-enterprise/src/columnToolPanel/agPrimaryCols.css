@@ -106,9 +106,13 @@
     white-space: nowrap;
 }
 
-/* Keeps a trailing indicator icon next to the name rather than at the far end of the row. */
+/* The trailing icon sits next to the name and takes the rest of the row, so the whole row stays clickable. */
 .ag-column-indicator-name {
     flex-grow: 0;
+}
+
+:where(.ag-column-select-column) .ag-show-values-as-icon {
+    flex-grow: 1;
 }
 
 .ag-column-select-checkbox {

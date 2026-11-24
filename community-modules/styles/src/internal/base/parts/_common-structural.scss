@@ -2009,6 +2009,10 @@
         flex-grow: 0;
     }
 
+    :where(.ag-column-select-column) .ag-show-values-as-icon {
+        flex-grow: 1;
+    }
+
     .ag-column-select-checkbox {
         display: flex;
     }

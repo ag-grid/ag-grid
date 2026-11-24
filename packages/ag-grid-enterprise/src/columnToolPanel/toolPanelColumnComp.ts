@@ -174,7 +174,7 @@ export class ToolPanelColumnComp extends Component {
         this.addManagedPropertyListener('functionsReadOnly', this.onColumnStateChanged.bind(this));
 
         this.addManagedListeners(cbSelect, { fieldValueChanged: this.onCheckboxChanged.bind(this) });
-        _addManagedElementListeners(this, eLabel, { click: this.onLabelClicked.bind(this) });
+        _addManagedElementListeners(this, this.getGui(), { click: this.onNameAreaClicked.bind(this) });
         _addManagedElementListeners(this, checkboxInput, { mousedown: this.onCheckboxMouseDown.bind(this) });
 
         this.onColumnStateChanged();
@@ -228,6 +228,13 @@ export class ToolPanelColumnComp extends Component {
             if (this.isSelectable()) {
                 this.onSelectAllChanged(!this.isSelected());
             }
+        }
+    }
+
+    private onNameAreaClicked(e: MouseEvent): void {
+        const target = e.target as Element;
+        if (this.eLabel.contains(target) || target.closest('.ag-column-indicator-icon')) {
+            this.onLabelClicked();
         }
     }
 

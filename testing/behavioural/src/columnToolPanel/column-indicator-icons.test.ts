@@ -199,6 +199,24 @@ describe('column indicator icons in the Columns Tool Panel and chips', () => {
         expectNoVisibleShowValuesAsIcon(chip);
     });
 
+    test('clicking an indicator icon in a list item toggles the column, like clicking its name', async () => {
+        const api = createGrid([
+            { field: 'country' },
+            calcDef,
+            { field: 'gold', aggFunc: 'sum', showValuesAs: 'percentOfGrandTotal' },
+        ]);
+
+        await waitFor(() => expectShowValuesAsIconAfterName(listItem(api, 'Gold')));
+        listItem(api, 'Profit').querySelector<HTMLElement>('.ag-calculated-column-icon')!.click();
+        showValuesAsIcon(listItem(api, 'Gold'))!.click();
+
+        await waitFor(() => {
+            expect(api.getColumn('profit')!.isVisible()).toBe(false);
+            expect(api.getColumn('gold')!.isVisible()).toBe(false);
+        });
+        expect(api.getColumn('country')!.isVisible()).toBe(true);
+    });
+
     test('ƒx follows a colDef change on the same list item', async () => {
         const api = createGrid([{ field: 'country' }, { colId: 'profit', headerName: 'Profit', field: 'gold' }]);
 
