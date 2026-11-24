@@ -62,8 +62,14 @@ export class ColumnModel extends BeanStub implements NamedBean {
     public colDefsVersion = 0;
     /** Bumped when the `accentedSort` grid option changes to an unequal value, so columns rebuild their string comparator. */
     public accentedSortVersion = 0;
-    /** The `accentedSort` object-form comparators, keyed by locales and options, so columns with equal settings share one. */
-    public readonly collatorComparators = new Map<string, StringComparator>();
+    /** The comparator for the `accentedSort` grid option, shared by the columns without their own. */
+    public gridStringComparator: StringComparator | undefined = undefined;
+    /** The {@link accentedSortVersion} {@link gridStringComparator} was built for; `-1` until built. */
+    public gridStringComparatorVersion = -1;
+    /** Bumped when a column's string comparator changes, from the grid option or a colDef `accentedSort`. */
+    public stringComparatorsVersion = 0;
+    /** The {@link stringComparatorsVersion} last raised in `stringComparatorsChanged`. */
+    private raisedStringComparatorsVersion = 0;
     /** >0 between {@link beginColUpdate} and {@link endColUpdate}, queueing the column events raised and deferring the
      *  role changes staged. */
     public colUpdateDepth = 0;
@@ -143,6 +149,8 @@ export class ColumnModel extends BeanStub implements NamedBean {
         this.addManagedPropertyListener('accentedSort', ({ currentValue, previousValue }) => {
             if (!_mergedEqual(currentValue, previousValue)) {
                 ++this.accentedSortVersion;
+                ++this.stringComparatorsVersion;
+                this.raiseStringComparatorsChanged();
             }
         });
         this.addManagedPropertyListener('pivotMode', (event) =>
@@ -356,6 +364,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         this.everythingChangedInUpdate = false;
         try {
             this.beans.visibleCols.raiseDeferredLayoutEvents();
+            this.raiseStringComparatorsChanged();
         } catch (e) {
             error = threw ? error : e;
             threw = true;
@@ -484,6 +493,15 @@ export class ColumnModel extends BeanStub implements NamedBean {
             valueColsSvc?.dispatchColChange(source);
         } finally {
             colAnimation?.finish();
+        }
+    }
+
+    /** Once per change, so client-side sorting can re-sort: the sort model, and so `sortChanged`, stays the same. */
+    private raiseStringComparatorsChanged(): void {
+        const version = this.stringComparatorsVersion;
+        if (version !== this.raisedStringComparatorsVersion) {
+            this.raisedStringComparatorsVersion = version;
+            this.eventSvc.dispatchEvent({ type: 'stringComparatorsChanged' });
         }
     }
 

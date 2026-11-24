@@ -1,6 +1,6 @@
 import { ALL_SEVERITIES, GridRows, TestGridsManager } from 'ag-test-utils';
 
-import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
+import type { AccentedSortOptions, ColDef, GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, enableDevValidations } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
@@ -238,7 +238,7 @@ describe('accentedSort locale and collator options', () => {
         expect(built).toBe(builtInitially + 1);
     });
 
-    test('columns with equal locales and options share one collator, whatever the option order', () => {
+    test('columns using the grid option share one collator, and an equal colDef accentedSort keeps its own', () => {
         const RealCollator = Intl.Collator;
         let built = 0;
         vi.spyOn(Intl, 'Collator').mockImplementation(function (
@@ -250,23 +250,25 @@ describe('accentedSort locale and collator options', () => {
             }
             return new RealCollator(locales, options);
         } as any);
+        const columnDefs = (own: AccentedSortOptions) => [
+            { field: 'a' },
+            { field: 'b' },
+            { field: 'own', accentedSort: own },
+        ];
         const api = createGrid('accented-shared-collator', {
-            columnDefs: [
-                { field: 'grid' },
-                { field: 'own', accentedSort: { locales: 'sv', options: { numeric: true, sensitivity: 'base' } } },
-                {
-                    field: 'reordered',
-                    accentedSort: { options: { sensitivity: 'base', numeric: true }, locales: 'sv' },
-                },
-            ],
-            rowData: names.map((name) => ({ grid: name, own: name, reordered: name })),
+            columnDefs: columnDefs({ locales: 'sv', options: { numeric: true, sensitivity: 'base' } }),
+            rowData: names.map((name) => ({ a: name, b: name, own: name })),
             accentedSort: { locales: 'sv', options: { numeric: true, sensitivity: 'base' } },
         });
 
-        for (const colId of ['grid', 'own', 'reordered']) {
+        for (const colId of ['a', 'b', 'own']) {
             expect(sortedValues(api, colId)).toEqual(['Anna', 'Ola', 'Zoe', 'Åsa', 'Örjan']);
         }
-        expect(built).toBe(1);
+        expect(built).toBe(2);
+
+        api.setGridOption('columnDefs', columnDefs({ options: { sensitivity: 'base', numeric: true }, locales: 'sv' }));
+        expect(sortedValues(api, 'own')).toEqual(['Anna', 'Ola', 'Zoe', 'Åsa', 'Örjan']);
+        expect(built).toBe(2);
     });
 
     test('colDef.accentedSort overrides the grid option for that column', () => {

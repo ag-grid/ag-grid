@@ -1,11 +1,4 @@
-import type {
-    BeanCollection,
-    NamedBean,
-    SortModelItem,
-    SortOption,
-    SortService,
-    StoreRefreshAfterParams,
-} from 'ag-grid-community';
+import type { BeanCollection, NamedBean, SortModelItem, SortService, StoreRefreshAfterParams } from 'ag-grid-community';
 import { BeanStub, _getSortModel, _isServerSideRowModel } from 'ag-grid-community';
 
 import type { ServerSideRowModel } from '../serverSideRowModel';
@@ -17,8 +10,6 @@ export class SortListener extends BeanStub implements NamedBean {
     private sortSvc: SortService;
     private serverSideRowModel: ServerSideRowModel;
     private listenerUtils: ListenerUtils;
-    /** The sort options when last checked, copied, to detect a comparator change with the sort model unchanged. */
-    private readonly checkedOpts: Pick<SortOption, 'column' | 'sort' | 'type' | 'stringComparator'>[] = [];
 
     public wireBeans(beans: BeanCollection) {
         this.sortSvc = beans.sortSvc!;
@@ -32,45 +23,20 @@ export class SortListener extends BeanStub implements NamedBean {
             return;
         }
 
-        const onComparatorsMaybeChanged = this.onComparatorsMaybeChanged.bind(this);
         this.addManagedEventListeners({
             sortChanged: this.onSortChanged.bind(this),
-            columnEverythingChanged: onComparatorsMaybeChanged,
+            stringComparatorsChanged: this.onStringComparatorsChanged.bind(this),
         });
-        this.addManagedPropertyListener('accentedSort', onComparatorsMaybeChanged);
     }
 
-    /** Client-side sorting re-sorts when a sorted column's `accentedSort` changes, as the sort model stays the same. */
-    private onComparatorsMaybeChanged(): void {
-        if (this.updateComparators() && this.gos.get('serverSideEnableClientSideSort')) {
+    /** Client-side sorting re-sorts the loaded rows, as the sort model, and so `sortChanged`, stays the same. */
+    private onStringComparatorsChanged(): void {
+        if (this.gos.get('serverSideEnableClientSideSort')) {
             this.serverSideRowModel.clientSideResort();
         }
     }
 
-    /** Records the sort options; `true` when only their string comparators changed, which raises no `sortChanged`. */
-    private updateComparators(): boolean {
-        const opts = this.sortSvc.getSortOptions();
-        const checkedOpts = this.checkedOpts;
-        const len = opts.length;
-        let sameSort = len === checkedOpts.length;
-        let changed = false;
-        for (let i = 0; i < len; ++i) {
-            const { column, sort, type, stringComparator } = opts[i];
-            const checked = checkedOpts[i];
-            if (sameSort && (checked.column !== column || checked.sort !== sort || checked.type !== type)) {
-                sameSort = false;
-            }
-            if (sameSort && checked.stringComparator !== stringComparator) {
-                changed = true;
-            }
-            checkedOpts[i] = { column, sort, type, stringComparator };
-        }
-        checkedOpts.length = len;
-        return sameSort && changed;
-    }
-
     private onSortChanged(): void {
-        this.updateComparators();
         const storeParams = this.serverSideRowModel.getParams();
         if (!storeParams) {
             return;
