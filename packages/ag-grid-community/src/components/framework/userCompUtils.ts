@@ -163,6 +163,11 @@ export function _getInnerHeaderCompDetails(
     return userCompFactory.getCompDetails(headerCompParams, InnerHeaderComponent, undefined, params);
 }
 
+/** Merges `innerHeaderComponentParams` into the header params, as `_getInnerHeaderCompDetails` does on create. */
+export function _mergeInnerHeaderParams(userCompFactory: UserComponentFactory, params: IHeaderParams): IHeaderParams {
+    return userCompFactory.mergeParams(params, InnerHeaderComponent, params);
+}
+
 export function _getHeaderGroupCompDetails(
     userCompFactory: UserComponentFactory,
     params: IHeaderGroupParams

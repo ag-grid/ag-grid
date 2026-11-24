@@ -1,6 +1,6 @@
 import { RefPlaceholder, _removeFromParent, _setDisplayed, _toString } from 'ag-stack';
 
-import { _getInnerHeaderCompDetails } from '../../../components/framework/userCompUtils';
+import { _getInnerHeaderCompDetails, _mergeInnerHeaderParams } from '../../../components/framework/userCompUtils';
 import type { UserComponentFactory } from '../../../components/framework/userComponentFactory';
 import type { AgColumn } from '../../../entities/agColumn';
 import { _isLegacyMenuEnabled } from '../../../gridOptionsUtils';
@@ -10,7 +10,6 @@ import type { SortIndicatorComp } from '../../../sort/sortIndicatorComp';
 import type { ElementParams } from '../../../utils/element';
 import type { IconName } from '../../../utils/icon';
 import { _createIconNoSpan } from '../../../utils/icon';
-import { _mergeDeep } from '../../../utils/mergeDeep';
 import { Component } from '../../../widgets/component';
 import { getColumnHeaderMenuAnchor } from '../../headerUtils';
 import { _addPopupToggleButtonListeners } from '../popupToggleButton';
@@ -138,10 +137,7 @@ export class AgColumnHeader extends Component implements IHeaderComp {
         }
 
         if (this.innerHeaderComponent) {
-            // Mimic the merging of params that happens during init of _getInnerHeaderCompDetails(userCompFactory, params, params);
-            const mergedParams = { ...params };
-            _mergeDeep(mergedParams, params.innerHeaderComponentParams);
-            this.innerHeaderComponent.refresh?.(mergedParams);
+            this.innerHeaderComponent.refresh?.(_mergeInnerHeaderParams(this.beans.userCompFactory, params));
         } else {
             this.setDisplayName(params);
         }
