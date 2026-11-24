@@ -19,6 +19,7 @@ import agSitemapFilterNoindex from '../../external/ag-website-shared/plugins/agS
 import agSitemapLastmod from '../../external/ag-website-shared/plugins/agSitemapLastmod';
 import agSourcemapCors from '../../external/ag-website-shared/plugins/agSourcemapCors';
 import { SITEMAP_CACHE_DIR } from '../../external/ag-website-shared/src/constants';
+import agBlogTagSitemap from './plugins/agBlogTagSitemap';
 import buildTime from './plugins/agBuildTime';
 import agDemoTitleChecker from './plugins/agDemoTitleChecker';
 import agDevCsp from './plugins/agDevCsp';
@@ -27,6 +28,7 @@ import agDevMarkdownNegotiation from './plugins/agDevMarkdownNegotiation';
 import agHotModuleReload from './plugins/agHotModuleReload';
 import agHtaccessGen from './plugins/agHtaccessGen';
 import agRedirectsChecker from './plugins/agRedirectsChecker';
+import { BLOG_TAG_SITEMAP_FILE } from './src/utils/blogTagSitemap';
 import { createLinkRedirectResolver, isServedOutsideBuild } from './src/utils/htaccess/linkRedirects';
 import { getSitemapConfig } from './src/utils/sitemap';
 import { urlWithBaseUrl } from './src/utils/urlWithBaseUrl';
@@ -148,6 +150,12 @@ const {
      * getSitemapConfig; an index inside an index is invalid and crawlers ignore it.
      */
     BLOG_SITEMAP_URLS,
+
+    /**
+     * SE-106: Ghost's tag sitemap. Filtered at build time to the indexable tags and written to
+     * sitemap-blog-tags.xml, which the sitemap index lists - see agBlogTagSitemap.
+     */
+    BLOG_TAGS_SITEMAP_URL,
 
     /**
      * Studio robots.txt disallow json url to merge
@@ -372,8 +380,12 @@ export default defineConfig({
                           blogSitemaps: BLOG_SITEMAP_URLS?.split(',')
                               .map((url) => url.trim())
                               .filter(Boolean),
+                          blogTagSitemap: BLOG_TAGS_SITEMAP_URL
+                              ? new URL(urlWithBaseUrl(BLOG_TAG_SITEMAP_FILE, PUBLIC_BASE_URL), PUBLIC_SITE_URL).href
+                              : undefined,
                       })
                   ),
+                  agBlogTagSitemap({ ghostSitemapUrl: BLOG_TAGS_SITEMAP_URL }),
                   agSitemapFilterNoindex({ enabled: PRODUCTION_SITE_URLS.includes(PUBLIC_SITE_URL) }),
                   agSitemapLastmod(),
                   agCacheSitemap({ cacheFolder: SITEMAP_CACHE_DIR }),
