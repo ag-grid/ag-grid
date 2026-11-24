@@ -28,6 +28,7 @@ const gridOptions: GridOptions = {
         { athlete: 'Simone Biles', country: 'United States', sport: 'Gymnastics' },
     ],
     tooltipTrigger: 'hoverOrFocus',
+    tooltipShowMode: 'standard',
     tooltipShowDelay: 500,
 };
 
