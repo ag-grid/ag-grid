@@ -493,6 +493,93 @@ test.describe('community grid in a real browser', () => {
         });
     });
 
+    test('a right to left print-layout grid with no rows is as wide as its columns with the first column at the right edge', async ({
+        page,
+    }) => {
+        const { grid } = await mountGrid(page, {
+            width: 300,
+            height: 300,
+            css: '#myGrid{width:auto;height:auto}',
+            options: () => ({
+                enableRtl: true,
+                columnDefs: Array.from({ length: 7 }, (_, i) => ({ field: `col${i}`, width: 100 })),
+                rowData: [],
+                domLayout: 'print',
+            }),
+        });
+        await page.emulateMedia({ media: 'print' });
+
+        await expect(grid.locator('.ag-header-cell')).toHaveCount(7);
+        await expect(async () => {
+            const root = (await grid.locator('.ag-root').boundingBox())!;
+            const first = (await grid.locator('.ag-header-cell[col-id="col0"]').boundingBox())!;
+            const last = (await grid.locator('.ag-header-cell[col-id="col6"]').boundingBox())!;
+            expect(root.width).toBeCloseTo(700, 0);
+            expect(first.x + first.width).toBeCloseTo(root.x + root.width, 0);
+            expect(last.x).toBeCloseTo(root.x, 0);
+        }).toPass();
+    });
+
+    test('flex columns in a print-layout grid size to their minimum widths rather than the width the page happened to have', async ({
+        page,
+    }) => {
+        const { grid } = await mountGrid(page, {
+            width: 300,
+            height: 300,
+            css: '#myGrid{width:auto;height:auto}',
+            options: () => ({
+                defaultColDef: { flex: 1, minWidth: 80 },
+                columnDefs: Array.from({ length: 4 }, (_, i) => ({ field: `col${i}` })),
+                rowData: Array.from({ length: 5 }, (_, i) => ({ col0: i, col1: i, col2: i, col3: i })),
+                domLayout: 'print',
+            }),
+        });
+        await page.emulateMedia({ media: 'print' });
+
+        await expect(async () => {
+            expect((await grid.locator('.ag-root').boundingBox())!.width).toBeCloseTo(320, 0);
+            expect((await grid.locator('.ag-header-cell[col-id="col3"]').boundingBox())!.width).toBeCloseTo(80, 0);
+        }).toPass();
+    });
+
+    test('a normal-layout detail grid inside a print-layout master keeps the width of its own columns', async ({
+        page,
+    }) => {
+        const { grid, withApi } = await mountGrid(page, {
+            enterprise: true,
+            width: 300,
+            height: 300,
+            css: '#myGrid{width:auto;height:auto}',
+            options: () => ({
+                domLayout: 'print',
+                masterDetail: true,
+                detailRowHeight: 150,
+                columnDefs: [
+                    { field: 'col0', width: 100, cellRenderer: 'agGroupCellRenderer' },
+                    { field: 'col1', width: 100 },
+                    { field: 'col2', width: 100 },
+                ],
+                rowData: [{ col0: 'a', col1: 'b', col2: 'c' }],
+                detailCellRendererParams: {
+                    detailGridOptions: {
+                        columnDefs: Array.from({ length: 5 }, (_, i) => ({ field: `detail${i}`, width: 100 })),
+                    },
+                    getDetailRowData: (params: { successCallback: (rows: object[]) => void }) =>
+                        params.successCallback([{ detail0: 1 }]),
+                },
+            }),
+        });
+        await withApi((api) => api.forEachNode((node) => node.setExpanded(true)));
+        await page.emulateMedia({ media: 'print' });
+
+        const detailArea = grid.locator('.ag-details-grid .ag-grid-scrollable-area');
+        await expect(detailArea).toHaveCount(1);
+        await expect(async () => {
+            expect((await grid.locator('.ag-root').first().boundingBox())!.width).toBeCloseTo(300, 0);
+            expect((await detailArea.boundingBox())!.width).toBeCloseTo(500, 0);
+        }).toPass();
+    });
+
     test('printing a print-layout grid prints every row', async ({ page, browserName }) => {
         test.skip(browserName !== 'chromium', 'page.pdf() is only supported in Chromium');
         await mountGrid(page, {
