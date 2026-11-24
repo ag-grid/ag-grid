@@ -22,7 +22,7 @@ on:
                 default: medium
                 required: false
     schedule:
-        - cron: '0 2 * * 0' # Weekly, Sunday 02:00 UTC
+        - cron: '0 2 * * 0' # Weekly, Sunday 02:00 UTC, staggered with the ag-grid, ag-charts and ag-studio reviews (02:00, 03:00, 04:00)
 
 permissions:
     contents: read
@@ -62,4 +62,6 @@ jobs:
                   min-severity: ${{ inputs.min_severity || 'medium' }}
                   slack-bot-oauth-token: ${{ secrets.SLACK_BOT_OAUTH_TOKEN }}
                   slack-channel: ${{ env.SLACK_CHANNEL }}
+                  # Fewer concurrent Codex sessions than the default 3, to stay inside the API rate limit
+                  parallel-shards: 2
                   product-name: AG Grid
