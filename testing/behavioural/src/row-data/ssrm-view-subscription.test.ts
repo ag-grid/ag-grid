@@ -571,6 +571,21 @@ describe('SSRM viewSubscription', () => {
         expect(api.isDestroyed()).toBe(true);
     });
 
+    test('destroy() throws an AggregateError from a bean destroy as it is', async () => {
+        const beanError = new AggregateError([], 'datasource destroy failed');
+        const api = await createFlatGrid({
+            serverSideDatasource: {
+                ...createFlatDatasource([{ id: '0', value: 0 }]),
+                destroy: () => {
+                    throw beanError;
+                },
+            },
+        });
+
+        expect(() => api.destroy()).toThrow(beanError);
+        expect(api.isDestroyed()).toBe(true);
+    });
+
     test('a subscribeRows handler that throws on an empty array does not stop createGrid returning the api', async () => {
         const subscribed: string[] = [];
         const api = gridsManager.createGrid('myGrid', {

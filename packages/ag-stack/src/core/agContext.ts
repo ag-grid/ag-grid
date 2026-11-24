@@ -149,7 +149,7 @@ export class AgContext<
         return this.id;
     }
 
-    public destroy(): void {
+    public destroy(errors?: unknown[]): void {
         if (this.destroyed) {
             return;
         }
@@ -162,13 +162,12 @@ export class AgContext<
         if (this.beanDestroyComparator) {
             beanInstances.sort(this.beanDestroyComparator);
         }
-        // Every bean is destroyed even when one throws, then the errors are thrown.
-        const errors: unknown[] = [];
+        const beanErrors = errors ?? [];
         for (let i = 0, len = beanInstances.length; i < len; ++i) {
             try {
                 this.destroyBean(beanInstances[i]);
             } catch (error) {
-                errors.push(error);
+                beanErrors.push(error);
             }
         }
 
@@ -177,7 +176,9 @@ export class AgContext<
 
         this.destroyCallback?.();
 
-        _throwErrors(errors);
+        if (!errors) {
+            _throwErrors(beanErrors);
+        }
     }
 
     /**

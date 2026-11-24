@@ -28,12 +28,7 @@ export class GridDestroyService extends BeanStub implements NamedBean {
         ctrlsSvc.get('gridCtrl')?.destroyGridUi();
 
         // destroy the services
-        try {
-            context.destroy();
-        } catch (error) {
-            // The context throws an AggregateError when several beans fail; add its errors without nesting.
-            errors.push(...(error instanceof AggregateError ? error.errors : [error]));
-        }
+        context.destroy(errors);
         super.destroy();
 
         _throwErrors(errors);
