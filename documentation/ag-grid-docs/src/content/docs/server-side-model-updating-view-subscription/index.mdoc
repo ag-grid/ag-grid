@@ -119,7 +119,7 @@ The grid leaves error handling to you: it does not catch errors thrown by the ha
 
 ## Grand Total Row
 
-With a [Grand Total Row](./server-side-model-grouping/#grand-total-row), the grand total row is passed as a group row with the ID `GRAND_TOTAL_ROW_ID` and an empty `route`. The grand total row sticks to the top or bottom of the grid, or is pinned, so it stays subscribed wherever the grid is scrolled. With `suppressStickyTotalRow` set to `true` or `'grand'`, an unpinned grand total row is subscribed only while it is in view.
+With a [Grand Total Row](./server-side-model-aggregation/#grand-total-row), the grand total row is passed as a group row with the ID `GRAND_TOTAL_ROW_ID` and an empty `route`. The grand total row sticks to the top or bottom of the grid, or is pinned, so it stays subscribed wherever the grid is scrolled. With `suppressStickyTotalRow` set to `true` or `'grand'`, an unpinned grand total row is subscribed only while it is in view.
 
 To apply new totals, update the row with a transaction without a `route`. `getRowId` must return `GRAND_TOTAL_ROW_ID` for the totals data:
 

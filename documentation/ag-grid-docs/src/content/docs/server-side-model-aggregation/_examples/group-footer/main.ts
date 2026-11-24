@@ -1,13 +1,6 @@
 import { FakeServer } from '@example-fake-servers/standard';
 
-import type {
-    GetRowIdParams,
-    GridApi,
-    GridOptions,
-    IServerSideDatasource,
-    IServerSideGetRowsParams,
-    IsServerSideGroupOpenByDefaultParams,
-} from 'ag-grid-community';
+import type { GridApi, GridOptions, IServerSideDatasource, IServerSideGetRowsParams } from 'ag-grid-community';
 import { ModuleRegistry, createGrid, enableDevValidations } from 'ag-grid-community';
 import { RowGroupingModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 
@@ -21,12 +14,12 @@ ModuleRegistry.registerModules([RowGroupingModule, ServerSideRowModelModule]);
 let gridApi: GridApi<IOlympicData>;
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: [
-        { field: 'country', enableRowGroup: true, rowGroup: true, hide: true },
-        { field: 'sport', enableRowGroup: true, rowGroup: true, hide: true },
+        { field: 'country', rowGroup: true, hide: true },
+        { field: 'sport', rowGroup: true, hide: true },
         { field: 'year', minWidth: 100 },
-        { field: 'gold', aggFunc: 'sum', enableValue: true },
-        { field: 'silver', aggFunc: 'sum', enableValue: true },
-        { field: 'bronze', aggFunc: 'sum', enableValue: true },
+        { field: 'gold', aggFunc: 'sum' },
+        { field: 'silver', aggFunc: 'sum' },
+        { field: 'bronze', aggFunc: 'sum' },
     ],
     defaultColDef: {
         flex: 1,
@@ -37,27 +30,8 @@ const gridOptions: GridOptions<IOlympicData> = {
         minWidth: 280,
     },
     rowModelType: 'serverSide',
-    isServerSideGroupOpenByDefault,
-    getRowId,
     groupTotalRow: 'bottom',
 };
-
-function getRowId(params: GetRowIdParams) {
-    return Math.random().toString();
-}
-
-function isServerSideGroupOpenByDefault(params: IsServerSideGroupOpenByDefaultParams) {
-    const route = params.rowNode.getRoute();
-    if (!route) {
-        return false;
-    }
-
-    const routeAsString = route.join(',');
-
-    const routesToOpenByDefault = ['Zimbabwe', 'Zimbabwe,Swimming'];
-
-    return routesToOpenByDefault.indexOf(routeAsString) >= 0;
-}
 
 function getServerSideDatasource(server: any): IServerSideDatasource {
     return {

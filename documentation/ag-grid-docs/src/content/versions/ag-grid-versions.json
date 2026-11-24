@@ -136,7 +136,7 @@
             },
             {
                 "text": "Grand Total Row for server-side row model",
-                "path": "./server-side-model-grouping/#grand-total-row"
+                "path": "./server-side-model-aggregation/#grand-total-row"
             },
             {
                 "text": "Performance Improvements"
@@ -912,7 +912,7 @@
             },
             {
                 "text": "Group Footer Rows when Using Server-Side Row Model",
-                "path": "./server-side-model-grouping/#group-total-rows"
+                "path": "./server-side-model-aggregation/#group-total-rows"
             },
             {
                 "text": "Module Registration Is No Longer Global and Is Per-Grid",

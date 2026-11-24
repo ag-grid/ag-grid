@@ -1,10 +1,17 @@
 // This fake server uses http://alasql.org/ to mimic how a real server
 // might generate sql queries from the Server-Side Row Model request.
 // To keep things simple it does the bare minimum to support the example.
+// Request values are bound as `?` parameters, and column names, sort directions and
+// aggregation functions are checked against allow-lists of known values.
+import { checkColumn, limitSql } from '@example-fake-servers/sql';
+
 import type { ColumnVO, IServerSideGetRowsRequest } from 'ag-grid-community';
 
 export function FakeServer(allData: any[]) {
     alasql.options.cache = false;
+
+    const knownColumns = new Set(Object.keys(allData[0] ?? {}));
+    const aggFuncs = new Set(['sum', 'min', 'max', 'avg', 'count']);
 
     return {
         getData: function (request: IServerSideGetRowsRequest) {
@@ -19,22 +26,34 @@ export function FakeServer(allData: any[]) {
     };
 
     function executeQuery(request: IServerSideGetRowsRequest) {
-        const sql = buildSql(request);
+        const params: unknown[] = [allData];
+        const sql = buildSql(request, params);
 
-        console.log('[FakeServer] - about to execute query:', sql);
+        console.log('[FakeServer] - about to execute query:', sql, params.slice(1));
 
-        return alasql(sql, [allData]);
+        return alasql(sql, params);
     }
 
-    function buildSql(request: IServerSideGetRowsRequest) {
+    function buildSql(request: IServerSideGetRowsRequest, params: unknown[]) {
         return (
             selectSql(request) +
             ' FROM ?' +
-            whereSql(request) +
+            whereSql(request, params) +
             groupBySql(request) +
             orderBySql(request) +
             limitSql(request)
         );
+    }
+
+    function column(colId: string) {
+        return checkColumn(knownColumns, colId);
+    }
+
+    function aggFunc(name?: string) {
+        if (!name || !aggFuncs.has(name)) {
+            throw new Error('Unsupported aggregation: ' + name);
+        }
+        return name;
     }
 
     function selectSql(request: IServerSideGetRowsRequest) {
@@ -44,10 +63,16 @@ export function FakeServer(allData: any[]) {
 
         if (isDoingGrouping(rowGroupCols, groupKeys)) {
             const rowGroupCol = rowGroupCols[groupKeys.length];
-            const colsToSelect = [rowGroupCol.id];
+            const colsToSelect = [column(rowGroupCol.id)];
 
             valueCols.forEach(function (valueCol) {
-                colsToSelect.push(valueCol.aggFunc + '(' + valueCol.id + ') AS ' + aggregateName(request, valueCol.id));
+                colsToSelect.push(
+                    aggFunc(valueCol.aggFunc) +
+                        '(' +
+                        column(valueCol.id) +
+                        ') AS ' +
+                        aggregateName(request, valueCol.id)
+                );
             });
 
             return 'SELECT ' + colsToSelect.join(', ');
@@ -56,18 +81,15 @@ export function FakeServer(allData: any[]) {
         return 'SELECT *';
     }
 
-    function whereSql(request: IServerSideGetRowsRequest) {
+    function whereSql(request: IServerSideGetRowsRequest, params: unknown[]) {
         const rowGroups = request.rowGroupCols;
         const groupKeys = request.groupKeys;
         const whereParts: string[] = [];
 
-        if (groupKeys) {
-            groupKeys.forEach(function (key, i) {
-                const value = typeof key === 'string' ? "'" + key + "'" : key;
-
-                whereParts.push(rowGroups[i].id + ' = ' + value);
-            });
-        }
+        groupKeys.forEach(function (key, i) {
+            whereParts.push(column(rowGroups[i].id) + ' = ?');
+            params.push(key);
+        });
 
         if (whereParts.length > 0) {
             return ' WHERE ' + whereParts.join(' AND ');
@@ -83,36 +105,29 @@ export function FakeServer(allData: any[]) {
         if (isDoingGrouping(rowGroupCols, groupKeys)) {
             const rowGroupCol = rowGroupCols[groupKeys.length];
 
-            return ' GROUP BY ' + rowGroupCol.id + ' HAVING count(*) > 0';
+            return ' GROUP BY ' + column(rowGroupCol.id) + ' HAVING count(*) > 0';
         }
 
         return '';
     }
 
     function orderBySql(request: IServerSideGetRowsRequest) {
-        const sortModel = request.sortModel;
-
-        if (sortModel.length === 0) return '';
-
         const rowGroupCol = isDoingGrouping(request.rowGroupCols, request.groupKeys)
             ? request.rowGroupCols[request.groupKeys.length]
             : undefined;
-        const sorts = sortModel.map(function (s) {
-            // a group level sorted by its own column is ordered by key, and by aggregate otherwise
-            const sortBy = rowGroupCol && s.colId !== rowGroupCol.id ? aggregateName(request, s.colId) : s.colId;
-            return sortBy + ' ' + s.sort.toUpperCase();
-        });
+        const sorts = request.sortModel
+            // sorting the auto group column has no effect, as the data doesn't hold it
+            .filter((s) => knownColumns.has(s.colId))
+            .map(function (s) {
+                // a group level sorted by its own column is ordered by key, and by aggregate otherwise
+                const sortBy =
+                    rowGroupCol && s.colId !== rowGroupCol.id ? aggregateName(request, s.colId) : column(s.colId);
+                return sortBy + (s.sort === 'desc' ? ' DESC' : ' ASC');
+            });
+
+        if (sorts.length === 0) return '';
 
         return ' ORDER BY ' + sorts.join(', ');
-    }
-
-    function limitSql(request: IServerSideGetRowsRequest) {
-        if (request.endRow == undefined || request.startRow == undefined) {
-            return '';
-        }
-
-        const blockSize = request.endRow - request.startRow;
-        return ' LIMIT ' + blockSize + ' OFFSET ' + request.startRow;
     }
 
     // the aggregate of a grouped column is returned under `<aggFunc>_<field>`, as its field holds the group key
@@ -123,7 +138,7 @@ export function FakeServer(allData: any[]) {
         const isGrouped = request.rowGroupCols.some(function (col) {
             return col.id === colId;
         });
-        return valueCol && isGrouped ? valueCol.aggFunc + '_' + valueCol.field : colId;
+        return valueCol && isGrouped ? aggFunc(valueCol.aggFunc) + '_' + column(valueCol.id) : column(colId);
     }
 
     function isDoingGrouping(rowGroupCols: ColumnVO[], groupKeys: string[]) {
