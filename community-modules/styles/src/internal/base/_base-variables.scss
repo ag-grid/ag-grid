@@ -176,9 +176,13 @@
             var(--ag-header-foreground-color),
             var(--ag-disabled-foreground-color)
         );
-        --ag-input-read-only-background-color: var(--ag-background-color);
+        --ag-input-read-only-background-color: color-mix(
+            in srgb,
+            var(--ag-background-color),
+            var(--ag-foreground-color) 3%
+        );
         --ag-input-read-only-border-color: var(--ag-input-border-color);
-        --ag-input-read-only-focus-border-color: var(--ag-foreground-color);
+        --ag-input-read-only-focus-border-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 50%);
         --ag-input-read-only-focus-box-shadow: none;
 
         --ag-checkbox-background-color: transparent;

@@ -129,7 +129,6 @@ export class AgInputTextField<
 
     public setReadOnly(readOnly: boolean): this {
         this.eInput.readOnly = readOnly;
-        this.refreshClearButton();
         return this;
     }
 
@@ -214,11 +213,7 @@ export class AgInputTextField<
 
     private refreshClearButton(): void {
         const { eClearButton, eInput } = this;
-        if (!eInput) {
-            return;
-        }
-        eInput.classList.toggle('ag-input-field-input-empty', eInput.readOnly && !eInput.value);
-        if (!eClearButton) {
+        if (!eClearButton || !eInput) {
             return;
         }
         const supportsClearButton =

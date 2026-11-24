@@ -1,12 +1,5 @@
 import type { BorderValue, ColorValue, LengthValue, Part, ShadowValue } from 'ag-stack';
-import {
-    accentColor,
-    backgroundColor,
-    createPart,
-    foregroundBackgroundMix,
-    foregroundColor,
-    foregroundMix,
-} from 'ag-stack';
+import { accentColor, backgroundColor, createPart, foregroundBackgroundMix, foregroundMix } from 'ag-stack';
 
 import inputStyleBaseCSS from './input-style-base.css';
 import inputStyleBorderedCSS from './input-style-bordered.css';
@@ -295,17 +288,18 @@ const makeInputStyleBorderedTreeShakeable = () =>
                 ref: 'textColor',
                 mix: 0.5,
             },
+            inputReadOnlyBackgroundColor: foregroundBackgroundMix(0.03),
             inputReadOnlyTextColor: {
                 ref: 'inputDisabledTextColor',
                 onto: 'inputTextColor',
                 mix: 0.5,
             },
             inputReadOnlyFocusBorder: {
-                color: foregroundColor,
+                color: foregroundMix(0.5),
             },
             inputReadOnlyFocusShadow: {
                 spread: 3,
-                color: foregroundMix(0.5),
+                color: foregroundMix(0.25),
             },
             inputInvalidBorder: {
                 color: { ref: 'invalidColor' },
@@ -337,6 +331,7 @@ const makeInputStyleUnderlinedTreeShakeable = () =>
                 mix: 0.5,
             },
             inputDisabledBorder: 'solid 1px var(--ag-border-color)',
+            inputReadOnlyBackgroundColor: foregroundBackgroundMix(0.03),
             inputReadOnlyTextColor: {
                 ref: 'inputDisabledTextColor',
                 onto: 'inputTextColor',
@@ -344,7 +339,7 @@ const makeInputStyleUnderlinedTreeShakeable = () =>
             },
             inputReadOnlyFocusBorder: {
                 width: 2,
-                color: foregroundColor,
+                color: foregroundMix(0.5),
             },
             inputInvalidBorder: {
                 width: 2,

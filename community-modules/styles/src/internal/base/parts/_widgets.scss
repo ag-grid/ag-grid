@@ -91,10 +91,6 @@
                 border-color: var(--ag-input-read-only-focus-border-color);
             }
         }
-
-        :where(.ag-floating-filter-input) &.ag-input-field-input-empty {
-            visibility: hidden;
-        }
     }
 
     .ag-input-field-clear-button {

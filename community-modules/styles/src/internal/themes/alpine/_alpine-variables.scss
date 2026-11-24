@@ -49,7 +49,7 @@
     --ag-input-border-color: var(--ag-border-color);
     --ag-input-border-color-invalid: var(--ag-invalid-color);
     --ag-input-focus-box-shadow: 0 0 2px 0.1rem var(--ag-input-focus-border-color);
-    --ag-input-read-only-focus-border-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 40%);
+    --ag-input-read-only-focus-border-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 20%);
     --ag-input-read-only-focus-box-shadow: 0 0 2px 0.1rem var(--ag-input-read-only-focus-border-color);
     --ag-input-error-focus-box-shadow: 0 0 2px 0.1rem var(--ag-invalid-color);
     --ag-panel-background-color: var(--ag-header-background-color);
