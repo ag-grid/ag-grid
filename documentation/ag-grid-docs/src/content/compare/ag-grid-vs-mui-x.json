@@ -7,7 +7,7 @@
     },
     "analyticsPrefix": "compare-mui-x",
     "technicalReviewer": "james",
-    "lastUpdated": "2026-11-19",
+    "lastUpdated": "2026-11-24",
     "competitor": {
         "name": "MUI X Data Grid",
         "slug": "mui-x",
@@ -32,9 +32,9 @@
             "detail": "AG Grid Community virtualises rows and columns by default."
         },
         {
-            "value": "6",
+            "value": "8",
             "label": "Features MUI X Data Grid does not include",
-            "detail": "Including Find, cell notes, the Set Filter and the status bar, all in AG Grid."
+            "detail": "Including Find, cell notes, the Set Filter, the status bar and PDF export, all in AG Grid."
         }
     ],
     "features": {
@@ -49,7 +49,7 @@
                         "product": {
                             "status": "yes",
                             "plan": "Free",
-                            "detail": "React, Angular, Vue and plain JavaScript"
+                            "detail": "Native React, Angular, Vue and plain JavaScript"
                         },
                         "competitor": {
                             "status": "yes",
@@ -65,7 +65,7 @@
                         "product": {
                             "status": "yes",
                             "plan": "Free",
-                            "detail": "Typed row data, cell values and grid context"
+                            "detail": "Typed API and typed to your own data, so field names and values are checked as you code"
                         },
                         "competitor": {
                             "status": "yes",
@@ -134,7 +134,7 @@
                         "product": {
                             "status": "yes",
                             "plan": "Free",
-                            "detail": "Infinite Row Model in Community; Server-Side Row Model in Enterprise"
+                            "detail": "Quite mature, with sorting, filtering and pagination via the Infinite Row Model in Community. Enterprise adds grouping, aggregation, pivoting, transactions, selection and dynamic row height via the Server-Side Row Model"
                         },
                         "competitor": {
                             "status": "limited",
@@ -480,12 +480,43 @@
                 "name": "Selection and export",
                 "rows": [
                     {
+                        "feature": "Row selection",
+                        "docsUrl": "./row-selection/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "Row selection using a checkbox or a click, which persists through other interactions"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "Click or checkbox row selection; Ctrl/Shift-click multi-row selection in Pro",
+                            "sourceUrl": "https://mui.com/x/react-data-grid/row-selection/",
+                            "checkedOn": "2026-11-24"
+                        }
+                    },
+                    {
+                        "feature": "Column selection",
+                        "docsUrl": "./cell-selection/#via-column-headers",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "Click a column header to select every cell in the column"
+                        },
+                        "competitor": {
+                            "status": "no",
+                            "detail": "No header-click column selection; cell range selection (Premium) is by click, drag or keyboard only",
+                            "sourceUrl": "https://mui.com/x/react-data-grid/cell-selection/",
+                            "checkedOn": "2026-11-24"
+                        }
+                    },
+                    {
                         "feature": "Cell range selection",
                         "docsUrl": "./cell-selection/",
                         "product": {
                             "status": "yes",
                             "plan": "Enterprise",
-                            "detail": "Includes the fill handle"
+                            "detail": "Single cells, ranges and multiple non-adjacent ranges including the range and fill handles"
                         },
                         "competitor": {
                             "status": "yes",
@@ -546,13 +577,28 @@
                         "product": {
                             "status": "yes",
                             "plan": "Enterprise",
-                            "detail": "Including styles and formulas"
+                            "detail": "Built-in exporter with comprehensive configuration including styles and formula support"
                         },
                         "competitor": {
                             "status": "yes",
                             "plan": "Premium",
                             "sourceUrl": "https://mui.com/x/react-data-grid/export/",
                             "checkedOn": "2026-11-11"
+                        }
+                    },
+                    {
+                        "feature": "PDF export",
+                        "docsUrl": "./pdf-export/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "Built-in exporter with comprehensive configuration including styles and formula support"
+                        },
+                        "competitor": {
+                            "status": "no",
+                            "detail": "No built-in PDF export; only the browser print dialog's save-as-PDF",
+                            "sourceUrl": "https://mui.com/x/react-data-grid/export/",
+                            "checkedOn": "2026-11-24"
                         }
                     }
                 ]
@@ -566,7 +612,7 @@
                         "product": {
                             "status": "yes",
                             "plan": "Free",
-                            "detail": "Built-in themes, the Theming API and the Theme Builder"
+                            "detail": "4 built-in themes, theming variables and a Theme Builder for easy theme editing"
                         },
                         "competitor": {
                             "status": "yes",
@@ -582,7 +628,7 @@
                         "product": {
                             "status": "yes",
                             "plan": "Free",
-                            "detail": "ARIA attributes and keyboard navigation"
+                            "detail": "Keyboard navigation and screen reader support through ARIA attributes; targets WCAG 2.2 Level A and AA"
                         },
                         "competitor": {
                             "status": "yes",

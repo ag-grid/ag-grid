@@ -6,7 +6,7 @@
     },
     "analyticsPrefix": "compare-syncfusion",
     "technicalReviewer": "james",
-    "lastUpdated": "2026-11-19",
+    "lastUpdated": "2026-11-24",
     "competitor": {
         "name": "Syncfusion Data Grid",
         "slug": "syncfusion",
@@ -47,7 +47,7 @@
                         "product": {
                             "status": "yes",
                             "plan": "Free",
-                            "detail": "React, Angular, Vue and plain JavaScript"
+                            "detail": "Native React, Angular, Vue and plain JavaScript"
                         },
                         "competitor": {
                             "status": "yes",
@@ -63,7 +63,7 @@
                         "product": {
                             "status": "yes",
                             "plan": "Free",
-                            "detail": "Typed row data, cell values and grid context"
+                            "detail": "Typed API and typed to your own data, so field names and values are checked as you code"
                         },
                         "competitor": {
                             "status": "yes",
@@ -132,7 +132,7 @@
                         "product": {
                             "status": "yes",
                             "plan": "Free",
-                            "detail": "Infinite Row Model in Community; Server-Side Row Model in Enterprise"
+                            "detail": "Quite mature, with sorting, filtering and pagination via the Infinite Row Model in Community. Enterprise adds grouping, aggregation, pivoting, transactions, selection and dynamic row height via the Server-Side Row Model"
                         },
                         "competitor": {
                             "status": "yes",
@@ -180,12 +180,60 @@
                         }
                     },
                     {
+                        "feature": "Set Filter",
+                        "docsUrl": "./filter-set/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "A checkbox list of the values in a column"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Grid SDK",
+                            "detail": "Excel and CheckBox filters list a column’s unique values as checkboxes, with a search box",
+                            "sourceUrl": "https://help.syncfusion.com/grid-sdk/react/data-grid/filtering/excel-like-filter",
+                            "checkedOn": "2026-11-24"
+                        }
+                    },
+                    {
+                        "feature": "Advanced Filter",
+                        "docsUrl": "./filter-advanced/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "Conditions across columns, in a type-ahead input or a visual builder with nested AND/OR groups"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Grid SDK",
+                            "detail": "Conditions across columns in a Query Builder dialog opened from the toolbar",
+                            "sourceUrl": "https://help.syncfusion.com/grid-sdk/react/data-grid/filtering/advanced-filter",
+                            "checkedOn": "2026-11-24"
+                        }
+                    },
+                    {
+                        "feature": "Find",
+                        "docsUrl": "./find/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "Highlights every match and steps between them, like the browser’s Ctrl+F"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Grid SDK",
+                            "detail": "Toolbar Find box highlights matches without filtering and steps between them",
+                            "sourceUrl": "https://unpkg.com/@syncfusion/ej2-grids@35.2.12/src/grid/actions/find.d.ts",
+                            "checkedOn": "2026-11-24"
+                        }
+                    },
+                    {
                         "feature": "Cell editing",
                         "docsUrl": "./cell-editing/",
                         "product": {
                             "status": "yes",
                             "plan": "Free",
-                            "detail": "Built-in editors and undo/redo"
+                            "detail": "Built-in editors"
                         },
                         "competitor": {
                             "status": "yes",
@@ -193,6 +241,37 @@
                             "detail": "Inline, dialog and batch edit modes",
                             "sourceUrl": "https://help.syncfusion.com/grid-sdk/react/data-grid/editing/edit",
                             "checkedOn": "2026-11-19"
+                        }
+                    },
+                    {
+                        "feature": "Undo / redo",
+                        "docsUrl": "./undo-redo-edits/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "Undoes cell edits, pastes and fill operations"
+                        },
+                        "competitor": {
+                            "status": "limited",
+                            "plan": "Limited",
+                            "detail": "Undoes edits from the toolbar or keyboard, in batch edit mode only",
+                            "sourceUrl": "https://unpkg.com/@syncfusion/ej2-grids@35.2.12/src/grid/actions/edit.d.ts",
+                            "checkedOn": "2026-11-24"
+                        }
+                    },
+                    {
+                        "feature": "Cell notes",
+                        "docsUrl": "./notes/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "Notes attached to cells, shown on hover and edited from the context menu"
+                        },
+                        "competitor": {
+                            "status": "no",
+                            "detail": "No cell notes or comments",
+                            "sourceUrl": "https://help.syncfusion.com/grid-sdk/react/data-grid/cell",
+                            "checkedOn": "2026-11-24"
                         }
                     },
                     {
@@ -209,6 +288,52 @@
                             "detail": "Frozen columns on the left, right or in a fixed section",
                             "sourceUrl": "https://help.syncfusion.com/grid-sdk/react/data-grid/columns/frozen-column",
                             "checkedOn": "2026-11-19"
+                        }
+                    },
+                    {
+                        "feature": "Row numbers",
+                        "docsUrl": "./row-numbers/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Grid SDK",
+                            "detail": "Read-only row number column that updates with paging, sorting, filtering and grouping",
+                            "sourceUrl": "https://help.syncfusion.com/grid-sdk/react/data-grid/row/row",
+                            "checkedOn": "2026-11-24"
+                        }
+                    },
+                    {
+                        "feature": "Context menu",
+                        "docsUrl": "./context-menu/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "Right-click menu with copy, paste, export and chart items"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Grid SDK",
+                            "detail": "Right-click menu on header, content and pager with sort, group, edit, copy and export items, plus custom items",
+                            "sourceUrl": "https://help.syncfusion.com/grid-sdk/react/data-grid/context-menu",
+                            "checkedOn": "2026-11-24"
+                        }
+                    },
+                    {
+                        "feature": "Aligned grids",
+                        "docsUrl": "./aligned-grids/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "Keeps column widths, order and scrolling in step across grids"
+                        },
+                        "competitor": {
+                            "status": "no",
+                            "detail": "No syncing of column widths or scrolling between grids",
+                            "sourceUrl": "https://help.syncfusion.com/grid-sdk/react/data-grid/overview",
+                            "checkedOn": "2026-11-24"
                         }
                     }
                 ]
@@ -297,7 +422,7 @@
                         "product": {
                             "status": "yes",
                             "plan": "Enterprise",
-                            "detail": "Community chart types in AG Grid Enterprise; Enterprise chart types also need an AG Charts Enterprise licence, such as the Enterprise Bundle"
+                            "detail": "Users chart a selected range or a pivot from the grid. Community chart types in AG Grid Enterprise; Enterprise chart types also need an AG Charts Enterprise licence, such as the Enterprise Bundle"
                         },
                         "competitor": {
                             "status": "limited",
@@ -306,6 +431,53 @@
                             "sourceUrl": "https://help.syncfusion.com/grid-sdk/react/data-grid/integrate-chart-in-grid",
                             "checkedOn": "2026-11-11"
                         }
+                    },
+                    {
+                        "feature": "Sparklines",
+                        "docsUrl": "./sparklines-overview/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "Line, area, bar and column charts in cells"
+                        },
+                        "competitor": {
+                            "status": "limited",
+                            "plan": "Limited",
+                            "detail": "No built-in sparkline column; a documented column template renders the separate Sparkline chart component in cells",
+                            "sourceUrl": "https://help.syncfusion.com/grid-sdk/react/data-grid/columns/column-template",
+                            "checkedOn": "2026-11-24"
+                        }
+                    },
+                    {
+                        "feature": "Formulas",
+                        "docsUrl": "./formulas/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "Spreadsheet formulas in cells, with cell references and custom functions"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Grid SDK",
+                            "detail": "Spreadsheet formulas in formula-enabled columns, with A1 references, built-in and custom functions",
+                            "sourceUrl": "https://help.syncfusion.com/grid-sdk/react/data-grid/formula/formula",
+                            "checkedOn": "2026-11-24"
+                        }
+                    },
+                    {
+                        "feature": "Calculated columns",
+                        "docsUrl": "./calculated-columns/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "Users add columns from an expression, through a dialog"
+                        },
+                        "competitor": {
+                            "status": "no",
+                            "detail": "Formula columns are defined by the developer; no UI for users to add columns from an expression",
+                            "sourceUrl": "https://help.syncfusion.com/grid-sdk/react/data-grid/formula/formula",
+                            "checkedOn": "2026-11-24"
+                        }
                     }
                 ]
             },
@@ -313,12 +485,44 @@
                 "name": "Selection and export",
                 "rows": [
                     {
+                        "feature": "Row selection",
+                        "docsUrl": "./row-selection/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "Row selection using a checkbox or a click, which persists through other interactions"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Grid SDK",
+                            "detail": "Click or checkbox row selection, persisted through other operations when a primary key is set",
+                            "sourceUrl": "https://help.syncfusion.com/grid-sdk/react/data-grid/selection/check-box-selection",
+                            "checkedOn": "2026-11-24"
+                        }
+                    },
+                    {
+                        "feature": "Column selection",
+                        "docsUrl": "./cell-selection/#via-column-headers",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "Click a column header to select every cell in the column"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Grid SDK",
+                            "detail": "Click a column header to select the column; Ctrl- or Shift-click for several",
+                            "sourceUrl": "https://help.syncfusion.com/grid-sdk/react/data-grid/selection/column-selection",
+                            "checkedOn": "2026-11-24"
+                        }
+                    },
+                    {
                         "feature": "Cell range selection",
                         "docsUrl": "./cell-selection/",
                         "product": {
                             "status": "yes",
                             "plan": "Enterprise",
-                            "detail": "Includes the fill handle"
+                            "detail": "Single cells, ranges and multiple non-adjacent ranges including the range and fill handles"
                         },
                         "competitor": {
                             "status": "yes",
@@ -326,6 +530,21 @@
                             "detail": "Flow, Box and BoxWithBorder cell selection modes",
                             "sourceUrl": "https://help.syncfusion.com/grid-sdk/react/data-grid/selection/cell-selection",
                             "checkedOn": "2026-11-19"
+                        }
+                    },
+                    {
+                        "feature": "Status bar",
+                        "docsUrl": "./status-bar/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "Shows the sum, average and count of selected cells"
+                        },
+                        "competitor": {
+                            "status": "no",
+                            "detail": "Footer aggregates summarise whole columns; no sum, average or count of selected cells",
+                            "sourceUrl": "https://help.syncfusion.com/grid-sdk/react/data-grid/aggregates/aggregates",
+                            "checkedOn": "2026-11-24"
                         }
                     },
                     {
@@ -364,7 +583,7 @@
                         "product": {
                             "status": "yes",
                             "plan": "Enterprise",
-                            "detail": "Including styles and formulas"
+                            "detail": "Built-in exporter with comprehensive configuration including styles and formula support"
                         },
                         "competitor": {
                             "status": "yes",
@@ -380,7 +599,7 @@
                         "product": {
                             "status": "yes",
                             "plan": "Enterprise",
-                            "detail": "Built in, with no third-party libraries"
+                            "detail": "Built-in exporter with comprehensive configuration including styles and formula support"
                         },
                         "competitor": {
                             "status": "yes",
@@ -401,7 +620,7 @@
                         "product": {
                             "status": "yes",
                             "plan": "Free",
-                            "detail": "Built-in themes, the Theming API and the Theme Builder"
+                            "detail": "4 built-in themes, theming variables and a Theme Builder for easy theme editing"
                         },
                         "competitor": {
                             "status": "yes",
@@ -417,7 +636,7 @@
                         "product": {
                             "status": "yes",
                             "plan": "Free",
-                            "detail": "ARIA attributes and keyboard navigation"
+                            "detail": "Keyboard navigation and screen reader support through ARIA attributes; targets WCAG 2.2 Level A and AA"
                         },
                         "competitor": {
                             "status": "yes",

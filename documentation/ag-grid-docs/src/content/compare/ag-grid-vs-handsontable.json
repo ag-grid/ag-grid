@@ -6,7 +6,7 @@
     },
     "analyticsPrefix": "compare-handsontable",
     "technicalReviewer": "james",
-    "lastUpdated": "2026-11-19",
+    "lastUpdated": "2026-11-24",
     "competitor": {
         "name": "Handsontable",
         "slug": "handsontable",
@@ -30,9 +30,9 @@
             "detail": "Users query and change the grid in plain language with AG Grid's AI Toolkit."
         },
         {
-            "value": "3",
+            "value": "8",
             "label": "AG Grid features not in Handsontable",
-            "detail": "Pivoting, integrated charts and the AI Toolkit."
+            "detail": "Including pivoting, integrated charts, PDF export, the status bar and the AI Toolkit."
         }
     ],
     "features": {
@@ -47,14 +47,14 @@
                         "product": {
                             "status": "yes",
                             "plan": "Free",
-                            "detail": "React, Angular, Vue and plain JavaScript"
+                            "detail": "Native React, Angular, Vue and plain JavaScript"
                         },
                         "competitor": {
                             "status": "yes",
                             "plan": "Commercial",
-                            "detail": "Official wrappers for React, Angular and Vue 3, plus plain JavaScript",
-                            "sourceUrl": "https://handsontable.com/",
-                            "checkedOn": "2026-11-19"
+                            "detail": "Wrappers for React, Angular and Vue 3, plus plain JavaScript. Handsontable's React grid sits outside React's component tree: each re-render re-applies its settings and data, and user edits bypass React state, so you have to keep the two in sync yourself",
+                            "sourceUrl": "https://handsontable.com/docs/react-data-grid/binding-to-data/#understand-binding-as-a-reference",
+                            "checkedOn": "2026-11-24"
                         }
                     },
                     {
@@ -63,14 +63,14 @@
                         "product": {
                             "status": "yes",
                             "plan": "Free",
-                            "detail": "Typed row data, cell values and grid context"
+                            "detail": "Typed API and typed to your own data, so field names and values are checked as you code"
                         },
                         "competitor": {
                             "status": "yes",
                             "plan": "Commercial",
-                            "detail": "Ships TypeScript declarations for its entire public API; needs TypeScript 5.1 or later",
+                            "detail": "Typed API but untyped data, so data mistakes only surface at runtime",
                             "sourceUrl": "https://handsontable.com/docs/javascript-data-grid/typescript-types/",
-                            "checkedOn": "2026-11-11"
+                            "checkedOn": "2026-11-24"
                         }
                     },
                     {
@@ -105,7 +105,7 @@
                         "competitor": {
                             "status": "yes",
                             "plan": "Commercial",
-                            "detail": "On by default; can be turned off with renderAllRows",
+                            "detail": "On by default",
                             "sourceUrl": "https://handsontable.com/docs/javascript-data-grid/row-virtualization/",
                             "checkedOn": "2026-11-11"
                         }
@@ -121,7 +121,7 @@
                         "competitor": {
                             "status": "yes",
                             "plan": "Commercial",
-                            "detail": "On by default; can be turned off with renderAllColumns",
+                            "detail": "On by default",
                             "sourceUrl": "https://handsontable.com/docs/javascript-data-grid/column-virtualization/",
                             "checkedOn": "2026-11-11"
                         }
@@ -132,14 +132,14 @@
                         "product": {
                             "status": "yes",
                             "plan": "Free",
-                            "detail": "Infinite Row Model in Community; Server-Side Row Model in Enterprise"
+                            "detail": "Quite mature, with sorting, filtering and pagination via the Infinite Row Model in Community. Enterprise adds grouping, aggregation, pivoting, transactions, selection and dynamic row height via the Server-Side Row Model"
                         },
                         "competitor": {
                             "status": "yes",
                             "plan": "Commercial",
-                            "detail": "dataProvider option for server-side paging, sorting and filtering, with create, update and remove callbacks",
+                            "detail": "New in 2026; paged only, with basic sorting and filtering and built-in saving of edits",
                             "sourceUrl": "https://handsontable.com/docs/javascript-data-grid/server-side-data/",
-                            "checkedOn": "2026-11-11"
+                            "checkedOn": "2026-11-24"
                         }
                     }
                 ]
@@ -180,12 +180,60 @@
                         }
                     },
                     {
+                        "feature": "Set Filter",
+                        "docsUrl": "./filter-set/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "A checkbox list of the values in a column"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Commercial",
+                            "detail": "Filter by value: a searchable checkbox list of the column’s values",
+                            "sourceUrl": "https://handsontable.com/docs/javascript-data-grid/column-filter/",
+                            "checkedOn": "2026-11-24"
+                        }
+                    },
+                    {
+                        "feature": "Advanced Filter",
+                        "docsUrl": "./filter-advanced/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "Conditions across columns, in a type-ahead input or a visual builder with nested AND/OR groups"
+                        },
+                        "competitor": {
+                            "status": "limited",
+                            "plan": "Limited",
+                            "detail": "Per column only, with up to two conditions plus a value list in the menu; no cross-column builder or nesting",
+                            "sourceUrl": "https://handsontable.com/docs/javascript-data-grid/column-filter/",
+                            "checkedOn": "2026-11-24"
+                        }
+                    },
+                    {
+                        "feature": "Find",
+                        "docsUrl": "./find/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "Highlights every match and steps between them, like the browser’s Ctrl+F"
+                        },
+                        "competitor": {
+                            "status": "limited",
+                            "plan": "Limited",
+                            "detail": "Highlights matching cells; you build the search box and any stepping between matches yourself",
+                            "sourceUrl": "https://handsontable.com/docs/javascript-data-grid/searching-values/",
+                            "checkedOn": "2026-11-24"
+                        }
+                    },
+                    {
                         "feature": "Cell editing",
                         "docsUrl": "./cell-editing/",
                         "product": {
                             "status": "yes",
                             "plan": "Free",
-                            "detail": "Built-in editors and undo/redo"
+                            "detail": "Built-in editors"
                         },
                         "competitor": {
                             "status": "yes",
@@ -196,19 +244,35 @@
                         }
                     },
                     {
-                        "feature": "Formulas",
-                        "docsUrl": "./formulas/",
+                        "feature": "Undo / redo",
+                        "docsUrl": "./undo-redo-edits/",
                         "product": {
                             "status": "yes",
-                            "plan": "Enterprise",
-                            "detail": "Spreadsheet-style formulas with built-in and custom functions"
+                            "plan": "Free",
+                            "detail": "Undoes cell edits, pastes and fill operations"
                         },
                         "competitor": {
                             "status": "yes",
                             "plan": "Commercial",
-                            "detail": "About 400 functions through HyperFormula, licensed separately (free under GPLv3, otherwise commercial) and installed separately since version 18.0",
-                            "sourceUrl": "https://handsontable.com/docs/javascript-data-grid/formula-calculation/",
-                            "checkedOn": "2026-11-19"
+                            "detail": "Undoes cell edits, row and column changes, sorting, filtering and moves",
+                            "sourceUrl": "https://handsontable.com/docs/javascript-data-grid/undo-redo/",
+                            "checkedOn": "2026-11-24"
+                        }
+                    },
+                    {
+                        "feature": "Cell notes",
+                        "docsUrl": "./notes/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "Notes attached to cells, shown on hover and edited from the context menu"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Commercial",
+                            "detail": "Notes on cells, added, edited and removed from the context menu, like Excel",
+                            "sourceUrl": "https://handsontable.com/docs/javascript-data-grid/comments/",
+                            "checkedOn": "2026-11-24"
                         }
                     },
                     {
@@ -225,6 +289,52 @@
                             "detail": "Freeze columns in the configuration or from the context menu",
                             "sourceUrl": "https://handsontable.com/docs/javascript-data-grid/column-freezing/",
                             "checkedOn": "2026-11-11"
+                        }
+                    },
+                    {
+                        "feature": "Row numbers",
+                        "docsUrl": "./row-numbers/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Commercial",
+                            "detail": "Row headers number the rows 1, 2, 3 by default",
+                            "sourceUrl": "https://handsontable.com/docs/javascript-data-grid/row-header/",
+                            "checkedOn": "2026-11-24"
+                        }
+                    },
+                    {
+                        "feature": "Context menu",
+                        "docsUrl": "./context-menu/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "Right-click menu with copy, paste, export and chart items"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Commercial",
+                            "detail": "Right-click menu with row, column, clipboard, undo, comment and export items",
+                            "sourceUrl": "https://handsontable.com/docs/javascript-data-grid/context-menu/",
+                            "checkedOn": "2026-11-24"
+                        }
+                    },
+                    {
+                        "feature": "Aligned grids",
+                        "docsUrl": "./aligned-grids/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "Keeps column widths, order and scrolling in step across grids"
+                        },
+                        "competitor": {
+                            "status": "no",
+                            "detail": "No syncing of column widths or scrolling between grids; a docs recipe syncs edits between two grids",
+                            "sourceUrl": "https://handsontable.com/docs/javascript-data-grid/recipes/data-management/sync-two-grids/",
+                            "checkedOn": "2026-11-24"
                         }
                     }
                 ]
@@ -312,13 +422,59 @@
                         "product": {
                             "status": "yes",
                             "plan": "Enterprise",
-                            "detail": "Community chart types in AG Grid Enterprise; Enterprise chart types also need an AG Charts Enterprise licence, such as the Enterprise Bundle"
+                            "detail": "Users chart a selected range or a pivot from the grid. Community chart types in AG Grid Enterprise; Enterprise chart types also need an AG Charts Enterprise licence, such as the Enterprise Bundle"
                         },
                         "competitor": {
                             "status": "no",
                             "detail": "No built-in charts; a docs recipe connects selected rows to Chart.js",
                             "sourceUrl": "https://handsontable.com/docs/javascript-data-grid/recipes/real-time/chartjs-sync/",
                             "checkedOn": "2026-11-11"
+                        }
+                    },
+                    {
+                        "feature": "Sparklines",
+                        "docsUrl": "./sparklines-overview/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "Line, area, bar and column charts in cells"
+                        },
+                        "competitor": {
+                            "status": "no",
+                            "detail": "No built-in sparklines; a docs recipe draws bar sparklines with a custom cell renderer",
+                            "sourceUrl": "https://handsontable.com/docs/javascript-data-grid/recipes/rendering-styling/sparkline-cell-renderer/",
+                            "checkedOn": "2026-11-24"
+                        }
+                    },
+                    {
+                        "feature": "Formulas",
+                        "docsUrl": "./formulas/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "Spreadsheet formulas in cells, with cell references and custom functions"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Commercial",
+                            "detail": "About 400 functions through HyperFormula, licensed separately (free under GPLv3, otherwise commercial) and installed separately since version 18.0",
+                            "sourceUrl": "https://handsontable.com/docs/javascript-data-grid/formula-calculation/",
+                            "checkedOn": "2026-11-19"
+                        }
+                    },
+                    {
+                        "feature": "Calculated columns",
+                        "docsUrl": "./calculated-columns/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "Users add columns from an expression, through a dialog"
+                        },
+                        "competitor": {
+                            "status": "no",
+                            "detail": "Not in the documentation; formulas work cell by cell instead",
+                            "sourceUrl": "https://handsontable.com/docs/llms-full.txt",
+                            "checkedOn": "2026-11-24"
                         }
                     }
                 ]
@@ -327,12 +483,45 @@
                 "name": "Selection and export",
                 "rows": [
                     {
+                        "feature": "Row selection",
+                        "docsUrl": "./row-selection/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Free",
+                            "detail": "Row selection using a checkbox or a click, which persists through other interactions"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Commercial",
+                            "detail": "Selection resets each time the user clicks outside it, for example to sort or filter",
+                            "sourceUrl": "https://handsontable.com/docs/javascript-data-grid/api/options/#outsideclickdeselects",
+                            "checkedOn": "2026-11-24",
+                            "TODO_VERIFY": true
+                        }
+                    },
+                    {
+                        "feature": "Column selection",
+                        "docsUrl": "./cell-selection/#via-column-headers",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "Click a column header to select every cell in the column"
+                        },
+                        "competitor": {
+                            "status": "yes",
+                            "plan": "Commercial",
+                            "detail": "Click a column header to select every cell in the column",
+                            "sourceUrl": "https://handsontable.com/docs/javascript-data-grid/selection/",
+                            "checkedOn": "2026-11-24"
+                        }
+                    },
+                    {
                         "feature": "Cell range selection",
                         "docsUrl": "./cell-selection/",
                         "product": {
                             "status": "yes",
                             "plan": "Enterprise",
-                            "detail": "Includes the fill handle"
+                            "detail": "Single cells, ranges and multiple non-adjacent ranges including the range and fill handles"
                         },
                         "competitor": {
                             "status": "yes",
@@ -340,6 +529,21 @@
                             "detail": "Single cells, ranges and multiple non-adjacent ranges",
                             "sourceUrl": "https://handsontable.com/docs/javascript-data-grid/selection/",
                             "checkedOn": "2026-11-11"
+                        }
+                    },
+                    {
+                        "feature": "Status bar",
+                        "docsUrl": "./status-bar/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "Shows the sum, average and count of selected cells"
+                        },
+                        "competitor": {
+                            "status": "no",
+                            "detail": "Not in the documentation",
+                            "sourceUrl": "https://handsontable.com/docs/llms-full.txt",
+                            "checkedOn": "2026-11-24"
                         }
                     },
                     {
@@ -378,7 +582,7 @@
                         "product": {
                             "status": "yes",
                             "plan": "Enterprise",
-                            "detail": "Including styles and formulas"
+                            "detail": "Built-in exporter with comprehensive configuration including styles and formula support"
                         },
                         "competitor": {
                             "status": "yes",
@@ -386,6 +590,21 @@
                             "detail": "Since version 17.1; needs the ExcelJS library installed alongside",
                             "sourceUrl": "https://handsontable.com/docs/javascript-data-grid/export-to-excel/",
                             "checkedOn": "2026-11-11"
+                        }
+                    },
+                    {
+                        "feature": "PDF export",
+                        "docsUrl": "./pdf-export/",
+                        "product": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "Built-in exporter with comprehensive configuration including styles and formula support"
+                        },
+                        "competitor": {
+                            "status": "no",
+                            "detail": "No built-in PDF export; a docs recipe builds one with the jsPDF library",
+                            "sourceUrl": "https://handsontable.com/docs/javascript-data-grid/recipes/import-export/export-to-pdf/",
+                            "checkedOn": "2026-11-24"
                         }
                     }
                 ]
@@ -399,7 +618,7 @@
                         "product": {
                             "status": "yes",
                             "plan": "Free",
-                            "detail": "Built-in themes, the Theming API and the Theme Builder"
+                            "detail": "4 built-in themes, theming variables and a Theme Builder for easy theme editing"
                         },
                         "competitor": {
                             "status": "yes",
@@ -415,7 +634,7 @@
                         "product": {
                             "status": "yes",
                             "plan": "Free",
-                            "detail": "ARIA attributes and keyboard navigation"
+                            "detail": "Keyboard navigation and screen reader support through ARIA attributes; targets WCAG 2.2 Level A and AA"
                         },
                         "competitor": {
                             "status": "yes",
