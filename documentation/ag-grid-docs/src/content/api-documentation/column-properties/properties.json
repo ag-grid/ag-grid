@@ -544,6 +544,12 @@
             }
         },
         "initialAggFunc": {},
+        "aggValueGetter": {
+            "more": {
+                "name": "Transforming Aggregated Values",
+                "url": "./aggregation-columns/#transforming-aggregated-values"
+            }
+        },
         "valueIndex": {},
         "initialValueIndex": {},
         "enableValue": {
