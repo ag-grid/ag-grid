@@ -27,6 +27,7 @@ interface TooltipOwner {
     isTooltipFocused(): boolean;
     hasFocusedSourceWithin(element: HTMLElement): boolean;
     containsSource(element: HTMLElement): boolean;
+    hasHoveredSourceWithin(element: HTMLElement): boolean;
     isTooltipTriggeredByFocus(): boolean;
     isTooltipHoveredOrLeaving(): boolean;
 }
@@ -372,6 +373,7 @@ export abstract class BaseTooltipStateManager<
             owner !== this &&
             (owner.isTooltipFocused() ||
                 owner.hasFocusedSourceWithin(source) ||
+                owner.hasHoveredSourceWithin(source) ||
                 (this.tooltipCtrl.control && !this.canShowTooltip()) ||
                 (owner.containsSource(source) && this.tooltipCtrl.shouldDisplayTooltip?.(this.getTooltip()) === false))
         ) {
@@ -637,6 +639,12 @@ export abstract class BaseTooltipStateManager<
     public hasFocusedSourceWithin(element: HTMLElement): boolean {
         const source = this.getFocusElement();
         return this.sourceFocused && source !== element && element.contains(source) && this.canShowTooltip();
+    }
+
+    /** A deferred attempt by a containing source must not displace a nested source the pointer has moved onto. */
+    public hasHoveredSourceWithin(element: HTMLElement): boolean {
+        const source = this.tooltipCtrl.getGui();
+        return this.sourceHovered && source !== element && element.contains(source) && this.canShowTooltip();
     }
 
     public containsSource(element: HTMLElement): boolean {

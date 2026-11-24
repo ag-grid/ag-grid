@@ -31,7 +31,8 @@ const hoverEditorValue = async (page: Page) => {
     await display.hover();
     // With no show delay the tooltip is shown on the next tick, so this is ample for the cases asserting none.
     await page.waitForTimeout(300);
-    return page.locator('.ag-tooltip');
+    // The cell's own tooltip from before editing started can still be fading out.
+    return page.locator('.ag-tooltip:not(.ag-tooltip-hiding)');
 };
 
 for (const cellEditor of ['agSelectCellEditor', 'agRichSelectCellEditor']) {
