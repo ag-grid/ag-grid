@@ -3,9 +3,8 @@ html[data-color-scheme='dark'] body {
     color-scheme: dark;
 }
 
-.test-header {
-    padding: 5px 5px 0;
-    margin-bottom: 8px;
+.example-controls {
+    margin-bottom: var(--controls-gap);
 }
 
 .ag-grid-pinned-top-rows-container .ag-row {

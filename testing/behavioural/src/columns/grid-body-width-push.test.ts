@@ -516,6 +516,29 @@ describe('Grid body width push', () => {
         expect(pinnedLanes()).toEqual(PINNED);
     });
 
+    test('print layout sizes the scrollable area to the columns, not the container, with or without rows', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { colId: 'left', width: 120, pinned: 'left' },
+                { colId: 'a', width: 100 },
+                { colId: 'b', width: 100 },
+                { colId: 'right', width: 150, pinned: 'right' },
+            ],
+            rowData: [],
+            domLayout: 'print',
+        });
+        await asyncSetTimeout(0);
+        expect(query('.ag-grid-scrollable-area').style.width).toBe('470px');
+
+        api.setGridOption('rowData', [{}]);
+        await asyncSetTimeout(0);
+        expect(query('.ag-grid-scrollable-area').style.width).toBe('470px');
+
+        api.setGridOption('domLayout', 'normal');
+        await asyncSetTimeout(0);
+        expect(query('.ag-grid-scrollable-area').style.width).toBe(`${VIEWPORT_WIDTH}px`);
+    });
+
     test('pushes zero pinned widths for a grid with none, so a grid nested inside another does not inherit its widths', async () => {
         gridsManager.createGrid('myGrid', { columnDefs: [{ colId: 'a' }], rowData: [{}] });
         await asyncSetTimeout(0);

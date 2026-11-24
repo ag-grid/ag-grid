@@ -45,6 +45,7 @@ describe('markdown endpoints agree with the registry, without a build', () => {
         pageName: 'getting-started',
         bryntumProduct: 'bryntum-task-board',
         comparePage: 'ag-grid-vs-tanstack-table',
+        alternativePage: 'tanstack-table-alternative',
         slug: sessionSlug(recordedSession.title),
     };
     // AGENTS.md is a standalone file, and index.md is the homepage's twin, negotiated by its own rule.

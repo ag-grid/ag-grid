@@ -1,4 +1,5 @@
-import { createComparisonPageSchema, findStaleClaims } from './comparisonPageSchema';
+import { createComparisonPageSchema } from './comparisonPageSchema';
+import { findStaleClaims } from './decisionPageSchema';
 import type { ComparisonPageContent } from './types';
 
 const NOW = new Date('2026-11-11T00:00:00Z');

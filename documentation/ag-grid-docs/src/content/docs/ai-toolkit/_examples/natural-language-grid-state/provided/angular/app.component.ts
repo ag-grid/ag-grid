@@ -62,7 +62,7 @@ interface ProcessingState {
                         </code>
                     </div>
 
-                    <div>
+                    <div class="controls-row">
                         <button (click)="resetGrid()">Reset Grid</button>
                     </div>
                 </div>

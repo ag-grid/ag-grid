@@ -1,20 +1,19 @@
 ---
 import styles from '../DecisionPage.module.scss';
 import { FEATURE_STATUS, featureCellLabel, featureCellTone } from '../decisionPageText';
-import type { FeatureCell, FeatureGroup } from '../types';
+import type { FeatureMatrixGroup } from '../featureMatrix';
 import ProductHeading from './ProductHeading.astro';
 import TonePill from './TonePill.astro';
 
 interface Props {
-    groups: FeatureGroup[];
-    product: { name: string; logo?: string };
-    competitor: { name: string; logo?: string };
+    groups: FeatureMatrixGroup[];
+    /** The two column headings; the first carries the brand highlight. */
+    columns: [{ name: string; logo?: string }, { name: string; logo?: string }];
     resolveUrl: (url: string) => string;
 }
 
-const { groups, product, competitor, resolveUrl } = Astro.props;
-
-const cells = (row: FeatureGroup['rows'][number]): FeatureCell[] => [row.product, row.competitor];
+const { groups, columns, resolveUrl } = Astro.props;
+const [first, second] = columns;
 ---
 
 <div class={styles.tableWrapper}>
@@ -28,10 +27,10 @@ const cells = (row: FeatureGroup['rows'][number]): FeatureCell[] => [row.product
             <tr>
                 <th scope="col">Feature</th>
                 <th scope="col" class={styles.productColumnHeading}>
-                    <ProductHeading name={product.name} logo={product.logo} />
+                    <ProductHeading name={first.name} logo={first.logo} />
                 </th>
                 <th scope="col">
-                    <ProductHeading name={competitor.name} logo={competitor.logo} />
+                    <ProductHeading name={second.name} logo={second.logo} />
                 </th>
             </tr>
         </thead>
@@ -53,7 +52,7 @@ const cells = (row: FeatureGroup['rows'][number]): FeatureCell[] => [row.product
                                 row.feature
                             )}
                         </th>
-                        {cells(row).map((value, index) => (
+                        {row.cells.map((value, index) => (
                             <td class:list={[index === 0 && styles.productCell]}>
                                 <TonePill
                                     tone={featureCellTone(value)}
