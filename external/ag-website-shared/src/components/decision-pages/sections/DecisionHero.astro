@@ -4,23 +4,26 @@ import PageHero from '@ag-website-shared/components/page-hero/PageHero.astro';
 import styles from '../DecisionPage.module.scss';
 import { ctaAttributes } from '../decisionPageCta';
 import { HERO_CTAS, formatLastUpdated, toIsoDate } from '../decisionPageText';
-import type { DecisionPageSite } from '../types';
+import type { DecisionHubLink, DecisionPageSite } from '../types';
 
 interface Props {
     site: DecisionPageSite;
-    /** The cluster name shown in the breadcrumb, e.g. `Compare`. */
-    hubName: string;
+    /** The cluster hub, the breadcrumb's middle item. */
+    hub: DecisionHubLink;
     /** The current page's short name, the breadcrumb's last item, e.g. `AG Grid vs MUI X`. */
     pageName: string;
     heading: string;
     subHeading: string;
     lastUpdated: Date;
     analyticsPrefix: string;
-    /** Logo URLs shown side by side above the heading, when both are known. */
-    logos?: { product?: string; competitor?: string };
+    /**
+     * Two logo URLs shown side by side above the heading, with a word between them (`vs` on a
+     * comparison page). Shown only when both are known.
+     */
+    logos?: { first?: string; second?: string; separator: string };
 }
 
-const { site, hubName, pageName, heading, subHeading, lastUpdated, analyticsPrefix, logos } = Astro.props;
+const { site, hub, pageName, heading, subHeading, lastUpdated, analyticsPrefix, logos } = Astro.props;
 const getStarted = ctaAttributes({ site, analyticsPrefix, action: 'get-started', placement: 'hero' });
 const demo = ctaAttributes({ site, analyticsPrefix, action: 'demo', placement: 'hero' });
 ---
@@ -28,17 +31,17 @@ const demo = ctaAttributes({ site, analyticsPrefix, action: 'demo', placement: '
 <PageHero headline={heading} subhead={subHeading}>
     <nav slot="eyebrow" class={styles.breadcrumbs} aria-label="Breadcrumb">
         <a href={site.resolveUrl(site.urls.home)}>{site.productName}</a> /{' '}
-        <a href={site.resolveUrl(site.urls.hub)}>{hubName}</a> /{' '}
+        <a href={site.resolveUrl(hub.url)}>{hub.name}</a> /{' '}
         <span class={styles.breadcrumbCurrent} aria-current="page">
             {pageName}
         </span>
     </nav>
     {/* Decorative: the heading names both products */}
-    {logos?.product && logos.competitor && (
+    {logos?.first && logos.second && (
         <div slot="media" class={styles.heroLogos} aria-hidden="true">
-            <img src={logos.product} alt="" width="48" height="48" />
-            <span class={styles.heroLogosVs}>vs</span>
-            <img src={logos.competitor} alt="" width="48" height="48" />
+            <img src={logos.first} alt="" width="48" height="48" />
+            <span class={styles.heroLogosSeparator}>{logos.separator}</span>
+            <img src={logos.second} alt="" width="48" height="48" />
         </div>
     )}
     <div class={styles.heroCtas}>
