@@ -40,6 +40,14 @@
     margin: 0 var(--ag-spacing);
 }
 
+:where(.ag-column-drop-cell) .ag-column-indicator-icon {
+    display: flex;
+}
+
+:where(.ag-column-drop-cell) .ag-calculated-column-icon {
+    margin-inline-start: var(--ag-spacing);
+}
+
 .ag-column-drop-vertical {
     display: flex;
     flex-direction: column;

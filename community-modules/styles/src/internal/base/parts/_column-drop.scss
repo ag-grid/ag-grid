@@ -16,6 +16,10 @@
         margin: 0 var(--ag-grid-size);
     }
 
+    :where(.ag-column-drop-cell) .ag-calculated-column-icon {
+        margin-inline-start: var(--ag-grid-size);
+    }
+
     .ag-column-drop-cell-button {
         min-width: calc(var(--ag-grid-size) * 4);
 

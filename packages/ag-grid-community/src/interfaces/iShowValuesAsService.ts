@@ -25,6 +25,8 @@ export interface IShowValuesAsService {
     toColState(column: AgColumn): ShowValuesAsStateValue;
     /** Whether the column's mode is currently applying (not dormant in the current view). */
     isApplying(column: AgColumn): boolean;
+    /** Whether the Show Values As indicator icon is shown for the column (header, Columns Tool Panel list and chips). */
+    isIndicatorShown(column: AgColumn): boolean;
     /** Transforms a column's raw value at a node into the value to display, or `null` for a blank cell. Call only when {@link isApplying} is true. */
     transform(column: AgColumn, rowNode: IRowNode, rawValue: any): ShowValuesAsResult | null;
     /** Formats a transformed value with the mode's formatter. `notApplicable` (the mode is selected but dormant in

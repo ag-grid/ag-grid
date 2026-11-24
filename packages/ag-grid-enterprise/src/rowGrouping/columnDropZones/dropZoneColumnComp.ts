@@ -24,6 +24,7 @@ import {
 
 import type { ColumnToolPanelChildParams } from '../../columnToolPanel/columnToolPanel';
 import { isDeferredMode, refreshDeferredToolPanelUi } from '../../columnToolPanel/toolPanelDeferredUiUtils';
+import { ColumnIndicatorIconsFeature } from '../../widgets/columnIndicatorIconsFeature';
 import { PillDragComp } from '../../widgets/pillDragComp';
 import { VirtualList } from '../../widgets/virtualList';
 import { isRowGroupColLocked } from '../rowGroupingUtils';
@@ -72,6 +73,8 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
         this.displayName = colNames.getDisplayNameForColumn(this.column, 'columnDrop');
 
         super.postConstruct();
+
+        this.createManagedBean(new ColumnIndicatorIconsFeature(this.column, this.eText));
 
         if (this.deferApply) {
             this.eDragHandle.dataset.columnToolPanelDeferred = '';

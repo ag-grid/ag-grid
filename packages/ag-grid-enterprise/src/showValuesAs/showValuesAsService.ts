@@ -288,6 +288,10 @@ export class ShowValuesAsService extends BeanStub implements NamedBean, IShowVal
         return state;
     }
 
+    public isIndicatorShown(column: AgColumn): boolean {
+        return column.showValuesAs != null && !column.showValuesAsDef?.suppressHeaderIndicator;
+    }
+
     public isApplying(column: AgColumn): boolean {
         const resolved = column.showValuesAs;
         if (!resolved) {

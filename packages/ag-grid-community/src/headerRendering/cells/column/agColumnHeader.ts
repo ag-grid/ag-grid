@@ -442,8 +442,7 @@ export class AgColumnHeader extends Component implements IHeaderComp {
         // current view — see ShowValuesAsService.isApplying). Dormancy flips on grouping/pivot change without a
         // column-state event, so listen for those too.
         const refresh = () => {
-            const resolved = column.showValuesAs;
-            const show = resolved != null && !column.showValuesAsDef?.suppressHeaderIndicator;
+            const show = showValuesAsSvc.isIndicatorShown(column);
             _setDisplayed(eShowValuesAs, show, { skipAriaHidden: true });
             if (show) {
                 eShowValuesAs.classList.toggle('ag-show-values-as-dormant', !showValuesAsSvc.isApplying(column));

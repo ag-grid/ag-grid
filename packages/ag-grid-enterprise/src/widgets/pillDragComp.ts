@@ -35,7 +35,7 @@ const PillDragCompElement: ElementParams = {
     ],
 };
 export abstract class PillDragComp<TItem> extends Component<PillDragCompEvent> {
-    private readonly eText: HTMLElement = RefPlaceholder;
+    protected readonly eText: HTMLElement = RefPlaceholder;
     protected readonly eDragHandle: HTMLElement = RefPlaceholder;
     private readonly eButton: HTMLElement = RefPlaceholder;
 

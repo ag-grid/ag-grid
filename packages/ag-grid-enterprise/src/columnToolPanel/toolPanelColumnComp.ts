@@ -32,6 +32,7 @@ import {
     _resolveHeaderTooltip,
 } from 'ag-grid-community';
 
+import { ColumnIndicatorIconsFeature } from '../widgets/columnIndicatorIconsFeature';
 import { _isContextMenuKey } from '../widgets/menuPopupUtils';
 import type { ColumnModelItem } from './columnModelItem';
 import type { ToolPanelColumnMove } from './columnMoveUtils';
@@ -112,6 +113,7 @@ export class ToolPanelColumnComp extends Component {
         } else {
             eLabel.textContent = this.displayName;
         }
+        this.createManagedBean(new ColumnIndicatorIconsFeature(column, eLabel));
 
         // if grouping, we add an extra level of indent, to cater for expand/contract icons we need to indent for
         if (groupsExist) {
