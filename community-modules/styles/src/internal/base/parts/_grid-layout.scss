@@ -548,7 +548,7 @@
         background-color: var(--ag-find-active-match-background-color);
         position: relative;
 
-        // Drawn on the cell background below the highlight, so it takes the cell text colour, not the match colour.
+        // Drawn on the cell background below the highlight, so it takes the row's text colour, not the match colour.
         &::after {
             content: '';
             position: absolute;
@@ -565,5 +565,9 @@
                 display: none;
             }
         }
+    }
+
+    .ag-row-selected .ag-find-active-match::after {
+        background-color: var(--ag-selected-row-text-color, var(--ag-data-color));
     }
 }
