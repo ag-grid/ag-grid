@@ -365,7 +365,7 @@ With `enableFilterHandlers` set to `true`:
 | `applyModel()`         | `api.doFilterAction({ colId, action: 'apply' })` |
 | `isFilterActive()`     | `api.getColumnFilterModel(column) != null`       |
 
-`api.setColumnFilterModel` returns a promise and applies the model, so no further `api.onFilterChanged()` call is needed.
+`api.setColumnFilterModel` returns a promise. Wait for it, then call `api.onFilterChanged()` to filter the rows again. See [Re-running Grid Filtering](./filter-api/#re-running-grid-filtering).
 
 - The model is read back as it was given, including a partial model. Legacy filter mode rebuilt it from the child filters, with `null` for each inactive child. Code that depends on the `null` entries in `filterModels` needs updating.
 
