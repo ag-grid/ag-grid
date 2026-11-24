@@ -24,7 +24,7 @@ import { checkboxStyleDefault } from '../checkbox-style/checkbox-styles';
 import { colorSchemeHighContrastVariable, colorSchemeVariable } from '../color-scheme/color-schemes';
 import { columnDropStyleBordered, columnDropStylePlain } from '../column-drop-style/column-drop-styles';
 import { iconSetBalham } from '../icon-set/balham/icon-set-balham';
-import { iconSetAlpine, iconSetMaterial, iconSetQuartzRegular } from '../icon-set/icon-sets';
+import { iconSetAlpine, iconSetHighContrast, iconSetMaterial, iconSetQuartzRegular } from '../icon-set/icon-sets';
 import type { InputStyleParams } from '../input-style/input-styles';
 import { inputStyleBordered, inputStyleUnderlined } from '../input-style/input-styles';
 import type { TabStyleParams } from '../tab-style/tab-styles';
@@ -75,7 +75,8 @@ export const themeQuartz: Theme<ThemeDefaultParams> =
     /*#__PURE__*/
     makeThemeQuartzTreeShakeable();
 
-const makeThemeHighContrastTreeShakeable = () => themeQuartz.withPart(colorSchemeHighContrastVariable);
+const makeThemeHighContrastTreeShakeable = () =>
+    themeQuartz.withPart(iconSetHighContrast).withPart(colorSchemeHighContrastVariable);
 
 export const themeHighContrast: Theme<ThemeDefaultParams> =
     /*#__PURE__*/
