@@ -81,7 +81,7 @@
                         "product": {
                             "status": "yes",
                             "plan": "Free",
-                            "detail": "Renders its own UI"
+                            "detail": "Complete UI out of the box, including column menus, filters and pagination; Enterprise adds tool panels, the status bar and the context menu"
                         },
                         "competitor": {
                             "status": "no",
@@ -154,14 +154,14 @@
                         "product": {
                             "status": "yes",
                             "plan": "Free",
-                            "detail": "Single and multi-column sorting"
+                            "detail": "Single and multi-column sorting, with custom comparators, absolute sorting and locale-aware sorting"
                         },
                         "competitor": {
                             "status": "yes",
                             "plan": "Free",
-                            "detail": "Client-side sorting or manual server-side sorting; you render the sort UI",
+                            "detail": "Multi-column sorting with built-in or custom sort functions; you render the clickable headers and sort indicators",
                             "sourceUrl": "https://tanstack.com/table/latest/docs/framework/react/guide/sorting",
-                            "checkedOn": "2026-11-11"
+                            "checkedOn": "2026-11-24"
                         }
                     },
                     {
@@ -173,11 +173,11 @@
                             "detail": "Text, number, date and quick filters; Set, Multi and Advanced filters in Enterprise"
                         },
                         "competitor": {
-                            "status": "yes",
-                            "plan": "Free",
-                            "detail": "Column and global filtering and faceting, with custom filter functions such as fuzzy matching; you build the filter inputs",
+                            "status": "limited",
+                            "plan": "Limited",
+                            "detail": "Filter logic, faceting and custom functions such as fuzzy matching; no ready-made filter inputs, so you build every one",
                             "sourceUrl": "https://tanstack.com/table/latest/docs/framework/react/guide/column-filtering",
-                            "checkedOn": "2026-11-19"
+                            "checkedOn": "2026-11-24"
                         }
                     },
                     {
@@ -232,14 +232,14 @@
                         "product": {
                             "status": "yes",
                             "plan": "Free",
-                            "detail": "Built-in editors"
+                            "detail": "Built-in text, large text, number, date, checkbox and select editors, with validation and full-row editing; rich select editor and batch editing in Enterprise"
                         },
                         "competitor": {
                             "status": "limited",
                             "plan": "Limited",
-                            "detail": "No editing feature in the core; the docs point to TanStack Form for editable cells",
+                            "detail": "No editors in the core; you build editable cells, with TanStack Form suggested for validation",
                             "sourceUrl": "https://tanstack.com/table/latest/docs/overview",
-                            "checkedOn": "2026-11-11"
+                            "checkedOn": "2026-11-24"
                         }
                     },
                     {
@@ -278,14 +278,14 @@
                         "product": {
                             "status": "yes",
                             "plan": "Free",
-                            "detail": "Pin columns left or right"
+                            "detail": "Pin columns left or right in code, from the column menu or by dragging"
                         },
                         "competitor": {
-                            "status": "yes",
-                            "plan": "Free",
-                            "detail": "Pinning state and APIs; you apply the sticky CSS",
+                            "status": "limited",
+                            "plan": "Limited",
+                            "detail": "Pinning state and offsets only; you apply the sticky CSS or split tables, and build the pinning controls",
                             "sourceUrl": "https://tanstack.com/table/latest/docs/framework/react/guide/column-pinning",
-                            "checkedOn": "2026-11-11"
+                            "checkedOn": "2026-11-24"
                         }
                     },
                     {
@@ -293,12 +293,13 @@
                         "docsUrl": "./row-numbers/",
                         "product": {
                             "status": "yes",
-                            "plan": "Enterprise"
+                            "plan": "Enterprise",
+                            "detail": "A row number column that also selects rows or cell ranges, resizes rows and is included in exports"
                         },
                         "competitor": {
-                            "status": "yes",
-                            "plan": "Free",
-                            "detail": "Display index that follows sorting, filtering and grouping; you add the row-number column",
+                            "status": "limited",
+                            "plan": "Limited",
+                            "detail": "Gives each row’s display index; you add the column yourself, with no row selection, resizing or export from it",
                             "sourceUrl": "https://tanstack.com/table/latest/docs/guide/rows",
                             "checkedOn": "2026-11-24"
                         }
@@ -343,14 +344,15 @@
                         "docsUrl": "./grouping/",
                         "product": {
                             "status": "yes",
-                            "plan": "Enterprise"
+                            "plan": "Enterprise",
+                            "detail": "Group by any columns, in code or by users dragging columns to the Row Group Panel; multi-level groups with several display types"
                         },
                         "competitor": {
-                            "status": "yes",
-                            "plan": "Free",
-                            "detail": "Grouped row model on the client, or manual grouping; you render the group rows",
+                            "status": "limited",
+                            "plan": "Limited",
+                            "detail": "Multi-level grouping logic; you render the group rows and expand toggles, with no drag-to-group panel",
                             "sourceUrl": "https://tanstack.com/table/latest/docs/framework/react/guide/grouping",
-                            "checkedOn": "2026-11-11"
+                            "checkedOn": "2026-11-24"
                         }
                     },
                     {
@@ -358,14 +360,15 @@
                         "docsUrl": "./aggregation/",
                         "product": {
                             "status": "yes",
-                            "plan": "Enterprise"
+                            "plan": "Enterprise",
+                            "detail": "Sum, min, max, count, average, first, last or your own functions, in group and grand total rows; values can be shown as a percentage of a total"
                         },
                         "competitor": {
                             "status": "yes",
                             "plan": "Free",
-                            "detail": "Built-in and custom aggregation functions, or manual aggregation from the server",
+                            "detail": "Built-in and custom functions for group rows and table-wide totals; you render the aggregated cells and footers",
                             "sourceUrl": "https://tanstack.com/table/latest/docs/framework/react/guide/aggregation",
-                            "checkedOn": "2026-11-11"
+                            "checkedOn": "2026-11-24"
                         }
                     },
                     {
@@ -373,7 +376,8 @@
                         "docsUrl": "./pivoting/",
                         "product": {
                             "status": "yes",
-                            "plan": "Enterprise"
+                            "plan": "Enterprise",
+                            "detail": "Pivot mode in the grid itself, configured by users from the side bar or the pivot panel, with pivot totals"
                         },
                         "competitor": {
                             "status": "no",
@@ -387,14 +391,15 @@
                         "docsUrl": "./tree-data/",
                         "product": {
                             "status": "yes",
-                            "plan": "Enterprise"
+                            "plan": "Enterprise",
+                            "detail": "From paths, parent IDs or nested children; filtering, sorting, aggregation and row dragging work across the tree"
                         },
                         "competitor": {
-                            "status": "yes",
-                            "plan": "Free",
-                            "detail": "Hierarchical sub-rows through getSubRows and the expanded row model",
+                            "status": "limited",
+                            "plan": "Limited",
+                            "detail": "From nested child arrays, with tree-aware filtering and sorting; you render the expand toggles",
                             "sourceUrl": "https://tanstack.com/table/latest/docs/framework/react/guide/expanding",
-                            "checkedOn": "2026-11-11"
+                            "checkedOn": "2026-11-24"
                         }
                     },
                     {
@@ -402,14 +407,15 @@
                         "docsUrl": "./master-detail/",
                         "product": {
                             "status": "yes",
-                            "plan": "Enterprise"
+                            "plan": "Enterprise",
+                            "detail": "Rows expand into a full detail grid or a custom detail panel; detail grids can nest"
                         },
                         "competitor": {
-                            "status": "yes",
-                            "plan": "Free",
-                            "detail": "Expansion state through getRowCanExpand; you render the detail panel",
+                            "status": "limited",
+                            "plan": "Limited",
+                            "detail": "Rows can be made expandable; you render the toggles and the detail content, with no built-in detail grid",
                             "sourceUrl": "https://tanstack.com/table/latest/docs/framework/react/guide/expanding",
-                            "checkedOn": "2026-11-11"
+                            "checkedOn": "2026-11-24"
                         }
                     },
                     {
@@ -486,9 +492,9 @@
                             "detail": "Row selection using a checkbox or a click, which persists through other interactions"
                         },
                         "competitor": {
-                            "status": "yes",
-                            "plan": "Free",
-                            "detail": "Single, multi and sub-row selection; you render the checkboxes or row click handling",
+                            "status": "limited",
+                            "plan": "Limited",
+                            "detail": "Selection state keyed by row ID, including sub-rows; you render the checkboxes or click handling",
                             "sourceUrl": "https://tanstack.com/table/latest/docs/framework/react/guide/row-selection",
                             "checkedOn": "2026-11-24"
                         }
@@ -517,11 +523,11 @@
                             "detail": "Single cells, ranges and multiple non-adjacent ranges including the range and fill handles"
                         },
                         "competitor": {
-                            "status": "yes",
-                            "plan": "Free",
-                            "detail": "Rectangular and multiple ranges; no built-in keyboard handling",
+                            "status": "limited",
+                            "plan": "Limited",
+                            "detail": "Rectangular and multiple ranges by mouse; no keyboard handling or fill handle, and you render the highlight",
                             "sourceUrl": "https://tanstack.com/table/latest/docs/framework/react/guide/cell-selection",
-                            "checkedOn": "2026-11-11"
+                            "checkedOn": "2026-11-24"
                         }
                     },
                     {
@@ -544,7 +550,8 @@
                         "docsUrl": "./clipboard/",
                         "product": {
                             "status": "yes",
-                            "plan": "Enterprise"
+                            "plan": "Enterprise",
+                            "detail": "Copy, cut and paste cells, ranges and rows, including headers, with hooks to process pasted data"
                         },
                         "competitor": {
                             "status": "limited",
@@ -559,7 +566,8 @@
                         "docsUrl": "./csv-export/",
                         "product": {
                             "status": "yes",
-                            "plan": "Free"
+                            "plan": "Free",
+                            "detail": "Exports the grid's current data, with options for columns, headers, separators and extra content"
                         },
                         "competitor": {
                             "status": "no",
@@ -646,9 +654,9 @@
                         "competitor": {
                             "status": "yes",
                             "plan": "Free",
-                            "detail": "Agent Skills for AI coding assistants",
+                            "detail": "Agent Skills shipped in the npm package for coding agents such as Claude Code, Cursor and Codex; no MCP server documented",
                             "sourceUrl": "https://tanstack.com/table/latest/docs/agent-skills",
-                            "checkedOn": "2026-11-19"
+                            "checkedOn": "2026-11-24"
                         }
                     },
                     {
@@ -676,9 +684,9 @@
                         "competitor": {
                             "status": "yes",
                             "plan": "Free",
-                            "detail": "Discord and GitHub Discussions; paid Enterprise Support on request",
+                            "detail": "Free help on Discord and GitHub Discussions; paid support by email, with no published response times",
                             "sourceUrl": "https://tanstack.com/paid-support",
-                            "checkedOn": "2026-11-11"
+                            "checkedOn": "2026-11-24"
                         }
                     }
                 ]

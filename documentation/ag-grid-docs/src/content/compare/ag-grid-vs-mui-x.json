@@ -81,7 +81,7 @@
                         "product": {
                             "status": "yes",
                             "plan": "Free",
-                            "detail": "Renders its own UI"
+                            "detail": "Complete UI out of the box, including column menus, filters and pagination; Enterprise adds tool panels, the status bar and the context menu"
                         },
                         "competitor": {
                             "status": "yes",
@@ -155,14 +155,14 @@
                         "product": {
                             "status": "yes",
                             "plan": "Free",
-                            "detail": "Single and multi-column sorting"
+                            "detail": "Single and multi-column sorting, with custom comparators, absolute sorting and locale-aware sorting"
                         },
                         "competitor": {
                             "status": "yes",
                             "plan": "Free",
-                            "detail": "Single-column sorting; multi-column sorting in Pro",
+                            "detail": "Single-column sorting with custom comparators; multi-column sorting in Pro",
                             "sourceUrl": "https://mui.com/x/react-data-grid/sorting/",
-                            "checkedOn": "2026-11-11"
+                            "checkedOn": "2026-11-24"
                         }
                     },
                     {
@@ -233,14 +233,14 @@
                         "product": {
                             "status": "yes",
                             "plan": "Free",
-                            "detail": "Built-in editors"
+                            "detail": "Built-in text, large text, number, date, checkbox and select editors, with validation and full-row editing; rich select editor and batch editing in Enterprise"
                         },
                         "competitor": {
                             "status": "yes",
                             "plan": "Free",
-                            "detail": "Cell and row editing",
+                            "detail": "Cell and full-row editing with validation through your own callbacks",
                             "sourceUrl": "https://mui.com/x/react-data-grid/editing/",
-                            "checkedOn": "2026-11-11"
+                            "checkedOn": "2026-11-24"
                         }
                     },
                     {
@@ -280,13 +280,14 @@
                         "product": {
                             "status": "yes",
                             "plan": "Free",
-                            "detail": "Pin columns left or right"
+                            "detail": "Pin columns left or right in code, from the column menu or by dragging"
                         },
                         "competitor": {
                             "status": "yes",
                             "plan": "Pro",
                             "sourceUrl": "https://mui.com/x/react-data-grid/column-pinning/",
-                            "checkedOn": "2026-11-11"
+                            "checkedOn": "2026-11-24",
+                            "detail": "Pro: pin left or right in code or from the column menu; pinned columns can't be reordered without unpinning"
                         }
                     },
                     {
@@ -294,7 +295,8 @@
                         "docsUrl": "./row-numbers/",
                         "product": {
                             "status": "yes",
-                            "plan": "Enterprise"
+                            "plan": "Enterprise",
+                            "detail": "A row number column that also selects rows or cell ranges, resizes rows and is included in exports"
                         },
                         "competitor": {
                             "status": "no",
@@ -344,13 +346,15 @@
                         "docsUrl": "./grouping/",
                         "product": {
                             "status": "yes",
-                            "plan": "Enterprise"
+                            "plan": "Enterprise",
+                            "detail": "Group by any columns, in code or by users dragging columns to the Row Group Panel; multi-level groups with several display types"
                         },
                         "competitor": {
                             "status": "yes",
                             "plan": "Premium",
                             "sourceUrl": "https://mui.com/x/react-data-grid/row-grouping/",
-                            "checkedOn": "2026-11-11"
+                            "checkedOn": "2026-11-24",
+                            "detail": "Premium: multi-level groups in one grouping column or one per level; no drag-to-group panel yet (planned)"
                         }
                     },
                     {
@@ -358,13 +362,15 @@
                         "docsUrl": "./aggregation/",
                         "product": {
                             "status": "yes",
-                            "plan": "Enterprise"
+                            "plan": "Enterprise",
+                            "detail": "Sum, min, max, count, average, first, last or your own functions, in group and grand total rows; values can be shown as a percentage of a total"
                         },
                         "competitor": {
                             "status": "yes",
                             "plan": "Premium",
                             "sourceUrl": "https://mui.com/x/react-data-grid/aggregation/",
-                            "checkedOn": "2026-11-11"
+                            "checkedOn": "2026-11-24",
+                            "detail": "Premium: sum, average, min, max, count or your own functions, in group rows and a footer row; no built-in first or last"
                         }
                     },
                     {
@@ -372,13 +378,15 @@
                         "docsUrl": "./pivoting/",
                         "product": {
                             "status": "yes",
-                            "plan": "Enterprise"
+                            "plan": "Enterprise",
+                            "detail": "Pivot mode in the grid itself, configured by users from the side bar or the pivot panel, with pivot totals"
                         },
                         "competitor": {
                             "status": "yes",
                             "plan": "Premium",
                             "sourceUrl": "https://mui.com/x/react-data-grid/pivoting/",
-                            "checkedOn": "2026-11-11"
+                            "checkedOn": "2026-11-24",
+                            "detail": "Premium: users pivot from a toolbar panel by dragging fields; a field can't yet be used more than once in a pivot"
                         }
                     },
                     {
@@ -386,13 +394,15 @@
                         "docsUrl": "./tree-data/",
                         "product": {
                             "status": "yes",
-                            "plan": "Enterprise"
+                            "plan": "Enterprise",
+                            "detail": "From paths, parent IDs or nested children; filtering, sorting, aggregation and row dragging work across the tree"
                         },
                         "competitor": {
                             "status": "yes",
                             "plan": "Pro",
                             "sourceUrl": "https://mui.com/x/react-data-grid/tree-data/",
-                            "checkedOn": "2026-11-11"
+                            "checkedOn": "2026-11-24",
+                            "detail": "Pro: each row supplies its path in the tree; filtering, sorting and drag reordering work across it, with aggregation in Premium"
                         }
                     },
                     {
@@ -400,14 +410,15 @@
                         "docsUrl": "./master-detail/",
                         "product": {
                             "status": "yes",
-                            "plan": "Enterprise"
+                            "plan": "Enterprise",
+                            "detail": "Rows expand into a full detail grid or a custom detail panel; detail grids can nest"
                         },
                         "competitor": {
                             "status": "yes",
                             "plan": "Pro",
-                            "detail": "Master-detail row panels",
+                            "detail": "Pro: an expandable panel per row renders any React content, so a detail grid is one you build and configure yourself",
                             "sourceUrl": "https://mui.com/x/react-data-grid/master-detail/",
-                            "checkedOn": "2026-11-11"
+                            "checkedOn": "2026-11-24"
                         }
                     },
                     {
@@ -521,9 +532,9 @@
                         "competitor": {
                             "status": "yes",
                             "plan": "Premium",
-                            "detail": "Single cells or ranges",
+                            "detail": "Premium: click, drag or Shift-click a range, or Ctrl-click to add single cells",
                             "sourceUrl": "https://mui.com/x/react-data-grid/cell-selection/",
-                            "checkedOn": "2026-11-11"
+                            "checkedOn": "2026-11-24"
                         }
                     },
                     {
@@ -546,7 +557,8 @@
                         "docsUrl": "./clipboard/",
                         "product": {
                             "status": "yes",
-                            "plan": "Enterprise"
+                            "plan": "Enterprise",
+                            "detail": "Copy, cut and paste cells, ranges and rows, including headers, with hooks to process pasted data"
                         },
                         "competitor": {
                             "status": "limited",
@@ -561,14 +573,15 @@
                         "docsUrl": "./csv-export/",
                         "product": {
                             "status": "yes",
-                            "plan": "Free"
+                            "plan": "Free",
+                            "detail": "Exports the grid's current data, with options for columns, headers, separators and extra content"
                         },
                         "competitor": {
                             "status": "yes",
                             "plan": "Free",
-                            "detail": "CSV export and print",
+                            "detail": "Choose columns and rows, delimiter, file name and encoding; print through the browser",
                             "sourceUrl": "https://mui.com/x/react-data-grid/export/",
-                            "checkedOn": "2026-11-11"
+                            "checkedOn": "2026-11-24"
                         }
                     },
                     {
@@ -583,7 +596,8 @@
                             "status": "yes",
                             "plan": "Premium",
                             "sourceUrl": "https://mui.com/x/react-data-grid/export/",
-                            "checkedOn": "2026-11-11"
+                            "checkedOn": "2026-11-24",
+                            "detail": "Premium: per-column styles and workbook customisation, optionally in a web worker; cell formulas escaped unless turned off"
                         }
                     },
                     {

@@ -79,14 +79,14 @@
                         "product": {
                             "status": "yes",
                             "plan": "Free",
-                            "detail": "Renders its own UI"
+                            "detail": "Complete UI out of the box, including column menus, filters and pagination; Enterprise adds tool panels, the status bar and the context menu"
                         },
                         "competitor": {
                             "status": "yes",
                             "plan": "Commercial",
-                            "detail": "Renders its own spreadsheet-like UI",
-                            "sourceUrl": "https://handsontable.com/docs/javascript-data-grid/themes/",
-                            "checkedOn": "2026-11-11"
+                            "detail": "Spreadsheet-like UI; column menus, filters, pagination and the context menu are each off until you enable them",
+                            "sourceUrl": "https://handsontable.com/docs/javascript-data-grid/api/options/",
+                            "checkedOn": "2026-11-24"
                         }
                     }
                 ]
@@ -153,7 +153,7 @@
                         "product": {
                             "status": "yes",
                             "plan": "Free",
-                            "detail": "Single and multi-column sorting"
+                            "detail": "Single and multi-column sorting, with custom comparators, absolute sorting and locale-aware sorting"
                         },
                         "competitor": {
                             "status": "yes",
@@ -174,9 +174,9 @@
                         "competitor": {
                             "status": "yes",
                             "plan": "Commercial",
-                            "detail": "Filter UI by value or by condition, plus a filtering API",
+                            "detail": "Value and condition filters per column, with at most two conditions each in the menu; a quick filter is a search box you build yourself",
                             "sourceUrl": "https://handsontable.com/docs/javascript-data-grid/column-filter/",
-                            "checkedOn": "2026-11-11"
+                            "checkedOn": "2026-11-24"
                         }
                     },
                     {
@@ -190,7 +190,7 @@
                         "competitor": {
                             "status": "yes",
                             "plan": "Commercial",
-                            "detail": "Filter by value: a searchable checkbox list of the column’s values",
+                            "detail": "Filter by value: a searchable checkbox list of the column’s values, generated automatically with no supported way to change it",
                             "sourceUrl": "https://handsontable.com/docs/javascript-data-grid/column-filter/",
                             "checkedOn": "2026-11-24"
                         }
@@ -233,7 +233,7 @@
                         "product": {
                             "status": "yes",
                             "plan": "Free",
-                            "detail": "Built-in editors"
+                            "detail": "Built-in text, large text, number, date, checkbox and select editors, with validation and full-row editing; rich select editor and batch editing in Enterprise"
                         },
                         "competitor": {
                             "status": "yes",
@@ -281,14 +281,14 @@
                         "product": {
                             "status": "yes",
                             "plan": "Free",
-                            "detail": "Pin columns left or right"
+                            "detail": "Pin columns left or right in code, from the column menu or by dragging"
                         },
                         "competitor": {
                             "status": "yes",
                             "plan": "Commercial",
-                            "detail": "Freeze columns in the configuration or from the context menu",
+                            "detail": "Freezes columns on the start edge only (left in left-to-right layouts), in code or from the context menu; an unfrozen column doesn’t return to its original position",
                             "sourceUrl": "https://handsontable.com/docs/javascript-data-grid/column-freezing/",
-                            "checkedOn": "2026-11-11"
+                            "checkedOn": "2026-11-24"
                         }
                     },
                     {
@@ -296,7 +296,8 @@
                         "docsUrl": "./row-numbers/",
                         "product": {
                             "status": "yes",
-                            "plan": "Enterprise"
+                            "plan": "Enterprise",
+                            "detail": "A row number column that also selects rows or cell ranges, resizes rows and is included in exports"
                         },
                         "competitor": {
                             "status": "yes",
@@ -317,7 +318,7 @@
                         "competitor": {
                             "status": "yes",
                             "plan": "Commercial",
-                            "detail": "Right-click menu with row, column, clipboard, undo, comment and export items",
+                            "detail": "Right-click menu with row, column, copy, undo, comment and export items; no paste item, as browsers block reading the clipboard",
                             "sourceUrl": "https://handsontable.com/docs/javascript-data-grid/context-menu/",
                             "checkedOn": "2026-11-24"
                         }
@@ -347,7 +348,8 @@
                         "docsUrl": "./grouping/",
                         "product": {
                             "status": "yes",
-                            "plan": "Enterprise"
+                            "plan": "Enterprise",
+                            "detail": "Group by any columns, in code or by users dragging columns to the Row Group Panel; multi-level groups with several display types"
                         },
                         "competitor": {
                             "status": "limited",
@@ -362,14 +364,15 @@
                         "docsUrl": "./aggregation/",
                         "product": {
                             "status": "yes",
-                            "plan": "Enterprise"
+                            "plan": "Enterprise",
+                            "detail": "Sum, min, max, count, average, first, last or your own functions, in group and grand total rows; values can be shown as a percentage of a total"
                         },
                         "competitor": {
-                            "status": "yes",
-                            "plan": "Commercial",
-                            "detail": "Column summaries: sum, min, max, count, average or a custom function; no row summaries",
+                            "status": "limited",
+                            "plan": "Limited",
+                            "detail": "Column summaries over row ranges, each written into a cell you choose; no grouping, so no group subtotals",
                             "sourceUrl": "https://handsontable.com/docs/javascript-data-grid/column-summary/",
-                            "checkedOn": "2026-11-11"
+                            "checkedOn": "2026-11-24"
                         }
                     },
                     {
@@ -377,7 +380,8 @@
                         "docsUrl": "./pivoting/",
                         "product": {
                             "status": "yes",
-                            "plan": "Enterprise"
+                            "plan": "Enterprise",
+                            "detail": "Pivot mode in the grid itself, configured by users from the side bar or the pivot panel, with pivot totals"
                         },
                         "competitor": {
                             "status": "no",
@@ -391,14 +395,15 @@
                         "docsUrl": "./tree-data/",
                         "product": {
                             "status": "yes",
-                            "plan": "Enterprise"
+                            "plan": "Enterprise",
+                            "detail": "From paths, parent IDs or nested children; filtering, sorting, aggregation and row dragging work across the tree"
                         },
                         "competitor": {
-                            "status": "yes",
-                            "plan": "Commercial",
-                            "detail": "Nested rows to any depth; column filtering and row sorting are not supported with them",
+                            "status": "limited",
+                            "plan": "Limited",
+                            "detail": "Built from nested children in the data, to any depth; column filtering and row sorting don’t work with them",
                             "sourceUrl": "https://handsontable.com/docs/javascript-data-grid/row-parent-child/",
-                            "checkedOn": "2026-11-11"
+                            "checkedOn": "2026-11-24"
                         }
                     },
                     {
@@ -406,7 +411,8 @@
                         "docsUrl": "./master-detail/",
                         "product": {
                             "status": "yes",
-                            "plan": "Enterprise"
+                            "plan": "Enterprise",
+                            "detail": "Rows expand into a full detail grid or a custom detail panel; detail grids can nest"
                         },
                         "competitor": {
                             "status": "limited",
@@ -551,14 +557,15 @@
                         "docsUrl": "./clipboard/",
                         "product": {
                             "status": "yes",
-                            "plan": "Enterprise"
+                            "plan": "Enterprise",
+                            "detail": "Copy, cut and paste cells, ranges and rows, including headers, with hooks to process pasted data"
                         },
                         "competitor": {
                             "status": "yes",
                             "plan": "Commercial",
-                            "detail": "Copy, cut and paste through the browser clipboard and keyboard shortcuts",
+                            "detail": "Copy, cut and paste with keyboard shortcuts; copying headers is opt-in, and paste isn’t available from the context menu or API because browsers block clipboard reads",
                             "sourceUrl": "https://handsontable.com/docs/javascript-data-grid/basic-clipboard/",
-                            "checkedOn": "2026-11-11"
+                            "checkedOn": "2026-11-24"
                         }
                     },
                     {
@@ -566,7 +573,8 @@
                         "docsUrl": "./csv-export/",
                         "product": {
                             "status": "yes",
-                            "plan": "Free"
+                            "plan": "Free",
+                            "detail": "Exports the grid's current data, with options for columns, headers, separators and extra content"
                         },
                         "competitor": {
                             "status": "yes",

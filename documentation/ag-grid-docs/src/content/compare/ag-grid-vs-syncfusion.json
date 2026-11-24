@@ -66,11 +66,11 @@
                             "detail": "Typed API and typed to your own data, so field names and values are checked as you code"
                         },
                         "competitor": {
-                            "status": "yes",
-                            "plan": "Grid SDK",
-                            "detail": "npm packages ship TypeScript declaration files",
-                            "sourceUrl": "https://www.npmjs.com/package/@syncfusion/ej2-grids",
-                            "checkedOn": "2026-11-11"
+                            "status": "limited",
+                            "plan": "Limited",
+                            "detail": "Typed API, but row data is typed as a plain Object, so your field names and values aren’t checked",
+                            "sourceUrl": "https://unpkg.com/@syncfusion/ej2-grids@35.2.12/src/grid/base/grid.d.ts",
+                            "checkedOn": "2026-11-24"
                         }
                     },
                     {
@@ -79,14 +79,14 @@
                         "product": {
                             "status": "yes",
                             "plan": "Free",
-                            "detail": "Renders its own UI"
+                            "detail": "Complete UI out of the box, including column menus, filters and pagination; Enterprise adds tool panels, the status bar and the context menu"
                         },
                         "competitor": {
                             "status": "yes",
                             "plan": "Grid SDK",
-                            "detail": "Renders its own UI; the React component extends the Grid class of the framework-agnostic @syncfusion/ej2-grids package",
-                            "sourceUrl": "https://unpkg.com/@syncfusion/ej2-react-grids@35.2.12/src/grid/grid.component.d.ts",
-                            "checkedOn": "2026-11-19"
+                            "detail": "Pager, filters, column menu, column chooser, toolbar and context menu, each injected as a separate module; no side bar or status bar",
+                            "sourceUrl": "https://help.syncfusion.com/grid-sdk/react/data-grid/module",
+                            "checkedOn": "2026-11-24"
                         }
                     }
                 ]
@@ -137,9 +137,9 @@
                         "competitor": {
                             "status": "yes",
                             "plan": "Grid SDK",
-                            "detail": "Remote data through adaptors such as OData, Web API, URL and GraphQL, with paging, sorting and filtering on the server",
+                            "detail": "Adaptors such as OData, Web API, URL and GraphQL, or custom binding, run paging, sorting, filtering and grouping on the server, with lazy-load grouping",
                             "sourceUrl": "https://help.syncfusion.com/grid-sdk/react/data-grid/data-binding/remote-data",
-                            "checkedOn": "2026-11-19"
+                            "checkedOn": "2026-11-24"
                         }
                     }
                 ]
@@ -153,14 +153,14 @@
                         "product": {
                             "status": "yes",
                             "plan": "Free",
-                            "detail": "Single and multi-column sorting"
+                            "detail": "Single and multi-column sorting, with custom comparators, absolute sorting and locale-aware sorting"
                         },
                         "competitor": {
                             "status": "yes",
                             "plan": "Grid SDK",
-                            "detail": "Single and multi-column sorting",
+                            "detail": "Single and multi-column sorting, with custom comparers and culture-based sorting",
                             "sourceUrl": "https://help.syncfusion.com/grid-sdk/react/data-grid/sorting",
-                            "checkedOn": "2026-11-19"
+                            "checkedOn": "2026-11-24"
                         }
                     },
                     {
@@ -190,7 +190,7 @@
                         "competitor": {
                             "status": "yes",
                             "plan": "Grid SDK",
-                            "detail": "Excel and CheckBox filters list a column’s unique values as checkboxes, with a search box",
+                            "detail": "Excel and CheckBox filters list a column’s unique values as checkboxes, with a search box; the list shows the first 1,000 values by default",
                             "sourceUrl": "https://help.syncfusion.com/grid-sdk/react/data-grid/filtering/excel-like-filter",
                             "checkedOn": "2026-11-24"
                         }
@@ -233,14 +233,14 @@
                         "product": {
                             "status": "yes",
                             "plan": "Free",
-                            "detail": "Built-in editors"
+                            "detail": "Built-in text, large text, number, date, checkbox and select editors, with validation and full-row editing; rich select editor and batch editing in Enterprise"
                         },
                         "competitor": {
                             "status": "yes",
                             "plan": "Grid SDK",
-                            "detail": "Inline, dialog and batch edit modes",
+                            "detail": "Inline row, dialog and batch modes with built-in validation; editing needs a primary key column",
                             "sourceUrl": "https://help.syncfusion.com/grid-sdk/react/data-grid/editing/edit",
-                            "checkedOn": "2026-11-19"
+                            "checkedOn": "2026-11-24"
                         }
                     },
                     {
@@ -280,14 +280,14 @@
                         "product": {
                             "status": "yes",
                             "plan": "Free",
-                            "detail": "Pin columns left or right"
+                            "detail": "Pin columns left or right in code, from the column menu or by dragging"
                         },
                         "competitor": {
                             "status": "yes",
                             "plan": "Grid SDK",
-                            "detail": "Frozen columns on the left, right or in a fixed section",
+                            "detail": "Columns frozen left, right or in a fixed section, set in column definitions; not supported with detail templates, hierarchy grids or AutoFill",
                             "sourceUrl": "https://help.syncfusion.com/grid-sdk/react/data-grid/columns/frozen-column",
-                            "checkedOn": "2026-11-19"
+                            "checkedOn": "2026-11-24"
                         }
                     },
                     {
@@ -295,12 +295,13 @@
                         "docsUrl": "./row-numbers/",
                         "product": {
                             "status": "yes",
-                            "plan": "Enterprise"
+                            "plan": "Enterprise",
+                            "detail": "A row number column that also selects rows or cell ranges, resizes rows and is included in exports"
                         },
                         "competitor": {
                             "status": "yes",
                             "plan": "Grid SDK",
-                            "detail": "Read-only row number column that updates with paging, sorting, filtering and grouping",
+                            "detail": "A read-only display column showing each row’s position in the current view",
                             "sourceUrl": "https://help.syncfusion.com/grid-sdk/react/data-grid/row/row",
                             "checkedOn": "2026-11-24"
                         }
@@ -316,7 +317,7 @@
                         "competitor": {
                             "status": "yes",
                             "plan": "Grid SDK",
-                            "detail": "Right-click menu on header, content and pager with sort, group, edit, copy and export items, plus custom items",
+                            "detail": "Right-click menu with sort, group, edit, copy and export items, plus custom items; no paste item",
                             "sourceUrl": "https://help.syncfusion.com/grid-sdk/react/data-grid/context-menu",
                             "checkedOn": "2026-11-24"
                         }
@@ -346,14 +347,15 @@
                         "docsUrl": "./grouping/",
                         "product": {
                             "status": "yes",
-                            "plan": "Enterprise"
+                            "plan": "Enterprise",
+                            "detail": "Group by any columns, in code or by users dragging columns to the Row Group Panel; multi-level groups with several display types"
                         },
                         "competitor": {
                             "status": "yes",
                             "plan": "Grid SDK",
-                            "detail": "Drag column headers to the group drop area; lazy-load grouping for large datasets",
+                            "detail": "Multi-level grouping by dragging headers to a drop area or in code, with lazy-load grouping for large datasets; not compatible with AutoFill",
                             "sourceUrl": "https://help.syncfusion.com/grid-sdk/react/data-grid/grouping/grouping",
-                            "checkedOn": "2026-11-19"
+                            "checkedOn": "2026-11-24"
                         }
                     },
                     {
@@ -361,14 +363,15 @@
                         "docsUrl": "./aggregation/",
                         "product": {
                             "status": "yes",
-                            "plan": "Enterprise"
+                            "plan": "Enterprise",
+                            "detail": "Sum, min, max, count, average, first, last or your own functions, in group and grand total rows; values can be shown as a percentage of a total"
                         },
                         "competitor": {
                             "status": "yes",
                             "plan": "Grid SDK",
-                            "detail": "Built-in aggregates in footer, group footer and group caption cells",
+                            "detail": "Sum, average, min, max, count and custom aggregates in footer, group footer and caption rows; with remote data, totals cover only the current page unless the server returns them",
                             "sourceUrl": "https://help.syncfusion.com/grid-sdk/react/data-grid/aggregates/aggregates",
-                            "checkedOn": "2026-11-19"
+                            "checkedOn": "2026-11-24"
                         }
                     },
                     {
@@ -376,14 +379,15 @@
                         "docsUrl": "./pivoting/",
                         "product": {
                             "status": "yes",
-                            "plan": "Enterprise"
+                            "plan": "Enterprise",
+                            "detail": "Pivot mode in the grid itself, configured by users from the side bar or the pivot panel, with pivot totals"
                         },
                         "competitor": {
                             "status": "yes",
                             "plan": "Grid SDK",
-                            "detail": "A separate Pivot Table component, included in the Grid SDK",
-                            "sourceUrl": "https://help.syncfusion.com/grid-sdk/overview",
-                            "checkedOn": "2026-11-11"
+                            "detail": "Only in the separate Pivot Table component, with its own API and a field list for users; the Data Grid has no pivot mode",
+                            "sourceUrl": "https://help.syncfusion.com/grid-sdk/react/pivot-table/field-list",
+                            "checkedOn": "2026-11-24"
                         }
                     },
                     {
@@ -391,14 +395,15 @@
                         "docsUrl": "./tree-data/",
                         "product": {
                             "status": "yes",
-                            "plan": "Enterprise"
+                            "plan": "Enterprise",
+                            "detail": "From paths, parent IDs or nested children; filtering, sorting, aggregation and row dragging work across the tree"
                         },
                         "competitor": {
                             "status": "yes",
                             "plan": "Grid SDK",
-                            "detail": "A separate Tree Grid component, included in the Grid SDK",
-                            "sourceUrl": "https://help.syncfusion.com/grid-sdk/overview",
-                            "checkedOn": "2026-11-11"
+                            "detail": "Only in the separate Tree Grid component, with its own API; from nested children or parent IDs, with remote data only for parent IDs",
+                            "sourceUrl": "https://help.syncfusion.com/grid-sdk/react/tree-grid/data-binding/local-data",
+                            "checkedOn": "2026-11-24"
                         }
                     },
                     {
@@ -406,14 +411,15 @@
                         "docsUrl": "./master-detail/",
                         "product": {
                             "status": "yes",
-                            "plan": "Enterprise"
+                            "plan": "Enterprise",
+                            "detail": "Rows expand into a full detail grid or a custom detail panel; detail grids can nest"
                         },
                         "competitor": {
                             "status": "yes",
                             "plan": "Grid SDK",
-                            "detail": "Hierarchy grid with nested child grids, or detail templates",
+                            "detail": "Nested child grids to any depth, or detail templates, but not both together",
                             "sourceUrl": "https://help.syncfusion.com/grid-sdk/react/data-grid/hierarchy-grid",
-                            "checkedOn": "2026-11-19"
+                            "checkedOn": "2026-11-24"
                         }
                     },
                     {
@@ -459,7 +465,7 @@
                         "competitor": {
                             "status": "yes",
                             "plan": "Grid SDK",
-                            "detail": "Spreadsheet formulas in formula-enabled columns, with A1 references, built-in and custom functions",
+                            "detail": "Spreadsheet formulas in opt-in formula columns, with the formulas held in the data, A1 references, built-in and custom functions",
                             "sourceUrl": "https://help.syncfusion.com/grid-sdk/react/data-grid/formula/formula",
                             "checkedOn": "2026-11-24"
                         }
@@ -527,9 +533,9 @@
                         "competitor": {
                             "status": "yes",
                             "plan": "Grid SDK",
-                            "detail": "Flow, Box and BoxWithBorder cell selection modes",
+                            "detail": "Single cells, or one range picked by Shift-click in Flow, Box or bordered Box mode",
                             "sourceUrl": "https://help.syncfusion.com/grid-sdk/react/data-grid/selection/cell-selection",
-                            "checkedOn": "2026-11-19"
+                            "checkedOn": "2026-11-24"
                         }
                     },
                     {
@@ -552,14 +558,15 @@
                         "docsUrl": "./clipboard/",
                         "product": {
                             "status": "yes",
-                            "plan": "Enterprise"
+                            "plan": "Enterprise",
+                            "detail": "Copy, cut and paste cells, ranges and rows, including headers, with hooks to process pasted data"
                         },
                         "competitor": {
                             "status": "yes",
                             "plan": "Grid SDK",
-                            "detail": "Copy and paste, and an AutoFill handle; pasting and AutoFill need Box cell selection and batch editing",
+                            "detail": "Copy with or without headers; paste and the AutoFill handle need Box cell selection and batch editing, and don’t convert text to numbers or dates; no cut",
                             "sourceUrl": "https://help.syncfusion.com/grid-sdk/react/data-grid/clipboard",
-                            "checkedOn": "2026-11-19"
+                            "checkedOn": "2026-11-24"
                         }
                     },
                     {
@@ -567,14 +574,15 @@
                         "docsUrl": "./csv-export/",
                         "product": {
                             "status": "yes",
-                            "plan": "Free"
+                            "plan": "Free",
+                            "detail": "Exports the grid's current data, with options for columns, headers, separators and extra content"
                         },
                         "competitor": {
                             "status": "yes",
                             "plan": "Grid SDK",
-                            "detail": "csvExport method",
-                            "sourceUrl": "https://help.syncfusion.com/grid-sdk/react/data-grid/excel-export/excel-exporting",
-                            "checkedOn": "2026-11-19"
+                            "detail": "Uses the Excel exporter’s options: all or current-page rows, chosen or hidden columns and a custom data source",
+                            "sourceUrl": "https://help.syncfusion.com/grid-sdk/react/data-grid/excel-export/excel-export-options",
+                            "checkedOn": "2026-11-24"
                         }
                     },
                     {
@@ -588,9 +596,9 @@
                         "competitor": {
                             "status": "yes",
                             "plan": "Grid SDK",
-                            "detail": "excelExport method",
+                            "detail": "Exports hierarchy grids and several grids into one workbook, with custom formats and merged cells; formulas only by adding them in code during export",
                             "sourceUrl": "https://help.syncfusion.com/grid-sdk/react/data-grid/excel-export/excel-exporting",
-                            "checkedOn": "2026-11-19"
+                            "checkedOn": "2026-11-24"
                         }
                     },
                     {
@@ -604,9 +612,9 @@
                         "competitor": {
                             "status": "yes",
                             "plan": "Grid SDK",
-                            "detail": "pdfExport method",
-                            "sourceUrl": "https://help.syncfusion.com/grid-sdk/react/data-grid/pdf-export/pdf-export",
-                            "checkedOn": "2026-11-19"
+                            "detail": "Current-page, selected or filtered rows, with page size, orientation, fonts and colours",
+                            "sourceUrl": "https://help.syncfusion.com/grid-sdk/react/data-grid/pdf-export/pdf-export-options",
+                            "checkedOn": "2026-11-24"
                         }
                     }
                 ]

@@ -80,14 +80,14 @@
                         "product": {
                             "status": "yes",
                             "plan": "Free",
-                            "detail": "Renders its own UI"
+                            "detail": "Complete UI out of the box, including column menus, filters and pagination; Enterprise adds tool panels, the status bar and the context menu"
                         },
                         "competitor": {
                             "status": "yes",
                             "plan": "Free",
-                            "detail": "Renders its own themed UI, built on the Progress Design System",
-                            "sourceUrl": "https://www.telerik.com/kendo-react-ui/components/getting-started/key-features",
-                            "checkedOn": "2026-11-19"
+                            "detail": "Themed UI with a filter row and pager in KendoReact Free; column menu, toolbar tools, context menu and selection aggregates are premium",
+                            "sourceUrl": "https://www.telerik.com/kendo-react-ui/components/getting-started/free-vs-premium",
+                            "checkedOn": "2026-11-24"
                         }
                     }
                 ]
@@ -106,9 +106,9 @@
                         "competitor": {
                             "status": "yes",
                             "plan": "Premium",
-                            "detail": "Row virtualisation is premium; not in KendoReact Free",
-                            "sourceUrl": "https://www.telerik.com/kendo-react-ui/components/getting-started/free-vs-premium",
-                            "checkedOn": "2026-11-11"
+                            "detail": "Premium, so on by default only with a licence; needs a fixed row height",
+                            "sourceUrl": "https://www.telerik.com/kendo-react-ui/components/grid/scroll-modes/virtual",
+                            "checkedOn": "2026-11-24"
                         }
                     },
                     {
@@ -122,9 +122,9 @@
                         "competitor": {
                             "status": "yes",
                             "plan": "Free",
-                            "detail": "Column virtualisation is in KendoReact Free",
-                            "sourceUrl": "https://www.telerik.com/kendo-react-ui/components/getting-started/free-vs-premium",
-                            "checkedOn": "2026-11-11"
+                            "detail": "Free, but off by default and needs a fixed width on every column and on the Grid",
+                            "sourceUrl": "https://www.telerik.com/kendo-react-ui/components/grid/optimization/column-virtualization",
+                            "checkedOn": "2026-11-24"
                         }
                     },
                     {
@@ -138,9 +138,9 @@
                         "competitor": {
                             "status": "yes",
                             "plan": "Premium",
-                            "detail": "Server and hybrid data operations, OData, DataSource and RSC mode are premium",
-                            "sourceUrl": "https://www.telerik.com/kendo-react-ui/components/getting-started/free-vs-premium",
-                            "checkedOn": "2026-11-11"
+                            "detail": "Premium DataSource hooks run sorting, filtering, grouping and paging against remote or OData services; without them you write the data handling yourself",
+                            "sourceUrl": "https://www.telerik.com/kendo-react-ui/components/grid/data-operations/datasource-integration",
+                            "checkedOn": "2026-11-24"
                         }
                     }
                 ]
@@ -154,7 +154,7 @@
                         "product": {
                             "status": "yes",
                             "plan": "Free",
-                            "detail": "Single and multi-column sorting"
+                            "detail": "Single and multi-column sorting, with custom comparators, absolute sorting and locale-aware sorting"
                         },
                         "competitor": {
                             "status": "yes",
@@ -207,7 +207,7 @@
                         "competitor": {
                             "status": "yes",
                             "plan": "Premium",
-                            "detail": "A separate Filter component builds nested AND/OR conditions across columns; premium",
+                            "detail": "A separate Filter component, placed outside the Grid and wired to it in code, builds nested AND/OR conditions; premium",
                             "sourceUrl": "https://www.telerik.com/kendo-react-ui/components/grid/filtering/advanced-filtering",
                             "checkedOn": "2026-11-24"
                         }
@@ -233,14 +233,14 @@
                         "product": {
                             "status": "yes",
                             "plan": "Free",
-                            "detail": "Built-in editors"
+                            "detail": "Built-in text, large text, number, date, checkbox and select editors, with validation and full-row editing; rich select editor and batch editing in Enterprise"
                         },
                         "competitor": {
                             "status": "yes",
                             "plan": "Free",
-                            "detail": "In-cell editing in KendoReact Free; inline row editing and external form editing are premium",
-                            "sourceUrl": "https://www.telerik.com/kendo-react-ui/components/getting-started/free-vs-premium",
-                            "checkedOn": "2026-11-11"
+                            "detail": "Built-in text, date, number and boolean editors only; in-cell editing in KendoReact Free, row editing and custom editors are premium",
+                            "sourceUrl": "https://www.telerik.com/kendo-react-ui/components/grid/editing",
+                            "checkedOn": "2026-11-24"
                         }
                     },
                     {
@@ -280,14 +280,14 @@
                         "product": {
                             "status": "yes",
                             "plan": "Free",
-                            "detail": "Pin columns left or right"
+                            "detail": "Pin columns left or right in code, from the column menu or by dragging"
                         },
                         "competitor": {
                             "status": "yes",
                             "plan": "Premium",
-                            "detail": "Locked columns stay visible while scrolling horizontally; premium",
+                            "detail": "Locked columns need a fixed width on every column, and locking from the column menu needs a custom menu item; premium",
                             "sourceUrl": "https://www.telerik.com/kendo-react-ui/components/grid/columns/locked",
-                            "checkedOn": "2026-11-11"
+                            "checkedOn": "2026-11-24"
                         }
                     },
                     {
@@ -295,7 +295,8 @@
                         "docsUrl": "./row-numbers/",
                         "product": {
                             "status": "yes",
-                            "plan": "Enterprise"
+                            "plan": "Enterprise",
+                            "detail": "A row number column that also selects rows or cell ranges, resizes rows and is included in exports"
                         },
                         "competitor": {
                             "status": "no",
@@ -345,14 +346,15 @@
                         "docsUrl": "./grouping/",
                         "product": {
                             "status": "yes",
-                            "plan": "Enterprise"
+                            "plan": "Enterprise",
+                            "detail": "Group by any columns, in code or by users dragging columns to the Row Group Panel; multi-level groups with several display types"
                         },
                         "competitor": {
                             "status": "yes",
                             "plan": "Premium",
-                            "detail": "Grouping is premium; not in KendoReact Free",
-                            "sourceUrl": "https://www.telerik.com/kendo-react-ui/components/getting-started/free-vs-premium",
-                            "checkedOn": "2026-11-11"
+                            "detail": "Multi-level grouping with four display modes; premium, not in KendoReact Free",
+                            "sourceUrl": "https://www.telerik.com/kendo-react-ui/components/grid/grouping/grouping-modes",
+                            "checkedOn": "2026-11-24"
                         }
                     },
                     {
@@ -360,14 +362,15 @@
                         "docsUrl": "./aggregation/",
                         "product": {
                             "status": "yes",
-                            "plan": "Enterprise"
+                            "plan": "Enterprise",
+                            "detail": "Sum, min, max, count, average, first, last or your own functions, in group and grand total rows; values can be shown as a percentage of a total"
                         },
                         "competitor": {
                             "status": "yes",
                             "plan": "Premium",
-                            "detail": "Aggregates for grouped data and selection aggregates are premium",
-                            "sourceUrl": "https://www.telerik.com/kendo-react-ui/components/getting-started/free-vs-premium",
-                            "checkedOn": "2026-11-11"
+                            "detail": "Group footer aggregates, displayed through a custom footer cell you write; premium",
+                            "sourceUrl": "https://www.telerik.com/kendo-react-ui/components/grid/grouping/grouping",
+                            "checkedOn": "2026-11-24"
                         }
                     },
                     {
@@ -375,14 +378,15 @@
                         "docsUrl": "./pivoting/",
                         "product": {
                             "status": "yes",
-                            "plan": "Enterprise"
+                            "plan": "Enterprise",
+                            "detail": "Pivot mode in the grid itself, configured by users from the side bar or the pivot panel, with pivot totals"
                         },
                         "competitor": {
                             "status": "yes",
                             "plan": "Premium",
-                            "detail": "A separate PivotGrid component (@progress/kendo-react-pivotgrid), not a Grid feature",
-                            "sourceUrl": "https://www.telerik.com/kendo-react-ui/components/pivotgrid",
-                            "checkedOn": "2026-11-11"
+                            "detail": "A separate PivotGrid component bound to an OLAP cube or local data, with its own API; not a mode of the Grid; premium",
+                            "sourceUrl": "https://www.telerik.com/kendo-react-ui/components/pivotgrid/data-binding",
+                            "checkedOn": "2026-11-24"
                         }
                     },
                     {
@@ -390,14 +394,15 @@
                         "docsUrl": "./tree-data/",
                         "product": {
                             "status": "yes",
-                            "plan": "Enterprise"
+                            "plan": "Enterprise",
+                            "detail": "From paths, parent IDs or nested children; filtering, sorting, aggregation and row dragging work across the tree"
                         },
                         "competitor": {
                             "status": "yes",
                             "plan": "Premium",
-                            "detail": "A separate TreeList component (@progress/kendo-react-treelist), not a Grid feature",
-                            "sourceUrl": "https://www.telerik.com/kendo-react-ui/components/treelist",
-                            "checkedOn": "2026-11-11"
+                            "detail": "A separate TreeList component, not the Grid; aggregates must be calculated and added to the data yourself; premium",
+                            "sourceUrl": "https://www.telerik.com/kendo-react-ui/components/treelist/aggregates",
+                            "checkedOn": "2026-11-24"
                         }
                     },
                     {
@@ -405,14 +410,15 @@
                         "docsUrl": "./master-detail/",
                         "product": {
                             "status": "yes",
-                            "plan": "Enterprise"
+                            "plan": "Enterprise",
+                            "detail": "Rows expand into a full detail grid or a custom detail panel; detail grids can nest"
                         },
                         "competitor": {
                             "status": "yes",
                             "plan": "Premium",
-                            "detail": "Master-detail (hierarchy) grids and detail rows are premium",
-                            "sourceUrl": "https://www.telerik.com/kendo-react-ui/components/grid/hierarchy",
-                            "checkedOn": "2026-11-11"
+                            "detail": "Rows expand into a custom detail component, which can hold a nested Grid; premium",
+                            "sourceUrl": "https://www.telerik.com/kendo-react-ui/components/grid/rows/detail",
+                            "checkedOn": "2026-11-24"
                         }
                     },
                     {
@@ -426,9 +432,9 @@
                         "competitor": {
                             "status": "yes",
                             "plan": "Premium",
-                            "detail": "Chart Wizard creates charts from Grid row and cell selection; premium",
+                            "detail": "A separate Chart Wizard component, wired to Grid selection in code, charts selected rows and cells; premium",
                             "sourceUrl": "https://www.telerik.com/kendo-react-ui/components/grid/integration-with-chart",
-                            "checkedOn": "2026-11-11"
+                            "checkedOn": "2026-11-24"
                         }
                     },
                     {
@@ -524,9 +530,9 @@
                         "competitor": {
                             "status": "yes",
                             "plan": "Premium",
-                            "detail": "Single cell selection in KendoReact Free; cell range and multi-range selection are premium",
-                            "sourceUrl": "https://www.telerik.com/kendo-react-ui/components/getting-started/free-vs-premium",
-                            "checkedOn": "2026-11-19"
+                            "detail": "Drag to select a range; single cell selection in KendoReact Free, ranges and multi-range premium; no fill handle",
+                            "sourceUrl": "https://www.telerik.com/kendo-react-ui/components/grid/selection/cell-range-selection",
+                            "checkedOn": "2026-11-24"
                         }
                     },
                     {
@@ -540,7 +546,7 @@
                         "competitor": {
                             "status": "yes",
                             "plan": "Premium",
-                            "detail": "Status bar shows sum, average, count, min and max of selected cells; premium",
+                            "detail": "A status bar you add and update from the selection shows sum, average, count, min and max; premium",
                             "sourceUrl": "https://www.telerik.com/kendo-react-ui/components/grid/selection/selection-aggregates",
                             "checkedOn": "2026-11-24"
                         }
@@ -550,14 +556,15 @@
                         "docsUrl": "./clipboard/",
                         "product": {
                             "status": "yes",
-                            "plan": "Enterprise"
+                            "plan": "Enterprise",
+                            "detail": "Copy, cut and paste cells, ranges and rows, including headers, with hooks to process pasted data"
                         },
                         "competitor": {
                             "status": "yes",
                             "plan": "Premium",
-                            "detail": "Copy, cut and paste through the system clipboard; premium",
+                            "detail": "Copy, cut and paste of cells, rows and ranges, optionally with headers; your code applies pasted data; premium",
                             "sourceUrl": "https://www.telerik.com/kendo-react-ui/components/grid/interactivity/clipboard",
-                            "checkedOn": "2026-11-11"
+                            "checkedOn": "2026-11-24"
                         }
                     },
                     {
@@ -565,14 +572,15 @@
                         "docsUrl": "./csv-export/",
                         "product": {
                             "status": "yes",
-                            "plan": "Free"
+                            "plan": "Free",
+                            "detail": "Exports the grid's current data, with options for columns, headers, separators and extra content"
                         },
                         "competitor": {
                             "status": "yes",
                             "plan": "Free",
-                            "detail": "CSV export is in KendoReact Free",
-                            "sourceUrl": "https://www.telerik.com/kendo-react-ui/components/getting-started/free-vs-premium",
-                            "checkedOn": "2026-11-11"
+                            "detail": "Free, with options for all or current page, columns, header names, separators and formula-injection protection",
+                            "sourceUrl": "https://www.telerik.com/kendo-react-ui/components/grid/export/csv-export",
+                            "checkedOn": "2026-11-24"
                         }
                     },
                     {
@@ -586,9 +594,9 @@
                         "competitor": {
                             "status": "yes",
                             "plan": "Premium",
-                            "detail": "Through the @progress/kendo-react-excel-export package; premium",
+                            "detail": "A separate Excel Export package wraps the Grid; column formats aren't exported, and all pages or filtered rows must be passed in; premium",
                             "sourceUrl": "https://www.telerik.com/kendo-react-ui/components/grid/export/excel-export",
-                            "checkedOn": "2026-11-11"
+                            "checkedOn": "2026-11-24"
                         }
                     },
                     {
@@ -602,8 +610,8 @@
                         "competitor": {
                             "status": "yes",
                             "plan": "Premium",
-                            "detail": "Exports the Grid, including all pages, through @progress/kendo-react-pdf; premium",
-                            "sourceUrl": "https://www.telerik.com/kendo-react-ui/components/grid/export/pdf-export",
+                            "detail": "Through a separate PDF package; right-to-left content and master-detail Grids can't be exported; premium",
+                            "sourceUrl": "https://www.telerik.com/kendo-react-ui/components/grid/export/pdf-export/known-limitations",
                             "checkedOn": "2026-11-24"
                         }
                     }
@@ -671,9 +679,9 @@
                         "competitor": {
                             "status": "yes",
                             "plan": "Premium",
-                            "detail": "Smart Grid, with the AI Smart Box and AI assistants",
-                            "sourceUrl": "https://www.telerik.com/kendo-react-ui/components/grid/smart",
-                            "checkedOn": "2026-11-19"
+                            "detail": "Smart Grid AI tools need a backend service you build to call your LLM, with a .NET helper library; premium",
+                            "sourceUrl": "https://www.telerik.com/kendo-react-ui/components/grid/smart/ai-service-setup",
+                            "checkedOn": "2026-11-24"
                         }
                     },
                     {
