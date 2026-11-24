@@ -447,6 +447,50 @@ test.describe('community grid in a real browser', () => {
 
             await expectSizedByColumns(page, grid);
         });
+
+        test('a print-layout grid that starts empty stays as wide as its columns and prints every row once rows load', async ({
+            page,
+            browserName,
+        }) => {
+            test.skip(browserName !== 'chromium', 'page.pdf() is only supported in Chromium');
+            const { grid, withApi } = await mountGrid(page, {
+                width: 300,
+                height: 300,
+                css: printCss,
+                options: () => ({
+                    columnDefs: Array.from({ length: 7 }, (_, i) => ({
+                        field: `col${i}`,
+                        width: 100,
+                        // only a link Chrome prints is written into the PDF, so its links are the rows that printed
+                        cellRenderer:
+                            i === 0
+                                ? (params: { value: number }) =>
+                                      `<a href="https://print-row.test/${params.value}">${params.value}</a>`
+                                : undefined,
+                    })),
+                    rowData: [],
+                    domLayout: 'print',
+                }),
+            });
+            await expectSizedByColumns(page, grid);
+
+            await withApi((api) =>
+                api.setGridOption(
+                    'rowData',
+                    Array.from({ length: 200 }, (_, index) => ({ col0: index + 1 }))
+                )
+            );
+            await expect(grid.locator('.ag-row')).toHaveCount(200);
+            await expect(async () => {
+                expect((await grid.locator('.ag-root').boundingBox())!.width).toBeCloseTo(700, 0);
+            }).toPass();
+
+            const pdf = (await page.pdf({ format: 'A4' })).toString('latin1');
+            const printedRowIds = new Set(
+                Array.from(pdf.matchAll(/https:\/\/print-row\.test\/(\d+)/g), ([, id]) => Number(id))
+            );
+            expect(printedRowIds.size).toBe(200);
+        });
     });
 
     test('printing a print-layout grid prints every row', async ({ page, browserName }) => {
