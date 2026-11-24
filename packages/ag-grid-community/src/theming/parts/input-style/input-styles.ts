@@ -77,7 +77,7 @@ export type InputStyleParams = {
     inputInvalidTextColor: ColorValue;
 
     /**
-     * Padding at the start of text in text inputs
+     * Padding at the start of text in text inputs. In inline cell editors the text instead starts in line with the cell value, using `cellHorizontalPadding`.
      */
     inputPaddingStart: LengthValue;
 

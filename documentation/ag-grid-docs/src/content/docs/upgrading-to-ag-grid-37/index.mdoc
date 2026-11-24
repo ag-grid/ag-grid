@@ -56,6 +56,15 @@ const gridOptions = {
 
 This does not reproduce the exact previous appearance. Focus and built-in control tooltips always anchor to the target; `tooltipMouseTrack: true` implies pointer anchoring for ordinary hover tooltips. Native browser positioning is unchanged. See [Tooltip Positioning](./tooltips-positioning/).
 
+### Cell Editing
+
+- Text in inline cell editors now lines up with the cell values in the rows above and below. Depending on the theme, editor text moves 2–7px.
+- `inputPaddingStart` no longer sets where text starts in inline cell editors; `cellHorizontalPadding` does. Popup editors are unchanged.
+- In right-aligned columns, text, number and date editors now right-align their value.
+- Remove any CSS or `inputPaddingStart` overrides that you added to line inline editors up with cell values.
+
+To restore the previous start padding in the Quartz, Alpine and Balham themes, add `.ag-cell-inline-editing .ag-input-field-input { padding-inline-start: var(--ag-input-padding-start); } .ag-cell-inline-editing .ag-picker-field-wrapper { padding-inline-start: var(--ag-spacing); }` to your CSS. This does not restore the previous alignment in the Material theme or in right-aligned columns.
+
 ## Behaviour Changes
 
 ### Tooltips
