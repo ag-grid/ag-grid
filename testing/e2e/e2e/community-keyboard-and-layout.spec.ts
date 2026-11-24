@@ -1,4 +1,4 @@
-import type { Page } from '@playwright/test';
+import type { Locator, Page } from '@playwright/test';
 import { expect, test } from '@playwright/test';
 
 import { mountGrid } from '../src/mountGrid';
@@ -346,5 +346,84 @@ test.describe('community grid in a real browser', () => {
         await expect(headerCell('a')).toBeFocused();
         await expect(headerCell('a')).toHaveCSS('left', '1200px');
         await expect(headerCell('a')).toBeInViewport({ ratio: 1 });
+    });
+
+    test.describe('print layout with no rows', () => {
+        // Seven 100px columns in a 300px container: wider than the container, so print layout grows to the columns.
+        // print layout needs a grid with no width or height of its own
+        const printCss = '#myGrid{width:auto;height:auto}';
+
+        const expectSizedByColumns = async (page: Page, grid: Locator) => {
+            const check = async () => {
+                await expect(grid.locator('.ag-header-cell')).toHaveCount(7);
+                await expect(grid.locator('.ag-header-cell[col-id="col0"]')).toBeInViewport({ ratio: 1 });
+                await expect(grid.locator('.ag-header-cell[col-id="col6"]')).toBeInViewport({ ratio: 1 });
+                await expect(grid.locator('.ag-overlay-no-rows-center')).toBeInViewport({ ratio: 1 });
+                await expect(async () => {
+                    expect((await grid.locator('.ag-root').boundingBox())!.width).toBeCloseTo(700, 0);
+                }).toPass();
+            };
+            await check();
+            // the grid's @media print rules change the display type of its containers
+            await page.emulateMedia({ media: 'print' });
+            await check();
+        };
+
+        test('a grid created in print layout is as wide as its columns and shows every header and the no-rows overlay', async ({
+            page,
+        }) => {
+            const { grid } = await mountGrid(page, {
+                width: 300,
+                height: 300,
+                css: printCss,
+                options: () => ({
+                    columnDefs: Array.from({ length: 7 }, (_, i) => ({ field: `col${i}`, width: 100 })),
+                    rowData: [],
+                    domLayout: 'print',
+                }),
+            });
+
+            await expectSizedByColumns(page, grid);
+        });
+
+        test('a grid switched to print layout is as wide as its columns and shows every header and the no-rows overlay', async ({
+            page,
+        }) => {
+            const { grid, withApi } = await mountGrid(page, {
+                width: 300,
+                height: 300,
+                options: () => ({
+                    columnDefs: Array.from({ length: 7 }, (_, i) => ({ field: `col${i}`, width: 100 })),
+                    rowData: [],
+                }),
+            });
+            await expect(grid.locator('.ag-header-cell[col-id="col6"]')).toHaveCount(0);
+
+            await page.addStyleTag({ content: printCss });
+            await withApi((api) => api.setGridOption('domLayout', 'print'));
+
+            await expectSizedByColumns(page, grid);
+        });
+
+        test('a grid with left and right pinned columns in print layout is as wide as its columns', async ({
+            page,
+        }) => {
+            const { grid } = await mountGrid(page, {
+                width: 300,
+                height: 300,
+                css: printCss,
+                options: () => ({
+                    columnDefs: Array.from({ length: 7 }, (_, i) => ({
+                        field: `col${i}`,
+                        width: 100,
+                        pinned: i === 0 ? ('left' as const) : i === 6 ? ('right' as const) : undefined,
+                    })),
+                    rowData: [],
+                    domLayout: 'print',
+                }),
+            });
+
+            await expectSizedByColumns(page, grid);
+        });
     });
 });
