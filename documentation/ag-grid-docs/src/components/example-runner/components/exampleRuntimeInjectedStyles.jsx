@@ -9,11 +9,6 @@ body {
     padding: 0;
 }
 
-/* This should be refactored and fixed at the place where .test-header is defined */
-.test-header {
-    margin-bottom: 0 !important;
-}
-
 html, body {
     background-color: transparent;
 }
