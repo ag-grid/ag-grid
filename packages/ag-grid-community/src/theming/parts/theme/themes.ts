@@ -83,6 +83,10 @@ export const themeAlpineParams = () => ({
         color: accentMix(0.4),
     },
     focusShadow: { radius: 2, spread: 1.6, color: accentMix(0.4) },
+    inputReadOnlyFocusBorder: {
+        color: foregroundMix(0.4),
+    },
+    inputReadOnlyFocusShadow: { radius: 2, spread: 1.6, color: foregroundMix(0.4) },
     iconButtonHoverBackgroundColor: 'transparent',
     iconButtonActiveBackgroundColor: 'transparent',
     checkboxUncheckedBorderColor: foregroundBackgroundMix(0.45),
@@ -159,6 +163,7 @@ export const themeBalhamParams = () => ({
     checkboxIndeterminateBorderColor: foregroundBackgroundMix(0.5),
     checkboxIndeterminateShapeColor: foregroundBackgroundMix(0.5),
     focusShadow: { radius: 2, spread: 1, color: accentColor },
+    inputReadOnlyFocusShadow: { radius: 2, spread: 1, color: foregroundColor },
     headerTextColor: foregroundMix(0.6),
     iconButtonHoverBackgroundColor: 'transparent',
     iconButtonActiveBackgroundColor: 'transparent',

@@ -71,7 +71,7 @@ export class DateFloatingFilter extends SimpleFloatingFilter<IFloatingFilterPara
         this.eReadOnlyText
             .setReadOnly(true)
             .setInputAriaLabel(translate('ariaDateFilterInput', 'Date Filter Input'))
-            .setClearButtonEnabled(true)
+            .setClearButtonEnabled(!this.readOnly)
             .onValueClear(() => _clearFloatingFilterModel(this.beans, this.params.column as AgColumn));
         this.refreshValueTooltip = _addFloatingFilterValueTooltip(
             this,

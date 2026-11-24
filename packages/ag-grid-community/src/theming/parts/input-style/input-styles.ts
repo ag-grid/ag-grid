@@ -1,5 +1,12 @@
 import type { BorderValue, ColorValue, LengthValue, Part, ShadowValue } from 'ag-stack';
-import { accentColor, backgroundColor, createPart, foregroundBackgroundMix, foregroundMix } from 'ag-stack';
+import {
+    accentColor,
+    backgroundColor,
+    createPart,
+    foregroundBackgroundMix,
+    foregroundColor,
+    foregroundMix,
+} from 'ag-stack';
 
 import inputStyleBaseCSS from './input-style-base.css';
 import inputStyleBorderedCSS from './input-style-bordered.css';
@@ -50,6 +57,16 @@ export type InputStyleParams = {
      * Color of text within read-only floating filter inputs
      */
     inputReadOnlyTextColor: ColorValue;
+
+    /**
+     * Border around focussed read-only floating filter inputs (or underneath, if using the underlined input style)
+     */
+    inputReadOnlyFocusBorder: BorderValue;
+
+    /**
+     * Shadow around focussed read-only floating filter inputs
+     */
+    inputReadOnlyFocusShadow: ShadowValue;
 
     /**
      * Background color for focussed text inputs
@@ -206,13 +223,19 @@ const baseParams: InputStyleParams = {
     inputDisabledTextColor: {
         ref: 'inputTextColor',
     },
-    inputReadOnlyBackgroundColor: 'transparent',
+    inputReadOnlyBackgroundColor: {
+        ref: 'inputBackgroundColor',
+    },
     inputReadOnlyBorder: {
         ref: 'inputBorder',
     },
     inputReadOnlyTextColor: {
         ref: 'inputTextColor',
     },
+    inputReadOnlyFocusBorder: {
+        ref: 'inputReadOnlyBorder',
+    },
+    inputReadOnlyFocusShadow: 'none',
     inputInvalidBackgroundColor: {
         ref: 'inputBackgroundColor',
     },
@@ -272,8 +295,17 @@ const makeInputStyleBorderedTreeShakeable = () =>
                 ref: 'textColor',
                 mix: 0.5,
             },
-            inputReadOnlyBorder: {
-                color: 'transparent',
+            inputReadOnlyTextColor: {
+                ref: 'inputDisabledTextColor',
+                onto: 'inputTextColor',
+                mix: 0.5,
+            },
+            inputReadOnlyFocusBorder: {
+                color: foregroundColor,
+            },
+            inputReadOnlyFocusShadow: {
+                spread: 3,
+                color: foregroundMix(0.5),
             },
             inputInvalidBorder: {
                 color: { ref: 'invalidColor' },
@@ -305,9 +337,14 @@ const makeInputStyleUnderlinedTreeShakeable = () =>
                 mix: 0.5,
             },
             inputDisabledBorder: 'solid 1px var(--ag-border-color)',
-            inputReadOnlyBorder: {
+            inputReadOnlyTextColor: {
+                ref: 'inputDisabledTextColor',
+                onto: 'inputTextColor',
+                mix: 0.5,
+            },
+            inputReadOnlyFocusBorder: {
                 width: 2,
-                color: 'transparent',
+                color: foregroundColor,
             },
             inputInvalidBorder: {
                 width: 2,

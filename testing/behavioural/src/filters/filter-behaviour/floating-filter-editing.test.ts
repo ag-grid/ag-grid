@@ -660,7 +660,6 @@ describe('Floating filter editing', () => {
                 { field: 'date', filter: 'agDateColumnFilter' },
                 { filterType: 'date', type: 'inRange', dateFrom: '2024-03-15', dateTo: '2024-06-30' },
             ],
-            ['readOnly: true', readOnlyText, { filterType: 'text', type: 'contains', filter: 'ita' }],
         ])('%s: the input can be focused and its clear button removes the filter', async (_, colDef, model) => {
             const colId = colDef.field!;
             const api = await gridsManager.createGridAndWait('grid1', {
@@ -683,6 +682,38 @@ describe('Floating filter editing', () => {
             expect(floating.input().value).toBe('');
             expect(floating.clearButton()).toBeNull();
             expect(api.getDisplayedRowCount()).toBe(2);
+        });
+
+        test.each<[string, ColDef, object]>([
+            ['text', readOnlyText, { filterType: 'text', type: 'contains', filter: 'ita' }],
+            [
+                'number',
+                { field: 'age', filter: 'agNumberColumnFilter', filterParams: { readOnly: true } },
+                { filterType: 'number', type: 'equals', filter: 25 },
+            ],
+            [
+                'date',
+                { field: 'date', filter: 'agDateColumnFilter', filterParams: { readOnly: true } },
+                { filterType: 'date', type: 'equals', dateFrom: '2024-05-01' },
+            ],
+            ['Set', { ...setFilter, filterParams: { readOnly: true } }, { filterType: 'set', values: ['Italy'] }],
+        ])('a readOnly: true %s filter can be focused but has no clear button', async (_, colDef, model) => {
+            const colId = colDef.field!;
+            const api = await gridsManager.createGridAndWait('grid1', {
+                columnDefs: [{ ...colDef, floatingFilter: true }],
+                rowData,
+            });
+            await api.setColumnFilterModel(colId, model);
+            await api.onFilterChanged();
+            await asyncSetTimeout(0);
+
+            const floating = FloatingFilterHarness.get(api, colId);
+            const input = floating.input();
+            await waitFor(() => expect(input.value).not.toBe(''));
+            expect({ readOnly: input.readOnly, disabled: input.disabled }).toEqual({ readOnly: true, disabled: false });
+            input.focus();
+            expect(input).toHaveFocus();
+            expect(floating.clearButton()).toBeNull();
         });
 
         test.each([
@@ -763,6 +794,34 @@ describe('Floating filter editing', () => {
             clearButton.click();
             await waitFor(() => expect(api.getColumnFilterModel('country')).toBeNull());
             await waitFor(() => expect(input().value).toBe(''));
+        });
+
+        test('the group column read-only input has no clear button when the column it shows is readOnly', async () => {
+            const api = await gridsManager.createGridAndWait(
+                'grid1',
+                {
+                    columnDefs: [
+                        {
+                            field: 'country',
+                            rowGroup: true,
+                            hide: true,
+                            filter: 'agSetColumnFilter',
+                            filterParams: { readOnly: true },
+                        },
+                    ],
+                    autoGroupColumnDef: { filter: 'agGroupColumnFilter', floatingFilter: true },
+                    rowData,
+                },
+                { modules: [RowGroupingModule, GroupFilterModule] }
+            );
+            await api.setColumnFilterModel('country', { filterType: 'set', values: ['Italy'] });
+            await api.onFilterChanged();
+
+            const input = () =>
+                getGridElement(api)!.querySelector<HTMLInputElement>('.ag-group-floating-filter input')!;
+            await waitFor(() => expect(input().value).toBe('(1) Italy'));
+            const clearButton = input().parentElement!.querySelector('.ag-input-field-clear-button');
+            expect(clearButton == null || clearButton.closest('.ag-hidden') != null).toBe(true);
         });
     });
 });

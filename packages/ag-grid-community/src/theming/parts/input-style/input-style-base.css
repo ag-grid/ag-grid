@@ -52,16 +52,15 @@
             border: var(--ag-input-disabled-border);
         }
 
+        :where(.ag-floating-filter-input) &:where(.ag-input-field-input[readonly]) {
+            background-color: var(--ag-input-read-only-background-color);
+            border: var(--ag-input-read-only-border);
+        }
+
         &:where(:focus) {
             box-shadow: var(--ag-input-focus-shadow);
             background-color: var(--ag-input-focus-background-color);
             border: var(--ag-input-focus-border);
-        }
-
-        :where(.ag-floating-filter-input) &:where(.ag-input-field-input[readonly]) {
-            background-color: var(--ag-input-read-only-background-color);
-            border: var(--ag-input-read-only-border);
-            border-inline-start-width: 0;
         }
 
         &:where(:invalid),
@@ -86,18 +85,12 @@
     }
 
     :where(.ag-floating-filter-input) &:where(.ag-input-field-input[readonly]) {
-        /* focus keeps the read-only look; a plain outline in the text colour shows it */
         --ag-input-focus-background-color: var(--ag-input-read-only-background-color);
-        --ag-input-focus-border: var(--ag-input-read-only-border);
+        --ag-input-focus-border: var(--ag-input-read-only-focus-border);
         --ag-input-focus-text-color: var(--ag-input-read-only-text-color);
-        --ag-input-focus-shadow: none;
+        --ag-input-focus-shadow: var(--ag-input-read-only-focus-shadow);
 
         color: var(--ag-input-read-only-text-color);
-        padding-inline-start: 0;
-
-        &:where(:focus-visible) {
-            outline: 2px solid currentcolor;
-        }
     }
 
     :where(.ag-floating-filter-input) &:where(.ag-input-field-input-empty) {

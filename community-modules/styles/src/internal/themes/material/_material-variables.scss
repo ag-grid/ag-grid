@@ -86,6 +86,13 @@
     --ag-selected-tab-underline-width: 2px;
 
     --ag-input-focus-border-color: var(--ag-material-primary-color);
+    --ag-input-read-only-text-color: color-mix(
+        in srgb,
+        var(--ag-foreground-color),
+        var(--ag-disabled-foreground-color)
+    );
+    --ag-input-read-only-background-color: transparent;
+    --ag-input-read-only-border-color: var(--ag-border-color);
 
     --ag-input-focus-box-shadow: 0 0 0 5px rgba(32, 33, 36, 0.122);
     --ag-input-error-focus-box-shadow: 0 0 0 5px

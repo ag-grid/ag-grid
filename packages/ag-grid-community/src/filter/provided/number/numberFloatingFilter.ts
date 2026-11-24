@@ -117,12 +117,16 @@ class FloatingFilterNumberInputService extends BeanStub implements FloatingFilte
         ariaLabel,
         autoComplete,
         placeholder,
+        clearButton,
     }: {
         ariaLabel: string;
         autoComplete?: boolean | string;
         placeholder?: string;
+        clearButton: boolean;
     }): void {
         this.setAriaLabel(ariaLabel);
+        this.eNumberInput.setClearButtonEnabled(clearButton);
+        this.eTextInput.setClearButtonEnabled(clearButton);
 
         this.setAutoComplete(autoComplete);
 

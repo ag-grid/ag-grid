@@ -180,8 +180,8 @@
                 background-color: var(--ag-input-read-only-background-color);
                 border-bottom: 2px solid var(--ag-input-read-only-border-color);
 
-                &:focus-visible {
-                    outline: 2px solid currentcolor;
+                &:focus {
+                    border-bottom-color: var(--ag-input-read-only-focus-border-color);
                 }
             }
         }

@@ -93,14 +93,12 @@ export abstract class TextInputFloatingFilter<
             ariaLabel: this.getAriaLabel(column as AgColumn),
             autoComplete: browserAutoComplete ?? (filterParams as TextFilterParams).browserAutoComplete,
             placeholder,
+            clearButton: !readOnly,
         });
 
         this.applyActive = _isUseApplyButton(filterParams as TextFilterParams);
 
         if (readOnly) {
-            inputSvc.setValueClearedListener(() =>
-                _clearFloatingFilterModel(this.beans, this.params.column as AgColumn)
-            );
             return;
         }
 

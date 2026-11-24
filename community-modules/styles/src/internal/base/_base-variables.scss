@@ -171,9 +171,15 @@
         --ag-invalid-color: red;
         --ag-input-disabled-border-color: var(--ag-input-border-color);
         --ag-input-disabled-background-color: transparent;
-        --ag-input-read-only-text-color: var(--ag-foreground-color);
-        --ag-input-read-only-background-color: transparent;
-        --ag-input-read-only-border-color: transparent;
+        --ag-input-read-only-text-color: color-mix(
+            in srgb,
+            var(--ag-header-foreground-color),
+            var(--ag-disabled-foreground-color)
+        );
+        --ag-input-read-only-background-color: var(--ag-background-color);
+        --ag-input-read-only-border-color: var(--ag-input-border-color);
+        --ag-input-read-only-focus-border-color: var(--ag-foreground-color);
+        --ag-input-read-only-focus-box-shadow: none;
 
         --ag-checkbox-background-color: transparent;
         --ag-checkbox-border-radius: var(--ag-border-radius);

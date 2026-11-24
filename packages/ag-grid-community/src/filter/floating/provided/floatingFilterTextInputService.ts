@@ -78,15 +78,18 @@ export class FloatingFilterTextInputService extends BeanStub implements Floating
         ariaLabel,
         autoComplete,
         placeholder,
+        clearButton,
     }: {
         ariaLabel: string;
         autoComplete?: boolean | string;
         placeholder?: string;
+        clearButton: boolean;
     }): void {
         const { eInput } = this;
         this.setAriaLabel(ariaLabel);
 
         eInput.setAutoComplete(autoComplete);
+        eInput.setClearButtonEnabled(clearButton);
 
         eInput.setSearchIcon(!!placeholder);
         eInput.setInputPlaceholder(placeholder);

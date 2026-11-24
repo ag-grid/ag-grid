@@ -121,10 +121,7 @@ export class GroupFloatingFilterComp extends Component implements IFloatingFilte
         if (!this.eFloatingFilterText) {
             this.eFloatingFilterText = this.createManagedBean(new AgInputTextField());
 
-            this.eFloatingFilterText
-                .setReadOnly(true)
-                .setClearButtonEnabled(true)
-                .onValueClear(() => this.clearSelectedColumnFilter());
+            this.eFloatingFilterText.setReadOnly(true).onValueClear(() => this.clearSelectedColumnFilter());
 
             this.setParams();
             this.refreshValueTooltip = _addFloatingFilterValueTooltip(
@@ -223,6 +220,7 @@ export class GroupFloatingFilterComp extends Component implements IFloatingFilte
         }
         const colFilter = this.beans.colFilter!;
         const column = this.getSelectedColumn();
+        eFloatingFilterText.setClearButtonEnabled(!column?.getColDef().filterParams?.readOnly);
         const updateText = (filterOrHandler?: Pick<FilterHandler, 'getModelAsString'> | null) => {
             if (!filterOrHandler) {
                 this.getTooltipValue = undefined;
