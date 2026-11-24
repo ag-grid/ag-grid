@@ -12,7 +12,7 @@ import type {
     IFloatingFilterParams,
     IFloatingFilterParent,
 } from '../floatingFilter';
-import { _getFloatingFilterAriaLabel } from '../floatingFilterUtils';
+import { _clearFloatingFilterModel, _getFloatingFilterAriaLabel } from '../floatingFilterUtils';
 import { _addFloatingFilterValueTooltip } from './floatingFilterValueTooltip';
 
 const ReadOnlyFloatingFilterElement: ElementParams = {
@@ -45,9 +45,12 @@ export class ReadOnlyFloatingFilter extends Component implements IFloatingFilter
             this.addManagedListeners(params.column as AgColumn, { headerNameChanged: () => this.refreshAriaLabel() });
             this.params = params;
             _addFloatingFilterValueTooltip(this, this.beans, () => this.params.column, this.eFloatingFilterText);
+            this.eFloatingFilterText
+                .setReadOnly(true)
+                .setClearButtonEnabled(true)
+                .onValueClear(() => _clearFloatingFilterModel(this.beans, this.params.column as AgColumn));
         }
         this.params = params;
-        this.eFloatingFilterText.setDisabled(true);
         this.refreshAriaLabel();
         if (this.gos.get('enableFilterHandlers')) {
             const reactiveParams = params as unknown as FloatingFilterDisplayParams;

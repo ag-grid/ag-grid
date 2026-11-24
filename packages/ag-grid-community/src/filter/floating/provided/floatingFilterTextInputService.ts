@@ -30,7 +30,12 @@ export class FloatingFilterTextInputService extends BeanStub implements Floating
 
         parentElement.appendChild(eInput);
 
-        const listener = (e: KeyboardEvent) => this.onValueChanged(e);
+        const listener = (e: KeyboardEvent) => {
+            if (this.eInput.isReadOnly()) {
+                return;
+            }
+            this.onValueChanged(e);
+        };
         this.addManagedListeners(eInput, {
             input: listener,
             keydown: listener,
@@ -38,7 +43,7 @@ export class FloatingFilterTextInputService extends BeanStub implements Floating
     }
 
     public setEditable(editable: boolean): void {
-        this.eInput.setDisabled(!editable);
+        this.eInput.setReadOnly(!editable);
     }
 
     public isFocused(): boolean {
@@ -73,15 +78,18 @@ export class FloatingFilterTextInputService extends BeanStub implements Floating
         ariaLabel,
         autoComplete,
         placeholder,
+        clearButton,
     }: {
         ariaLabel: string;
         autoComplete?: boolean | string;
         placeholder?: string;
+        clearButton: boolean;
     }): void {
         const { eInput } = this;
         this.setAriaLabel(ariaLabel);
 
         eInput.setAutoComplete(autoComplete);
+        eInput.setClearButtonEnabled(clearButton);
 
         eInput.setSearchIcon(!!placeholder);
         eInput.setInputPlaceholder(placeholder);

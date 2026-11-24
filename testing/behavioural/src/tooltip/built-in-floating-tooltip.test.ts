@@ -103,12 +103,11 @@ describe.each([false, true])('Built-in floating filter tooltips (enableFilterHan
         const source = input.closest<HTMLElement>('.ag-input-field')!;
         getModelAsString.mockClear();
 
-        const header = source.closest<HTMLElement>('.ag-floating-filter')!;
         if (enableBrowserTooltips) {
             await userEvent.setup().hover(source);
         } else {
-            header.focus();
-            await waitFor(() => expect(header).toHaveAccessibleDescription(summary));
+            input.focus();
+            await waitFor(() => expect(input).toHaveAccessibleDescription(summary));
         }
         await waitFor(() => expect(enableBrowserTooltips ? source.title : tooltipTexts()[0]).toBe(summary));
         expect(getModelAsString).not.toHaveBeenCalled();
@@ -171,7 +170,7 @@ describe.each([false, true])('Built-in floating filter tooltips (enableFilterHan
                 dateTo: '2026-12-31 00:00:00',
             },
         },
-    ])('describes a read-only $filter from its keyboard-focused header', async ({ filter, model }) => {
+    ])('describes a read-only $filter from its focused input', async ({ filter, model }) => {
         const api = await grids.createGridAndWait(
             'read-only',
             {
@@ -189,14 +188,13 @@ describe.each([false, true])('Built-in floating filter tooltips (enableFilterHan
         await api.setColumnFilterModel('value', model);
         api.onFilterChanged();
         const header = getGridElement(api)!.querySelector<HTMLElement>('.ag-floating-filter')!;
-        const input = header.querySelector<HTMLInputElement>('input:disabled')!;
+        const input = header.querySelector<HTMLInputElement>('input[readonly]')!;
         await waitFor(() => expect(input.value).not.toBe(''));
         vi.spyOn(input, 'scrollWidth', 'get').mockReturnValue(2000);
         vi.spyOn(input, 'clientWidth', 'get').mockReturnValue(100);
-        header.focus();
+        input.focus();
         await waitFor(() => expect(tooltipTexts()).toEqual([input.value]));
-        expect(header).toHaveAccessibleDescription(input.value);
-        expect(input).not.toHaveAttribute('aria-describedby');
+        expect(input).toHaveAccessibleDescription(input.value);
         const user = userEvent.setup();
         await user.keyboard('{Tab}');
         expect(getVisibleTooltips()[0].querySelector('button')).toHaveFocus();
@@ -207,11 +205,11 @@ describe.each([false, true])('Built-in floating filter tooltips (enableFilterHan
         api.refreshHeader();
         const refreshedHeader = getGridElement(api)!.querySelector<HTMLElement>('.ag-floating-filter')!;
         expect(refreshedHeader).not.toBe(header);
-        const refreshedInput = refreshedHeader.querySelector<HTMLInputElement>('input:disabled')!;
+        const refreshedInput = refreshedHeader.querySelector<HTMLInputElement>('input[readonly]')!;
         vi.spyOn(refreshedInput, 'scrollWidth', 'get').mockReturnValue(2000);
         vi.spyOn(refreshedInput, 'clientWidth', 'get').mockReturnValue(100);
-        refreshedHeader.focus();
-        await waitFor(() => expect(refreshedHeader).toHaveAccessibleDescription(refreshedInput.value));
+        refreshedInput.focus();
+        await waitFor(() => expect(refreshedInput).toHaveAccessibleDescription(refreshedInput.value));
         await waitFor(() => expect(tooltipTexts()).toEqual([refreshedInput.value]));
     });
 
@@ -272,17 +270,15 @@ describe.each([false, true])('Built-in floating filter tooltips (enableFilterHan
         await user.unhover(source);
         const header = source.closest<HTMLElement>('.ag-floating-filter')!;
         header.focus();
-        await waitFor(() => expect(header).toHaveAccessibleDescription(updatedTooltip));
-        expect(input).not.toHaveAttribute('aria-describedby');
         await user.keyboard('{Enter}');
-        expect(header.querySelector('button')).toHaveFocus();
-        await waitFor(() => expect(tooltipTexts()).toEqual(['Filter']));
+        expect(input).toHaveFocus();
+        await waitFor(() => expect(input).toHaveAccessibleDescription(updatedTooltip));
+        await waitFor(() => expect(tooltipTexts()).toEqual([updatedTooltip]));
         await user.keyboard('{Escape}');
-        expect(header.querySelector('button')).toHaveFocus();
+        expect(input).toHaveFocus();
         expect(tooltipTexts()).toEqual([]);
         await user.keyboard('{Escape}');
         expect(header).toHaveFocus();
-        await waitFor(() => expect(tooltipTexts()).toEqual([updatedTooltip]));
 
         await api.setColumnFilterModel('value', null);
         api.onFilterChanged();
@@ -322,16 +318,15 @@ describe.each([false, true])('Built-in floating filter tooltips (enableFilterHan
             const summary = isSetFilter ? `(11) ${values.slice(0, 10).join(',')},...` : values[0];
             const tooltip = isSetFilter ? `(11) ${values.slice(0, 11).join(',')}` : values[0];
             await waitFor(() => expect(input.value).toBe(summary));
-            expect(input.disabled).toBe(true);
+            expect(input.readOnly).toBe(true);
             vi.spyOn(input, 'scrollWidth', 'get').mockReturnValue(2000);
             vi.spyOn(input, 'clientWidth', 'get').mockReturnValue(100);
 
             await userEvent.setup().hover(source);
             await waitFor(() => expect(tooltipTexts()).toEqual([tooltip]));
 
-            const header = source.closest<HTMLElement>('.ag-floating-filter')!;
-            header.focus();
-            await waitFor(() => expect(header).toHaveAccessibleDescription(tooltip));
+            input.focus();
+            await waitFor(() => expect(input).toHaveAccessibleDescription(tooltip));
 
             await api.setColumnFilterModel('country', null);
             api.onFilterChanged();

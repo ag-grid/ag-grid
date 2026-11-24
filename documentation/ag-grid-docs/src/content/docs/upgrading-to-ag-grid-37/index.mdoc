@@ -40,6 +40,7 @@ To automate the upgrade, use the [`ag-update` AI skill](./skills), which reads t
 ### Filtering
 
 - `FilterChangedEventSourceType` now includes `'gridInitializing'`. Code that switches exhaustively over `FilterChangedEvent.source`, or maps every source value, must handle it.
+- Read-only floating filter inputs no longer use the disabled input colours. This covers the Set Filter, simple filters that can't be edited in the floating filter (for example with two conditions), filters with `readOnly: true` and custom filters that implement `getModelAsString()`. They now look like other text inputs with a slightly darker background, and can be focused and their text selected. If you styled them with the disabled input theme parameters (for example `inputDisabledTextColor`), use `inputReadOnlyTextColor`, `inputReadOnlyBackgroundColor` and `inputReadOnlyBorder` instead. With Legacy Themes, use `--ag-input-read-only-text-color`, `--ag-input-read-only-background-color` and `--ag-input-read-only-border-color`. See [Customising Inputs & Widgets](./theming-widgets/#styling-text-inputs).
 
 ### Tooltip Positioning
 

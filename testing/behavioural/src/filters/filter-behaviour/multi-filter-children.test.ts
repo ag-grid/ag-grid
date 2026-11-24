@@ -200,8 +200,8 @@ describe('Multi Filter — sub-filter combos & combined model (coverage)', () =>
 
         const input = visibleFloatingInput();
         expect(visibleFloatingKind()).toBe('text');
-        // readOnly ⇒ the floating input is disabled (cannot type), but the model still drives it.
-        expect(input.disabled).toBe(true);
+        // readOnly ⇒ the floating input is read-only (cannot type), but the model still drives it.
+        expect(input.readOnly).toBe(true);
 
         await api.setColumnFilterModel('name', {
             filterType: 'multi',
@@ -211,7 +211,7 @@ describe('Multi Filter — sub-filter combos & combined model (coverage)', () =>
         await asyncSetTimeout(0);
 
         expect(visibleFloatingInput().value).toBe('mich');
-        expect(visibleFloatingInput().disabled).toBe(true);
+        expect(visibleFloatingInput().readOnly).toBe(true);
         await new GridRows(api, 'readOnly floating rows').check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:0 name:"michael"

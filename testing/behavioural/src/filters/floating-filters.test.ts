@@ -1,5 +1,5 @@
 import { fireEvent, getByTestId, waitFor } from '@testing-library/dom';
-import { GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
+import { FloatingFilterHarness, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import type {
     ColDef,
@@ -503,7 +503,7 @@ describe('Floating Filters', () => {
                 getModelAsString: describeModel,
             });
 
-            test('its floating filter is a disabled input showing that string as the model changes', async () => {
+            test('its floating filter is a read-only input showing that string, cleared by its clear button', async () => {
                 const api = await gridsManager.createGridAndWait('grid1', {
                     columnDefs: [
                         {
@@ -517,7 +517,13 @@ describe('Floating Filters', () => {
                 });
                 const input = () =>
                     getGridElement(api)!.querySelector<HTMLInputElement>('.ag-floating-filter[col-id="gold"] input')!;
-                expect({ value: input().value, disabled: input().disabled }).toEqual({ value: '', disabled: true });
+                const clearButton = () => FloatingFilterHarness.get(api, 'gold').clearButton();
+                expect({ value: input().value, readOnly: input().readOnly, disabled: input().disabled }).toEqual({
+                    value: '',
+                    readOnly: true,
+                    disabled: false,
+                });
+                expect(clearButton()).toBeNull();
 
                 api.setFilterModel({ gold: 4 });
                 await waitFor(() => expect(input().value).toBe('>4'));
@@ -526,6 +532,14 @@ describe('Floating Filters', () => {
                 api.setFilterModel(null);
                 await waitFor(() => expect(input().value).toBe(''));
                 expect(api.getDisplayedRowCount()).toBe(3);
+
+                api.setFilterModel({ gold: 4 });
+                await waitFor(() => expect(clearButton()).not.toBeNull());
+                clearButton()!.click();
+                await waitFor(() => expect(api.getColumnFilterModel('gold')).toBeNull());
+                expect(input().value).toBe('');
+                expect(api.getDisplayedRowCount()).toBe(3);
+                expect(clearButton()).toBeNull();
             });
         }
     );

@@ -234,7 +234,7 @@ describe('a filter definition is read alike by every reader', () => {
         await asyncSetTimeout(0);
         const input = document.querySelector<HTMLInputElement>('.ag-floating-filter input');
         expect(input).not.toBeNull();
-        expect(input!.disabled).toBe(true);
+        expect(input!.readOnly).toBe(true);
     });
 
     test.each(CASES)("the AI Toolkit schema reads the author's params: $label", async ({ form, ...shape }) => {

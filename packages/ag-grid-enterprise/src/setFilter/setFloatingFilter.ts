@@ -8,12 +8,14 @@ import type {
     GridInputTextField,
     IFloatingFilter,
     IFloatingFilterParams,
+    IProvidedFilterParams,
     SetFilterModel,
 } from 'ag-grid-community';
 import {
     AgInputTextFieldSelector,
     Component,
     _addFloatingFilterValueTooltip,
+    _clearFloatingFilterModel,
     _getFloatingFilterAriaLabel,
 } from 'ag-grid-community';
 
@@ -45,7 +47,9 @@ export class SetFloatingFilterComp<V = string> extends Component implements IFlo
     public init(params: IFloatingFilterParams): void {
         this.params = params;
 
-        this.eFloatingFilterText.setDisabled(true).addGuiEventListener('click', () => this.params.showParentFilter());
+        this.eFloatingFilterText
+            .setReadOnly(true)
+            .onValueClear(() => _clearFloatingFilterModel(this.beans, this.params.column as AgColumn));
 
         this.setParams(params);
         this.addManagedListeners(params.column as AgColumn, { headerNameChanged: () => this.refreshAriaLabel() });
@@ -60,6 +64,7 @@ export class SetFloatingFilterComp<V = string> extends Component implements IFlo
 
     private setParams(params: IFloatingFilterParams): void {
         this.refreshAriaLabel();
+        this.eFloatingFilterText.setClearButtonEnabled(!(params.filterParams as IProvidedFilterParams).readOnly);
 
         if (this.gos.get('enableFilterHandlers')) {
             const reactiveParams = params as unknown as FloatingFilterDisplayParams;

@@ -167,7 +167,7 @@ export type { FilterValueService, FilterValueSource } from './filter/filterValue
 export { _getFilterValueSource } from './filter/filterValueService';
 export { FilterWrapperComp } from './filter/filterWrapperComp';
 export { _getDefaultFloatingFilterType } from './filter/floating/floatingFilterMapper';
-export { _getFloatingFilterAriaLabel } from './filter/floating/floatingFilterUtils';
+export { _clearFloatingFilterModel, _getFloatingFilterAriaLabel } from './filter/floating/floatingFilterUtils';
 export { _addFloatingFilterValueTooltip } from './filter/floating/provided/floatingFilterValueTooltip';
 export { _isUseApplyButton } from './filter/provided/providedFilterUtils';
 export {

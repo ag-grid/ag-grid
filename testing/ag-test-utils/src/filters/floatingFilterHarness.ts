@@ -6,7 +6,7 @@ import { setNativeInputValue } from '../widgets/inputs';
 
 /**
  * Drives a column's floating filter row through public DOM only. A floating filter shows either an editor of
- * the filter's own type or a disabled read-only summary, which `input().disabled` tells apart.
+ * the filter's own type or a read-only summary, which `input().readOnly` tells apart.
  */
 export class FloatingFilterHarness {
     private constructor(
@@ -52,6 +52,12 @@ export class FloatingFilterHarness {
             throw new Error(`No visible floating filter input at index ${index} for "${this.colId}"`);
         }
         return input;
+    }
+
+    /** The clear button of the visible input, or null when it isn't shown. */
+    public clearButton(): HTMLButtonElement | null {
+        const button = this.input().parentElement?.querySelector<HTMLButtonElement>('.ag-input-field-clear-button');
+        return button && !button.closest('.ag-hidden') ? button : null;
     }
 
     public async setValue(value: string, index = 0): Promise<this> {

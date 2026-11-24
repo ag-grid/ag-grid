@@ -115,10 +115,6 @@
     display: flex;
 }
 
-.ag-set-floating-filter-input :where(.ag-input-field-input)[disabled] {
-    pointer-events: none;
-}
-
 .ag-floating-filter-button-button {
     appearance: none;
     border: none;

@@ -22,6 +22,11 @@
     color: inherit;
     background: transparent;
     cursor: pointer;
+
+    &:focus-visible {
+        outline: var(--ag-internal-accessible-no-outline, revert);
+        box-shadow: var(--ag-focus-shadow);
+    }
 }
 
 .ag-input-field-input:where(
@@ -45,6 +50,11 @@
         &:where(:disabled) {
             background-color: var(--ag-input-disabled-background-color);
             border: var(--ag-input-disabled-border);
+        }
+
+        :where(.ag-floating-filter-input) &:where(.ag-input-field-input[readonly]) {
+            background-color: var(--ag-input-read-only-background-color);
+            border: var(--ag-input-read-only-border);
         }
 
         &:where(:focus) {
@@ -72,6 +82,15 @@
 
     &:where(:disabled) {
         color: var(--ag-input-disabled-text-color);
+    }
+
+    :where(.ag-floating-filter-input) &:where(.ag-input-field-input[readonly]) {
+        --ag-input-focus-background-color: var(--ag-input-read-only-background-color);
+        --ag-input-focus-text-color: var(--ag-input-read-only-text-color);
+
+        color: var(--ag-input-read-only-text-color);
+        caret-color: transparent;
+        cursor: default;
     }
 
     &:where(:focus) {

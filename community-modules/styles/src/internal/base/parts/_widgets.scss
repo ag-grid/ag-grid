@@ -80,6 +80,17 @@
         &:invalid {
             border: var(--ag-borders-input-invalid) var(--ag-input-border-color-invalid);
         }
+
+        :where(.ag-floating-filter-input) &[readonly] {
+            color: var(--ag-input-read-only-text-color);
+            background-color: var(--ag-input-read-only-background-color);
+            caret-color: transparent;
+            cursor: default;
+
+            &:not(:focus) {
+                border-color: var(--ag-input-read-only-border-color);
+            }
+        }
     }
 
     .ag-input-field-clear-button {
