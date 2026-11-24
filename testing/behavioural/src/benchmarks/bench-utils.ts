@@ -5,7 +5,7 @@ import { test } from 'vitest';
 import type { GridApi, GridOptions, Module, Params } from 'ag-grid-community';
 import { RenderApiModule, createGrid } from 'ag-grid-community';
 
-import type { BenchOptions } from './bench-measure';
+import type { BenchOptions, BenchPrepare } from './bench-measure';
 import { measureBench } from './bench-measure';
 
 // Benchmarks use vitest's `suite` and this file's `bench`, and import grid helpers from here (never the
@@ -18,10 +18,14 @@ export type { BenchOptions };
 /** One bench, as a test of its own name: vitest runs a bench inside a test; `bench-measure.ts` measures it. */
 export function bench(name: string, fn: () => unknown, options: BenchOptions = {}): void {
     // Destructured: vitest injects a fixture only when the parameter's pattern names it.
-    test(name, async ({ bench: report }) => {
-        const result = await measureBench(name, fn, options);
-        await report.from(name, () => result).run();
-    });
+    test(
+        name,
+        async ({ bench: report }) => {
+            const result = await measureBench(name, fn, options);
+            await report.from(name, () => result).run();
+        },
+        options.timeout
+    );
 }
 
 // A timed loop never yields a frame, so the CSS transitions it starts never finish and pile up, each call
@@ -66,9 +70,10 @@ export const sweep = (i: number, steps = 20): number => {
 
 /**
  * A bench fn whose every call starts with an untimed `prepare`, so a call measures one operation from the state
- * it needs rather than also undoing the previous call. `prepare` runs on the virtual clock too, idle gap included.
+ * it needs rather than also undoing the previous call. `prepare` runs on the virtual clock too, idle gap included,
+ * unless it is `async`: then it keeps real timers, so it can await the frames a timed loop never yields.
  */
-export function untimedPrepare<T extends () => unknown>(prepare: () => void, measure: T): T {
+export function untimedPrepare<T extends () => unknown>(prepare: BenchPrepare, measure: T): T {
     return Object.assign(measure, { agBenchPrepare: prepare });
 }
 
