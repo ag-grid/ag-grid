@@ -351,8 +351,7 @@ test.describe('community grid in a real browser', () => {
     });
 
     test.describe('print layout with no rows', () => {
-        // Seven 100px columns in a 300px container: wider than the container, so print layout grows to the columns.
-        // print layout needs a grid with no width or height of its own
+        // Print layout needs a grid with no size of its own; seven 100px columns then outgrow the 300px container.
         const printCss = '#myGrid{width:auto;height:auto}';
 
         const expectSizedByColumns = async (page: Page, grid: Locator) => {
