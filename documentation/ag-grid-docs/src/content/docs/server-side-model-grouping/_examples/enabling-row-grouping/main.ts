@@ -29,8 +29,6 @@ const gridOptions: GridOptions<IOlympicData> = {
 function getServerSideDatasource(server: any): IServerSideDatasource {
     return {
         getRows: (params) => {
-            console.log('[Datasource] - rows requested by grid: ', params.request);
-
             const response = server.getData(params.request);
 
             // adding delay to simulate real server call
