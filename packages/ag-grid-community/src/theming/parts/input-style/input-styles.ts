@@ -52,16 +52,6 @@ export type InputStyleParams = {
     inputReadOnlyTextColor: ColorValue;
 
     /**
-     * Border around focussed read-only floating filter inputs (or underneath, if using the underlined input style)
-     */
-    inputReadOnlyFocusBorder: BorderValue;
-
-    /**
-     * Shadow around focussed read-only floating filter inputs
-     */
-    inputReadOnlyFocusShadow: ShadowValue;
-
-    /**
      * Background color for focussed text inputs
      */
     inputFocusBackgroundColor: ColorValue;
@@ -225,10 +215,6 @@ const baseParams: InputStyleParams = {
     inputReadOnlyTextColor: {
         ref: 'inputTextColor',
     },
-    inputReadOnlyFocusBorder: {
-        ref: 'inputReadOnlyBorder',
-    },
-    inputReadOnlyFocusShadow: 'none',
     inputInvalidBackgroundColor: {
         ref: 'inputBackgroundColor',
     },
@@ -289,18 +275,6 @@ const makeInputStyleBorderedTreeShakeable = () =>
                 mix: 0.5,
             },
             inputReadOnlyBackgroundColor: foregroundBackgroundMix(0.03),
-            inputReadOnlyTextColor: {
-                ref: 'inputDisabledTextColor',
-                onto: 'inputTextColor',
-                mix: 0.5,
-            },
-            inputReadOnlyFocusBorder: {
-                color: foregroundMix(0.5),
-            },
-            inputReadOnlyFocusShadow: {
-                spread: 3,
-                color: foregroundMix(0.25),
-            },
             inputInvalidBorder: {
                 color: { ref: 'invalidColor' },
             },
@@ -332,15 +306,6 @@ const makeInputStyleUnderlinedTreeShakeable = () =>
             },
             inputDisabledBorder: 'solid 1px var(--ag-border-color)',
             inputReadOnlyBackgroundColor: foregroundBackgroundMix(0.03),
-            inputReadOnlyTextColor: {
-                ref: 'inputDisabledTextColor',
-                onto: 'inputTextColor',
-                mix: 0.5,
-            },
-            inputReadOnlyFocusBorder: {
-                width: 2,
-                color: foregroundMix(0.5),
-            },
             inputInvalidBorder: {
                 width: 2,
                 color: {

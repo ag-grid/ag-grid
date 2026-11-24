@@ -341,14 +341,6 @@
             "description": "The colour of the border around read-only floating filter inputs",
             "type": "CSS color (e.g. `red` or `#fff`)"
         },
-        "--ag-input-read-only-focus-border-color": {
-            "description": "The colour of the border around focussed read-only floating filter inputs",
-            "type": "CSS color (e.g. `red` or `#fff`)"
-        },
-        "--ag-input-read-only-focus-box-shadow": {
-            "description": "box shadow around focussed read-only floating filter inputs",
-            "type": "CSS box-shadow value (e.g. `0 5px 10px black`)"
-        },
         "--ag-checkbox-background-color": {
             "description": "Background of a checkbox",
             "type": "CSS color (e.g. `red` or `#fff`)"

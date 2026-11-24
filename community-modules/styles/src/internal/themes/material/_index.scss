@@ -178,10 +178,9 @@
             &[readonly] {
                 color: var(--ag-input-read-only-text-color);
                 background-color: var(--ag-input-read-only-background-color);
-                border-bottom: 2px solid var(--ag-input-read-only-border-color);
 
-                &:focus {
-                    border-bottom-color: var(--ag-input-read-only-focus-border-color);
+                &:not(:focus) {
+                    border-bottom-color: var(--ag-input-read-only-border-color);
                 }
             }
         }
