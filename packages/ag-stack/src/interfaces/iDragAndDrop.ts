@@ -52,6 +52,8 @@ export interface AgDragSource<
     dragSourceDomDataKey?: string;
     /** After how many pixels of dragging should the drag operation start. Default is 4. */
     dragStartPixels?: number;
+    /** Called when a press has moved far enough to start a drag; returning `false` discards the press. */
+    canStartDrag?: () => boolean;
     /** Callback for drag started */
     onDragStarted?: () => void;
     /** Callback for drag stopped */

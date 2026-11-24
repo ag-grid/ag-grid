@@ -36,6 +36,17 @@ export interface IsRowValidDropPositionResult<TData = any> {
     changed?: boolean;
 }
 
+export interface IsRowDraggableParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
+    /** The row node the drag would start on. */
+    node: IRowNode<TData>;
+    /** The data of the row node, `undefined` for group and footer rows without data. */
+    data: TData | undefined;
+}
+
+export type IsRowDraggableCallback<TData = any, TContext = any> = (
+    params: IsRowDraggableParams<TData, TContext>
+) => boolean;
+
 export type IsRowValidDropPositionCallback<TData = any, TContext = any> = (
     params: IsRowValidDropPositionParams<TData, TContext>
 ) => IsRowValidDropPositionResult<TData> | null | boolean;
