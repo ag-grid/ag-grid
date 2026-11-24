@@ -21,7 +21,7 @@
     "whySwitch": {
         "heading": "Why teams look for a Syncfusion Data Grid alternative",
         "reasons": [
-            "Syncfusion's free Community License only applies to organisations with under $1M annual revenue, 5 or fewer developers and 10 or fewer employees.",
+            "Syncfusion's free Community License only applies to organisations with under $1M annual gross revenue, 5 or fewer developers and 10 or fewer employees that have never received more than $3M in outside capital. Government bodies funded by taxes are not eligible.",
             "Above those limits, the Grid SDK is an annual subscription per developer.",
             "Pivoting and tree data are separate Syncfusion components rather than features of the grid."
         ]
@@ -65,7 +65,7 @@
         },
         {
             "question": "How much does Syncfusion cost?",
-            "answer": "The Syncfusion Grid SDK and the UI Component Suite are annual subscriptions per developer, with a minimum term of one year, and Syncfusion publishes their prices on its pricing page. A free Community License is available to organisations with under $1M annual revenue, 5 or fewer developers and 10 or fewer employees."
+            "answer": "The Syncfusion Grid SDK and the UI Component Suite are annual subscriptions per developer, with a minimum term of one year, and Syncfusion publishes their prices on its pricing page. A free Community License is available to organisations with under $1M annual gross revenue, 5 or fewer developers and 10 or fewer employees that have never received more than $3M in outside capital. Government bodies funded by taxes are not eligible."
         },
         {
             "question": "What is Syncfusion used for?",
@@ -78,7 +78,7 @@
     ],
     "proseClaims": [
         {
-            "claim": "Syncfusion's free Community License only applies to organisations with under $1M annual gross revenue, 5 or fewer developers and 10 or fewer employees.",
+            "claim": "Syncfusion's free Community License is limited to organisations with under $1M annual gross revenue, 5 or fewer developers and 10 or fewer employees that have never received more than $3M in outside capital; government bodies funded by taxes are not eligible; eligible organisations apply and are validated.",
             "sourceUrl": "https://www.syncfusion.com/products/communitylicense",
             "checkedOn": "2026-11-11"
         },
