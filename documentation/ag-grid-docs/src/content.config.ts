@@ -1,5 +1,6 @@
 import { createAlternativePageSchema } from '@ag-website-shared/components/decision-pages/alternativePageSchema';
 import { createComparisonPageSchema } from '@ag-website-shared/components/decision-pages/comparisonPageSchema';
+import { createProductAlternativePageSchema } from '@ag-website-shared/components/decision-pages/productAlternativePageSchema';
 import type { IconName } from '@ag-website-shared/components/icon/Icon';
 import { ALL_INTERNAL_FRAMEWORKS, FRAMEWORKS } from '@constants';
 import { TECHNICAL_REVIEWER_KEYS } from '@utils/technicalReviewers';
@@ -611,6 +612,15 @@ const alternativePages = defineCollection({
     schema: createAlternativePageSchema({ reviewerKeys: TECHNICAL_REVIEWER_KEYS }),
 });
 
+/**
+ * AG Grid's own alternative page at /alternatives/ag-grid-alternative/. It names no competitor, so
+ * it has no claims to source.
+ */
+const productAlternativePages = defineCollection({
+    loader: glob({ base: './src/content/product-alternatives', pattern: '*.json' }),
+    schema: createProductAlternativePageSchema({ reviewerKeys: TECHNICAL_REVIEWER_KEYS }),
+});
+
 export const collections = {
     docs,
     homepage,
@@ -634,4 +644,5 @@ export const collections = {
     landingPages,
     comparePages,
     alternativePages,
+    productAlternativePages,
 };

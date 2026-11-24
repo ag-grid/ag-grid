@@ -19,6 +19,7 @@ import {
     alternativePageName,
     fullComparisonLinkText,
 } from './decisionPageText';
+import { competitorFeatureMatrix } from './featureMatrix';
 import DecisionHero from './sections/DecisionHero.astro';
 import DecisionSection from './sections/DecisionSection.astro';
 import FeatureMatrix from './sections/FeatureMatrix.astro';
@@ -79,9 +80,8 @@ const competitor = {
 
 <DecisionSection id="at-a-glance" heading={ALTERNATIVE_SECTIONS.atAGlance(productName, competitorName)}>
     <FeatureMatrix
-        groups={content.features.groups}
-        product={product}
-        competitor={competitor}
+        groups={competitorFeatureMatrix(content.features.groups)}
+        columns={[product, competitor]}
         resolveUrl={site.resolveUrl}
     />
     {comparison && (

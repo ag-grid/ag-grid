@@ -1,15 +1,19 @@
 ---
 import DecisionHubPage from '@ag-website-shared/components/decision-pages/DecisionHubPage.astro';
-import { sortHubCards } from '@ag-website-shared/components/decision-pages/decisionHub';
 import { buildBreadcrumbList } from '@ag-website-shared/utils/structuredData';
 import { DISABLE_MARKDOWN_DOCS } from '@constants';
 import Layout from '@layouts/Layout.astro';
-import { ALTERNATIVES_HUB, ALTERNATIVES_HUB_LINK, GRID_DECISION_SITE, alternativeHubCard } from '@utils/decisionPages';
+import { getDecisionPageCollections } from '@utils/decisionPageCollections';
+import {
+    ALTERNATIVES_HUB,
+    ALTERNATIVES_HUB_LINK,
+    GRID_DECISION_SITE,
+    alternativesHubCards,
+} from '@utils/decisionPages';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
-import { type CollectionEntry, getCollection, getEntry } from 'astro:content';
+import { type CollectionEntry, getEntry } from 'astro:content';
 
-const entries = await getCollection('alternativePages');
-const cards = sortHubCards(entries.map(({ id, data }) => alternativeHubCard(id, data)));
+const cards = alternativesHubCards(await getDecisionPageCollections());
 
 const { data: metadata } = (await getEntry('metadata', 'metadata')) as CollectionEntry<'metadata'>;
 const pageUrl = new URL(Astro.url.pathname, metadata.canonicalUrlBase).href;

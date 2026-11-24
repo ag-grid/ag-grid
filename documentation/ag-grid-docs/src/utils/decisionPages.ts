@@ -11,6 +11,7 @@ import type {
     ComparisonPageContent,
     DecisionHubLink,
     DecisionPageSite,
+    ProductAlternativePageContent,
     RelatedPageGroup,
     RelatedPageLink,
 } from '@ag-website-shared/components/decision-pages/types';
@@ -27,6 +28,8 @@ import { urlWithPrefix } from '@utils/urlWithPrefix';
 /** Docs links on the decision pages go to the React docs, the most common framework. */
 const DECISION_PAGE_FRAMEWORK = 'react';
 
+const EDITIONS_URL = './community-vs-enterprise/';
+
 export const GRID_DECISION_SITE: DecisionPageSite = {
     productName: 'AG Grid',
     productKey: 'grid',
@@ -39,6 +42,7 @@ export const GRID_DECISION_SITE: DecisionPageSite = {
         getStarted: './getting-started/',
         demo: '/example/',
         trial: ENTERPRISE_TRIAL_PATH,
+        editions: EDITIONS_URL,
     },
     getStarted: {
         heading: 'Try AG Grid with your own data',
@@ -71,6 +75,9 @@ export const ALTERNATIVES_HUB: DecisionHubContent = {
 
 const { urls } = GRID_DECISION_SITE;
 
+/** AG Grid's own alternative page, served by its own route rather than the competitor alternatives route. */
+export const PRODUCT_ALTERNATIVE_SLUG = 'ag-grid-alternative';
+
 export const comparePageUrl = (slug: string): string => `${COMPARE_HUB_LINK.url}${slug}/`;
 export const alternativePageUrl = (slug: string): string => `${ALTERNATIVES_HUB_LINK.url}${slug}/`;
 
@@ -80,8 +87,14 @@ export const compareHubCard = (slug: string, content: ComparisonPageContent): De
     url: comparePageUrl(slug),
 });
 
-export const alternativeHubCard = (slug: string, content: AlternativePageContent): DecisionHubCard => ({
+const alternativeHubCard = (slug: string, content: AlternativePageContent): DecisionHubCard => ({
     title: alternativePageName(content.competitor),
+    description: content.meta.description,
+    url: alternativePageUrl(slug),
+});
+
+const productAlternativeHubCard = (slug: string, content: ProductAlternativePageContent): DecisionHubCard => ({
+    title: alternativePageName({ name: GRID_DECISION_SITE.productName }),
     description: content.meta.description,
     url: alternativePageUrl(slug),
 });
@@ -95,6 +108,15 @@ interface DecisionPageEntry<Content> {
 export interface DecisionPageClusters {
     comparisons: Array<DecisionPageEntry<ComparisonPageContent>>;
     alternatives: Array<DecisionPageEntry<AlternativePageContent>>;
+    /** AG Grid's own alternative page, listed with the other alternatives. */
+    productAlternatives: Array<DecisionPageEntry<ProductAlternativePageContent>>;
+}
+
+/** The decision page content collections, as `getDecisionPageCollections` loads them. */
+export interface DecisionPageCollections {
+    comparePages: Array<{ id: string; data: ComparisonPageContent }>;
+    alternativePages: Array<{ id: string; data: AlternativePageContent }>;
+    productAlternativePages: Array<{ id: string; data: ProductAlternativePageContent }>;
 }
 
 const comparisonLink = ({ slug, content }: DecisionPageEntry<ComparisonPageContent>): RelatedPageLink => ({
@@ -107,10 +129,25 @@ const alternativeLink = ({ slug, content }: DecisionPageEntry<AlternativePageCon
     url: alternativePageUrl(slug),
 });
 
+const productAlternativeLink = ({ slug }: DecisionPageEntry<ProductAlternativePageContent>): RelatedPageLink => ({
+    title: alternativePageName({ name: GRID_DECISION_SITE.productName }),
+    url: alternativePageUrl(slug),
+});
+
+/** The /alternatives/ hub's cards: AG Grid's own alternative page and every competitor's, by title. */
+export const alternativesHubCards = ({
+    alternativePages,
+    productAlternativePages,
+}: Pick<DecisionPageCollections, 'alternativePages' | 'productAlternativePages'>): DecisionHubCard[] =>
+    sortHubCards([
+        ...productAlternativePages.map(({ id, data }) => productAlternativeHubCard(id, data)),
+        ...alternativePages.map(({ id, data }) => alternativeHubCard(id, data)),
+    ]);
+
 const PRODUCT_LINKS: RelatedPageGroup = {
     name: GRID_DECISION_SITE.productName,
     links: [
-        { title: 'Community vs Enterprise', url: './community-vs-enterprise/' },
+        { title: 'Community vs Enterprise', url: EDITIONS_URL },
         { title: 'Pricing', url: urls.pricing },
         { title: 'Demos', url: urls.demo },
         { title: 'Documentation', url: urls.getStarted },
@@ -132,7 +169,13 @@ export function decisionRelatedPages({
 }): RelatedPageGroup[] {
     const groups: RelatedPageGroup[] = [
         { name: COMPARE_HUB_LINK.name, links: sortHubCards(clusters.comparisons.map(comparisonLink)) },
-        { name: ALTERNATIVES_HUB_LINK.name, links: sortHubCards(clusters.alternatives.map(alternativeLink)) },
+        {
+            name: ALTERNATIVES_HUB_LINK.name,
+            links: sortHubCards([
+                ...clusters.productAlternatives.map(productAlternativeLink),
+                ...clusters.alternatives.map(alternativeLink),
+            ]),
+        },
     ]
         .map((group) => ({ ...group, links: group.links.filter(({ url }) => url !== current) }))
         .filter((group) => group.links.length > 0);
@@ -143,18 +186,18 @@ export function decisionRelatedPages({
 const toEntries = <Content>(entries: Array<{ id: string; data: Content }>): Array<DecisionPageEntry<Content>> =>
     entries.map(({ id, data }) => ({ slug: id, content: data }));
 
+const toClusters = (collections: DecisionPageCollections): DecisionPageClusters => ({
+    comparisons: toEntries(collections.comparePages),
+    alternatives: toEntries(collections.alternativePages),
+    productAlternatives: toEntries(collections.productAlternativePages),
+});
+
 /**
  * `getStaticPaths` for a comparison page and its `.md` twin, so both build from the same entries
  * and related links.
  */
-export function comparePagePaths({
-    comparePages,
-    alternativePages,
-}: {
-    comparePages: Array<{ id: string; data: ComparisonPageContent }>;
-    alternativePages: Array<{ id: string; data: AlternativePageContent }>;
-}) {
-    const clusters = { comparisons: toEntries(comparePages), alternatives: toEntries(alternativePages) };
+export function comparePagePaths(collections: DecisionPageCollections) {
+    const clusters = toClusters(collections);
     return clusters.comparisons.map(({ slug, content }) => ({
         params: { comparePage: slug },
         props: { content, related: decisionRelatedPages({ current: comparePageUrl(slug), clusters }) },
@@ -165,14 +208,8 @@ export function comparePagePaths({
  * `getStaticPaths` for an alternative page and its `.md` twin. Each page links to the comparison
  * with the same competitor, when there is one.
  */
-export function alternativePagePaths({
-    comparePages,
-    alternativePages,
-}: {
-    comparePages: Array<{ id: string; data: ComparisonPageContent }>;
-    alternativePages: Array<{ id: string; data: AlternativePageContent }>;
-}) {
-    const clusters = { comparisons: toEntries(comparePages), alternatives: toEntries(alternativePages) };
+export function alternativePagePaths(collections: DecisionPageCollections) {
+    const clusters = toClusters(collections);
     return clusters.alternatives.map(({ slug, content }) => {
         const comparison = clusters.comparisons.find(
             (page) => page.content.competitor.slug === content.competitor.slug
@@ -186,6 +223,19 @@ export function alternativePagePaths({
             },
         };
     });
+}
+
+/** The props for AG Grid's own alternative page and its `.md` twin, which share one content entry. */
+export function productAlternativePageProps(collections: DecisionPageCollections, slug: string) {
+    const clusters = toClusters(collections);
+    const entry = clusters.productAlternatives.find((page) => page.slug === slug);
+    if (!entry) {
+        throw new Error(`No productAlternativePages entry named ${slug}`);
+    }
+    return {
+        content: entry.content,
+        related: decisionRelatedPages({ current: alternativePageUrl(slug), clusters }),
+    };
 }
 
 /**

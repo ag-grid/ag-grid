@@ -1,8 +1,9 @@
 import { buildComparisonPageMarkdown } from '@ag-website-shared/markdown-pages/decision-pages/buildComparisonPageMarkdown';
 import { DISABLE_MARKDOWN_DOCS, SITE_URL } from '@constants';
+import { getDecisionPageCollections } from '@utils/decisionPageCollections';
 import { GRID_DECISION_SITE, comparePagePaths, type decisionRelatedPages } from '@utils/decisionPages';
 import { gridSiteFrontmatter } from '@utils/markdown-pages/gridFrontmatter';
-import { type CollectionEntry, getCollection } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
 
 // Served at /compare/<slug>.md, the markdown twin of each comparison page. It renders from the same
 // collection entry and related links as the page, so the two cannot drift.
@@ -11,10 +12,7 @@ export async function getStaticPaths() {
         return [];
     }
 
-    return comparePagePaths({
-        comparePages: await getCollection('comparePages'),
-        alternativePages: await getCollection('alternativePages'),
-    });
+    return comparePagePaths(await getDecisionPageCollections());
 }
 
 export function GET({

@@ -35,6 +35,19 @@ export const ALTERNATIVE_SECTIONS = {
 export const alternativePageName = (competitor: { name: string; shortName?: string }): string =>
     `${competitor.shortName ?? competitor.name} alternative`;
 
+/**
+ * Section labels for the product's own alternative page; the pricing, FAQ, get started and related
+ * sections share the labels above.
+ */
+export const PRODUCT_ALTERNATIVE_SECTIONS = {
+    betterFit: (productName: string): string => `When ${productName} is the better fit`,
+    editions: (productName: string): string => `${productName} Community and Enterprise`,
+    editionsLink: (productName: string): string => `${productName} Community vs Enterprise`,
+} as const;
+
+export const communityEditionName = (productName: string): string => `${productName} Community`;
+export const enterpriseEditionName = (productName: string): string => `${productName} Enterprise`;
+
 /** The link text from an alternative page to the full comparison with the same competitor. */
 export const fullComparisonLinkText = (comparisonName: string): string => `full ${comparisonName} comparison`;
 

@@ -7,12 +7,12 @@ import {
     featureCellLabel,
     formatLastUpdated,
 } from '@ag-website-shared/components/decision-pages/decisionPageText';
+import type { FeatureMatrixGroup } from '@ag-website-shared/components/decision-pages/featureMatrix';
 import type {
     ClaimBearingContent,
     DecisionPageFaqItem,
     DecisionPageSite,
     FeatureCell,
-    FeatureGroup,
     PricingCost,
     PricingRow,
     RelatedPageGroup,
@@ -65,26 +65,23 @@ export const heroMarkdown = ({
     ].join('\n'),
 ];
 
-/** One table per feature group, under a `###` heading each. */
-export const featureGroupsMarkdown = ({
+/** One table per feature group, under a `###` heading each; `columns` names the two cell columns. */
+export const featureMatrixMarkdown = ({
     groups,
-    productName,
-    competitorName,
+    columns,
     absolute,
 }: {
-    groups: FeatureGroup[];
-    productName: string;
-    competitorName: string;
+    groups: FeatureMatrixGroup[];
+    columns: [string, string];
     absolute: (url: string) => string;
 }): Block =>
     groups.flatMap((group) => [
         `### ${group.name}`,
         table(
-            ['Feature', productName, competitorName],
+            ['Feature', ...columns],
             group.rows.map((row) => [
                 row.docsUrl ? `[${cell(row.feature)}](${absolute(row.docsUrl)})` : cell(row.feature),
-                featureCell(row.product),
-                featureCell(row.competitor),
+                ...row.cells.map(featureCell),
             ])
         ),
     ]);

@@ -18,6 +18,7 @@ import {
 import styles from './DecisionPage.module.scss';
 import { COMPARISON_SECTIONS, comparisonPageName } from './decisionPageText';
 import ChooseIf from './sections/ChooseIf.astro';
+import { competitorFeatureMatrix } from './featureMatrix';
 import DecisionHero from './sections/DecisionHero.astro';
 import DecisionSection from './sections/DecisionSection.astro';
 import FeatureMatrix from './sections/FeatureMatrix.astro';
@@ -72,9 +73,8 @@ const competitor = {
 
 <DecisionSection id="features" heading={COMPARISON_SECTIONS.features} subHeading={content.features.subHeading}>
     <FeatureMatrix
-        groups={content.features.groups}
-        product={product}
-        competitor={competitor}
+        groups={competitorFeatureMatrix(content.features.groups)}
+        columns={[product, competitor]}
         resolveUrl={site.resolveUrl}
     />
 </DecisionSection>

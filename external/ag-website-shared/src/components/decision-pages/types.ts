@@ -105,19 +105,23 @@ export interface Competitor {
 }
 
 /** The fields every decision page has, whichever cluster it belongs to. */
-interface DecisionPageContentBase {
+interface DecisionPageCore {
     meta: DecisionPageMeta;
     /** Prefix for Plausible tagged-event names on this page's CTAs. */
     analyticsPrefix: string;
     technicalReviewer?: string;
     /** ISO date (`YYYY-MM-DD`) the page content was last reviewed, shown on the page. */
     lastUpdated: Date;
-    competitor: Competitor;
     hero: {
         heading: string;
         subHeading: string;
     };
     faq: DecisionPageFaqItem[];
+}
+
+/** The fields of a decision page about a competitor. */
+interface DecisionPageContentBase extends DecisionPageCore {
+    competitor: Competitor;
     /** Sources for competitor claims made in prose rather than in a table cell. */
     proseClaims: ProseClaim[];
 }
@@ -179,6 +183,43 @@ export interface AlternativePageContent extends DecisionPageContentBase {
     };
 }
 
+/** A feature row comparing the product's free Community edition with its Enterprise edition. */
+export interface EditionFeatureRow {
+    feature: string;
+    /** The product's own docs page for this feature, framework relative (e.g. `./pivoting/`). */
+    docsUrl?: string;
+    community: FeatureCell;
+    enterprise: FeatureCell;
+}
+
+export interface EditionFeatureGroup {
+    name: string;
+    rows: EditionFeatureRow[];
+}
+
+/**
+ * The product's own alternative page (`/alternatives/{product}-alternative/`), for people searching
+ * for an alternative to the product itself. It names no competitor and makes no competitor claims:
+ * it shows when a lighter library is enough, and when the free Community edition or Enterprise fits.
+ */
+export interface ProductAlternativePageContent extends DecisionPageCore {
+    lighterOption: {
+        /** e.g. `When a lighter library is enough`. */
+        heading: string;
+        reasons: string[];
+    };
+    /** When the product is the better fit, one card per reason. */
+    whyProduct: ProductReason[];
+    editions: {
+        subHeading: string;
+        groups: EditionFeatureGroup[];
+    };
+    pricing: {
+        subHeading: string;
+        product: PricingRow[];
+    };
+}
+
 /**
  * What the rendering site supplies to a decision page template: everything that differs between
  * AG Grid, AG Charts and AG Studio but is the same on every page of that site.
@@ -204,6 +245,8 @@ export interface DecisionPageSite {
         getStarted: string;
         demo: string;
         trial: string;
+        /** The product's Community vs Enterprise page, linked from the product's own alternative page. */
+        editions?: string;
     };
     getStarted: {
         heading: string;

@@ -12,14 +12,15 @@ import {
     type decisionRelatedPages,
     warnStaleClaims,
 } from '@utils/decisionPages';
+import { getDecisionPageCollections } from '@utils/decisionPageCollections';
 import { buildTechnicalReviewStructuredData } from '@utils/technicalReviewers';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
-import { type CollectionEntry, getCollection, getEntry } from 'astro:content';
+import { type CollectionEntry, getEntry } from 'astro:content';
 
 export async function getStaticPaths() {
-    const comparePages = await getCollection('comparePages');
-    warnStaleClaims('compare', comparePages);
-    return comparePagePaths({ comparePages, alternativePages: await getCollection('alternativePages') });
+    const collections = await getDecisionPageCollections();
+    warnStaleClaims('compare', collections.comparePages);
+    return comparePagePaths(collections);
 }
 
 type Props = {

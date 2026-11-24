@@ -3,6 +3,7 @@ import {
     alternativePageName,
     fullComparisonLinkText,
 } from '@ag-website-shared/components/decision-pages/decisionPageText';
+import { competitorFeatureMatrix } from '@ag-website-shared/components/decision-pages/featureMatrix';
 import type {
     AlternativePageContent,
     DecisionPageSite,
@@ -15,7 +16,7 @@ import { resolveMarkdownLinks } from '../landing-pages/buildLandingPageMarkdown'
 import { type SiteFrontmatterFields, buildMarkdownFrontmatter } from '../markdownFrontmatter';
 import {
     faqMarkdown,
-    featureGroupsMarkdown,
+    featureMatrixMarkdown,
     heroMarkdown,
     joinBlocks,
     pricingMarkdown,
@@ -74,7 +75,11 @@ export function buildAlternativePageMarkdown({
         ],
         [
             `## ${ALTERNATIVE_SECTIONS.atAGlance(productName, competitorName)}`,
-            ...featureGroupsMarkdown({ groups: content.features.groups, productName, competitorName, absolute }),
+            ...featureMatrixMarkdown({
+                groups: competitorFeatureMatrix(content.features.groups),
+                columns: [productName, competitorName],
+                absolute,
+            }),
             ...(comparison
                 ? [
                       `See the [${fullComparisonLinkText(comparison.title)}](${absolute(comparison.url)}) for every feature, pricing and licensing.`,

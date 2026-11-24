@@ -3,6 +3,7 @@ import {
     HERO_CTAS,
     chooseIfHeading,
 } from '@ag-website-shared/components/decision-pages/decisionPageText';
+import { competitorFeatureMatrix } from '@ag-website-shared/components/decision-pages/featureMatrix';
 import type {
     ComparisonPageContent,
     DecisionPageSite,
@@ -14,7 +15,7 @@ import { resolveMarkdownLinks } from '../landing-pages/buildLandingPageMarkdown'
 import { type SiteFrontmatterFields, buildMarkdownFrontmatter } from '../markdownFrontmatter';
 import {
     faqMarkdown,
-    featureGroupsMarkdown,
+    featureMatrixMarkdown,
     heroMarkdown,
     joinBlocks,
     pricingMarkdown,
@@ -72,7 +73,11 @@ export function buildComparisonPageMarkdown({
         [
             `## ${COMPARISON_SECTIONS.features}`,
             content.features.subHeading,
-            ...featureGroupsMarkdown({ groups: content.features.groups, productName, competitorName, absolute }),
+            ...featureMatrixMarkdown({
+                groups: competitorFeatureMatrix(content.features.groups),
+                columns: [productName, competitorName],
+                absolute,
+            }),
         ],
         [
             `## ${COMPARISON_SECTIONS.pricing}`,

@@ -6,15 +6,16 @@ import TechnicalReviewCredit from '@components/technical-review-credit/Technical
 import { DISABLE_MARKDOWN_DOCS } from '@constants';
 import Layout from '@layouts/Layout.astro';
 import { ALTERNATIVES_HUB_LINK, GRID_DECISION_SITE, alternativePagePaths, warnStaleClaims } from '@utils/decisionPages';
+import { getDecisionPageCollections } from '@utils/decisionPageCollections';
 import { buildTechnicalReviewStructuredData } from '@utils/technicalReviewers';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
-import { getCollection, getEntry } from 'astro:content';
+import { getEntry } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
 
 export async function getStaticPaths() {
-    const alternativePages = await getCollection('alternativePages');
-    warnStaleClaims('alternatives', alternativePages);
-    return alternativePagePaths({ comparePages: await getCollection('comparePages'), alternativePages });
+    const collections = await getDecisionPageCollections();
+    warnStaleClaims('alternatives', collections.alternativePages);
+    return alternativePagePaths(collections);
 }
 
 type Props = ReturnType<typeof alternativePagePaths>[number]['props'];

@@ -46,19 +46,37 @@ export function createDecisionPageSchemaParts({ reviewerKeys, now = new Date() }
         licence: z.string(),
     });
 
+    /** The fields every decision page has. */
+    const core = {
+        meta: z.object({
+            title: z.string(),
+            description: z.string(),
+            targetTerm: z.string(),
+            monthlySearches: z.number().int().nonnegative().optional(),
+            demandSource: z.string().optional(),
+        }),
+        analyticsPrefix: z.string(),
+        technicalReviewer: z.enum(reviewerKeys).optional(),
+        lastUpdated: z.coerce.date(),
+        hero: z.object({
+            heading: z.string(),
+            subHeading: z.string(),
+        }),
+        faq: z.array(
+            z.object({
+                question: z.string(),
+                answer: z.string(),
+            })
+        ),
+    };
+
     return {
-        /** The fields every decision page has. */
+        core,
+        featureCell,
+        pricingRow,
+        /** The fields every page about a competitor has. */
         base: {
-            meta: z.object({
-                title: z.string(),
-                description: z.string(),
-                targetTerm: z.string(),
-                monthlySearches: z.number().int().nonnegative().optional(),
-                demandSource: z.string().optional(),
-            }),
-            analyticsPrefix: z.string(),
-            technicalReviewer: z.enum(reviewerKeys).optional(),
-            lastUpdated: z.coerce.date(),
+            ...core,
             competitor: z.object({
                 name: z.string(),
                 shortName: z.string().optional(),
@@ -66,16 +84,6 @@ export function createDecisionPageSchemaParts({ reviewerKeys, now = new Date() }
                 url: z.string().url(),
                 logo: z.string().startsWith('/').optional(),
             }),
-            hero: z.object({
-                heading: z.string(),
-                subHeading: z.string(),
-            }),
-            faq: z.array(
-                z.object({
-                    question: z.string(),
-                    answer: z.string(),
-                })
-            ),
             // Every page makes competitor claims in its prose, so it must source at least one; an
             // empty list would leave that prose unchecked.
             proseClaims: z
