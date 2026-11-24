@@ -153,7 +153,7 @@ const GridExample = () => {
                             </div>
                         )}
 
-                        <div>
+                        <div className="controls-row">
                             <button onClick={resetGrid}>Reset Grid</button>
                         </div>
                     </div>

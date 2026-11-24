@@ -24,7 +24,7 @@ documentation/ag-grid-docs/src/content/docs/feature-name/
         ├── main.ts          # Main example code
         ├── index.html       # HTML template
         ├── example.spec.ts  # Playwright test (required — see below)
-        ├── styles.css       # Optional — required when using a wrapper div
+        ├── styles.css       # Optional — example-specific styles
         └── data.ts          # Optional data file
 ```
 
@@ -154,33 +154,29 @@ Use a single div with `height: 100%`:
 
 ### Grid with buttons or controls
 
-Wrap everything in an `example-wrapper` div and add a `styles.css`:
+Put the controls in `.example-controls`, one `.controls-row` per line of controls, and wrap them and the grid in `.example-wrapper`:
 
-**index.html:**
 ```html
 <div class="example-wrapper">
-    <div style="margin-bottom: 1rem">
-        <button onclick="onDoSomething()">Do Something</button>
+    <div class="example-controls">
+        <div class="controls-row">
+            <button onclick="onDoSomething()">Do Something</button>
+        </div>
     </div>
+
     <div id="myGrid"></div>
 </div>
 ```
 
-**styles.css:**
-```css
-.example-wrapper {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-}
+The shared example stylesheet, linked into every example, styles these classes. The controls sit at the top, the grid fills the remaining height, and the gap between them is standard. Don't add layout CSS or inline spacing for them.
 
-#myGrid {
-    flex: 1 1 0px;
-    width: 100%;
+When the grid sizes itself to its rows (`domLayout: 'autoHeight'` or `'print'`), leave out `.example-wrapper`: it would hold the grid at a fixed height. Give the controls their gap in `styles.css` instead:
+
+```css
+.example-controls {
+    margin-bottom: var(--controls-gap);
 }
 ```
-
-The flexbox layout makes the controls sit at the top and the grid fills the remaining vertical space.
 
 ## Example Spec File (Required)
 
