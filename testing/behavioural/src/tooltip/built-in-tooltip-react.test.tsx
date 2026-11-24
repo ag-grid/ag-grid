@@ -32,7 +32,7 @@ describe('Built-in tooltip components (React)', () => {
         vi.restoreAllMocks();
     });
 
-    test('read-only floating previews follow the header across strict-mode mounts', async () => {
+    test('read-only floating previews follow the input across strict-mode mounts', async () => {
         for (let mount = 0; mount < 2; mount++) {
             const rendered = render(
                 <StrictMode>
@@ -63,13 +63,12 @@ describe('Built-in tooltip components (React)', () => {
             });
             vi.spyOn(input, 'scrollWidth', 'get').mockReturnValue(2000);
             vi.spyOn(input, 'clientWidth', 'get').mockReturnValue(100);
-            const header = input.closest<HTMLElement>('.ag-floating-filter')!;
-            act(() => header.focus());
+            act(() => input.focus());
             await waitFor(() => expect(getVisibleTooltips()[0]).toHaveTextContent(input.value));
-            expect(header).toHaveAccessibleDescription(input.value);
+            expect(input).toHaveAccessibleDescription(input.value);
             rendered.unmount();
             expect(getVisibleTooltips()).toEqual([]);
-            expect(header).not.toHaveAttribute('aria-describedby');
+            expect(input).not.toHaveAttribute('aria-describedby');
         }
     });
 

@@ -98,7 +98,9 @@ export abstract class TextInputFloatingFilter<
         this.applyActive = _isUseApplyButton(filterParams as TextFilterParams);
 
         if (readOnly) {
-            inputSvc.setValueClearedListener(() => _clearFloatingFilterModel(this.beans, this.params.column as AgColumn));
+            inputSvc.setValueClearedListener(() =>
+                _clearFloatingFilterModel(this.beans, this.params.column as AgColumn)
+            );
             return;
         }
 

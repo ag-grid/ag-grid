@@ -619,7 +619,11 @@ describe('Floating filter editing', () => {
             { country: 'France', age: 40, date: '2024-09-01' },
         ];
         const setFilter: ColDef = { field: 'country', filter: 'agSetColumnFilter' };
-        const readOnlyText: ColDef = { field: 'country', filter: 'agTextColumnFilter', filterParams: { readOnly: true } };
+        const readOnlyText: ColDef = {
+            field: 'country',
+            filter: 'agTextColumnFilter',
+            filterParams: { readOnly: true },
+        };
 
         const createWithSetFilterApplied = async () => {
             const api = await gridsManager.createGridAndWait('grid1', {
@@ -752,7 +756,8 @@ describe('Floating filter editing', () => {
                 getGridElement(api)!.querySelector<HTMLInputElement>('.ag-group-floating-filter input')!;
             await waitFor(() => expect(input().value).toBe('(1) Italy'));
             expect(input().readOnly).toBe(true);
-            const clearButton = input().parentElement!.querySelector<HTMLButtonElement>('.ag-input-field-clear-button')!;
+            const clearButton =
+                input().parentElement!.querySelector<HTMLButtonElement>('.ag-input-field-clear-button')!;
             expect(clearButton.closest('.ag-hidden')).toBeNull();
 
             clearButton.click();
