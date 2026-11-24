@@ -1,3 +1,4 @@
 {
-    "extras": ["alasql"]
+    "extras": ["alasql"],
+    "hideConsoleLogger": true
 }
