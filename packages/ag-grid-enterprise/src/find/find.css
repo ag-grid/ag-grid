@@ -33,18 +33,18 @@
     background-color: var(--ag-pinned-row-text-color, var(--ag-cell-text-color));
 }
 
-.ag-row-selected .ag-find-active-match::after {
+:where(.ag-row).ag-row-selected .ag-find-active-match::after {
     background-color: var(--ag-selected-row-text-color, var(--ag-cell-text-color));
 }
 
-:where(.ag-row-pinned-source).ag-row-selected .ag-find-active-match::after {
+:where(.ag-row.ag-row-pinned-source).ag-row-selected .ag-find-active-match::after {
     background-color: var(
         --ag-selected-row-text-color,
         var(--ag-pinned-source-row-text-color, var(--ag-cell-text-color))
     );
 }
 
-:where(.ag-row-pinned).ag-row-selected .ag-find-active-match::after {
+:where(.ag-row.ag-row-pinned).ag-row-selected .ag-find-active-match::after {
     background-color: var(--ag-selected-row-text-color, var(--ag-pinned-row-text-color, var(--ag-cell-text-color)));
 }
 
