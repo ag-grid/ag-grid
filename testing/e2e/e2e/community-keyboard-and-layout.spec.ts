@@ -1,5 +1,7 @@
 import type { Locator, Page } from '@playwright/test';
 import { expect, test } from '@playwright/test';
+import fs from 'node:fs';
+import path from 'node:path';
 
 import { mountGrid } from '../src/mountGrid';
 
@@ -401,6 +403,27 @@ test.describe('community grid in a real browser', () => {
 
             await page.addStyleTag({ content: printCss });
             await withApi((api) => api.setGridOption('domLayout', 'print'));
+
+            await expectSizedByColumns(page, grid);
+        });
+
+        test('a grid with a legacy CSS theme in print layout is as wide as its columns', async ({ page }) => {
+            const styles = path.join(__dirname, '../../../packages/ag-grid-community/styles');
+            const legacyCss = ['ag-grid.css', 'ag-theme-quartz.css']
+                .map((file) => fs.readFileSync(path.join(styles, file), 'utf8'))
+                .join('\n');
+            const { grid } = await mountGrid(page, {
+                width: 300,
+                height: 300,
+                className: 'ag-theme-quartz',
+                css: legacyCss + printCss,
+                options: () => ({
+                    theme: 'legacy',
+                    columnDefs: Array.from({ length: 7 }, (_, i) => ({ field: `col${i}`, width: 100 })),
+                    rowData: [],
+                    domLayout: 'print',
+                }),
+            });
 
             await expectSizedByColumns(page, grid);
         });
