@@ -89,14 +89,13 @@ describe('alternative page content', () => {
             expect(result.error?.issues ?? []).toEqual([]);
         });
 
-        // The intro is about AG Grid rather than the competitor, so the term is checked where the
-        // page names what it replaces.
-        test('targets its search term in the title and the H1', () => {
+        test('targets its search term in the title, the H1 and the intro', () => {
             const content = result.data as AlternativePageSource;
             const term = content.meta.targetTerm.toLowerCase();
 
             expect(content.meta.title.toLowerCase()).toContain(term);
             expect(content.hero.heading.toLowerCase()).toContain(term);
+            expect(content.hero.subHeading.toLowerCase()).toContain(term);
         });
 
         test('is named after the competitor it replaces', () => {
