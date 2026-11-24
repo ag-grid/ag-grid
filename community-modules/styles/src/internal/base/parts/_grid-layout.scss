@@ -567,11 +567,11 @@
         }
     }
 
-    .ag-row-pinned-source .ag-find-active-match::after {
+    :where(.ag-row-pinned-source) .ag-find-active-match::after {
         background-color: var(--ag-pinned-source-row-text-color, var(--ag-data-color));
     }
 
-    .ag-row-pinned .ag-find-active-match::after {
+    :where(.ag-row-pinned) .ag-find-active-match::after {
         background-color: var(--ag-pinned-row-text-color, var(--ag-data-color));
     }
 
@@ -579,14 +579,14 @@
         background-color: var(--ag-selected-row-text-color, var(--ag-data-color));
     }
 
-    .ag-row-pinned-source.ag-row-selected .ag-find-active-match::after {
+    :where(.ag-row-pinned-source).ag-row-selected .ag-find-active-match::after {
         background-color: var(
             --ag-selected-row-text-color,
             var(--ag-pinned-source-row-text-color, var(--ag-data-color))
         );
     }
 
-    .ag-row-pinned.ag-row-selected .ag-find-active-match::after {
+    :where(.ag-row-pinned).ag-row-selected .ag-find-active-match::after {
         background-color: var(--ag-selected-row-text-color, var(--ag-pinned-row-text-color, var(--ag-data-color)));
     }
 }
