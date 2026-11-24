@@ -1,7 +1,7 @@
 // 1M-row grid creation to first render, across module sets (minimal, all community, all enterprise), features (flat,
-// row selection, row grouping) and two 20-column sets: 3 category fields plus 17 numeric ones, and 3 category fields,
-// a boolean, a date-time and 15 numeric ones. Each setup runs with both, so the cost of the boolean and date-time cell
-// paths shows as the gap between the two.
+// row selection, row grouping) and two 20-column data sets: 3 category fields plus 17 numeric ones, and 3 category
+// fields, a boolean, a date-time and 15 numeric ones. Each setup runs with both, so the gap between the two shows the
+// cost of the boolean and date-time data and cell paths.
 //
 // Opt-in, as each call takes seconds: run with `./benches.sh --large "large-data"`. The call is one createGrid
 // plus the frame flush that renders the first rows; the previous call's grid is destroyed untimed.
@@ -11,12 +11,11 @@ import type { ColDef, GridOptions, Module } from 'ag-grid-community';
 import { AllCommunityModule, ClientSideRowModelModule, RowSelectionModule, getGridElement } from 'ag-grid-community';
 import { AllEnterpriseModule, RowGroupingModule } from 'ag-grid-enterprise';
 
+import type { LargeRow } from './bench-data';
 import { LARGE_ROW_COUNT, buildLargeData } from './bench-data';
 import { BenchGridsManager, bench, untimedPrepare } from './bench-utils';
 
 const COLUMN_COUNT = 20;
-// Both column sets read the same rows, so only one 1M-row array is held in memory.
-const rowData = buildLargeData(COLUMN_COUNT - 3);
 
 const valueColumns = (count: number): ColDef[] =>
     Array.from({ length: count }, (_, c) => ({ field: `v${c}`, width: 100 }));
@@ -25,10 +24,15 @@ interface ColumnSet {
     name: string;
     /** The columns after the three category fields. */
     columns: () => ColDef[];
+    buildRows: () => LargeRow[];
 }
 
 const columnSets: ColumnSet[] = [
-    { name: 'numeric', columns: () => valueColumns(COLUMN_COUNT - 3) },
+    {
+        name: 'numeric',
+        columns: () => valueColumns(COLUMN_COUNT - 3),
+        buildRows: () => buildLargeData(COLUMN_COUNT - 3, false),
+    },
     {
         name: 'mixed types',
         // `Date` values are inferred as `date`, so the type is set to take the date-time path.
@@ -37,6 +41,7 @@ const columnSets: ColumnSet[] = [
             { field: 'recorded', cellDataType: 'dateTime' },
             ...valueColumns(COLUMN_COUNT - 5),
         ],
+        buildRows: () => buildLargeData(COLUMN_COUNT - 5, true),
     },
 ];
 
@@ -98,9 +103,21 @@ suite(`1M rows — grid creation to first render (${COLUMN_COUNT} columns)`, () 
         (globalThis as { gc?: () => void }).gc?.();
     };
 
-    for (const feature of features) {
-        for (const { name, modules } of moduleSets(feature)) {
-            for (const columnSet of columnSets) {
+    // One column set's rows at a time: built in the first setup of its benches, after the previous set's are released.
+    let rowData: LargeRow[] = [];
+    let rowDataSet: ColumnSet | undefined;
+    const useRows = (columnSet: ColumnSet) => {
+        if (rowDataSet !== columnSet) {
+            rowData = [];
+            (globalThis as { gc?: () => void }).gc?.();
+            rowData = columnSet.buildRows();
+            rowDataSet = columnSet;
+        }
+    };
+
+    for (const columnSet of columnSets) {
+        for (const feature of features) {
+            for (const { name, modules } of moduleSets(feature)) {
                 const gridOptions = feature.gridOptions(columnSet);
                 bench(
                     `${feature.name}, ${name} modules, ${columnSet.name} columns, ${LARGE_ROW_COUNT} rows`,
@@ -111,6 +128,7 @@ suite(`1M rows — grid creation to first render (${COLUMN_COUNT} columns)`, () 
                     {
                         setup: async () => {
                             await gridsManager.reset();
+                            useRows(columnSet);
                             const api = gridsManager.createGrid('L', { ...gridOptions, rowData }, { modules });
                             api.flushAllAnimationFrames();
                             // A grid that rendered nothing would read as a very fast bench.
