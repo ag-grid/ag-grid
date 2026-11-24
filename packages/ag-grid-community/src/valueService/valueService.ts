@@ -10,6 +10,8 @@ import type { EditService } from '../edit/editService';
 import type { AgColumn } from '../entities/agColumn';
 import { _resolvePivotColumnForRow } from '../entities/agColumn';
 import type {
+    AggValueGetterFunc,
+    AggValueGetterParams,
     ColDef,
     ColKey,
     KeyCreatorParams,
@@ -279,7 +281,14 @@ export class ValueService extends BeanStub implements NamedBean {
     // pending-edit lookup. Callers that may hold a pivot result column (pivot edit, API reads, pivot
     // aggregation) must pre-resolve via `_resolvePivotColumnForRow`. Run the getValue benchmark to verify.
     // This does NOT resolve pending edit values (edit or batch). `_getFilterValueSource` mirrors its precedence.
-    public getValueFromData(column: AgColumn, rowNode: IRowNode, ignoreAggData: boolean = false): any {
+    // `colDef.aggValueGetter` is applied at the end: a column without it pays one property read. Pass
+    // `skipAggValueGetter` for reads that need the stored value, such as parent aggregation and group keys.
+    public getValueFromData(
+        column: AgColumn,
+        rowNode: IRowNode,
+        ignoreAggData: boolean = false,
+        skipAggValueGetter: boolean = false
+    ): any {
         // An actively-aggregating calc col aggregates its per-leaf results, so group rows read aggData
         // instead of re-evaluating the formula (gated on the active state, not just a defined aggFunc).
         const evaluateFormula = column.isCalculatedCol && !(column.aggregationActive && rowNode.group);
@@ -293,6 +302,12 @@ export class ValueService extends BeanStub implements NamedBean {
             result = this.executeValueGetter(cellValueGetter, rowNode.data, column, rowNode);
         }
 
+        if (!ignoreAggData && !skipAggValueGetter) {
+            const aggValueGetter = column.aggValueGetter;
+            if (aggValueGetter && this.isAggValueGetterRow(column, rowNode)) {
+                return this.applyAggValueGetter(aggValueGetter, column, rowNode, result);
+            }
+        }
         return result;
     }
 
@@ -567,7 +582,23 @@ export class ValueService extends BeanStub implements NamedBean {
         }
 
         // Get old value from stored data, ignoring any pending edit state
-        const oldValue = this.getValueFromData(column, rowNode);
+        let oldValue;
+        let aggGetterEdit: 'setter' | 'reject' | undefined;
+        if (column.aggValueGetter && this.isAggValueGetterRow(column, rowNode)) {
+            // The cell shows the getter's result. On a group row with a group row setter, only a function
+            // `groupRowValueSetter` writes it, never into the group's own field.
+            const editSvc = this.rowGroupingEditValueSvc;
+            aggGetterEdit = rowNode.group ? editSvc?.getAggGetterEditMode(rowNode, column) : undefined;
+            if (aggGetterEdit === 'reject') {
+                return false;
+            }
+            // The old value is in the new value's units: the shown value for an edit through the function setter,
+            // the stored value for a field write or a child group written by distribution.
+            const editsShownValue = aggGetterEdit === 'setter' && !editSvc!.isDistributing(column);
+            oldValue = this.getValueFromData(column, rowNode, false, !editsShownValue);
+        } else {
+            oldValue = this.getValueFromData(column, rowNode);
+        }
 
         const data = rowNode.data;
         const params: ValueSetterParams = {
@@ -583,7 +614,7 @@ export class ValueService extends BeanStub implements NamedBean {
 
         let valueSetterChanged = false;
 
-        if (data) {
+        if (data && aggGetterEdit !== 'setter') {
             const externalFormulaResult = this.handleExternalFormulaChange({
                 column,
                 eventSource,
@@ -666,8 +697,9 @@ export class ValueService extends BeanStub implements NamedBean {
 
         this.valueCache?.onDataChanged();
 
+        // Stored value: with `aggValueGetter`, the function group row setter passes the typed value as the override.
         const savedValue =
-            savedValueOverride === undefined ? this.getValueFromData(column, rowNode) : savedValueOverride;
+            savedValueOverride === undefined ? this.getValueFromData(column, rowNode, false, true) : savedValueOverride;
 
         this.dispatchCellValueChangedEvent(rowNode, params, savedValue, eventSource);
         const pinnedSibling = (rowNode as RowNode).pinnedSibling;
@@ -879,6 +911,44 @@ export class ValueService extends BeanStub implements NamedBean {
             valueCache.setValue(rowNode as RowNode, column.colId, result);
         }
         return result;
+    }
+
+    /**
+     * Whether `colDef.aggValueGetter` computes this cell's value: an aggregated column on a group, total, grand total
+     * or tree data parent row. Pivot result columns are never aggregation-active, so they are excluded with leaf rows
+     * and group columns.
+     */
+    public appliesAggValueGetter(column: AgColumn, rowNode: IRowNode): boolean {
+        return !!column.aggValueGetter && this.isAggValueGetterRow(column, rowNode);
+    }
+
+    /** `appliesAggValueGetter` without the `aggValueGetter` check, for callers that have already made it. */
+    private isAggValueGetterRow(column: AgColumn, rowNode: IRowNode): boolean {
+        // `footer` admits the SSRM grand total row, which is not a group row.
+        return !!(rowNode.group || rowNode.footer) && column.aggregationActive && !column.showRowGroup;
+    }
+
+    private applyAggValueGetter(
+        aggValueGetter: AggValueGetterFunc,
+        column: AgColumn,
+        rowNode: IRowNode,
+        value: any
+    ): any {
+        const aggData = rowNode.aggData;
+        const params: AggValueGetterParams = {
+            api: this.gridApi,
+            context: this.gridOptions.context,
+            data: rowNode.data,
+            node: rowNode,
+            column,
+            colDef: column.colDef,
+            getValue: (colKey) => this.getValueCallback(rowNode, colKey),
+            value,
+            aggFunc: column.aggFunc,
+            aggData,
+            aggValue: aggData?.[column.colId],
+        };
+        return aggValueGetter(params);
     }
 
     private getValueCallback(node: IRowNode, colKey: ColKey): any {

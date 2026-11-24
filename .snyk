@@ -1272,7 +1272,7 @@ ignore:
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T09:31:45.130Z
-    - '@nx/workspace@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6 > brace-expansion@2.1.4':
+    - '@nx/workspace@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6 > brace-expansion@2.1.4':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
@@ -1287,17 +1287,17 @@ ignore:
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T09:31:45.113Z
-    - '@nx/web@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6 > brace-expansion@2.1.4':
+    - '@nx/web@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6 > brace-expansion@2.1.4':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T09:31:45.106Z
-    - '@nx/web@20.8.4 > @nx/js@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6 > brace-expansion@2.1.4':
+    - '@nx/web@20.8.4 > @nx/js@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6 > brace-expansion@2.1.4':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T09:31:45.102Z
-    - '@nx/web@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6 > brace-expansion@2.1.4':
+    - '@nx/web@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6 > brace-expansion@2.1.4':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
@@ -1327,17 +1327,17 @@ ignore:
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T09:31:45.072Z
-    - '@nx/rollup@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6 > brace-expansion@2.1.4':
+    - '@nx/rollup@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6 > brace-expansion@2.1.4':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T09:31:45.070Z
-    - '@nx/rollup@20.8.4 > @nx/js@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6 > brace-expansion@2.1.4':
+    - '@nx/rollup@20.8.4 > @nx/js@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6 > brace-expansion@2.1.4':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T09:31:45.067Z
-    - '@nx/rollup@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6 > brace-expansion@2.1.4':
+    - '@nx/rollup@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6 > brace-expansion@2.1.4':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
@@ -1362,27 +1362,27 @@ ignore:
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T09:31:45.046Z
-    - '@nx/react@20.8.4 > @nx/module-federation@20.8.4 > @nx/web@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6 > brace-expansion@2.1.4':
+    - '@nx/react@20.8.4 > @nx/module-federation@20.8.4 > @nx/web@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6 > brace-expansion@2.1.4':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T09:31:45.039Z
-    - '@nx/react@20.8.4 > @nx/eslint@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6 > brace-expansion@2.1.4':
+    - '@nx/react@20.8.4 > @nx/eslint@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6 > brace-expansion@2.1.4':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T09:31:45.031Z
-    - '@nx/react@20.8.4 > @nx/module-federation@20.8.4 > @nx/web@20.8.4 > @nx/js@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6 > brace-expansion@2.1.4':
+    - '@nx/react@20.8.4 > @nx/module-federation@20.8.4 > @nx/web@20.8.4 > @nx/js@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6 > brace-expansion@2.1.4':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T09:31:45.028Z
-    - '@nx/react@20.8.4 > @nx/module-federation@20.8.4 > @nx/web@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6 > brace-expansion@2.1.4':
+    - '@nx/react@20.8.4 > @nx/module-federation@20.8.4 > @nx/web@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6 > brace-expansion@2.1.4':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T09:31:45.023Z
-    - '@nx/react@20.8.4 > @nx/eslint@20.8.4 > @nx/js@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6 > brace-expansion@2.1.4':
+    - '@nx/react@20.8.4 > @nx/eslint@20.8.4 > @nx/js@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6 > brace-expansion@2.1.4':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
@@ -1397,7 +1397,7 @@ ignore:
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T09:31:45.004Z
-    - '@nx/react@20.8.4 > @nx/eslint@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6 > brace-expansion@2.1.4':
+    - '@nx/react@20.8.4 > @nx/eslint@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6 > brace-expansion@2.1.4':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
@@ -1417,7 +1417,7 @@ ignore:
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T09:31:44.981Z
-    - '@nx/react@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6 > brace-expansion@2.1.4':
+    - '@nx/react@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6 > brace-expansion@2.1.4':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
@@ -1442,12 +1442,12 @@ ignore:
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T09:31:44.952Z
-    - '@nx/js@20.8.4 > @nx/workspace@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6 > brace-expansion@2.1.4':
+    - '@nx/js@20.8.4 > @nx/workspace@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6 > brace-expansion@2.1.4':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T09:31:44.948Z
-    - '@nx/js@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6 > brace-expansion@2.1.4':
+    - '@nx/js@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6 > brace-expansion@2.1.4':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
@@ -1467,17 +1467,17 @@ ignore:
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T09:31:44.931Z
-    - '@nx/eslint-plugin@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6 > brace-expansion@2.1.4':
+    - '@nx/eslint-plugin@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6 > brace-expansion@2.1.4':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T09:31:44.925Z
-    - '@nx/eslint-plugin@20.8.4 > @nx/js@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6 > brace-expansion@2.1.4':
+    - '@nx/eslint-plugin@20.8.4 > @nx/js@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6 > brace-expansion@2.1.4':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T09:31:44.921Z
-    - '@nx/eslint-plugin@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6 > brace-expansion@2.1.4':
+    - '@nx/eslint-plugin@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6 > brace-expansion@2.1.4':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
@@ -1507,17 +1507,17 @@ ignore:
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T09:31:44.887Z
-    - '@nx/eslint@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6 > brace-expansion@2.1.4':
+    - '@nx/eslint@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6 > brace-expansion@2.1.4':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T09:31:44.880Z
-    - '@nx/eslint@20.8.4 > @nx/js@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6 > brace-expansion@2.1.4':
+    - '@nx/eslint@20.8.4 > @nx/js@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6 > brace-expansion@2.1.4':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T09:31:44.873Z
-    - '@nx/eslint@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6 > brace-expansion@2.1.4':
+    - '@nx/eslint@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6 > brace-expansion@2.1.4':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
@@ -1542,17 +1542,17 @@ ignore:
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T09:31:44.852Z
-    - '@nx/esbuild@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6 > brace-expansion@2.1.4':
+    - '@nx/esbuild@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6 > brace-expansion@2.1.4':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T09:31:44.848Z
-    - '@nx/esbuild@20.8.4 > @nx/js@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6 > brace-expansion@2.1.4':
+    - '@nx/esbuild@20.8.4 > @nx/js@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6 > brace-expansion@2.1.4':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T09:31:44.844Z
-    - '@nx/esbuild@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6 > brace-expansion@2.1.4':
+    - '@nx/esbuild@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6 > brace-expansion@2.1.4':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
@@ -1582,7 +1582,7 @@ ignore:
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T09:31:44.806Z
-    - '@nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6 > brace-expansion@2.1.4':
+    - '@nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6 > brace-expansion@2.1.4':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
@@ -1663,7 +1663,7 @@ ignore:
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T09:30:45.964Z
-    - '@nx/workspace@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6 > brace-expansion@2.1.4':
+    - '@nx/workspace@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6 > brace-expansion@2.1.4':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
@@ -1678,17 +1678,17 @@ ignore:
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T09:30:45.952Z
-    - '@nx/web@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6 > brace-expansion@2.1.4':
+    - '@nx/web@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6 > brace-expansion@2.1.4':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T09:30:45.946Z
-    - '@nx/web@20.8.4 > @nx/js@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6 > brace-expansion@2.1.4':
+    - '@nx/web@20.8.4 > @nx/js@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6 > brace-expansion@2.1.4':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T09:30:45.941Z
-    - '@nx/web@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6 > brace-expansion@2.1.4':
+    - '@nx/web@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6 > brace-expansion@2.1.4':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
@@ -1718,17 +1718,17 @@ ignore:
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T09:30:45.921Z
-    - '@nx/rollup@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6 > brace-expansion@2.1.4':
+    - '@nx/rollup@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6 > brace-expansion@2.1.4':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T09:30:45.916Z
-    - '@nx/rollup@20.8.4 > @nx/js@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6 > brace-expansion@2.1.4':
+    - '@nx/rollup@20.8.4 > @nx/js@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6 > brace-expansion@2.1.4':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T09:30:45.910Z
-    - '@nx/rollup@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6 > brace-expansion@2.1.4':
+    - '@nx/rollup@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6 > brace-expansion@2.1.4':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
@@ -1753,27 +1753,27 @@ ignore:
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T09:30:45.883Z
-    - '@nx/react@20.8.4 > @nx/module-federation@20.8.4 > @nx/web@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6 > brace-expansion@2.1.4':
+    - '@nx/react@20.8.4 > @nx/module-federation@20.8.4 > @nx/web@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6 > brace-expansion@2.1.4':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T09:30:45.879Z
-    - '@nx/react@20.8.4 > @nx/eslint@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6 > brace-expansion@2.1.4':
+    - '@nx/react@20.8.4 > @nx/eslint@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6 > brace-expansion@2.1.4':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T09:30:45.875Z
-    - '@nx/react@20.8.4 > @nx/module-federation@20.8.4 > @nx/web@20.8.4 > @nx/js@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6 > brace-expansion@2.1.4':
+    - '@nx/react@20.8.4 > @nx/module-federation@20.8.4 > @nx/web@20.8.4 > @nx/js@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6 > brace-expansion@2.1.4':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T09:30:45.873Z
-    - '@nx/react@20.8.4 > @nx/module-federation@20.8.4 > @nx/web@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6 > brace-expansion@2.1.4':
+    - '@nx/react@20.8.4 > @nx/module-federation@20.8.4 > @nx/web@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6 > brace-expansion@2.1.4':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T09:30:45.866Z
-    - '@nx/react@20.8.4 > @nx/eslint@20.8.4 > @nx/js@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6 > brace-expansion@2.1.4':
+    - '@nx/react@20.8.4 > @nx/eslint@20.8.4 > @nx/js@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6 > brace-expansion@2.1.4':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
@@ -1788,7 +1788,7 @@ ignore:
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T09:30:45.843Z
-    - '@nx/react@20.8.4 > @nx/eslint@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6 > brace-expansion@2.1.4':
+    - '@nx/react@20.8.4 > @nx/eslint@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6 > brace-expansion@2.1.4':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
@@ -1808,7 +1808,7 @@ ignore:
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T09:30:45.830Z
-    - '@nx/react@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6 > brace-expansion@2.1.4':
+    - '@nx/react@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6 > brace-expansion@2.1.4':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
@@ -1833,12 +1833,12 @@ ignore:
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T09:30:45.796Z
-    - '@nx/js@20.8.4 > @nx/workspace@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6 > brace-expansion@2.1.4':
+    - '@nx/js@20.8.4 > @nx/workspace@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6 > brace-expansion@2.1.4':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T09:30:45.792Z
-    - '@nx/js@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6 > brace-expansion@2.1.4':
+    - '@nx/js@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6 > brace-expansion@2.1.4':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
@@ -1858,17 +1858,17 @@ ignore:
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T09:30:45.777Z
-    - '@nx/eslint-plugin@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6 > brace-expansion@2.1.4':
+    - '@nx/eslint-plugin@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6 > brace-expansion@2.1.4':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T09:30:45.771Z
-    - '@nx/eslint-plugin@20.8.4 > @nx/js@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6 > brace-expansion@2.1.4':
+    - '@nx/eslint-plugin@20.8.4 > @nx/js@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6 > brace-expansion@2.1.4':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T09:30:45.765Z
-    - '@nx/eslint-plugin@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6 > brace-expansion@2.1.4':
+    - '@nx/eslint-plugin@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6 > brace-expansion@2.1.4':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
@@ -1898,17 +1898,17 @@ ignore:
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T09:30:45.740Z
-    - '@nx/eslint@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6 > brace-expansion@2.1.4':
+    - '@nx/eslint@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6 > brace-expansion@2.1.4':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T09:30:45.737Z
-    - '@nx/eslint@20.8.4 > @nx/js@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6 > brace-expansion@2.1.4':
+    - '@nx/eslint@20.8.4 > @nx/js@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6 > brace-expansion@2.1.4':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T09:30:45.733Z
-    - '@nx/eslint@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6 > brace-expansion@2.1.4':
+    - '@nx/eslint@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6 > brace-expansion@2.1.4':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
@@ -1933,17 +1933,17 @@ ignore:
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T09:30:45.713Z
-    - '@nx/esbuild@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6 > brace-expansion@2.1.4':
+    - '@nx/esbuild@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6 > brace-expansion@2.1.4':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T09:30:45.709Z
-    - '@nx/esbuild@20.8.4 > @nx/js@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6 > brace-expansion@2.1.4':
+    - '@nx/esbuild@20.8.4 > @nx/js@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6 > brace-expansion@2.1.4':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T09:30:45.704Z
-    - '@nx/esbuild@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6 > brace-expansion@2.1.4':
+    - '@nx/esbuild@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6 > brace-expansion@2.1.4':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
@@ -1973,7 +1973,7 @@ ignore:
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T09:30:45.632Z
-    - '@nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6 > brace-expansion@2.1.4':
+    - '@nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6 > brace-expansion@2.1.4':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
@@ -2942,107 +2942,107 @@ ignore:
         reason: Build dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
-    - '@nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6':
+    - '@nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6':
         reason: Build dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
-    - '@nx/esbuild@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6':
+    - '@nx/esbuild@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6':
         reason: Build dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
-    - '@nx/eslint@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6':
+    - '@nx/eslint@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6':
         reason: Testing dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
-    - '@nx/eslint-plugin@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6':
+    - '@nx/eslint-plugin@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6':
         reason: Build dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
-    - '@nx/js@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6':
+    - '@nx/js@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6':
         reason: Build dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
-    - '@nx/react@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6':
+    - '@nx/react@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6':
         reason: Build dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
-    - '@nx/rollup@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6':
+    - '@nx/rollup@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6':
         reason: Build dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
-    - '@nx/web@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6':
+    - '@nx/web@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6':
         reason: Build dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
-    - '@nx/workspace@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6':
+    - '@nx/workspace@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6':
         reason: Build dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
-    - '@nx/react@20.8.4 > @nx/eslint@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6':
+    - '@nx/react@20.8.4 > @nx/eslint@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6':
         reason: Testing dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
-    - '@nx/esbuild@20.8.4 > @nx/js@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6':
+    - '@nx/esbuild@20.8.4 > @nx/js@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6':
         reason: Build dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
-    - '@nx/eslint@20.8.4 > @nx/js@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6':
+    - '@nx/eslint@20.8.4 > @nx/js@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6':
         reason: Testing dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
-    - '@nx/eslint-plugin@20.8.4 > @nx/js@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6':
+    - '@nx/eslint-plugin@20.8.4 > @nx/js@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6':
         reason: Build dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
-    - '@nx/rollup@20.8.4 > @nx/js@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6':
+    - '@nx/rollup@20.8.4 > @nx/js@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6':
         reason: Build dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
-    - '@nx/web@20.8.4 > @nx/js@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6':
+    - '@nx/web@20.8.4 > @nx/js@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6':
         reason: Build dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
-    - '@nx/js@20.8.4 > @nx/workspace@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6':
+    - '@nx/js@20.8.4 > @nx/workspace@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6':
         reason: Build dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
-    - '@nx/react@20.8.4 > @nx/eslint@20.8.4 > @nx/js@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6':
+    - '@nx/react@20.8.4 > @nx/eslint@20.8.4 > @nx/js@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6':
         reason: Testing dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
-    - '@nx/react@20.8.4 > @nx/module-federation@20.8.4 > @nx/web@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6':
+    - '@nx/react@20.8.4 > @nx/module-federation@20.8.4 > @nx/web@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6':
         reason: Build dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
-    - '@nx/esbuild@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6':
+    - '@nx/esbuild@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6':
         reason: Build dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
-    - '@nx/eslint@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6':
+    - '@nx/eslint@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6':
         reason: Testing dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
-    - '@nx/eslint-plugin@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6':
+    - '@nx/eslint-plugin@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6':
         reason: Build dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
-    - '@nx/rollup@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6':
+    - '@nx/rollup@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6':
         reason: Build dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
-    - '@nx/web@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6':
+    - '@nx/web@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6':
         reason: Build dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
-    - '@nx/react@20.8.4 > @nx/module-federation@20.8.4 > @nx/web@20.8.4 > @nx/js@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6':
+    - '@nx/react@20.8.4 > @nx/module-federation@20.8.4 > @nx/web@20.8.4 > @nx/js@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6':
         reason: Build dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
-    - '@nx/react@20.8.4 > @nx/eslint@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6':
+    - '@nx/react@20.8.4 > @nx/eslint@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6':
         reason: Testing dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
-    - '@nx/react@20.8.4 > @nx/module-federation@20.8.4 > @nx/web@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6':
+    - '@nx/react@20.8.4 > @nx/module-federation@20.8.4 > @nx/web@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6':
         reason: Build dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
@@ -3338,107 +3338,107 @@ ignore:
         reason: Build dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
-    - '@nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6':
+    - '@nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6':
         reason: Build dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
-    - '@nx/esbuild@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6':
+    - '@nx/esbuild@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6':
         reason: Build dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
-    - '@nx/eslint@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6':
+    - '@nx/eslint@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6':
         reason: Testing dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
-    - '@nx/eslint-plugin@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6':
+    - '@nx/eslint-plugin@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6':
         reason: Build dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
-    - '@nx/js@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6':
+    - '@nx/js@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6':
         reason: Build dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
-    - '@nx/react@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6':
+    - '@nx/react@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6':
         reason: Build dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
-    - '@nx/rollup@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6':
+    - '@nx/rollup@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6':
         reason: Build dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
-    - '@nx/web@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6':
+    - '@nx/web@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6':
         reason: Build dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
-    - '@nx/workspace@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6':
+    - '@nx/workspace@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6':
         reason: Build dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
-    - '@nx/react@20.8.4 > @nx/eslint@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6':
+    - '@nx/react@20.8.4 > @nx/eslint@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6':
         reason: Testing dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
-    - '@nx/esbuild@20.8.4 > @nx/js@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6':
+    - '@nx/esbuild@20.8.4 > @nx/js@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6':
         reason: Build dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
-    - '@nx/eslint@20.8.4 > @nx/js@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6':
+    - '@nx/eslint@20.8.4 > @nx/js@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6':
         reason: Testing dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
-    - '@nx/eslint-plugin@20.8.4 > @nx/js@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6':
+    - '@nx/eslint-plugin@20.8.4 > @nx/js@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6':
         reason: Build dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
-    - '@nx/rollup@20.8.4 > @nx/js@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6':
+    - '@nx/rollup@20.8.4 > @nx/js@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6':
         reason: Build dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
-    - '@nx/web@20.8.4 > @nx/js@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6':
+    - '@nx/web@20.8.4 > @nx/js@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6':
         reason: Build dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
-    - '@nx/js@20.8.4 > @nx/workspace@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6':
+    - '@nx/js@20.8.4 > @nx/workspace@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6':
         reason: Build dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
-    - '@nx/react@20.8.4 > @nx/eslint@20.8.4 > @nx/js@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6':
+    - '@nx/react@20.8.4 > @nx/eslint@20.8.4 > @nx/js@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6':
         reason: Testing dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
-    - '@nx/react@20.8.4 > @nx/module-federation@20.8.4 > @nx/web@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6':
+    - '@nx/react@20.8.4 > @nx/module-federation@20.8.4 > @nx/web@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6':
         reason: Build dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
-    - '@nx/esbuild@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6':
+    - '@nx/esbuild@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6':
         reason: Build dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
-    - '@nx/eslint@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6':
+    - '@nx/eslint@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6':
         reason: Testing dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
-    - '@nx/eslint-plugin@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6':
+    - '@nx/eslint-plugin@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6':
         reason: Build dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
-    - '@nx/rollup@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6':
+    - '@nx/rollup@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6':
         reason: Build dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
-    - '@nx/web@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6':
+    - '@nx/web@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6':
         reason: Build dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
-    - '@nx/react@20.8.4 > @nx/module-federation@20.8.4 > @nx/web@20.8.4 > @nx/js@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6':
+    - '@nx/react@20.8.4 > @nx/module-federation@20.8.4 > @nx/web@20.8.4 > @nx/js@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6':
         reason: Build dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
-    - '@nx/react@20.8.4 > @nx/eslint@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6':
+    - '@nx/react@20.8.4 > @nx/eslint@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6':
         reason: Testing dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
-    - '@nx/react@20.8.4 > @nx/module-federation@20.8.4 > @nx/web@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6':
+    - '@nx/react@20.8.4 > @nx/module-federation@20.8.4 > @nx/web@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > @nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6':
         reason: Build dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
@@ -4079,6 +4079,12 @@ ignore:
         reason: Build/dev/test tooling dependency - not shipped in AG Grid runtime bundles (which have zero third-party runtime dependencies)
         expires: '2027-03-02T00:00:00.000Z'
         created: '2026-07-23T00:00:00.000Z'
+  SNYK-JS-EFFECT-22606122:
+    - 'rulesync@8.8.1 > effect@3.20.0':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-24T10:24:09.759Z
 patch: {}
 
 # Snyk Code (SAST) exclusion.

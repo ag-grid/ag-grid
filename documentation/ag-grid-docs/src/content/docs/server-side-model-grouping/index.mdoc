@@ -99,6 +99,46 @@ Group total rows can also be used with `groupDisplayType='multipleColumns'`, as 
 
 {% gridExampleRunner title="Multiple Group Columns and Footers" name="group-footer-multiple-cols" /%}
 
+## Grouping and Aggregating the Same Column
+
+To group by a column and also aggregate it, each group row needs two values for that column: the group key and the
+aggregate. Have the server return the group key under the column's field, as for any other grouped column, and the
+aggregate under a separate field. Then read the aggregate with the `aggValueGetter` column definition property. One
+entry in the default column definition covers every column:
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    defaultColDef: {
+        // the server returns { gold: 4, sum_gold: 12 } for the group row of gold 4
+        aggValueGetter: (params) => {
+            const aggValue = params.data?.[`${params.aggFunc}_${params.colDef.field}`];
+            return aggValue !== undefined ? aggValue : params.value;
+        },
+    },
+}
+```
+
+The grid calls `aggValueGetter` when it reads the value of an aggregated column on a group row, a group total row or
+the grand total row. `params.value` is the value read from the row data, and `params.aggFunc` is the column's
+aggregation function, as sent in the `valueCols` of the request. The group key is always read from the column's field,
+so the group column and the `groupKeys` of later requests are unchanged. See
+[Transforming Aggregated Values](./aggregation-columns/#transforming-aggregated-values) for the full set of parameters.
+
+By default, sorting the group column and sorting the aggregated column send the same request, so the server chooses
+whether that group level is ordered by its key or by its aggregate. Filters are applied by the server too. Grouping a
+column also hides it by default. To keep it visible, see
+[Prevent User Grouping from Hiding Columns](./grouping-group-panel/#prevent-user-grouping-from-hiding-columns).
+
+The example below groups by **Gold**, aggregates it with `sum` and sorts it ascending. Note the following:
+
+- The server returns the aggregate of a grouped column as `<aggFunc>_<field>`, such as `sum_gold`, so the getter also
+  works when other columns are grouped and aggregated from the Columns Tool Panel.
+- Aggregates of columns that are not grouped are returned under their field, and the getter returns `params.value`.
+- The server orders a group level sorted by its own column by key.
+- **Gold** appears in both Row Groups and Values in the Columns Tool Panel.
+
+{% gridExampleRunner title="Grouping and Aggregating the Same Column" name="group-agg-same-column" exampleHeight=590 /%}
+
 ## Grand Total Row
 
 To display a grand total row, set the `grandTotalRow` property to `'top'`, `'bottom'`, `'pinnedTop'`, or `'pinnedBottom'`. The grand total row is supported for both flat grids and grids with row grouping.

@@ -1,3 +1,5 @@
+import { _throwErrors } from 'ag-stack';
+
 import type { NamedBean } from './context/bean';
 import { BeanStub } from './context/beanStub';
 
@@ -14,21 +16,21 @@ export class GridDestroyService extends BeanStub implements NamedBean {
 
         const { stateSvc, ctrlsSvc, context } = this.beans;
 
-        try {
-            this.eventSvc.dispatchEvent({
-                type: 'gridPreDestroyed',
-                state: stateSvc?.getState() ?? {},
-            });
-        } finally {
-            // Set after pre-destroy so user can still use the api in pre-destroy event and it is not marked as destroyed yet.
-            this.destroyCalled = true;
+        const errors = this.eventSvc.dispatchEventCollectingErrors({
+            type: 'gridPreDestroyed',
+            state: stateSvc?.getState() ?? {},
+        });
 
-            // destroy the UI first (as they use the services)
-            ctrlsSvc.get('gridCtrl')?.destroyGridUi();
+        // Set after pre-destroy so user can still use the api in pre-destroy event and it is not marked as destroyed yet.
+        this.destroyCalled = true;
 
-            // destroy the services
-            context.destroy();
-            super.destroy();
-        }
+        // destroy the UI first (as they use the services)
+        ctrlsSvc.get('gridCtrl')?.destroyGridUi();
+
+        // destroy the services
+        context.destroy(errors);
+        super.destroy();
+
+        _throwErrors(errors);
     }
 }

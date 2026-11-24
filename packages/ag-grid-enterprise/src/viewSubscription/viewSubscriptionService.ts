@@ -1,4 +1,4 @@
-import { _areEqual, _getDocument, _observeIntersection } from 'ag-stack';
+import { _areEqual, _getDocument, _observeIntersection, _throwErrors } from 'ag-stack';
 
 import {
     BeanStub,
@@ -33,8 +33,6 @@ interface ActiveSubscription {
     timer: ReturnType<typeof setTimeout> | undefined;
     /** The view at the last flush or scroll. */
     view: ViewEnds;
-    /** Set once a failed `subscribeRows` call has scheduled a retry, so a handler that keeps throwing is retried once. */
-    retried: boolean;
 }
 
 interface ViewEnds {
@@ -166,14 +164,13 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean {
             stopped: false,
             timer: undefined,
             view: this.getViewEnds(),
-            retried: false,
         };
         this.sub = sub;
 
         const rows: ViewRow[] = [];
         this.getViewportRows().forEach((node, id) => rows.push(this.addRow(sub, id, node)));
         if (rows.length) {
-            this.callSubscribeRows(sub, rows, options);
+            options.subscribeRows(rows, this.createParams());
         }
     }
 
@@ -189,7 +186,7 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean {
 
         const refs = Array.from(sub.rows.values(), (row) => row.ref);
         if (refs.length) {
-            this.callUnsubscribeRows(refs, options);
+            options?.unsubscribeRows(refs, this.createParams());
         }
     }
 
@@ -263,10 +260,21 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean {
             }
         });
 
+        // The rows now in view are subscribed even when unsubscribeRows throws, then both errors are thrown.
+        const errors: unknown[] = [];
         if (removed.length) {
-            this.callUnsubscribeRows(removed, this.getOptions());
+            try {
+                this.getOptions()?.unsubscribeRows(removed, this.createParams());
+            } catch (error) {
+                errors.push(error);
+            }
         }
-        this.subscribeNodes(sub, added);
+        try {
+            this.subscribeNodes(sub, added);
+        } catch (error) {
+            errors.push(error);
+        }
+        _throwErrors(errors);
     }
 
     /** Schedules another flush when rows are no longer in view, before calling the handler, which can throw. */
@@ -291,55 +299,7 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean {
             this.schedule();
         }
         if (rows.length) {
-            this.callSubscribeRows(sub, rows, this.getOptions());
-        }
-    }
-
-    /** An error thrown by the handler is reported, so one failed call does not stop the grid or later calls. */
-    private callUnsubscribeRows(refs: ViewRowRef[], options: ViewSubscriptionOptions | undefined): void {
-        try {
-            options?.unsubscribeRows(refs, this.createParams());
-        } catch (error) {
-            this.reportHandlerError('unsubscribeRows', error);
-        }
-    }
-
-    /**
-     * Rows passed to a `subscribeRows` call that throws are not subscribed, so they are not passed to `unsubscribeRows`.
-     * The error is reported, so one failed call does not stop the grid or later calls.
-     */
-    private callSubscribeRows(
-        sub: ActiveSubscription,
-        rows: ViewRow[],
-        options: ViewSubscriptionOptions | undefined
-    ): void {
-        // Read before the call, as the handler owns the array and can change it.
-        const ids = rows.map((row) => row.id);
-        try {
-            options?.subscribeRows(rows, this.createParams());
-            sub.retried = false;
-        } catch (error) {
-            for (const id of ids) {
-                sub.rows.delete(id);
-            }
-            if (!sub.retried) {
-                // Try the rows in view once more, as no other change may come to subscribe them.
-                sub.retried = true;
-                this.schedule();
-            }
-            this.reportHandlerError('subscribeRows', error);
-        }
-    }
-
-    /**
-     * Reports a handler error as warning #333. Reporting never throws, so a `throwOn` dev validation setting
-     * does not stop the grid part-way through destroying or updating subscriptions.
-     */
-    private reportHandlerError(handler: 'subscribeRows' | 'unsubscribeRows', error: unknown): void {
-        try {
-            this.warn(333, { callback: `viewSubscription.${handler}`, error });
-        } catch {
-            // the warning is already logged and captured; only the `throwOn` rethrow is dropped
+            this.getOptions()?.subscribeRows(rows, this.createParams());
         }
     }
 

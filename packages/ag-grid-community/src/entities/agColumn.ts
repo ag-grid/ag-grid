@@ -30,6 +30,7 @@ import type { AgColumnGroup } from './agColumnGroup';
 import type { AgProvidedColumnGroup } from './agProvidedColumnGroup';
 import type {
     AbstractColDef,
+    AggValueGetterFunc,
     ColAggFunc,
     ColDef,
     ColDefField,
@@ -160,6 +161,8 @@ export class AgColumn<TValue = any>
     /** True when `field` reaches `__proto__`, so the column reads no value and refuses edits. */
     public fieldHasProtoKey = false;
     public valueGetter: string | ValueGetterFunc<any, TValue> | undefined = undefined;
+    /** Read once per value read, so rows of a column without it pay a single property load. */
+    public aggValueGetter: AggValueGetterFunc<any, TValue> | undefined = undefined;
     public allowFormula: boolean = false;
     public showRowGroup: string | boolean | undefined = undefined;
     public pivotValueColumn: AgColumn | null | undefined = undefined;
@@ -596,6 +599,7 @@ export class AgColumn<TValue = any>
     private initColDefHotFields(): void {
         const colDef = this.colDef;
         this.valueGetter = colDef.valueGetter;
+        this.aggValueGetter = colDef.aggValueGetter;
         this.allowFormula = colDef.allowFormula === true;
         this.showRowGroup = colDef.showRowGroup;
         this.pivotValueColumn = colDef.pivotValueColumn as AgColumn | null | undefined;
