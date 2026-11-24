@@ -4079,6 +4079,12 @@ ignore:
         reason: Build/dev/test tooling dependency - not shipped in AG Grid runtime bundles (which have zero third-party runtime dependencies)
         expires: '2027-03-02T00:00:00.000Z'
         created: '2026-07-23T00:00:00.000Z'
+  SNYK-JS-EFFECT-22606122:
+    - 'rulesync@8.8.1 > effect@3.20.0':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-24T10:24:09.759Z
 patch: {}
 
 # Snyk Code (SAST) exclusion.
