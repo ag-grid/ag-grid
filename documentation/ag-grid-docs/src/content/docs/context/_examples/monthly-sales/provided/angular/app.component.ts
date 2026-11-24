@@ -65,7 +65,8 @@ ModuleRegistry.registerModules([
                 </button>
                 <span id="monthName" style="width: 100px; display: inline-block;">Year to Jan</span>
 
-                <span class="legend-item gap-left">
+                <span class="gap-left">Legend:</span>
+                <span class="legend-item">
                     <span class="legend-swatch cell-bud"></span>
                     Actual
                 </span>

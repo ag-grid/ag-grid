@@ -4,32 +4,8 @@ html[data-color-scheme='dark'] body {
 }
 
 .test-header {
-    display: flex;
-    justify-content: space-between;
     padding: 5px 5px 0;
-    font-size: 13px;
-
     margin-bottom: 8px;
-}
-
-.test-header > div {
-    vertical-align: middle;
-    align-content: center;
-}
-
-.test-header button {
-    margin-right: 5px;
-    margin-bottom: 0;
-    margin-top: 0;
-}
-
-.test-header input {
-    margin-top: 0;
-    margin-bottom: 0;
-}
-
-.test-header #floating-rows {
-    vertical-align: bottom;
 }
 
 .ag-grid-pinned-top-rows-container .ag-row {
