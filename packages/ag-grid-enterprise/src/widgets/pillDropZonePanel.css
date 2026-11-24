@@ -48,6 +48,10 @@
     margin-inline-start: var(--ag-spacing);
 }
 
+.ag-column-indicator-name {
+    flex-grow: 0;
+}
+
 .ag-column-drop-vertical {
     display: flex;
     flex-direction: column;

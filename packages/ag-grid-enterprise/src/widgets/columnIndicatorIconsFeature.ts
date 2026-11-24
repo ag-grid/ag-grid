@@ -32,12 +32,6 @@ export class ColumnIndicatorIconsFeature extends BeanStub {
         this.refresh();
     }
 
-    public override destroy(): void {
-        this.eCalculatedColumn?.remove();
-        this.eShowValuesAs?.remove();
-        super.destroy();
-    }
-
     private refresh(): void {
         this.refreshCalculatedColumn();
         this.refreshShowValuesAs();
@@ -62,6 +56,7 @@ export class ColumnIndicatorIconsFeature extends BeanStub {
         }
         const show = showValuesAsSvc.isIndicatorShown(column);
         _setDisplayed(eShowValuesAs, show, { skipAriaHidden: true });
+        this.eName.classList.toggle('ag-column-indicator-name', show);
         if (show) {
             eShowValuesAs.classList.toggle('ag-show-values-as-dormant', !showValuesAsSvc.isApplying(column));
             eShowValuesAs.title = showValuesAsSvc.getActiveModeTooltip(column) ?? '';

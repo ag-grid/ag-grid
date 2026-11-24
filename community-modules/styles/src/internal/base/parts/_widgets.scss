@@ -1170,7 +1170,8 @@
     .ag-column-select-checkbox,
     .ag-column-select-column-drag-handle,
     .ag-column-select-column-group-drag-handle,
-    .ag-column-select-column-label {
+    .ag-column-select-column-label,
+    :where(.ag-column-select-column) .ag-column-indicator-icon {
         &:not(:last-child) {
             @include ag.unthemed-rtl(
                 (

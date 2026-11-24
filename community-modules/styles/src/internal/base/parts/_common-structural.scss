@@ -647,6 +647,14 @@
         white-space: nowrap;
     }
 
+    .ag-column-indicator-name {
+        flex-grow: 0;
+    }
+
+    :where(.ag-column-drop-cell) .ag-column-indicator-icon {
+        display: flex;
+    }
+
     .ag-column-drop-vertical {
         display: flex;
         flex-direction: column;
@@ -1995,6 +2003,10 @@
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
+    }
+
+    .ag-column-indicator-name {
+        flex-grow: 0;
     }
 
     .ag-column-select-checkbox {

@@ -106,6 +106,11 @@
     white-space: nowrap;
 }
 
+/* Keeps a trailing indicator icon next to the name rather than at the far end of the row. */
+.ag-column-indicator-name {
+    flex-grow: 0;
+}
+
 .ag-column-select-checkbox {
     display: flex;
 }
