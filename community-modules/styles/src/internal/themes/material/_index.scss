@@ -66,6 +66,53 @@
         border-color: var(--ag-border-color) !important;
     }
 
+    .ag-cell-inline-editing input.ag-input-field-input[class^='ag-'][type='text'],
+    .ag-cell-inline-editing input.ag-input-field-input[class^='ag-'][type='number'],
+    .ag-cell-inline-editing input.ag-input-field-input[class^='ag-'][type='tel'],
+    .ag-cell-inline-editing input.ag-input-field-input[class^='ag-'][type='date'],
+    .ag-cell-inline-editing input.ag-input-field-input[class^='ag-'][type='datetime-local'],
+    .ag-cell-inline-editing textarea.ag-input-field-input[class^='ag-'] {
+        &:not(.ag-large-text *, .ag-rich-select-typing-multi *) {
+            @include ag.theme-rtl(
+                (
+                    padding-left: calc(var(--ag-cell-horizontal-padding) - var(--ag-grid-size) - 1px),
+                )
+            );
+        }
+    }
+
+    .ag-cell-inline-editing .ag-picker-field-wrapper {
+        @include ag.theme-rtl(
+            (
+                padding-left: calc(var(--ag-cell-horizontal-padding) - var(--ag-grid-size) - 1px),
+            )
+        );
+    }
+
+    .ag-cell-inline-editing .ag-checkbox-edit {
+        @include ag.theme-rtl(
+            (
+                padding-left: calc(var(--ag-cell-horizontal-padding) - var(--ag-grid-size) - 1px),
+            )
+        );
+    }
+
+    .ag-right-aligned-cell.ag-cell-inline-editing input.ag-input-field-input[class^='ag-'][type='text'],
+    .ag-right-aligned-cell.ag-cell-inline-editing input.ag-input-field-input[class^='ag-'][type='number'],
+    .ag-right-aligned-cell.ag-cell-inline-editing input.ag-input-field-input[class^='ag-'][type='tel'],
+    .ag-right-aligned-cell.ag-cell-inline-editing input.ag-input-field-input[class^='ag-'][type='date'],
+    .ag-right-aligned-cell.ag-cell-inline-editing input.ag-input-field-input[class^='ag-'][type='datetime-local'],
+    .ag-right-aligned-cell.ag-cell-inline-editing textarea.ag-input-field-input[class^='ag-'] {
+        &:not(.ag-large-text *, .ag-rich-select-typing-multi *) {
+            @include ag.theme-rtl(
+                (
+                    padding-left: var(--ag-grid-size),
+                    padding-right: calc(var(--ag-cell-horizontal-padding) - var(--ag-grid-size) - 1px),
+                )
+            );
+        }
+    }
+
     .ag-has-focus {
         .ag-cell-inline-editing {
             border-color: var(--ag-input-focus-border-color) !important;

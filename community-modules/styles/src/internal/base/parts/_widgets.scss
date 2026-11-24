@@ -650,6 +650,48 @@
         }
     }
 
+    // the `.ag-ltr`/`.ag-rtl` prefix, the input's own class and the type attribute lift these above each
+    // theme's `ag.text-input` padding, which is emitted after this file
+    .ag-cell-inline-editing input.ag-input-field-input[class^='ag-'][type='text'],
+    .ag-cell-inline-editing input.ag-input-field-input[class^='ag-'][type='number'],
+    .ag-cell-inline-editing input.ag-input-field-input[class^='ag-'][type='tel'],
+    .ag-cell-inline-editing input.ag-input-field-input[class^='ag-'][type='date'],
+    .ag-cell-inline-editing input.ag-input-field-input[class^='ag-'][type='datetime-local'],
+    .ag-cell-inline-editing textarea.ag-input-field-input[class^='ag-'] {
+        &:not(.ag-large-text *, .ag-rich-select-typing-multi *) {
+            @include ag.unthemed-rtl(
+                (
+                    padding-left: calc(var(--ag-cell-horizontal-padding) - 2px),
+                )
+            );
+        }
+    }
+
+    .ag-cell-inline-editing .ag-picker-field-wrapper {
+        @include ag.unthemed-rtl(
+            (
+                padding-left: calc(var(--ag-cell-horizontal-padding) - 2px),
+            )
+        );
+    }
+
+    .ag-right-aligned-cell.ag-cell-inline-editing input.ag-input-field-input[class^='ag-'][type='text'],
+    .ag-right-aligned-cell.ag-cell-inline-editing input.ag-input-field-input[class^='ag-'][type='number'],
+    .ag-right-aligned-cell.ag-cell-inline-editing input.ag-input-field-input[class^='ag-'][type='tel'],
+    .ag-right-aligned-cell.ag-cell-inline-editing input.ag-input-field-input[class^='ag-'][type='date'],
+    .ag-right-aligned-cell.ag-cell-inline-editing input.ag-input-field-input[class^='ag-'][type='datetime-local'],
+    .ag-right-aligned-cell.ag-cell-inline-editing textarea.ag-input-field-input[class^='ag-'] {
+        &:not(.ag-large-text *, .ag-rich-select-typing-multi *) {
+            @include ag.unthemed-rtl(
+                (
+                    text-align: right,
+                    padding-left: var(--ag-grid-size),
+                    padding-right: calc(var(--ag-cell-horizontal-padding) - 2px),
+                )
+            );
+        }
+    }
+
     .ag-popup-editor .ag-rich-select-value {
         height: var(--ag-row-height);
         min-width: 200px;
