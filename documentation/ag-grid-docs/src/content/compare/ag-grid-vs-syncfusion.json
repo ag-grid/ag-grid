@@ -679,10 +679,11 @@
                             "detail": "AI Toolkit: connect your own LLM so users can query and change the grid in natural language"
                         },
                         "competitor": {
-                            "status": "no",
-                            "detail": "No built-in AI features in the web Data Grid; the Smart DataGrid is for .NET MAUI and WPF only",
-                            "sourceUrl": "https://www.syncfusion.com/react-components/react-data-grid/evaluation-guide",
-                            "checkedOn": "2026-11-19"
+                            "status": "limited",
+                            "plan": "Limited",
+                            "detail": "A documented recipe connects your own LLM so users can filter, sort, group and page in plain language; you build the prompt, a backend proxy and the code that applies the result",
+                            "sourceUrl": "https://help.syncfusion.com/grid-sdk/react/data-grid/smart-grid/smart-grid",
+                            "checkedOn": "2026-11-24"
                         }
                     },
                     {
@@ -786,7 +787,7 @@
         },
         {
             "question": "Does AG Grid have AI features for users?",
-            "answer": "Yes. AG Grid Enterprise's AI Toolkit connects your own LLM so users can query and change the grid in plain language. Syncfusion's web Data Grid has no built-in AI features; its Smart DataGrid is for .NET MAUI and WPF only."
+            "answer": "Yes. AG Grid Enterprise's AI Toolkit connects your own LLM so users can query and change the grid in plain language. Syncfusion's React Data Grid documents a recipe for natural-language filtering, sorting, grouping and paging, in which you build the prompt, a backend proxy and the code that applies the LLM's response."
         }
     ],
     "proseClaims": [
@@ -839,6 +840,11 @@
             "claim": "The Syncfusion Grid SDK and UI Component Suite are annual subscriptions per developer, minimum one year, including Business Support; the UI Component Suite includes all seven standalone UI SDKs.",
             "sourceUrl": "https://www.syncfusion.com/sales/pricing",
             "checkedOn": "2026-11-19"
+        },
+        {
+            "claim": "Syncfusion's React Data Grid documents a recipe for natural-language filtering, sorting, grouping and paging with your own LLM, in which you build the prompt, a backend proxy and the code that applies the response.",
+            "sourceUrl": "https://help.syncfusion.com/grid-sdk/react/data-grid/smart-grid/smart-grid",
+            "checkedOn": "2026-11-24"
         }
     ]
 }
