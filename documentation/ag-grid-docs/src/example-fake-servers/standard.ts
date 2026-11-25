@@ -17,7 +17,7 @@ import type { ColumnVO, FilterModel, IServerSideGetRowsRequest } from 'ag-grid-c
 // The ID AG Grid uses for the grand total row. Exported as GRAND_TOTAL_ROW_ID from 'ag-grid-community'
 const GRAND_TOTAL_ROW_ID = 'rowGroupFooter_ROOT_NODE_ID';
 
-export function FakeServer(allData: any[], { log = true }: { log?: boolean } = {}) {
+export function FakeServer(allData: any[]) {
     alasql.options.cache = false;
 
     const knownColumns = new Set(Object.keys(allData[0] ?? {}));
@@ -49,9 +49,7 @@ export function FakeServer(allData: any[], { log = true }: { log?: boolean } = {
     function executeQuery(request: IServerSideGetRowsRequest) {
         const params: unknown[] = [allData];
         const sql = buildSql(request, params);
-        if (log) {
-            console.log('[FakeServer] - about to execute query:', sql, params.slice(1));
-        }
+        console.log('[FakeServer] - about to execute query:', sql, params.slice(1));
         return alasql(sql, params);
     }
 
@@ -70,9 +68,7 @@ export function FakeServer(allData: any[], { log = true }: { log?: boolean } = {
         });
         const params: unknown[] = [allData];
         const sql = `SELECT ${selects.join(', ')} FROM ?` + whereSql({ ...request, groupKeys: [] }, params);
-        if (log) {
-            console.log('[FakeServer] - about to execute grand total query:', sql, params.slice(1));
-        }
+        console.log('[FakeServer] - about to execute grand total query:', sql, params.slice(1));
         const result = alasql(sql, params)[0] ?? {};
         for (const col of valueCols) {
             // the sum of no rows is 0, where SQL gives null
