@@ -11,7 +11,7 @@
 export const highContrastIconSvgs: Record<string, string> = {
     aggregation:
         '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="currentColor"><path d="M4 2h10v2H7.4L12 9l-4.6 5H14v2H4v-2l5-5-5-5z"/></svg>',
-    arrows: '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="currentColor"><rect x="8" y="5" width="2" height="8"/><rect x="5" y="8" width="8" height="2"/><path d="M6 5l3-3 3 3zM6 13l3 3 3-3zM5 6 2 9l3 3zM13 6l3 3-3 3z"/></svg>',
+    arrows: '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="currentColor"><rect x="8" y="4" width="2" height="10"/><rect x="4" y="8" width="10" height="2"/><path d="M6 4l3-3 3 3zM6 14l3 3 3-3zM4 6 1 9l3 3zM14 6l3 3-3 3z"/></svg>',
     asc: '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="currentColor"><rect x="8" y="8" width="2" height="7"/><path d="M4 9l5-5 5 5z"/></svg>',
     cancel: '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="currentColor"><path d="M5 5l8 8M13 5l-8 8" fill="none" stroke="currentColor" stroke-width="2.83"/></svg>',
     chart: '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="currentColor"><rect x="1" y="10" width="4" height="6"/><rect x="7" y="2" width="4" height="14"/><rect x="13" y="6" width="4" height="10"/></svg>',
