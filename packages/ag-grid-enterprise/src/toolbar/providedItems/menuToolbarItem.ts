@@ -54,7 +54,12 @@ export class MenuToolbarItem extends Component implements IToolbarItemComp {
         this.menuTooltip = this.addTooltip({
             getLocation: () => 'toolbar',
             control: 'toolbarMenu',
-            getTooltip: () => ({ value: this.getAccessibleName() }),
+            getTooltip: () => ({
+                value:
+                    this.params.tooltip ??
+                    this.params.label ??
+                    this.getLocaleTextFunc()('tooltipOpenMenu', 'Open menu'),
+            }),
         });
         _addManagedElementListeners(this, this.getGui(), {
             click: () => this.showMenu(),

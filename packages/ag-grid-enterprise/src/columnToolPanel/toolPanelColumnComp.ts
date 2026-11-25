@@ -62,6 +62,7 @@ export class ToolPanelColumnComp extends Component {
     private processingColumnStateChange = false;
     private tooltipFeature?: TooltipFeature;
     private dragTooltip?: ITooltipFeature;
+    private selectionTooltip?: ITooltipFeature;
     private labelRendererFeature?: ColumnSelectionLabelRendererFeature;
 
     constructor(
@@ -146,6 +147,26 @@ export class ToolPanelColumnComp extends Component {
         );
 
         this.setupDragging();
+        this.selectionTooltip = cbSelect.addTooltip({
+            control: 'columnSelect',
+            getLocation: () => 'columnToolPanelColumn',
+            getAriaElement: () => checkboxInput,
+            getTooltip: () => {
+                const pivotMode = beans.columnStateUpdateStrategy.getPivotMode(isDeferredMode(this.params));
+                const translate = this.getLocaleTextFunc();
+                let value: string;
+                if (pivotMode) {
+                    value = cbSelect.getValue()
+                        ? translate('tooltipDisableColumn', 'Disable column')
+                        : translate('tooltipEnableColumn', 'Enable column');
+                } else {
+                    value = cbSelect.getValue()
+                        ? translate('tooltipHideColumn', 'Hide column')
+                        : translate('tooltipShowColumn', 'Show column');
+                }
+                return { value, params: { column } };
+            },
+        });
 
         const onColStateChanged = this.onColumnStateChanged.bind(this);
         this.addManagedEventListeners({ columnPivotModeChanged: onColStateChanged });
@@ -413,6 +434,7 @@ export class ToolPanelColumnComp extends Component {
         this.cbSelect.setReadOnly(!canBeToggled);
         this.eDragHandle.classList.toggle('ag-column-select-column-readonly', !canBeDragged);
         this.dragTooltip?.refreshTooltip();
+        this.selectionTooltip?.refreshTooltip();
         this.toggleCss('ag-column-select-column-readonly', !canBeDragged && !canBeToggled);
 
         this.cbSelect.setPassive(false);

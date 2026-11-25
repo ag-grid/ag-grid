@@ -62,8 +62,15 @@ export class TooltipStateManager extends BaseTooltipStateManager<
         const configured = this.gos.get('tooltipPosition');
         const position =
             typeof configured === 'function' ? configured({ ...this.getCallbackParams(tooltip), trigger }) : configured;
-        const fallback = this.tooltipCtrl.control ? 'top' : super.getTooltipPosition(tooltip, trigger);
-        return _isTooltipPosition(position) ? position : fallback;
+        if (_isTooltipPosition(position)) {
+            return position;
+        }
+        if (this.tooltipCtrl.control === 'toolPanel') {
+            const sideBarOnLeft = this.beans.sideBar?.comp.getSideBarPosition() === 'left';
+            const visuallyOnLeft = sideBarOnLeft !== this.gos.get('enableRtl');
+            return visuallyOnLeft ? 'right' : 'left';
+        }
+        return this.tooltipCtrl.control ? 'top' : super.getTooltipPosition(tooltip, trigger);
     }
 
     protected override getTooltipInteraction(tooltip?: ResolvedTooltip): boolean {

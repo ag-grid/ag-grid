@@ -35,7 +35,7 @@ import {
     _createElement,
     _createIcon,
     _getCellRendererDetails,
-    _isShowTooltipWhenTruncated,
+    _isAutomaticTooltipEnabled,
     _resolveTextTooltip,
 } from 'ag-grid-community';
 
@@ -541,7 +541,7 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
         return (
             params.showTooltips === true ||
             (params.showTooltips === undefined &&
-                _isShowTooltipWhenTruncated(this.gos) &&
+                _isAutomaticTooltipEnabled(this.gos) &&
                 (!params.cellRenderer || this.isKeyOnly))
         );
     }

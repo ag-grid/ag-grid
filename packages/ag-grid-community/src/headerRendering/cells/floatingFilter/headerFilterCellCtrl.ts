@@ -123,7 +123,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
             getTooltipAccessibleName: () => _getAriaLabel(eButton),
             getLocation: () => 'floatingFilter',
             getTooltip: () => ({
-                value: this.getLocaleTextFunc()('tooltipFilter', 'Filter'),
+                value: this.getLocaleTextFunc()('tooltipFilter', 'Open filter'),
                 params: { column: this.column },
             }),
         };

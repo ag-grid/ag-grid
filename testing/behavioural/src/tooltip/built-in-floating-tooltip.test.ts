@@ -276,7 +276,7 @@ describe.each([false, true])('Built-in floating filter tooltips (enableFilterHan
         expect(input).not.toHaveAttribute('aria-describedby');
         await user.keyboard('{Enter}');
         expect(header.querySelector('button')).toHaveFocus();
-        await waitFor(() => expect(tooltipTexts()).toEqual(['Filter']));
+        await waitFor(() => expect(tooltipTexts()).toEqual(['Open filter']));
         await user.keyboard('{Escape}');
         expect(header.querySelector('button')).toHaveFocus();
         expect(tooltipTexts()).toEqual([]);

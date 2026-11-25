@@ -22,6 +22,8 @@ export interface ResolvedTooltip extends TooltipDetails<TooltipLocation> {
     componentDefinition?: ColDef | ColGroupDef;
     shouldDisplay?: () => boolean;
     automatic?: boolean;
+    showMode?: GridOptionsWithDefaults['tooltipShowMode'];
+    matchesSource?: boolean;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -29,18 +31,17 @@ export interface TooltipSource extends TooltipCtrl<TooltipLocation, ResolvedTool
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _resolveTextTooltip(gos: GridOptionsService, tooltip: ResolvedTooltip): ResolvedTooltip {
-    const whenTruncated = _isShowTooltipWhenTruncated(gos);
+    const mode = gos.get('tooltipShowMode');
+    tooltip.showMode = mode;
     if (tooltip.automatic) {
-        tooltip.value = whenTruncated ? (tooltip.params?.valueFormatted ?? tooltip.params?.value) : undefined;
+        tooltip.value = mode === 'auto' ? (tooltip.params?.valueFormatted ?? tooltip.params?.value) : undefined;
     }
     const value = tooltip.value;
-    const { value: rawValue, valueFormatted } = tooltip.params ?? {};
+    const sourceValue = tooltip.params?.valueFormatted ?? tooltip.params?.value;
     const isText = typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean';
-    const repeatsText =
-        isText &&
-        ((rawValue != null && String(value) === String(rawValue)) ||
-            (valueFormatted != null && String(value) === valueFormatted));
-    tooltip.requiresTruncation = whenTruncated && !!(tooltip.automatic || repeatsText);
+    tooltip.matchesSource = isText && sourceValue != null && String(value) === String(sourceValue);
+    tooltip.requiresTruncation =
+        mode === 'whenTruncated' || (mode === 'auto' && !!(tooltip.automatic || tooltip.matchesSource));
     return tooltip;
 }
 
@@ -48,11 +49,18 @@ export function shouldDisplayTextTooltip(tooltip: ResolvedTooltip, getElement: (
     if (tooltip.shouldDisplay) {
         return tooltip.shouldDisplay();
     }
+    if (tooltip.showMode === 'whenDifferent') {
+        return !tooltip.matchesSource;
+    }
     if (!tooltip.requiresTruncation) {
         return true;
     }
     const element = getElement();
-    return !!element && (_isHorizontalScrollShowing(element) || _isVerticalScrollShowing(element));
+    if (!element) {
+        // Preserve whenTruncated's custom-renderer fallback when the grid cannot measure its text.
+        return tooltip.showMode === 'whenTruncated';
+    }
+    return _isHorizontalScrollShowing(element) || _isVerticalScrollShowing(element);
 }
 
 export function getGroupTooltipTextElement(element: HTMLElement | undefined, scope = ''): HTMLElement | undefined {
@@ -76,8 +84,8 @@ export function _getHeaderTooltipComponentDefinition(
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export function _isShowTooltipWhenTruncated(gos: GridOptionsService): boolean {
-    return gos.get('tooltipShowMode') === 'whenTruncated';
+export function _isAutomaticTooltipEnabled(gos: GridOptionsService): boolean {
+    return gos.get('tooltipShowMode') === 'auto';
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
