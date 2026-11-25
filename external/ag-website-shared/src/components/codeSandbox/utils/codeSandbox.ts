@@ -94,15 +94,18 @@ const getCodeSandboxFiles = ({
     return sandboxFiles;
 };
 
-const createHiddenInputFactory =
+// A <textarea> rather than a hidden <input>: on form submission, Google Tag Manager scans the page's
+// inputs for email addresses with a regex that takes quadratic time on a long unbroken run of
+// characters, which the compressed `parameters` value is. It took seconds for a large example. GTM
+// skips textareas, and the form submits the same fields either way.
+const createHiddenFieldFactory =
     (form: HTMLFormElement) =>
     ({ name, value }: { name: string; value: string }) => {
-        const input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = name;
-        input.value = value;
+        const field = document.createElement('textarea');
+        field.name = name;
+        field.value = value;
 
-        form.appendChild(input);
+        form.appendChild(field);
     };
 
 export const getCodeSandboxFilesToSubmit = ({
@@ -158,7 +161,7 @@ export const openCodeSandbox = ({
     form.action = CREATE_CODE_SANDBOX_URL;
     form.target = '_blank';
 
-    const addHiddenInput = createHiddenInputFactory(form);
+    const addHiddenField = createHiddenFieldFactory(form);
     const parameters = getParameters({
         files: getCodeSandboxFilesToSubmit({
             title,
@@ -169,12 +172,12 @@ export const openCodeSandbox = ({
         template: getCodeSandboxRuntime(internalFramework),
     });
 
-    addHiddenInput({ name: 'tags[0]', value: 'ag-grid' });
-    addHiddenInput({ name: 'tags[1]', value: 'ag-charts' });
-    addHiddenInput({ name: 'tags[2]', value: 'example' });
-    addHiddenInput({ name: 'published', value: 'false' });
-    addHiddenInput({ name: 'title', value: title });
-    addHiddenInput({ name: 'parameters', value: parameters });
+    addHiddenField({ name: 'tags[0]', value: 'ag-grid' });
+    addHiddenField({ name: 'tags[1]', value: 'ag-charts' });
+    addHiddenField({ name: 'tags[2]', value: 'example' });
+    addHiddenField({ name: 'published', value: 'false' });
+    addHiddenField({ name: 'title', value: title });
+    addHiddenField({ name: 'parameters', value: parameters });
 
     document.body.appendChild(form);
     form.submit();

@@ -20,7 +20,7 @@ export const GRID_OPTION_DEFAULTS = {
     noteShowDelay: 180,
     noteHideDelay: 220,
     tooltipMouseTrack: false,
-    tooltipShowMode: 'standard',
+    tooltipShowMode: 'auto',
     tooltipInteraction: false,
     copyHeadersToClipboard: false,
     copyGroupHeadersToClipboard: false,
@@ -185,7 +185,6 @@ export const GRID_OPTION_DEFAULTS = {
     suppressServerSideFullWidthLoadingRow: false,
     pivotMaxGeneratedColumns: -1,
     columnMenu: 'new',
-    reactiveCustomComponents: true,
     suppressSetFilterByDefault: false,
     enableFilterHandlers: false,
 } as const;

@@ -48,7 +48,6 @@ describe('TransactionManager internal flush branches', () => {
         manager['eventSvc'] = { dispatchEvent } as any;
         manager['valueCache'] = { onDataChanged: vi.fn() } as any;
         manager['serverSideRowModel'] = { executeOnStore } as any;
-        manager['selectionSvc'] = undefined;
     });
 
     afterEach(() => {

@@ -225,7 +225,7 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
 
     private getCompDetails(child: ResolvedFilter, params: IFloatingFilterParams<IFilter>): UserCompDetails | undefined {
         const defaultComponentName = _getDefaultFloatingFilterType(child.key) ?? 'agReadOnlyFloatingFilter';
-        return _getFloatingFilterCompDetails(this.beans.userCompFactory, child.def, params, defaultComponentName);
+        return _getFloatingFilterCompDetails(this.beans, child.def, params, defaultComponentName);
     }
 
     private parentMultiFilterInstance(cb: (instance: MultiFilter | MultiFilterUi) => void): void {

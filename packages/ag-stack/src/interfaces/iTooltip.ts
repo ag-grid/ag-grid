@@ -16,6 +16,8 @@ export interface TooltipDetails<TLocation extends string> {
     value?: any;
     location?: TLocation;
     params?: object;
+    /** Native titles can defer layout-dependent content until the source is hovered. */
+    requiresTruncation?: boolean;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -24,6 +26,8 @@ export interface TooltipCtrl<TLocation extends string, TDetails extends TooltipD
     control?: string;
     getTooltip?(): TDetails;
     getGui(): HTMLElement;
+    /** The grid-rendered text whose truncation controls a text preview. */
+    getTextElement?(): HTMLElement | undefined;
     /** The container receiving keyboard focus when it is outside the pointer source. */
     getFocusElement?(): HTMLElement;
     /** The accessible owner when keyboard focus is managed outside the tooltip source. */

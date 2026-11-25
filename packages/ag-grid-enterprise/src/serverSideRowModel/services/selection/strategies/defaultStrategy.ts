@@ -96,7 +96,7 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
         this.rootSelected = rootSelected;
     }
 
-    public deleteSelectionStateFromParent(parentPath: string[], removedNodeIds: string[]): boolean {
+    public deleteSelectionStateFromParent(removedNodeIds: string[]): boolean {
         if (this.selectedState.toggledNodes.size === 0) {
             return false;
         }
@@ -248,20 +248,23 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
         return !this.selectedState.selectAll && !this.selectedState.toggledNodes?.size && !this.rootSelected;
     }
 
-    public selectAllRowNodes(): void {
-        this.reset(true);
+    public selectAllRowNodes(): boolean {
+        return this.reset(true);
     }
 
-    public deselectAllRowNodes(): void {
-        this.reset(false);
+    public deselectAllRowNodes(): boolean {
+        return this.reset(false);
     }
 
-    private reset(selectAll: boolean): void {
+    private reset(selectAll: boolean): boolean {
+        const state = this.selectedState;
+        const changed = this.rootSelected || state.selectAll !== selectAll || state.toggledNodes.size > 0;
         this.selectedState = { selectAll, toggledNodes: new Set() };
         this.selectedNodes = {};
         this.rootSelected = false;
         // If we have ever used select-all, we keep this flag true.
         this.selectAllUsed ||= selectAll;
+        return changed;
     }
 
     public getSelectAllState(): boolean | null {

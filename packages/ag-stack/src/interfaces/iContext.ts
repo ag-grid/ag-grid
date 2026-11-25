@@ -19,7 +19,8 @@ export interface IContext<TBeanCollection> {
 
     getId(): string;
 
-    destroy(): void;
+    /** Destroys every bean even when one throws, then throws their errors, or adds them to `errors` when given. */
+    destroy(errors?: unknown[]): void;
 
     isDestroyed(): boolean;
 

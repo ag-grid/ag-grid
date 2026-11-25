@@ -245,7 +245,6 @@ export class GridRowsValidator {
         rowErrors.add(!isPivotGrandTotalsRoot && root.rowIndex !== null && 'Root node has rowIndex ' + root.rowIndex);
         rowErrors.add(csrm && !Array.isArray(root.allLeafChildren) && 'Root node has no allLeafChildren');
         rowErrors.add(!isPivotGrandTotalsRoot && gridRows.isRowDisplayed(root) && 'Root node is displayed');
-        rowErrors.expectValueEqual('childIndex', root.childIndex, undefined);
         if (gridRows.treeData) {
             rowErrors.expectValueEqual('group', root.group, true);
         }
@@ -617,27 +616,6 @@ export class GridRowsValidator {
                     gridRows.getById(child.id) === child &&
                     `${name}[${index}] ${rowIdAndIndexToString(child)} is not in rowNodes`
             );
-            if (name === 'childrenAfterSort') {
-                const childErrors = this.errors.get(child);
-                if (!state.hasPostSortRows) {
-                    // Strict: flags must match the displayed array position.
-                    childErrors.expectValueEqual('childIndex', child.childIndex, child.footer ? undefined : index);
-                    childErrors.expectValueEqual('firstChild', child.firstChild, index === 0);
-                    if (duplicatesCount === 0) {
-                        childErrors.expectValueEqual('lastChild', child.lastChild, index === children.length - 1);
-                    }
-                } else if (typeof child.childIndex === 'number') {
-                    // Loose (AG-309): `_updateRowNodeAfterSort` runs BEFORE `postSortRows`
-                    childErrors.expectValueEqual('firstChild', child.firstChild, child.childIndex === 0);
-                    if (duplicatesCount === 0) {
-                        childErrors.expectValueEqual(
-                            'lastChild',
-                            child.lastChild,
-                            child.childIndex === children.length - 1
-                        );
-                    }
-                }
-            }
             this.validateRow(state, child);
         }
         parentErrors.add(duplicatesCount > 0 && `${name} has ${duplicatesCount} duplicates.`);

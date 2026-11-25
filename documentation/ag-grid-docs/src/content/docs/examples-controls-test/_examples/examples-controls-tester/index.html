@@ -121,6 +121,60 @@
     </div>
 
     <div class="style-guide-item">
+        <code>fieldset class="controls-section"</code>
+        <div class="controls-row">
+            <fieldset class="controls-section">
+                <legend>I'm a section</legend>
+                <div class="controls-row">
+                    <label>
+                        Position
+                        <select>
+                            <option>Left</option>
+                            <option>Right</option>
+                        </select>
+                    </label>
+                </div>
+                <div class="controls-row">
+                    <label>
+                        Value
+                        <input type="text" placeholder="I'm a text input" />
+                    </label>
+                </div>
+            </fieldset>
+            <fieldset class="controls-section">
+                <legend>I'm a section beside it</legend>
+                <div class="controls-row">
+                    <label>
+                        Position
+                        <select>
+                            <option>Left</option>
+                            <option>Right</option>
+                        </select>
+                    </label>
+                </div>
+                <div class="controls-row">
+                    <label><input type="checkbox" /> I'm a checkbox</label>
+                </div>
+            </fieldset>
+        </div>
+        <div class="controls-row">
+            <button class="primary">I'm a row outside the sections</button>
+        </div>
+    </div>
+
+    <div class="style-guide-item">
+        <code>span class="legend-swatch"</code>
+        <div class="controls-row">
+            <button><span class="legend-swatch swatch-a"></span>I'm a button with a swatch</button>
+            <button>
+                <span class="legend-swatch swatch-a"></span><span class="legend-swatch swatch-b"></span>I'm a button
+                with two
+            </button>
+            <span class="legend-item"><span class="legend-swatch swatch-b"></span>I'm a legend item</span>
+        </div>
+    </div>
+
+    <div class="style-guide-item">
         <code>button aria-pressed</code>
         <div class="controls-row">
             <button aria-pressed="true">I'm a pressed toggle button</button>

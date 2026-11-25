@@ -107,15 +107,19 @@ export function getSitemapConfig({
     chartsSitemap,
     studioSitemap,
     blogSitemaps,
+    blogTagSitemap,
 }: {
     chartsSitemap?: string;
     studioSitemap?: string;
     blogSitemaps?: string[];
+    /** SE-106: our filtered copy of Ghost's tag sitemap - see agBlogTagSitemap */
+    blogTagSitemap?: string;
 }) {
     const customSitemaps = [
         ...(chartsSitemap ? [chartsSitemap] : []),
         ...(studioSitemap ? [studioSitemap] : []),
         ...(blogSitemaps ?? []),
+        ...(blogTagSitemap ? [blogTagSitemap] : []),
     ];
 
     return {

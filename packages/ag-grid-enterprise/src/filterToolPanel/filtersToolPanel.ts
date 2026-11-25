@@ -44,6 +44,13 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
         this.registerCSS(filtersToolPanelCSS);
     }
 
+    public postConstruct(): void {
+        // Outlives init: the list reports its state while it builds, which a refresh does with its listeners removed.
+        this.addManagedListeners(this.filtersToolPanelListPanel, {
+            groupExpanded: (event) => this.filtersToolPanelHeaderPanel.setExpandState(event.state),
+        });
+    }
+
     public init(params: ToolPanelFiltersCompParams): void {
         // if initialised is true, means this is a refresh
         if (this.initialised) {
@@ -90,10 +97,7 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
             }),
             ...this.addManagedListeners(filtersToolPanelListPanel, {
                 filterExpanded: newParams.onStateUpdated,
-                groupExpanded: (event) => {
-                    filtersToolPanelHeaderPanel.setExpandState(event.state);
-                    newParams.onStateUpdated();
-                },
+                groupExpanded: newParams.onStateUpdated,
             })
         );
     }

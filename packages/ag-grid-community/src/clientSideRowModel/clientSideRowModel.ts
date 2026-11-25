@@ -1,3 +1,5 @@
+import { _debounce } from 'ag-stack';
+
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { GridOptions } from '../entities/gridOptions';
@@ -664,6 +666,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
     public refreshModel(params: RefreshModelParams): void {
         const { nodeManager, eventSvc, started } = this;
+        const selectionSvc = this.beans.selectionSvc;
         if (!nodeManager) {
             return; // destroyed
         }
@@ -680,7 +683,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             // Flag accumulation is intentional - they persist until the next successful refreshModel().
             this.setPendingRefreshFlags(params);
             this.rowDataUpdatedPending ||= rowDataUpdated;
-            const selectionSvc = this.beans.selectionSvc;
             if (rowDataUpdated && started && !this.refreshingModel && selectionSvc) {
                 if (suppressUpdateTransaction) {
                     // Model rebuild is suppressed indefinitely, so reapply isRowSelectable to the updated rows now.
@@ -703,6 +705,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
         let succeeded = false;
         this.refreshingModel = true; // Prevent nested refreshModel calls
+        selectionSvc?.beginSelectionBatch(); // one selectionChanged for the whole refresh
         try {
             this.executeRefresh(params, rowDataUpdated);
             succeeded = true;
@@ -710,6 +713,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             // Reset lock flags even on failure to prevent the grid from being stuck
             this.refreshingData = false;
             this.refreshingModel = false;
+            selectionSvc?.endSelectionBatch();
 
             if (!succeeded) {
                 // Capture flags so on error they are not lost.
@@ -747,12 +751,14 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
         // Ensure the root node is always visited by pipeline stages even for empty transactions.
         changedPath?.addRow(rootNode);
+        const rootHadGrandTotalRow = !!rootNode?.sibling;
+        const rootWasDisplayed = !!rootNode?.displayed;
 
         // Run grouping first if needed — sets this.hierarchical and may create changedPath.
         if (params.step === 'group') {
             this.doGrouping(rootNode!, params);
             changedPath ??= params.changedPath;
-            // nodes are fully formed after grouping — apply isRowSelectable to the changed set
+            // leaves are fully formed after grouping; groups are asked once aggregated, in doAggregate
             beans.selectionSvc?.updateSelectableAfterGrouping(changedPath, params.changedRowNodes);
         }
 
@@ -774,7 +780,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
                     params.changedPath = undefined;
                 }
             case 'aggregate': // depends on agg fields
-                this.doAggregate(changedPath);
+                this.doAggregate(changedPath, params.step === 'group');
             case 'filter_aggregates':
                 this.doFilterAggregates(changedPath);
             case 'sort':
@@ -785,6 +791,9 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         /* eslint-enable no-fallthrough */
 
         this.setRowTopAndRowIndex();
+        if (rootNode && (rootHadGrandTotalRow !== !!rootNode.sibling || rootWasDisplayed !== rootNode.displayed)) {
+            beans.selectionSvc?.updateRootSelection?.(rootNode); // known only once the rows are positioned
+        }
 
         this.updateRefreshParams(params); // Apply forced flags from any nested refresh calls
     }
@@ -1103,10 +1112,11 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     // it's possible to recompute the aggregate without doing the other parts + api.refreshClientSideRowModel('aggregate')
-    public doAggregate(changedPath: ChangedPath | undefined): void {
-        const rootNode = this.rootNode;
-        if (rootNode) {
-            this.beans.aggStage?.execute(changedPath);
+    public doAggregate(changedPath: ChangedPath | undefined, groupsChanged?: boolean): void {
+        const { rootNode, beans } = this;
+        // isRowSelectable sees a group's final totals; without totals, only a regroup asks the path's groups again
+        if (rootNode && (beans.aggStage?.execute(changedPath) || groupsChanged)) {
+            beans.selectionSvc?.updateGroupsSelectable?.(changedPath);
         }
     }
 
@@ -1404,6 +1414,14 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         this.stages = null;
         this.stagesRefreshProps.clear();
         clearTimeout(this.asyncTransactionsTimer);
+    }
+
+    private readonly onRowHeightChanged_debounced = _debounce(this, this.onRowHeightChanged.bind(this), 100);
+    /**
+     * @deprecated v33.1
+     */
+    public onRowHeightChangedDebounced(): void {
+        this.onRowHeightChanged_debounced();
     }
 }
 

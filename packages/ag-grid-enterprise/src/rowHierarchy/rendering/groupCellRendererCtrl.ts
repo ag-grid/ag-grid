@@ -180,7 +180,11 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
         } = this;
         // `(Blanks)` is substituted in `showRowGroupColValueSvc`, and does not propagate down for [showOpenedGroup].
         const innerCompDetails = this.getInnerCompDetails();
-        this.comp.setInnerRenderer(innerCompDetails, valueFormatted ?? value ?? null);
+        // Automatic text tooltips must not infer truncation inside a custom component.
+        if (this.beans.tooltipSvc) {
+            this.comp.toggleCss('ag-group-default-inner-renderer', !innerCompDetails);
+        }
+        this.comp.setInnerRenderer(innerCompDetails ?? this.getFindCompDetails(), valueFormatted ?? value ?? null);
     }
 
     /**
@@ -204,9 +208,28 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
 
         addIconToDom('groupExpanded', this.eExpanded);
         addIconToDom('groupContracted', this.eContracted);
+        const expandTooltips = [this.eExpanded, this.eContracted].map((element) =>
+            this.createOptionalManagedBean(
+                this.beans.tooltipSvc?.createTooltip({
+                    control: 'rowGroupExpand',
+                    shouldDisplayTooltip: () => !!this.displayedNode.group,
+                    getGui: () => element,
+                    getLocation: () => (this.params.column ? 'cell' : 'fullWidthRow'),
+                    getTooltip: () => ({
+                        value: this.displayedNode.expanded
+                            ? this.getLocaleTextFunc()('tooltipCollapseRowGroup', 'Collapse row group')
+                            : this.getLocaleTextFunc()('tooltipExpandRowGroup', 'Expand row group'),
+                        params: { node: this.displayedNode, column: this.params.column },
+                    }),
+                })
+            )
+        );
 
         const comp = this.comp;
         const onExpandedChanged = () => {
+            for (const tooltip of expandTooltips) {
+                tooltip?.refreshTooltip();
+            }
             const expandable = this.isExpandable();
             if (!expandable) {
                 return;
@@ -279,36 +302,18 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
      *
      * Prioritises:
      * 1. Group row renderer for group rows
-     * 2. agFindCellRenderer for find results in group rows
-     * 3. Provided innerRenderer (i.e, cellRendererParams.innerRenderer)
-     * 4. Cell renderer of the grouped column
-     * 5. Inner renderer of the grouped column
-     * 6. agFindCellRenderer for find results
+     * 2. Provided innerRenderer (i.e, cellRendererParams.innerRenderer)
+     * 3. Cell renderer of the grouped column
+     * 4. Inner renderer of the grouped column
      */
     private getInnerCompDetails(): UserCompDetails | undefined {
-        const { userCompFactory, findSvc } = this.beans;
+        const { userCompFactory } = this.beans;
         const params = this.params;
 
         // full width rows do not inherit the child group column renderer
         if (params.fullWidth) {
             const groupRowRendererParams = this.gos.get('groupRowRendererParams');
-            const groupRowInnerCompDetails = _getInnerCellRendererDetails(
-                userCompFactory,
-                groupRowRendererParams,
-                params
-            );
-            if (groupRowInnerCompDetails) {
-                return groupRowInnerCompDetails;
-            }
-            // if no group row inner renderer, use find renderer if match
-            if (findSvc?.isMatch(params.node, null)) {
-                return _getInnerCellRendererDetails(
-                    userCompFactory,
-                    { ...groupRowRendererParams, innerRenderer: 'agFindCellRenderer' },
-                    params
-                );
-            }
-            return undefined;
+            return _getInnerCellRendererDetails(userCompFactory, groupRowRendererParams, params);
         }
 
         const isGroupRowRenderer = (details: UserCompDetails | undefined) =>
@@ -348,17 +353,28 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
                 }
             }
         }
+    }
 
-        /**
-         * Use the find renderer
-         */
-        if (findSvc?.isMatch(params.node, params.column!)) {
-            return _getCellRendererDetails(
-                userCompFactory,
-                { ...(relatedColDef ?? params.colDef), cellRenderer: 'agFindCellRenderer' },
-                params
-            );
+    private getFindCompDetails(): UserCompDetails | undefined {
+        const { userCompFactory, findSvc } = this.beans;
+        const { params } = this;
+        if (!findSvc?.isMatch(params.node, params.fullWidth ? null : params.column!)) {
+            return undefined;
         }
+        return params.fullWidth
+            ? _getInnerCellRendererDetails(
+                  userCompFactory,
+                  { ...this.gos.get('groupRowRendererParams'), innerRenderer: 'agFindCellRenderer' },
+                  params
+              )
+            : _getCellRendererDetails(
+                  userCompFactory,
+                  {
+                      ...(this.displayedNode.rowGroupColumn?.colDef ?? params.colDef),
+                      cellRenderer: 'agFindCellRenderer',
+                  },
+                  params
+              );
     }
 
     /**

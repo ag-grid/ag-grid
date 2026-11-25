@@ -20,7 +20,7 @@ export function setNodesSelected(
             return false;
         }
 
-        if (node.id === undefined) {
+        if (node.id === undefined && node.level !== -1) {
             beans.log.warn(60);
             return false;
         }

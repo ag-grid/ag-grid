@@ -7,7 +7,7 @@ import type {
     ICommonSource,
     IPropertiesService,
 } from 'ag-stack';
-import { LocalEventService, _exists } from 'ag-stack';
+import { LocalEventService, _exists, _throwErrors } from 'ag-stack';
 
 import type { GridApi } from './api/gridApi';
 import type { NamedBean } from './context/bean';
@@ -215,10 +215,13 @@ export class GridOptionsService
         // changeSet should just include the properties that have changed.
         changeSet.properties = events.map((event) => event.type);
 
+        // Every changed option is notified even when a listener throws, as every value is already set.
+        const errors: unknown[] = [];
         for (const event of events) {
             _logIfDebug(this, `Updated property ${event.type} from`, event.previousValue, ` to `, event.currentValue);
-            this.propEventSvc.dispatchEvent(event);
+            errors.push(...this.propEventSvc.dispatchEventCollectingErrors(event));
         }
+        _throwErrors(errors);
     }
 
     public addPropertyEventListener<K extends keyof GridOptions>(

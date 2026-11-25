@@ -373,6 +373,21 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         this.setActiveHeader(false);
     }
 
+    public getTooltipTextElement(): HTMLElement | undefined {
+        const headerComp = this.comp?.getUserCompInstance();
+        const compDetails = this.userCompDetails;
+        // A pending replacement must not expose the previous component's text.
+        if (
+            !compDetails ||
+            compDetails.componentFromFramework ||
+            compDetails.componentClass !== headerComp?.constructor ||
+            compDetails.params.innerHeaderComponent
+        ) {
+            return undefined;
+        }
+        return (headerComp as AgColumnHeader).getTooltipTextElement?.();
+    }
+
     private setupTooltip(): void {
         const feature = this.beans.tooltipSvc?.setupHeaderTooltip(
             this,
@@ -466,6 +481,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         const headerCompRefreshed = attemptRefresh ? this.attemptHeaderCompRefresh(newCompDetails.params) : false;
 
         if (headerCompRefreshed) {
+            this.userCompDetails = newCompDetails;
             // we do this as a refresh happens after colDefs change, and it's possible the column has had it's
             // draggable property toggled. no need to call this if not refreshing, as setDragSource is done
             // as part of appendHeaderComp

@@ -1,3 +1,4 @@
+import type { ITooltipFeature } from 'ag-stack';
 import {
     FAST_TEST_TIMINGS,
     RefPlaceholder,
@@ -13,6 +14,7 @@ import type { ComponentSelector, ElementParams, GridCheckbox, GridInputTextField
 import { AgCheckboxSelector, AgInputTextFieldSelector, Component, KeyCode, _createIconNoSpan } from 'ag-grid-community';
 
 import type { ToolPanelColumnCompParams } from './columnToolPanel';
+import { isDeferredMode } from './toolPanelDeferredUiUtils';
 
 export enum ExpandState {
     EXPANDED,
@@ -34,7 +36,7 @@ const AgPrimaryColsHeaderElement: ElementParams = {
     ],
 };
 export class AgPrimaryColsHeader extends Component<AgPrimaryColsHeaderEvent> {
-    private readonly eExpand: Element = RefPlaceholder;
+    private readonly eExpand: HTMLElement = RefPlaceholder;
     private readonly eSelect: GridCheckbox = RefPlaceholder;
     private readonly eFilterTextField: GridInputTextField = RefPlaceholder;
 
@@ -44,6 +46,8 @@ export class AgPrimaryColsHeader extends Component<AgPrimaryColsHeaderEvent> {
 
     private expandState: ExpandState;
     private selectState?: boolean;
+    private expandTooltip?: ITooltipFeature;
+    private selectTooltip?: ITooltipFeature;
 
     private onFilterTextChangedDebounced: () => ReturnType<typeof setTimeout>;
     private filterTextChangedTimeout: ReturnType<typeof setTimeout> | undefined;
@@ -85,10 +89,40 @@ export class AgPrimaryColsHeader extends Component<AgPrimaryColsHeaderEvent> {
         const translate = this.getLocaleTextFunc();
 
         this.eSelect.setInputAriaLabel(translate('ariaColumnSelectAll', 'Toggle All Columns Visibility'));
-        _setAriaLabel(this.eExpand, translate('ariaColumnSelectExpandAll', 'Expand or Collapse All Column Groups'));
         this.eFilterTextField.setInputAriaLabel(translate('ariaFilterColumnsInput', 'Filter Columns Input'));
 
         this.activateTabIndex([this.eExpand]);
+        this.expandTooltip = this.addTooltip({
+            control: 'expandAll',
+            getGui: () => this.eExpand,
+            getLocation: () => 'columnToolPanelColumnGroup',
+            getTooltip: () => ({
+                value:
+                    this.expandState === ExpandState.EXPANDED
+                        ? translate('tooltipCollapseAll', 'Collapse all')
+                        : translate('tooltipExpandAll', 'Expand all'),
+            }),
+        });
+        this.selectTooltip = this.eSelect.addTooltip({
+            control: 'columnSelectAll',
+            getLocation: () => 'columnToolPanelColumnGroup',
+            getAriaElement: () => this.eSelect.getInputElement(),
+            getTooltip: () => {
+                const pivotMode = this.beans.columnStateUpdateStrategy.getPivotMode(isDeferredMode(this.params));
+                if (pivotMode) {
+                    return {
+                        value: this.selectState
+                            ? translate('tooltipDisableAllColumns', 'Disable all columns')
+                            : translate('tooltipEnableAllColumns', 'Enable all columns'),
+                    };
+                }
+                return {
+                    value: this.selectState
+                        ? translate('tooltipHideAllColumns', 'Hide all columns')
+                        : translate('tooltipShowAllColumns', 'Show all columns'),
+                };
+            },
+        });
     }
 
     private onFunctionsReadOnlyPropChanged(): void {
@@ -171,9 +205,19 @@ export class AgPrimaryColsHeader extends Component<AgPrimaryColsHeaderEvent> {
 
     public setExpandState(state: ExpandState): void {
         this.expandState = state;
+        this.expandTooltip?.refreshTooltip();
+        const expanded = state === ExpandState.EXPANDED;
+        const translate = this.getLocaleTextFunc();
 
-        _setAriaExpanded(this.eExpand, state === ExpandState.EXPANDED);
-        _setDisplayed(this.eExpandChecked, state === ExpandState.EXPANDED);
+        // The name says what activating does, so it names the collapse only once every group is expanded.
+        _setAriaLabel(
+            this.eExpand,
+            expanded
+                ? translate('ariaColumnSelectCollapseAll', 'Collapse All Column Groups')
+                : translate('ariaColumnSelectExpandAll', 'Expand All Column Groups')
+        );
+        _setAriaExpanded(this.eExpand, expanded);
+        _setDisplayed(this.eExpandChecked, expanded);
         _setDisplayed(this.eExpandUnchecked, state === ExpandState.COLLAPSED);
         _setDisplayed(this.eExpandIndeterminate, state === ExpandState.INDETERMINATE);
     }
@@ -181,6 +225,7 @@ export class AgPrimaryColsHeader extends Component<AgPrimaryColsHeaderEvent> {
     public setSelectionState(state?: boolean): void {
         this.selectState = state;
         this.eSelect.setValue(this.selectState);
+        this.selectTooltip?.refreshTooltip();
     }
 }
 

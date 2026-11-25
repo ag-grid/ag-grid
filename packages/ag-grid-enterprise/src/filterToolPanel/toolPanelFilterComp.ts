@@ -1,7 +1,22 @@
+import type { ITooltipFeature } from 'ag-stack';
 import { RefPlaceholder, _clearElement, _setAriaExpanded, _setAriaLabel, _setAriaRole, _setDisplayed } from 'ag-stack';
 
-import type { AgColumn, ElementParams, FilterOpenedEvent, IFilterComp, IconName } from 'ag-grid-community';
-import { Component, FilterComp, KeyCode, _createElement, _createIconNoSpan } from 'ag-grid-community';
+import type {
+    AgColumn,
+    ElementParams,
+    FilterOpenedEvent,
+    IFilterComp,
+    IconName,
+    TooltipFeature,
+} from 'ag-grid-community';
+import {
+    Component,
+    FilterComp,
+    KeyCode,
+    _createElement,
+    _createIconNoSpan,
+    _resolveHeaderTooltip,
+} from 'ag-grid-community';
 
 type ToolPanelFilterCompEvent = 'filterChanged';
 
@@ -33,7 +48,7 @@ export class ToolPanelFilterComp extends Component<ToolPanelFilterCompEvent> {
     private readonly eFilterName: HTMLElement = RefPlaceholder;
     private readonly agFilterToolPanelBody: HTMLElement = RefPlaceholder;
     private readonly eFilterIcon: Element = RefPlaceholder;
-    private readonly eExpand: Element = RefPlaceholder;
+    private readonly eExpand: HTMLElement = RefPlaceholder;
 
     private eExpandChecked: Element;
     private eExpandUnchecked: Element;
@@ -41,6 +56,8 @@ export class ToolPanelFilterComp extends Component<ToolPanelFilterCompEvent> {
     private expanded: boolean = false;
     private underlyingFilter: IFilterComp | null;
     private filterComp?: FilterComp;
+    private tooltipFeature?: TooltipFeature;
+    private expandTooltip?: ITooltipFeature;
 
     constructor(
         private readonly hideHeader: boolean,
@@ -84,6 +101,7 @@ export class ToolPanelFilterComp extends Component<ToolPanelFilterCompEvent> {
             eFilterToolPanelHeader.removeAttribute('tabindex');
         } else {
             eFilterToolPanelHeader.setAttribute('tabindex', '0');
+            this.setupTooltip();
         }
 
         this.addManagedListeners(column, { filterChanged: this.onFilterChanged.bind(this) });
@@ -92,6 +110,42 @@ export class ToolPanelFilterComp extends Component<ToolPanelFilterCompEvent> {
     private refreshFilterName(): void {
         // eslint-disable-next-line no-restricted-properties -- Could swap to textContent, but could be a breaking change
         this.eFilterName.innerText = this.getColumnFilterName() || '';
+        this.tooltipFeature?.refreshTooltip();
+    }
+
+    private setupTooltip(): void {
+        this.tooltipFeature = this.createOptionalManagedBean(
+            this.beans.tooltipSvc?.createTooltip({
+                getGui: () => this.eFilterToolPanelHeader,
+                getTextElement: () => this.eFilterName,
+                getLocation: () => 'filterToolPanelColumnGroup',
+                getTooltip: () => {
+                    const displayName = this.getColumnFilterName();
+                    return _resolveHeaderTooltip(
+                        this.gos,
+                        this.gos.addCommon({
+                            location: 'filterToolPanelColumnGroup',
+                            column: this.column,
+                            colDef: this.column.colDef,
+                            value: displayName,
+                            valueFormatted: displayName,
+                        })
+                    );
+                },
+            })
+        );
+        this.expandTooltip = this.addTooltip({
+            control: 'filterExpand',
+            getGui: () => this.eExpand,
+            getLocation: () => 'filterToolPanelColumnGroup',
+            getTooltip: () => ({
+                value: this.expanded
+                    ? this.getLocaleTextFunc()('tooltipCollapseFilter', 'Collapse filter')
+                    : this.getLocaleTextFunc()('tooltipExpandFilter', 'Expand filter'),
+                params: { column: this.column },
+            }),
+        });
+        this.addManagedEventListeners({ newColumnsLoaded: () => this.tooltipFeature?.refreshTooltip() });
     }
 
     private onKeyDown(e: KeyboardEvent): void {
@@ -157,6 +211,7 @@ export class ToolPanelFilterComp extends Component<ToolPanelFilterCompEvent> {
         }
 
         this.expanded = true;
+        this.expandTooltip?.refreshTooltip();
         _setAriaExpanded(this.eFilterToolPanelHeader, true);
 
         _setDisplayed(this.eExpandChecked, true);
@@ -196,6 +251,7 @@ export class ToolPanelFilterComp extends Component<ToolPanelFilterCompEvent> {
         }
 
         this.expanded = false;
+        this.expandTooltip?.refreshTooltip();
         _setAriaExpanded(this.eFilterToolPanelHeader, false);
         this.removeFilterElement();
 

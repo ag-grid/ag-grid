@@ -208,3 +208,52 @@ export function buildValueEdits<T extends Record<string, string | number>>(
     }
     return { forward, reverse };
 }
+
+// ── Large data (1M rows) — shared by the large-data benches. ─────────────────────────────────────
+
+export const LARGE_TERRITORIES = 166_667;
+const LARGE_SPECIES = ['A', 'B', 'C'] as const;
+const LARGE_SEXES = ['M', 'F'] as const;
+
+/** Row count of `buildLargeData`: territories × species × sexes. */
+export const LARGE_ROW_COUNT = LARGE_TERRITORIES * LARGE_SPECIES.length * LARGE_SEXES.length;
+
+/** Start of the `recorded` timestamps: a fixed instant, so the data is the same on every run. */
+const LARGE_EPOCH = Date.UTC(2024, 0, 1);
+
+export interface LargeRow {
+    territory: string;
+    species: string;
+    sex: string;
+    active?: boolean;
+    recorded?: Date;
+    [valueField: `v${number}`]: number;
+}
+
+/**
+ * 1,000,002 rows in a three-level hierarchy (166,667 territories × 3 species × 2 sexes) and `valueColumns` numeric
+ * fields `v0…`, plus, with `typedFields`, a boolean `active` and a `recorded` date with a time of day. Fully derived
+ * from the row index, so it needs no PRNG and is identical on every side.
+ */
+export function buildLargeData(valueColumns: number, typedFields: boolean): LargeRow[] {
+    const rows = new Array<LargeRow>(LARGE_ROW_COUNT);
+    let i = 0;
+    for (let t = 0; t < LARGE_TERRITORIES; ++t) {
+        const territory = 'T' + t;
+        for (const species of LARGE_SPECIES) {
+            for (const sex of LARGE_SEXES) {
+                const row: LargeRow = { territory, species, sex };
+                if (typedFields) {
+                    row.active = i % 3 !== 0;
+                    // Minutes across a year, so the times of day vary.
+                    row.recorded = new Date(LARGE_EPOCH + ((i * 7_919) % 525_600) * 60_000);
+                }
+                for (let c = 0; c < valueColumns; ++c) {
+                    row[`v${c}`] = (i * (c + 7)) % 100_000;
+                }
+                rows[i++] = row;
+            }
+        }
+    }
+    return rows;
+}

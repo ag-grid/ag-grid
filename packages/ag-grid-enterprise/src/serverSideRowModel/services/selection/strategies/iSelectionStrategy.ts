@@ -21,8 +21,10 @@ export interface ISelectionStrategy extends Bean {
     /** Whether `node` accounts for the entire selection, i.e. nothing outside its own subtree is selected. */
     isSoleSelection(node: RowNode): boolean;
     isEmpty(): boolean;
-    selectAllRowNodes(params: { source: SelectionEventSourceType; selectAll?: SelectAllMode }): void;
-    deselectAllRowNodes(params: { source: SelectionEventSourceType; selectAll?: SelectAllMode }): void;
+    /** @returns whether the selection changed. */
+    selectAllRowNodes(params: { source: SelectionEventSourceType; selectAll?: SelectAllMode }): boolean;
+    /** @returns whether the selection changed. */
+    deselectAllRowNodes(params: { source: SelectionEventSourceType; selectAll?: SelectAllMode }): boolean;
     getSelectAllState(selectAll?: SelectAllMode): boolean | null;
-    deleteSelectionStateFromParent(parentRoute: string[], removedNodeIds: string[]): boolean;
+    deleteSelectionStateFromParent(removedNodeIds: string[], parentNode: RowNode): boolean;
 }

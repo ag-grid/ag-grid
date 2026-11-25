@@ -1,5 +1,6 @@
 import { waitFor } from '@testing-library/dom';
 import {
+    ALL_SEVERITIES,
     ColumnFilterHarness,
     FilterDom,
     GridRows,
@@ -11,7 +12,13 @@ import {
 } from 'ag-test-utils';
 
 import type { GridApi } from 'ag-grid-community';
-import { ClientSideRowModelModule, TextFilterModule, agTestIdFor, setupAgTestIds } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    TextFilterModule,
+    agTestIdFor,
+    enableDevValidations,
+    setupAgTestIds,
+} from 'ag-grid-community';
 
 /** Clicks an apply-panel button by label (harness only exposes Apply/Clear; Reset needs this). */
 async function clickPanelButton(label: string): Promise<void> {
@@ -212,6 +219,7 @@ describe('Text Filter — buttons & model round-trip', () => {
     test.each([false, true])(
         'the join radio revealed by typing can be found by its test ID (enableFilterHandlers: %s)',
         async (enableFilterHandlers) => {
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [348] });
             const api: GridApi = await gridsManager.createGridAndWait('grid1', {
                 enableFilterHandlers,
                 columnDefs: [{ field: 'name', filter: 'agTextColumnFilter', filterParams: { buttons: ['apply'] } }],

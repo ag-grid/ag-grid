@@ -27,7 +27,7 @@ export interface IHeaderGroupParams<TData = any, TContext = any> extends AgGridC
     /**
      * Sets a tooltip to the main element of this component.
      * @param value The value to be displayed by the tooltip
-     * @param shouldDisplayTooltip A function returning a boolean that allows the tooltip to be displayed conditionally. This option does not work when `enableBrowserTooltips={true}`.
+     * @param shouldDisplayTooltip A function returning a boolean that allows the tooltip to be displayed conditionally.
      */
     setTooltip: (value: string, shouldDisplayTooltip?: () => boolean) => void;
     /**
@@ -103,6 +103,10 @@ export class AgColumnGroupHeader extends Component implements IHeaderGroupComp {
 
     constructor() {
         super(HeaderGroupCompElement);
+    }
+
+    public getTooltipTextElement(): HTMLElement | undefined {
+        return this.innerHeaderGroupComponent || this.isLoadingInnerComponent ? undefined : this.agLabel;
     }
 
     public init(params: IHeaderGroupParams): void {

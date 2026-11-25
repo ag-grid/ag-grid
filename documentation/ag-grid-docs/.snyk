@@ -1286,4 +1286,31 @@ ignore:
         reason: Used in build & dev - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T11:46:21.570Z
+  SNYK-JS-PARSE5-22742152:
+    - 'ag-grid-angular@* > *':
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-24T11:05:12.729Z
+    - 'cheerio@1.2.0 > parse5@7.3.0':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-24T10:29:28.361Z
+    - 'cheerio@1.2.0 > parse5-parser-stream@7.1.2 > parse5@7.3.0':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-24T10:29:28.361Z
+    - 'cheerio@1.2.0 > parse5-htmlparser2-tree-adapter@7.1.0 > parse5@7.3.0':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-24T10:29:28.361Z
+  SNYK-JS-MSGPACKR-22744130:
+    - 'ag-grid-angular@* > *':
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-24T11:05:12.729Z
 patch: {}

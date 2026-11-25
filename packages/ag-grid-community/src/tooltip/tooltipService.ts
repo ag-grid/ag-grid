@@ -13,6 +13,7 @@ import { FullWidthRowTooltips } from './fullWidthRowTooltips';
 import type { ComponentTooltip } from './headerTooltipSource';
 import { _setupHeaderGroupTooltip, _setupHeaderTooltip } from './headerTooltipSource';
 import type { TooltipFeature, TooltipSource } from './tooltipFeature';
+import { shouldDisplayTextTooltip } from './tooltipFeature';
 import { _initColTooltip } from './tooltipValueUtils';
 
 /**
@@ -43,7 +44,16 @@ export class TooltipService extends BeanStub implements NamedBean {
     /** Creates an uninitialised feature for hosts whose element is attached later (ordinary cells). */
     public createTooltip(source: TooltipSource): TooltipFeature | undefined {
         const { beans } = this;
+        this.configureTextTooltip(source);
         return beans.registry.createDynamicBean<TooltipFeature>('tooltipFeature', false, source, beans);
+    }
+
+    private configureTextTooltip(source: TooltipSource): void {
+        const { getTextElement, shouldDisplayTooltip } = source;
+        if (getTextElement) {
+            source.shouldDisplayTooltip = (tooltip) =>
+                shouldDisplayTooltip?.(tooltip) !== false && shouldDisplayTextTooltip(tooltip, getTextElement);
+        }
     }
 
     /** Creates a feature which can also be shown when its owner reports keyboard highlight changes. */
@@ -52,6 +62,7 @@ export class TooltipService extends BeanStub implements NamedBean {
         highlightTracker: IEventEmitter<HighlightTooltipEventType>
     ): TooltipFeature | undefined {
         const { beans } = this;
+        this.configureTextTooltip(source);
         return beans.registry.createDynamicBean<TooltipFeature>(
             'highlightTooltipFeature',
             false,

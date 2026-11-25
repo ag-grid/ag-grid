@@ -11,6 +11,7 @@ import type {
     ElementParams,
     GridDragSource,
     HeaderTooltipCallbackParams,
+    ResolvedTooltip,
     TooltipFeature,
     TooltipLocation,
     TooltipSourceParams,
@@ -43,7 +44,7 @@ export abstract class PillDragComp<TItem> extends Component<PillDragCompEvent> {
 
     protected abstract getDisplayName(): string;
     protected abstract getAriaDisplayName(): string;
-    protected abstract getTooltip(params: HeaderTooltipCallbackParams): string | null | undefined;
+    protected abstract getTooltip(params: HeaderTooltipCallbackParams): ResolvedTooltip;
     protected abstract createGetDragItem(): () => DragItem<TItem>;
     protected abstract getDragSourceType(): DragSourceType;
     private tooltipFeature?: TooltipFeature;
@@ -78,19 +79,18 @@ export abstract class PillDragComp<TItem> extends Component<PillDragCompEvent> {
         this.tooltipFeature = this.createOptionalManagedBean(
             beans.tooltipSvc?.createTooltip({
                 getGui: () => this.getGui(),
+                getTextElement: () => eText,
                 getLocation: () => this.getTooltipLocation(),
                 getTooltip: () => {
                     const params = { ...this.getTooltipParams(), value: this.getDisplayName() };
-                    const componentDefinition = this.getTooltipComponentDefinition();
                     return {
-                        value: this.getTooltip(
+                        ...this.getTooltip(
                             _addGridCommonParams<HeaderTooltipCallbackParams>(this.gos, {
                                 location: this.getTooltipLocation(),
                                 ...params,
                             })
                         ),
                         params,
-                        componentDefinition,
                     };
                 },
             })
@@ -180,10 +180,6 @@ export abstract class PillDragComp<TItem> extends Component<PillDragCompEvent> {
 
     protected getTooltipParams(): TooltipSourceParams {
         return {};
-    }
-
-    protected getTooltipComponentDefinition(): TooltipSourceParams['colDef'] {
-        return undefined;
     }
 
     protected getDragSourceId(): string | undefined {

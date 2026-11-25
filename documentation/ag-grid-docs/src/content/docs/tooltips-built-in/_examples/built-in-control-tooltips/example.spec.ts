@@ -11,7 +11,7 @@ test.agExample(import.meta, () => {
         await nextPage.focus();
         await expect(nextPage).toBeFocused();
         await expect(tooltip).toContainText('Grid control');
-        await expect(tooltip).toContainText('Next Page');
+        await expect(tooltip).toContainText('Go to next page');
         await expect(tooltip).toContainText('pagination / nextPage');
 
         await nextPage.click();
@@ -46,7 +46,7 @@ test.agExample(import.meta, () => {
         await expect(tooltip).toHaveText('Athlete');
 
         await header.locator('.ag-header-cell-menu-button').hover();
-        await expect(tooltip).toContainText('Column Menu');
+        await expect(tooltip).toContainText('Open column menu');
         await expect(tooltip).toContainText('header / columnMenu');
         await expect(tooltip).toHaveCount(1);
     });
@@ -59,7 +59,7 @@ test.agExample(import.meta, () => {
         const tooltip = page.locator('[role="tooltip"]:not(.ag-tooltip-hiding)');
         await expect(page.getByLabel('Use custom component', { exact: true })).not.toBeChecked();
         await nextPage.focus();
-        await expect(tooltip).toHaveText('Next Page');
+        await expect(tooltip).toHaveText('Go to next page');
         await expect(page.locator('.control-tooltip')).toHaveCount(0);
 
         await page.keyboard.press('Escape');
@@ -91,7 +91,7 @@ test.agExample(import.meta, () => {
 
             await page.getByLabel('Suppress built-in tooltips', { exact: true }).uncheck();
             await nextPage.focus();
-            await expect(tooltip).toContainText('Next Page');
+            await expect(tooltip).toContainText('Go to next page');
         }
     );
 });

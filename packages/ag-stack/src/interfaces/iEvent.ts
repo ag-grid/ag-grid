@@ -60,4 +60,7 @@ export interface AgEventService<TGlobalEvents, TDispatch = TGlobalEvents[keyof T
     ): void;
 
     dispatchEvent(event: TDispatch): void;
+
+    /** Like `dispatchEvent`, but a sync listener that throws does not stop later ones; returns the errors thrown, in order. */
+    dispatchEventCollectingErrors(event: TDispatch): unknown[];
 }

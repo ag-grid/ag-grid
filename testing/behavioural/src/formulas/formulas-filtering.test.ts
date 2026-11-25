@@ -1,5 +1,13 @@
 import { waitFor } from '@testing-library/dom';
-import { GridColumns, GridRows, TestGridsManager, applyTransactionChecked, waitForEvent } from 'ag-test-utils';
+import {
+    ALL_SEVERITIES,
+    GridColumns,
+    GridRows,
+    LEGACY_FILTER_WARNING_IDS,
+    TestGridsManager,
+    applyTransactionChecked,
+    waitForEvent,
+} from 'ag-test-utils';
 
 import type { GridOptions, SetFilterHandler } from 'ag-grid-community';
 import {
@@ -9,6 +17,7 @@ import {
     TextFilterModule,
     TooltipModule,
     UndoRedoEditModule,
+    enableDevValidations,
 } from 'ag-grid-community';
 import { CellSelectionModule, FormulaModule, SetFilterModule } from 'ag-grid-enterprise';
 
@@ -606,6 +615,7 @@ describe('ag-grid formulas filtering', () => {
     });
 
     test('TC4-1 Custom filter honours formula edits', async () => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: LEGACY_FILTER_WARNING_IDS });
         const personData = [
             {
                 id: '1',

@@ -16,6 +16,7 @@ import { _getCtrlASelectsRows, _getSelectAll, _isCellSelectionEnabled, _isRowSel
 import type { IClipboardService } from '../../interfaces/iClipboardService';
 import type { GetNoteParams } from '../../interfaces/notes';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
+import { _onSuppressedCellKeyDown } from '../../rendering/cell/cellKeyboardListenerFeature';
 import { _getCellCtrlForEventTarget, _getRowCtrlForEventTarget } from '../../rendering/renderUtils';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
 import type { UndoRedoService } from '../../undoRedo/undoRedoService';
@@ -166,6 +167,8 @@ export class RowContainerEventsFeature extends BeanStub {
                     cellCtrl.processCharacter(keyboardEvent, this.spaceKeyAction);
                 }
             }
+        } else if (eventName === 'keydown' && !editing) {
+            _onSuppressedCellKeyDown(this.beans, cellCtrl, keyboardEvent);
         }
 
         if (eventName === 'keydown') {

@@ -8,7 +8,8 @@
       "executor": "nx:run-commands",
       "dependsOn": ["ag-grid-community:build:package"],
       "inputs": [
-        "{projectRoot}/node updateGridAndColumnProperties.js",
+        "{projectRoot}/updateGridAndColumnProperties.js",
+        "{projectRoot}/projects/ag-grid-angular/src/lib/ag-grid-angular.component.ts",
         "{workspaceRoot}/packages/ag-grid-community/src/entities/gridOptions.ts"
       ],
       "outputs": ["{projectRoot}/projects/ag-grid-angular/src/lib/ag-grid-angular.component.ts"],

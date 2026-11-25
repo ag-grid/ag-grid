@@ -303,7 +303,11 @@ export class AgDialog<
         this.maximizeTooltip = maximizeButtonComp.addTooltip({
             getLocation: () => 'dialog',
             control: 'maximize',
-            getTooltip: () => ({ value: this.getMaximizeLabel() }),
+            getTooltip: () => ({
+                value: this.isMaximized
+                    ? this.getLocaleTextFunc()('tooltipRestore', 'Restore')
+                    : this.getLocaleTextFunc()('tooltipMaximize', 'Maximise'),
+            }),
         });
 
         const iconSvc = this.beans.iconSvc;
