@@ -538,11 +538,12 @@
         text-overflow: ellipsis;
     }
 
-    // The underlines take the match's text colour, so they stay as visible as the text in every row state.
+    // The padding keeps the double underline's lower line on the highlight, not the row background.
     .ag-find-match {
         color: var(--ag-find-match-color);
         background-color: var(--ag-find-match-background-color);
         text-decoration: underline;
+        padding-bottom: 0.2em;
     }
 
     .ag-find-active-match {
