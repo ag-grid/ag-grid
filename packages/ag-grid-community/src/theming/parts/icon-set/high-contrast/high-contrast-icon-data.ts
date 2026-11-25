@@ -65,7 +65,7 @@ export const highContrastIconSvgs: Record<string, string> = {
     none: '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="currentColor"><path d="M5 7l4-4 4 4M5 11l4 4 4-4" fill="none" stroke="currentColor" stroke-width="2.83"/></svg>',
     'not-allowed':
         '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="currentColor"><circle cx="9" cy="9" r="6" fill="none" stroke="currentColor" stroke-width="2"/><path d="M4.5 4.5l9 9" fill="none" stroke="currentColor" stroke-width="2.83"/></svg>',
-    paste: '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="currentColor"><rect x="6" y="1" width="6" height="3"/><path d="M3 3h2v2h8V3h2v14H3z"/></svg>',
+    paste: '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="currentColor"><rect x="5" y="1" width="6" height="3"/><path d="M2 3h3v2H4v10h10v2H2zM11 3h3v2h-3z"/><rect x="6" y="9" width="8" height="2"/><path d="M13 6l4 4-4 4z"/></svg>',
     pdf: '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="currentColor"><path fill-rule="evenodd" d="M3 1h7v6h6v10H3zM12 1l4 4h-4zM5 9h8v2H5zM5 13h5v2H5z"/></svg>',
     pin: '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="currentColor"><path d="M5 2h8v2h-2v5l3 3v2H4v-2l3-3V4H5z"/><rect x="8" y="14" width="2" height="3"/></svg>',
     pivot: '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="currentColor"><path fill-rule="evenodd" d="M2 2h14v14H2zM4 6h3v3H4zM9 6h3v3H9zM4 11h3v3H4zM9 11h3v3H9z"/></svg>',
