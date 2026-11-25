@@ -38,6 +38,13 @@ function getClippedHintPixels(grid: Locator): Promise<number[]> {
     });
 }
 
+async function expectNoClippedHints(grid: Locator, hintCount: number) {
+    await expect(grid.locator('.ag-column-drop-vertical-empty-message:visible')).toHaveCount(hintCount);
+    for (const clipped of await getClippedHintPixels(grid)) {
+        expect(clipped).toBeLessThan(0.5);
+    }
+}
+
 async function expectHintsUnclipped(page: Page, params: Omit<MountGridParams, 'options'>, pivotMode = false) {
     const { grid, withApi } = await mountGrid(page, {
         enterprise: true,
@@ -52,11 +59,7 @@ async function expectHintsUnclipped(page: Page, params: Omit<MountGridParams, 'o
     if (pivotMode) {
         await withApi((api) => api.setGridOption('pivotMode', true));
     }
-    await expect(grid.locator('.ag-column-drop-vertical-empty-message:visible')).toHaveCount(pivotMode ? 3 : 2);
-
-    for (const clipped of await getClippedHintPixels(grid)) {
-        expect(clipped).toBeLessThan(0.5);
-    }
+    await expectNoClippedHints(grid, pivotMode ? 3 : 2);
 }
 
 test.describe('Columns tool panel drop zone hints with WCAG 1.4.12 text spacing', () => {
@@ -87,11 +90,7 @@ test.describe('Columns tool panel drop zone hints with WCAG 1.4.12 text spacing'
                 },
             }),
         });
-        await expect(grid.locator('.ag-column-drop-vertical-empty-message:visible')).toHaveCount(2);
-
-        for (const clipped of await getClippedHintPixels(grid)) {
-            expect(clipped).toBeLessThan(0.5);
-        }
+        await expectNoClippedHints(grid, 2);
     });
 
     for (const theme of ['quartz', 'balham']) {
@@ -113,11 +112,7 @@ test.describe('Columns tool panel drop zone hints with WCAG 1.4.12 text spacing'
                     localeText: { rowGroupColumnsEmptyMessage: 'Ziehen Sie hierher, um Zeilengruppen festzulegen' },
                 }),
             });
-            await expect(grid.locator('.ag-column-drop-vertical-empty-message:visible')).toHaveCount(2);
-
-            for (const clipped of await getClippedHintPixels(grid)) {
-                expect(clipped).toBeLessThan(0.5);
-            }
+            await expectNoClippedHints(grid, 2);
         });
     }
 });
