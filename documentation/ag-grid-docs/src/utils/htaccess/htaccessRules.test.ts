@@ -519,7 +519,7 @@ describe('htaccessRules', () => {
             'http://www.ag-grid.com/react-data-grid/getting-started',
             'https://ag-grid.com/react-data-grid/getting-started/',
             'http://ag-grid.com/',
-            'https://angulargrid.com/license-pricing/',
+            'https://react-grid.ag-grid.com/license-pricing/',
             `${WWW}/react-data-grid/getting-started?x=1`,
             `${WWW}/archive/36.2.0/react-data-grid/getting-started`,
             'https://blog.ag-grid.com/some-post/',
@@ -1633,7 +1633,6 @@ describe('htaccessRules', () => {
             'http://www.ag-grid.com',
             'https://ag-grid.com',
             'https://blog.ag-grid.com',
-            'https://angulargrid.com',
             'https://react-grid.ag-grid.com',
         ];
 
@@ -1757,7 +1756,7 @@ describe('htaccessRules', () => {
         });
 
         it('skips the single-hop rewrites on other hosts, which canonicalise first', () => {
-            for (const host of ['https://angulargrid.com', 'https://react-grid.ag-grid.com']) {
+            for (const host of ['https://javascript-grid.ag-grid.com', 'https://react-grid.ag-grid.com']) {
                 for (const { from } of keptSingleHops) {
                     // Canonicalising a slash-less directory path adds its slash in the same hop.
                     const canonical = /\/[^/.]+$/.test(from) ? `${from}/` : from;
@@ -1938,8 +1937,6 @@ describe('htaccessRules', () => {
             'angular-grid.ag-grid.com',
             'javascript-grid.ag-grid.com',
             'react-grid.ag-grid.com',
-            'angulargrid.com',
-            'www.angulargrid.com',
         ];
         const PATHS = ['/', '/react-data-grid/getting-started/', '/license-pricing/?utm_source=x&b=1', '/a/b/c/'];
         const files = () => [compileHtaccess(productionContent)];
