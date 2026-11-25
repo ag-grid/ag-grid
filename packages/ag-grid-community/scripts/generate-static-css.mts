@@ -55,6 +55,9 @@ const SOURCE_DIRS = ['ag-stack/src', 'ag-grid-community/src', 'ag-grid-enterpris
     path.join(packagesRoot, dir)
 );
 
+/** Sorts strings by UTF-16 code unit, as `sort()` does by default, so the order is the same in every locale. */
+const sortStrings = (values: Iterable<string>) => [...values].sort((a, b) => Number(a > b) - Number(a < b));
+
 /** Fails the build when something the generator discovers or assumes no longer holds, rather than silently writing incomplete CSS. */
 function sanityCheck(condition: unknown, message: string): asserts condition {
     if (!condition) {
@@ -127,7 +130,7 @@ const featureOrder = ownParts('quartz')
     .filter(isSwappable)
     .map((part) => part.feature!);
 sanityCheck(
-    JSON.stringify([...featureOrder].sort()) === JSON.stringify([..._themePartFeatures].sort()),
+    JSON.stringify(sortStrings(featureOrder)) === JSON.stringify(sortStrings(_themePartFeatures)),
     `themeQuartz sets the features ${featureOrder.join(', ')}, but static CSS themes swap ${_themePartFeatures.join(', ')}`
 );
 for (const name of themeNames) {
@@ -152,7 +155,7 @@ const acceptedPartClasses = Object.entries(grid._STATIC_CSS_THEME_PARTS).flatMap
 );
 const exportedPartClasses = swappableParts.map(({ cls }) => cls);
 sanityCheck(
-    JSON.stringify(acceptedPartClasses.sort()) === JSON.stringify(exportedPartClasses.sort()),
+    JSON.stringify(sortStrings(acceptedPartClasses)) === JSON.stringify(sortStrings(exportedPartClasses)),
     `the parts that _STATIC_CSS_THEME_PARTS accepts (${acceptedPartClasses.join(', ')}) must match the parts the package exports (${exportedPartClasses.join(', ')})`
 );
 
@@ -164,7 +167,7 @@ const paramsCss = (selectors: string[], modeParams: Record<string, Record<string
     for (const mode of Object.keys(modeParams)) {
         const params = modeParams[mode];
         let declarations = '';
-        for (const key of Object.keys(params).sort()) {
+        for (const key of sortStrings(Object.keys(params))) {
             const value = params[key];
             if (value === undefined) {
                 continue;
@@ -192,7 +195,7 @@ const paramsCss = (selectors: string[], modeParams: Record<string, Record<string
 
 const inheritanceCss = () => {
     let declarations = '';
-    for (const cssName of [...allParamNames].sort()) {
+    for (const cssName of sortStrings(allParamNames)) {
         declarations += `${cssName.replace('--ag-', '--ag-inherited-')}: var(${cssName});\n`;
     }
     return `:where(.${_STATIC_CSS_INHERIT_CLASS}) {\n${declarations}}\n`;
@@ -214,10 +217,7 @@ const groupCssBySelector = (entries: { selector: string; css: string | undefined
 };
 
 const listFiles = (dir: string) =>
-    fs
-        .readdirSync(dir, { recursive: true, encoding: 'utf8' })
-        .map((file) => path.join(dir, file))
-        .sort();
+    sortStrings(fs.readdirSync(dir, { recursive: true, encoding: 'utf8' }).map((file) => path.join(dir, file)));
 
 /**
  * All CSS the grid registers at runtime, other than theme parts: shared and core CSS first, as at
@@ -390,7 +390,10 @@ await writeCss(
 // the built-in icon set is left out, so that it is linked once, from its own -linked.css file like every other icon set
 await writeCss(
     `${_staticCssGridFile(true)}.css`,
-    linkImages(markerCss(['--ag-static-css-loaded', '--ag-static-css-linked-loaded']) + gridCss, `${FILES_DIR}/core-images`)
+    linkImages(
+        markerCss(['--ag-static-css-loaded', '--ag-static-css-linked-loaded']) + gridCss,
+        `${FILES_DIR}/core-images`
+    )
 );
 
 for (const { part, cls } of iconSetEntries) {
@@ -398,10 +401,7 @@ for (const { part, cls } of iconSetEntries) {
     const file = _staticCssIconSetFile(iconSet, false);
     const linkedFile = _staticCssIconSetFile(iconSet, true);
     if (part !== builtInIconSet.part) {
-        await writeCss(
-            `${file}.css`,
-            markerCss([iconSetMarker(file)]) + iconSetCss(part, themedSelector(cls))
-        );
+        await writeCss(`${file}.css`, markerCss([iconSetMarker(file)]) + iconSetCss(part, themedSelector(cls)));
     }
     const linkedCss = markerCss([iconSetMarker(linkedFile)]) + iconSetCss(part, themedSelector(`${cls}-linked`));
     await writeCss(`${linkedFile}.css`, linkImages(linkedCss, `${FILES_DIR}/${_staticCssPartName(ICON_SET, iconSet)}`));
@@ -419,8 +419,8 @@ sanityCheck(
 );
 
 const packageJson = JSON.parse(fs.readFileSync(path.join(packageRoot, 'package.json'), 'utf8'));
-const listedFiles = (paths: string[]) => paths.filter((file) => file.startsWith('./css/')).sort();
-const expectedFiles = JSON.stringify([...writtenFiles].sort());
+const listedFiles = (paths: string[]) => sortStrings(paths.filter((file) => file.startsWith('./css/')));
+const expectedFiles = JSON.stringify(sortStrings(writtenFiles));
 sanityCheck(
     JSON.stringify(listedFiles(Object.keys(packageJson.exports))) === expectedFiles &&
         JSON.stringify(listedFiles(packageJson.sideEffects)) === expectedFiles,
