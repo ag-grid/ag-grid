@@ -123,6 +123,10 @@ export function _getRowHeightForNode(
     allowEstimate = false,
     defaultRowHeight?: number
 ): { height: number; estimated: boolean } {
+    if (!isRowHeightPerRow(beans)) {
+        const height = getRowHeightOption(beans.gos, defaultRowHeight ?? beans.environment.getDefaultRowHeight());
+        return { height, estimated: false };
+    }
     const measuredHeight = beans.rowAutoHeight?.getMeasuredRowHeight(rowNode);
     if (measuredHeight != null) {
         return { height: measuredHeight, estimated: false };
@@ -137,16 +141,15 @@ export function _getRowHeightForNode(
     return _getConfiguredRowHeight(beans, rowNode, allowEstimate, defaultRowHeight);
 }
 
-/**
- * The height `_getRowHeightForNode` gives every row when nothing sizes rows individually, otherwise `null`.
- * Must stay in step with the per-row sources `_getRowHeightForNode` consults.
- */
+/** The height `_getRowHeightForNode` gives every row when nothing sizes rows individually, otherwise `null`. */
 export function _getSharedRowHeight(beans: BeanCollection, defaultRowHeight: number): number | null {
+    return isRowHeightPerRow(beans) ? null : getRowHeightOption(beans.gos, defaultRowHeight);
+}
+
+/** Gates every per-row height source in `_getRowHeightForNode`, so `_getSharedRowHeight` cannot disagree with it. */
+function isRowHeightPerRow(beans: BeanCollection): boolean {
     const gos = beans.gos;
-    if (beans.rowAutoHeight?.active || _isGetRowHeightFunction(gos) || gos.get('masterDetail')) {
-        return null;
-    }
-    return getRowHeightOption(gos, defaultRowHeight);
+    return !!beans.rowAutoHeight?.active || _isGetRowHeightFunction(gos) || gos.get('masterDetail');
 }
 
 /** The height configuration gives a row: `getRowHeight`, the detail row settings, the `rowHeight` option or the theme. */
