@@ -98,7 +98,7 @@ export class FooterService extends BeanStub implements NamedBean, IFooterService
 
         // grand total row only displays the 'Total' value
         if (node.level === -1) {
-            return this.getTotalValue('');
+            return this.getLocaleTextFunc()('footerTotal', 'Total') + ' ';
         }
 
         return this.getTotalValue(formattedValue ?? value) ?? '';
