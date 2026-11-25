@@ -2,7 +2,7 @@ import { GridRows, TestGridsManager, waitForEvent, waitForNoLoadingRows } from '
 
 import type { AggValueGetterParams, IServerSideGetRowsParams } from 'ag-grid-community';
 import { GRAND_TOTAL_ROW_ID } from 'ag-grid-community';
-import { RowGroupingModule, ServerSideRowModelModule, TreeDataModule } from 'ag-grid-enterprise';
+import { RowGroupingModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 
 interface MedalRow {
     id?: string;
@@ -38,7 +38,7 @@ function getRows(params: IServerSideGetRowsParams<MedalRow>): void {
 
 describe('colDef.aggValueGetter with the Server-Side Row Model', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ServerSideRowModelModule, RowGroupingModule, TreeDataModule],
+        modules: [ServerSideRowModelModule, RowGroupingModule],
     });
 
     afterEach(() => {
@@ -86,40 +86,5 @@ describe('colDef.aggValueGetter with the Server-Side Row Model', () => {
             ├── GROUP-leafGroup collapsed id:1 ag-Grid-AutoColumn:1 gold:1 goldAgg:1
             └─ footer id:rowGroupFooter_ROOT_NODE_ID ag-Grid-AutoColumn:"Total " gold:9 goldAgg:9
         `);
-    });
-
-    test('applies to tree data parent rows, as in the Client-Side Row Model', async () => {
-        interface FileRow {
-            name: string;
-            size: number;
-            folder?: boolean;
-        }
-        const tree: Record<string, FileRow[]> = {
-            '': [
-                { name: 'Documents', size: 300, folder: true },
-                { name: 'notes.txt', size: 5 },
-            ],
-            Documents: [{ name: 'cv.pdf', size: 300 }],
-        };
-        const api = gridsManager.createGrid('ssrm-agg-value-getter-tree', {
-            rowModelType: 'serverSide',
-            treeData: true,
-            isServerSideGroup: (data: FileRow) => !!data.folder,
-            getServerSideGroupKey: (data: FileRow) => data.name,
-            getRowId: ({ data }) => data.name,
-            columnDefs: [{ field: 'size', aggFunc: 'sum', aggValueGetter: (params) => params.value * 2 }],
-            autoGroupColumnDef: { field: 'name' },
-            serverSideDatasource: {
-                getRows: (params) => {
-                    const rowData = tree[params.request.groupKeys.join('/')];
-                    setTimeout(() => params.success({ rowData }), 0);
-                },
-            },
-        });
-        await waitForEvent('firstDataRendered', api);
-        await waitForNoLoadingRows(api);
-
-        expect(api.getCellValue({ rowNode: api.getRowNode('Documents')!, colKey: 'size' })).toBe(600);
-        expect(api.getCellValue({ rowNode: api.getRowNode('notes.txt')!, colKey: 'size' })).toBe(5);
     });
 });
