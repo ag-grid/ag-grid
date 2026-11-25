@@ -4,10 +4,8 @@
 // straight parts are 2px bars, dots are 3x3 squares, arrows are filled carets,
 // shapes are filled with their detail knocked out, and diagonals use a 2.83px
 // stroke (whole pixels at 45 degrees). They read as solid at 1x and 2x where
-// the Quartz strokes are mostly antialiased edge.
-//
-// Designed in the AG-10640 playground (ag-playground src/pages/ag10640/icons.js);
-// every other icon comes from the Quartz set.
+// the Quartz strokes are mostly antialiased edge. Every other icon comes from
+// the Quartz set.
 export const highContrastIconSvgs: Record<string, string> = {
     aggregation:
         '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="currentColor"><path d="M4 2h10v2H7.4L12 9l-4.6 5H14v2H4v-2l5-5-5-5z"/></svg>',
