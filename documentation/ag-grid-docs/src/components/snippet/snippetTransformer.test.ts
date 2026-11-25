@@ -160,6 +160,13 @@ const rowNode = api.getRowNode('55');`
         );
     });
 
+    describe('given api statements with type arguments', () => {
+        runSnippetFrameworkTests(
+            `// get filter handler
+const countryFilterHandler = api.getColumnFilterHandler<SetFilterHandler>('country');`
+        );
+    });
+
     describe('given column definitions with functions', () => {
         runSnippetFrameworkTests(
             `const gridOptions = {
