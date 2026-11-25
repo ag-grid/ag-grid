@@ -280,7 +280,8 @@ For date range filters, the Grid State model matches the SSRM request model shap
 
 When using the `inRange` filter type, the grid performs input validation to ensure the bounds of the range produce a valid filter; that is, where the start date is earlier than the end date.
 
-Where this is not the case, the last edited input will display a red border and a hover tooltip directing the user to enter a valid date. While the filter is in an invalid state, the filter will not be applied.
+Where this is not the case, the last edited input will display a red border and an error tooltip on focus or hover. Validation errors are announced to screen readers, and users can continue editing the date while the tooltip is displayed. While the filter is in an invalid state, the filter will not be applied.
+If `enableBrowserTooltips` is enabled, the browser's hover tooltip is used instead.
 Screen readers that respond to the `aria-invalid` attribute or the `ValidityState` of the input will detect the input as invalid.
 
 ## Filter Values

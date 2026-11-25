@@ -1,4 +1,4 @@
-import { _isBrowserFirefox, _parseDateTimeFromString, _serialiseDate } from 'ag-stack';
+import { _parseDateTimeFromString, _serialiseDate } from 'ag-stack';
 
 import { _addGridCommonParams } from '../../../gridOptionsUtils';
 import type { IDateParams } from '../../../interfaces/dateComponent';
@@ -10,7 +10,6 @@ import type { ICombinedSimpleModel, Tuple } from '../iSimpleFilter';
 import { SimpleFilter } from '../simpleFilter';
 import { getValidityMessageKey, removeItems } from '../simpleFilterUtils';
 import { DateCompWrapper } from './dateCompWrapper';
-import type { ValidationReportMode } from './dateCompWrapper';
 import { DEFAULT_DATE_FILTER_OPTIONS } from './dateFilterConstants';
 import { mapValuesFromDateFilterModel } from './dateFilterUtils';
 import type { DateFilterModel, IDateFilterParams } from './iDateFilter';
@@ -43,6 +42,11 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
     protected override onGuiAttached(params?: IAfterGuiAttachedParams): void {
         // A read-only filter builds no replacement for a condition a model removed, so there may be none.
         this.dateConditionFromComps[0]?.afterGuiAttached(params);
+    }
+
+    public override afterGuiDetached(): void {
+        super.afterGuiDetached();
+        this.forEachInput((input) => input.hideValidationTooltip());
     }
 
     protected override commonUpdateSimpleParams(params: DateFilterDisplayParams): void {
@@ -83,12 +87,7 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
         }
     }
 
-    protected override refreshPositionValidation(position: number, isFrom = false, reattached?: boolean): void {
-        // A picker keeps its message across a close, so re-opening is no change for `debounceIfChanged` to find.
-        this.refreshInputPairValidation(position, isFrom, reattached ? 'immediate' : 'debounceIfChanged');
-    }
-
-    private refreshInputPairValidation(position: number, isFrom: boolean, reportMode: ValidationReportMode): void {
+    protected override refreshPositionValidation(position: number, isFrom = false): void {
         const [from, to] = this.getInputs(position);
         if (!from || !to) {
             return; // A destroyed picker can still report focus, and the pair it belonged to is gone.
@@ -103,16 +102,8 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
             : null;
         const message = localeKey ? this.translate(localeKey, [String(isFrom ? toDate : fromDate)]) : '';
 
-        // FF seems to handle cursors/focus sufficiently well for the validation to be left as synchronous.
-        // Chrome/Safari, however, need to be debounced, otherwise they will reset the date input cursor when
-        // reporting validity.
-        // For example, when typing "2000", when we get to "200", that is interpreted as a valid year by Chrome
-        // (even though a HTML date should be four digits per the spec), which triggers validation, and the
-        // final keystroke of "0" will instead be interpreted as the first keystroke of a new year.
-        const effectiveMode: ValidationReportMode = _isBrowserFirefox() ? 'immediate' : reportMode;
-
-        (isFrom ? from : to).setCustomValidity(message, effectiveMode); // Set validity error state for target input
-        (isFrom ? to : from).setCustomValidity('', effectiveMode); // Reset validity error state for other input
+        (isFrom ? from : to).setCustomValidity(message); // Set validity error state for target input
+        (isFrom ? to : from).setCustomValidity(''); // Reset validity error state for other input
 
         if (message.length > 0) {
             this.beans.ariaAnnounce.announceValue(message, 'filterValidation');
@@ -120,29 +111,24 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
     }
 
     private createDateCompWrapper(element: HTMLElement, fromTo: 'from' | 'to'): DateCompWrapper {
-        const {
-            beans: { userCompFactory, context, gos },
-            params,
-        } = this;
+        const { beans, params } = this;
         const isFrom = fromTo === 'from';
         // Read per event, never captured: removing a condition from the middle shifts every later one.
         const panels = isFrom ? this.eConditionPanelsFrom : this.eConditionPanelsTo;
-        const refreshValidation = (reportMode: ValidationReportMode) =>
-            this.refreshInputPairValidation(panels.indexOf(element), isFrom, reportMode);
+        const refreshValidation = () => this.refreshPositionValidation(panels.indexOf(element), isFrom);
         return new DateCompWrapper(
-            context,
-            userCompFactory,
+            beans,
             params.colDef,
-            _addGridCommonParams<IDateParams>(gos, {
+            _addGridCommonParams<IDateParams>(beans.gos, {
                 onDateChanged: () => {
-                    refreshValidation('debounce');
+                    refreshValidation();
                     this.onUiChanged();
                 },
                 onDateCleared: () => {
-                    refreshValidation('immediate');
+                    refreshValidation();
                     this.onUiCleared();
                 },
-                onFocusIn: () => refreshValidation('debounceIfChanged'),
+                onFocusIn: refreshValidation,
                 filterParams: params as any,
                 location: 'filter',
             }),

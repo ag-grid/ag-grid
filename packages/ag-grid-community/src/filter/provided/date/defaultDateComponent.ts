@@ -54,7 +54,7 @@ export class DefaultDateComponent extends Component implements IDateComp {
             input: this.handleInput.bind(this, false),
             change: this.handleInput.bind(this, true),
             focusout: this.handleFocusOut.bind(this),
-            focusin: this.handleFocusIn.bind(this),
+            focus: this.handleFocusIn.bind(this),
         });
     }
 

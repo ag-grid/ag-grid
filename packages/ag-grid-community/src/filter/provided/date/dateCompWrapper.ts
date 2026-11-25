@@ -1,27 +1,13 @@
-import { FAST_TEST_TIMINGS, _debounce, _setAriaInvalid, _setDisplayed } from 'ag-stack';
+import { _setAriaInvalid, _setDisplayed } from 'ag-stack';
 
 import { _getDateCompDetails } from '../../../components/framework/userCompUtils';
-import type { UserComponentFactory } from '../../../components/framework/userComponentFactory';
-import type { Context } from '../../../context/context';
+import type { BeanCollection } from '../../../context/context';
 import type { ColDef } from '../../../entities/colDef';
 import type { IDateComp, IDateParams } from '../../../interfaces/dateComponent';
 import type { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
+import type { TooltipFeature } from '../../../tooltip/tooltipFeature';
 
 const CLASS_INPUT_FIELD = '.ag-input-field-input';
-
-/**
- * How a validity change should be reported to the user:
- * - `immediate`: report synchronously (used on (re-)open, and always in Firefox).
- * - `debounce`: schedule a trailing report, resetting the timer on each call (used while typing so the
- *   report lands after the user stops, avoiding a mid-entry cursor reset).
- * - `debounceIfChanged`: schedule a trailing report only when the message actually changed, so a
- *   `focusin` fired by tab-switching (or reportValidity's own focus steal) does not re-report and blink
- *   the native validation bubble.
- */
-export type ValidationReportMode = 'immediate' | 'debounce' | 'debounceIfChanged';
-
-/** Long enough that the native validation bubble isn't re-shown while the user is still typing a date. */
-const REPORT_DEBOUNCE = FAST_TEST_TIMINGS ? 0 : 500;
 
 /** Provides sync access to async component. Date component can be lazy created - this class encapsulates
  * this by keeping value locally until DateComp has loaded, then passing DateComp the value. */
@@ -30,18 +16,16 @@ export class DateCompWrapper {
     private tempValue: Date | null;
     private disabled: boolean | null;
     private alive = true;
-    private readonly debouncedReport = _debounce({ isAlive: () => this.alive }, reportValidity, REPORT_DEBOUNCE);
-    private timeoutHandle: ReturnType<typeof setTimeout> | null = null;
-    private lastValidityMessage: string | null = null;
+    private validationTooltip?: TooltipFeature;
 
     constructor(
-        private readonly context: Context,
-        userCompFactory: UserComponentFactory,
+        private readonly beans: BeanCollection,
         colDef: ColDef,
         dateComponentParams: IDateParams,
         private readonly eParent: HTMLElement,
         onReady?: (comp: DateCompWrapper) => void
     ) {
+        const { context, userCompFactory } = beans;
         const compDetails = _getDateCompDetails(userCompFactory, colDef, dateComponentParams);
 
         compDetails?.newAgStackInstance().then((dateComp) => {
@@ -75,7 +59,8 @@ export class DateCompWrapper {
 
     public destroy(): void {
         this.alive = false;
-        this.dateComp = this.context.destroyBean(this.dateComp);
+        this.hideValidationTooltip();
+        this.dateComp = this.beans.context.destroyBean(this.dateComp);
     }
 
     public getDate(): Date | null {
@@ -92,6 +77,9 @@ export class DateCompWrapper {
     }
 
     public setDisabled(disabled: boolean): void {
+        if (disabled) {
+            this.hideValidationTooltip();
+        }
         const dateComp = this.dateComp;
         if (dateComp) {
             dateComp.setDisabled?.(disabled);
@@ -101,6 +89,9 @@ export class DateCompWrapper {
     }
 
     public setDisplayed(displayed: boolean) {
+        if (!displayed) {
+            this.hideValidationTooltip();
+        }
         _setDisplayed(this.eParent, displayed);
     }
 
@@ -117,40 +108,47 @@ export class DateCompWrapper {
     }
 
     public updateParams(params: IDateParams): void {
+        this.hideValidationTooltip();
         this.dateComp?.refresh?.(params);
     }
 
-    public setCustomValidity(message: string, reportMode: ValidationReportMode = 'immediate'): void {
+    public setCustomValidity(message: string): void {
         const eInput = this.dateComp?.getGui().querySelector<HTMLInputElement>(CLASS_INPUT_FIELD);
 
         if (eInput && 'setCustomValidity' in eInput) {
             const isInvalid = message.length > 0;
-            const messageChanged = message !== this.lastValidityMessage;
-            this.lastValidityMessage = message;
+            const messageChanged = eInput.validationMessage !== message;
+            // Surface the error via tooltip: reportValidity steals focus and resets the date segment mid-typing.
             eInput.setCustomValidity(message);
+            _setAriaInvalid(eInput, isInvalid);
 
-            // Firefox automatically displays tooltips when inputs are invalid, but chrome and safari do not,
-            // so we need to call `reportValidity`.
-            // In some browsers, this needs to be debounced or it will interrupt user inputs.
-            if (isInvalid) {
-                if (reportMode === 'immediate') {
-                    reportValidity(eInput);
-                } else if (reportMode === 'debounce' || messageChanged) {
-                    this.timeoutHandle = this.debouncedReport(eInput);
-                }
-            } else if (this.timeoutHandle) {
-                clearTimeout(this.timeoutHandle);
+            if (!isInvalid) {
+                this.hideValidationTooltip();
+                return;
             }
 
-            _setAriaInvalid(eInput, isInvalid);
+            if (!this.validationTooltip) {
+                const tooltip = this.beans.tooltipSvc?.createTooltip({
+                    getGui: () => eInput,
+                    getLocation: () => 'filterValidation',
+                    getTooltip: () => ({ value: eInput.validationMessage }),
+                    shouldDisplayTooltip: () => eInput.isConnected && !eInput.disabled && !!eInput.validationMessage,
+                });
+                if (tooltip) {
+                    this.validationTooltip = this.beans.context.createBean(tooltip);
+                }
+            } else if (messageChanged) {
+                this.validationTooltip.refreshTooltip();
+            }
+            this.validationTooltip?.showTooltipOnFocus();
         }
+    }
+
+    public hideValidationTooltip(): void {
+        this.validationTooltip = this.beans.context.destroyBean(this.validationTooltip);
     }
 
     public getValidity(): ValidityState | undefined {
         return this.dateComp?.getGui().querySelector<HTMLInputElement>(CLASS_INPUT_FIELD)?.validity;
     }
-}
-
-function reportValidity(eInput: HTMLInputElement) {
-    eInput.reportValidity();
 }

@@ -1127,6 +1127,7 @@
         white-space: normal;
 
         &.ag-cell-editor-tooltip,
+        &.ag-filter-validation-tooltip,
         &.ag-cell-formula-tooltip,
         &.ag-calculated-column-expression-tooltip {
             background-color: var(--ag-tooltip-error-background-color);

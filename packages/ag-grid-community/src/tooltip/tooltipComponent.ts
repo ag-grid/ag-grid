@@ -19,6 +19,7 @@ export type TooltipLocation =
     | 'dialog'
     | 'filterToolPanelColumnGroup'
     | 'filter'
+    | 'filterValidation'
     | 'floatingFilter'
     | 'fullWidthRow'
     | 'fullRowEditor'

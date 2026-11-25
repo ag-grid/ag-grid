@@ -3,6 +3,7 @@ import { HeaderFilterCellCtrl } from '../headerRendering/cells/floatingFilter/he
 import type { FilterWrapperParams } from '../interfaces/iFilter';
 import type { _ModuleWithApi, _ModuleWithoutApi } from '../interfaces/iModule';
 import { SharedMenuModule } from '../misc/menu/sharedMenuModule';
+import { TooltipModule } from '../tooltip/tooltipModule';
 import { VERSION } from '../version';
 import { PopupModule } from '../widgets/popupModule';
 import columnFiltersCSS from './column-filters.css';
@@ -167,7 +168,7 @@ export const BigIntFilterModule: _ModuleWithoutApi = {
 export const DateFilterModule: _ModuleWithoutApi = {
     moduleName: 'DateFilter',
     version: VERSION,
-    dependsOn: [ColumnFilterModule],
+    dependsOn: [ColumnFilterModule, TooltipModule],
     userComponents: {
         agDateColumnFilter: {
             classImp: DateFilter,

@@ -34,6 +34,7 @@ export class TooltipStateManager extends BaseTooltipStateManager<
 > {
     private onColumnMovedEventCallback: (() => null) | undefined;
     private onContextMenuEventCallback: (() => null) | undefined;
+    private readonly isFilterValidation = this.tooltipCtrl.getLocation?.() === 'filterValidation';
 
     protected override isTooltipAllowed(): boolean {
         return (
@@ -43,19 +44,19 @@ export class TooltipStateManager extends BaseTooltipStateManager<
     }
 
     protected override getTooltipTrigger() {
-        return this.tooltipCtrl.control ? 'hoverOrFocus' : super.getTooltipTrigger();
+        return this.tooltipCtrl.control || this.isFilterValidation ? 'hoverOrFocus' : super.getTooltipTrigger();
     }
 
     protected override getTooltipFocusShowDelay(): number | undefined {
-        return this.tooltipCtrl.control ? 0 : super.getTooltipFocusShowDelay();
+        return this.tooltipCtrl.control || this.isFilterValidation ? 0 : super.getTooltipFocusShowDelay();
     }
 
     protected override isTooltipMouseTracking(): boolean {
-        return !this.tooltipCtrl.control && super.isTooltipMouseTracking();
+        return !this.tooltipCtrl.control && !this.isFilterValidation && super.isTooltipMouseTracking();
     }
 
     protected override isTooltipPointerAnchored(): boolean {
-        return !this.tooltipCtrl.control && super.isTooltipPointerAnchored();
+        return !this.tooltipCtrl.control && !this.isFilterValidation && super.isTooltipPointerAnchored();
     }
 
     protected override getTooltipPosition(tooltip: ResolvedTooltip, trigger: 'hover' | 'focus'): TooltipPosition {
@@ -64,6 +65,9 @@ export class TooltipStateManager extends BaseTooltipStateManager<
             typeof configured === 'function' ? configured({ ...this.getCallbackParams(tooltip), trigger }) : configured;
         if (_isTooltipPosition(position)) {
             return position;
+        }
+        if (this.isFilterValidation) {
+            return 'bottom-start';
         }
         if (this.tooltipCtrl.control === 'toolPanel') {
             const sideBarOnLeft = this.beans.sideBar?.comp.getSideBarPosition() === 'left';
@@ -74,6 +78,9 @@ export class TooltipStateManager extends BaseTooltipStateManager<
     }
 
     protected override getTooltipInteraction(tooltip?: ResolvedTooltip): boolean {
+        if (this.isFilterValidation) {
+            return false;
+        }
         const configured = this.gos.get('tooltipInteraction');
         if (typeof configured !== 'function') {
             return !!configured;
