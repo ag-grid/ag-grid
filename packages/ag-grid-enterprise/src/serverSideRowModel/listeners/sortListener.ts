@@ -6,7 +6,7 @@ import type {
     StoreRefreshAfterParams,
     StringComparatorsChangedEvent,
 } from 'ag-grid-community';
-import { BeanStub, _getSortModel, _isServerSideRowModel, _usesGridStringSort } from 'ag-grid-community';
+import { BeanStub, _getSortModel, _isServerSideRowModel } from 'ag-grid-community';
 
 import type { ServerSideRowModel } from '../serverSideRowModel';
 import type { ListenerUtils } from './listenerUtils';
@@ -41,11 +41,7 @@ export class SortListener extends BeanStub implements NamedBean {
      * Only when a sorted column's string comparator changed, from its own `accentedSort` or `caseInsensitiveSort` or the grid option it falls
      * back to, and the sort uses it.
      */
-    private onStringComparatorsChanged({
-        accentedSort,
-        caseInsensitiveSort,
-        columns,
-    }: StringComparatorsChangedEvent): void {
+    private onStringComparatorsChanged({ gridOption, columns }: StringComparatorsChangedEvent): void {
         if (!this.gos.get('serverSideEnableClientSideSort')) {
             return;
         }
@@ -53,7 +49,7 @@ export class SortListener extends BeanStub implements NamedBean {
             ({ column, colComparator }) =>
                 // a column comparator replaces the string comparator for every row; a leaf comparator only for leaves
                 !colComparator &&
-                (columns.includes(column) || _usesGridStringSort(column.getColDef(), accentedSort, caseInsensitiveSort))
+                (columns.includes(column) || (gridOption && column.getColDef().accentedSort === undefined))
         );
         if (sortedColAffected) {
             this.serverSideRowModel.clientSideResort();

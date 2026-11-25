@@ -1948,15 +1948,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @default false
      */
     @Input() public accentedSort: boolean | AccentedSortOptions | undefined = undefined;
-    /** Set to `true` to sort strings without regard to case, so `aa` sorts before `AZ` and values that differ only in case keep their original order.
-     * Combined with `accentedSort`, the locale's rules are used and accents are still taken into account. If this feature is turned on the sort will be slower.
-     *
-     * Only applies when both values are strings. Also orders the values in the Set Filter list.
-     *
-     * Can be overridden per column with `colDef.caseInsensitiveSort`.
-     * @default false
-     */
-    @Input({ transform: booleanAttribute }) public caseInsensitiveSort: boolean | undefined = undefined;
     /** Set to `true` to suppress multi-sort when the user shift-clicks a column header.
      * @default false
      */

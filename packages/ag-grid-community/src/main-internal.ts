@@ -364,7 +364,7 @@ export type { GroupValueResult, IShowRowGroupColsValueService } from './interfac
 export type { IShowValuesAsService } from './interfaces/iShowValuesAsService';
 export type { ISideBar, ISideBarService } from './interfaces/iSideBar';
 export type { SortOption } from './interfaces/iSortOption';
-export { _getColumnStringComparator, _usesGridStringSort } from './sort/accentedSort';
+export { _getColumnStringComparator } from './sort/accentedSort';
 export { _resolveSortOptions } from './sort/sortOptionUtils';
 export type { IAutoCompleteComponentParams } from './interfaces/iAutoComplete';
 export type { IToolbarComp, IToolbarService } from './interfaces/iToolbar';

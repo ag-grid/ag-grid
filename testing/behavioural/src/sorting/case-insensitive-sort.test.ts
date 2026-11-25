@@ -24,6 +24,12 @@ describe('caseInsensitiveSort', () => {
         return values;
     }
 
+    function displayedValues(api: GridApi): unknown[] {
+        const values: unknown[] = [];
+        api.forEachNodeAfterFilterAndSort((node) => values.push(node.data.code));
+        return values;
+    }
+
     function createGrid(id: string, options: Partial<GridOptions>, colDef: ColDef = {}): GridApi {
         return gridMgr.createGrid(id, {
             columnDefs: [{ field: 'code', ...colDef }],
@@ -33,11 +39,27 @@ describe('caseInsensitiveSort', () => {
     }
 
     test('sorts without regard to case, keeping the original order of values that differ only in case', () => {
-        const api = createGrid('ci-grid', { caseInsensitiveSort: true });
+        const api = createGrid('ci-col', {}, { caseInsensitiveSort: true });
 
         expect(sortedValues(api, 'code')).toEqual(caseInsensitiveOrder);
         // values that differ only in case keep their original order descending too
         expect(sortedValues(api, 'code', 'desc')).toEqual(['b', 'B', 'az', 'AZ', 'AA', 'aa', 'Aa']);
+    });
+
+    test('defaultColDef.caseInsensitiveSort applies to every column', () => {
+        const api = createGrid('ci-default-col-def', { defaultColDef: { caseInsensitiveSort: true } });
+
+        expect(sortedValues(api, 'code')).toEqual(caseInsensitiveOrder);
+    });
+
+    test('colDef.caseInsensitiveSort = false on a column overrides defaultColDef', () => {
+        const api = createGrid(
+            'ci-col-off',
+            { defaultColDef: { caseInsensitiveSort: true } },
+            { caseInsensitiveSort: false }
+        );
+
+        expect(sortedValues(api, 'code')).toEqual(defaultOrder);
     });
 
     test('the default sort is unchanged', () => {
@@ -46,71 +68,32 @@ describe('caseInsensitiveSort', () => {
         expect(sortedValues(api, 'code')).toEqual(defaultOrder);
     });
 
-    test('changing the grid option at runtime sorts again', () => {
-        const api = createGrid('ci-runtime', {});
-        api.applyColumnState({ state: [{ colId: 'code', sort: 'asc' }] });
-
-        const displayed = () => {
-            const values: unknown[] = [];
-            api.forEachNodeAfterFilterAndSort((node) => values.push(node.data.code));
-            return values;
-        };
-        expect(displayed()).toEqual(defaultOrder);
-
-        api.setGridOption('caseInsensitiveSort', true);
-        expect(displayed()).toEqual(caseInsensitiveOrder);
-
-        api.setGridOption('caseInsensitiveSort', false);
-        expect(displayed()).toEqual(defaultOrder);
-    });
-
-    test('setting accentedSort and caseInsensitiveSort in one update sorts again with both', () => {
-        // the column's own accentedSort makes its comparator depend on the caseInsensitiveSort grid option only
-        const api = createGrid('ci-batched', {}, { accentedSort: false });
-        api.applyColumnState({ state: [{ colId: 'code', sort: 'asc' }] });
-
-        api.updateGridOptions({ accentedSort: true, caseInsensitiveSort: true });
-        const values: unknown[] = [];
-        api.forEachNodeAfterFilterAndSort((node) => values.push(node.data.code));
-        expect(values).toEqual(caseInsensitiveOrder);
-    });
-
-    test('an update that sets rowData before caseInsensitiveSort sorts the new rows with it', () => {
-        const api = createGrid('ci-row-data-first', {});
-        api.applyColumnState({ state: [{ colId: 'code', sort: 'asc' }] });
-
-        // rowData is applied first and sorts the rows before the caseInsensitiveSort event is raised
-        api.updateGridOptions({ rowData: [...codes].reverse().map((code) => ({ code })), caseInsensitiveSort: true });
-        const values: unknown[] = [];
-        api.forEachNodeAfterFilterAndSort((node) => values.push(node.data.code));
-        expect(values).toEqual(['Aa', 'aa', 'AA', 'AZ', 'az', 'B', 'b']);
-    });
-
-    test('colDef.caseInsensitiveSort overrides the grid option for that column', () => {
-        const onApi = createGrid('ci-col-on', {}, { caseInsensitiveSort: true });
-        expect(sortedValues(onApi, 'code')).toEqual(caseInsensitiveOrder);
-
-        const offApi = createGrid('ci-col-off', { caseInsensitiveSort: true }, { caseInsensitiveSort: false });
-        expect(sortedValues(offApi, 'code')).toEqual(defaultOrder);
-    });
-
     test('changing colDef.caseInsensitiveSort at runtime sorts again', () => {
         const api = createGrid('ci-col-runtime', {});
         expect(sortedValues(api, 'code')).toEqual(defaultOrder);
 
         api.setGridOption('columnDefs', [{ field: 'code', sort: 'asc', caseInsensitiveSort: true }]);
-        const values: unknown[] = [];
-        api.forEachNodeAfterFilterAndSort((node) => values.push(node.data.code));
-        expect(values).toEqual(caseInsensitiveOrder);
+        expect(displayedValues(api)).toEqual(caseInsensitiveOrder);
+
+        api.setGridOption('columnDefs', [{ field: 'code', sort: 'asc', caseInsensitiveSort: false }]);
+        expect(displayedValues(api)).toEqual(defaultOrder);
+    });
+
+    test('changing defaultColDef.caseInsensitiveSort at runtime sorts again', () => {
+        const api = createGrid('ci-default-col-def-runtime', {});
+        api.applyColumnState({ state: [{ colId: 'code', sort: 'asc' }] });
+        expect(displayedValues(api)).toEqual(defaultOrder);
+
+        api.setGridOption('defaultColDef', { caseInsensitiveSort: true });
+        expect(displayedValues(api)).toEqual(caseInsensitiveOrder);
     });
 
     test('combined with accentedSort, uses the locale rules and still takes accents into account', () => {
         const values = ['b', 'À', 'a', 'A', 'à', 'B'];
         const api = gridMgr.createGrid('ci-accented', {
-            columnDefs: [{ field: 'code' }],
+            columnDefs: [{ field: 'code', caseInsensitiveSort: true }],
             rowData: values.map((code) => ({ code })),
             accentedSort: true,
-            caseInsensitiveSort: true,
         });
 
         // a and A are equal and keep their order, and so are à and À; à sorts after a
@@ -120,21 +103,26 @@ describe('caseInsensitiveSort', () => {
     test("combined with accentedSort `sensitivity: 'case'`, ignores case and accents", () => {
         const values = ['b', 'à', 'A', 'a'];
         const api = gridMgr.createGrid('ci-accented-case', {
-            columnDefs: [{ field: 'code' }],
+            columnDefs: [
+                { field: 'code', caseInsensitiveSort: true, accentedSort: { options: { sensitivity: 'case' } } },
+            ],
             rowData: values.map((code) => ({ code })),
-            accentedSort: { options: { sensitivity: 'case' } },
-            caseInsensitiveSort: true,
         });
 
         expect(sortedValues(api, 'code')).toEqual(['à', 'A', 'a', 'b']);
     });
 
-    test('a column with its own accentedSort still follows the caseInsensitiveSort grid option', () => {
-        const api = createGrid('ci-own-accented', { caseInsensitiveSort: true }, { accentedSort: true });
-        expect(sortedValues(api, 'code')).toEqual(caseInsensitiveOrder);
+    test('a case-insensitive column follows a change to the accentedSort grid option', () => {
+        const values = ['b', 'À', 'a', 'A', 'à', 'B'];
+        const api = gridMgr.createGrid('ci-grid-accented-runtime', {
+            columnDefs: [{ field: 'code', caseInsensitiveSort: true }],
+            rowData: values.map((code) => ({ code })),
+        });
+        api.applyColumnState({ state: [{ colId: 'code', sort: 'asc' }] });
+        // lowercased code point order puts accented letters after every unaccented one
+        expect(displayedValues(api)).toEqual(['a', 'A', 'b', 'B', 'À', 'à']);
 
-        api.setGridOption('caseInsensitiveSort', false);
-        // accentedSort only: localeCompare puts lowercase first in most locales, so case variants no longer tie
-        expect(sortedValues(api, 'code')).toEqual([...codes].sort((a, b) => a.localeCompare(b)));
+        api.setGridOption('accentedSort', true);
+        expect(displayedValues(api)).toEqual(['a', 'A', 'À', 'à', 'b', 'B']);
     });
 });

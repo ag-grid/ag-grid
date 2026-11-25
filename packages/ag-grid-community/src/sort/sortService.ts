@@ -23,8 +23,8 @@ export class SortService extends BeanStub implements NamedBean {
     private cols: AgColumn[] | null = null;
     private map: Map<AgColumn, number> | null = null;
     private opts: SortOption[] | null = null;
-    /** The `colModel.stringSortVersion` `opts` was resolved with, as its string comparators depend on it. */
-    private optsStringSortVersion = 0;
+    /** The `colModel.accentedSortVersion` `opts` was resolved with, as its string comparators depend on it. */
+    private optsAccentedSortVersion = 0;
     /** The `colModel.colDefsVersion` `opts` was resolved with, as its comparators are read from the colDefs. */
     private optsColDefsVersion = 0;
     private displaySortCount = 0;
@@ -273,11 +273,10 @@ export class SortService extends BeanStub implements NamedBean {
     public getSortOptions(): SortOption[] {
         let opts = this.opts;
         const { colModel } = this.beans;
-        colModel.syncStringSortOptions();
-        const { stringSortVersion, colDefsVersion } = colModel;
+        const { accentedSortVersion, colDefsVersion } = colModel;
         if (
             opts === null ||
-            stringSortVersion !== this.optsStringSortVersion ||
+            accentedSortVersion !== this.optsAccentedSortVersion ||
             colDefsVersion !== this.optsColDefsVersion
         ) {
             opts = [];
@@ -301,7 +300,7 @@ export class SortService extends BeanStub implements NamedBean {
             }
             _resolveSortOptions(opts, colModel, this.gos);
             this.opts = opts;
-            this.optsStringSortVersion = stringSortVersion;
+            this.optsAccentedSortVersion = accentedSortVersion;
             this.optsColDefsVersion = colDefsVersion;
         }
         return opts;

@@ -62,36 +62,32 @@ describe('Set Filter list order follows accentedSort', () => {
         const api = await gridsManager.createGridAndWait('grid1', {
             // a case-sensitive Set Filter lists each case variant, so the order of values that differ only in case shows
             columnDefs: [{ field: 'name', filter: 'agSetColumnFilter', filterParams: { caseSensitive: true } }],
+            defaultColDef: { caseInsensitiveSort: true },
             rowData: values.map((name) => ({ name })),
-            caseInsensitiveSort: true,
         });
         expect(await listOrder(api)).toEqual(['(Select All)', 'AA', 'aa', 'az', 'AZ', 'b', 'B']);
     });
 
-    test('setting accentedSort and caseInsensitiveSort in one update orders the list with both', async () => {
-        const values = ['b', 'AA', 'az', 'aa', 'B', 'AZ'];
+    test('a case-insensitive column reorders the list when the accentedSort grid option changes', async () => {
+        const values = ['b', 'À', 'a', 'A', 'à', 'B'];
         const api = await gridsManager.createGridAndWait('grid1', {
             columnDefs: [
                 {
                     field: 'name',
                     filter: 'agSetColumnFilter',
                     filterParams: { caseSensitive: true },
-                    accentedSort: true,
+                    caseInsensitiveSort: true,
                 },
             ],
             rowData: values.map((name) => ({ name })),
         });
         const filter = await ColumnFilterHarness.open(api, 'name');
         await asyncSetTimeout(0);
-        expect(filter.setFilterItemLabels()).toEqual([
-            '(Select All)',
-            ...[...values].sort((a, b) => a.localeCompare(b)),
-        ]);
+        expect(filter.setFilterItemLabels()).toEqual(['(Select All)', 'a', 'A', 'b', 'B', 'À', 'à']);
 
-        // the column's own accentedSort ignores the grid's, but the grid's caseInsensitiveSort still applies to it
-        api.updateGridOptions({ accentedSort: { locales: 'de' }, caseInsensitiveSort: true });
+        api.setGridOption('accentedSort', true);
         await asyncSetTimeout(0);
-        expect(filter.setFilterItemLabels()).toEqual(['(Select All)', 'AA', 'aa', 'az', 'AZ', 'b', 'B']);
+        expect(filter.setFilterItemLabels()).toEqual(['(Select All)', 'a', 'A', 'À', 'à', 'b', 'B']);
     });
 
     test('the object form sorts the list with that locale', async () => {

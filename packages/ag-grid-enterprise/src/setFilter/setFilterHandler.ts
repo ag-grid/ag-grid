@@ -23,7 +23,6 @@ import {
     _getFilterValueSource,
     _isBlank,
     _isClientSideRowModel,
-    _usesGridStringSort,
 } from 'ag-grid-community';
 
 import { CsrmValuesExtractor } from './csrmValueExtractor';
@@ -472,17 +471,16 @@ export class SetFilterHandler<TValue = string>
     private addEventListenersForDataChanges(): void {
         this.addManagedPropertyListeners(['groupAllowUnbalanced'], () => this.onNewRowsLoaded());
         const { colModel } = this.beans;
-        let { accentedSortVersion, caseInsensitiveSortVersion } = colModel;
-        this.addManagedPropertyListeners(['accentedSort', 'caseInsensitiveSort'], () => {
+        let accentedSortVersion = colModel.accentedSortVersion;
+        this.addManagedPropertyListener('accentedSort', () => {
             // the column model counts real changes only, so an equal value from a framework re-render keeps the order
-            const accentedSort = colModel.accentedSortVersion !== accentedSortVersion;
-            const caseInsensitiveSort = colModel.caseInsensitiveSortVersion !== caseInsensitiveSortVersion;
-            accentedSortVersion = colModel.accentedSortVersion;
-            caseInsensitiveSortVersion = colModel.caseInsensitiveSortVersion;
+            const version = colModel.accentedSortVersion;
             const { colDef, column } = this.params;
-            if (_usesGridStringSort(colDef, accentedSort, caseInsensitiveSort)) {
-                this.beans.colFilter?.filterParamsChanged(column.getColId());
+            if (version === accentedSortVersion || colDef.accentedSort !== undefined) {
+                return;
             }
+            accentedSortVersion = version;
+            this.beans.colFilter?.filterParamsChanged(column.getColId());
         });
 
         const syncAfterDataChangeDebounced = _debounce(this, () => this.syncAfterDataChange(false), 0);

@@ -208,7 +208,7 @@ export class AgColumn<TValue = any>
     public sortCycleIndex: number | undefined = undefined;
     /** Compares the column's strings for its effective `accentedSort` and `caseInsensitiveSort`, `undefined` when both are off. Built lazily by `_getColumnStringComparator`. */
     public stringComparator: StringComparator | undefined = undefined;
-    /** The `colModel.stringSortVersion` `stringComparator` was built for; `-1` until built, or after the colDef `accentedSort` or `caseInsensitiveSort` changes. */
+    /** The `colModel.accentedSortVersion` `stringComparator` was built for; `-1` until built, or after the colDef `accentedSort` or `caseInsensitiveSort` changes. */
     public stringComparatorVersion = -1;
     public lastQueuedEventAt: number = 0;
 
@@ -333,7 +333,7 @@ export class AgColumn<TValue = any>
         ) {
             // equal values keep the comparator, so client-side sorting does not re-sort for nothing
             this.stringComparatorVersion = -1;
-            colModel.stringSortChangedCols.push(this);
+            colModel.accentedSortChangedCols.push(this);
         }
         showValuesAsSvc?.resolveColumn(this, false); // colDef change — `initialShowValuesAs` is create-only
         this.initMinAndMaxWidths();

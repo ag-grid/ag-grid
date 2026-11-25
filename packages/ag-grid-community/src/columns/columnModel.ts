@@ -60,26 +60,16 @@ export class ColumnModel extends BeanStub implements NamedBean {
     public colDefList: AgColumn[] = [];
     /** Invalidation key for anything memoised off the colDefs. Mutating a live colDef in place doesn't register. */
     public colDefsVersion = 0;
-    /** Bumped when the `accentedSort` or `caseInsensitiveSort` grid option changes to an unequal value, so columns rebuild their string comparator. */
-    public stringSortVersion = 0;
-    /** Bumped when the `accentedSort` grid option changes to an unequal value. */
+    /** Bumped when the `accentedSort` grid option changes to an unequal value, so columns rebuild their string comparator. */
     public accentedSortVersion = 0;
-    /** Bumped when the `caseInsensitiveSort` grid option changes. */
-    public caseInsensitiveSortVersion = 0;
-    /** The comparator for the `accentedSort` and `caseInsensitiveSort` grid options, shared by the columns without their own. */
+    /** The comparator for the `accentedSort` grid option, shared by the columns without their own. */
     public gridStringComparator: StringComparator | undefined = undefined;
-    /** The {@link stringSortVersion} {@link gridStringComparator} was built for; `-1` until built. */
+    /** The {@link accentedSortVersion} {@link gridStringComparator} was built for; `-1` until built. */
     public gridStringComparatorVersion = -1;
-    /** The `accentedSort` grid option the versions were last synced with. */
-    private syncedAccentedSort: GridOptions['accentedSort'] = undefined;
-    /** The `caseInsensitiveSort` grid option the versions were last synced with. */
-    private syncedCaseInsensitiveSort = false;
     /** Whether the `accentedSort` grid option changed since `stringComparatorsChanged` was last raised. */
     private gridAccentedSortChanged = false;
-    /** Whether the `caseInsensitiveSort` grid option changed since `stringComparatorsChanged` was last raised. */
-    private gridCaseInsensitiveSortChanged = false;
     /** The columns whose colDef `accentedSort` or `caseInsensitiveSort` changed since `stringComparatorsChanged` was last raised. */
-    public stringSortChangedCols: AgColumn[] = [];
+    public accentedSortChangedCols: AgColumn[] = [];
     /** >0 between {@link beginColUpdate} and {@link endColUpdate}, queueing the column events raised and deferring the
      *  role changes staged. */
     public colUpdateDepth = 0;
@@ -155,14 +145,14 @@ export class ColumnModel extends BeanStub implements NamedBean {
             ['defaultColDef', 'defaultColGroupDef', 'columnTypes', 'suppressFieldDotNotation'],
             this.recreateColumnDefs.bind(this)
         );
-        this.syncedAccentedSort = this.gos.get('accentedSort');
-        this.syncedCaseInsensitiveSort = !!this.gos.get('caseInsensitiveSort');
-        const onStringSortChanged = () => {
-            this.syncStringSortOptions();
-            this.raiseStringComparatorsChanged();
-        };
-        this.addManagedPropertyListener('accentedSort', onStringSortChanged);
-        this.addManagedPropertyListener('caseInsensitiveSort', onStringSortChanged);
+        // the grid options compare by identity, so a framework re-creating them with an equal value keeps the comparators
+        this.addManagedPropertyListener('accentedSort', ({ currentValue, previousValue }) => {
+            if (!_mergedEqual(currentValue, previousValue)) {
+                ++this.accentedSortVersion;
+                this.gridAccentedSortChanged = true;
+                this.raiseStringComparatorsChanged();
+            }
+        });
         this.addManagedPropertyListener('pivotMode', (event) =>
             this.setPivotMode(this.gos.get('pivotMode'), _convertColumnEventSourceType(event.source))
         );
@@ -506,49 +496,13 @@ export class ColumnModel extends BeanStub implements NamedBean {
         }
     }
 
-    /**
-     * Bumps the string sort versions for the `accentedSort` and `caseInsensitiveSort` grid options that changed since the
-     * last sync. Called from their property listeners and before the comparators are read, as other properties of the
-     * same change set, such as `rowData`, can sort before those listeners run. The grid options compare by identity, so
-     * a framework re-creating them with an equal value keeps the comparators.
-     */
-    public syncStringSortOptions(): void {
-        const gos = this.gos;
-        const accentedSort = gos.get('accentedSort');
-        const caseInsensitiveSort = !!gos.get('caseInsensitiveSort');
-        let changed = false;
-        if (accentedSort !== this.syncedAccentedSort && !_mergedEqual(accentedSort, this.syncedAccentedSort)) {
-            ++this.accentedSortVersion;
-            this.gridAccentedSortChanged = changed = true;
-        }
-        this.syncedAccentedSort = accentedSort;
-        if (caseInsensitiveSort !== this.syncedCaseInsensitiveSort) {
-            this.syncedCaseInsensitiveSort = caseInsensitiveSort;
-            ++this.caseInsensitiveSortVersion;
-            this.gridCaseInsensitiveSortChanged = changed = true;
-        }
-        if (changed) {
-            ++this.stringSortVersion;
-        }
-    }
-
     /** Once per change, so client-side sorting can re-sort: the sort model, and so `sortChanged`, stays the same. */
     private raiseStringComparatorsChanged(): void {
-        const {
-            gridAccentedSortChanged: accentedSort,
-            gridCaseInsensitiveSortChanged: caseInsensitiveSort,
-            stringSortChangedCols: columns,
-        } = this;
-        if (accentedSort || caseInsensitiveSort || columns.length) {
+        const { gridAccentedSortChanged: gridOption, accentedSortChangedCols: columns } = this;
+        if (gridOption || columns.length) {
             this.gridAccentedSortChanged = false;
-            this.gridCaseInsensitiveSortChanged = false;
-            this.stringSortChangedCols = [];
-            this.eventSvc.dispatchEvent({
-                type: 'stringComparatorsChanged',
-                accentedSort,
-                caseInsensitiveSort,
-                columns,
-            });
+            this.accentedSortChangedCols = [];
+            this.eventSvc.dispatchEvent({ type: 'stringComparatorsChanged', gridOption, columns });
         }
     }
 

@@ -22,7 +22,7 @@ export class SortStage extends BeanStub implements NamedBean, IRowNodeSortStage 
     beanName = 'sortStage' as const;
 
     public readonly step: ClientSideRowModelStage = 'sort';
-    public readonly refreshProps: (keyof GridOptions<any>)[] = ['postSortRows', 'accentedSort', 'caseInsensitiveSort'];
+    public readonly refreshProps: (keyof GridOptions<any>)[] = ['postSortRows', 'accentedSort'];
 
     public execute(changedPath: ChangedPath | undefined, changedRowNodes: ChangedRowNodes | undefined): void {
         const { rowModel, sortSvc, rowNodeSorter } = this.beans;
