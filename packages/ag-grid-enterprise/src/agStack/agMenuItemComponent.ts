@@ -15,6 +15,7 @@ import {
     AgAbstractBean,
     FAST_TEST_TIMINGS,
     _addManagedElementListeners,
+    _addSpaceKeyAction,
     _setAriaDisabled,
     _setAriaExpanded,
     _setAriaHasPopup,
@@ -248,9 +249,12 @@ export class AgMenuItemComponent<
             this.addDestroyFunc(() => touchListener.destroy());
         }
         if (!params?.suppressKeyboardSelect) {
+            const spaceKeyAction = this.params.checked != null ? _addSpaceKeyAction(this, eGui) : null;
             _addManagedElementListeners(this, eGui, {
                 keydown: (e: KeyboardEvent) => {
-                    if (e.key === KeyCode.ENTER || e.key === KeyCode.SPACE) {
+                    if (e.key === KeyCode.SPACE && spaceKeyAction) {
+                        spaceKeyAction.arm(e, () => this.onItemSelected(e));
+                    } else if (e.key === KeyCode.ENTER || e.key === KeyCode.SPACE) {
                         e.preventDefault();
                         this.onItemSelected(e);
                     }
