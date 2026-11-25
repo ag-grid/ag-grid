@@ -5,7 +5,12 @@ import type { BaseProperties } from '../interfaces/baseProperties';
 import type { IPropertiesService } from '../interfaces/iProperties';
 import { _getActiveDomElement, _getDocument } from '../utils/document';
 import { _addManagedElementListeners } from '../utils/event';
-import { _findFocusableElements, _findNextFocusableElement, _removeNonTabStopRadios } from '../utils/focus';
+import {
+    _findFocusableElements,
+    _findNextFocusableElement,
+    _getTabOrderedElements,
+    _removeNonTabStopRadios,
+} from '../utils/focus';
 import type { StopPropagationCallbacks } from './agManagedFocusFeature';
 import { AgManagedFocusFeature } from './agManagedFocusFeature';
 
@@ -226,20 +231,12 @@ export class AgTabGuardCtrl<
         }
     }
 
-    private getTabOrderedElements(root: HTMLElement, activeEl?: Element | null): HTMLElement[] {
-        return _removeNonTabStopRadios(
-            root,
-            _findFocusableElements(root).filter((element) => element.tabIndex >= 0),
-            activeEl
-        ).sort((a, b) => (a.tabIndex || Number.MAX_SAFE_INTEGER) - (b.tabIndex || Number.MAX_SAFE_INTEGER));
-    }
-
     private focusNextInTrap(e: FocusEvent): void {
         const root = this.eFocusableElement;
         const fromBottom = e.target === this.eBottomGuard;
         const previous = e.relatedTarget as HTMLElement | null;
         // Ancestor guards reactivate on focusout; do not re-enter the container we are leaving.
-        const elements = this.getTabOrderedElements(root, previous).filter(
+        const elements = _getTabOrderedElements(root, previous).filter(
             (element) =>
                 !this.isTabGuard(element) &&
                 (element === previous ||
@@ -256,7 +253,7 @@ export class AgTabGuardCtrl<
     }
 
     private findNextElementOutsideAndFocus(up: boolean, excludeElements?: HTMLElement[]): boolean {
-        const focusableEls = this.getTabOrderedElements(_getDocument(this.beans).body);
+        const focusableEls = _getTabOrderedElements(_getDocument(this.beans).body);
         const tabGuard = up ? this.eTopGuard : this.eBottomGuard;
         const index = focusableEls.indexOf(tabGuard);
 

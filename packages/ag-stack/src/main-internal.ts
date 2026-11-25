@@ -263,9 +263,9 @@ export {
     _findTabbableParent,
     _focusInto,
     _focusIntoTabbableFirst,
+    _getTabOrderedElements,
     _isKeyboardMode,
     _registerKeyboardFocusEvents,
-    _removeNonTabStopRadios,
     _resetKeyboardMode,
     _scrollHorizontallyToShow,
 } from './utils/focus';

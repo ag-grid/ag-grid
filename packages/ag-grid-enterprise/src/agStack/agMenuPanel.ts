@@ -1,5 +1,5 @@
 import type { AgBeanCollection, BaseEvents, BaseProperties, ICommonSource, IPropertiesService } from 'ag-stack';
-import { AgTabGuardComp, _findFocusableElements, _getActiveDomElement, _removeNonTabStopRadios } from 'ag-stack';
+import { AgTabGuardComp, _getActiveDomElement, _getTabOrderedElements } from 'ag-stack';
 
 import type { IComponent } from 'ag-grid-community';
 import { KeyCode } from 'ag-grid-community';
@@ -46,7 +46,7 @@ export class AgMenuPanel<
         }
 
         const activeEl = _getActiveDomElement(this.beans) as HTMLElement;
-        const tabStops = this.getTabOrderedElements();
+        const tabStops = _getTabOrderedElements(this.getFocusableElement(), activeEl);
         const activeIndex = tabStops.indexOf(activeEl);
         const next = activeIndex === -1 ? undefined : tabStops[activeIndex + (e.shiftKey ? -1 : 1)];
 
@@ -61,14 +61,6 @@ export class AgMenuPanel<
             next.focus();
             e.preventDefault();
         }
-    }
-
-    private getTabOrderedElements(): HTMLElement[] {
-        const root = this.getFocusableElement();
-        return _removeNonTabStopRadios(
-            root,
-            _findFocusableElements(root).filter((element) => element.tabIndex >= 0)
-        ).sort((a, b) => (a.tabIndex || Number.MAX_SAFE_INTEGER) - (b.tabIndex || Number.MAX_SAFE_INTEGER));
     }
 
     private closePanel(): void {

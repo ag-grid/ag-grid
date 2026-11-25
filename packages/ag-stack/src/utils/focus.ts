@@ -95,10 +95,7 @@ export function _findFocusableElements(
     return excludeNodes.size ? nodes.filter((element) => !excludeNodes.has(element)) : nodes;
 }
 
-/**
- * Named radios are one Tab stop, the focused or checked radio, as managed Tab handling bypasses the browser.
- * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
- */
+/** Named radios are one Tab stop, the focused or checked radio, as managed Tab handling bypasses the browser. */
 export function _removeNonTabStopRadios(
     rootNode: HTMLElement,
     elements: HTMLElement[],
@@ -130,6 +127,18 @@ export function _removeNonTabStopRadios(
               return !tabStop || tabStop === element;
           })
         : elements;
+}
+
+/**
+ * The tabbable elements in `root`, in native Tab order.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export function _getTabOrderedElements(root: HTMLElement, activeEl?: Element | null): HTMLElement[] {
+    return _removeNonTabStopRadios(
+        root,
+        _findFocusableElements(root).filter((element) => element.tabIndex >= 0),
+        activeEl
+    ).sort((a, b) => (a.tabIndex || Number.MAX_SAFE_INTEGER) - (b.tabIndex || Number.MAX_SAFE_INTEGER));
 }
 
 function isNamedRadio(element: HTMLElement): element is HTMLInputElement {
