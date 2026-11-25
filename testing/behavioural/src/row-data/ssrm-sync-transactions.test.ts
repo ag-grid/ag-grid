@@ -138,6 +138,138 @@ describe('SSRM Sync Transactions (characterization)', () => {
                 └── LEAF id:4 id:4 value:"Row 4"
             `);
         });
+
+        // A transaction runs its update, then its add, then its remove.
+        describe('operation order within one transaction', () => {
+            async function createFlatGrid() {
+                const rowData = Array.from({ length: 5 }, (_, i) => ({ id: i, value: `Row ${i}` }));
+                const api = gridsManager.createGrid(null, createFlatGridOptions(rowData));
+                await waitForEvent('firstDataRendered', api);
+                return api;
+            }
+
+            test('addIndex counts positions before a removed row above it is removed', async () => {
+                const api = await createFlatGrid();
+
+                const result = api.applyServerSideTransaction({
+                    remove: [{ id: 1 }],
+                    add: [{ id: 100, value: 'Added' }],
+                    addIndex: 3,
+                });
+                await waitForNoLoadingRows(api);
+
+                expect(result?.status).toBe('Applied');
+                await new GridRows(api, `remove above addIndex`).check(`
+                    ROOT id:<no-id>
+                    ├── LEAF id:0 id:0 value:"Row 0"
+                    ├── LEAF id:2 id:2 value:"Row 2"
+                    ├── LEAF id:100 id:100 value:"Added"
+                    ├── LEAF id:3 id:3 value:"Row 3"
+                    └── LEAF id:4 id:4 value:"Row 4"
+                `);
+            });
+
+            test('addIndex equal to the row count before the removal adds at the end', async () => {
+                const api = await createFlatGrid();
+
+                const result = api.applyServerSideTransaction({
+                    remove: [{ id: 1 }],
+                    add: [{ id: 100, value: 'Added' }],
+                    addIndex: 5,
+                });
+                await waitForNoLoadingRows(api);
+
+                expect(result?.add?.length).toBe(1);
+                expect(result?.unapplied).toBeUndefined();
+                await new GridRows(api, `addIndex at pre-removal end`).check(`
+                    ROOT id:<no-id>
+                    ├── LEAF id:0 id:0 value:"Row 0"
+                    ├── LEAF id:2 id:2 value:"Row 2"
+                    ├── LEAF id:3 id:3 value:"Row 3"
+                    ├── LEAF id:4 id:4 value:"Row 4"
+                    └── LEAF id:100 id:100 value:"Added"
+                `);
+            });
+
+            test('a row removed and added with the same ID is skipped by the add, then removed', async () => {
+                const api = await createFlatGrid();
+
+                const result = api.applyServerSideTransaction({
+                    remove: [{ id: 1 }],
+                    add: [{ id: 1, value: 'Re-added' }],
+                    addIndex: 3,
+                });
+                await waitForNoLoadingRows(api);
+
+                expect(result?.add).toEqual([]);
+                expect(result?.unapplied).toEqual([{ id: 1, value: 'Re-added' }]);
+                expect(result?.remove?.length).toBe(1);
+                await new GridRows(api, `remove and add same ID`).check(`
+                    ROOT id:<no-id>
+                    ├── LEAF id:0 id:0 value:"Row 0"
+                    ├── LEAF id:2 id:2 value:"Row 2"
+                    ├── LEAF id:3 id:3 value:"Row 3"
+                    └── LEAF id:4 id:4 value:"Row 4"
+                `);
+            });
+
+            test('a new row added and removed in the same transaction is added, then removed', async () => {
+                const api = await createFlatGrid();
+
+                const result = api.applyServerSideTransaction({
+                    remove: [{ id: 100 }],
+                    add: [{ id: 100, value: 'Added' }],
+                });
+                await waitForNoLoadingRows(api);
+
+                expect(result?.add?.map((node) => node.id)).toEqual(['100']);
+                expect(result?.remove?.map((node) => node.id)).toEqual(['100']);
+                expect(!!api.getRowNode('100')).toBe(false);
+                expect(api.getDisplayedRowCount()).toBe(5);
+            });
+
+            test('an update for a row added in the same transaction is not applied', async () => {
+                const api = await createFlatGrid();
+
+                const result = api.applyServerSideTransaction({
+                    add: [{ id: 100, value: 'Added' }],
+                    update: [{ id: 100, value: 'Updated' }],
+                });
+                await waitForNoLoadingRows(api);
+
+                expect(result?.update).toEqual([]);
+                expect(result?.add?.length).toBe(1);
+                expect(api.getRowNode('100')?.data.value).toBe('Added');
+            });
+
+            test('a row updated and removed in the same transaction is reported in both and removed', async () => {
+                const api = await createFlatGrid();
+
+                const result = api.applyServerSideTransaction({
+                    update: [{ id: 2, value: 'Updated' }],
+                    remove: [{ id: 2 }],
+                });
+                await waitForNoLoadingRows(api);
+
+                expect(result?.update?.map((node) => node.id)).toEqual(['2']);
+                expect(result?.remove?.map((node) => node.id)).toEqual(['2']);
+                expect(!!api.getRowNode('2')).toBe(false);
+                expect(api.getDisplayedRowCount()).toBe(4);
+            });
+
+            test('rowCount is the row count after the whole transaction', async () => {
+                const api = await createFlatGrid();
+
+                api.applyServerSideTransaction({
+                    remove: [{ id: 1 }],
+                    add: [{ id: 100, value: 'Added' }],
+                    rowCount: 5,
+                });
+                await waitForNoLoadingRows(api);
+
+                expect(api.getDisplayedRowCount()).toBe(5);
+            });
+        });
     });
 
     describe('Grouped store (single rowGroup column)', () => {
