@@ -924,8 +924,12 @@ export class ValueService extends BeanStub implements NamedBean {
 
     /** `appliesAggValueGetter` without the `aggValueGetter` check, for callers that have already made it. */
     private isAggValueGetterRow(column: AgColumn, rowNode: IRowNode): boolean {
-        // `footer` admits the SSRM grand total row, which is not a group row.
-        return !!(rowNode.group || rowNode.footer) && column.aggregationActive && !column.showRowGroup;
+        // `footer` admits the SSRM grand total row and `hasChildren()` SSRM tree data parents: neither is a group row.
+        return (
+            !!(rowNode.group || rowNode.footer || (rowNode as RowNode).hasChildren()) &&
+            column.aggregationActive &&
+            !column.showRowGroup
+        );
     }
 
     private applyAggValueGetter(
