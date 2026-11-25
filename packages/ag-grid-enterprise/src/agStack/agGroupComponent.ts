@@ -11,6 +11,7 @@ import {
     AgAbstractComponent,
     RefPlaceholder,
     _addManagedElementListeners,
+    _addSpaceKeyAction,
     _isComponent,
     _removeAriaExpanded,
     _removeFromParent,
@@ -580,7 +581,9 @@ class DefaultTitleBar<
         const iconSvc = this.beans.iconSvc;
         this.eGroupClosedIcon.appendChild(iconSvc.createIconNoSpan('accordionClosed')!);
         this.eGroupOpenedIcon.appendChild(iconSvc.createIconNoSpan('accordionOpen')!);
-        _addManagedElementListeners(this, this.getGui(), {
+        const eGui = this.getGui();
+        const spaceKeyAction = _addSpaceKeyAction(this, eGui);
+        _addManagedElementListeners(this, eGui, {
             click: () => this.dispatchExpandChanged(),
             keydown: (e: KeyboardEvent) => {
                 const { ENTER, SPACE, RIGHT, LEFT, UP, DOWN, PAGE_UP, PAGE_DOWN, PAGE_HOME, PAGE_END } = KeyCode;
@@ -594,9 +597,11 @@ class DefaultTitleBar<
                         e.preventDefault();
                         return;
                     case ENTER:
-                    case SPACE:
                         e.preventDefault();
                         this.dispatchExpandChanged();
+                        break;
+                    case SPACE:
+                        spaceKeyAction.arm(e, () => this.dispatchExpandChanged());
                         break;
                     case RIGHT:
                     case LEFT:

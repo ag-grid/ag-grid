@@ -2,6 +2,7 @@ import {
     KeyCode,
     RefPlaceholder,
     _addManagedElementListeners,
+    _addSpaceKeyAction,
     _getActiveDomElement,
     _getAriaCheckboxStateName,
     _setAriaLive,
@@ -72,15 +73,17 @@ export class CheckboxCellRenderer extends Component implements ICellRenderer {
             },
         });
 
-        _addManagedElementListeners(this, params.eGridCell, {
+        const eGridCell = params.eGridCell;
+        const spaceKeyAction = _addSpaceKeyAction(this, eGridCell);
+        _addManagedElementListeners(this, eGridCell, {
             keydown: (event: KeyboardEvent) => {
                 if (event.key === KeyCode.SPACE && !eCheckbox.isDisabled()) {
-                    if (params.eGridCell === _getActiveDomElement(beans)) {
-                        eCheckbox.toggle();
-                    }
-                    const isSelected = eCheckbox.getValue();
-                    this.onCheckboxChanged(isSelected);
-                    event.preventDefault();
+                    spaceKeyAction.arm(event, () => {
+                        if (eGridCell === _getActiveDomElement(beans)) {
+                            eCheckbox.toggle();
+                        }
+                        this.onCheckboxChanged(eCheckbox.getValue());
+                    });
                 }
             },
         });

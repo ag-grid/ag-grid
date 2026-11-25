@@ -1,3 +1,5 @@
+import { _SpaceKeyAction } from 'ag-stack';
+
 import type { RichSelectParams } from 'ag-grid-community';
 
 import { AgPillContainer } from './AgPillContainer';
@@ -766,11 +768,12 @@ describe('AgRichSelect', () => {
         expect(fallbackNavigation).not.toHaveBeenCalled();
     });
 
-    it('toggles multi-selection with space only when typing input is empty', () => {
+    it('toggles multi-selection when space is released, only when typing input is empty', () => {
         const richSelect = createRichSelect<string>({
             allowTyping: true,
             multiSelect: true,
         });
+        richSelect.spaceKeyAction = new _SpaceKeyAction();
         const toggleListItemSelection = vi.fn();
         const listComponent = {
             getLastItemHovered: () => 'Open',
@@ -801,6 +804,9 @@ describe('AgRichSelect', () => {
         });
 
         expect(preventDefaultWithoutText).toHaveBeenCalled();
+        expect(toggleListItemSelection).not.toHaveBeenCalled();
+
+        richSelect.spaceKeyAction.onKeyUp({ key: ' ', preventDefault: vi.fn() });
         expect(toggleListItemSelection).toHaveBeenCalledWith('Open');
     });
 

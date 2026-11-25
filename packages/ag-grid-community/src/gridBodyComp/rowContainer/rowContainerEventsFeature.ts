@@ -1,6 +1,8 @@
+import type { _SpaceKeyAction } from 'ag-stack';
 import {
     KeyCode,
     _addManagedElementListeners,
+    _addSpaceKeyAction,
     _isEventFromPrintableCharacter,
     _isEventFromThisInstance,
     _isEventSupported,
@@ -26,6 +28,7 @@ export class RowContainerEventsFeature extends BeanStub {
     private editSvc?: EditService;
     private mouseDownEvent = 'mousedown';
     private pendingTouchDown: MouseEvent | null = null;
+    private spaceKeyAction: _SpaceKeyAction;
 
     constructor(public readonly element: HTMLElement) {
         super();
@@ -42,6 +45,7 @@ export class RowContainerEventsFeature extends BeanStub {
         const eventName = 'keydown';
         const listener = this.processKeyboardEvent.bind(this, eventName);
         _addManagedElementListeners(this, this.element, { [eventName]: listener });
+        this.spaceKeyAction = _addSpaceKeyAction(this, this.element);
     }
 
     private addMouseListeners(): void {
@@ -160,7 +164,7 @@ export class RowContainerEventsFeature extends BeanStub {
                 this.doGridOperations(keyboardEvent, editing);
 
                 if (_isEventFromPrintableCharacter(keyboardEvent)) {
-                    cellCtrl.processCharacter(keyboardEvent);
+                    cellCtrl.processCharacter(keyboardEvent, this.spaceKeyAction);
                 }
             }
         } else if (eventName === 'keydown' && !editing) {
@@ -225,7 +229,9 @@ export class RowContainerEventsFeature extends BeanStub {
                     return;
                 }
                 if (_isRowSelection(this.gos)) {
-                    this.beans.selectionSvc?.handleSelectionEvent(keyboardEvent, rowCtrl.rowNode, 'spaceKey');
+                    this.spaceKeyAction.arm(keyboardEvent, () =>
+                        this.beans.selectionSvc?.handleSelectionEvent(keyboardEvent, rowCtrl.rowNode, 'spaceKey')
+                    );
                 }
                 keyboardEvent.preventDefault();
                 return;

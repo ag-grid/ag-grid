@@ -1,5 +1,5 @@
-import type { AriaSortState } from 'ag-stack';
-import { KeyCode, _getActiveDomElement, _isKeyboardMode, _setDisplayed } from 'ag-stack';
+import type { AriaSortState, _SpaceKeyAction } from 'ag-stack';
+import { KeyCode, _addSpaceKeyAction, _getActiveDomElement, _isKeyboardMode, _setDisplayed } from 'ag-stack';
 
 import type { ResizeFeature } from '../../../columnResize/resizeFeature';
 import { isRowNumberCol } from '../../../columns/columnUtils';
@@ -50,6 +50,7 @@ type RefreshFunction =
 export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgColumn, ResizeFeature> {
     private refreshFunctions: { [key in RefreshFunction]?: () => void } = {};
     private selectAllFeature?: SelectAllFeature;
+    private spaceKeyAction: _SpaceKeyAction;
 
     private sortable: boolean | null | undefined;
     private displayName: string | null;
@@ -113,6 +114,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         }
         colHover?.createHoverFeature(compBean, [column], eGui);
         rangeSvc?.createRangeHighlightFeature(compBean, column, comp);
+        this.spaceKeyAction = _addSpaceKeyAction(compBean, eGui);
         compBean.createManagedBean(
             new ManagedFocusFeature(eGui, {
                 shouldStopEventPropagation: (e) => this.shouldStopEventPropagation(e),
@@ -306,8 +308,9 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
     protected override handleKeyDown(e: KeyboardEvent): void {
         super.handleKeyDown(e);
 
+        const spaceKeyAction = this.spaceKeyAction;
         if (e.key === KeyCode.SPACE) {
-            this.selectAllFeature?.onSpaceKeyDown(e);
+            this.selectAllFeature?.onSpaceKeyDown(e, spaceKeyAction);
         } else if (e.key === KeyCode.ENTER) {
             this.onEnterKeyDown(e);
         } else if (e.key === KeyCode.DOWN && e.altKey) {
@@ -315,7 +318,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         }
         const rowNumbersSvc = this.beans.rowNumbersSvc;
         if (rowNumbersSvc && this.getWrapperHasFocus()) {
-            rowNumbersSvc.handleKeyDownOnHeader(this.column, e);
+            rowNumbersSvc.handleKeyDownOnHeader(this.column, e, spaceKeyAction);
         }
     }
 

@@ -101,12 +101,14 @@ describe('column select items expose their checked state', () => {
         const athlete = getRow(viewport, 'Athlete');
         athlete.focus();
         fireEvent.keyDown(athlete, { key: ' ' });
+        fireEvent.keyUp(athlete, { key: ' ' });
         await expectChecked(viewport, { Athlete: 'false', 'Athlete Details': 'false' });
         expect(api.getColumn('athlete')!.isVisible()).toBe(false);
 
         const group = getRow(viewport, 'Athlete Details');
         group.focus();
         fireEvent.keyDown(group, { key: ' ' });
+        fireEvent.keyUp(group, { key: ' ' });
         await expectChecked(viewport, { Athlete: 'true', Country: 'true', 'Athlete Details': 'true' });
     });
 
@@ -153,6 +155,7 @@ describe('column select items expose their checked state', () => {
         const athlete = getRow(viewport, 'Athlete');
         athlete.focus();
         fireEvent.keyDown(athlete, { key: ' ' });
+        fireEvent.keyUp(athlete, { key: ' ' });
 
         await expectChecked(viewport, { Athlete: 'false' });
         expect(api.getColumn('athlete')!.isVisible()).toBe(true);

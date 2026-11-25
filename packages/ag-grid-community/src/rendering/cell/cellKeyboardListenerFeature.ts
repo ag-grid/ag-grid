@@ -1,3 +1,4 @@
+import type { _SpaceKeyAction } from 'ag-stack';
 import { KeyCode, _isMacOsUserAgent } from 'ag-stack';
 
 import { isRowNumberCol } from '../../columns/columnUtils';
@@ -288,7 +289,12 @@ function onEscapeKeyDown(beans: BeanCollection, cellCtrl: CellCtrl, event: Keybo
     });
 }
 
-export function _processCellCharacter(beans: BeanCollection, cellCtrl: CellCtrl, event: KeyboardEvent): void {
+export function _processCellCharacter(
+    beans: BeanCollection,
+    cellCtrl: CellCtrl,
+    event: KeyboardEvent,
+    spaceKeyAction: _SpaceKeyAction
+): void {
     // check this, in case focus is on a (for example) a text field inside the cell,
     // in which cse we should not be listening for these key pressed
     const eventTarget = event.target;
@@ -306,7 +312,7 @@ export function _processCellCharacter(beans: BeanCollection, cellCtrl: CellCtrl,
 
     const key = event.key;
     if (key === KeyCode.SPACE) {
-        onSpaceKeyDown(beans, cellCtrl, event);
+        onSpaceKeyDown(beans, cellCtrl, event, spaceKeyAction);
     } else if (editSvc?.isCellEditable(cellCtrl, 'ui')) {
         if (editSvc?.revalidateAndCheck() && !editSvc.checkValidated(cellCtrl)) {
             return;
@@ -328,12 +334,17 @@ export function _processCellCharacter(beans: BeanCollection, cellCtrl: CellCtrl,
     }
 }
 
-function onSpaceKeyDown(beans: BeanCollection, cellCtrl: CellCtrl, event: KeyboardEvent): void {
+function onSpaceKeyDown(
+    beans: BeanCollection,
+    cellCtrl: CellCtrl,
+    event: KeyboardEvent,
+    spaceKeyAction: _SpaceKeyAction
+): void {
     const { gos, editSvc } = beans;
-    const { rowNode } = cellCtrl;
+    const { rowNode, column } = cellCtrl;
 
     if (!editSvc?.isEditing(cellCtrl, { withOpenEditor: true }) && _isRowSelection(gos)) {
-        beans.selectionSvc?.handleSelectionEvent(event, rowNode, 'spaceKey', cellCtrl.column);
+        spaceKeyAction.arm(event, () => beans.selectionSvc?.handleSelectionEvent(event, rowNode, 'spaceKey', column));
     }
 
     // prevent default as space key, by default, moves browser scroll down

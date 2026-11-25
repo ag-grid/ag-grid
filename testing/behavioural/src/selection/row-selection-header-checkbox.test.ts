@@ -1,4 +1,4 @@
-import { GridColumns, GridRows, assertSelectedRowsByIndex } from 'ag-test-utils';
+import { GridColumns, GridRows, assertSelectedRowsByIndex, asyncSetTimeout } from 'ag-test-utils';
 
 import {
     columnDefs,
@@ -8,6 +8,7 @@ import {
     rowData,
     setupRowSelectionSuite,
 } from './rowSelectionHarness';
+import { holdSpaceKey, releaseSpaceKey } from './utils';
 
 describe('Row Selection Grid Options', () => {
     describe('Basic Interactions', () => {
@@ -51,6 +52,25 @@ describe('Row Selection Grid Options', () => {
                     ├── LEAF id:5 sport:"swimming"
                     └── LEAF id:6 sport:"rowing"
                 `);
+            });
+
+            test('holding SPACE on the focused header selects all rows once, when SPACE is released', async () => {
+                const [api] = createGrid({
+                    columnDefs,
+                    rowData,
+                    rowSelection: { mode: 'multiRow', headerCheckbox: true },
+                });
+                api.setFocusedHeader('ag-Grid-SelectionColumn');
+                await asyncSetTimeout(0);
+                const headerCell = document.querySelector<HTMLElement>(
+                    '.ag-header-cell[col-id="ag-Grid-SelectionColumn"]'
+                )!;
+
+                holdSpaceKey(headerCell);
+                assertSelectedRowsByIndex([], api);
+
+                releaseSpaceKey(headerCell);
+                assertSelectedRowsByIndex([0, 1, 2, 3, 4, 5, 6], api);
             });
 
             test('can select multiple pages of data', async () => {

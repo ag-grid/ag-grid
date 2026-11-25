@@ -83,6 +83,10 @@ This does not reproduce the exact previous appearance. Focus and built-in contro
 - `headerClass` classes are now also added to the column's floating filter cell, and the `headerClass` callback receives `params.floatingFilter` (`true` for floating filter cells, `false` for column and column group header cells). To keep header-only styling, return classes only when `params.floatingFilter` is `false`, or narrow selectors with `.ag-header-cell:not(.ag-floating-filter)`.
 - A `headerClass` callback is now also called for every floating filter cell (every column has one when any column has a floating filter), including on pin and column definition changes, so callbacks with side effects run more often. See [Column Headers Styling](./column-headers-styling/#header-class).
 
+### Keyboard Interaction
+
+- {% kbd "␣ Space" /%} now selects, toggles and expands when released rather than when pressed, as native checkboxes and buttons do, so holding it no longer repeats the action. Tests that simulate {% kbd "␣ Space" /%} with only a `keydown` event must also dispatch `keyup`.
+
 ### Validation
 
 - With [Development Validation](./dev-validation/) enabled, apps that set `suppressPropertyNamesCheck` now see unknown-property warnings for their custom keys. Move custom data into `context` and delete the flag.

@@ -3,6 +3,7 @@ import {
     FAST_TEST_TIMINGS,
     RefPlaceholder,
     _addManagedElementListeners,
+    _addSpaceKeyAction,
     _debounce,
     _setAriaExpanded,
     _setAriaLabel,
@@ -60,12 +61,16 @@ export class AgPrimaryColsHeader extends Component<AgPrimaryColsHeaderEvent> {
     public postConstruct(): void {
         this.createExpandIcons();
 
-        this.addManagedListeners(this.eExpand, {
+        const eExpand = this.eExpand;
+        const spaceKeyAction = _addSpaceKeyAction(this, eExpand);
+        this.addManagedListeners(eExpand, {
             click: this.onExpandClicked.bind(this),
             keydown: (e: KeyboardEvent) => {
-                if (e.key === KeyCode.SPACE || e.key === KeyCode.ENTER) {
+                if (e.key === KeyCode.ENTER) {
                     e.preventDefault();
                     this.onExpandClicked();
+                } else if (e.key === KeyCode.SPACE) {
+                    spaceKeyAction.arm(e, () => this.onExpandClicked());
                 }
             },
         });

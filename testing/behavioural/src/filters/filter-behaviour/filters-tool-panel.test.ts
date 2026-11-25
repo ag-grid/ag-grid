@@ -491,8 +491,10 @@ describe('Filters Tool Panel', () => {
         await panel.collapseGroup('Person');
         expect(titleBar?.getAttribute('aria-expanded')).toBe('false');
 
-        // Space re-expands it, as button semantics promise.
-        titleBar?.dispatchEvent(new KeyboardEvent('keydown', { key: ' ', bubbles: true }));
+        // Space re-expands it on release, as button semantics promise.
+        titleBar?.dispatchEvent(new KeyboardEvent('keydown', { key: ' ', bubbles: true, cancelable: true }));
+        expect(titleBar?.getAttribute('aria-expanded')).toBe('false');
+        titleBar?.dispatchEvent(new KeyboardEvent('keyup', { key: ' ', bubbles: true, cancelable: true }));
         expect(titleBar?.getAttribute('aria-expanded')).toBe('true');
         expect(panel.isGroupExpandedByTitle('Person')).toBe(true);
     });
