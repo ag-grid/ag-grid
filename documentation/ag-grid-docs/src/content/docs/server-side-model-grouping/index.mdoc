@@ -64,11 +64,11 @@ For example, when the grid groups by **Country** then **Sport**, and the user ex
 Each request asks for the rows inside one group, and `groupKeys` says which group. Grouping by **Country** then
 **Sport**, the datasource returns:
 
-| `groupKeys`                | Rows to return                                    |
-| -------------------------- | ------------------------------------------------- |
-| `[]`                       | One group row per country                         |
-| `['Argentina']`            | One group row per sport played in Argentina       |
-| `['Argentina', 'Cycling']` | The leaf rows of cyclists from Argentina          |
+| `groupKeys`                | Rows to return                              |
+| -------------------------- | ------------------------------------------- |
+| `[]`                       | One group row per country                   |
+| `['Argentina']`            | One group row per sport played in Argentina |
+| `['Argentina', 'Cycling']` | The leaf rows of cyclists from Argentina    |
 
 The first key is a **Country** value and the second is a **Sport** value, in the order of `rowGroupCols`. Keep only the
 rows matching every key, then group them by the next column in `rowGroupCols`. Once there is a key for every column in
