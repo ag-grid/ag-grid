@@ -225,12 +225,12 @@ When values are initially passed to the set filter, they are only loaded once wh
 
 Values set with `setFilterValues` count as Supplied Values when the [Set Filter Parameters are updated](./filter-set/#updating-set-filter-parameters). Where such an update resets a filter with a selection applied, it also returns it to the column definition's values.
 
-It may be desirable to refresh the values at a later point, for example to reflect other filtering that has occurred in the grid. To achieve this, you can call `refreshFilterValues` on the relevant filter that you would like to refresh. This will cause the values used in the filter to be refreshed from their source, whether that is by looking again at the provided `values` array or the values set with `setFilterValues`, by re-executing the `values` callback, or by reading the rows. For example, you might use something like the following:
+It may be desirable to refresh the values at a later point, for example to reflect other filtering that has occurred in the grid. To achieve this, you can call `refreshFilterValues` on the Set Filter handler of the relevant column. This will cause the values used in the filter to be refreshed from their source, whether that is by looking again at the provided `values` array or the values set with `setFilterValues`, by re-executing the `values` callback, or by reading the rows. For example, you might use something like the following:
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
     onFilterChanged: params => {
-        params.api.getColumnFilterHandler('columnName').refreshFilterValues();
+        params.api.getColumnFilterHandler<SetFilterHandler>('columnName').refreshFilterValues();
     }
 }
 ```

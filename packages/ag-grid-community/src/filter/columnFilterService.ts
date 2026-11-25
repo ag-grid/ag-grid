@@ -999,9 +999,6 @@ export class ColumnFilterService
             doesRowPassOtherFilter: forFloatingFilter
                 ? () => true
                 : this.createDoesRowPassOtherFilter(column, undefined),
-            // to avoid breaking changes to `filterParams` defined as functions
-            // we need to provide the below options even though they are not valid for handlers
-            rowModel: this.beans.rowModel,
         });
     }
 

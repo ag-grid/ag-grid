@@ -11,6 +11,7 @@ export type RowModelType = 'infinite' | 'viewport' | 'clientSide' | 'serverSide'
 
 export type ForEachNodeCallback<TData = any> = (node: RowNode<TData>, index: number) => void;
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IRowModel {
     /**
      * The root row.

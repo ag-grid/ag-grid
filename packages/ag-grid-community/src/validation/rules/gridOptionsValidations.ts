@@ -69,11 +69,6 @@ const GRID_OPTION_DEPRECATIONS = (): Deprecations<GridOptions> => ({
             'Either use `onDisplayedColumnsChanged` which is fired at the same time, or use one of the more specific column events.',
     },
 
-    suppressAdvancedFilterEval: {
-        version: '34',
-        message: 'Advanced filter no longer uses function evaluation, so this option has no effect.',
-    },
-
     suppressContentVisibilityAuto: { version: '36.1', message: 'Use `enableContentVisibilityAuto` instead.' },
     debug: { version: '36.3', message: 'Use `enableDevValidations({ debug: true })` instead.' },
 });

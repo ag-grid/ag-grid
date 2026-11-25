@@ -14,12 +14,12 @@ import type {
     FilterInputCallbackParams,
     GridApi,
     GridOptions,
-    ISetFilter,
     ISetFilterCellRendererParams,
     ISetFilterParams,
     KeyCreatorParams,
     SetFilterHandler,
     SetFilterModel,
+    SetFilterUi,
     SetFilterValuesFuncParams,
     ValueFormatterParams,
 } from 'ag-grid-community';
@@ -180,7 +180,7 @@ describe('Set Filter — value model & UI (coverage)', () => {
 
             await filter.miniFilterSearch('');
             await asyncSetTimeout(0);
-            const instance = (await api.getColumnFilterInstance<ISetFilter>('name'))!;
+            const instance = (await api.getColumnFilterInstance<SetFilterUi>('name'))!;
             instance.setMiniFilter('mich');
             await asyncSetTimeout(0);
             expect(filter.setFilterItemLabels()).toEqual(typed);
@@ -231,7 +231,7 @@ describe('Set Filter — value model & UI (coverage)', () => {
 
             await filter.miniFilterSearch('');
             await asyncSetTimeout(0);
-            const instance = (await api.getColumnFilterInstance<ISetFilter>('name'))!;
+            const instance = (await api.getColumnFilterInstance<SetFilterUi>('name'))!;
             instance.setMiniFilter('MICH');
             await asyncSetTimeout(0);
             expect(filter.setFilterItemLabels()).toEqual(['(Select All)', 'MICHAEL']);
