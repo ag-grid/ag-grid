@@ -263,6 +263,7 @@ import {
     _BOOLEAN_MIXED_GRID_OPTIONS,
     _combineAttributesAndGridOptions,
     _processOnChange,
+    _reportFilterModifiedListened,
     createGrid,
 } from 'ag-grid-community';
 
@@ -350,6 +351,9 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
             const api = createGrid(this._nativeElement, mergedGridOps, gridParams);
             if (api) {
                 this.api = api;
+                if (this.isEmitterUsed('filterModified')) {
+                    _reportFilterModifiedListened(api);
+                }
             }
 
             this._initialised = true;
@@ -933,6 +937,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      *
      * Note that grid-provided filters (except for the Multi Filter) always use filter handlers.
      * The Multi Filter will also use a filter handler if this is enabled.
+     *
+     * The default becomes `true` in v38. Setting `false` (legacy filter mode) is deprecated in v37, and legacy filter mode and this option will be removed in a major version after v38. See [Migrating to Filter Handlers](https://www.ag-grid.com/javascript-data-grid/enable-filter-handlers-migration/).
      * @initial
      */
     @Input({ transform: booleanAttribute }) public enableFilterHandlers: boolean | undefined = undefined;
@@ -2619,6 +2625,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
         FilterChangedEvent<TData>
     >();
     /** Filter was modified but not applied  (when using `enableFilterHandlers = false`). Used when filters have 'Apply' buttons.
+     * @deprecated v37 Use `onFilterUiChanged` and `onFloatingFilterUiChanged` with `enableFilterHandlers` instead. See [Migrating to Filter Handlers](https://www.ag-grid.com/javascript-data-grid/enable-filter-handlers-migration/).
      */
     @Output() public filterModified: EventEmitter<FilterModifiedEvent<TData>> = new EventEmitter<
         FilterModifiedEvent<TData>

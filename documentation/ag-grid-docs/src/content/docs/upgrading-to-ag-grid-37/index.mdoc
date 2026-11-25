@@ -191,4 +191,49 @@ The following icon keys have been removed. Setting them in the `icons` grid opti
 
 {% /expandingSection %}
 
+## Deprecations
+
+Legacy filter mode, which applies when the grid option `enableFilterHandlers` is not set or is `false`, is deprecated. The APIs below remain supported and continue to work in AG Grid 37, but the replacements are recommended. In AG Grid 38 `enableFilterHandlers` defaults to `true`, and legacy filter mode will be removed in a major version after AG Grid 38. See [Migrating to Filter Handlers](./enable-filter-handlers-migration/), and [Filter Component](./component-filter/#migrating-to-filter-handlers) for the features filter handlers enable.
+
+When `enableFilterHandlers` is not set, AG Grid 37 logs a warning for each of these cases that is in use: custom filter components, custom floating filters, `filterModified` listeners, and Multi Filter `buttons`, `closeOnApply` or legacy methods. The warnings are logged in production as well as in development. Setting `enableFilterHandlers: false` logs a deprecation in development only.
+
+Apps that use `enableDevValidations({ throwOn: ['warning'] })` with legacy filters and `enableFilterHandlers` unset will now throw where the legacy feature is first used: usually when the grid is created, or for Multi Filter buttons and methods, when the filter is created or the method is called.
+
+| Deprecated                                                                                  | Replacement                                                                                         |
+| ------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| `enableFilterHandlers: false` (legacy filter mode)                                          | `enableFilterHandlers: true`                                                                        |
+| `onFilterModified` / `filterModified` event                                                 | `onFilterUiChanged` / `filterUiChanged` and `onFloatingFilterUiChanged` / `floatingFilterUiChanged` |
+| `IFilterComp`                                                                               | `FilterDisplayComp`, with the filter logic as a `doesFilterPass` callback or `handler`              |
+| `IFilterType`                                                                               | `ColumnFilter`                                                                                      |
+| `IFloatingFilter`, `IFloatingFilterComp`, `IFloatingFilterType`                             | `FloatingFilterDisplay`, `FloatingFilterDisplayComp`                                                |
+| `IFilterParams.filterChangedCallback`                                                       | `FilterDisplayParams.onModelChange`                                                                 |
+| `IFilterParams.filterModifiedCallback`                                                      | `FilterDisplayParams.onUiChange`                                                                    |
+| `IFloatingFilterParams.parentFilterInstance`, `IFloatingFilterParentCallback`               | `FloatingFilterDisplayParams.model` and `onModelChange`                                             |
+| `IFloatingFilterParams.currentParentModel`                                                  | `FloatingFilterDisplayParams.model`                                                                 |
+| `onFloatingFilterChanged()` on filter instances                                             | `onModelChange` in a `FloatingFilterDisplayComp`                                                    |
+| `applyModel()`, `getModelFromUi()` on filter instances                                      | `api.setColumnFilterModel`, `api.getColumnFilterModel(column, true)`                                |
+| The `getModel`, `setModel`, `isFilterActive` and `doesFilterPass` methods of `IMultiFilter` | `api.getColumnFilterModel` and `api.setColumnFilterModel`                                           |
+
+{% if isFramework("react") %}
+
+| Deprecated                  | Replacement                        |
+| --------------------------- | ---------------------------------- |
+| `useGridFilter`             | `useGridFilterDisplay`             |
+| `CustomFilterProps`         | `CustomFilterDisplayProps`         |
+| `CustomFilterCallbacks`     | `CustomFilterDisplayCallbacks`     |
+| `CustomFloatingFilterProps` | `CustomFloatingFilterDisplayProps` |
+
+{% /if %}
+
+{% if isFramework("angular") %}
+
+| Deprecated                   | Replacement                         |
+| ---------------------------- | ----------------------------------- |
+| `IFilterAngularComp`         | `IFilterDisplayAngularComp`         |
+| `IFloatingFilterAngularComp` | `IFloatingFilterDisplayAngularComp` |
+
+{% /if %}
+
+See [Migrating to Filter Handlers](./enable-filter-handlers-migration/).
+
 {% changelogSection version=$migrationVersion /%}

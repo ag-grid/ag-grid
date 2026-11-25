@@ -1,5 +1,5 @@
 import type { IFloatingFilter, IFloatingFilterParams } from 'ag-grid-community';
-import { AgPromise, ProvidedFilter } from 'ag-grid-community';
+import { AgPromise, ProvidedFilter, _legacyFilterMethods } from 'ag-grid-community';
 
 import { addOptionalMethods } from './customComponentWrapper';
 import type { CustomFloatingFilterCallbacks, CustomFloatingFilterProps } from './interfaces';
@@ -8,8 +8,9 @@ export function updateFloatingFilterParent(params: IFloatingFilterParams, model:
     params.parentFilterInstance((instance) => {
         // Pass suppressDeprecationWarning to providedFilters as the grid calls setModel() on the user's behalf here, not user code.
         (
-            (instance instanceof ProvidedFilter ? instance.setModel(model, true) : instance.setModel(model)) ||
-            AgPromise.resolve()
+            (instance instanceof ProvidedFilter
+                ? instance.setModel(model, true)
+                : _legacyFilterMethods(instance).setModel(model)) || AgPromise.resolve()
         ).then(() => {
             params.filterParams.filterChangedCallback();
         });

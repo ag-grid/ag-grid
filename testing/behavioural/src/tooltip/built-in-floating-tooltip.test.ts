@@ -1,7 +1,7 @@
 import { waitFor } from '@testing-library/dom';
 import '@testing-library/jest-dom/vitest';
 import { userEvent } from '@testing-library/user-event';
-import { TestGridsManager, getVisibleTooltips } from 'ag-test-utils';
+import { ALL_SEVERITIES, LEGACY_FILTER_WARNING_IDS, TestGridsManager, getVisibleTooltips } from 'ag-test-utils';
 
 import type { FilterHandler, Module, NumberFilterModel, ValueFormatterParams } from 'ag-grid-community';
 import {
@@ -11,6 +11,7 @@ import {
     RenderApiModule,
     TextFilterModule,
     TooltipModule,
+    enableDevValidations,
     getGridElement,
 } from 'ag-grid-community';
 import { GroupFilterModule, RowGroupingModule, SetFilterModule } from 'ag-grid-enterprise';
@@ -33,6 +34,12 @@ class InteractiveTooltip {
 describe.each([false, true])('Built-in floating filter tooltips (enableFilterHandlers=%s)', (enableFilterHandlers) => {
     const grids = new TestGridsManager({ modules: [TooltipModule] });
     const tooltipTexts = () => getVisibleTooltips().map((tooltip) => tooltip.textContent);
+
+    beforeEach(() => {
+        if (!enableFilterHandlers) {
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: LEGACY_FILTER_WARNING_IDS });
+        }
+    });
 
     afterEach(() => {
         grids.reset();

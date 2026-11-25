@@ -765,6 +765,8 @@ export interface Props<TData> {
          *
          * Note that grid-provided filters (except for the Multi Filter) always use filter handlers.
          * The Multi Filter will also use a filter handler if this is enabled.
+         *
+         * The default becomes `true` in v38. Setting `false` (legacy filter mode) is deprecated in v37, and legacy filter mode and this option will be removed in a major version after v38. See [Migrating to Filter Handlers](https://www.ag-grid.com/javascript-data-grid/enable-filter-handlers-migration/).
          * @initial
          */
     enableFilterHandlers?: boolean,

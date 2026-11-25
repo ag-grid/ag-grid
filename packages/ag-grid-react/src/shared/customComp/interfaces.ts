@@ -62,7 +62,10 @@ export interface CustomDateProps<TData = any, TContext = any> extends BaseDatePa
     onDateChange: (date: Date | null) => void;
 }
 
-/** Props provided to custom filter components */
+/**
+ * Props provided to custom filter components
+ * @deprecated v37 Use `enableFilterHandlers` and `CustomFilterDisplayProps` instead. See [Migrating to Filter Handlers](https://www.ag-grid.com/javascript-data-grid/enable-filter-handlers-migration/).
+ */
 export interface CustomFilterProps<TData = any, TContext = any, TModel = any> extends BaseFilterParams<
     TData,
     TContext
@@ -86,7 +89,10 @@ export interface CustomFilterDisplayProps<TData = any, TContext = any, TModel = 
     TModel
 > {}
 
-/** Props provided to custom floating filter components */
+/**
+ * Props provided to custom floating filter components
+ * @deprecated v37 Use `enableFilterHandlers` and `CustomFloatingFilterDisplayProps` instead. See [Migrating to Filter Handlers](https://www.ag-grid.com/javascript-data-grid/enable-filter-handlers-migration/).
+ */
 export interface CustomFloatingFilterProps<
     P = IFilter,
     TData = any,
@@ -238,7 +244,10 @@ export interface CustomCellEditorCallbacks extends BaseCellEditor {}
 /** Callbacks for custom date components */
 export interface CustomDateCallbacks extends BaseDate {}
 
-/** Callbacks for custom filter components */
+/**
+ * Callbacks for custom filter components
+ * @deprecated v37 Use `enableFilterHandlers` and `CustomFilterDisplayCallbacks` instead. See [Migrating to Filter Handlers](https://www.ag-grid.com/javascript-data-grid/enable-filter-handlers-migration/).
+ */
 export interface CustomFilterCallbacks extends BaseFilter {}
 
 /** Callbacks for custom filter components when using `enableFilterHandlers = true` */
@@ -267,7 +276,10 @@ export function useGridDate(callbacks: CustomDateCallbacks): void {
     return useGridCustomComponent(callbacks);
 }
 
-/** Hook to allow custom filter component callbacks to be provided to the grid */
+/**
+ * Hook to allow custom filter component callbacks to be provided to the grid
+ * @deprecated v37 Use `enableFilterHandlers` and `useGridFilterDisplay` instead. See [Migrating to Filter Handlers](https://www.ag-grid.com/javascript-data-grid/enable-filter-handlers-migration/).
+ */
 export function useGridFilter(callbacks: CustomFilterCallbacks): void {
     return useGridCustomComponent(callbacks);
 }

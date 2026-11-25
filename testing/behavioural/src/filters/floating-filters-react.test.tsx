@@ -1,4 +1,5 @@
 import { act, cleanup, render, waitFor } from '@testing-library/react';
+import { ALL_SEVERITIES } from 'ag-test-utils';
 import React from 'react';
 
 import type {
@@ -8,7 +9,13 @@ import type {
     IFloatingFilterComp,
     IFloatingFilterParams,
 } from 'ag-grid-community';
-import { AgPromise, ClientSideRowModelModule, RowApiModule, TextFilterModule } from 'ag-grid-community';
+import {
+    AgPromise,
+    ClientSideRowModelModule,
+    RowApiModule,
+    TextFilterModule,
+    enableDevValidations,
+} from 'ag-grid-community';
 import type { CustomFloatingFilterProps } from 'ag-grid-react';
 import { AgGridReact } from 'ag-grid-react';
 
@@ -44,6 +51,9 @@ const withComponent = (floatingFilterComponent?: unknown): ColDef<Person>[] => [
 ];
 
 describe('Floating Filters (React)', () => {
+    beforeEach(() => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [348] });
+    });
     afterEach(() => cleanup());
 
     const renderGrid = (enableFilterHandlers: boolean, columnDefs: ColDef<Person>[]) => {
