@@ -60,6 +60,7 @@ describe('redirect-moved-anchors script', () => {
         ${'no anchor'}                    | ${''}
         ${'an anchor that has not moved'} | ${'#filters'}
         ${'an inherited property name'}   | ${'#constructor'}
+        ${'a malformed escape'}           | ${'#100%'}
     `('stays on the page for $case', ({ hash }) => {
         runScript(hash);
 

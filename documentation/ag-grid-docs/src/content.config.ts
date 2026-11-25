@@ -62,7 +62,9 @@ const docs = defineCollection({
          * new location as `<pageName>/#<headingId>`. A visit to an old anchor is sent on to the new
          * location, so external links and bookmarks keep working (see `redirect-moved-anchors.js`).
          */
-        movedAnchors: z.record(z.string(), z.string().regex(/^[a-z0-9-]+\/#[a-z0-9-]+$/)).optional(),
+        movedAnchors: z
+            .record(z.string().regex(/^[a-z0-9-]+$/), z.string().regex(/^[a-z0-9-]+\/#[a-z0-9-]+$/))
+            .optional(),
     }),
 });
 
