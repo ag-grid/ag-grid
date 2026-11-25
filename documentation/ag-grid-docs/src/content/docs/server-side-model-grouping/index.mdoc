@@ -141,8 +141,6 @@ Server-Side Open By Default requires [Row IDs](./server-side-model-configuration
 
 Use the [Row Node](./row-object/) method `getRoute()` to inspect the route of a row node.
 
-{% apiDocumentation source="row-object/properties.json" section="serverSide" names=["getRoute"] /%}
-
 Below shows `isServerSideGroupOpenByDefault()` and `getRoute` in action. Note the following:
 
 - The callback opens the following routes as soon as those routes are loaded:
@@ -287,7 +285,7 @@ Changes made outside the Columns Tool Panel — such as dragging columns into th
 
 {% apiDocumentation source="column-properties/properties.json" section="grouping" names=["rowGroup"] /%}
 
-{% apiDocumentation source="grid-options/properties.json" section="serverSideRowModel" names=["getChildCount", "isServerSideGroupOpenByDefault", "serverSideOnlyRefreshFilteredGroups"] /%}
+{% apiDocumentation source="grid-options/properties.json" section="serverSideRowModel" names=["serverSideOnlyRefreshFilteredGroups"] /%}
 
 {% apiDocumentation source="grid-options/properties.json" section="rowGrouping" names=["groupHideOpenParents", "groupAllowUnbalanced", "ssrmExpandAllAffectsAllRows"] /%}
 
