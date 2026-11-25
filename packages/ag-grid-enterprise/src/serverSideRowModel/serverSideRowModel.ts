@@ -337,12 +337,9 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
     }
 
     public clientSideResort(): void {
-        const rootStore = this.getRootStore();
-        if (!rootStore) {
-            return;
+        if (this.getRootStore()?.clientSideResort()) {
+            this.onStoreUpdated();
         }
-        rootStore.clientSideResort();
-        this.onStoreUpdated();
     }
 
     public generateSecondaryColumns(pivotFields: string[]) {
