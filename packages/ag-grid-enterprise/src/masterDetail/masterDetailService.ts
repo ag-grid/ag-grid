@@ -122,13 +122,7 @@ export class MasterDetailService extends BeanStub<'masterChanged'> implements Na
     }
 
     private setMasters(changedRowNodes: _ChangedRowNodes | null | undefined): void {
-        const wasEnabled = this.enabled;
-        const enabled = this.isEnabled();
-        this.enabled = enabled;
-        if (!enabled && !wasEnabled) {
-            // OPTIMIZATION: no row can be a master while masterDetail stays off, so skip the per-row walk.
-            return;
-        }
+        this.enabled = this.isEnabled();
         if (changedRowNodes) {
             for (const node of changedRowNodes.updates) {
                 this.setMaster(node, false, true);
