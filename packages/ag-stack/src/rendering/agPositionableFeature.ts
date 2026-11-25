@@ -702,6 +702,10 @@ export class AgPositionableFeature<
                 const computedStyle = window.getComputedStyle(currentEl);
                 if (computedStyle.minHeight) {
                     nextHeight = Number.parseInt(computedStyle.minHeight, 10);
+                    if (Number.isNaN(nextHeight)) {
+                        // keyword min-heights such as `min-content` cannot be parsed, so measure the clamped height
+                        nextHeight = measureMinHeight(currentEl);
+                    }
                 }
                 if (computedStyle.minWidth) {
                     nextWidth = Number.parseInt(computedStyle.minWidth, 10);
@@ -932,4 +936,14 @@ export class AgPositionableFeature<
         this.clearResizeListeners();
         this.removeResizers();
     }
+}
+
+function measureMinHeight(el: HTMLElement): number {
+    const { flex, height } = el.style;
+    el.style.flex = '0 0 auto';
+    el.style.height = '0px';
+    const minHeight = el.offsetHeight;
+    el.style.flex = flex;
+    el.style.height = height;
+    return minHeight;
 }

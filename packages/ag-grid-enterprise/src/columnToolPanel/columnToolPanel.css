@@ -33,6 +33,10 @@
     flex: 1 1 0px;
 }
 
+:where(.ag-column-panel) .ag-column-drop-vertical:where(.ag-column-drop-empty) {
+    min-height: min-content;
+}
+
 :where(.ag-column-panel) .ag-column-drop-vertical:where(:not(.ag-last-column-drop)) {
     border-bottom: var(--ag-tool-panel-separator-border);
 }
