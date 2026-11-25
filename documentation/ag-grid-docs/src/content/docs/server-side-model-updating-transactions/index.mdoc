@@ -19,8 +19,6 @@ The SSRM Transaction API allows rows to be added, removed or updated in the grid
 When the server-side store has a known last row index, remove transactions only delete rows that are currently in cache. If a delete is repeated or targets a row outside the loaded range, the grid ignores it and keeps the current store size. To explicitly set the new store size, provide `rowCount` on the transaction.
 {% /note %}
 
-The grid applies a transaction's `remove` first, then `update`, then `add`. An `addIndex` refers to the row positions after the removed rows are gone, and a row that is removed and added with the same ID in one transaction is moved to `addIndex`. A `rowCount` provided on the transaction is the row count after the whole transaction.
-
 These operations are shown in the snippet below:
 
 ```{% frameworkTransform=true %}

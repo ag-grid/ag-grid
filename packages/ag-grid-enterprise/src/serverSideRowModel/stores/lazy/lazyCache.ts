@@ -1289,14 +1289,7 @@ export class LazyCache extends BeanStub {
         return { inserted, skipped };
     }
 
-    /** Sets the total row count supplied with a transaction, which covers removed rows that were not loaded. */
-    public setTransactionRowCount(rowCount: number): void {
-        this.numberOfRows = rowCount;
-        this.isLastRowKnown = true;
-        this.isLastRowInferred = false;
-    }
-
-    public removeRowNodes(idsToRemove: string[]): RowNode[] {
+    public removeRowNodes(idsToRemove: string[], newRowCount?: number): RowNode[] {
         const removedNodes: RowNode[] = [];
         const nodesToVerify: RowNode[] = [];
 
@@ -1347,7 +1340,24 @@ export class LazyCache extends BeanStub {
             });
         }
 
-        this.numberOfRows -= deletedNodeCount;
+        const isNewRowCountValid = newRowCount != null && newRowCount >= 0;
+
+        /**
+         * 'known' nodes are ones in lazy cache
+         * 'unknown' or 'out-of-bounds' nodes are nodes that are not in cache currently.
+         *    These can be either nodes out of cached blocks or nodes that just were in cache and were deleted via a transaction
+         *
+         * If available, set new row count using user supplied number;
+         * else subtract 'known' + 'out-of-bounds' nodes when last index is known and all deleted nodes were in cache, this is an optimistic approach;
+         * else subtract 'known' nodes when last index is unknown, this is a pessimistic approach.
+         */
+        if (isNewRowCountValid) {
+            this.numberOfRows = newRowCount;
+            this.isLastRowKnown = true;
+            this.isLastRowInferred = false;
+        } else {
+            this.numberOfRows -= deletedNodeCount;
+        }
 
         if (idsToRemoveSet.size > 0 && nodesToVerify.length > 0) {
             nodesToVerify.forEach((node) => (node.__needsRefreshWhenVisible = true));
