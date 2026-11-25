@@ -591,7 +591,7 @@ describe('Advanced Filter - Set Filter Builder round trip', () => {
         for (const filterParams of [
             { filters: [setChild] },
             // Children only when called with the grid's params.
-            (params: IFilterParams) => params.getValue && { filters: [setChild] },
+            (params: IFilterParams) => typeof params.getValue === 'function' && { filters: [setChild] },
         ]) {
             const api = await gridsManager.createGridAndWait('grid1', {
                 ...DEFAULT_OPTIONS,
