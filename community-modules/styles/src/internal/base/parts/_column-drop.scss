@@ -105,7 +105,7 @@
     .ag-column-drop-vertical-empty-message {
         overflow: hidden;
         color: var(--ag-disabled-foreground-color);
-        /* the negative margins cancel the list's side padding so the text wraps at the same width as the zone */
+        // the negative margins cancel the list's side padding so the text wraps at the same width as the zone
         margin: var(--ag-grid-size) calc(var(--ag-grid-size) * -1) 0;
     }
 
