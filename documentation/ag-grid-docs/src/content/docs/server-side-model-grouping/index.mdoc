@@ -9,14 +9,24 @@ movedAnchors:
     updating-the-grand-total-row-via-transactions: server-side-model-aggregation/#updating-the-grand-total-row-via-transactions
     accessing-grand-total-and-group-total-rows: server-side-model-aggregation/#accessing-grand-total-and-group-total-rows
     grand-total-row-api-reference: server-side-model-aggregation/#api-reference
+    enabling-row-grouping: server-side-model-grouping/#grouping-rows-on-the-server
+    server-side-row-grouping: server-side-model-grouping/#grouping-rows-on-the-server
+    providing-child-counts: server-side-model-grouping/#showing-child-counts-on-group-rows
+    group-via-value-getter: server-side-model-grouping/#grouping-by-nested-object-fields
+    open-by-default: server-side-model-grouping/#opening-groups-by-default
+    hide-open-parents: server-side-model-grouping/#hiding-expanded-group-rows
+    unbalanced-groups: server-side-model-grouping/#unbalanced-groups-with-empty-keys
+    expand-all--collapse-all: server-side-model-grouping/#expanding-and-collapsing-all-groups
+    filters: server-side-model-grouping/#filtering-with-row-groups
+    deferred-column-configuration: server-side-model-grouping/#deferring-columns-tool-panel-changes
 ---
 
 This section covers Row Grouping in the Server-Side Row Model (SSRM).
 
-## Enabling Row Grouping
+## Grouping Rows on the Server
 
-Row Grouping is enabled in the grid via the `rowGroup` column definition attribute.
-The example below groups rows by 'country':
+Set the `rowGroup` column definition property on each column to group by. The example below groups rows by
+**Country**:
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -31,31 +41,23 @@ const gridOptions = {
 
 {% gridExampleRunner title="Enabling Row Grouping" name="enabling-row-grouping" /%}
 
-For more configuration details see the section on [Row Grouping](./grouping/).
+The server groups the rows. When the grid needs rows, it calls `getRows(params)` on the
+[Server-Side Datasource](./server-side-model-datasource/), and `params.request` carries the grouping state:
 
-## Server Side Row Grouping
+{% interfaceDocumentation interfaceName="IServerSideGetRowsRequest" names=["rowGroupCols", "groupKeys"] config={"description": ""} /%}
 
-The actual grouping of rows is performed on the server when using the SSRM. When the grid needs more rows it makes a
-request via `getRows(params)` on the [Server-Side Datasource](./server-side-model-datasource) with metadata containing
-grouping details.
+For example, when the grid groups by **Country** then **Sport**, and the user expands **Argentina**, the request is:
 
-The properties relevant to Row Grouping in the request are shown below:
-
-```ts
-type IServerSideGetRowsRequest = {
-    // row group columns
-    rowGroupCols: ColumnVO[];
-
-    // what groups the user is viewing
-    groupKeys: string[];
-
-    // ... // other params
+```js
+{
+    rowGroupCols: [
+        { id: 'country', field: 'country', displayName: 'Country' },
+        { id: 'sport', field: 'sport', displayName: 'Sport' },
+    ],
+    groupKeys: ['Argentina'],
+    // ...
 }
 ```
-
-Note in the snippet above the property `rowGroupCols` contains all the columns (dimensions) the grid is
-grouping on, e.g. 'Country', 'Year'. The property `groupKeys` contains the list of group keys selected,
-e.g. `['Argentina', '2012']`.
 
 ### Returning Group Rows
 
@@ -67,8 +69,7 @@ Each request loads the children of one group, grouped by the column `rowGroupCol
 - When `groupKeys` has as many keys as `rowGroupCols`, return the matching leaf rows.
 
 The grid reads the key of a group row from its data, through the group column's `field` or `valueGetter`, and sends
-it in the `groupKeys` of later requests for that group's children. For example, a request with
-`groupKeys: ['Argentina']`, grouped by **Country** then **Sport**, can be answered with:
+it in the `groupKeys` of later requests for that group's children. The request above can be answered with:
 
 ```js
 params.success({
@@ -82,26 +83,24 @@ params.success({
 });
 ```
 
-The `rowCount` refers to the rows of that one group. See
-[Server-Side Datasource](./server-side-model-datasource/) for paging within a group with `startRow` and `endRow`.
+The `rowCount` is the number of rows in that one group. Page within a group with `startRow` and `endRow`, as described
+in [Server-Side Datasource](./server-side-model-datasource/). Return aggregated values on group rows as described in
+[SSRM Aggregation](./server-side-model-aggregation/). With [Row IDs](./server-side-model-configuration/#providing-row-ids),
+group rows need [unique IDs](./server-side-model-configuration/#supplying-unique-group-ids) too.
 
-To show aggregated values on group rows, see [SSRM Aggregation](./server-side-model-aggregation/).
+The example below groups by two levels. Note the following:
 
-When using [Row IDs](./server-side-model-configuration/#providing-row-ids), group rows need IDs too. See
-[Supplying Unique Group IDs](./server-side-model-configuration/#supplying-unique-group-ids).
-
-The example below demonstrates server-side Row Grouping. Note the following:
-
-- **Country** and **Sport** columns have `rowGroup=true` defined on their column definitions. This tells the grid there are two levels of grouping, one for Country and one for Sport.
+- **Country** and **Sport** set `rowGroup: true`, so there are two levels of grouping.
 - The server returns one group row per Country, then one per Sport when a Country is expanded, then the leaf rows when a Sport is expanded.
 - The group column shows the **Athlete** of each leaf row, as `autoGroupColumnDef` sets `field: 'athlete'`.
 - Open the browser's dev console to view the request supplied to the datasource.
 
 {% gridExampleRunner title="Row Grouping" name="row-grouping"  exampleHeight=590 /%}
 
-## Providing Child Counts
+## Showing Child Counts on Group Rows
 
-By default, the grid does not show row counts beside the group names. If you do want row counts, you need to implement the `getChildCount(dataItem)` callback for the grid. The callback provides you with the row data; it is your application's responsibility to know what the child row count is. The suggestion is you set this information into the row data item you provide to the grid.
+To show a row count beside each group name, implement the `getChildCount(dataItem)` callback. The grid does not know
+how many rows a group holds, so return the count from the group row's data, which the server can include.
 
 {% apiDocumentation source="grid-options/properties.json" section="serverSideRowModel" names=["getChildCount"] /%}
 
@@ -116,36 +115,9 @@ const gridOptions = {
 
 {% gridExampleRunner title="Child Counts" name="child-counts"  exampleHeight=590 /%}
 
-## Group via Value Getter
+## Opening Groups by Default
 
-It is possible the data provided has composite objects, in which case it's more difficult for the grid to extract group names. This can be worked with using value getters or embedded fields (i.e. the field attribute has dot notation).
-
-In the example below, all rows are modified so that the rows look something like this:
-
-```js
-// sample contents of row data
-const rowData = {
-    // country field is complex object
-    country: {
-        name: 'Ireland',
-        code: 'IRE'
-    },
-
-    // other fields as normal
-    ...
-}
-```
-
-Then the columns are set up so that country uses a `valueGetter` that uses the field with dot notation, i.e. `data.country.name`
-
-{% gridExampleRunner title="Complex Objects" name="complex-objects"  exampleHeight=590 /%}
-
-To group and aggregate the same column, see
-[Grouping and Aggregating the Same Column](./server-side-model-aggregation/#grouping-and-aggregating-the-same-column).
-
-## Open by Default
-
-It is possible to have rows open as soon as they are loaded. To do this implement the grid callback `isServerSideGroupOpenByDefault`.
+To open groups as soon as they load, implement the `isServerSideGroupOpenByDefault` callback.
 
 {% apiDocumentation source="grid-options/properties.json" section="serverSideRowModel" names=["isServerSideGroupOpenByDefault"] /%}
 
@@ -162,7 +134,7 @@ function isServerSideGroupOpenByDefault(params) {
 Server-Side Open By Default requires [Row IDs](./server-side-model-configuration/#providing-row-ids) to be supplied to the grid.
 {% /note %}
 
-It may also be helpful to use the [Row Node](./row-object/) API `getRoute()` to inspect the route of a row node.
+Use the [Row Node](./row-object/) method `getRoute()` to inspect the route of a row node.
 
 {% apiDocumentation source="row-object/properties.json" section="serverSide" names=["getRoute"] /%}
 
@@ -172,50 +144,52 @@ Below shows `isServerSideGroupOpenByDefault()` and `getRoute` in action. Note th
     - **\[Zimbabwe]**
     - **\[Zimbabwe, Swimming]**
     - **\[United States, Swimming]**
-- Note **\[Zimbabwe]** and **\[Zimbabwe, Swimming]** are visibly open by default.
-- Note **\[United States, Swimming]** is not visibly open by default, as the parent group 'United States' is not open. However when 'United States' is opened, it's 'Swimming' group is opened by default.
+- **\[Zimbabwe]** and **\[Zimbabwe, Swimming]** are visibly open.
+- **\[United States, Swimming]** is not visibly open, as **United States** is closed. Opening **United States** shows its **Swimming** group open.
 - Selecting a group row and clicking 'Route of Selected' prints the route to the selected node to the developer console.
 
 {% gridExampleRunner title="Open by Default" name="open-by-default" /%}
 
-## Hide Open Parents
+## Hiding Expanded Group Rows
 
-In some configurations it may be desired for the group row to be hidden when expanded, this can be achieved by setting the `groupHideOpenParents` property to true.
+To hide a group row while it is expanded, set the `groupHideOpenParents` property to `true`.
 
-The example below has been styled in a way that demonstrates the behaviour of the groups. Note how upon expanding a group, the group row is replaced by the first
-of its children, and only when collapsed is the group row is shown again.
+In the example below, expanding a group replaces the group row with its first child. Collapsing it shows the group row
+again.
 
 {% gridExampleRunner title="Hide Open Parents" name="hide-open-parents" /%}
 
 {% note %}
-When `groupHideOpenParents=true` the Grid automatically disables the [Sticky Groups](./grouping-opening-groups/#prevent-sticky-groups) behaviour of the rows as well as [Full Width Loading](./server-side-model-loading-rows/#full-width-loading-row).
+`groupHideOpenParents=true` turns off [Sticky Groups](./grouping-opening-groups/#prevent-sticky-groups) and [Full Width Loading](./server-side-model-loading-rows/#full-width-loading-row).
 {% /note %}
 
-## Unbalanced Groups
+## Unbalanced Groups with Empty Keys
 
-To enable unbalanced groups in the SSRM, set the `groupAllowUnbalanced` property to true. This causes any group with a key of `''` to behave as if it is always expanded, and the group row to always be hidden.
+To support unbalanced groups, where some rows have no value for a group column, set the `groupAllowUnbalanced`
+property to `true`. A group with the key `''` is then always expanded, and its group row is hidden.
 
 {% gridExampleRunner title="Unbalanced Groups" name="unbalanced-groups" /%}
 
 {% note %}
-When using `groupAllowUnbalanced=true` it is important to remember that a row group still exists to contain the unbalanced nodes, this can be an important consideration when working with selection state, refreshing, or group paths.
-This also means that there will be additional requests and delays in loading these unbalanced rows, as they do not belong to the parent row.
+With `groupAllowUnbalanced=true`, a hidden row group still holds the unbalanced rows. Consider it when working with
+selection state, refreshing or group paths. Loading these rows also takes an extra request, as they belong to the
+hidden group.
 {% /note %}
 
-## Expand All / Collapse All
+## Expanding and Collapsing All Groups
 
-Group rows can be expanded or collapsed using the `expandAll()` and `collapseAll()` grid API's. By default, these operations apply only to **loaded group rows** (not all groups). To expand/collapse **all groups**, including those not yet loaded, set `ssrmExpandAllAffectsAllRows: true` in your grid options.
+The `expandAll()` and `collapseAll()` grid API methods apply only to **loaded group rows** by default. To include groups
+that are not loaded yet, set `ssrmExpandAllAffectsAllRows: true`.
 
-The example below demonstrates this feature, note the following:
+In the example below, note the following:
 
-- First button expands all loaded group rows
-- Checking the checkbox enables `ssrmExpandAllAffectsAllRows` in the grid options
-- Now clicking the first button expands all group rows, including those not yet loaded
-- Second button collapses all group rows
+- The first button expands all loaded group rows.
+- The checkbox sets `ssrmExpandAllAffectsAllRows`. The first button then also expands groups that are not loaded yet.
+- The second button collapses all group rows.
 
 {% gridExampleRunner title="expand-all-affects-all-rows" name="expand-all-affects-all-rows"  exampleHeight=540 /%}
 
-To open only specific groups, e.g. only groups at the top level, then use the `forEachNode()` callback and open / close the row using `setExpanded()` as follows:
+To open only some groups, such as the top level, call `forEachNode()` and `setExpanded()`:
 
 ```{% frameworkTransform=true %}
 // Expand all top level row nodes
@@ -228,31 +202,50 @@ api.forEachNode(node => {
 
 The example below demonstrates these techniques. Note the following:
 
-- Clicking 'Expand All' expands all loaded group rows. Doing this when the grid initially loads expands all Year groups. Clicking it a second time (after Year groups have loaded) causes all Year groups as well as their children Country groups to be expanded - this is a heavier operation with 100's of rows to expand.
-
-- Clicking 'Collapse All' collapses all rows.
-
-- Clicking 'Expand Top Level Only' expands Years only, even if more group rows are loaded.
+- **Expand All** expands the loaded group rows. On first load that is every **Year** group. Clicking it again, once
+  they have loaded, also expands their **Country** groups: hundreds of rows.
+- **Collapse All** collapses all rows.
+- **Expand Top Level Only** expands **Year** groups only, even when more group rows are loaded.
 
 {% gridExampleRunner title="Expand All" name="expand-all" /%}
 
-## Filters
+## Grouping by Nested Object Fields
 
-By default, changing filters fully purges the grid. Though, it can be configured to only refresh when the group has been directly impacted by enabling `serverSideOnlyRefreshFilteredGroups`. Be aware, this can mean your grid may have empty group rows. This is because the grid does not refresh the groups above the groups it deems impacted by the filter.
+When a grouped column holds an object, read the group key from one of its fields with a `valueGetter` or a `field` in
+dot notation. In the example below, each row holds **Country** as an object:
+
+```js
+const rowData = {
+    country: {
+        name: 'Ireland',
+        code: 'IRE'
+    },
+    // other fields as normal
+}
+```
+
+**Country** uses a `valueGetter` that reads `data.country.name`.
+
+{% gridExampleRunner title="Complex Objects" name="complex-objects"  exampleHeight=590 /%}
+
+## Filtering with Row Groups
+
+Changing a filter reloads the whole grid by default. To reload only the groups the filter affects, set
+`serverSideOnlyRefreshFilteredGroups`. The grid does not reload the groups above them, so a group row can be left with
+no children.
 
 In the example below, note the following:
 
 - Filtering by `Gold`, `Silver` or `Bronze` fully purges the grid, as they are [aggregated](./server-side-model-aggregation/) and every group row shows a value for them.
-- Applying a filter to the `Year` column does not purge the entire grid, and instead only refreshes the `Year` group rows.
-- The example enables `serverSideOnlyRefreshFilteredGroups`, note that if you apply a filter to `Year` with the value `1900`, no leaf rows exist in any group.
+- Filtering `Year` reloads only the `Year` group rows, as the example sets `serverSideOnlyRefreshFilteredGroups`.
+- Filtering `Year` to `1900` leaves every group with no leaf rows.
 
 {% gridExampleRunner title="Filtering" name="filtering"  exampleHeight=590 /%}
 
-## Deferred Column Configuration
+## Deferring Columns Tool Panel Changes
 
-You can configure the Columns Tool Panel to stage changes and require an explicit **Apply** action before they are committed. This allows multiple configuration changes to be made and applied in a single update, avoiding unnecessary intermediate recomputations or requests.
-
-Deferred Updates are enabled by including the **Apply** button in `toolPanelParams.buttons`.
+To stage changes in the Columns Tool Panel and send one request when the user clicks **Apply**, include the **Apply**
+button in `toolPanelParams.buttons`.
 
 Note that in the example below:
 

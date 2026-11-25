@@ -5,7 +5,7 @@
 // aggregation functions are checked against allow-lists of known values.
 import type { ColumnVO, IServerSideGetRowsRequest, SortModelItem } from 'ag-grid-community';
 
-export function FakeServer(allData: any[]) {
+export function FakeServer(allData: any[], { log = true }: { log?: boolean } = {}) {
     alasql.options.cache = false;
 
     const knownColumns = new Set(Object.keys(allData[0] ?? {}));
@@ -79,7 +79,9 @@ export function FakeServer(allData: any[]) {
             valueCol.aggFunc
         )}([${valueId}]) FOR ${pivotId})${whereSql(request, params)}`;
 
-        console.log('[FakeServer] - about to execute query:', SQL, params.slice(1));
+        if (log) {
+            console.log('[FakeServer] - about to execute query:', SQL, params.slice(1));
+        }
 
         return extractRowsForBlock(request, alasql(SQL, params));
     }

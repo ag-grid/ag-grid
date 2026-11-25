@@ -6,13 +6,13 @@ enterprise: true
 This section covers Aggregation with [Row Grouping](./server-side-model-grouping/) in the Server-Side Row Model (SSRM).
 The server calculates the aggregated values, and returns them on the group rows.
 
-{% gridExampleRunner title="Aggregation" name="aggregation" exampleHeight=590 /%}
-
-In the example above, note the following:
+In the example below, note the following:
 
 - **Gold** and **Silver** are aggregated with `sum`, and **Bronze** with `max`.
 - Each group row shows the aggregated values of its rows, as calculated by the server.
 - Open the browser's dev console to view the `valueCols` in each request supplied to the datasource.
+
+{% gridExampleRunner title="Aggregation" name="aggregation" /%}
 
 ## Enabling Aggregation
 
@@ -29,40 +29,17 @@ const gridOptions = {
 ```
 
 Use the names of functions your server implements, such as `'sum'`, `'min'`, `'max'`, `'avg'` and `'count'`. The
-request carries `aggFunc` as it is set on the column, and a function cannot be sent to a server. See
-[Aggregation](./aggregation/) for letting users choose the aggregated columns and their functions.
+request carries `aggFunc` as it is set on the column, so it must be a string. To let users choose the aggregated
+columns and their functions, see [Configuring via the UI](./aggregation-columns/#configuring-via-the-ui).
 
-## The Aggregation Request
+## Aggregated Columns in the Request
 
-The request lists the aggregated columns in `valueCols`, alongside the grouping properties described in
-[SSRM Row Grouping](./server-side-model-grouping/#server-side-row-grouping):
+The request lists the aggregated columns in `valueCols`, beside the grouping properties described in
+[SSRM Row Grouping](./server-side-model-grouping/#grouping-rows-on-the-server):
 
-```ts
-type IServerSideGetRowsRequest = {
-    // row group columns
-    rowGroupCols: ColumnVO[];
+{% interfaceDocumentation interfaceName="IServerSideGetRowsRequest" names=["valueCols"] config={"description": ""} /%}
 
-    // what groups the user is viewing
-    groupKeys: string[];
-
-    // aggregated columns
-    valueCols: ColumnVO[];
-
-    // ... // other params
-}
-
-type ColumnVO = {
-    id: string;
-    displayName: string;
-    field?: string;
-    aggFunc?: string;
-}
-```
-
-## Returning Aggregated Values
-
-Return each aggregated value on the group row under the column's field, beside the group key. The grid reads it as it
-reads any other value, through the column's `field` or `valueGetter`. Leaf rows are returned as they are.
+{% interfaceDocumentation interfaceName="ColumnVO" config={"description": ""} /%}
 
 For example, the top-level request of the example above is:
 
@@ -82,7 +59,11 @@ For example, the top-level request of the example above is:
 }
 ```
 
-The server can answer it with:
+## Returning Aggregated Values on Group Rows
+
+Return each aggregated value on the group row under the column's field, beside the group key. The grid reads it as it
+reads any other value, through the column's `field` or `valueGetter`. Leaf rows are returned as they are. The server
+can answer the request above with:
 
 ```js
 params.success({
@@ -95,7 +76,14 @@ params.success({
 });
 ```
 
-## Sorting and Filtering
+## Updating Aggregated Values After Data Changes
+
+The grid does not calculate aggregated values in the SSRM, so it does not update them when leaf rows change.
+Recalculate them on the server, then send the updated group rows with a
+[transaction](./server-side-model-updating-transactions/), or reload the group with
+[`refreshServerSide`](./server-side-model-updating-refresh/).
+
+## Sorting and Filtering Aggregated Columns
 
 Sorting and filtering are applied by the server, as described in [SSRM Sorting](./server-side-model-sorting/) and
 [SSRM Filtering](./server-side-model-filtering/). With aggregation:
@@ -106,7 +94,7 @@ Sorting and filtering are applied by the server, as described in [SSRM Sorting](
   The examples on this page ignore column IDs the data does not have.
 - The examples on this page filter leaf rows before aggregating, so group rows show the aggregated values of the rows
   that pass the filter.
-- Filtering an aggregated column reloads every group level. See [Filters](./server-side-model-grouping/#filters).
+- Filtering an aggregated column reloads every group level. See [Filtering with Row Groups](./server-side-model-grouping/#filtering-with-row-groups).
 
 ## Group Total Rows
 
@@ -125,39 +113,51 @@ To display a grand total row, set the `grandTotalRow` property to `'top'`, `'bot
 
 ### Providing Grand Total Data
 
-When `grandTotalRow` is set, the `needsGrandTotal` hint on `getRows` params will be `true` for root-level requests that don't yet have cached grand total data — this happens on first load and after any filter or aggregation change that purges the cached data. The server may also always provide updated grand total data regardless of this hint. Sort changes do not invalidate the grand total (sorting does not affect the totals), so `needsGrandTotal` remains `false` after a sort-only change.
+When `grandTotalRow` is set, the `needsGrandTotal` hint on the `getRows` params is `true` for root-level requests
+that have no cached grand total: on first load, and after a filter or aggregation change purges the cache. A sort
+change keeps the grand total, so `needsGrandTotal` stays `false`. The server can also send the grand total on every
+request.
 
-The `grandTotalData` field on the `success` callback params controls the grand total row:
+The `grandTotalData` field of the `success` params controls the grand total row:
 
-- Pass the **grand total data object** to set or update the grand total row.
-- Pass `null` to explicitly remove an existing grand total row.
-- Leave it `undefined` (or omit the field entirely) to keep the grand total unchanged — the grid will continue to show whatever grand total is already cached. This lets paged block requests return data rows without having to re-send the grand total every time.
+- Pass the **grand total data object** to set or update it.
+- Pass `null` to remove it.
+- Omit it, or pass `undefined`, to keep the cached grand total. Paged block requests can then return data rows without
+  sending the grand total again.
 
 While the grid has no rows, the grand total row is not shown; it returns with the rows. Set `alwaysShowGrandTotalRow` to `true` to keep it shown with the `grandTotalData` the server returns; the grid still shows its no-rows or no-matching-rows overlay.
 
-The example below shows a grouped grid with aggregations on the medal columns. Note how the grand total is recomputed server-side when filters change (reflecting the filtered totals), and that changing an aggregation function via the column menu triggers a fresh request for both data and grand total:
+In the example below, the server recalculates the grand total when a filter changes, and changing an aggregation
+function in the column menu requests both the rows and the grand total again.
 
 {% gridExampleRunner title="Grand Total via getRows" name="grand-total-getrows" exampleHeight=590 /%}
 
-Alternatively, if `getRowId` is configured, a row with ID `GRAND_TOTAL_ROW_ID` (`'rowGroupFooter_ROOT_NODE_ID'`) included in `rowData` will also be treated as the grand total (the `grandTotalData` field takes priority).
+With `getRowId`, a row in `rowData` with the ID `GRAND_TOTAL_ROW_ID` (`'rowGroupFooter_ROOT_NODE_ID'`) is also
+treated as the grand total. The `grandTotalData` field takes priority.
 
 ### Updating the Grand Total Row via Transactions
 
 The grand total row can be updated, added, or removed via `applyServerSideTransaction`:
 
-- **Update**: Include the grand total data in the `update` array. The `getRowId` must return `GRAND_TOTAL_ROW_ID` (`'rowGroupFooter_ROOT_NODE_ID'`) for this row.
-- **Add**: Include the grand total data in the `add` array. If a grand total already exists, it will be updated.
-- **Remove**: Include a row whose `getRowId` returns `GRAND_TOTAL_ROW_ID` (`'rowGroupFooter_ROOT_NODE_ID'`) in the `remove` array to remove it.
+- **Update**: include the grand total data in `update`. `getRowId` must return `GRAND_TOTAL_ROW_ID`
+  (`'rowGroupFooter_ROOT_NODE_ID'`) for it.
+- **Add**: include the grand total data in `add`. An existing grand total is updated.
+- **Remove**: include a row whose `getRowId` returns `GRAND_TOTAL_ROW_ID` in `remove`.
 
-This is useful when the grand total comes from a different endpoint than the paged data — for example, when computing totals is more expensive than loading rows and should be done in a separate, independently cancellable request.
+Use this when the grand total comes from a separate endpoint, such as a slower totals query that can be cancelled on
+its own.
 
-The example below demonstrates that pattern on a flat grid. Each `getRows` call fetches only the data rows; whenever the grid signals `needsGrandTotal`, a separate asynchronous request for the grand total is started in parallel. While it is in flight the current grand total is removed via transaction so stale values aren't shown, and when the response arrives the new total is applied via an `add` transaction. A monotonic request id ensures that if a newer grand-total fetch is started before an earlier one returns, the stale response is discarded rather than overwriting fresher data.
+The example below does this on a flat grid. Each `getRows` call fetches only the data rows. When the grid sets
+`needsGrandTotal`, a separate request for the grand total starts. While it runs, a transaction removes the current
+grand total so stale values are not shown, and an `add` transaction applies the response. A request ID discards a
+response that arrives after a newer request started.
 
 {% gridExampleRunner title="Grand Total with Transactions" name="grand-total-transactions" exampleHeight=590 /%}
 
 ### Accessing Grand Total and Group Total Rows
 
-Both the grand total and individual group total rows can be retrieved by ID using `api.getRowNode()`. Two constants, exported from `ag-grid-community`, define the ID format:
+Get the grand total row and group total rows by ID with `api.getRowNode()`. Two constants exported from
+`ag-grid-community` define the IDs:
 
 - `GRAND_TOTAL_ROW_ID` (`'rowGroupFooter_ROOT_NODE_ID'`) — the ID of the grand total row.
 - `GROUP_TOTAL_ROW_ID_PREFIX` (`'rowGroupFooter_'`) — the prefix for group total row IDs. A group total row ID is `GROUP_TOTAL_ROW_ID_PREFIX + groupRowNode.id`.
@@ -195,10 +195,14 @@ The grid calls `aggValueGetter` when it reads the value of an aggregated column 
 the grand total row. `params.value` is the value read from the row data, and `params.aggFunc` is the column's
 aggregation function, as sent in `valueCols`. The group key is always read from the column's field,
 so the group column and the `groupKeys` of later requests are unchanged. To change how the key is read, see
-[Group via Value Getter](./server-side-model-grouping/#group-via-value-getter).
+[Group via Value Getter](./server-side-model-grouping/#grouping-by-nested-object-fields).
 
-See [Transforming Aggregated Values](./aggregation-columns/#transforming-aggregated-values) for the full set of
-parameters.
+{% interfaceDocumentation interfaceName="AggValueGetterParams" names=["value", "aggFunc", "data", "colDef"] config={"description": ""} /%}
+
+{% note %}
+`${params.aggFunc}_${params.colDef.field}` is the naming this example's server uses. Build the key in `aggValueGetter`
+from whatever names your server returns, such as a nested `data.aggs.gold` object or a fixed field per column.
+{% /note %}
 
 By default, sorting the group column and sorting the aggregated column send the same request, so the server chooses
 whether that group level is ordered by its key or by its aggregate. Grouping a column also hides it by default. To keep it visible, see
@@ -213,13 +217,6 @@ The example below groups by **Gold**, aggregates it with `sum` and sorts it asce
 - **Gold** appears in both Row Groups and Values in the Columns Tool Panel.
 
 {% gridExampleRunner title="Grouping and Aggregating the Same Column" name="group-agg-same-column" exampleHeight=590 /%}
-
-## Updating Aggregated Values
-
-The grid does not calculate aggregated values in the SSRM, so it does not update them when leaf rows change. When the
-data changes, recalculate the aggregated values on the server and send the updated group rows with a
-[transaction](./server-side-model-updating-transactions/), or reload the group with
-[`refreshServerSide`](./server-side-model-updating-refresh/).
 
 ## API Reference
 
