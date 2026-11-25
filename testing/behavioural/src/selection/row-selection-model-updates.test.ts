@@ -221,7 +221,7 @@ describe('Row Selection Grid Options', () => {
             const original = api.getRowNode('2')!;
 
             api.applyTransaction({ add: [{ id: '2', sport: 'cricket' }, ...extraAdds] });
-            expect(warn).toHaveBeenCalledOnce();
+            expect(warn).toHaveBeenCalledTimes(1);
             warn.mockRestore();
 
             const replacement = api.getRowNode('2')!;
