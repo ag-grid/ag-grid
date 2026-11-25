@@ -124,14 +124,15 @@ describe('Multi filter sub-menu keyboard navigation', () => {
 
         await user.type(input, 'sw');
         const visited = new Set<Element | null>();
-        for (let i = 0; i < 15 && subMenu.isConnected; i++) {
+        for (let i = 0; i < 15; i++) {
             await user.tab();
-            if (subMenu.isConnected) {
-                expect(subMenu).toContainElement(document.activeElement as HTMLElement);
-                visited.add(document.activeElement);
+            if (!subMenu.isConnected) {
+                break;
             }
+            visited.add(document.activeElement);
         }
 
+        expect([...visited].every((element) => subMenu.contains(element))).toBe(true);
         expect(visited).toContain(clearButton);
         expect(subMenu).not.toBeInTheDocument();
         await waitFor(() => expect(menuItem).toHaveFocus());

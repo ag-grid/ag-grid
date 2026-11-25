@@ -434,9 +434,7 @@ test.describe('native tab navigation in a multi filter sub-menu', () => {
                 );
             }
             expect(visited).not.toContain('outside');
-            if (!tabIndex) {
-                expect(visited[0]).toContain('ag-input-field-clear-button');
-            }
+            expect(visited[0]).toContain(tabIndex ? 'ag-radio-button-input' : 'ag-input-field-clear-button');
             expect(visited.some((stop) => stop.includes('ag-input-field-clear-button'))).toBe(true);
             expect(visited.some((stop) => stop.includes('ag-radio-button-input'))).toBe(true);
             expect(visited.filter((stop) => stop.includes('ag-picker-field-wrapper'))).toHaveLength(1);
@@ -455,20 +453,19 @@ test.describe('native tab navigation in a multi filter sub-menu', () => {
             await expect(subMenu.getByRole('radio', { name: 'AND', exact: true })).toBeVisible();
 
             await input.evaluate((element: HTMLInputElement) => {
-                const before = document.createElement('button');
-                before.id = 'native-before';
                 const reference = document.createElement('input');
                 reference.id = 'native-date';
                 reference.type = element.type;
                 reference.step = element.step;
                 reference.value = element.value;
                 const after = document.createElement('button');
-                document.body.append(before, reference, after);
+                document.body.append(reference, after);
             });
-            const expected = await tabSequences(page, page.locator('#native-date'));
+            const reference = page.locator('#native-date');
+            await reference.focus();
+            const expected = await tabOutOfInput(page, reference);
             await input.focus();
-            const forwards = await tabOutOfInput(page, input);
-            expect(forwards).toEqual(expected.forwards);
+            expect(await tabOutOfInput(page, input)).toEqual(expected);
             expect(await subMenu.evaluate((element) => element.contains(document.activeElement))).toBe(true);
         });
     }
