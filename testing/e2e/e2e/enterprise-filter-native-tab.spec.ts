@@ -380,10 +380,10 @@ test.describe('native tab navigation in provided filters', () => {
 });
 
 test.describe('native tab navigation in a multi filter sub-menu', () => {
-    async function openSubMenu(page: Page, child: { filter: string; filterParams?: object }, tabIndex?: number) {
+    async function openSubMenu(page: Page, child: { filter: string; filterParams?: object }, positiveTabIndex = false) {
         await mountGrid(page, {
             enterprise: true,
-            options: tabIndex ? () => ({ tabIndex: 3, rowData: [] }) : () => ({ rowData: [] }),
+            options: positiveTabIndex ? () => ({ tabIndex: 3, rowData: [] }) : () => ({ rowData: [] }),
         });
         await page.evaluate((child) => {
             const api = window.gridApi;
@@ -407,11 +407,15 @@ test.describe('native tab navigation in a multi filter sub-menu', () => {
         return { menuItem, subMenu, input };
     }
 
-    for (const tabIndex of [undefined, 3]) {
-        test(`text filter controls are reachable with Tab and Shift+Tab${tabIndex ? ' with a positive grid tabIndex' : ''}`, async ({
+    for (const positiveTabIndex of [false, true]) {
+        test(`text filter controls are reachable with Tab and Shift+Tab${positiveTabIndex ? ' with a positive grid tabIndex' : ''}`, async ({
             page,
         }) => {
-            const { menuItem, subMenu, input } = await openSubMenu(page, { filter: 'agTextColumnFilter' }, tabIndex);
+            const { menuItem, subMenu, input } = await openSubMenu(
+                page,
+                { filter: 'agTextColumnFilter' },
+                positiveTabIndex
+            );
             const operator = subMenu.getByRole('combobox').first();
 
             await page.keyboard.press('Shift+Tab');
@@ -434,7 +438,7 @@ test.describe('native tab navigation in a multi filter sub-menu', () => {
                 );
             }
             expect(visited).not.toContain('outside');
-            expect(visited[0]).toContain(tabIndex ? 'ag-radio-button-input' : 'ag-input-field-clear-button');
+            expect(visited[0]).toContain(positiveTabIndex ? 'ag-radio-button-input' : 'ag-input-field-clear-button');
             expect(visited.some((stop) => stop.includes('ag-input-field-clear-button'))).toBe(true);
             expect(visited.some((stop) => stop.includes('ag-radio-button-input'))).toBe(true);
             expect(visited.filter((stop) => stop.includes('ag-picker-field-wrapper'))).toHaveLength(1);

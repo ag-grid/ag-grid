@@ -132,7 +132,7 @@ describe('Multi filter sub-menu keyboard navigation', () => {
             visited.add(document.activeElement);
         }
 
-        expect([...visited].every((element) => subMenu.contains(element))).toBe(true);
+        expect([...visited].filter((element) => !subMenu.contains(element))).toEqual([]);
         expect(visited).toContain(clearButton);
         expect(subMenu).not.toBeInTheDocument();
         await waitFor(() => expect(menuItem).toHaveFocus());
