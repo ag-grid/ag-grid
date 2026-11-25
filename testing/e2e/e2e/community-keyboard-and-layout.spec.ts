@@ -520,7 +520,7 @@ test.describe('community grid in a real browser', () => {
         }).toPass();
     });
 
-    test('flex columns in a print-layout grid size to their minimum widths rather than the width the page happened to have', async ({
+    test('flex columns in a grid created in print layout keep their own widths rather than their minimum or the page width', async ({
         page,
     }) => {
         const { grid } = await mountGrid(page, {
@@ -529,16 +529,16 @@ test.describe('community grid in a real browser', () => {
             css: '#myGrid{width:auto;height:auto}',
             options: () => ({
                 defaultColDef: { flex: 1, minWidth: 80 },
-                columnDefs: Array.from({ length: 4 }, (_, i) => ({ field: `col${i}` })),
-                rowData: Array.from({ length: 5 }, (_, i) => ({ col0: i, col1: i, col2: i, col3: i })),
+                columnDefs: Array.from({ length: 3 }, (_, i) => ({ field: `col${i}` })),
+                rowData: Array.from({ length: 5 }, (_, i) => ({ col0: i, col1: i, col2: i })),
                 domLayout: 'print',
             }),
         });
         await page.emulateMedia({ media: 'print' });
 
         await expect(async () => {
-            expect((await grid.locator('.ag-root').boundingBox())!.width).toBeCloseTo(320, 0);
-            expect((await grid.locator('.ag-header-cell[col-id="col3"]').boundingBox())!.width).toBeCloseTo(80, 0);
+            expect((await grid.locator('.ag-root').boundingBox())!.width).toBeCloseTo(600, 0);
+            expect((await grid.locator('.ag-header-cell[col-id="col2"]').boundingBox())!.width).toBeCloseTo(200, 0);
         }).toPass();
     });
 

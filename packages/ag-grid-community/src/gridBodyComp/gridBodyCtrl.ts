@@ -244,10 +244,10 @@ export class GridBodyCtrl extends BeanStub {
             this.isPinnedWidthOverflowingViewport(viewportWidth, verticalScrollShowing) &&
             this.isPinnedWidthOverflowingViewport(undefined, verticalScrollShowing);
         const contentWidth = this.getHorizontalContentWidth(pinnedColumnsOverflowing, verticalScrollShowing);
-        // Print layout is as wide as its columns, as a grid with no rows has nothing else in flow to size it.
+        // Print layout is as wide as its columns, unfloored: flex is sized against the width the grid measures.
         // Otherwise a zero-width container collapses the scroll range.
         const containerWidth = _isDomLayout(this.gos, 'print')
-            ? Math.max(this.getColumnsWidth(), 1)
+            ? this.getColumnsWidth()
             : Math.max(contentWidth, viewportWidth, 1);
 
         if (containerWidth !== this.scrollableAreaWidth) {
