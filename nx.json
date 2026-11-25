@@ -31,6 +31,14 @@
       "!{projectRoot}/**/?(*.)+(spec|test).[jt]s?(x)?(.snap)",
       "!{projectRoot}/tsconfig.spec.json"
     ],
+    "tsSources": [
+      "{projectRoot}/package.json",
+      "{projectRoot}/src/**/*",
+      "{projectRoot}/tsconfig.*.json",
+      "tsDeclarations",
+      "sharedGlobals",
+      "defaultExcludes"
+    ],
     "tsDeclarations": [
       {
         "dependentTasksOutputFiles": "**/*.d.ts",
