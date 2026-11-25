@@ -57,7 +57,16 @@
             return;
         }
         var link = event.target instanceof Element ? event.target.closest('a[href]') : null;
-        if (!link || link.pathname !== location.pathname || link.search !== location.search) {
+        // Only a link moving within this document: another origin or page is not ours, and a link opening
+        // another browsing context or downloading leaves this one where it is
+        if (
+            !link ||
+            link.origin !== location.origin ||
+            link.pathname !== location.pathname ||
+            link.search !== location.search ||
+            (link.target && link.target !== '_self') ||
+            link.hasAttribute('download')
+        ) {
             return;
         }
         var target = getTarget(link.hash);

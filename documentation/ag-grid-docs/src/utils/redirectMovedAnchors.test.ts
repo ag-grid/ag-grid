@@ -18,7 +18,8 @@ const NEW_LOCATION = '/javascript-data-grid/server-side-model-aggregation/#grand
 const originalLocation = window.location;
 const assign = vi.fn();
 const replace = vi.fn();
-const location = { pathname: PAGE, search: '', hash: '', assign, replace };
+const ORIGIN = 'https://www.ag-grid.com';
+const location = { origin: ORIGIN, pathname: PAGE, search: '', hash: '', assign, replace };
 
 function runScript(hash: string) {
     location.hash = hash;
@@ -32,9 +33,12 @@ function runScript(hash: string) {
     vm.runInThisContext(SCRIPT);
 }
 
-function clickLink(href: string, init: MouseEventInit = {}) {
+function clickLink(href: string, init: MouseEventInit = {}, attributes: Record<string, string> = {}) {
     const link = document.createElement('a');
-    link.href = new URL(href, 'https://www.ag-grid.com' + PAGE).href;
+    link.href = new URL(href, ORIGIN + PAGE).href;
+    for (const [name, value] of Object.entries(attributes)) {
+        link.setAttribute(name, value);
+    }
     link.addEventListener('click', (event) => event.preventDefault());
     document.body.appendChild(link);
     link.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, ...init }));
@@ -85,10 +89,17 @@ describe('redirect-moved-anchors script', () => {
         expect(assign).toHaveBeenCalledWith(NEW_LOCATION);
     });
 
-    it('leaves a link to a moved anchor alone when it opens another tab', () => {
+    it.each`
+        case                                   | href                                                          | init                 | attributes
+        ${'opens another tab with a modifier'} | ${'#grand-total-row'}                                         | ${{ metaKey: true }} | ${{}}
+        ${'opens another browsing context'}    | ${'#grand-total-row'}                                         | ${{}}                | ${{ target: '_blank' }}
+        ${'downloads'}                         | ${'#grand-total-row'}                                         | ${{}}                | ${{ download: '' }}
+        ${'goes to another origin'}            | ${'https://example.com' + PAGE + '#grand-total-row'}          | ${{}}                | ${{}}
+        ${'goes to another page'}              | ${'/javascript-data-grid/server-side-model/#grand-total-row'} | ${{}}                | ${{}}
+    `('leaves a link to a moved anchor alone when it $case', ({ href, init, attributes }) => {
         runScript('');
 
-        clickLink('#grand-total-row', { metaKey: true });
+        clickLink(href, init, attributes);
 
         expect(assign).not.toHaveBeenCalled();
     });
