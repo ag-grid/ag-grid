@@ -486,47 +486,6 @@ body {
     }
 }
 
-.tabs {
-    display: flex;
-    flex-direction: row;
-    gap: 16px;
-    padding: $spacing-size-2 $spacing-size-2;
-    font-weight: 500;
-
-    div {
-        display: flex;
-        gap: 8px;
-        padding-bottom: 8px;
-    }
-
-    .active {
-        border-bottom: 1.5px solid var(--color-white);
-    }
-
-    :not(.active) {
-        transition: color opacity 0.5s;
-        color: var(--color-brand-300);
-
-        img {
-            opacity: 0.5;
-        }
-
-        &:hover {
-            cursor: pointer;
-            color: var(--color-white);
-            transition: color opacity 0.5s;
-
-            img {
-                opacity: 1;
-            }
-        }
-    }
-
-    img {
-        height: 20px;
-    }
-}
-
 .frameworkSelector {
     background-color: color-mix(in srgb, var(--color-fg-primary), var(--color-brand-500) 90%);
     width: 400px;

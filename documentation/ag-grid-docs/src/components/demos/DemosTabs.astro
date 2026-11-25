@@ -9,7 +9,7 @@ const { activeTab } = Astro.props;
 <div class={styles.tabs}>
     {demoTabs.map((tab) => (
         <div class:list={[styles.tabItem, activeTab === tab.key && styles.activeTab]}>
-            <a href={urlWithBaseUrl(tab.href)}>
+            <a href={urlWithBaseUrl(tab.href)} aria-current={activeTab === tab.key ? 'page' : undefined}>
                 <img
                     class:list={[styles.showcaseImg, styles.showcaseImgLight]}
                     src={urlWithBaseUrl(tab.imgLight)}

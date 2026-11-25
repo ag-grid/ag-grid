@@ -20,7 +20,7 @@ const IconsList = ({ theme }: { theme: Theme }) => (
 );
 
 const PanelWrapper = ({ theme }: { theme: Theme }) => (
-    <div className={styles.iconList} role="tabpanel" aria-labelledby={`${theme}-tab`}>
+    <div className={styles.iconList}>
         <IconsList theme={theme} />
     </div>
 );
