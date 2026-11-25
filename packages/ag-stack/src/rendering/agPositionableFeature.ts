@@ -175,7 +175,7 @@ export class AgPositionableFeature<
 
             if (offsetParentComputedStyles.minHeight != null) {
                 const paddingHeight = boundaryEl.offsetHeight - this.element.offsetHeight;
-                computedMinHeight = Number.parseInt(offsetParentComputedStyles.minHeight, 10) - paddingHeight;
+                computedMinHeight = parseMinHeight(boundaryEl, offsetParentComputedStyles.minHeight) - paddingHeight;
             }
         }
 
@@ -701,11 +701,7 @@ export class AgPositionableFeature<
             if (isFlex) {
                 const computedStyle = window.getComputedStyle(currentEl);
                 if (computedStyle.minHeight) {
-                    nextHeight = Number.parseInt(computedStyle.minHeight, 10);
-                    if (Number.isNaN(nextHeight)) {
-                        // a keyword such as `auto` (empty drop zones) resolves to the content height
-                        nextHeight = getContentHeight(currentEl);
-                    }
+                    nextHeight = parseMinHeight(currentEl, computedStyle.minHeight);
                 }
                 if (computedStyle.minWidth) {
                     nextWidth = Number.parseInt(computedStyle.minWidth, 10);
@@ -936,6 +932,12 @@ export class AgPositionableFeature<
         this.clearResizeListeners();
         this.removeResizers();
     }
+}
+
+/** A keyword min-height such as `auto` on a flex item is resolved to the element's content height. */
+function parseMinHeight(el: HTMLElement, minHeight: string): number {
+    const px = Number.parseInt(minHeight, 10);
+    return Number.isNaN(px) ? getContentHeight(el) : px;
 }
 
 function getContentHeight(el: HTMLElement): number {

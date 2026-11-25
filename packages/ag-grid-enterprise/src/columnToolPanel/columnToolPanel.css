@@ -34,7 +34,7 @@
 }
 
 /* an empty zone's automatic minimum height fits its hint, which can wrap with user text spacing or long translations */
-:where(.ag-column-panel) .ag-column-drop-vertical:where(.ag-column-drop-empty) {
+:where(.ag-column-panel) .ag-column-drop-vertical:where(.ag-column-drop-empty-message-shown) {
     min-height: auto;
     overflow: visible;
 }

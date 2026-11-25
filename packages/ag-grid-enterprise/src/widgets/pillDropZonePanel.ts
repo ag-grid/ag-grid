@@ -691,7 +691,9 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
 
     private addEmptyMessageToGui(): void {
         const { emptyMessage } = this.params;
-        if (!emptyMessage || !this.isExistingItemsEmpty() || this.isPotentialDndItems()) {
+        const showMessage = !!emptyMessage && this.isExistingItemsEmpty() && !this.isPotentialDndItems();
+        this.toggleCss('ag-column-drop-empty-message-shown', showMessage);
+        if (!showMessage) {
             return;
         }
 

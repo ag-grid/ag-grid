@@ -154,4 +154,26 @@ test.describe('Columns tool panel column list resizing', () => {
         await dragResizer(400);
         expect(await panel.evaluate((el) => el.scrollHeight - el.clientHeight)).toBeLessThanOrEqual(1);
     });
+
+    test('can resize an empty drop zone', async ({ page }) => {
+        const { grid } = await mountGrid(page, {
+            enterprise: true,
+            height: 500,
+            options: () => ({
+                columnDefs: [{ field: 'country', enableRowGroup: true, enableValue: true }],
+                rowData: [],
+                sideBar: 'columns',
+                localeText: { rowGroupColumnsEmptyMessage: 'Drop', valueColumnsEmptyMessage: 'Drop' },
+            }),
+        });
+        const zone = grid.locator('.ag-column-drop-vertical').first();
+        const initialHeight = (await zone.boundingBox())!.height;
+        const box = (await zone.locator('.ag-resizer-bottom').boundingBox())!;
+        await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+        await page.mouse.down();
+        await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2 - 8, { steps: 4 });
+        await page.mouse.up();
+
+        expect((await zone.boundingBox())!.height).toBeLessThan(initialHeight);
+    });
 });
