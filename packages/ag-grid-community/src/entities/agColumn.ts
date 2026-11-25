@@ -327,7 +327,7 @@ export class AgColumn<TValue = any>
         if (!_mergedEqual(colDef.accentedSort, oldColDef.accentedSort)) {
             // an equal `accentedSort` keeps the comparator, so client-side sorting does not re-sort for nothing
             this.stringComparatorVersion = -1;
-            ++colModel.stringComparatorsVersion;
+            colModel.accentedSortChangedCols.push(this);
         }
         showValuesAsSvc?.resolveColumn(this, false); // colDef change — `initialShowValuesAs` is create-only
         this.initMinAndMaxWidths();
