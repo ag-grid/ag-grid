@@ -22,13 +22,14 @@ const SortIndicatorElement: ElementParams = {
     tag: 'span',
     cls: 'ag-sort-indicator-container',
     children: [
-        makeIconParams('Order', 'order'),
         makeIconParams('Asc', 'ascending-icon'),
         makeIconParams('Desc', 'descending-icon'),
         makeIconParams('Mixed', 'mixed-icon'),
         makeIconParams('AbsoluteAsc', 'absolute-ascending-icon'),
         makeIconParams('AbsoluteDesc', 'absolute-descending-icon'),
         makeIconParams('None', 'none-icon'),
+        // the sort index sits on the far side of the sort icon from the header text
+        makeIconParams('Order', 'order'),
     ],
 };
 

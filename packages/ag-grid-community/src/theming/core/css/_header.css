@@ -361,5 +361,28 @@
 
 .ag-sort-indicator-container {
     display: flex;
-    gap: var(--ag-spacing);
+}
+
+.ag-sort-order {
+    padding-left: calc(var(--ag-spacing) * 0.5);
+}
+
+:where(.ag-header-cell) .ag-sort-order {
+    color: var(--ag-header-sort-index-text-color);
+}
+
+/* keep the sort index on the far side of the icon from the header text */
+:where(.ag-right-aligned-header) {
+    .ag-sort-indicator-container {
+        flex-direction: row-reverse;
+    }
+
+    .ag-sort-indicator-icon {
+        padding-left: 0;
+        padding-right: var(--ag-spacing);
+    }
+
+    .ag-sort-order {
+        padding-right: calc(var(--ag-spacing) * 0.5);
+    }
 }
