@@ -1945,6 +1945,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * Only applies when both values are strings. Also orders the values in the Set Filter list.
      *
      * Can be overridden per column with `colDef.accentedSort`.
+     * Setting `accentedSort` on the `defaultColDef` is preferred, as it keeps all sort configuration on the column definitions.
      * @default false
      */
     @Input() public accentedSort: boolean | AccentedSortOptions | undefined = undefined;

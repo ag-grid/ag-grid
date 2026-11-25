@@ -2140,6 +2140,7 @@ export interface GridOptions<TData = any> {
      * Only applies when both values are strings. Also orders the values in the Set Filter list.
      *
      * Can be overridden per column with `colDef.accentedSort`.
+     * Setting `accentedSort` on the `defaultColDef` is preferred, as it keeps all sort configuration on the column definitions.
      * @default false
      */
     accentedSort?: boolean | AccentedSortOptions;
