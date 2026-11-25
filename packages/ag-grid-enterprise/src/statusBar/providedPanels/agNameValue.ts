@@ -8,7 +8,7 @@ const AgNameValueElement: ElementParams = {
     cls: 'ag-status-name-value',
     children: [
         { tag: 'span', ref: 'eLabel' },
-        ':\u00A0',
+        { tag: 'span', ref: 'eSeparator' },
         { tag: 'span', ref: 'eValue', cls: 'ag-status-name-value-value' },
     ],
 };
@@ -18,6 +18,7 @@ const MAX_SAFE_BIGINT = BigInt(Number.MAX_SAFE_INTEGER);
 
 export class AgNameValue extends Component {
     private readonly eLabel: HTMLElement = RefPlaceholder;
+    private readonly eSeparator: HTMLElement = RefPlaceholder;
     private readonly eValue: HTMLElement = RefPlaceholder;
     public valueFormatter: (params: IStatusPanelValueFormatterParams) => string;
 
@@ -31,7 +32,9 @@ export class AgNameValue extends Component {
         // we want to hide until the first value comes in
         this.setDisplayed(false);
 
-        this.eLabel.textContent = this.getLocaleTextFunc()(key, defaultValue);
+        const translate = this.getLocaleTextFunc();
+        this.eLabel.textContent = translate(key, defaultValue);
+        this.eSeparator.textContent = translate('statusBarLabelSeparator', ':\u00A0');
     }
 
     public setValue(value: number | bigint | null, totalRows: number): void {

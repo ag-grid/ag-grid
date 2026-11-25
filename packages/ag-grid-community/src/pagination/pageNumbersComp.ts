@@ -1,4 +1,4 @@
-import { KeyCode, RefPlaceholder, _getActiveDomElement, _setAriaDisabled } from 'ag-stack';
+import { KeyCode, RefPlaceholder, _getActiveDomElement, _setAriaDisabled, _translateTokens } from 'ag-stack';
 
 import type { BeanCollection } from '../context/context';
 import type { IRowModel } from '../interfaces/iRowModel';
@@ -216,12 +216,19 @@ export class PageNumbersComp extends Component {
         button.classList.toggle('ag-disabled', disabled);
     }
 
+    private getPageButtonLabel(page: number, pageLabel: string): string {
+        // Built from the existing word so a localeText without this key reads as before.
+        return _translateTokens(this.getLocaleTextFunc(), 'ariaPaginationPageButton', `${pageLabel} \${page}`, {
+            page: String(page),
+        });
+    }
+
     private createPageButton(page: number, pageLabel: string): HTMLElement {
         const button = _createElement({
             tag: 'div',
             cls: 'ag-paging-page-number',
             role: 'button',
-            attrs: { [PAGE_ATTR]: String(page - 1), 'aria-label': `${pageLabel} ${page}` },
+            attrs: { [PAGE_ATTR]: String(page - 1), 'aria-label': this.getPageButtonLabel(page, pageLabel) },
         });
         button.textContent = this.formatNumber(page);
         this.activateTabIndex([button]);
@@ -235,7 +242,11 @@ export class PageNumbersComp extends Component {
             tag: 'div',
             cls: 'ag-paging-page-number ag-paging-page-number-current',
             role: 'button',
-            attrs: { 'aria-current': 'page', 'aria-disabled': 'true', 'aria-label': `${pageLabel} ${page}` },
+            attrs: {
+                'aria-current': 'page',
+                'aria-disabled': 'true',
+                'aria-label': this.getPageButtonLabel(page, pageLabel),
+            },
         });
         current.textContent = this.formatNumber(page);
         this.activateTabIndex([current]);

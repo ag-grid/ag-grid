@@ -1,3 +1,6 @@
+import type { LocaleTokenValues } from 'ag-stack';
+import { _translateTokens } from 'ag-stack';
+
 import type { NamedBean } from 'ag-grid-community';
 import { BeanStub } from 'ag-grid-community';
 
@@ -271,7 +274,8 @@ const DEFAULT_CHART_TRANSLATIONS = {
     ariaChartSeriesChartType: '${variable} Chart Type',
     ariaChartPalettePrevious: 'Previous palette',
     ariaChartPaletteNext: 'Next palette',
-    ariaChartPalettePage: 'Palette ${variable} of ${variable}',
+    ariaChartPalettePage: 'Palette ${page} of ${total}',
+    labelInDegrees: '${label} \u00B0',
     ariaLabelAggregationFunction: 'Aggregation Function',
 
     // group
@@ -302,12 +306,16 @@ const DEFAULT_CHART_TRANSLATIONS = {
 export class ChartTranslationService extends BeanStub implements NamedBean {
     beanName = 'chartTranslation' as const;
 
-    public translate(toTranslate: ChartTranslationKey, variableValues?: string[]): string {
+    /** An array fills `${variable}` placeholders by position; `LocaleTokenValues` fill named `${token}` placeholders. */
+    public translate(toTranslate: ChartTranslationKey, variableValues?: string[] | LocaleTokenValues): string {
         const translate = this.getLocaleTextFunc();
-        let defaultTranslation = DEFAULT_CHART_TRANSLATIONS[toTranslate];
-        for (const value of variableValues ?? []) {
-            defaultTranslation = defaultTranslation.replace('${variable}', () => value);
+        let defaultTranslation: string = DEFAULT_CHART_TRANSLATIONS[toTranslate];
+        if (variableValues == null || Array.isArray(variableValues)) {
+            for (const value of variableValues ?? []) {
+                defaultTranslation = defaultTranslation.replace('${variable}', () => value);
+            }
+            return translate(toTranslate, defaultTranslation, variableValues);
         }
-        return translate(toTranslate, defaultTranslation, variableValues);
+        return _translateTokens(translate, toTranslate, defaultTranslation, variableValues);
     }
 }

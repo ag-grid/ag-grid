@@ -1,5 +1,5 @@
 import type { ITooltipFeature } from 'ag-stack';
-import { _getActiveDomElement, _getAriaCheckboxStateName, _setAriaRole } from 'ag-stack';
+import { _getActiveDomElement, _getAriaCheckboxStateName, _getAriaLabelWithState, _setAriaRole } from 'ag-stack';
 
 import { AgCheckbox } from '../agWidgets/agCheckbox';
 import { isColumnGroupAutoCol, isColumnSelectionCol } from '../columns/columnUtils';
@@ -145,7 +145,7 @@ export class SelectAllFeature extends BeanStub {
 
         headerCellCtrl.setAriaDescriptionProperty(
             'selectAll',
-            cbSelectAllVisible ? `${ariaLabel} (${ariaStatus})` : null
+            cbSelectAllVisible ? _getAriaLabelWithState(translate, ariaLabel, ariaStatus) : null
         );
 
         cbSelectAll.setInputAriaLabel(translate('ariaHeaderSelection', 'Column with Header Selection'));

@@ -1,6 +1,7 @@
 import {
     RefPlaceholder,
     _addManagedElementListeners,
+    _getAriaLabelWithState,
     _setAriaChecked,
     _setAriaDescribedBy,
     _setAriaExpanded,
@@ -9,6 +10,7 @@ import {
     _setAriaLevel,
     _setDisplayed,
     _toStringOrNull,
+    _translateTokens,
 } from 'ag-stack';
 
 import type {
@@ -351,7 +353,7 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
                   : translate('ariaHidden', 'hidden');
         const visibilityLabel = translate('ariaToggleVisibility', 'Press SPACE to toggle visibility');
         _setAriaLabelledBy(this.eCheckbox.getInputElement(), undefined as any);
-        this.eCheckbox.setInputAriaLabel(`${visibilityLabel} (${state})`);
+        this.eCheckbox.setInputAriaLabel(_getAriaLabelWithState(translate, visibilityLabel, state));
     }
 
     private setupFixedAriaLabels(value: any): void {
@@ -359,14 +361,18 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
             return;
         }
         const translate = this.getLocaleTextFunc();
-        const itemLabel = translate('ariaFilterValue', 'Filter Value');
         const ariaEl = this.getAriaElement();
         const missingLabel = this.getMissingLabel();
         // The label goes right after the value, as it is shown, before the item label.
-        const ariaLabel = missingLabel
-            ? `${value}, ${missingLabel} ${itemLabel}`
-            : `${value} ${itemLabel}${this.getMissingSuffix()}`;
-        _setAriaLabel(ariaEl, ariaLabel);
+        const itemValue = missingLabel ? this.withMissingLabel(value, missingLabel) : value;
+        const itemLabel = _translateTokens(
+            translate,
+            'ariaFilterValueItem',
+            // Built from the existing word so a localeText without this key reads as before.
+            `\${value} ${translate('ariaFilterValue', 'Filter Value')}`,
+            { value: itemValue ?? '' }
+        );
+        _setAriaLabel(ariaEl, missingLabel ? itemLabel : this.withNotInCurrentData(itemLabel));
         _setAriaDescribedBy(ariaEl, this.eCheckbox.getInputElement().id);
     }
 
@@ -390,7 +396,14 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
     private getMissingAriaLabel(): string {
         const text = this.formattedValue ?? _toStringOrNull(this.cellRendererParams.value) ?? '';
         const missingLabel = this.getMissingLabel();
-        return missingLabel ? `${text}, ${missingLabel}` : `${text}${this.getMissingSuffix()}`;
+        return missingLabel ? this.withMissingLabel(text, missingLabel) : this.withNotInCurrentData(text);
+    }
+
+    private withMissingLabel(text: string, label: string): string {
+        return _translateTokens(this.getLocaleTextFunc(), 'ariaValueWithLabel', '${value}, ${label}', {
+            value: text,
+            label,
+        });
     }
 
     /** The label shown after a missing value, if any. */
@@ -398,8 +411,17 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
         return (this.isMissing && this.params.preservePreviousValuesLabel) || undefined;
     }
 
-    private getMissingSuffix(): string {
-        return this.isMissing ? `, ${this.translate('ariaNotInCurrentData')}` : '';
+    private withNotInCurrentData(text: string): string {
+        if (!this.isMissing) {
+            return text;
+        }
+        return _translateTokens(
+            this.getLocaleTextFunc(),
+            'ariaValueNotInCurrentData',
+            // Built from the existing words so a localeText without this key reads as before.
+            `\${value}, ${this.translate('ariaNotInCurrentData')}`,
+            { value: text }
+        );
     }
 
     private refreshAriaChecked(): void {
@@ -548,7 +570,7 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
 
     private getDefaultTooltipText(value: V | null | (() => string), formattedValue: string | null): string | null {
         const text = formattedValue ?? _toStringOrNull(value);
-        return this.isMissing ? `${text ?? ''}${this.getMissingSuffix()}` : text;
+        return this.isMissing ? this.withNotInCurrentData(text ?? '') : text;
     }
 
     private getFormattedValue(column: AgColumn, value: any) {

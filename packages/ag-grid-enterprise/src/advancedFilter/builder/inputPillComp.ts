@@ -138,7 +138,8 @@ export class InputPillComp extends PillComp<InputPillCompEvent> {
             this.writeLabel(displayValue, 'ag-advanced-filter-builder-value-number');
             return;
         }
-        this.writeLabel(`"${displayValue}"`, 'ag-advanced-filter-builder-value-text');
+        const quoted = this.getLocaleTextFunc()('filterSummaryTextQuote', `"${displayValue}"`, [displayValue]);
+        this.writeLabel(quoted, 'ag-advanced-filter-builder-value-text');
     }
 
     private updateValue(keepFocus: boolean): void {

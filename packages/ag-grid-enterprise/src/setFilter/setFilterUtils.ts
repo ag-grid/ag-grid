@@ -1,4 +1,4 @@
-import type { LocaleTextFunc, StringComparator } from 'ag-stack';
+import type { LocaleTextFunc, LocaleTokenValues, StringComparator } from 'ag-stack';
 import { _defaultComparator, _last, _toStringOrNull, _translate } from 'ag-stack';
 
 import type {
@@ -112,7 +112,7 @@ export function setFilterFormattedValue(
 export function translateForSetFilter(
     bean: { getLocaleTextFunc(): LocaleTextFunc },
     key: SetFilterLocaleTextKey,
-    variableValues?: string[]
+    variableValues?: string[] | LocaleTokenValues
 ): string {
     return _translate(bean, DEFAULT_LOCALE_TEXT, key, variableValues);
 }

@@ -1,5 +1,5 @@
 import type { AriaSortState } from 'ag-stack';
-import { KeyCode, _getActiveDomElement, _isKeyboardMode, _setDisplayed } from 'ag-stack';
+import { KeyCode, _getActiveDomElement, _isKeyboardMode, _setDisplayed, _translateTokens } from 'ag-stack';
 
 import type { ResizeFeature } from '../../../columnResize/resizeFeature';
 import { isRowNumberCol } from '../../../columns/columnUtils';
@@ -676,13 +676,18 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         if (sortIndex != null && sortCount > 1) {
             const priority = String(sortIndex + 1);
             const count = String(sortCount);
-            const sortPriority = translate('ariaSortPriority', 'Sort priority ${priority} of ${count}', [
-                priority,
-                count,
-            ])
-                .replaceAll('${priority}', priority)
-                .replaceAll('${count}', count);
-            description = description ? `${sortPriority}. ${description}` : sortPriority;
+            const sortPriority = _translateTokens(
+                translate,
+                'ariaSortPriority',
+                'Sort priority ${priority} of ${count}',
+                {
+                    priority,
+                    count,
+                }
+            );
+            description = description
+                ? `${sortPriority}${translate('ariaAnnouncementSeparator', '. ')}${description}`
+                : sortPriority;
         }
         this.setAriaDescriptionProperty('sort', description);
     }
@@ -720,7 +725,15 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         const label = this.beans.showValuesAsSvc?.getActiveModeLabel(this.column);
         this.setAriaDescriptionProperty(
             'showValuesAs',
-            label ? `${translate('ariaColumnShowValuesAs', 'Showing Values As')} ${label}` : null
+            label
+                ? _translateTokens(
+                      translate,
+                      'ariaColumnShowValuesAsMode',
+                      // Built from the existing words so a localeText without this key reads as before.
+                      `${translate('ariaColumnShowValuesAs', 'Showing Values As')} \${label}`,
+                      { label }
+                  )
+                : null
         );
     }
 
@@ -768,7 +781,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
             // always announce the filter description first
             .sort((a, b) => (a === 'filter' ? -1 : b.charCodeAt(0) - a.charCodeAt(0)))
             .map((key) => ariaDescriptionProperties.get(key))
-            .join('. ');
+            .join(this.getLocaleTextFunc()('ariaAnnouncementSeparator', '. '));
 
         beans.ariaAnnounce?.announceValue(ariaDescription, 'columnHeader');
     }

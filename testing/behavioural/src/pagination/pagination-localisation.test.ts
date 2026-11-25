@@ -15,6 +15,18 @@ import {
 const COLUMN_DEFS = [{ field: 'name' }];
 const ROW_DATA = Array.from({ length: 50 }, (_, i) => ({ name: `Row ${i + 1}` }));
 
+const getPageSummary = (api: GridApi) =>
+    getGridElement(api)!.querySelector<HTMLElement>('.ag-paging-page-summary-panel .ag-paging-description')!;
+
+/** The page input's wrapper holds whitespace of its own, so runs of whitespace are collapsed. */
+const getPageSummaryText = (api: GridApi) => getPageSummary(api).textContent!.replace(/\s+/g, ' ').trim();
+
+const getPageInput = (api: GridApi) => getPageSummary(api).querySelector<HTMLInputElement>('input')!;
+
+/** The page number input and total, in DOM order. */
+const getPageSummaryRefs = (api: GridApi) =>
+    Array.from(getPageSummary(api).querySelectorAll<HTMLElement>(':scope > .ag-paging-number'), (el) => el.dataset.ref);
+
 const getRowSummary = (api: GridApi) =>
     getGridElement(api)!.querySelector<HTMLElement>('.ag-paging-row-summary-content')!;
 
@@ -162,6 +174,47 @@ describe('pagination localisation', () => {
             expect(getRowSummary(api).textContent).toBe('1 TO 10 OF 50');
             await waitForAnnouncement(api, 'PAGE 1 OF 5');
             expect(getLiveRegionText(api)).not.toContain('${');
+        });
+    });
+
+    describe('visible page summary', () => {
+        test('en-US is unchanged', () => {
+            const api = createGrid();
+
+            expect(getPageSummaryText(api)).toBe('Page of 5');
+            expect(getPageSummaryRefs(api)).toEqual(['lbCurrentInput', 'lbTotal']);
+            expect(getPageInput(api).getAttribute('aria-label')).toBe('Page number, 1 of 5');
+        });
+
+        test('a translation can put the total before the page input, and phrase the input label', () => {
+            const api = createGrid({
+                localeText: {
+                    paginationPageSummary: '全${total}ページ中 ${page}ページ目',
+                    ariaPaginationPageInputLabel: 'ページ番号、${total}ページ中${page}ページ目',
+                },
+            });
+
+            expect(getPageSummaryText(api)).toBe('全5ページ中 ページ目');
+            expect(getPageSummaryRefs(api)).toEqual(['lbTotal', 'lbCurrentInput']);
+            expect(getPageInput(api).getAttribute('aria-label')).toBe('ページ番号、5ページ中1ページ目');
+        });
+
+        test('the page input keeps focus when the total becomes known', async () => {
+            const api = createInfiniteGrid(unknownTotalDatasource, {
+                localeText: {
+                    paginationPageSummaryUnknownTotal: 'Page ${page}',
+                    paginationPageSummary: '${total} pages, page ${page}',
+                },
+            });
+            await waitFor(() => expect(getPageSummaryText(api)).toBe('Page'));
+            const input = getPageInput(api);
+            input.focus();
+
+            api.setRowCount(50, true);
+
+            await waitFor(() => expect(getPageSummaryText(api)).toBe('5 pages, page'));
+            expect(document.activeElement).toBe(input);
+            expect(input.getAttribute('aria-label')).toBe('Page number, 1 of 5');
         });
     });
 

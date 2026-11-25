@@ -1,5 +1,5 @@
 import type { AgElementParams, LocaleTextFunc } from 'ag-stack';
-import { KeyCode, RefPlaceholder, _setAriaDisabled, _setAriaLabel, _setAriaRole } from 'ag-stack';
+import { KeyCode, RefPlaceholder, _setAriaDisabled, _setAriaLabel, _setAriaRole, _translateTokens } from 'ag-stack';
 
 import { AgInputNumberFieldSelector } from '../agWidgets/agInputNumberField';
 import type { BeanCollection } from '../context/context';
@@ -9,7 +9,12 @@ import type { AgComponentSelectorType } from '../widgets/component';
 import { Component } from '../widgets/component';
 import type { GridInputNumberField } from '../widgets/gridWidgetTypes';
 import type { PaginationService } from './paginationService';
-import { _formatPaginationNumber, _getPageAriaStatus } from './paginationUtils';
+import {
+    _formatPaginationNumber,
+    _getPageAriaStatus,
+    _renderPaginationPhrase,
+    _splitPaginationTokens,
+} from './paginationUtils';
 
 export class PageSummaryComp extends Component {
     private rowModel: IRowModel;
@@ -22,6 +27,8 @@ export class PageSummaryComp extends Component {
     private readonly lbCurrentInput: GridInputNumberField = RefPlaceholder;
     private readonly lbCurrentStatic: HTMLElement = RefPlaceholder;
     private readonly lbTotal: HTMLElement = RefPlaceholder;
+    private readonly eDescription: HTMLElement = RefPlaceholder;
+    private renderedDescription: string | null = null;
 
     private previousAndFirstButtonsDisabled = false;
     private nextButtonDisabled = false;
@@ -249,9 +256,7 @@ export class PageSummaryComp extends Component {
 
         const lbCurrentValue = this.getDisplayPageNumber();
         const lbCurrent = this.formatNumber(lbCurrentValue);
-        const strPage = localeTextFunc('page', 'Page');
-        // An unknown total is left out rather than read as "of more".
-        const strOfTotal = lastPageFound ? ` ${localeTextFunc('of', 'of')} ${lbTotalStr}` : '';
+        this.renderDescription(localeTextFunc, lastPageFound);
         if (this.suppressPageInput) {
             lbCurrentStatic.textContent = lbCurrent;
         } else {
@@ -264,13 +269,57 @@ export class PageSummaryComp extends Component {
             lbCurrentInput.getInputElement().style.width = `${Math.floor(Math.log10(Math.max(1, maxPage))) + 3.5}ch`;
             lbCurrentInput.setValue(lbCurrentValue.toString());
             const eInput = lbCurrentInput.getInputElement();
-            _setAriaLabel(eInput, `${strPage} ${localeTextFunc('number', 'number')}, ${lbCurrentValue}${strOfTotal}`);
+            _setAriaLabel(
+                eInput,
+                this.getPageInputLabel(localeTextFunc, String(lbCurrentValue), lastPageFound ? lbTotalStr : null)
+            );
             eInput.setAttribute('aria-valuenow', String(lbCurrentValue));
             eInput.setAttribute('aria-valuemin', String(Math.min(1, lbCurrentValue)));
             eInput.setAttribute('aria-valuemax', String(maxPage));
         }
 
         this.ariaStatus = _getPageAriaStatus(localeTextFunc, lbCurrent, lastPageFound ? lbTotalStr : null);
+    }
+
+    /**
+     * Places the page number and total where the phrase puts them. The phrase is read without values, so it changes
+     * only when the total becomes known, not on every page.
+     */
+    private renderDescription(localeTextFunc: LocaleTextFunc, lastPageFound: boolean): void {
+        const pageWord = localeTextFunc('page', 'Page');
+        // Built from the existing words so a localeText without these keys reads as before.
+        const template = localeTextFunc(
+            lastPageFound ? 'paginationPageSummary' : 'paginationPageSummaryUnknownTotal',
+            `${pageWord} \${page} ${localeTextFunc('of', 'of')} \${total}`
+        );
+        if (template === this.renderedDescription) {
+            return;
+        }
+        this.renderedDescription = template;
+
+        const { suppressPageInput, lbCurrentStatic, lbCurrentInput, lbTotal } = this;
+        const ePage = suppressPageInput ? lbCurrentStatic : lbCurrentInput.getGui();
+        _renderPaginationPhrase(
+            this.eDescription,
+            _splitPaginationTokens(template),
+            { page: ePage, total: lbTotal },
+            {}
+        );
+    }
+
+    private getPageInputLabel(localeTextFunc: LocaleTextFunc, page: string, total: string | null): string {
+        const prefix = `${localeTextFunc('page', 'Page')} ${localeTextFunc('number', 'number')},`;
+        if (total == null) {
+            return _translateTokens(localeTextFunc, 'ariaPaginationPageInputLabelUnknownTotal', `${prefix} \${page}`, {
+                page,
+            });
+        }
+        return _translateTokens(
+            localeTextFunc,
+            'ariaPaginationPageInputLabel',
+            `${prefix} \${page} ${localeTextFunc('of', 'of')} \${total}`,
+            { page, total }
+        );
     }
 
     private formatNumber(value: number): string {
@@ -311,19 +360,10 @@ function buildPageSummaryTemplate(
             },
             {
                 tag: 'span',
+                ref: 'eDescription',
                 cls: 'ag-paging-description',
                 children: [
-                    {
-                        tag: 'span',
-                        attrs: { id: `${idPrefix}-start-page` },
-                        children: localeTextFunc('page', 'Page'),
-                    },
                     pageNumberChild,
-                    {
-                        tag: 'span',
-                        attrs: { id: `${idPrefix}-of-page` },
-                        children: localeTextFunc('of', 'of'),
-                    },
                     {
                         tag: 'span',
                         ref: 'lbTotal',

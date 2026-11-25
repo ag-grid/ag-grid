@@ -36,10 +36,10 @@ export class FilterExpressionParser {
             return this.params.advFilterExpSvc.translate('advancedFilterValidationMessageOnly', [message]);
         }
         return startPosition < this.params.expression.length
-            ? this.params.advFilterExpSvc.translate('advancedFilterValidationMessage', [
-                  message,
-                  this.params.expression.slice(startPosition, endPosition + 1).trim(),
-              ])
+            ? this.params.advFilterExpSvc.translate('advancedFilterValidationMessage', {
+                  error: message,
+                  expression: this.params.expression.slice(startPosition, endPosition + 1).trim(),
+              })
             : this.params.advFilterExpSvc.translate('advancedFilterValidationMessageAtEnd', [message]);
     }
 

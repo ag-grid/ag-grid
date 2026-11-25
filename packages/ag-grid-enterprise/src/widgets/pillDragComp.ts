@@ -149,7 +149,7 @@ export abstract class PillDragComp<TItem> extends Component<PillDragCompEvent> {
 
         this.addAdditionalAriaInstructions(ariaInstructions, translate);
 
-        _setAriaLabel(this.getGui(), ariaInstructions.join('. '));
+        _setAriaLabel(this.getGui(), ariaInstructions.join(translate('ariaAnnouncementSeparator', '. ')));
     }
 
     protected addAdditionalAriaInstructions(

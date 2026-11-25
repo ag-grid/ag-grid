@@ -818,7 +818,8 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
         if (blocked) {
             // reject before traversing dependencies, including when another formula reads this column
             if (blocked.reason === 'customValidation') {
-                throw new FormulaError(blocked.messages.join('; '), '#ERROR!');
+                const separator = this.getLocaleTextFunc()('formulaValidationErrorSeparator', '; ');
+                throw new FormulaError(blocked.messages.join(separator), '#ERROR!');
             }
             throw new FormulaError(getRestrictedReferenceMessage(this.getLocaleTextFunc(), blocked.reference), '#REF!');
         }

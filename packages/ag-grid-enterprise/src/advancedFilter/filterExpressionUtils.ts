@@ -124,7 +124,10 @@ export function getRangeOrderMessage(
     } else {
         key = isDate ? 'advancedFilterValidationMustBeAfter' : 'advancedFilterValidationMustBeGreaterThan';
     }
-    return advFilterExpSvc.translate(key, [advFilterExpSvc.getColumnDisplayValue(colId) ?? colId, fromDisplayValue]);
+    return advFilterExpSvc.translate(key, {
+        column: advFilterExpSvc.getColumnDisplayValue(colId) ?? colId,
+        value: fromDisplayValue,
+    });
 }
 
 /**

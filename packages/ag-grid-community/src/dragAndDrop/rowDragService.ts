@@ -3,7 +3,7 @@ import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
 import type { RowNode } from '../entities/rowNode';
 import { _isCellSelectionEnabled, _isClientSideRowModel } from '../gridOptionsUtils';
-import { RowDragComp } from './rowDragComp';
+import { RowDragComp, _getRowDragCountText } from './rowDragComp';
 import { RowDragFeature } from './rowDragFeature';
 import type { RowDragVisibility } from './rowDragTypes';
 
@@ -56,7 +56,7 @@ export class RowDragService extends BeanStub implements NamedBean {
         }
         const translate = this.getLocaleTextFunc();
         return this.createRowDragComp(
-            () => `1 ${translate('rowDragRow', 'row')}`,
+            () => _getRowDragCountText(translate, 1),
             rowNode,
             undefined,
             element,

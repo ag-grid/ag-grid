@@ -1,3 +1,5 @@
+import { _translateTokens } from 'ag-stack';
+
 import type { Column, IFooterService, IRowNode, NamedBean, RowNode, VerticalSection } from 'ag-grid-community';
 import { BeanStub, _addGridCommonParams, _getGrandTotalRow, _getGroupTotalRowCallback } from 'ag-grid-community';
 
@@ -96,13 +98,17 @@ export class FooterService extends BeanStub implements NamedBean, IFooterService
 
         // grand total row only displays the 'Total' value
         if (node.level === -1) {
-            return this.getLocaleTextFunc()('footerTotal', 'Total') + ' ';
+            return this.getTotalValue('');
         }
 
         return this.getTotalValue(formattedValue ?? value) ?? '';
     }
 
     public getTotalValue(value: any): string {
-        return this.getLocaleTextFunc()('footerTotal', 'Total') + ' ' + (value ?? '');
+        const translate = this.getLocaleTextFunc();
+        // Built from the existing word so a localeText without this key reads as before.
+        return _translateTokens(translate, 'footerTotalValue', `${translate('footerTotal', 'Total')} \${value}`, {
+            value: String(value ?? ''),
+        });
     }
 }

@@ -7,6 +7,7 @@ import {
     _setAriaLabel,
     _setAriaRole,
     _setDisplayed,
+    _translateTokens,
 } from 'ag-stack';
 
 import { KeyCode } from 'ag-grid-community';
@@ -191,10 +192,11 @@ export class AgColorPanel<
         this.spectrumColor.setAttribute('aria-valuenow', saturation);
         this.spectrumColor.setAttribute(
             'aria-valuetext',
-            this.getLocaleTextFunc()(
+            _translateTokens(
+                this.getLocaleTextFunc(),
                 'ariaValueColorPickerSpectrum',
-                `Saturation ${saturation}%, Brightness ${brightness}%`,
-                [saturation, brightness]
+                'Saturation ${saturation}%, Brightness ${brightness}%',
+                { saturation, brightness }
             )
         );
         this.spectrumHueSlider.setAttribute('aria-valuenow', String(Math.round(this.H * 360)));

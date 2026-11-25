@@ -1,5 +1,5 @@
 import type { LocaleTextFunc } from 'ag-stack';
-import { _addManagedElementListeners, _isEventSupported, preventEventDefault } from 'ag-stack';
+import { _addManagedElementListeners, _isEventSupported, _translateTokens, preventEventDefault } from 'ag-stack';
 
 import type { AgColumn } from '../entities/agColumn';
 import type { RowNode } from '../entities/rowNode';
@@ -21,6 +21,15 @@ const RowDragElement: ElementParams = {
 const SKIP_ARIA_HIDDEN = { skipAriaHidden: true };
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+/** The default drag text for `count` rows. */
+export function _getRowDragCountText(translate: LocaleTextFunc, count: number): string {
+    const value = { count: String(count) };
+    // Built from the existing words so a localeText without these keys reads as before.
+    return count === 1
+        ? _translateTokens(translate, 'rowDragSingleRow', `\${count} ${translate('rowDragRow', 'row')}`, value)
+        : _translateTokens(translate, 'rowDragRowCount', `\${count} ${translate('rowDragRows', 'rows')}`, value);
+}
+
 export class RowDragComp extends Component {
     private dragSource: GridDragSource<RowDraggingEvent> | null = null;
     private mouseDownListener: (() => void) | undefined;
@@ -205,7 +214,7 @@ export class RowDragComp extends Component {
         }
 
         if (dragItemCount !== 1) {
-            return `${dragItemCount} ${translate('rowDragRows', 'rows')}`;
+            return _getRowDragCountText(translate, dragItemCount);
         }
 
         const value = this.cellValueFn();
@@ -213,7 +222,7 @@ export class RowDragComp extends Component {
             return value;
         }
 
-        return `1 ${translate('rowDragRow', 'rows')}`;
+        return _getRowDragCountText(translate, 1);
     }
 
     public override destroy(): void {

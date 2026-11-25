@@ -4,6 +4,7 @@ import {
     _addManagedElementListeners,
     _getActiveDomElement,
     _getAriaCheckboxStateName,
+    _getAriaLabelWithState,
     _setAriaLive,
 } from 'ag-stack';
 
@@ -128,7 +129,11 @@ export class CheckboxCellRenderer extends Component implements ICellRenderer {
         const stateName = _getAriaCheckboxStateName(translate, isSelected);
         const ariaLabel = disabled
             ? stateName
-            : `${translate('ariaToggleCellValue', 'Press SPACE to toggle cell value')} (${stateName})`;
+            : _getAriaLabelWithState(
+                  translate,
+                  translate('ariaToggleCellValue', 'Press SPACE to toggle cell value'),
+                  stateName
+              );
         eCheckbox.setInputAriaLabel(ariaLabel);
     }
 
