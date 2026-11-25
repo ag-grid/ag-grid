@@ -5,10 +5,7 @@
   "sourceRoot": "{projectRoot}/src",
   "targets": {
     "lint": {
-      "command": "eslint",
-      "options": {
-        "cwd": "{projectRoot}"
-      }
+      "command": "eslint"
     },
     "test": {
       "executor": "nx:noop",

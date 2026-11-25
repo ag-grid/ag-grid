@@ -64,6 +64,12 @@
         opacity: 0.6666;
     }
 
+    // `.button-style-none` drops the button focus ring, and keyboard users move between tabs
+    &:focus-visible {
+        outline: 2px solid var(--color-input-shadow-focus);
+        outline-offset: -2px;
+    }
+
     svg {
         --icon-size: #{$spacing-size-6};
 

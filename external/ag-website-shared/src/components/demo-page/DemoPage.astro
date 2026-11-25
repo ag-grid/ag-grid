@@ -10,9 +10,24 @@ interface Props extends DemoPageHero {
     currentId: string;
     /** Every demo the site offers, in the order the feature list shows them. */
     examples: DemoPageExample[];
+    /**
+     * Shows the demo below 720px wide, where it is otherwise hidden; set only for a demo with a phone layout.
+     * Pages narrower than the phone layout fits (360px) still get the mobile notice.
+     */
+    supportsSmallDevices?: boolean;
 }
 
-const { currentId, examples, eyebrow, title, description, primaryCta, secondaryCta, openIn = [] } = Astro.props;
+const {
+    currentId,
+    examples,
+    supportsSmallDevices = false,
+    eyebrow,
+    title,
+    description,
+    primaryCta,
+    secondaryCta,
+    openIn = [],
+} = Astro.props;
 
 /**
  * The two ways to open a seed, each rendered as one button. `dataAttribute` marks every link it
@@ -37,7 +52,7 @@ const openInActions = [
 ] as const;
 ---
 
-<div class={styles.demoPage}>
+<div class:list={[styles.demoPage, supportsSmallDevices && styles.demoPageSmallDevices]}>
     <aside class={styles.hero}>
         <div class={styles.heroInner}>
             <p class={styles.eyebrow}>{eyebrow}</p>
@@ -70,7 +85,13 @@ const openInActions = [
             </ul>
 
             {/* Stands in for the demo card, hidden at this notice's breakpoint. The hero copy above stays. */}
-            <slot name="mobile-notice" />
+            {supportsSmallDevices ? (
+                <div class={styles.smallDevicesNotice}>
+                    <slot name="mobile-notice" />
+                </div>
+            ) : (
+                <slot name="mobile-notice" />
+            )}
 
             <div class={styles.ctaButtons}>
                 <a class="button" href={primaryCta.href}>
