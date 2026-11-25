@@ -32,12 +32,16 @@ We only recommend using static CSS files if your Content Security Policy require
 
     The grid then injects no styles, and relies on the CSS files below being loaded.
 
-3. Load `ag-grid.css` from `ag-grid-community/css`, either by importing it through your bundler or linking it from your HTML:
+3. Load `ag-grid.css` from `ag-grid-community/css`, either by importing it through your bundler:
 
     ```js
     import 'ag-grid-community/css/ag-grid.css';
-    // optional: an icon set other than Quartz Regular, loaded after ag-grid.css
-    import 'ag-grid-community/css/icon-set-alpine.css';
+    ```
+
+    or copy the CSS file to be served by your application and link it in HTML:
+
+    ```html
+    <link rel="stylesheet" href="/assets/ag-grid.css" />
     ```
 
 `ag-grid.css` contains the styles for every community and enterprise feature, every built-in theme and part, and the default Quartz Regular icons. Other [icon sets](#loading-icon-sets) are in separate files. If your Content Security Policy does not allow `data:` URLs for images, use [linked images](#linked-images) instead.
@@ -88,7 +92,7 @@ const gridOptions = {
 
 ## Loading icon sets
 
-The Quartz regular icons are included in `ag-grid.css`. Any other icon set, whether chosen with `iconSet` or by `defaults`, needs its file loading after `ag-grid.css`:
+The Quartz Regular icons are included in `ag-grid.css`. Any other icon set, whether chosen with `iconSet` or by `defaults`, needs its file loading after `ag-grid.css`:
 
 ```js
 import 'ag-grid-community/css/ag-grid.css';
@@ -111,25 +115,17 @@ const gridOptions = {
 }
 ```
 
-Then load the linked version of every CSS file: `ag-grid-linked.css` in place of `ag-grid.css`, and the `-linked.css` file of your icon set. `ag-grid-linked.css` does not include the Quartz Regular icons, so they need their own file too:
+Then load the linked version of every CSS file: `ag-grid-linked.css` in place of `ag-grid.css`, and the `-linked.css` file of your icon set if it is not Quartz Regular:
 
 ```js
 import 'ag-grid-community/css/ag-grid-linked.css';
-import 'ag-grid-community/css/icon-set-quartz-regular-linked.css';
-// or for staticCssTheme({ iconSet: 'quartzLight', useLinkedImages: true })
-// import 'ag-grid-community/css/icon-set-quartz-light-linked.css';
+// for staticCssTheme({ iconSet: 'quartzLight', useLinkedImages: true })
+import 'ag-grid-community/css/icon-set-quartz-light-linked.css';
 ```
 
 ### Configuring your bundler for linked images
 
-Linked images do not need the `img-src data:` CSP directive, as long as your bundler does not turn them back into data URIs. Some bundlers inline small files as data URLs: Vite does this for files under 4 KiB in production builds, so set [`build.assetsInlineLimit`](https://vite.dev/config/build-options.html#build-assetsinlinelimit) to `0`:
-
-```js
-// vite.config.js
-export default defineConfig({
-    build: { assetsInlineLimit: 0 },
-});
-```
+Linked images do not need the `img-src data:` CSP directive, as long as your bundler does not turn them back into data URIs. Some bundlers inline small files as data URLs: Vite does this for files under 4 KiB in production builds, so set [`build.assetsInlineLimit`](https://vite.dev/config/build-options.html#build-assetsinlinelimit) to `0`.
 
 ## Fonts
 

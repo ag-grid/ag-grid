@@ -204,7 +204,7 @@ describe('staticCssTheme', () => {
     test.each<[string, StaticCssThemeOptions, string]>([
         ['the defaults theme', { defaults: 'alpine' }, 'icon-set-alpine'],
         ['the iconSet option', { iconSet: 'quartzLight' }, 'icon-set-quartz-light'],
-        ['useLinkedImages', { useLinkedImages: true }, 'icon-set-quartz-regular-linked'],
+        ['useLinkedImages', { iconSet: 'quartzLight', useLinkedImages: true }, 'icon-set-quartz-light-linked'],
     ])('warns when the icon set file for %s has not loaded, naming the file', async (_, options, file) => {
         eLoadedMarkers.textContent = options.useLinkedImages
             ? '.ag-measurement-container { --ag-static-css-loaded: 1; --ag-static-css-linked-loaded: 1; }'

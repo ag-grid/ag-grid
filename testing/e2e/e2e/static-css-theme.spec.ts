@@ -229,9 +229,7 @@ test('linked images load from files beside the CSS, with a CSP that blocks data 
     const icon = page.waitForResponse((response) =>
         response.url().startsWith(`${origin}/css/ag-grid-files/icon-set-quartz-regular/`)
     );
-    for (const file of ['ag-grid-linked.css', 'icon-set-quartz-regular-linked.css']) {
-        await page.addStyleTag({ url: `${origin}/css/${file}` });
-    }
+    await page.addStyleTag({ url: `${origin}/css/ag-grid-linked.css` });
     await withApi((api) => api.selectAll());
 
     expect((await checkboxImage).ok()).toBe(true);

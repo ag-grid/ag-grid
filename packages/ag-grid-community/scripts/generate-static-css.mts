@@ -384,31 +384,36 @@ fs.rmSync(outputDir, { recursive: true, force: true });
 fs.mkdirSync(outputDir, { recursive: true });
 
 const gridCss = await buildGridCss();
-const builtInIconSetCss = `/* built-in icon set */\n${iconSetCss(builtInIconSet.part, themedSelector(builtInIconSet.cls))}`;
+const iconSetName = (cls: string) => cls.replace(_themePartClass(`${ICON_SET}-`), '');
+const linkedIconSetCss = (part: PartImpl, cls: string) =>
+    linkImages(
+        iconSetCss(part, themedSelector(`${cls}-linked`)),
+        `${FILES_DIR}/${_staticCssPartName(ICON_SET, iconSetName(cls))}`
+    );
+const builtInMarker = (linked: boolean) => iconSetMarker(_staticCssIconSetFile(BUILT_IN_ICON_SET, linked));
+
 await writeCss(
     `${_staticCssGridFile(false)}.css`,
-    markerCss(['--ag-static-css-loaded', iconSetMarker(_staticCssIconSetFile(BUILT_IN_ICON_SET, false))]) +
+    markerCss(['--ag-static-css-loaded', builtInMarker(false)]) +
         gridCss +
-        builtInIconSetCss
+        `/* built-in icon set */\n${iconSetCss(builtInIconSet.part, themedSelector(builtInIconSet.cls))}`
 );
-// the built-in icon set is left out, so that it is linked once, from its own -linked.css file like every other icon set
 await writeCss(
     `${_staticCssGridFile(true)}.css`,
     linkImages(
-        markerCss(['--ag-static-css-loaded', '--ag-static-css-linked-loaded']) + gridCss,
+        markerCss(['--ag-static-css-loaded', '--ag-static-css-linked-loaded', builtInMarker(true)]) + gridCss,
         `${FILES_DIR}/core-images`
-    )
+    ) + `/* built-in icon set */\n${linkedIconSetCss(builtInIconSet.part, builtInIconSet.cls)}`
 );
 
 for (const { part, cls } of iconSetEntries) {
-    const iconSet = cls.replace(_themePartClass(`${ICON_SET}-`), '');
-    const file = _staticCssIconSetFile(iconSet, false);
-    const linkedFile = _staticCssIconSetFile(iconSet, true);
-    if (part !== builtInIconSet.part) {
-        await writeCss(`${file}.css`, markerCss([iconSetMarker(file)]) + iconSetCss(part, themedSelector(cls)));
+    if (part === builtInIconSet.part) {
+        continue;
     }
-    const linkedCss = markerCss([iconSetMarker(linkedFile)]) + iconSetCss(part, themedSelector(`${cls}-linked`));
-    await writeCss(`${linkedFile}.css`, linkImages(linkedCss, `${FILES_DIR}/${_staticCssPartName(ICON_SET, iconSet)}`));
+    const file = _staticCssIconSetFile(iconSetName(cls), false);
+    const linkedFile = _staticCssIconSetFile(iconSetName(cls), true);
+    await writeCss(`${file}.css`, markerCss([iconSetMarker(file)]) + iconSetCss(part, themedSelector(cls)));
+    await writeCss(`${linkedFile}.css`, markerCss([iconSetMarker(linkedFile)]) + linkedIconSetCss(part, cls));
 }
 
 // stylelint lints source CSS but not generated files, so apply its rule to the selectors this script writes

@@ -54,8 +54,7 @@
     "./css/icon-set-quartz-bold.css": "./css/icon-set-quartz-bold.css",
     "./css/icon-set-quartz-bold-linked.css": "./css/icon-set-quartz-bold-linked.css",
     "./css/icon-set-quartz-light.css": "./css/icon-set-quartz-light.css",
-    "./css/icon-set-quartz-light-linked.css": "./css/icon-set-quartz-light-linked.css",
-    "./css/icon-set-quartz-regular-linked.css": "./css/icon-set-quartz-regular-linked.css"
+    "./css/icon-set-quartz-light-linked.css": "./css/icon-set-quartz-light-linked.css"
   },
   "sideEffects": [
     "./css/ag-grid.css",
@@ -70,7 +69,6 @@
     "./css/icon-set-quartz-bold-linked.css",
     "./css/icon-set-quartz-light.css",
     "./css/icon-set-quartz-light-linked.css",
-    "./css/icon-set-quartz-regular-linked.css",
     "./styles/ag-grid-no-native-widgets.css",
     "./styles/ag-grid-no-native-widgets.min.css",
     "./styles/ag-grid.css",
