@@ -1543,6 +1543,23 @@ describe('SSRM Client-Side Sorting', () => {
         await asyncSetTimeout(0);
         expect(modelUpdatedCount).toBe(0);
         expect(getDisplayedValues(api, 'name')).toEqual(['Anna', 'Ola', 'Zoe', 'Åsa', 'Örjan']);
+
+        // a column comparator replaces the string comparator, so its accentedSort is not used by the sort
+        const comparator = (a: string, b: string) => (a === b ? 0 : a < b ? -1 : 1);
+        api.setGridOption('columnDefs', [
+            { field: 'name', sort: 'asc', comparator, accentedSort: { locales: 'sv' } },
+            { field: 'city', accentedSort: { locales: 'de' } },
+        ]);
+        await asyncSetTimeout(0);
+        modelUpdatedCount = 0;
+        api.setGridOption('columnDefs', [
+            { field: 'name', sort: 'asc', comparator },
+            { field: 'city', accentedSort: { locales: 'de' } },
+        ]);
+        // now inherited by the sorted column, still replaced by its comparator
+        api.setGridOption('accentedSort', { locales: 'sv' });
+        await asyncSetTimeout(0);
+        expect(modelUpdatedCount).toBe(0);
     });
 
     test('changing the auto group column accentedSort re-sorts the loaded tree rows client-side', async () => {

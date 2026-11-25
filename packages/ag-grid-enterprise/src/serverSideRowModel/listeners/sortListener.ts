@@ -38,18 +38,19 @@ export class SortListener extends BeanStub implements NamedBean {
 
     /**
      * Client-side sorting re-sorts the loaded rows, as the sort model, and so `sortChanged`, stays the same.
-     * Only when a sorted column's comparator changed: its own `accentedSort`, or the grid option it falls back to.
+     * Only when a sorted column's string comparator changed, from its own `accentedSort` or the grid option it falls
+     * back to, and the sort uses it.
      */
     private onStringComparatorsChanged({ gridOption, columns }: StringComparatorsChangedEvent): void {
         if (!this.gos.get('serverSideEnableClientSideSort')) {
             return;
         }
-        const sortedColAffected = this.sortSvc
-            .getSortOptions()
-            .some(
-                ({ column }) =>
-                    columns.includes(column) || (gridOption && column.getColDef().accentedSort === undefined)
-            );
+        const sortedColAffected = this.sortSvc.getSortOptions().some(
+            ({ column, colComparator }) =>
+                // a column comparator replaces the string comparator for every row; a leaf comparator only for leaves
+                !colComparator &&
+                (columns.includes(column) || (gridOption && column.getColDef().accentedSort === undefined))
+        );
         if (sortedColAffected) {
             this.serverSideRowModel.clientSideResort();
         }
