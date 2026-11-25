@@ -28,7 +28,7 @@ const gridOptions = {
 ```
 
 Use the names of functions your server implements, such as `'sum'`, `'min'`, `'max'`, `'avg'` and `'count'`. The
-request carries `aggFunc` as it is set on the column, so it must be a string. To let users choose the aggregated
+request sends `aggFunc` exactly as it is set on the column, so it must be a string. To let users choose the aggregated
 columns and their functions, see [Configuring via the UI](./aggregation-columns/#configuring-via-the-ui).
 
 ## Aggregated Columns in the Request
@@ -192,7 +192,7 @@ The grid calls `aggValueGetter` when it reads the value of an aggregated column 
 the grand total row. `params.value` is the value read from the row data, and `params.aggFunc` is the column's
 aggregation function, as sent in `valueCols`. The group key is always read from the column's field,
 so the group column and the `groupKeys` of later requests are unchanged. To change how the key is read, see
-[Group via Value Getter](./server-side-model-grouping/#grouping-by-nested-object-fields).
+[Grouping by Nested Object Fields](./server-side-model-grouping/#grouping-by-nested-object-fields).
 
 {% apiDocumentation source="column-properties/properties.json" section="aggregation" names=["aggValueGetter"] /%}
 

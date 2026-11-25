@@ -191,7 +191,7 @@ In the example below, note the following:
 - The checkbox sets `ssrmExpandAllAffectsAllRows`. The first button then also expands groups that are not loaded yet.
 - The second button collapses all group rows.
 
-{% gridExampleRunner title="expand-all-affects-all-rows" name="expand-all-affects-all-rows"  exampleHeight=540 /%}
+{% gridExampleRunner title="Expand All Affects All Rows" name="expand-all-affects-all-rows"  exampleHeight=540 /%}
 
 To open only some groups, such as the top level, call `forEachNode()` and `setExpanded()`:
 
@@ -282,3 +282,15 @@ const gridOptions = {
 {% note %}
 Changes made outside the Columns Tool Panel — such as dragging columns into the Row Group or Pivot Panels, using the Column Menu, or calling the Grid / Column API — are applied immediately and clear any pending changes. Column pinning, resizing, and group expansion do not clear pending changes.
 {% /note %}
+
+## API Reference
+
+{% apiDocumentation source="column-properties/properties.json" section="grouping" names=["rowGroup"] /%}
+
+{% apiDocumentation source="grid-options/properties.json" section="serverSideRowModel" names=["getChildCount", "isServerSideGroupOpenByDefault", "serverSideOnlyRefreshFilteredGroups"] /%}
+
+{% apiDocumentation source="grid-options/properties.json" section="rowGrouping" names=["groupHideOpenParents", "groupAllowUnbalanced", "ssrmExpandAllAffectsAllRows"] /%}
+
+{% apiDocumentation source="grid-api/api.json" section="rowExpansion" names=["expandAll", "collapseAll"] /%}
+
+{% apiDocumentation source="row-object/properties.json" section="serverSide" names=["getRoute"] /%}
