@@ -29,8 +29,8 @@ export function _splitPaginationTokens(text: string): string[] {
 
 /**
  * Fills `container` with the phrase from `_splitPaginationTokens`, putting each element where its token first appears.
- * A repeated token is plain text, and an element whose token is missing is left out. Text nodes are reused and an
- * element already in the container is not moved, so a focused page input keeps focus.
+ * A repeated token is plain text, and an element whose token is missing is left out. Text nodes are reused, and the
+ * element holding focus is never moved: the nodes before it are, so a focused page input keeps focus.
  */
 export function _renderPaginationPhrase(
     container: HTMLElement,
@@ -39,6 +39,8 @@ export function _renderPaginationPhrase(
     values: PaginationTokenValues
 ): void {
     const unplaced = { ...elements };
+    // A detached container's root is an element, which has no active element.
+    const activeElement = (container.getRootNode() as Partial<DocumentOrShadowRoot>).activeElement ?? null;
     let current = container.firstChild;
     const insert = (node: Node) => {
         if (current) {
@@ -61,7 +63,9 @@ export function _renderPaginationPhrase(
         if (element) {
             delete unplaced[name];
         }
-        if (element?.parentNode === container) {
+        if (element && element === current) {
+            current = current.nextSibling;
+        } else if (element?.parentNode === container && element.contains(activeElement)) {
             removeUntil(element);
             current = element.nextSibling;
         } else if (element) {

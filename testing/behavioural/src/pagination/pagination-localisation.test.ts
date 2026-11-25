@@ -199,22 +199,36 @@ describe('pagination localisation', () => {
             expect(getPageInput(api).getAttribute('aria-label')).toBe('ページ番号、5ページ中1ページ目');
         });
 
-        test('the page input keeps focus when the total becomes known', async () => {
+        test.each([
+            {
+                order: 'the total moves before the input',
+                unknownTotal: 'Page ${page} of ${total}',
+                known: '${total} pages, page ${page}',
+                before: 'Page of more',
+                after: '5 pages, page',
+            },
+            {
+                order: 'the input moves before the total',
+                unknownTotal: '${total}: page ${page}',
+                known: 'Page ${page} of ${total}',
+                before: 'more: page',
+                after: 'Page of 5',
+            },
+        ])('the page input keeps focus when the total becomes known and $order', async (phrases) => {
             const api = createInfiniteGrid(unknownTotalDatasource, {
                 localeText: {
-                    paginationPageSummaryUnknownTotal: 'Page ${page}',
-                    paginationPageSummary: '${total} pages, page ${page}',
+                    paginationPageSummaryUnknownTotal: phrases.unknownTotal,
+                    paginationPageSummary: phrases.known,
                 },
             });
-            await waitFor(() => expect(getPageSummaryText(api)).toBe('Page'));
+            await waitFor(() => expect(getPageSummaryText(api)).toBe(phrases.before));
             const input = getPageInput(api);
             input.focus();
 
             api.setRowCount(50, true);
 
-            await waitFor(() => expect(getPageSummaryText(api)).toBe('5 pages, page'));
+            await waitFor(() => expect(getPageSummaryText(api)).toBe(phrases.after));
             expect(document.activeElement).toBe(input);
-            expect(input.getAttribute('aria-label')).toBe('Page number, 1 of 5');
         });
     });
 

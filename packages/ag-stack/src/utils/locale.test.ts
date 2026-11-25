@@ -24,6 +24,20 @@ describe('_translateTokens', () => {
             _translateTokens(translate, 'key', '${match} of ${total} ${other}', { match: '${total}', total: '$&' })
         ).toBe('${total} OF $& ${OTHER}');
     });
+
+    test('matches a camelCase token name in either the phrase or the values', () => {
+        const translate = _getLocaleTextFromMap({ aggFuncColumnName: '${column}の${aggfunc}' });
+
+        expect(_translateTokens(translate, 'aggFuncColumnName', '', { aggFunc: 'Sum', column: 'Gold' })).toBe(
+            'GoldのSum'
+        );
+        expect(
+            _translateTokens(_getLocaleTextFromMap(), 'key', '${aggFunc}(${column})', {
+                aggFunc: 'Sum',
+                column: 'Gold',
+            })
+        ).toBe('Sum(Gold)');
+    });
 });
 
 describe('_translate', () => {

@@ -13,20 +13,25 @@ export function _getLocaleTextFunc<TKey extends string = string>(
 
 /**
  * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
- * Values for the named `${token}` placeholders of a locale phrase, keyed by lower-case token name.
+ * Values for the named `${token}` placeholders of a locale phrase, keyed by token name.
  */
 export type LocaleTokenValues = Readonly<Record<string, string>>;
 
-/** Case-insensitive so a `getLocaleText` callback that changes the case of the default keeps working. */
 const LOCALE_TOKEN_REGEX = /\$\{(\w+)\}/g;
 
 /**
  * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
- * Replaces each named `${token}` with its value, leaving unknown tokens as they are.
+ * Replaces each named `${token}` with its value, leaving unknown tokens as they are. Names match case-insensitively,
+ * so a `getLocaleText` callback that changes the case of the default keeps working.
  */
 export function _fillLocaleTokens(template: string, values: LocaleTokenValues): string {
+    const valuesByName = new Map<string, string>();
+    const names = Object.keys(values);
+    for (let i = 0, len = names.length; i < len; ++i) {
+        valuesByName.set(names[i].toLowerCase(), values[names[i]]);
+    }
     // One pass with a function replacer, so a value is never itself substituted or read as a replacement pattern.
-    return template.replace(LOCALE_TOKEN_REGEX, (match, name: string) => values[name.toLowerCase()] ?? match);
+    return template.replace(LOCALE_TOKEN_REGEX, (match, name: string) => valuesByName.get(name.toLowerCase()) ?? match);
 }
 
 /**
