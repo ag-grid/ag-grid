@@ -184,7 +184,7 @@ describe('Status bar panels', () => {
         await filterApplied;
 
         const gridDiv = TestGridsManager.getHTMLElement(api)!;
-        expect(gridDiv.querySelector('.ag-status-name-value')!.textContent).toBe('Rows：全4件中2件');
+        expect(gridDiv.querySelector('.ag-status-name-value')!.textContent!.trim()).toBe('Rows ：全4件中2件');
     });
 
     test('agSelectedRowCountComponent updates on single, multi, select-all and deselect', async () => {

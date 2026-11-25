@@ -17,6 +17,7 @@ import {
     BigIntFilterModule,
     ClientSideRowModelModule,
     DateFilterModule,
+    LocaleModule,
     NumberFilterModule,
     TextFilterModule,
     enableDevValidations,
@@ -41,6 +42,7 @@ describe('Floating filter editing', () => {
     const gridsManager = new TestGridsManager({
         modules: [
             ClientSideRowModelModule,
+            LocaleModule,
             TextFilterModule,
             NumberFilterModule,
             BigIntFilterModule,

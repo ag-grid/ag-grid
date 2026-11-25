@@ -377,8 +377,8 @@ export const AG_GRID_LOCALE_FR_FR = {
     // Row Drag
     rowDragRow: 'rang',
     rowDragRows: 'rangs',
-    rowDragSingleRow: '${count} rang',
-    rowDragRowCount: '${count} rangs',
+    rowDragSingleRow: '${count} ligne',
+    rowDragRowCount: '${count} lignes',
 
     // Other
     loadingOoo: 'Chargement...',
@@ -492,7 +492,7 @@ export const AG_GRID_LOCALE_FR_FR = {
     footerTotal: 'Total',
     footerTotalValue: 'Total ${value}',
     aggFuncColumnName: '${aggFunc}(${column})',
-    statusBarLabelSeparator: '\u00A0:\u00A0',
+    statusBarLabelSeparator: ':\u00A0',
     statusBarLastRowUnknown: '?',
     scrollColumnIntoView: 'Faire défiler ${variable} dans la vue',
 

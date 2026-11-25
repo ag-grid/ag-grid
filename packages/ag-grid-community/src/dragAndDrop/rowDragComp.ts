@@ -20,7 +20,6 @@ const RowDragElement: ElementParams = {
 
 const SKIP_ARIA_HIDDEN = { skipAriaHidden: true };
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 /** The default drag text for `count` rows. */
 export function _getRowDragCountText(translate: LocaleTextFunc, count: number): string {
     const value = { count: String(count) };
@@ -30,6 +29,7 @@ export function _getRowDragCountText(translate: LocaleTextFunc, count: number): 
         : _translateTokens(translate, 'rowDragRowCount', `\${count} ${translate('rowDragRows', 'rows')}`, value);
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class RowDragComp extends Component {
     private dragSource: GridDragSource<RowDraggingEvent> | null = null;
     private mouseDownListener: (() => void) | undefined;

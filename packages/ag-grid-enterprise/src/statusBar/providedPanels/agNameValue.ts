@@ -8,7 +8,7 @@ const AgNameValueElement: ElementParams = {
     cls: 'ag-status-name-value',
     children: [
         { tag: 'span', ref: 'eLabel' },
-        { tag: 'span', ref: 'eSeparator' },
+        ':\u00A0',
         { tag: 'span', ref: 'eValue', cls: 'ag-status-name-value-value' },
     ],
 };
@@ -18,7 +18,6 @@ const MAX_SAFE_BIGINT = BigInt(Number.MAX_SAFE_INTEGER);
 
 export class AgNameValue extends Component {
     private readonly eLabel: HTMLElement = RefPlaceholder;
-    private readonly eSeparator: HTMLElement = RefPlaceholder;
     private readonly eValue: HTMLElement = RefPlaceholder;
     public valueFormatter: (params: IStatusPanelValueFormatterParams) => string;
 
@@ -34,7 +33,12 @@ export class AgNameValue extends Component {
 
         const translate = this.getLocaleTextFunc();
         this.eLabel.textContent = translate(key, defaultValue);
-        this.eSeparator.textContent = translate('statusBarLabelSeparator', ':\u00A0');
+        // The separator is the text node the template puts before the value.
+        const eSeparator = this.eValue.previousSibling;
+        if (!eSeparator) {
+            return;
+        }
+        eSeparator.textContent = translate('statusBarLabelSeparator', ':\u00A0');
     }
 
     public setValue(value: number | bigint | null, totalRows: number): void {

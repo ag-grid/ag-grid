@@ -28,7 +28,6 @@ export class PageSummaryComp extends Component {
     private readonly lbCurrentStatic: HTMLElement = RefPlaceholder;
     private readonly lbTotal: HTMLElement = RefPlaceholder;
     private readonly eDescription: HTMLElement = RefPlaceholder;
-    private renderedDescription: string | null = null;
 
     private previousAndFirstButtonsDisabled = false;
     private nextButtonDisabled = false;
@@ -256,7 +255,7 @@ export class PageSummaryComp extends Component {
 
         const lbCurrentValue = this.getDisplayPageNumber();
         const lbCurrent = this.formatNumber(lbCurrentValue);
-        this.renderDescription(localeTextFunc, lastPageFound);
+        this.renderDescription(localeTextFunc, lastPageFound, lbCurrent, lbTotalStr);
         if (this.suppressPageInput) {
             lbCurrentStatic.textContent = lbCurrent;
         } else {
@@ -282,28 +281,28 @@ export class PageSummaryComp extends Component {
     }
 
     /**
-     * Places the page number and total where the phrase puts them. The phrase is read without values, so it changes
-     * only when the total becomes known, not on every page.
+     * Places the page number and total where the phrase puts them. The phrase is read without values, so it stays the
+     * same from page to page and the page input is not moved; a repeated token is filled with the current value.
      */
-    private renderDescription(localeTextFunc: LocaleTextFunc, lastPageFound: boolean): void {
+    private renderDescription(
+        localeTextFunc: LocaleTextFunc,
+        lastPageFound: boolean,
+        page: string,
+        total: string
+    ): void {
         const pageWord = localeTextFunc('page', 'Page');
         // Built from the existing words so a localeText without these keys reads as before.
         const template = localeTextFunc(
             lastPageFound ? 'paginationPageSummary' : 'paginationPageSummaryUnknownTotal',
             `${pageWord} \${page} ${localeTextFunc('of', 'of')} \${total}`
         );
-        if (template === this.renderedDescription) {
-            return;
-        }
-        this.renderedDescription = template;
-
         const { suppressPageInput, lbCurrentStatic, lbCurrentInput, lbTotal } = this;
         const ePage = suppressPageInput ? lbCurrentStatic : lbCurrentInput.getGui();
         _renderPaginationPhrase(
             this.eDescription,
             _splitPaginationTokens(template),
             { page: ePage, total: lbTotal },
-            {}
+            { page, total }
         );
     }
 

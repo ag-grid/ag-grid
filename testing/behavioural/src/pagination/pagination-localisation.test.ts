@@ -199,6 +199,19 @@ describe('pagination localisation', () => {
             expect(getPageInput(api).getAttribute('aria-label')).toBe('ページ番号、5ページ中1ページ目');
         });
 
+        test('a repeated token is filled with the current value as the page changes', async () => {
+            const api = createGrid({
+                localeText: { paginationPageSummary: 'Page ${page} of ${total} (page ${page})' },
+            });
+
+            expect(getPageSummaryText(api)).toBe('Page of 5 (page 1)');
+            expect(getPageSummaryRefs(api)).toEqual(['lbCurrentInput', 'lbTotal']);
+
+            api.paginationGoToNextPage();
+
+            await waitFor(() => expect(getPageSummaryText(api)).toBe('Page of 5 (page 2)'));
+        });
+
         test.each([
             {
                 order: 'the total moves before the input',
