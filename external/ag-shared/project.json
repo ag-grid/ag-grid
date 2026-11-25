@@ -73,7 +73,10 @@
       }
     },
     "lint": {
-      "command": "eslint"
+      "command": "eslint",
+      "options": {
+        "cwd": "{projectRoot}"
+      }
     }
   },
   "tags": ["shared"]
