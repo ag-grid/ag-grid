@@ -1286,13 +1286,12 @@ ignore:
         reason: Used in build & dev - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T11:46:21.570Z
-  SNYK-JS-MSGPACKR-22744130:
-    - 'ag-grid-angular@0.0.0-use.local > @angular/build@21.2.29 > lmdb@3.5.1 > msgpackr@1.11.5':
-        reason: >-
-            Used in build & dev - not included in final production build
-        expires: '2027-03-02T00:00:00.000Z'
-        created: 2026-11-24T10:29:28.361Z
   SNYK-JS-PARSE5-22742152:
+    - 'ag-grid-angular@* > *':
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-24T11:05:12.729Z
     - 'cheerio@1.2.0 > parse5@7.3.0':
         reason: >-
             Used in build & dev - not included in final production build
@@ -1308,14 +1307,10 @@ ignore:
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-11-24T10:29:28.361Z
-    - 'ag-grid-angular@0.0.0-use.local > @angular/build@21.2.29 > parse5-html-rewriting-stream@8.0.0 > parse5@8.0.1':
+  SNYK-JS-MSGPACKR-22744130:
+    - 'ag-grid-angular@* > *':
         reason: >-
-            Used in build & dev - not included in final production build
+            Local workspace package - its dependencies are scanned and triaged in its own project
         expires: '2027-03-02T00:00:00.000Z'
-        created: 2026-11-24T10:29:28.361Z
-    - 'ag-grid-angular@0.0.0-use.local > @angular/build@21.2.29 > parse5-html-rewriting-stream@8.0.0 > parse5-sax-parser@8.0.0 > parse5@8.0.1':
-        reason: >-
-            Used in build & dev - not included in final production build
-        expires: '2027-03-02T00:00:00.000Z'
-        created: 2026-11-24T10:29:28.361Z
+        created: 2026-11-24T11:05:12.729Z
 patch: {}
