@@ -171,4 +171,35 @@ test.describe('Columns tool panel column list resizing', () => {
 
         expect((await zone.boundingBox())!.height).toBeLessThan(initialHeight);
     });
+
+    test('dragging several columns over an empty drop zone does not shrink the column list', async ({ page }) => {
+        const { grid } = await mountGrid(page, {
+            enterprise: true,
+            height: 500,
+            options: () => ({
+                columnDefs: [
+                    {
+                        headerName: 'Group',
+                        children: Array.from({ length: 6 }, (_, i) => ({ field: `col${i}`, enableRowGroup: true })),
+                    },
+                ],
+                rowData: [],
+                sideBar: 'columns',
+            }),
+        });
+        const columnList = grid.locator('.ag-column-select');
+        const zone = grid.locator('.ag-column-drop-vertical').first();
+        const initialHeight = (await columnList.boundingBox())!.height;
+        const handle = grid.locator('.ag-column-select-column-group .ag-drag-handle').first();
+        const from = (await handle.boundingBox())!;
+        const to = (await zone.boundingBox())!;
+        await page.mouse.move(from.x + from.width / 2, from.y + from.height / 2);
+        await page.mouse.down();
+        await page.mouse.move(from.x + 20, from.y + from.height / 2 + 10, { steps: 5 });
+        await page.mouse.move(to.x + to.width / 2, to.y + to.height / 2, { steps: 20 });
+
+        await expect(zone.locator('.ag-column-drop-cell-ghost')).toHaveCount(6);
+        expect((await columnList.boundingBox())!.height).toBeGreaterThanOrEqual(initialHeight);
+        await page.mouse.up();
+    });
 });
