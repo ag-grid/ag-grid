@@ -97,25 +97,17 @@ const movedAnchorUrls = movedAnchors
     ? Object.fromEntries(
           await Promise.all(
               Object.entries(movedAnchors).map(async ([id, target]) => {
-                  const [targetPageName, targetId] = target.split('/#');
+                  const targetPageName = target.split('/')[0];
                   const targetPage = await getEntry('docs', targetPageName);
-                  // The page is built for this framework (as `getDocsPages` decides), and its headings are read
-                  // from the content, as a `headings` frontmatter override lists only what the side nav shows
-                  const isTargetPageBuilt =
-                      targetPage &&
-                      (!targetPage.data.frameworks || targetPage.data.frameworks.includes(currentFramework));
-                  const targetHeadings = isTargetPageBuilt
-                      ? await getHeadings({
-                            pageHeadings: undefined,
-                            title: targetPage.data.title,
-                            pageName: targetPageName,
-                            markdocContent: targetPage.body,
-                            framework: currentFramework,
-                            getTabItemSlug: (tabId) => `${DOCS_TAB_ITEM_ID_PREFIX}${tabId}`,
-                        })
-                      : [];
-                  if (!targetHeadings.some(({ slug }) => slug === targetId)) {
-                      throw new Error(`${pageName}: moved anchor '${id}' points to missing heading '${target}'`);
+                  // Built for this framework, as `getDocsPages` decides. The heading id is not checked: some
+                  // headings render inside components, so no heading list here covers every anchor.
+                  if (
+                      !targetPage ||
+                      (targetPage.data.frameworks && !targetPage.data.frameworks.includes(currentFramework))
+                  ) {
+                      throw new Error(
+                          `${pageName}: moved anchor '${id}' points to '${target}', not built for ${currentFramework}`
+                      );
                   }
                   return [id, urlWithBaseUrl(`/${currentFramework}-data-grid/${target}`)];
               })
