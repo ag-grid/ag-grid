@@ -60,6 +60,11 @@ This does not reproduce the exact previous appearance. Focus and built-in contro
 
 ### Tooltips
 
+- `tooltipShowMode` now defaults to `'auto'`: grid-rendered cells, headers, Set Filter items, tool panel labels and drop-zone pills show automatic tooltips when truncated. Configured content appears when truncated or different from the default tooltip value (`valueFormatted` when available, otherwise `value` for cells). This also applies to native browser titles.
+- Explicit `'standard'` and `'whenTruncated'` still require configured tooltip content: `'standard'` shows it without truncation checks, and `'whenTruncated'` requires truncation. The new `'whenDifferent'` mode also requires configured content, showing it only when it differs from the default tooltip value. Callbacks returning no content suppress the tooltip in every mode.
+- Set Filter `showTooltips` now defaults to unset, following `tooltipShowMode`. Set it to `false` to disable item previews, or `true` to configure them explicitly.
+- Custom renderers receive no automatic text tooltip. In `'auto'` mode, configured content matching the default tooltip value needs a truncation check through `setTooltip(value, shouldDisplay)`. The callback overrides the mode's display check. Explicit `'whenTruncated'` preserves the custom-renderer fallback when truncation cannot be measured. Remove `headerTooltip` if your custom header already manages its own tooltip.
+- Automatic text tooltips use the same component selection as configured tooltips at each location, including column/group custom components where supported. `builtInTooltipComponent` and `suppressBuiltInTooltips` only apply to control hints; `IBuiltInTooltipParams.control` is required. Ordinary `ITooltipParams` no longer includes `control`.
 - Built-in control tooltips are enabled by default with `TooltipModule`, replacing managed controls' native `title` hints. They always support hover and immediate keyboard focus, regardless of `tooltipTrigger` or `tooltipShowDelay`, and remain target-anchored. Set `suppressBuiltInTooltips: true` to hide them or use `builtInTooltipComponent` for custom rendering. See [Built-in Control Tooltips](./tooltips-built-in/).
 - `tooltipTrigger: 'focus'` now uses the same show-delay rules as hover for ordinary tooltips. Set `tooltipShowDelay: 0` for immediate display, except for filter Apply-button validation and Advanced Filter validation tooltips, which override it with 1 second. Pointer switching uses `tooltipSwitchShowDelay` instead (200 ms by default). Screen-reader descriptions remain available immediately on focus.
 - Tooltips no longer hide after 10 seconds by default. Set `tooltipHideDelay: 10000` to restore the timeout.
@@ -125,6 +130,15 @@ The following deprecated APIs have now been removed.
 - `rowGroupingHierarchy` - removed, use `groupHierarchy` instead.
 - Rich Select Cell Editor: `colDef.keyCreator` is no longer used to build the search strings for object values - removed, please use `cellEditorParams.formatValue` (or a `valueFormatter`) instead. Columns with object values that only define a `keyCreator` no longer support typeahead search in the Rich Select Cell Editor. `colDef.keyCreator` itself is unchanged and is still used for grouping and the Set Filter.
 
+### Row Node
+
+- `firstChild` - removed. With the Client-Side Row Model, use `rowNode.parent?.childrenAfterSort?.[0] === rowNode` instead.
+- `lastChild` - removed. With the Client-Side Row Model, use `rowNode.parent?.childrenAfterSort?.at(-1) === rowNode` instead.
+- `childIndex` - removed. With the Client-Side Row Model, use `rowNode.parent?.childrenAfterSort?.indexOf(rowNode)` instead.
+- `isFullWidthCell()` - removed, check `rowNode.detail`, then the `isFullWidthRow` grid option callback instead.
+
+In the Server-Side Row Model only `firstChild` was ever set, and it has no direct replacement; listen to the `modelUpdated` event to re-check row positions.
+
 ### Interfaces and Types
 
 - `ChartType`, `CrossFilterChartType`: `'doughnut'` - removed, please use `'donut'` instead. This applies to `createRangeChart`, `createPivotChart`, `createCrossFilterChart`, `updateChart` and `chartGroupsDef.pieGroup`. Calling `createRangeChart`, `createPivotChart` or `createCrossFilterChart` with `chartType: 'doughnut'` now logs a warning and does not create a chart, and `updateChart` with `chartType: 'doughnut'` also logs a warning. Chart models saved before v37 with `'doughnut'` can still be restored with `restoreChart`.
@@ -133,6 +147,11 @@ The following deprecated APIs have now been removed.
 - `ExpandCollapseAllEvent` - removed, use `ExpandOrCollapseAllEvent` instead.
 - `ServerSideStoreParams` - removed, use `ServerSideGroupLevelParams` instead.
 - `IDetailCellRendererParams`: `agGridReact` and `frameworkComponentWrapper` - removed, they were not used.
+- `FirstChildChangedEvent`, `LastChildChangedEvent` and `ChildIndexChangedEvent` - removed, along with the row node events below.
+
+### Events
+
+- Row node events `firstChildChanged`, `lastChildChanged` and `childIndexChanged` - removed. With the Client-Side Row Model, listen to the grid's `modelUpdated` event and read `rowNode.parent.childrenAfterSort` instead. The Server-Side Row Model only ever dispatched `firstChildChanged`; listen to the `modelUpdated` event instead.
 
 ### Modules
 
@@ -161,6 +180,60 @@ The following icon keys have been removed. Setting them in the `icons` grid opti
 - `radioButtonOn` - removed, please use the icon CSS name `radio-button-on` instead.
 - `radioButtonOff` - removed, please use the icon CSS name `radio-button-off` instead.
 
+{% if isFramework("react") %}
+
+### Framework
+
+- `AgGridReact` props `setGridApi`, `children` and `maxComponentCreationTimeMs` - removed, there is no replacement.
+- `reactiveCustomComponents` grid option removed. This only affects applications that set `reactiveCustomComponents` to `false`, as it has defaulted to `true` since v32. Those applications need to migrate their imperative custom components, which were deprecated in v31.1. To migrate them, see [Migrating Custom Components to Use reactiveCustomComponents Option](./upgrading-to-ag-grid-31-1/#migrating-custom-components-to-use-reactivecustomcomponents-option), and for class components see [Upgrading React Class-Based Components](./upgrading-to-ag-grid-32/#upgrading-react-class-based-components).
+
+{% /if %}
+
 {% /expandingSection %}
+
+## Deprecations
+
+Legacy filter mode, which applies when the grid option `enableFilterHandlers` is not set or is `false`, is deprecated. The APIs below remain supported and continue to work in AG Grid 37, but the replacements are recommended. In AG Grid 38 `enableFilterHandlers` defaults to `true`, and legacy filter mode will be removed in a major version after AG Grid 38. See [Migrating to Filter Handlers](./enable-filter-handlers-migration/), and [Filter Component](./component-filter/#migrating-to-filter-handlers) for the features filter handlers enable.
+
+When `enableFilterHandlers` is not set, AG Grid 37 logs a warning for each of these cases that is in use: custom filter components, custom floating filters, `filterModified` listeners, and Multi Filter `buttons`, `closeOnApply` or legacy methods. The warnings are logged in production as well as in development. Setting `enableFilterHandlers: false` logs a deprecation in development only.
+
+Apps that use `enableDevValidations({ throwOn: ['warning'] })` with legacy filters and `enableFilterHandlers` unset will now throw where the legacy feature is first used: usually when the grid is created, or for Multi Filter buttons and methods, when the filter is created or the method is called.
+
+| Deprecated                                                                                  | Replacement                                                                                         |
+| ------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| `enableFilterHandlers: false` (legacy filter mode)                                          | `enableFilterHandlers: true`                                                                        |
+| `onFilterModified` / `filterModified` event                                                 | `onFilterUiChanged` / `filterUiChanged` and `onFloatingFilterUiChanged` / `floatingFilterUiChanged` |
+| `IFilterComp`                                                                               | `FilterDisplayComp`, with the filter logic as a `doesFilterPass` callback or `handler`              |
+| `IFilterType`                                                                               | `ColumnFilter`                                                                                      |
+| `IFloatingFilter`, `IFloatingFilterComp`, `IFloatingFilterType`                             | `FloatingFilterDisplay`, `FloatingFilterDisplayComp`                                                |
+| `IFilterParams.filterChangedCallback`                                                       | `FilterDisplayParams.onModelChange`                                                                 |
+| `IFilterParams.filterModifiedCallback`                                                      | `FilterDisplayParams.onUiChange`                                                                    |
+| `IFloatingFilterParams.parentFilterInstance`, `IFloatingFilterParentCallback`               | `FloatingFilterDisplayParams.model` and `onModelChange`                                             |
+| `IFloatingFilterParams.currentParentModel`                                                  | `FloatingFilterDisplayParams.model`                                                                 |
+| `onFloatingFilterChanged()` on filter instances                                             | `onModelChange` in a `FloatingFilterDisplayComp`                                                    |
+| `applyModel()`, `getModelFromUi()` on filter instances                                      | `api.setColumnFilterModel`, `api.getColumnFilterModel(column, true)`                                |
+| The `getModel`, `setModel`, `isFilterActive` and `doesFilterPass` methods of `IMultiFilter` | `api.getColumnFilterModel` and `api.setColumnFilterModel`                                           |
+
+{% if isFramework("react") %}
+
+| Deprecated                  | Replacement                        |
+| --------------------------- | ---------------------------------- |
+| `useGridFilter`             | `useGridFilterDisplay`             |
+| `CustomFilterProps`         | `CustomFilterDisplayProps`         |
+| `CustomFilterCallbacks`     | `CustomFilterDisplayCallbacks`     |
+| `CustomFloatingFilterProps` | `CustomFloatingFilterDisplayProps` |
+
+{% /if %}
+
+{% if isFramework("angular") %}
+
+| Deprecated                   | Replacement                         |
+| ---------------------------- | ----------------------------------- |
+| `IFilterAngularComp`         | `IFilterDisplayAngularComp`         |
+| `IFloatingFilterAngularComp` | `IFloatingFilterDisplayAngularComp` |
+
+{% /if %}
+
+See [Migrating to Filter Handlers](./enable-filter-handlers-migration/).
 
 {% changelogSection version=$migrationVersion /%}

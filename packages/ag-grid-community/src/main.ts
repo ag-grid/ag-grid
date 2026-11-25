@@ -43,18 +43,15 @@ export {
 export type {
     AllChildrenCountChangedEvent,
     CellChangedEvent,
-    ChildIndexChangedEvent,
     DataChangedEvent,
     DataValueFrom,
     DisplayedChangedEvent,
     DraggingChangedEvent,
     ExpandedChangedEvent,
-    FirstChildChangedEvent,
     GroupChangedEvent,
     HasChildrenChangedEvent,
     HeightChangedEvent,
     IRowNode,
-    LastChildChangedEvent,
     MasterChangedEvent,
     MouseEnterEvent,
     MouseLeaveEvent,
@@ -765,6 +762,8 @@ export type { RowPosition } from './interfaces/iRowPosition';
 // Column Configuration
 export type {
     AbstractColDef,
+    AggValueGetterFunc,
+    AggValueGetterParams,
     CellClassFunc,
     CellClassParams,
     CellClassRules,

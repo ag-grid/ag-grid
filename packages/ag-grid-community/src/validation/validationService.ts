@@ -9,7 +9,6 @@ import type { ColDef, ColGroupDef } from '../entities/colDef';
 import type { GridOptions } from '../entities/gridOptions';
 import { INITIAL_GRID_OPTION_KEYS } from '../gridOptionsInitial';
 import type { AdvancedFilterModel } from '../interfaces/advancedFilterModel';
-import type { RowNodeEventType } from '../interfaces/iRowNode';
 import type { IconName } from '../utils/icon';
 import { ICON_NAME_TO_VALUE } from '../utils/iconNameToValue';
 import { validateApiFunction } from './apiFunctionValidator';
@@ -61,6 +60,10 @@ export class ValidationService extends BeanStub implements NamedBean {
 
     public processGridOptions(options: GridOptions): void {
         this.processOptions(options, GRID_OPTIONS_VALIDATORS());
+        if (options.enableFilterHandlers !== false) {
+            return;
+        }
+        this.beans.log.deprecated(348);
     }
 
     public validateApiFunction<TFunctionName extends ApiFunctionName>(
@@ -131,7 +134,7 @@ export class ValidationService extends BeanStub implements NamedBean {
         if (staticCssTheme) {
             const invalidValues = _findInvalidStaticCssThemeValues(staticCssTheme.options);
             for (let i = 0, len = invalidValues.length; i < len; ++i) {
-                this.warn(347, invalidValues[i]);
+                this.warn(353, invalidValues[i]);
             }
         }
         if (theme === 'legacy' || !eMeasurementContainer.isConnected) {
@@ -143,15 +146,15 @@ export class ValidationService extends BeanStub implements NamedBean {
         if (staticCssTheme) {
             const linked = !!staticCssTheme.options.useLinkedImages;
             if (legacyStylesLoaded) {
-                this.error(343);
+                this.error(349);
             } else if (!style.getPropertyValue('--ag-static-css-loaded')) {
-                this.warn(344, { linked });
+                this.warn(350, { linked });
             } else if (!!style.getPropertyValue('--ag-static-css-linked-loaded') !== linked) {
-                this.warn(348, { linked });
+                this.warn(354, { linked });
             } else {
                 const missingIconSet = _findMissingIconSetFile(staticCssTheme.options, style);
                 if (missingIconSet) {
-                    this.warn(345, missingIconSet);
+                    this.warn(351, missingIconSet);
                 }
             }
         }
@@ -190,12 +193,6 @@ export class ValidationService extends BeanStub implements NamedBean {
         const conditions = model.conditions;
         for (let i = 0, len = conditions.length; i < len; ++i) {
             this.collectAdvancedFilterColIds(conditions[i], colIds);
-        }
-    }
-
-    public checkRowEvents(eventType: RowNodeEventType): void {
-        if (DEPRECATED_ROW_NODE_EVENTS.has(eventType)) {
-            this.warn(10, { eventType });
         }
     }
 
@@ -370,12 +367,6 @@ export class ValidationService extends BeanStub implements NamedBean {
         });
     }
 }
-
-const DEPRECATED_ROW_NODE_EVENTS: Set<RowNodeEventType> = new Set([
-    'firstChildChanged',
-    'lastChildChanged',
-    'childIndexChanged',
-]);
 
 function suggestIconNames(iconName: string): string[] {
     const hyphenatedName = iconName.replace(/[A-Z]/g, (char) => `-${char.toLowerCase()}`);

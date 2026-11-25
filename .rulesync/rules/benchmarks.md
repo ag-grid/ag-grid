@@ -53,6 +53,10 @@ Each bench is reported as test's speed relative to base, as the likeliest of `â†
 
 Between processes, most pairs agree within a few percent but some land far off, on any bench: a bench's spread in one run does not predict its spread in the next. So the noise is one mixture per machine (the typical spread, and how often and how far an outlier pair lands), learned from every bench measured in two process pairs (`process-noise.json` beside the results), and each bench's rounds are weighed by how well they agree, so one outlier round neither makes nor hides a change. Confidences are rescaled to the run's own spread across benches. The noise is fitted once the history holds 30 benches seen in two process pairs, the prior once the run itself has 30 benches, and the rescaling needs 10; below those, defaults are used. `--runs 1` is a screen only; `--all-rounds` reruns every bench, to seed the noise history. `base` and `test` run one round each, in separate sessions: the machine can shift a whole round's times by as much as 18% as it heats, which only pairing in time cancels, so with at least 10 benches their comparison takes out the run-wide median shift and states it in the report. Use `all` for a decision, and separate sessions as a screen.
 
+## Large-data benchmarks
+
+`*.large.bench.ts` files (1M rows, seconds per call) are left out of a plain `./benches.sh` run; `--large` includes them (`./benches.sh --large "large-data"`). With `--bench-compare`, set `AG_BENCH_LARGE=1` in the environment instead. Their benches pass `warmupCalls`, `time` and `timeout` in the bench options, as the defaults (10 warmup calls, a 120 s cap) assume a call of milliseconds.
+
 ## Writing benchmarks
 
 A bench measures a realistic scenario at a fixed data size (`bench-data.ts`), registers the modules it uses (an unregistered API no-ops with `error #200`), and uses the helpers in `bench-utils.ts`. Import `bench` from there, not from `vitest` (whose `bench` is a test fixture): `bench(name, fn, { setup, teardown })` registers one test per bench, which `bench-measure.ts` measures. `setup` and `teardown` run once each, untimed, around the bench's turn.

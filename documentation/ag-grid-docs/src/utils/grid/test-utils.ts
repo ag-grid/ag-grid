@@ -132,7 +132,6 @@ const licenseTexts = [
 // TEMPORARY: maybe need a cleaner way of ignoring these warnings for specific tests
 // Errors that we want to exclude from the test based on partial text match
 const excludeErrors = [
-    'AG Grid: Using custom components without `reactiveCustomComponents = true` is deprecated.',
     'ERROR ResizeObserver loop completed with undelivered notifications',
     // This error is thrown when a favicon is not found which is not relevant to the test
     'Failed to load resource: the server responded with a status of 404 ()',
@@ -914,6 +913,7 @@ export async function serializeGridDom(page: Page, options?: ConsistentDomOption
 export { gridApiHandle } from './test/gridApiHandle';
 export { type EventLog, type GridEventLog, gridEventLog } from './test/gridEventLog';
 export { recreateGrid } from './test/recreateGrid';
+export { dismissValidationOverlay } from './test/dismissValidationOverlay';
 export { ensureGridReady, waitForGridContent } from './test/waitForGrid';
 export { orderedValues } from './test/orderedValues';
 export { repeat } from './test/repeat';

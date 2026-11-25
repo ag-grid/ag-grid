@@ -251,6 +251,12 @@ runs:
           shell: bash
           run: corepack enable
 
+        - name: Record restored Nx cache DBs
+          # Before the postinstall runs nx, which may create this machine's DB alongside it.
+          if: inputs.cache_mode != 'off' && inputs.nx_restore != 'false'
+          shell: bash
+          run: node "${{ github.action_path }}/nx-cache-db.mjs" snapshot "${RUNNER_TEMP}/nx-cache-state.json"
+
         - name: Tidy Nx Cache
           uses: ./external/ag-shared/github/actions/tidy-nx-cache
           if: inputs.cache_mode == 'rw' && inputs.nx_restore != 'false' && inputs.tidy_nx_cache != 'false'
@@ -373,6 +379,12 @@ runs:
                 # reads it. Installing under cache_mode:ro is safe — nothing is saved.
                 yarn install --immutable
               fi
+
+        - name: Adopt restored Nx cache DB
+          # Nx names its cache DB after the machine ID, which runners don't share predictably.
+          if: inputs.cache_mode != 'off' && inputs.nx_restore != 'false'
+          shell: bash
+          run: node "${{ github.action_path }}/nx-cache-db.mjs" adopt "${RUNNER_TEMP}/nx-cache-state.json"
 
         - name: Save node_modules
           # Explicit save of the freshly installed tree (see "Restore node_modules" for

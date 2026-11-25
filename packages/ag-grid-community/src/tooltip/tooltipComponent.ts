@@ -44,11 +44,16 @@ export type BuiltInTooltipControl =
     | 'previousPage'
     | 'nextPage'
     | 'lastPage'
-    | 'pageNumber'
     | 'columnMenu'
     | 'filter'
     | 'sort'
     | 'groupExpand'
+    | 'expandAll'
+    | 'columnSelectAll'
+    | 'columnSelect'
+    | 'rowGroupExpand'
+    | 'filterExpand'
+    | 'filterRemove'
     | 'selectAll'
     | 'selectRow'
     | 'resizeColumn'
@@ -69,8 +74,6 @@ export type BuiltInTooltipControl =
 interface TooltipCommonParams<TData, TValue, TContext> extends AgGridCommon<TData, TContext> {
     /** What part of the application is showing the tooltip, e.g. 'cell', 'header', or 'menu'. */
     location: TooltipLocation;
-    /** The built-in control showing the tooltip. Unset for ordinary cell, header and other configured tooltips. */
-    control?: BuiltInTooltipControl;
     /** The formatted source value, when available. */
     valueFormatted?: string | null;
     /** Column / ColumnGroup definition. */
@@ -90,6 +93,8 @@ export interface TooltipCallbackParams<TData = any, TValue = any, TContext = any
     TValue,
     TContext
 > {
+    /** The built-in control showing the tooltip. Unset for text tooltips. */
+    control?: BuiltInTooltipControl;
     /**
      * The underlying source value, such as a cell value, header display name or list-item value.
      * For message-only tooltips, such as validation errors and button hints, the resolved tooltip content.
@@ -138,15 +143,24 @@ export type TooltipDefinition<TData = any, TValue = any, TContext = any> =
 export type HeaderTooltipDefinition<TData = any, TValue = any, TContext = any> =
     boolean | string | ((params: HeaderTooltipCallbackParams<TData, TValue, TContext>) => any);
 
+interface TooltipValueParams<TData, TValue, TContext, TTooltipValue> extends TooltipCommonParams<
+    TData,
+    TValue,
+    TContext
+> {
+    /** The resolved value to render in the tooltip. */
+    value?: TTooltipValue | null;
+}
+
 /** Resolved tooltip content. `TValue` describes column cells; `TTooltipValue` describes the tooltip payload. */
 export interface TooltipContentParams<
     TData = any,
     TValue = any,
     TContext = any,
     TTooltipValue = TValue,
-> extends TooltipCommonParams<TData, TValue, TContext> {
-    /** The resolved value to render in the tooltip. */
-    value?: TTooltipValue | null;
+> extends TooltipValueParams<TData, TValue, TContext, TTooltipValue> {
+    /** The built-in control showing the tooltip. Unset for text tooltips. */
+    control?: BuiltInTooltipControl;
 }
 
 export interface ITooltipParams<
@@ -154,7 +168,7 @@ export interface ITooltipParams<
     TValue = any,
     TContext = any,
     TTooltipValue = TValue,
-> extends TooltipContentParams<TData, TValue, TContext, TTooltipValue> {
+> extends TooltipValueParams<TData, TValue, TContext, TTooltipValue> {
     /** A callback function that hides the tooltip. */
     hideTooltipCallback?: () => void;
 }
@@ -164,8 +178,9 @@ export interface ITooltipComp<TData = any, TValue = any, TContext = any> extends
 > {}
 
 export interface IBuiltInTooltipParams<TData = any, TContext = any> extends TooltipCommonParams<TData, any, TContext> {
-    /** The localised tooltip text. */
+    /** The tooltip text, localised for built-in control hints. */
     text: string;
+    /** The built-in control showing the tooltip. */
     control: BuiltInTooltipControl;
     /** Hides the tooltip without moving focus. */
     hideTooltipCallback: () => void;

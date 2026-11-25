@@ -3,6 +3,7 @@ import type { AgSingletonBean } from '../interfaces/agCoreBean';
 import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
 import type { IContext } from '../interfaces/iContext';
 import type { IPropertiesService } from '../interfaces/iProperties';
+import { _throwErrors } from '../utils/error';
 import { _nextContainerInstanceId } from './containerInstanceId';
 
 type BeanComparator<TBeanCollection> = (
@@ -148,7 +149,7 @@ export class AgContext<
         return this.id;
     }
 
-    public destroy(): void {
+    public destroy(errors?: unknown[]): void {
         if (this.destroyed) {
             return;
         }
@@ -161,12 +162,23 @@ export class AgContext<
         if (this.beanDestroyComparator) {
             beanInstances.sort(this.beanDestroyComparator);
         }
-        this.destroyBeans(beanInstances);
+        const beanErrors = errors ?? [];
+        for (let i = 0, len = beanInstances.length; i < len; ++i) {
+            try {
+                this.destroyBean(beanInstances[i]);
+            } catch (error) {
+                beanErrors.push(error);
+            }
+        }
 
         this.beans = {} as TBeanCollection;
         this.createdBeans = [];
 
         this.destroyCallback?.();
+
+        if (!errors) {
+            _throwErrors(beanErrors);
+        }
     }
 
     /**

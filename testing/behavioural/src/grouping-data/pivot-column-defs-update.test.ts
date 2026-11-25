@@ -1,5 +1,13 @@
 import { waitFor } from '@testing-library/dom';
-import { GridColumns, GridRows, TestGridsManager, applyTransactionChecked, asyncSetTimeout } from 'ag-test-utils';
+import {
+    ALL_SEVERITIES,
+    GridColumns,
+    GridRows,
+    LEGACY_FILTER_WARNING_IDS,
+    TestGridsManager,
+    applyTransactionChecked,
+    asyncSetTimeout,
+} from 'ag-test-utils';
 import { vi } from 'vitest';
 
 import type {
@@ -12,7 +20,7 @@ import type {
     IFilterComp,
     IFilterParams,
 } from 'ag-grid-community';
-import { ClientSideRowModelModule, CustomFilterModule, getGridElement } from 'ag-grid-community';
+import { ClientSideRowModelModule, CustomFilterModule, enableDevValidations, getGridElement } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
 
 import { pivotGroups } from './pivotGroups';
@@ -1281,6 +1289,7 @@ describe('pivot column identity across columnDefs updates', () => {
     });
 
     test('a value column given a new headerName keeps its pivot result columns', async () => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: LEGACY_FILTER_WARNING_IDS });
         const refreshes: { instance: IFilterComp; headerName: unknown }[] = [];
         class RecordingFilter implements IFilterComp {
             public readonly eGui = document.createElement('div');

@@ -110,6 +110,23 @@ describe('Tool Panel state', () => {
             await waitForSideBarState(api, groupExpandedState);
         });
 
+        test('expand-all expands on its first click after setState collapses every group', async () => {
+            const api = await gridsManager.createGridAndWait('grid1', {
+                columnDefs: [{ headerName: 'Group', groupId: 'group', children: columnDefs }],
+                rowData,
+                sideBar: FILTERS_SIDEBAR,
+            });
+            const panel = await openFiltersPanel(api);
+            expect(panel.isGroupExpandedByTitle('Group')).toBe(true);
+
+            restoreSideBar(api, filtersState([]));
+            await waitForFilterExpanded(api, 'Group', false);
+            expect(panel.expandAllButton()!.getAttribute('aria-expanded')).toBe('false');
+
+            await panel.clickExpandAll();
+            expect(panel.isGroupExpandedByTitle('Group')).toBe(true);
+        });
+
         test('setState restore is authoritative: empty ids collapse a live-expanded filter', async () => {
             const api = await gridsManager.createGridAndWait('grid1', {
                 columnDefs,

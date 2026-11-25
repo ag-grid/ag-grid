@@ -1,4 +1,11 @@
-import { ALL_SEVERITIES, ColumnFilterHarness, FilterDom, GridRows, asyncSetTimeout } from 'ag-test-utils';
+import {
+    ALL_SEVERITIES,
+    ColumnFilterHarness,
+    FilterDom,
+    GridRows,
+    LEGACY_FILTER_WARNING_IDS,
+    asyncSetTimeout,
+} from 'ag-test-utils';
 
 import type { DoesFilterPassParams, GridApi, IFilterComp, IMultiFilter } from 'ag-grid-community';
 import { CustomFilterModule, enableDevValidations } from 'ag-grid-community';
@@ -213,6 +220,7 @@ describe('Multi Filter — sub-filter combos & combined model (coverage)', () =>
     });
 
     test('a model set before the rows arrive and cleared after is not what the rebuilt filter starts with', async () => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: LEGACY_FILTER_WARNING_IDS });
         const api: GridApi = gridsManager.createGrid('grid1', {
             columnDefs: [
                 {
@@ -238,6 +246,7 @@ describe('Multi Filter — sub-filter combos & combined model (coverage)', () =>
     });
 
     test("without filter handlers, a Multi Filter instance's own model methods set, read and test its column's model", async () => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: LEGACY_FILTER_WARNING_IDS });
         const api: GridApi = await gridsManager.createGridAndWait('grid1', {
             columnDefs: [
                 {
@@ -328,7 +337,7 @@ describe('Multi Filter — sub-filter combos & combined model (coverage)', () =>
     test.each([false, true])(
         "with enableFilterHandlers %s, a Multi Filter child's deprecated doesFilterPass tests rows by the child's model, also once the filter is destroyed",
         async (enableFilterHandlers) => {
-            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [283] });
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [283, 348] });
             const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
             try {
                 const api: GridApi = await gridsManager.createGridAndWait('grid1', {
@@ -369,6 +378,7 @@ describe('Multi Filter — sub-filter combos & combined model (coverage)', () =>
     test.each([false, true])(
         'with enableFilterHandlers %s, an open Multi Filter whose Number child is given an option it lacks shows no model, as it applies none',
         async (enableFilterHandlers) => {
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [348] });
             const api: GridApi = await gridsManager.createGridAndWait('grid1', {
                 enableFilterHandlers,
                 columnDefs: [
@@ -400,6 +410,10 @@ describe('Multi Filter — sub-filter combos & combined model (coverage)', () =>
     );
 
     describe('a model its children cannot apply', () => {
+        beforeEach(() => {
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [348] });
+        });
+
         const bob = { filterType: 'text', type: 'equals', filter: 'bob' };
         const underTwenty = { filterType: 'number', type: 'lessThan', filter: 20 };
         // the default children: a Text Filter, then a Set Filter

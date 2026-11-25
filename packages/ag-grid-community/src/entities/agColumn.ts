@@ -30,6 +30,7 @@ import type { AgColumnGroup } from './agColumnGroup';
 import type { AgProvidedColumnGroup } from './agProvidedColumnGroup';
 import type {
     AbstractColDef,
+    AggValueGetterFunc,
     ColAggFunc,
     ColDef,
     ColDefField,
@@ -160,6 +161,8 @@ export class AgColumn<TValue = any>
     /** True when `field` reaches `__proto__`, so the column reads no value and refuses edits. */
     public fieldHasProtoKey = false;
     public valueGetter: string | ValueGetterFunc<any, TValue> | undefined = undefined;
+    /** Read once per value read, so rows of a column without it pay a single property load. */
+    public aggValueGetter: AggValueGetterFunc<any, TValue> | undefined = undefined;
     public allowFormula: boolean = false;
     public showRowGroup: string | boolean | undefined = undefined;
     public pivotValueColumn: AgColumn | null | undefined = undefined;
@@ -205,7 +208,7 @@ export class AgColumn<TValue = any>
     public sortCycleIndex: number | undefined = undefined;
     /** Compares the column's strings for its effective `accentedSort`, `undefined` when it is off. Built lazily by `_getColumnStringComparator`. */
     public stringComparator: StringComparator | undefined = undefined;
-    /** The `colModel.accentedSortVersion` `stringComparator` was built for; `-1` until built, or after the colDef changes. */
+    /** The `colModel.accentedSortVersion` `stringComparator` was built for; `-1` until built, or after the colDef `accentedSort` changes. */
     public stringComparatorVersion = -1;
     public lastQueuedEventAt: number = 0;
 
@@ -324,7 +327,11 @@ export class AgColumn<TValue = any>
         this.colFlags &= ~COL_FLAG_SORT_TYPES_CACHED; // sort/initialSort/sortingOrder may have changed
         this.sortCycleIndex = undefined;
         this.initColDefHotFields();
-        this.stringComparatorVersion = -1; // `accentedSort` may have changed
+        if (!_mergedEqual(colDef.accentedSort, oldColDef.accentedSort)) {
+            // an equal `accentedSort` keeps the comparator, so client-side sorting does not re-sort for nothing
+            this.stringComparatorVersion = -1;
+            colModel.accentedSortChangedCols.push(this);
+        }
         showValuesAsSvc?.resolveColumn(this, false); // colDef change — `initialShowValuesAs` is create-only
         this.initMinAndMaxWidths();
         this.initDotNotation();
@@ -596,6 +603,7 @@ export class AgColumn<TValue = any>
     private initColDefHotFields(): void {
         const colDef = this.colDef;
         this.valueGetter = colDef.valueGetter;
+        this.aggValueGetter = colDef.aggValueGetter;
         this.allowFormula = colDef.allowFormula === true;
         this.showRowGroup = colDef.showRowGroup;
         this.pivotValueColumn = colDef.pivotValueColumn as AgColumn | null | undefined;

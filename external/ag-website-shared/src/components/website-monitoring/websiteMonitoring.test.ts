@@ -404,6 +404,63 @@ describe('CSP violations', () => {
     });
 });
 
+describe('slow interactions', () => {
+    // The reporter's own behaviour is covered by its tests; this checks how monitoring drives it
+    const reporter = {
+        send: undefined as ((attributes: Record<string, string | number | boolean>) => void) | undefined,
+        stop: vi.fn(),
+    };
+
+    beforeEach(() => {
+        reporter.send = undefined;
+        vi.doMock('./slowInteractionReporter', () => ({
+            startSlowInteractionReporting: (send: typeof reporter.send) => {
+                reporter.send = send;
+                return reporter.stop;
+            },
+        }));
+    });
+
+    afterEach(() => {
+        vi.doUnmock('./slowInteractionReporter');
+    });
+
+    test('are reported to Dash0 once monitoring starts, and not before', async () => {
+        await initWebsiteMonitoring();
+        expect(reporter.send).toBeUndefined();
+
+        await fireGtmTag(WEBSITE_MONITORING_GTM_START_SCRIPT);
+        reporter.send!({ frame: 'iframe', duration: 320 });
+
+        expect(dash0.sendEvent).toHaveBeenCalledWith('slow_interaction', {
+            attributes: { frame: 'iframe', duration: 320 },
+        });
+    });
+
+    test('stop being reported when monitoring is disposed', async () => {
+        await initWebsiteMonitoring();
+        await fireGtmTag(WEBSITE_MONITORING_GTM_START_SCRIPT);
+
+        dispose!();
+        dispose = undefined;
+
+        expect(reporter.stop).toHaveBeenCalledTimes(1);
+    });
+
+    test('stop being reported before the session ends when GTM sends stop', async () => {
+        stubReload();
+        await initWebsiteMonitoring();
+        await fireGtmTag(WEBSITE_MONITORING_GTM_START_SCRIPT);
+
+        await fireGtmTag(WEBSITE_MONITORING_GTM_STOP_SCRIPT);
+
+        expect(reporter.stop).toHaveBeenCalledTimes(1);
+        expect(reporter.stop.mock.invocationCallOrder[0]).toBeLessThan(
+            dash0.terminateSession.mock.invocationCallOrder[0]
+        );
+    });
+});
+
 describe('trackMonitoringEvent and reportMonitoringError', () => {
     test('do nothing when monitoring has not started', async () => {
         const { trackMonitoringEvent, reportMonitoringError } = await initWebsiteMonitoring();

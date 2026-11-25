@@ -4,15 +4,6 @@
     height: 100%;
 }
 
-.example-controls {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 12px;
-}
-
 #myGrid {
     flex: 1 1 0px;
     min-height: 0;

@@ -1,0 +1,15 @@
+---
+import styles from '../DecisionPage.module.scss';
+
+interface Props {
+    reasons: string[];
+}
+
+const { reasons } = Astro.props;
+---
+
+<ul class={styles.reasonList}>
+    {reasons.map((reason) => (
+        <li>{reason}</li>
+    ))}
+</ul>

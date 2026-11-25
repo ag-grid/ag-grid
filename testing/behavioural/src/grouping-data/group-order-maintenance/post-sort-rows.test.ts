@@ -63,10 +63,7 @@ describe('group order maintenance / postSortRows', () => {
         `);
     });
 
-    test('grouped GroupSortStage: postSortRows reorder leaves childIndex / firstChild / lastChild stale (legacy AG-309 behaviour)', async () => {
-        // Locks the AG-309 (Feb 2018) ordering: _updateRowNodeAfterSort runs BEFORE postSortRows.
-        // The flags reflecting the pre-mutation order is intentional and out of scope to flip —
-        // changing it would break callers reading those flags during postSortRows.
+    test('grouped GroupSortStage: postSortRows reorder is reflected in the displayed order', async () => {
         const rowData = [
             { id: '1', country: 'Audi', athlete: 'A' },
             { id: '2', country: 'BMW', athlete: 'B' },
@@ -81,14 +78,11 @@ describe('group order maintenance / postSortRows', () => {
             rowData,
             getRowId: (p) => p.data.id,
             postSortRows: (params) => {
-                // Reverse the input. After this, childrenAfterSort is [Tesla, BMW, Audi] but
-                // the flags were already written for the input order [Audi, BMW, Tesla].
                 params.nodes.reverse();
             },
         });
 
-        // Display reflects the post-mutation array.
-        await new GridRows(api, 'AG-309 stale flags: displayed order is post-mutation').check(`
+        await new GridRows(api, 'displayed order is post-mutation').check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ LEAF_GROUP id:row-group-country-Tesla ag-Grid-AutoColumn:"Tesla"
             │ └── LEAF id:3 country:"Tesla" athlete:"T"
@@ -97,21 +91,9 @@ describe('group order maintenance / postSortRows', () => {
             └─┬ LEAF_GROUP id:row-group-country-Audi ag-Grid-AutoColumn:"Audi"
             · └── LEAF id:1 country:"Audi" athlete:"A"
         `);
-
-        // Deprecated flags reflect the pre-mutation (input) order — Audi was first in input,
-        // Tesla was last, even though they're now at the opposite ends of the display.
-        const audi = api.getRowNode('row-group-country-Audi')!;
-        expect(audi.childIndex).toBe(0);
-        expect(audi.firstChild).toBe(true);
-        expect(audi.lastChild).toBe(false);
-
-        const tesla = api.getRowNode('row-group-country-Tesla')!;
-        expect(tesla.childIndex).toBe(2);
-        expect(tesla.firstChild).toBe(false);
-        expect(tesla.lastChild).toBe(true);
     });
 
-    test('firstChild / lastChild / childIndex reflect the sorted group order', async () => {
+    test('childrenAfterSort reflects the sorted group order', async () => {
         const rowData = [
             { id: '1', country: 'Audi', athlete: 'A' },
             { id: '2', country: 'BMW', athlete: 'B' },
@@ -139,14 +121,12 @@ describe('group order maintenance / postSortRows', () => {
             · └── LEAF id:1 country:"Audi" athlete:"A"
         `);
 
-        const sortedKeys = ['Tesla', 'BMW', 'Audi'];
-        const groupNodes = sortedKeys.map((key) => api.getRowNode(`row-group-country-${key}`)!);
-
-        groupNodes.forEach((node, idx) => {
-            expect(node.childIndex).toBe(idx);
-            expect(node.firstChild).toBe(idx === 0);
-            expect(node.lastChild).toBe(idx === groupNodes.length - 1);
-        });
+        const root = api.getRowNode('row-group-country-Tesla')!.parent!;
+        expect(root.childrenAfterSort!.map((n) => n.id)).toEqual([
+            'row-group-country-Tesla',
+            'row-group-country-BMW',
+            'row-group-country-Audi',
+        ]);
     });
 
     test('reused-array postSortRows mutation does not corrupt the structural baseline', async () => {

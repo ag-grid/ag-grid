@@ -20,7 +20,7 @@
 //     giving `<to>/` + `/`.
 //   - shadowed: an earlier, broader rule answers first with a different Location.
 //
-// The root file's alias hosts (the apex, the legacy framework subdomains, angulargrid.com) are
+// The root file's alias hosts (the apex and the legacy framework subdomains) are
 // modelled too, for the first hop only: the apex gets the single-hop rewrites, then every alias host
 // gets the slash and the host swap together in one hop for a slash-less directory URL, or the host
 // swap alone. A few rows per alias host prove that model on Apache; `firstHop` answers it for any

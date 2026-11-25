@@ -20,6 +20,7 @@ const dispatchTouch = (target: Locator, type: 'touchstart' | 'touchend') =>
 test('the default tooltip accepts the pointer across the gap and dismisses on Escape', async ({ page }) => {
     const { cell } = await mountGrid(page, {
         options: () => ({
+            tooltipShowMode: 'standard',
             columnDefs: [{ field: 'value', tooltip: true }],
             rowData: [{ value: 'First tooltip' }, { value: 'Second tooltip' }, { value: 'Third tooltip' }],
             tooltipShowDelay: 0,
@@ -51,6 +52,7 @@ test('resumes hover tooltips after wheel scrolling virtualised rows', async ({ p
     const { cell, withApi } = await mountGrid(page, {
         height: 240,
         options: () => ({
+            tooltipShowMode: 'standard',
             columnDefs: [{ field: 'value', tooltip: true }],
             rowData: Array.from({ length: 200 }, (_, i) => ({ value: `Row ${i}` })),
             rowBuffer: 0,
@@ -91,6 +93,7 @@ test('a tooltip recreated after scrolling closes when the pointer leaves its sou
         width: 400,
         height: 400,
         options: () => ({
+            tooltipShowMode: 'standard',
             columnDefs: [{ field: 'value', tooltip: true, width: 200 }],
             rowData: Array.from({ length: 100 }, (_, i) => ({ value: `Row ${i}` })),
             tooltipPosition: 'right',
@@ -121,6 +124,7 @@ for (const action of ['Escape', 'leave', 'remove', 'focus', 'tap away'] as const
         const { cell, withApi } = await mountGrid(page, {
             height: 240,
             options: () => ({
+                tooltipShowMode: 'standard',
                 columnDefs: [{ field: 'value', tooltip: true }],
                 rowData: Array.from({ length: 200 }, (_, i) => ({ value: `Row ${i}` })),
                 rowBuffer: 0,
@@ -169,6 +173,7 @@ for (const action of ['Escape', 'leave', 'remove', 'focus', 'tap away'] as const
 test('focus tooltips describe cells and headers without changing their accessible names', async ({ page }) => {
     const { cell, headerCell } = await mountGrid(page, {
         options: () => ({
+            tooltipShowMode: 'standard',
             columnDefs: [
                 {
                     field: 'age',
@@ -205,6 +210,7 @@ test('focus tooltips survive keyboard scrolling into view', async ({ page }) => 
         width: 400,
         height: 210,
         options: () => ({
+            tooltipShowMode: 'standard',
             columnDefs: ['a', 'b', 'c', 'd'].map((field) => ({ field, tooltip: true, width: 180 })),
             rowData: Array.from({ length: 30 }, (_, i) => ({ a: `a${i}`, b: `b${i}`, c: `c${i}`, d: `d${i}` })),
             tooltipTrigger: 'hoverOrFocus',
@@ -234,6 +240,7 @@ test('focus tooltips survive keyboard scrolling into view', async ({ page }) => 
 test('keyboard navigation keeps the tooltip at the focused cell until the pointer moves', async ({ page }) => {
     const { cell } = await mountGrid(page, {
         options: () => ({
+            tooltipShowMode: 'standard',
             columnDefs: [{ field: 'value', tooltip: true }],
             rowData: Array.from({ length: 6 }, (_, i) => ({ value: `Row ${i}` })),
             tooltipTrigger: 'hoverOrFocus',
@@ -266,6 +273,7 @@ test('a shadow-root grid opens its cell menu once and suppresses the later nativ
         enterprise: true,
         shadowDom: true,
         options: () => ({
+            tooltipShowMode: 'standard',
             columnDefs: [{ field: 'value', tooltip: true }],
             rowData: [{ value: 'First' }],
             getContextMenuItems: ({ column, value }) => [{ name: `${column?.getColId()}: ${value}` }],
@@ -295,6 +303,7 @@ test('selectively interactive tooltips support native Tab navigation and restore
                 }
             }
             return {
+                tooltipShowMode: 'standard',
                 columnDefs: [
                     { field: 'plain', tooltip: true },
                     { field: 'value', tooltip: true, tooltipComponent: Tooltip },
@@ -330,6 +339,7 @@ test('focus descriptions resolve inside a shadow root before visual display', as
     const { cell } = await mountGrid(page, {
         shadowDom: true,
         options: () => ({
+            tooltipShowMode: 'standard',
             columnDefs: [{ field: 'value', tooltip: true }],
             rowData: [{ value: 'Shadow tooltip' }],
             tooltipTrigger: 'hoverOrFocus',
@@ -345,6 +355,7 @@ test('long press resolves a tooltip inside Shadow DOM after the touch event fini
     const { cell } = await mountGrid(page, {
         shadowDom: true,
         options: () => ({
+            tooltipShowMode: 'standard',
             columnDefs: [{ field: 'value', tooltip: true }],
             rowData: [{ value: 'Shadow tooltip' }],
             suppressContextMenu: true,
@@ -362,6 +373,7 @@ for (const header of [false, true]) {
             const { cell, headerCell, withApi } = await mountGrid(page, {
                 enterprise: true,
                 options: () => ({
+                    tooltipShowMode: 'standard',
                     columnDefs: [{ field: 'value', tooltip: true, headerTooltip: true }],
                     rowData: [{ value: 'First' }],
                     context: { opened: 0 },
@@ -399,6 +411,7 @@ for (const header of [false, true]) {
 test('Escape dismisses a validation tooltip without cancelling editing', async ({ page }) => {
     const { cell, withApi } = await mountGrid(page, {
         options: () => ({
+            tooltipShowMode: 'standard',
             columnDefs: [
                 {
                     field: 'value',
@@ -429,6 +442,7 @@ for (const applyMode of ['live', 'deferred'] as const) {
         await mountGrid(page, {
             enterprise: true,
             options: () => ({
+                tooltipShowMode: 'standard',
                 columnDefs: [{ colId: 'profit', headerName: 'Profit', calculatedExpression: '3' }],
                 rowData: [{}],
                 tooltipTrigger: 'hoverOrFocus',

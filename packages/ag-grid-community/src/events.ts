@@ -199,8 +199,10 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         rowExpansionStateChanged: AgEvent<'rowExpansionStateChanged'>;
         showRowGroupColsSetChanged: AgEvent<'showRowGroupColsSetChanged'>;
         columnShowValuesAsChanged: AgEvent<'columnShowValuesAsChanged'>;
+        stringComparatorsChanged: StringComparatorsChangedEvent;
         rowDragVisibilityChanged: AgEvent<'rowDragVisibilityChanged'>;
         columnHeaderEditHighlightChanged: ColumnHeaderEditHighlightChangedEvent;
+        filterModifiedListened: AgEvent<'filterModifiedListened'>;
     }
 >;
 
@@ -440,6 +442,7 @@ export interface FilterChangedEvent<TData = any, TContext = any> extends AgGloba
     columns: Column[];
 }
 
+/** @deprecated v37 Use `FilterUiChangedEvent` and `FloatingFilterUiChangedEvent` with `enableFilterHandlers` instead. See [Migrating to Filter Handlers](https://www.ag-grid.com/javascript-data-grid/enable-filter-handlers-migration/). */
 export interface FilterModifiedEvent<TData = any, TContext = any> extends AgGlobalEvent<
     'filterModified',
     TData,
@@ -1018,6 +1021,13 @@ export interface ColumnHeaderNameChangedEvent<TData = any, TContext = any> exten
      * `null` for column renames or a bulk change (e.g. state reset).
      */
     columnGroup: ProvidedColumnGroup | null;
+}
+
+export interface StringComparatorsChangedEvent extends AgEvent<'stringComparatorsChanged'> {
+    /** Whether the `accentedSort` grid option changed, so every column without its own `accentedSort` is affected. */
+    gridOption: boolean;
+    /** The columns whose colDef `accentedSort` changed. */
+    columns: Column[];
 }
 
 export interface ColumnHeaderEditHighlightChangedEvent extends AgEvent<'columnHeaderEditHighlightChanged'> {

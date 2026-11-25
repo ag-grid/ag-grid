@@ -813,7 +813,7 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 }
                 if (_isStaticCssTheme(theme)) {
                     const ignored = STATIC_CSS_THEME_IGNORED_OPTIONS.filter((key) => options[key] != null);
-                    return ignored.length > 0 ? _createValidationWarning(346, { options: ignored }) : null;
+                    return ignored.length > 0 ? _createValidationWarning(352, { options: ignored }) : null;
                 }
                 return null;
             },

@@ -32,7 +32,7 @@ function isIgnored({ directive, blockedUri, sourceFile }: Record<string, string 
 }
 
 // Origin and path only: a query string can carry anything
-function withoutQuery(uri: string): string {
+export function withoutQuery(uri: string): string {
     try {
         const url = new URL(uri);
         return url.origin + url.pathname;

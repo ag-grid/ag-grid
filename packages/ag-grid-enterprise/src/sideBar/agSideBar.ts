@@ -246,6 +246,10 @@ class AgSideBar extends Component implements ISideBar, FocusableContainer {
         return this.sideBar;
     }
 
+    public getSideBarPosition(): 'left' | 'right' {
+        return this.position;
+    }
+
     public setSideBarPosition(position?: 'left' | 'right'): this {
         if (!position) {
             position = 'right';

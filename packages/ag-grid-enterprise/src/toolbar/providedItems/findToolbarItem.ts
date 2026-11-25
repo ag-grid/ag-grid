@@ -102,13 +102,13 @@ export class FindToolbarItem extends Component implements IToolbarItemComp {
             getGui: () => this.ePrevButton,
             getLocation: () => 'toolbar',
             control: 'findPrevious',
-            getTooltip: () => ({ value: localeTextFunc('toolbarFindPreviousMatch', 'Previous Match') }),
+            getTooltip: () => ({ value: localeTextFunc('tooltipFindPreviousMatch', 'Go to previous match') }),
         });
         this.nextTooltip = this.addTooltip({
             getGui: () => this.eNextButton,
             getLocation: () => 'toolbar',
             control: 'findNext',
-            getTooltip: () => ({ value: localeTextFunc('toolbarFindNextMatch', 'Next Match') }),
+            getTooltip: () => ({ value: localeTextFunc('tooltipFindNextMatch', 'Go to next match') }),
         });
 
         const updateFindSearchValueDebounced = _debounce(this, flushFindSearchValue, INPUT_DEBOUNCE_MS);

@@ -179,7 +179,7 @@ describe('staticCssTheme', () => {
 
         await createGrid();
 
-        expect(diagnostics(consoleWarnSpy, 344)).toHaveLength(1);
+        expect(diagnostics(consoleWarnSpy, 350)).toHaveLength(1);
     });
 
     test('errors when legacy theme CSS is also loaded', async () => {
@@ -187,7 +187,7 @@ describe('staticCssTheme', () => {
 
         await createGrid();
 
-        expect(diagnostics(consoleErrorSpy, 343)).toHaveLength(1);
+        expect(diagnostics(consoleErrorSpy, 349)).toHaveLength(1);
     });
 
     test.each<[string, StaticCssThemeOptions, string]>([
@@ -201,7 +201,7 @@ describe('staticCssTheme', () => {
 
         await createGrid({ theme: staticCssTheme(options) });
 
-        const warnings = diagnostics(consoleWarnSpy, 345);
+        const warnings = diagnostics(consoleWarnSpy, 351);
         expect(warnings).toHaveLength(1);
         expect(String(warnings[0][1])).toContain(`ag-grid-community/css/${file}.css`);
     });
@@ -219,20 +219,20 @@ describe('staticCssTheme', () => {
 
         await createGrid({ theme: staticCssTheme({ useLinkedImages }) });
 
-        const warnings = diagnostics(consoleWarnSpy, 348);
+        const warnings = diagnostics(consoleWarnSpy, 354);
         expect(warnings).toHaveLength(1);
         expect(String(warnings[0][1])).toContain(`ag-grid-community/css/${file}`);
-        expect(diagnostics(consoleWarnSpy, 345)).toHaveLength(0);
+        expect(diagnostics(consoleWarnSpy, 351)).toHaveLength(0);
     });
 
     test('checks the theme again when the theme option changes', async () => {
         const api = await createGrid();
-        expect(diagnostics(consoleWarnSpy, 345)).toHaveLength(0);
+        expect(diagnostics(consoleWarnSpy, 351)).toHaveLength(0);
 
         api.setGridOption('theme', staticCssTheme({ iconSet: 'material' }));
 
-        await waitFor(() => expect(diagnostics(consoleWarnSpy, 345)).toHaveLength(1));
-        expect(String(diagnostics(consoleWarnSpy, 345)[0][1])).toContain('icon-set-material.css');
+        await waitFor(() => expect(diagnostics(consoleWarnSpy, 351)).toHaveLength(1));
+        expect(String(diagnostics(consoleWarnSpy, 351)[0][1])).toContain('icon-set-material.css');
     });
 
     test('warns about unknown options and values', async () => {
@@ -241,7 +241,7 @@ describe('staticCssTheme', () => {
 
         await createGrid({ theme });
 
-        const messages = diagnostics(consoleWarnSpy, 347).map((call) => String(call[1]));
+        const messages = diagnostics(consoleWarnSpy, 353).map((call) => String(call[1]));
         expect(messages).toEqual([
             expect.stringContaining('unknown `defaults`: `quarts`'),
             expect.stringContaining('unknown `iconSet`: `quartzlight`'),
@@ -260,7 +260,7 @@ describe('staticCssTheme', () => {
     test('warns that style injection options have no effect', async () => {
         await createGrid({ styleNonce: 'abc', themeCssLayer: 'grid' });
 
-        const warnings = diagnostics(consoleWarnSpy, 346);
+        const warnings = diagnostics(consoleWarnSpy, 352);
         expect(warnings).toHaveLength(1);
         expect(String(warnings[0][1])).toContain('`styleNonce`, `themeCssLayer`');
     });

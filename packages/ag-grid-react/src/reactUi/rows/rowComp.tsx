@@ -22,7 +22,7 @@ import { showJsComp } from '../jsComp';
 import { agFlushSync, agUseSyncExternalStore, getNextValueIfDifferent, isComponentStateless } from '../utils';
 
 const RowComp = ({ rowCtrl }: { rowCtrl: RowCtrl }) => {
-    const { context, gos } = useContext(BeansContext);
+    const { context } = useContext(BeansContext);
 
     const enableUses = useContext(RenderModeContext) === 'default';
 
@@ -268,7 +268,7 @@ const RowComp = ({ rowCtrl }: { rowCtrl: RowCtrl }) => {
                         !!details?.componentFromFramework && isComponentStateless(details.componentClass);
 
                     if (isStatelessFrameworkRenderer) {
-                        if (!gos.get('reactiveCustomComponents') || !currentDetails) {
+                        if (!currentDetails) {
                             return false;
                         }
 
@@ -398,8 +398,7 @@ const RowComp = ({ rowCtrl }: { rowCtrl: RowCtrl }) => {
     // needs to be a ref to avoid stale closure, as used in compProxy passed to row ctrl
     const canRefreshFullWidthRef = useRef(false);
     useEffect(() => {
-        canRefreshFullWidthRef.current =
-            reactFullWidthCellRendererStateless && !!fullWidthCompDetails && !!gos.get('reactiveCustomComponents');
+        canRefreshFullWidthRef.current = reactFullWidthCellRendererStateless && !!fullWidthCompDetails;
     }, [reactFullWidthCellRendererStateless, fullWidthCompDetails]);
 
     const showFullWidthFrameworkJsx = () => {

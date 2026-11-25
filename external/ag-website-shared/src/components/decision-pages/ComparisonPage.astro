@@ -18,6 +18,7 @@ import {
 import styles from './DecisionPage.module.scss';
 import { COMPARISON_SECTIONS, comparisonPageName } from './decisionPageText';
 import ChooseIf from './sections/ChooseIf.astro';
+import { competitorFeatureMatrix } from './featureMatrix';
 import DecisionHero from './sections/DecisionHero.astro';
 import DecisionSection from './sections/DecisionSection.astro';
 import FeatureMatrix from './sections/FeatureMatrix.astro';
@@ -25,17 +26,17 @@ import GetStartedPanel from './sections/GetStartedPanel.astro';
 import KeyFigures from './sections/KeyFigures.astro';
 import PricingTables from './sections/PricingTables.astro';
 import RelatedPages from './sections/RelatedPages.astro';
-import type { ComparisonPageContent, DecisionPageSite, RelatedPageGroup } from './types';
+import type { ComparisonPageContent, DecisionHubLink, DecisionPageSite, RelatedPageGroup } from './types';
 
 interface Props {
     content: ComparisonPageContent;
     site: DecisionPageSite;
-    /** The cluster name shown in the breadcrumb. */
-    hubName: string;
+    /** The comparison hub, the breadcrumb's parent. */
+    hub: DecisionHubLink;
     related: RelatedPageGroup[];
 }
 
-const { content, site, hubName, related } = Astro.props;
+const { content, site, hub, related } = Astro.props;
 const { productName } = site;
 const competitorName = content.competitor.name;
 const product = { name: productName, logo: site.productLogo };
@@ -47,13 +48,13 @@ const competitor = {
 
 <DecisionHero
     site={site}
-    hubName={hubName}
+    hub={hub}
     pageName={comparisonPageName(productName, competitorName)}
     heading={content.hero.heading}
     subHeading={content.hero.subHeading}
     lastUpdated={content.lastUpdated}
     analyticsPrefix={content.analyticsPrefix}
-    logos={{ product: product.logo, competitor: competitor.logo }}
+    logos={{ first: product.logo, second: competitor.logo, separator: 'vs' }}
 >
     <slot name="review-credit" slot="review-credit" />
 </DecisionHero>
@@ -72,9 +73,8 @@ const competitor = {
 
 <DecisionSection id="features" heading={COMPARISON_SECTIONS.features} subHeading={content.features.subHeading}>
     <FeatureMatrix
-        groups={content.features.groups}
-        product={product}
-        competitor={competitor}
+        groups={competitorFeatureMatrix(content.features.groups)}
+        columns={[product, competitor]}
         resolveUrl={site.resolveUrl}
     />
 </DecisionSection>

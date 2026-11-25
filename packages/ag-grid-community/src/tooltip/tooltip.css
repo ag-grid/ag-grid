@@ -1,5 +1,6 @@
 .ag-tooltip {
     position: absolute;
+    width: max-content;
     max-width: min(100%, calc(100vw - 30px), var(--ag-internal-tooltip-max-width, 100%));
     padding: var(--ag-widget-container-vertical-padding) var(--ag-widget-container-horizontal-padding);
     background-color: var(--ag-tooltip-background-color);

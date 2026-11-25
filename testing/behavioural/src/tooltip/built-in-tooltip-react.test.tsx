@@ -87,9 +87,9 @@ describe('Built-in tooltip components (React)', () => {
                 getByRole(rendered.container, 'button', { name: 'Open Value Filter Menu' })
             );
             act(() => button.focus());
-            await waitFor(() => expect(getVisibleTooltips()[0]).toHaveTextContent('Filter'));
+            await waitFor(() => expect(getVisibleTooltips()[0]).toHaveTextContent('Open filter'));
             expect(getVisibleTooltips()).toHaveLength(1);
-            expect(button).toHaveAccessibleDescription('Filter');
+            expect(button).toHaveAccessibleDescription('Open filter');
 
             rendered.unmount();
             expect(getVisibleTooltips()).toEqual([]);
@@ -133,9 +133,9 @@ describe('Built-in tooltip components (React)', () => {
             const rendered = render(<Grid />);
             const next = await waitFor(() => getByRole(rendered.container, 'button', { name: 'Next Page' }));
             act(() => next.focus());
-            await waitFor(() => expect(getVisibleTooltips()[0]).toHaveTextContent('React: Next Page!'));
+            await waitFor(() => expect(getVisibleTooltips()[0]).toHaveTextContent('React: Go to next page!'));
             expect(current).toMatchObject({
-                text: 'Next Page',
+                text: 'Go to next page',
                 control: 'nextPage',
                 location: 'pagination',
                 suffix: '!',
@@ -146,13 +146,13 @@ describe('Built-in tooltip components (React)', () => {
 
             act(() => next.blur());
             act(() => next.focus());
-            await waitFor(() => expect(getVisibleTooltips()[0]).toHaveTextContent('React: Next Page!'));
+            await waitFor(() => expect(getVisibleTooltips()[0]).toHaveTextContent('React: Go to next page!'));
             rendered.rerender(<Grid suppressed />);
             await waitFor(() => expect(getVisibleTooltips()).toEqual([]));
             rendered.rerender(<Grid />);
             act(() => next.blur());
             act(() => next.focus());
-            await waitFor(() => expect(getVisibleTooltips()[0]).toHaveTextContent('React: Next Page!'));
+            await waitFor(() => expect(getVisibleTooltips()[0]).toHaveTextContent('React: Go to next page!'));
             rendered.unmount();
             expect(getVisibleTooltips()).toEqual([]);
         }

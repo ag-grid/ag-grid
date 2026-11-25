@@ -36,6 +36,9 @@ export class AgTooltipFeature<
           >
         | undefined;
     private browserTooltips: boolean;
+    private browserTooltipActive = false;
+    private eventSource?: HTMLElement;
+    private removeSourceListeners?: () => void;
 
     constructor(
         private readonly ctrl: TooltipCtrl<TLocation, TTooltipCtrlParams>,
@@ -44,24 +47,70 @@ export class AgTooltipFeature<
         super();
 
         if (beans) {
-            this.beans = beans;
+            this.preWireBeans(beans);
         }
     }
 
     public postConstruct() {
         this.refreshTooltip();
-        if (this.ctrl.control) {
+    }
+
+    private setupSourceListeners(): void {
+        if (!this.ctrl.control && !this.ctrl.getTextElement) {
+            return;
+        }
+        const source = this.ctrl.getGui();
+        if (this.eventSource === source && !!this.removeSourceListeners === this.browserTooltips) {
+            return;
+        }
+        if (!this.eventSource && this.ctrl.control) {
             this.addManagedPropertyListeners(['suppressBuiltInTooltips', 'enableBrowserTooltips'], () =>
                 this.refreshTooltip()
             );
-            this.addManagedListeners(this.ctrl.getGui(), {
-                mouseenter: () => {
-                    if (this.browserTooltips) {
-                        this.refreshTooltip();
-                    }
-                },
-            });
         }
+        this.removeSourceListeners?.();
+        this.removeSourceListeners = undefined;
+        this.eventSource = source;
+        this.browserTooltipActive = false;
+        if (!this.browserTooltips) {
+            return;
+        }
+        let observer: MutationObserver | undefined;
+        const removeListeners = this.addManagedListeners(source, {
+            mouseenter: () => {
+                if (this.browserTooltips) {
+                    this.browserTooltipActive = true;
+                    this.refreshTooltip();
+                    if (this.ctrl.getTextElement) {
+                        // Frameworks can commit text after refreshTooltip; observe only the hovered native source.
+                        observer ??= new MutationObserver(() => this.refreshBrowserTooltip());
+                        observer.observe(source, { childList: true, characterData: true, subtree: true });
+                    }
+                }
+            },
+            mouseleave: () => {
+                this.browserTooltipActive = false;
+                observer?.disconnect();
+            },
+        });
+        this.removeSourceListeners = () => {
+            observer?.disconnect();
+            for (const remove of removeListeners) {
+                remove();
+            }
+        };
+    }
+
+    private refreshBrowserTooltip(): void {
+        const tooltip = this.getLatestTooltip();
+        if (tooltip.requiresTruncation && !this.browserTooltipActive) {
+            this.setBrowserTooltip('', true);
+            return;
+        }
+        const hidden =
+            (this.ctrl.control || this.ctrl.getTextElement) && this.ctrl.shouldDisplayTooltip?.(tooltip) === false;
+        // An empty title also prevents a nested source from inheriting an ancestor's tooltip.
+        this.setBrowserTooltip(hidden ? '' : tooltip.value, !!this.ctrl.getTextElement);
     }
 
     /**
@@ -137,6 +186,9 @@ export class AgTooltipFeature<
 
     public refreshTooltip(clearWithEmptyString?: boolean): void {
         this.browserTooltips = this.beans.gos.get('enableBrowserTooltips')!;
+        if (!this.eventSource || this.browserTooltips || this.removeSourceListeners) {
+            this.setupSourceListeners();
+        }
 
         if (this.ctrl.control && this.gos.get('suppressBuiltInTooltips')) {
             this.setBrowserTooltip(null);
@@ -150,9 +202,7 @@ export class AgTooltipFeature<
         tooltipManager?.refreshTooltip();
 
         if (this.browserTooltips) {
-            const tooltip = this.getLatestTooltip();
-            const hidden = this.ctrl.control && this.ctrl.shouldDisplayTooltip?.(tooltip) === false;
-            this.setBrowserTooltip(hidden ? null : tooltip.value);
+            this.refreshBrowserTooltip();
             this.tooltipManager = this.destroyBean(this.tooltipManager, this.beans.context);
         } else {
             this.setBrowserTooltip(clearWithEmptyString ? '' : null, clearWithEmptyString);
@@ -161,6 +211,7 @@ export class AgTooltipFeature<
     }
 
     public override destroy() {
+        this.removeSourceListeners?.();
         this.setBrowserTooltip(null);
         this.tooltipManager = this.destroyBean(this.tooltipManager, this.beans.context);
         super.destroy();

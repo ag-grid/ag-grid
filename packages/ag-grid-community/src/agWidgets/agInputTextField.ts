@@ -181,7 +181,7 @@ export class AgInputTextField<
             control: 'clear',
             getGui: () => eClearButton,
             getLocation: () => 'input',
-            getTooltip: () => ({ value: label }),
+            getTooltip: () => ({ value: this.getLocaleTextFunc()('tooltipClear', 'Clear') }),
             getTooltipAccessibleName: () => label,
         });
     }

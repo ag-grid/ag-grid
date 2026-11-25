@@ -55,6 +55,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     },
     columnDefs: columnDefs,
     tooltipTrigger: 'hoverOrFocus',
+    tooltipShowMode: 'standard',
     tooltipShowDelay: 500,
     tooltipSwitchShowDelay: 0,
     pagination: true,

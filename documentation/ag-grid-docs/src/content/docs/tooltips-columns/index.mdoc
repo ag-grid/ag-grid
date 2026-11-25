@@ -2,7 +2,7 @@
 title: "Column Tooltips"
 ---
 
-Column tooltips are set on the column definition and show for cells and column headers.
+Cells and column headers automatically show tooltips when their grid-rendered text is truncated. Column definitions can override or disable that content.
 
 ## Cell Tooltips
 
@@ -58,23 +58,43 @@ Tooltips are not shown for the missing values `undefined`, `null` and `''` (empt
 
 ## Tooltips for Truncated Text
 
-Set `tooltipShowMode: 'whenTruncated'` to show tooltips only when the hovered or focused text is truncated. Built-in control tooltips do not require truncated text, except floating-filter value previews, which show only when truncated.
+`tooltipShowMode` controls when text tooltips appear, including [Browser Tooltips](./tooltips/#browser-tooltip):
+
+| Mode               | Behaviour                                                                                                                                                                 |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `'auto'` (default) | Automatically previews truncated text without tooltip configuration. Configured tooltips appear when the text is truncated or the tooltip differs from the default value. |
+| `'standard'`       | Shows configured tooltips without requiring truncation.                                                                                                                   |
+| `'whenTruncated'`  | Shows configured tooltips only when the text is truncated.                                                                                                                |
+| `'whenDifferent'`  | Shows configured tooltips only when their content differs from the default value, regardless of truncation.                                                               |
+
+For cells, the default value is `valueFormatted` when available, otherwise `value`. For example, a cell with raw value `10` and formatted value `£10.00` treats a configured tooltip of `10` as different. Headers compare against the displayed header name. Structured content for a custom tooltip component is treated as different.
+
+Only `'auto'` supplies tooltips without explicit configuration. This applies to grid-rendered cells, headers, Set Filter items, tool panel labels and drop-zone pills. Other modes require configured content, such as `tooltip`, `headerTooltip`, Set Filter `showTooltips: true`, or a custom component's `setTooltip`. Legacy tooltip fields and getters also count as explicit configuration.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
-    tooltipShowMode: 'whenTruncated',
+    tooltipShowMode: 'auto',
+    columnDefs: [
+        { field: 'athlete', tooltip: true },
+        { field: 'country' },
+        { field: 'sport', tooltip: ({ value }) => `Sport: ${value}` },
+    ],
 };
 ```
 
-{% gridExampleRunner title="Tooltips" name="tooltip-show-mode" /%}
+The example uses the default mode, `'auto'`. **Athlete** has a configured tooltip matching its displayed value, **Country** uses automatic previews, and **Sport** has different configured content that appears even when its text fits.
 
-{% note %}
-`tooltipShowMode = 'whenTruncated'` has no effect when using Browser Tooltips, as Browser Tooltips are controlled by the browser and not the grid.
-{% /note %}
+{% gridExampleRunner title="Tooltip Show Modes" name="tooltip-show-mode" /%}
+
+Use `tooltip: false`, `headerTooltip: false` or Set Filter `filterParams.showTooltips: false` to disable individual sources. Configured callbacks returning no content suppress the tooltip in every mode.
+
+Automatic and configured tooltips use the same component selection: the column/group's custom component where supported, otherwise the default tooltip. `builtInTooltipComponent` and `suppressBuiltInTooltips` only apply to control hints. Existing control hints and floating-filter previews retain their own display rules.
 
 ## Tooltips for Custom Components
 
 Custom cell renderers and header components can register tooltip content at runtime with the `setTooltip` method on their params. `tooltip: false` and `headerTooltip: false` do not disable these. See [Cell Components](./component-cell-renderer/#tooltips), [Header Components](./column-headers-components/#tooltips) and [Column Groups](./column-groups/#tooltips).
+
+Custom renderers receive no automatic text tooltip. In `'auto'` mode, configured content matching the default value needs a truncation check; supply `setTooltip(value, shouldDisplay)` with a callback that measures the relevant text element. The callback overrides the mode's display check. For compatibility, `'whenTruncated'` continues to show configured tooltips when a custom renderer prevents the grid from measuring truncation and no callback is supplied.
 
 ## Row Groups
 

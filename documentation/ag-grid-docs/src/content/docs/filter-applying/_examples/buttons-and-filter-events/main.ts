@@ -1,12 +1,11 @@
 import type {
     ColDef,
     FilterChangedEvent,
-    FilterModifiedEvent,
     FilterOpenedEvent,
+    FilterUiChangedEvent,
     GridApi,
     GridOptions,
     INumberFilterParams,
-    IProvidedFilter,
     ITextFilterParams,
 } from 'ag-grid-community';
 import {
@@ -68,6 +67,7 @@ const columnDefs: ColDef[] = [
 let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
+    enableFilterHandlers: true,
     columnDefs: columnDefs,
     defaultColDef: {
         flex: 1,
@@ -76,7 +76,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     },
     onFilterOpened: onFilterOpened,
     onFilterChanged: onFilterChanged,
-    onFilterModified: onFilterModified,
+    onFilterUiChanged: onFilterUiChanged,
 };
 
 function onFilterOpened(e: FilterOpenedEvent) {
@@ -88,10 +88,10 @@ function onFilterChanged(e: FilterChangedEvent) {
     console.log('gridApi.getFilterModel() =>', e.api.getFilterModel());
 }
 
-function onFilterModified(e: FilterModifiedEvent) {
-    console.log('onFilterModified', e);
+function onFilterUiChanged(e: FilterUiChangedEvent) {
+    console.log('onFilterUiChanged', e);
     console.log('applied model =>', e.api.getColumnFilterModel(e.column));
-    console.log('unapplied model =>', (e.filterInstance as unknown as IProvidedFilter).getModelFromUi());
+    console.log('unapplied model =>', e.api.getColumnFilterModel(e.column, true));
 }
 
 // setup the grid after the page has finished loading

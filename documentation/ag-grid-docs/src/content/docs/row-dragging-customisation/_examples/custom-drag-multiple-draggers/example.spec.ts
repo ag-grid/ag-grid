@@ -11,6 +11,11 @@ async function centreOf(locator: Locator) {
 
 /** Presses the mouse on `source` and moves it past the default 4px drag threshold. */
 async function startDrag(page: Page, source: Locator) {
+    // A clicked selection checkbox keeps its built-in tooltip open above it, over the previous row's
+    // drag handle, while it has focus: blur it and move the pointer away so the tooltip closes.
+    await page.evaluate(() => (document.activeElement as HTMLElement | null)?.blur());
+    await page.mouse.move(0, 0);
+    await expect(page.locator('.ag-tooltip')).toHaveCount(0);
     const { x, y } = await centreOf(source);
     await page.mouse.move(x, y);
     await page.mouse.down();
