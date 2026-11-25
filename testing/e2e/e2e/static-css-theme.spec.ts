@@ -120,6 +120,22 @@ const CASES: ParityCase[] = [
         darkMode: true,
     },
     {
+        name: 'Alpine with Material tabs and underlined inputs',
+        theme: () =>
+            window.agGrid.themeAlpine
+                .withPart(window.agGrid.tabStyleMaterial)
+                .withPart(window.agGrid.inputStyleUnderlined),
+        staticCss: () =>
+            window.agGrid.staticCssTheme({ defaults: 'alpine', tabStyle: 'material', inputStyle: 'underlined' }),
+        iconSetFile: 'icon-set-alpine.css',
+    },
+    {
+        name: 'Balham with a dark colour scheme',
+        theme: () => window.agGrid.themeBalham.withPart(window.agGrid.colorSchemeDark),
+        staticCss: () => window.agGrid.staticCssTheme({ defaults: 'balham', colorScheme: 'dark' }),
+        iconSetFile: 'icon-set-balham.css',
+    },
+    {
         name: 'Quartz with params set on an ancestor',
         theme: () => window.agGrid.themeQuartz.withParams({ accentColor: 'red', spacing: 6 }),
         staticCss: () => window.agGrid.staticCssTheme(),

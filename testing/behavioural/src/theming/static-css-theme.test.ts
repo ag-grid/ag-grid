@@ -99,6 +99,17 @@ describe('staticCssTheme', () => {
         expect(gridClasses()).not.toContain('ag-theme-part-input-style-bordered');
     });
 
+    test('applies override classes only for parts that replace the defaults theme part', async () => {
+        eLoadedMarkers.textContent += '.ag-measurement-container { --ag-static-css-icon-set-alpine-loaded: 1; }';
+
+        await createGrid({
+            theme: staticCssTheme({ defaults: 'alpine', tabStyle: 'material', inputStyle: 'bordered' }),
+        });
+
+        const overrides = gridClasses().filter((cls) => cls.startsWith('ag-theme-override-'));
+        expect(overrides).toEqual(['ag-theme-override-tab-style-material']);
+    });
+
     test('applies the linked icon set class with useLinkedImages', async () => {
         eLoadedMarkers.textContent =
             '.ag-measurement-container { --ag-static-css-loaded: 1; --ag-static-css-linked-loaded: 1; --ag-static-css-icon-set-quartz-regular-linked-loaded: 1; }';

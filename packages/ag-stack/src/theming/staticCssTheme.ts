@@ -22,6 +22,12 @@ export const _STATIC_CSS_INHERIT_CLASS = 'ag-static-css-inherit';
 export const _themePartClass = (partOrFeatureName: string) => `ag-theme-part-${kebabCase(partOrFeatureName)}`;
 
 /**
+ * The CSS class that lets a part chosen in place of the theme's default override the theme's params, e.g. `ag-theme-override-tab-style-material`.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export const _themePartOverrideClass = (partName: string) => `ag-theme-override-${kebabCase(partName)}`;
+
+/**
  * The name of a part in static CSS theme classes and files, e.g. `iconSet` and `quartzLight` give `icon-set-quartz-light`.
  * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
@@ -102,9 +108,14 @@ class StaticCssThemeImpl implements _StaticCssThemeHooks {
             const features = Object.keys(defaultParts) as StaticCssThemePart[];
             for (let i = 0, len = features.length; i < len; ++i) {
                 const feature = features[i];
-                const partClass = _themePartClass(`${feature}-${options[feature] ?? defaultParts[feature]}`);
+                const chosen = options[feature];
+                const partName = `${feature}-${chosen ?? defaultParts[feature]}`;
+                const partClass = _themePartClass(partName);
                 const linked = feature === 'iconSet' && options.useLinkedImages;
                 applyClass += ' ' + (linked ? partClass + '-linked' : partClass);
+                if (chosen != null && chosen !== defaultParts[feature]) {
+                    applyClass += ' ' + _themePartOverrideClass(partName);
+                }
             }
             this.cssClasses = [_STATIC_CSS_INHERIT_CLASS, applyClass];
         }

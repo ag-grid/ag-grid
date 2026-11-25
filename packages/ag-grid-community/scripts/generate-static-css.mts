@@ -13,6 +13,7 @@ import {
     _staticCssPartName,
     _themePartClass,
     _themePartFeatures,
+    _themePartOverrideClass,
     paramToVariableName,
     paramValueToCss,
 } from 'ag-stack';
@@ -281,7 +282,7 @@ const buildGridCss = async () => {
     }
 
     // Params blocks all have 0 specificity, so source order decides precedence: base params, then
-    // params set by swappable parts, then each theme's own parts and params.
+    // params set by swappable parts, then each theme's own parts and params, then chosen parts again.
     const baseModeParams = baseTheme._getModeParams();
     sanityCheck(DEFAULT_MODE in baseModeParams, `theme params have no ${DEFAULT_MODE} mode`);
     let params = paramsCss([`.${_STATIC_CSS_THEME_CLASS}`], baseModeParams);
@@ -300,6 +301,9 @@ const buildGridCss = async () => {
                 partCssEntries.push({ selector, css: partCss(part) });
             }
         }
+    }
+    for (const { name, part } of swappableParts) {
+        params += paramsCss([themedSelector(_themePartOverrideClass(name))], part.modeParams);
     }
     sanityCheck(
         allParamNames.has('--ag-accent-color') && allParamNames.has('--ag-spacing'),

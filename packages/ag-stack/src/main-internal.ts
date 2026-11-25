@@ -94,6 +94,7 @@ export {
     _staticCssIconSetFile,
     _staticCssPartName,
     _themePartClass,
+    _themePartOverrideClass,
 } from './theming/staticCssTheme';
 export { _isStaticCssTheme } from './theming/staticCssThemeTypes';
 export type { StaticCssThemePart } from './theming/staticCssThemeTypes';
