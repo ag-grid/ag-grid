@@ -480,7 +480,9 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         if (!csrm || !selectedCount) {
             return;
         }
-        const createdCount = Array.isArray(createdNodes) ? createdNodes.length : (createdNodes as ReadonlySet<RowNode>).size;
+        const createdCount = Array.isArray(createdNodes)
+            ? createdNodes.length
+            : (createdNodes as ReadonlySet<RowNode>).size;
         // OPTIMIZATION: walk the smaller side; per-row Map lookups hash every row id, which slows large loads
         if (createdCount < selectedCount) {
             for (const node of createdNodes) {
