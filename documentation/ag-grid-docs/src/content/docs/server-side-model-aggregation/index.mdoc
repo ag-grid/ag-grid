@@ -10,7 +10,7 @@ In the example below, note the following:
 
 - **Gold** and **Silver** are aggregated with `sum`, and **Bronze** with `max`.
 - Each group row shows the aggregated values of its rows, as calculated by the server.
-- Open the browser's dev console to view the `valueCols` in each request supplied to the datasource.
+- The console below the example shows the `valueCols` of each request supplied to the datasource.
 
 {% gridExampleRunner title="Aggregation" name="aggregation" /%}
 
@@ -38,8 +38,6 @@ The request lists the aggregated columns in `valueCols`, beside the grouping pro
 [SSRM Row Grouping](./server-side-model-grouping/#grouping-rows-on-the-server):
 
 {% interfaceDocumentation interfaceName="IServerSideGetRowsRequest" names=["valueCols"] config={"description": ""} /%}
-
-{% interfaceDocumentation interfaceName="ColumnVO" config={"description": ""} /%}
 
 For example, the top-level request of the example above is:
 
@@ -197,7 +195,7 @@ aggregation function, as sent in `valueCols`. The group key is always read from 
 so the group column and the `groupKeys` of later requests are unchanged. To change how the key is read, see
 [Group via Value Getter](./server-side-model-grouping/#grouping-by-nested-object-fields).
 
-{% interfaceDocumentation interfaceName="AggValueGetterParams" names=["value", "aggFunc", "data", "colDef"] config={"description": ""} /%}
+{% apiDocumentation source="column-properties/properties.json" section="aggregation" names=["aggValueGetter"] /%}
 
 {% note %}
 `${params.aggFunc}_${params.colDef.field}` is the naming this example's server uses. Build the key in `aggValueGetter`
@@ -220,4 +218,10 @@ The example below groups by **Gold**, aggregates it with `sum` and sorts it asce
 
 ## API Reference
 
-{% apiDocumentation source="grid-options/properties.json" section="aggregation" names=["grandTotalRow", "alwaysShowGrandTotalRow"] /%}
+{% apiDocumentation source="column-properties/properties.json" section="aggregation" names=["aggFunc", "aggValueGetter"] /%}
+
+{% apiDocumentation source="grid-options/properties.json" section="aggregation" names=["groupTotalRow", "grandTotalRow", "alwaysShowGrandTotalRow"] /%}
+
+{% apiDocumentation source="grid-api/api.json" section="serverSideRowModel" names=["applyServerSideTransaction", "refreshServerSide"] /%}
+
+{% apiDocumentation source="grid-api/api.json" section="rowNodes" names=["getRowNode"] /%}
