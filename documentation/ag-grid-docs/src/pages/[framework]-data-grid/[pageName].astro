@@ -99,9 +99,14 @@ const movedAnchorUrls = movedAnchors
               Object.entries(movedAnchors).map(async ([id, target]) => {
                   const [targetPageName, targetId] = target.split('/#');
                   const targetPage = await getEntry('docs', targetPageName);
-                  const targetHeadings = targetPage
+                  // The page is built for this framework (as `getDocsPages` decides), and its headings are read
+                  // from the content, as a `headings` frontmatter override lists only what the side nav shows
+                  const isTargetPageBuilt =
+                      targetPage &&
+                      (!targetPage.data.frameworks || targetPage.data.frameworks.includes(currentFramework));
+                  const targetHeadings = isTargetPageBuilt
                       ? await getHeadings({
-                            pageHeadings: targetPage.data.headings,
+                            pageHeadings: undefined,
                             title: targetPage.data.title,
                             pageName: targetPageName,
                             markdocContent: targetPage.body,
