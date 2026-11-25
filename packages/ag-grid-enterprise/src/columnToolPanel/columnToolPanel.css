@@ -33,8 +33,10 @@
     flex: 1 1 0px;
 }
 
+/* an empty zone's automatic minimum height fits its hint, which can wrap with user text spacing or long translations */
 :where(.ag-column-panel) .ag-column-drop-vertical:where(.ag-column-drop-empty) {
-    min-height: min-content;
+    min-height: auto;
+    overflow: visible;
 }
 
 :where(.ag-column-panel) .ag-column-drop-vertical:where(:not(.ag-last-column-drop)) {

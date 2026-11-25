@@ -166,7 +166,8 @@
     }
 
     .ag-column-drop-vertical.ag-column-drop-empty {
-        min-height: min-content;
+        min-height: auto;
+        overflow: visible;
     }
 
     .ag-column-drop-vertical-title-bar {
@@ -180,7 +181,6 @@
         border: dashed 1px;
         border-color: var(--ag-border-color);
         flex: 1 1 auto;
-        min-height: min-content;
         /* together with the list's padding these margins give the box the same position as before it was in flow */
         margin: calc(var(--ag-grid-size) * 2) var(--ag-grid-size) var(--ag-grid-size);
         /* the box stretches to fill the list, so a small vertical padding keeps a single line from growing the zone */

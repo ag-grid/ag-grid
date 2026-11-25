@@ -68,7 +68,6 @@
 
 :where(.ag-column-drop-empty) .ag-column-drop-vertical-list {
     overflow: hidden;
-    min-height: min-content;
 }
 
 .ag-column-drop-cell-button {

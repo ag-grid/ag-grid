@@ -98,7 +98,8 @@
     }
 
     .ag-column-drop-vertical.ag-column-drop-empty {
-        min-height: min-content;
+        min-height: auto;
+        overflow: visible;
     }
 
     .ag-column-drop-vertical-empty-message {
