@@ -62,7 +62,7 @@ export abstract class BaseEnvironment<
     }
 
     private theme: _ThemeHooks | undefined;
-    private readonly globalCSS: [string, string][] = [];
+    private readonly globalCSS = new Map<string, string>();
 
     protected abstract initVariables(): void;
     protected abstract getAdditionalCss(): Map<string, string[]>;
@@ -188,10 +188,9 @@ export abstract class BaseEnvironment<
     }
 
     public addGlobalCSS(css: string, debugId: string): void {
+        this.globalCSS.set(css, debugId);
         if (this.theme?._injectsGridCss) {
             _injectGlobalCSS(css, this.eStyleContainer, debugId, this.cssLayer, 0, this.styleNonce);
-        } else {
-            this.globalCSS.push([css, debugId]);
         }
     }
 
@@ -337,7 +336,6 @@ export abstract class BaseEnvironment<
             for (const [css, debugId] of globalCSS) {
                 _injectGlobalCSS(css, eStyleContainer, debugId, cssLayer, 0, styleNonce);
             }
-            globalCSS.length = 0;
         } else {
             _unregisterInstanceUsingThemingAPI(this);
         }

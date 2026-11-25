@@ -172,6 +172,26 @@ for (const { name, theme, staticCss, iconSetFile, darkMode, css } of CASES) {
     });
 }
 
+test('injects component CSS again when switching back from a static CSS theme', async ({ page }) => {
+    const { withApi } = await mountGrid(page, {
+        options: () => ({ theme: window.agGrid.themeQuartz, columnDefs: [{ field: 'make' }], rowData: [] }),
+    });
+    const overlayCssCount = () =>
+        page.evaluate(
+            () =>
+                [...document.querySelectorAll('style[data-ag-css]')].filter((el) =>
+                    el.textContent!.includes('.ag-overlay-panel')
+                ).length
+        );
+    await expect.poll(overlayCssCount).toBe(1);
+
+    await withApi((api) => api.setGridOption('theme', window.agGrid.staticCssTheme()));
+    await expect.poll(overlayCssCount).toBe(0);
+
+    await withApi((api) => api.setGridOption('theme', window.agGrid.themeQuartz));
+    await expect.poll(overlayCssCount).toBe(1);
+});
+
 test('linked images load from files beside the CSS, with a CSP that blocks data URLs', async ({ page }) => {
     const origin = 'http://static-css.test';
     await page.route(`${origin}/**`, (route) => {
