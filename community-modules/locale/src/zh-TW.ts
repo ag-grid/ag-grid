@@ -795,7 +795,7 @@ export const AG_GRID_LOCALE_ZH_TW = {
     ariaColumnFiltered: '欄已篩選',
     ariaCalculatedColumn: '計算欄',
     ariaColumnShowValuesAs: '正在以此方式顯示值',
-    ariaColumnShowValuesAsMode: '正在以此方式顯示值 ${label}',
+    ariaColumnShowValuesAsMode: '正在以 ${label} 方式顯示值',
     showValuesAsTooltip: '${label}: ${description}',
     ariaColumnSelectAll: '切換所有列的可見性',
     ariaColumnSelectExpandAll: '展開所有欄組',
