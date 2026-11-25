@@ -24,7 +24,7 @@ export const highContrastIconSvgs: Record<string, string> = {
     'chevron-up':
         '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="currentColor"><path d="M4 12l5-5 5 5" fill="none" stroke="currentColor" stroke-width="2.83"/></svg>',
     'color-picker':
-        '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="currentColor"><path fill-rule="evenodd" d="M7 3 2 8l5 5 2-2h7v-1l-4-2zM7 5.8 4.8 8l1 1h2.4l1-1z"/><path d="M3 1l3.5 3.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M15.5 12.5c-.7 1.2-1.3 1.9-1.3 2.8a1.3 1.3 0 0 0 2.6 0c0-.9-.6-1.6-1.3-2.8z"/></svg>',
+        '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="currentColor"><path d="M7 3 1 9l6 6 3-3h6v-2h-2l-1-1z"/><path d="M2 1l3.5 3.5" fill="none" stroke="currentColor" stroke-width="2.83"/><path d="M15 13c-.8 1.3-1.6 2.1-1.6 3.2a1.6 1.6 0 0 0 3.2 0c0-1.1-.8-1.9-1.6-3.2z"/></svg>',
     columns:
         '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="currentColor"><path fill-rule="evenodd" d="M2 3h14v12H2zM4 5v8h4V5zm6 0v8h4V5z"/></svg>',
     contracted:
