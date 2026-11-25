@@ -1238,7 +1238,7 @@ export type {
     ShadowValue,
     ShadowValueParams,
     StaticCssTheme,
-    StaticCssThemeDefaults,
+    StaticCssThemeName,
     StaticCssThemeOptions,
     Theme,
     WithParamTypes,

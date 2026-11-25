@@ -1,7 +1,7 @@
 // Generates the CSS files in `ag-grid-community/css` used with `staticCssTheme`, from the same
 // CSS, params and parts that the Theming API injects at runtime. Reads themes and parts from the
 // built package, so `build:package` must have run first.
-import type { StaticCssThemeDefaults, StaticCssThemePart, Theme } from 'ag-stack';
+import type { StaticCssThemeName, StaticCssThemePart, Theme } from 'ag-stack';
 import {
     PartImpl,
     _STATIC_CSS_INHERIT_CLASS,
@@ -43,14 +43,14 @@ const BUILT_IN_ICON_SET = 'quartzRegular';
 // every file the linked CSS references is in this one directory, so that applications serving the CSS copy only it
 const FILES_DIR = 'ag-grid-files';
 
-const THEMES: Record<StaticCssThemeDefaults, Theme> = {
+const THEMES: Record<StaticCssThemeName, Theme> = {
     quartz: grid.themeQuartz,
     alpine: grid.themeAlpine,
     balham: grid.themeBalham,
     material: grid.themeMaterial,
 };
-const themeNames = Object.keys(THEMES) as StaticCssThemeDefaults[];
-const themeClass = (name: StaticCssThemeDefaults) => `ag-theme-${name}`;
+const themeNames = Object.keys(THEMES) as StaticCssThemeName[];
+const themeClass = (name: StaticCssThemeName) => `ag-theme-${name}`;
 
 const SOURCE_DIRS = ['ag-stack/src', 'ag-grid-community/src', 'ag-grid-enterprise/src'].map((dir) =>
     path.join(packagesRoot, dir)
@@ -116,7 +116,7 @@ for (const { name, part } of partEntries) {
 const partContent = (part: PartImpl | undefined) =>
     part && JSON.stringify([part.feature, partCss(part), part.modeParams]);
 const baseTheme = _asThemeImpl(grid.createTheme());
-const ownParts = (name: StaticCssThemeDefaults) => {
+const ownParts = (name: StaticCssThemeName) => {
     const { parts } = _asThemeImpl(THEMES[name]);
     sanityCheck(
         baseTheme.parts.every((part, i) => partContent(parts[i]) === partContent(part)) &&

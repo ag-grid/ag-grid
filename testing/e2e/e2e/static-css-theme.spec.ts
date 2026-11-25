@@ -103,19 +103,19 @@ const CASES: ParityCase[] = [
     {
         name: 'Alpine defaults',
         theme: () => window.agGrid.themeAlpine,
-        staticCss: () => window.agGrid.staticCssTheme({ defaults: 'alpine' }),
+        staticCss: () => window.agGrid.staticCssTheme({ theme: 'alpine' }),
         iconSetFile: 'icon-set-alpine.css',
     },
     {
         name: 'Material defaults',
         theme: () => window.agGrid.themeMaterial,
-        staticCss: () => window.agGrid.staticCssTheme({ defaults: 'material' }),
+        staticCss: () => window.agGrid.staticCssTheme({ theme: 'material' }),
         iconSetFile: 'icon-set-material.css',
     },
     {
         name: 'Balham defaults in dark mode',
         theme: () => window.agGrid.themeBalham,
-        staticCss: () => window.agGrid.staticCssTheme({ defaults: 'balham' }),
+        staticCss: () => window.agGrid.staticCssTheme({ theme: 'balham' }),
         iconSetFile: 'icon-set-balham.css',
         darkMode: true,
     },
@@ -126,13 +126,13 @@ const CASES: ParityCase[] = [
                 .withPart(window.agGrid.tabStyleMaterial)
                 .withPart(window.agGrid.inputStyleUnderlined),
         staticCss: () =>
-            window.agGrid.staticCssTheme({ defaults: 'alpine', tabStyle: 'material', inputStyle: 'underlined' }),
+            window.agGrid.staticCssTheme({ theme: 'alpine', tabStyle: 'material', inputStyle: 'underlined' }),
         iconSetFile: 'icon-set-alpine.css',
     },
     {
         name: 'Balham with a dark colour scheme',
         theme: () => window.agGrid.themeBalham.withPart(window.agGrid.colorSchemeDark),
-        staticCss: () => window.agGrid.staticCssTheme({ defaults: 'balham', colorScheme: 'dark' }),
+        staticCss: () => window.agGrid.staticCssTheme({ theme: 'balham', colorScheme: 'dark' }),
         iconSetFile: 'icon-set-balham.css',
     },
     {

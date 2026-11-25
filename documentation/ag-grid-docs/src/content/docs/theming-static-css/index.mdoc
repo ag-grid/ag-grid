@@ -86,13 +86,13 @@ For new applications we recommend starting with the default theme and customisin
 ```{% frameworkTransform=true %}
 const gridOptions = {
     // equivalent to themeAlpine
-    theme: staticCssTheme({ defaults: 'alpine' }),
+    theme: staticCssTheme({ theme: 'alpine' }),
 }
 ```
 
 ## Loading icon sets
 
-The Quartz Regular icons are included in `ag-grid.css`. Any other icon set, whether chosen with `iconSet` or by `defaults`, needs its file loading after `ag-grid.css`:
+The Quartz Regular icons are included in `ag-grid.css`. Any other icon set, whether chosen with `iconSet` or by `theme`, needs its file loading after `ag-grid.css`:
 
 ```js
 import 'ag-grid-community/css/ag-grid.css';

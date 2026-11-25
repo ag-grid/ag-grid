@@ -120,7 +120,7 @@ export const _STATIC_CSS_THEME_PARTS: {
 };
 
 const NON_PART_OPTIONS: ValueSet<Exclude<keyof StaticCssThemeOptions, StaticCssThemePart>> = {
-    defaults: true,
+    theme: true,
     useLinkedImages: true,
 };
 
@@ -132,9 +132,9 @@ export function _findInvalidStaticCssThemeValues(
     options: Readonly<StaticCssThemeOptions>
 ): { option: string; value: string; valid: string }[] {
     const invalid: { option: string; value: string; valid: string }[] = [];
-    const { defaults } = options;
-    if (defaults != null && !has(_STATIC_CSS_THEME_DEFAULT_PARTS, defaults)) {
-        invalid.push({ option: '`defaults`', value: defaults, valid: formatValues(_STATIC_CSS_THEME_DEFAULT_PARTS) });
+    const { theme } = options;
+    if (theme != null && !has(_STATIC_CSS_THEME_DEFAULT_PARTS, theme)) {
+        invalid.push({ option: '`theme`', value: theme, valid: formatValues(_STATIC_CSS_THEME_DEFAULT_PARTS) });
     }
     const values = options as Readonly<Record<string, unknown>>;
     const keys = Object.keys(values);
@@ -167,7 +167,7 @@ export function _findMissingIconSetFile(
     options: Readonly<StaticCssThemeOptions>,
     style: CSSStyleDeclaration
 ): { iconSet: string; linked: boolean; file: string } | undefined {
-    const defaultParts = _STATIC_CSS_THEME_DEFAULT_PARTS[options.defaults ?? 'quartz'];
+    const defaultParts = _STATIC_CSS_THEME_DEFAULT_PARTS[options.theme ?? 'quartz'];
     const iconSet = options.iconSet ?? defaultParts?.iconSet;
     if (!iconSet || !has(_STATIC_CSS_THEME_PARTS.iconSet, iconSet)) {
         return undefined;

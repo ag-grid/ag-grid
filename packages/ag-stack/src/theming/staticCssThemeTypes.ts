@@ -1,15 +1,15 @@
-export type StaticCssThemeDefaults = 'quartz' | 'alpine' | 'balham' | 'material';
+export type StaticCssThemeName = 'quartz' | 'alpine' | 'balham' | 'material';
 
 /**
  * Options for `staticCssTheme`. Each part option names a Theming API part without its feature prefix,
- * e.g. `iconSet: 'quartzLight'` is `iconSetQuartzLight`, and replaces the part that `defaults` uses.
+ * e.g. `iconSet: 'quartzLight'` is `iconSetQuartzLight`, and replaces the part that `theme` uses.
  */
 export interface StaticCssThemeOptions {
     /**
      * The Theming API theme whose parameters and parts this theme starts from, e.g. `'alpine'` for `themeAlpine`.
      * @default 'quartz'
      */
-    defaults?: StaticCssThemeDefaults;
+    theme?: StaticCssThemeName;
     buttonStyle?: 'base' | 'quartz' | 'alpine' | 'balham';
     checkboxStyle?: 'default';
     colorScheme?: 'variable' | 'light' | 'lightCold' | 'lightWarm' | 'dark' | 'darkBlue' | 'darkWarm';
@@ -30,7 +30,7 @@ export interface StaticCssThemeOptions {
  * The options of `staticCssTheme` that choose a part.
  * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
-export type StaticCssThemePart = Exclude<keyof StaticCssThemeOptions, 'defaults' | 'useLinkedImages'>;
+export type StaticCssThemePart = Exclude<keyof StaticCssThemeOptions, 'theme' | 'useLinkedImages'>;
 
 export const staticCssThemeBrand: unique symbol = Symbol();
 

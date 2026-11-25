@@ -14,7 +14,7 @@ export type {
     PopupEventParams,
 } from './interfaces/iPopup';
 export { staticCssTheme } from './theming/staticCssTheme';
-export type { StaticCssTheme, StaticCssThemeDefaults, StaticCssThemeOptions } from './theming/staticCssThemeTypes';
+export type { StaticCssTheme, StaticCssThemeName, StaticCssThemeOptions } from './theming/staticCssThemeTypes';
 export type { Part } from './theming/part';
 export { createPart } from './theming/partImpl';
 export type { Theme } from './theming/theme';

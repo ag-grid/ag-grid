@@ -83,10 +83,10 @@ describe('staticCssTheme', () => {
         expect(popupRoot.parentElement!.classList.contains('ag-static-css-inherit')).toBe(true);
     });
 
-    test('applies the part classes of the defaults theme for parts that are not set', async () => {
+    test('applies the part classes of the chosen theme for parts that are not set', async () => {
         eLoadedMarkers.textContent += '.ag-measurement-container { --ag-static-css-icon-set-balham-loaded: 1; }';
 
-        await createGrid({ theme: staticCssTheme({ defaults: 'balham', inputStyle: 'underlined' }) });
+        await createGrid({ theme: staticCssTheme({ theme: 'balham', inputStyle: 'underlined' }) });
 
         expect(gridClasses()).toEqual(
             expect.arrayContaining([
@@ -99,11 +99,11 @@ describe('staticCssTheme', () => {
         expect(gridClasses()).not.toContain('ag-theme-part-input-style-bordered');
     });
 
-    test('applies override classes only for parts that replace the defaults theme part', async () => {
+    test("applies override classes only for parts that replace the chosen theme's part", async () => {
         eLoadedMarkers.textContent += '.ag-measurement-container { --ag-static-css-icon-set-alpine-loaded: 1; }';
 
         await createGrid({
-            theme: staticCssTheme({ defaults: 'alpine', tabStyle: 'material', inputStyle: 'bordered' }),
+            theme: staticCssTheme({ theme: 'alpine', tabStyle: 'material', inputStyle: 'bordered' }),
         });
 
         const overrides = gridClasses().filter((cls) => cls.startsWith('ag-theme-override-'));
@@ -134,7 +134,7 @@ describe('staticCssTheme', () => {
         eLoadedMarkers.textContent += '.ag-measurement-container { --ag-static-css-icon-set-alpine-loaded: 1; }';
         const api = await createGrid();
 
-        api.setGridOption('theme', staticCssTheme({ defaults: 'alpine', colorScheme: 'dark' }));
+        api.setGridOption('theme', staticCssTheme({ theme: 'alpine', colorScheme: 'dark' }));
 
         await waitFor(() => {
             expect(gridClasses()).toContain('ag-theme-alpine');
@@ -202,7 +202,7 @@ describe('staticCssTheme', () => {
     });
 
     test.each<[string, StaticCssThemeOptions, string]>([
-        ['the defaults theme', { defaults: 'alpine' }, 'icon-set-alpine'],
+        ['the theme option', { theme: 'alpine' }, 'icon-set-alpine'],
         ['the iconSet option', { iconSet: 'quartzLight' }, 'icon-set-quartz-light'],
         ['useLinkedImages', { iconSet: 'quartzLight', useLinkedImages: true }, 'icon-set-quartz-light-linked'],
     ])('warns when the icon set file for %s has not loaded, naming the file', async (_, options, file) => {
@@ -248,13 +248,13 @@ describe('staticCssTheme', () => {
 
     test('warns about unknown options and values', async () => {
         // @ts-expect-error - JavaScript callers can pass values that the types reject
-        const theme = staticCssTheme({ defaults: 'quarts', iconSet: 'quartzlight', tabstyle: 'material' });
+        const theme = staticCssTheme({ theme: 'quarts', iconSet: 'quartzlight', tabstyle: 'material' });
 
         await createGrid({ theme });
 
         const messages = diagnostics(consoleWarnSpy, 353).map((call) => String(call[1]));
         expect(messages).toEqual([
-            expect.stringContaining('unknown `defaults`: `quarts`'),
+            expect.stringContaining('unknown `theme`: `quarts`'),
             expect.stringContaining('unknown `iconSet`: `quartzlight`'),
             expect.stringContaining('unknown option: `tabstyle`'),
         ]);

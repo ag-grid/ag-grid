@@ -1,6 +1,6 @@
 import type {
     StaticCssTheme,
-    StaticCssThemeDefaults,
+    StaticCssThemeName,
     StaticCssThemeOptions,
     StaticCssThemePart,
     _StaticCssThemeHooks,
@@ -47,11 +47,11 @@ export const _staticCssIconSetFile = (iconSet: string, linked: boolean) =>
     `${_staticCssPartName('iconSet', iconSet)}${linked ? '-linked' : ''}`;
 
 /**
- * The parts of the Theming API theme that each `defaults` value names, in the order the themes add them.
+ * The parts of the Theming API theme that each `theme` value names, in the order the themes add them.
  * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export const _STATIC_CSS_THEME_DEFAULT_PARTS: {
-    readonly [D in StaticCssThemeDefaults]: {
+    readonly [D in StaticCssThemeName]: {
         readonly [P in StaticCssThemePart]-?: NonNullable<StaticCssThemeOptions[P]>;
     };
 } = {
@@ -102,9 +102,9 @@ class StaticCssThemeImpl implements _StaticCssThemeHooks {
     public _getCssClasses(): [inheritClass: string, applyClass: string] {
         if (!this.cssClasses) {
             const { options } = this;
-            const defaults = options.defaults ?? 'quartz';
-            const defaultParts = _STATIC_CSS_THEME_DEFAULT_PARTS[defaults] ?? _STATIC_CSS_THEME_DEFAULT_PARTS.quartz;
-            let applyClass = `${_STATIC_CSS_THEME_CLASS} ag-theme-${defaults}`;
+            const theme = options.theme ?? 'quartz';
+            const defaultParts = _STATIC_CSS_THEME_DEFAULT_PARTS[theme] ?? _STATIC_CSS_THEME_DEFAULT_PARTS.quartz;
+            let applyClass = `${_STATIC_CSS_THEME_CLASS} ag-theme-${theme}`;
             const features = Object.keys(defaultParts) as StaticCssThemePart[];
             for (let i = 0, len = features.length; i < len; ++i) {
                 const feature = features[i];
