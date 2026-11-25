@@ -172,6 +172,38 @@ test.describe('Columns tool panel column list resizing', () => {
         expect((await zone.boundingBox())!.height).toBeLessThan(initialHeight);
     });
 
+    test('can shrink a drop zone below its hint height once columns are dropped into it', async ({ page }) => {
+        const { grid, withApi } = await mountGrid(page, {
+            enterprise: true,
+            height: 500,
+            css: TEXT_SPACING_CSS,
+            options: () => ({
+                columnDefs: [{ field: 'country', enableRowGroup: true, enableValue: true }],
+                rowData: [],
+                sideBar: 'columns',
+                localeText: { rowGroupColumnsEmptyMessage: 'Ziehen Sie hierher, um Zeilengruppen festzulegen' },
+            }),
+        });
+        const zone = grid.locator('.ag-column-drop-vertical').first();
+        const zoneHeight = async () => (await zone.boundingBox())!.height;
+        const dragResizer = async (distance: number) => {
+            const box = (await zone.locator('.ag-resizer-bottom').boundingBox())!;
+            const x = box.x + box.width / 2;
+            const y = box.y + box.height / 2;
+            await page.mouse.move(x, y);
+            await page.mouse.down();
+            await page.mouse.move(x, y + distance, { steps: 10 });
+            await page.mouse.up();
+        };
+
+        await dragResizer(-8);
+        const emptyHeight = await zoneHeight();
+        await withApi((api) => api.setRowGroupColumns(['country']));
+        await dragResizer(-emptyHeight);
+
+        expect(await zoneHeight()).toBeLessThan(emptyHeight - 20);
+    });
+
     test('dragging several columns over an empty drop zone does not shrink the column list', async ({ page }) => {
         const { grid } = await mountGrid(page, {
             enterprise: true,

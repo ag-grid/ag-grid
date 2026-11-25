@@ -174,8 +174,7 @@ export class AgPositionableFeature<
             }
 
             if (offsetParentComputedStyles.minHeight != null) {
-                const paddingHeight = boundaryEl.offsetHeight - this.element.offsetHeight;
-                computedMinHeight = parseMinHeight(boundaryEl, offsetParentComputedStyles.minHeight) - paddingHeight;
+                computedMinHeight = this.getCssMinHeight(boundaryEl);
             }
         }
 
@@ -644,7 +643,8 @@ export class AgPositionableFeature<
     }
 
     private onResizeStart(e: MouseEvent, side: ResizableSides) {
-        this.boundaryEl = this.findBoundaryElement();
+        const boundaryEl = this.findBoundaryElement();
+        this.boundaryEl = boundaryEl;
 
         if (!this.positioned) {
             this.initialisePosition();
@@ -663,11 +663,18 @@ export class AgPositionableFeature<
         const { popup, forcePopupParentAsOffsetParent } = this.config;
 
         if (!popup && !forcePopupParentAsOffsetParent) {
+            // the CSS minimum can follow the content (a drop zone's hint), which may have changed since positioning
+            this.minHeight = this.config.minHeight || this.getCssMinHeight(boundaryEl);
             this.applySizeToSiblings(this.currentResizer.isBottom || this.currentResizer.isTop);
         }
 
         this.isResizing = true;
         this.updateDragStartPosition(e.clientX, e.clientY);
+    }
+
+    private getCssMinHeight(boundaryEl: HTMLElement): number {
+        const paddingHeight = boundaryEl.offsetHeight - this.element.offsetHeight;
+        return parseMinHeight(boundaryEl, window.getComputedStyle(boundaryEl).minHeight) - paddingHeight;
     }
 
     private getSiblings(): HTMLElement[] | null {
