@@ -92,6 +92,12 @@ This does not reproduce the exact previous appearance. Focus and built-in contro
 
 - The Aggregation Panel (`agAggregationComponent`) no longer converts string values to numbers. String values are still included in `count`, but numeric-looking strings such as `'1001'` no longer contribute to `sum`, `min`, `max` or `avg`. To aggregate numbers supplied as strings, convert them to numbers in the row data or with a [Value Getter](./value-getters/). See [Status Bar Configuration](./status-bar/#configuration).
 
+### Row Styling
+
+- Row elements now always fill the full width of the grid, even if columns don't fill the full width. This covers row borders, odd-row backgrounds, hover and selection highlights, and styles from `rowStyle`, `getRowStyle`, `rowClass` and `rowClassRules`. Cell styles and column borders still stop at the last column.
+- The row border is now drawn on `.ag-row`, not on the `.ag-grid-pinned-left-cells`, `.ag-grid-scrolling-cells` and `.ag-grid-pinned-right-cells` elements inside it. Move any CSS that changes or removes row borders on those elements to `.ag-row`. A `border-bottom` set on `.ag-row`, for example through `rowStyle`, now replaces the theme's row border instead of adding a second border.
+- `.ag-grid-scrolling-cells` now grows to fill the width between the pinned columns, so it can be wider than its columns.
+
 ### Server-Side Row Model
 
 - When rows are grouped, the provided full width loading row is now indented to the level of the rows being loaded, so its spinner lines up with the expand and collapse icons of the rows around it. To display loading rows without indentation, add `.ag-row-loading .ag-loading { padding-inline-start: var(--ag-cell-horizontal-padding); }` to your CSS. See [Full Width Loading Row](./server-side-model-loading-rows/#full-width-loading-row).

@@ -282,26 +282,6 @@
     width: 100%;
 }
 
-/* fill the gap between the last content section and pinned-right without allowing
-   the row's own background to bleed into the empty viewport area. */
-:where(.ag-row:not(.ag-full-width-row))::after,
-:where(.ag-header-row)::after,
-:where(.ag-row.ag-embedded-full-width-row::after),
-:where(.ag-spanned-row)::after {
-    content: '';
-    flex: 1 0 0px;
-    align-self: stretch;
-}
-
-:where(.ag-row:not(.ag-header-row, .ag-full-width-row))::after,
-:where(.ag-row.ag-embedded-full-width-row::after) {
-    background-color: var(--ag-data-background-color);
-}
-
-:where(.ag-header-row)::after {
-    background-color: var(--ag-header-background-color);
-}
-
 .ag-header {
     position: absolute;
     top: 0;
@@ -322,15 +302,14 @@
 }
 
 .ag-grid-scrolling-cells {
-    flex: 0 0 auto;
+    /* grow past the columns' width so row styles fill the viewport, pushing pinned-right to the edge */
+    flex: 1 0 auto;
 
     /* create a base stacking context for center cells so pinned lanes can always layer above. */
     z-index: 0;
 }
 
 :where(.ag-row.ag-embedded-full-width-row) > .ag-grid-scrolling-cells {
-    flex: 1 0 auto;
-
     /* rtl:ignore */
     margin-right: var(--ag-internal-pinned-right-sticky-offset, 0);
 }
@@ -357,30 +336,8 @@
     right: var(--ag-internal-pinned-right-sticky-offset, 0);
 }
 
-/* place pinned-right after the ::after spacer so the spacer fills the gap between
-   the scrolling section and pinned-right. */
-:where(.ag-row:not(.ag-full-width-row)),
-:where(.ag-header-row),
-:where(.ag-row.ag-embedded-full-width-row),
-:where(.ag-spanned-row) {
-    > .ag-grid-pinned-right-cells {
-        order: 1;
-    }
-}
-
-/* in RTL (row-reverse), the gap is between pinned-left and scrolling-cells.
-   move scrolling-cells after the spacer so it sits next to pinned-right on the left. */
 /* rtl:ignore */
 .ag-rtl {
-    :where(.ag-row:not(.ag-full-width-row)),
-    :where(.ag-header-row),
-    :where(.ag-row.ag-embedded-full-width-row),
-    :where(.ag-spanned-row) {
-        > :where(.ag-grid-scrolling-cells) {
-            order: 1;
-        }
-    }
-
     :where(.ag-row .ag-grid-scrolling-cells),
     :where(.ag-spanned-row .ag-grid-scrolling-cells) {
         /* when scrollable, offset for the vertical scrollbar on the left in rtl. */
