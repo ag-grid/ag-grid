@@ -15,7 +15,26 @@
       "executor": "nx:noop",
       "inputs": [],
       "outputs": [],
-      "dependsOn": ["build:types", "build:package", "build:copy-styles", "build:umd"]
+      "dependsOn": ["build:types", "build:package", "build:copy-styles", "build:static-css", "build:umd"]
+    },
+    "build:static-css": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build:package"],
+      "inputs": [
+        "{projectRoot}/scripts/generate-static-css.mts",
+        "{projectRoot}/package.json",
+        "{projectRoot}/src/**/*",
+        "{workspaceRoot}/packages/ag-stack/src/**/*",
+        "{workspaceRoot}/packages/ag-grid-enterprise/src/**/*",
+        "{workspaceRoot}/postcss-plugins.cjs",
+        "{workspaceRoot}/plugins/stylelint-plugin-ag/**/*",
+        "defaultExcludes"
+      ],
+      "outputs": ["{projectRoot}/css"],
+      "cache": true,
+      "options": {
+        "command": "node packages/ag-grid-community/scripts/generate-static-css.mts"
+      }
     },
     "build:umd": {
       "executor": "ag-grid-task-autogen:esbuild-staged",

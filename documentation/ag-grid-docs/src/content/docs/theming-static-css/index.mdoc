@@ -1,0 +1,149 @@
+---
+title: "Static CSS Files"
+---
+
+Load the grid's styles from static CSS files, for applications whose Content Security Policy does not allow the grid to inject styles.
+
+By default, the grid adds the styles for its theme to the page at runtime. This works with a [strict Content Security Policy](./security/#style-src) if you provide a `styleNonce`. If your application cannot allow injected styles at all, the grid package provides a version of its CSS that can be linked as a static file, or incorporated into your application build.
+
+{% note %}
+We only recommend using static CSS files if your Content Security Policy requires it. The Javascript Theming API achieves smaller bundle size, TypeScript validation of parameters, and requires less configuration of your application's build.
+{% /note %}
+
+## Setup
+
+1. Optional: enable [development validation](./dev-validation/) so that the grid reports missing CSS files and incorrect configuration (see [Validation](#validation)):
+
+    ```js
+    import { enableDevValidations } from 'ag-grid-community';
+
+    if (process.env.NODE_ENV !== 'production') {
+        enableDevValidations();
+    }
+    ```
+
+2. Set the `theme` grid option to a theme created with `staticCssTheme` from `ag-grid-community`:
+
+    ```{% frameworkTransform=true %}
+    const gridOptions = {
+        theme: staticCssTheme(),
+    }
+    ```
+
+    The grid then injects no styles, and relies on the CSS files below being loaded.
+
+3. Load `ag-grid.css` from `ag-grid-community/css`, either by importing it through your bundler or linking it from your HTML:
+
+    ```js
+    import 'ag-grid-community/css/ag-grid.css';
+    // optional: an icon set other than Quartz Regular, loaded after ag-grid.css
+    import 'ag-grid-community/css/icon-set-alpine.css';
+    ```
+
+`ag-grid.css` contains the styles for every community and enterprise feature, every built-in theme and part, and the default Quartz Regular icons. Other [icon sets](#loading-icon-sets) are in separate files. If your Content Security Policy does not allow `data:` URLs for images, use [linked images](#linked-images) instead.
+
+## Setting Parameters
+
+Set parameters with CSS custom properties, see [Overriding Theme Parameters with Custom Properties](./theming-css/#overriding-theme-parameters-with-custom-properties).
+
+These can be set on any parent element of the grid:
+
+```css
+body {
+    --ag-accent-color: red;
+    --ag-spacing: 6px;
+}
+```
+
+## Choosing Parts
+
+With no options, `staticCssTheme()` is equivalent to the default theme.
+
+You configure theme parts by passing arguments, e.g.:
+
+```js
+staticCssTheme({ colorScheme: 'dark' });
+```
+
+The available parts are listed below. See the [Parts Reference](./theming-parts/#parts-reference) for what each one looks like.
+
+- `colorScheme`: `'variable'`, `'light'`, `'lightCold'`, `'lightWarm'`, `'dark'`, `'darkBlue'`, `'darkWarm'`
+- `iconSet`: `'quartzRegular'`, `'quartzLight'`, `'quartzBold'`, `'alpine'`, `'balham'`, `'material'`
+- `buttonStyle`: `'base'`, `'quartz'`, `'alpine'`, `'balham'`
+- `tabStyle`: `'base'`, `'quartz'`, `'alpine'`, `'material'`, `'rolodex'`
+- `inputStyle`: `'base'`, `'bordered'`, `'underlined'`
+- `checkboxStyle`: `'default'`
+- `columnDropStyle`: `'bordered'`, `'plain'`
+
+## Migrating from a named theme
+
+For new applications we recommend starting with the default theme and customising it for your needs, but if you are migrating from a named theme you can import its default parameters and parts to start from a base closer to your existing application:
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    // equivalent to themeAlpine
+    theme: staticCssTheme({ defaults: 'alpine' }),
+}
+```
+
+## Loading icon sets
+
+The Quartz regular icons are included in `ag-grid.css`. Any other icon set, whether chosen with `iconSet` or by `defaults`, needs its file loading after `ag-grid.css`:
+
+```js
+import 'ag-grid-community/css/ag-grid.css';
+// for staticCssTheme({ iconSet: 'quartzLight' })
+import 'ag-grid-community/css/icon-set-quartz-light.css';
+```
+
+## Linked Images
+
+Every CSS file is available in two versions:
+
+- Default files use `url("data:...")` URIs to embed SVG image data, ensuring that icons are immediately available when required. This is recommended unless your Content Security Policy bans `data:` URIs in [`img-src`](./security/#img-src).
+- Linked images use `url("path/to/file.svg")` URIs to link to an SVG file. In order to use them your bundler must be configured to handle these paths (many modern build tools like Vite work this way by default) or you must copy the `ag-grid-files` directory from `ag-grid-community/css` to your server, alongside the CSS files.
+
+To use linked images, set `useLinkedImages`:
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    theme: staticCssTheme({ useLinkedImages: true }),
+}
+```
+
+Then load the linked version of every CSS file: `ag-grid-linked.css` in place of `ag-grid.css`, and the `-linked.css` file of your icon set. `ag-grid-linked.css` does not include the Quartz Regular icons, so they need their own file too:
+
+```js
+import 'ag-grid-community/css/ag-grid-linked.css';
+import 'ag-grid-community/css/icon-set-quartz-regular-linked.css';
+// or for staticCssTheme({ iconSet: 'quartzLight', useLinkedImages: true })
+// import 'ag-grid-community/css/icon-set-quartz-light-linked.css';
+```
+
+### Configuring your bundler for linked images
+
+Linked images do not need the `img-src data:` CSP directive, as long as your bundler does not turn them back into data URIs. Some bundlers inline small files as data URLs: Vite does this for files under 4 KiB in production builds, so set [`build.assetsInlineLimit`](https://vite.dev/config/build-options.html#build-assetsinlinelimit) to `0`:
+
+```js
+// vite.config.js
+export default defineConfig({
+    build: { assetsInlineLimit: 0 },
+});
+```
+
+## Fonts
+
+Some themes use fonts from Google Fonts: Quartz uses IBM Plex Sans and Material uses Roboto. The `loadThemeGoogleFonts` grid option has no effect with static CSS files. Load the font yourself, or set `--ag-font-family` to a font your application already loads. If the font is not loaded, the grid uses the theme's fallback font.
+
+If your application can set `style-src fonts.googleapis.com` and `font-src fonts.gstatic.com` in its Content-Security Policy, you may link fonts from Google's CDN using the instructions in [Get Started with the Google Fonts API](https://developers.google.com/fonts/docs/getting_started).
+
+Otherwise follow [Google's instructions for downloading and self-hosting](https://fonts.google.com/knowledge/using_type/self_hosting_web_fonts) the [IBM Plex Sans](https://fonts.google.com/specimen/IBM+Plex+Sans) or [Roboto](https://fonts.google.com/specimen/Roboto) fonts. When self-hosted, the only CSP directive this needs is `font-src 'self'`.
+
+## CSS Layers
+
+The `themeCssLayer` grid option has no effect with static CSS files. To put the grid's styles in a [CSS layer](./theming/#css-layers), import the CSS files into the layer:
+
+```css
+@import url('ag-grid-community/css/ag-grid.css') layer(grid);
+@import url('ag-grid-community/css/icon-set-alpine.css') layer(grid);
+```

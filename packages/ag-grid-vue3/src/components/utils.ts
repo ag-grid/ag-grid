@@ -114,6 +114,7 @@ import type {
     SelectionColumnDef,
     SendToClipboard,
     SideBarDef,
+    StaticCssTheme,
     StatusBar,
     TabToNextCell,
     TabToNextGridContainer,
@@ -1857,13 +1858,16 @@ export interface Props<TData> {
          * @agModule `GridStateModule`
          */
     initialState?: GridState,
-    /** Theme to apply to the grid, or the string "legacy" to opt back into the
-         * v32 style of theming where themes were imported as CSS files and applied
-         * by setting a class name on the parent element.
+    /** Theme to apply to the grid. Use a theme created with `staticCssTheme` to style the grid with static CSS
+         * files from `ag-grid-community/css` that your application loads itself, for applications whose Content
+         * Security Policy does not allow styles to be injected.
+         *
+         * The string "legacy" is deprecated, and opts back into the v32 style of theming
+         * using the CSS files in `ag-grid-community/styles`.
          *
          * @default themeQuartz
          */
-    theme?: Theme | 'legacy',
+    theme?: Theme | StaticCssTheme | 'legacy',
     /** If your theme uses a font that is available on Google Fonts, pass true to load it from Google's CDN.
          */
     loadThemeGoogleFonts?: boolean,

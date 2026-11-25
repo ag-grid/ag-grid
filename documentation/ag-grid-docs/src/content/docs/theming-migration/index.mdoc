@@ -14,7 +14,7 @@ In v33, the `theme` grid option has a default value, and if no value is provided
 
 ### Continue with legacy themes
 
-If you want to upgrade to v33 without immediately adopting the Theming API, you can opt back in to the v32 style of themes by passing the string `"legacy"` to the `theme` grid option. You can then continue to use legacy themes.
+Legacy Themes are deprecated and will be removed in a future release. To defer upgrading to Theming API, pass the string `"legacy"` to the `theme` grid option. Applications should upgrade to Theming API, or load the Theming API's styles from [Static CSS Files](./theming-static-css/) if their Content Security Policy requires it.
 
 If you have multiple grids you may find using a [Global Grid Option](./grid-interface/#global-grid-options) to be a convenient way to set the theme to `"legacy"` for all grids in your application.
 

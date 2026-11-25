@@ -1,8 +1,8 @@
 import {
     FORCE_LEGACY_THEMES,
-    _injectCoreAndModuleCSS,
     _injectGlobalCSS,
     _isStyleInjectionDisabled,
+    _useParamsCss,
     getInjectionState,
 } from './inject';
 import type { Part } from './part';
@@ -10,6 +10,7 @@ import { PartImpl, createPart, defaultModeName } from './partImpl';
 import { sharedDefaults } from './shared/shared-css';
 import type { SharedThemeParams } from './shared/shared-css';
 import type { Theme } from './theme';
+import type { _ThemeHooks, _ThemeUseContext } from './themeHooks';
 import type { ThemeLogger } from './themeLogger';
 import { paramValueToCss } from './themeTypeUtils';
 import type { WithParamTypes } from './themeTypes';
@@ -29,16 +30,10 @@ export const createSharedTheme = <TParams extends SharedThemeParams>(
     overridePrefix?: string
 ): Theme<TParams> => new ThemeImpl({ themeLogger, overridePrefix });
 
-type themeUseArgs = {
-    loadThemeGoogleFonts: boolean | undefined;
-    styleContainer: HTMLElement;
-    cssLayer: string | undefined;
-    nonce: string | undefined;
-    moduleCss: Map<string, string[]> | undefined;
-};
-
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export class ThemeImpl {
+export class ThemeImpl implements _ThemeHooks {
+    public readonly _injectsGridCss = true;
+
     constructor(
         private readonly params: {
             themeLogger: ThemeLogger;
@@ -75,14 +70,10 @@ export class ThemeImpl {
         );
     }
 
-    _startUse({ styleContainer, cssLayer, nonce, loadThemeGoogleFonts, moduleCss }: themeUseArgs): void {
+    _startUse({ environment, styleContainer, cssLayer, nonce, loadThemeGoogleFonts }: _ThemeUseContext): void {
         if (_isStyleInjectionDisabled()) {
             return;
         }
-
-        uninstallLegacyCSS();
-
-        _injectCoreAndModuleCSS(styleContainer, cssLayer, nonce, moduleCss);
 
         const googleFontsUsed = getGoogleFontsUsed(this);
         if (googleFontsUsed.length > 0) {
@@ -96,6 +87,8 @@ export class ThemeImpl {
         for (const part of this.parts) {
             part.use(styleContainer, cssLayer, nonce);
         }
+
+        _useParamsCss(environment, this._getParamsCss(), this._getParamsClassName(), styleContainer, cssLayer, nonce);
     }
 
     private _cssClassCache?: [string, string];
@@ -270,7 +263,7 @@ const getGoogleFontsUsed = (theme: ThemeImpl): string[] => {
 let uninstalledLegacyCSS = false;
 // Remove the CSS from @ag-grid-community/styles that is automatically injected
 // by the UMD bundle
-const uninstallLegacyCSS = () => {
+export const uninstallLegacyCSS = () => {
     if (uninstalledLegacyCSS) {
         return;
     }

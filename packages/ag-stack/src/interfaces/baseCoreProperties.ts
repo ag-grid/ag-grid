@@ -1,3 +1,4 @@
+import type { StaticCssTheme } from '../theming/staticCssThemeTypes';
 import type { Theme } from '../theming/theme';
 
 /**
@@ -8,7 +9,7 @@ export interface BaseCoreProperties {
     tabIndex?: number;
     suppressScrollWhenPopupsAreOpen?: boolean;
     enableRtl?: boolean;
-    theme?: Theme | 'legacy';
+    theme?: Theme | StaticCssTheme | 'legacy';
     loadThemeGoogleFonts?: boolean;
     themeCssLayer?: string;
     styleNonce?: string;

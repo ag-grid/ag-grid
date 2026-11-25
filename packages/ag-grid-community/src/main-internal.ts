@@ -470,6 +470,7 @@ export {
     _warnForGrid,
     _warnWithoutAttribution,
 } from './validation/logging';
+export { _STATIC_CSS_THEME_PARTS } from './validation/rules/themeValidations';
 export { _emitValidationWarning, _createValidationWarning } from './validation/validationTypes';
 export type { ValidationWarning } from './validation/validationTypes';
 export type { ExpressionService } from './valueService/expressionService';
