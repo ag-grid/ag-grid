@@ -383,27 +383,21 @@ test.describe('native tab navigation in a multi filter sub-menu', () => {
     async function openSubMenu(page: Page, child: { filter: string; filterParams?: object }, tabIndex?: number) {
         await mountGrid(page, {
             enterprise: true,
-            options: () => ({ rowData: [] }),
+            options: tabIndex ? () => ({ tabIndex: 3, rowData: [] }) : () => ({ rowData: [] }),
         });
-        await page.evaluate(
-            ({ child, tabIndex }) => {
-                const api = window.gridApi;
-                if (tabIndex !== undefined) {
-                    api.setGridOption('tabIndex', tabIndex);
-                }
-                api.setGridOption('columnDefs', [
-                    {
-                        field: 'value',
-                        filter: 'agMultiColumnFilter',
-                        filterParams: {
-                            filters: [{ ...child, display: 'subMenu' }, { filter: 'agSetColumnFilter' }],
-                        },
+        await page.evaluate((child) => {
+            const api = window.gridApi;
+            api.setGridOption('columnDefs', [
+                {
+                    field: 'value',
+                    filter: 'agMultiColumnFilter',
+                    filterParams: {
+                        filters: [{ ...child, display: 'subMenu' }, { filter: 'agSetColumnFilter' }],
                     },
-                ]);
-                api.showColumnFilter('value');
-            },
-            { child, tabIndex }
-        );
+                },
+            ]);
+            api.showColumnFilter('value');
+        }, child);
         const menuItem = page.locator('.ag-multi-filter-menu-item');
         await menuItem.focus();
         await page.keyboard.press('Enter');
