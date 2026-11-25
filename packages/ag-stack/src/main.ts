@@ -17,6 +17,8 @@ export type { Part } from './theming/part';
 export { createPart } from './theming/partImpl';
 export type { Theme } from './theming/theme';
 export type {
+    BackdropFilterFunction,
+    BackdropFilterValue,
     BorderStyleValue,
     BorderValue,
     ColorSchemeValue,
