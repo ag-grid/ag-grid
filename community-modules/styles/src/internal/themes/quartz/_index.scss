@@ -435,8 +435,10 @@
         border: dashed 1px;
         border-color: var(--ag-border-color);
         flex: 1 1 auto;
-        /* together with the list's padding these margins give the box the same position as before it was in flow */
+
+        /* with the list's padding, these margins inset the box 1.5 grid sizes from the top and bottom and 2 from the sides */
         margin: calc(var(--ag-grid-size) * 1.5) var(--ag-grid-size) calc(var(--ag-grid-size) * 0.5);
+
         /* the box stretches to fill the list, so a small vertical padding keeps a single line from growing the zone */
         padding: calc(var(--ag-grid-size) * 0.5) calc(var(--ag-grid-size) * 2);
     }
