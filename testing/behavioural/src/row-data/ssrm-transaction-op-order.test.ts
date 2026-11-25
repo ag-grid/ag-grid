@@ -73,6 +73,21 @@ describe('SSRM transaction operation order', () => {
         expect(api.getDisplayedRowCount()).toBe(49);
     });
 
+    test('an update for a new row added in the same transaction is ignored, as it runs before the add', async () => {
+        const api = await createGrid();
+
+        const result = api.applyServerSideTransaction({
+            add: [{ id: 100, price: 100 }],
+            update: [{ id: 100, price: 999 }],
+            addIndex: 2,
+        });
+
+        expect(result?.status).toBe('Applied');
+        expect(ids(result?.update)).toEqual([]);
+        expect(ids(result?.add)).toEqual(['100']);
+        expect(api.getRowNode('100')?.data).toEqual({ id: 100, price: 100 });
+    });
+
     test('a new row added and removed in one transaction is added, then removed', async () => {
         const api = await createGrid();
 
