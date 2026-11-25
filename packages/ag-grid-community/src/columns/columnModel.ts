@@ -70,6 +70,10 @@ export class ColumnModel extends BeanStub implements NamedBean {
     public gridStringComparator: StringComparator | undefined = undefined;
     /** The {@link stringSortVersion} {@link gridStringComparator} was built for; `-1` until built. */
     public gridStringComparatorVersion = -1;
+    /** The `accentedSort` grid option the versions were last synced with. */
+    private syncedAccentedSort: GridOptions['accentedSort'] = undefined;
+    /** The `caseInsensitiveSort` grid option the versions were last synced with. */
+    private syncedCaseInsensitiveSort = false;
     /** Whether the `accentedSort` grid option changed since `stringComparatorsChanged` was last raised. */
     private gridAccentedSortChanged = false;
     /** Whether the `caseInsensitiveSort` grid option changed since `stringComparatorsChanged` was last raised. */
@@ -151,29 +155,11 @@ export class ColumnModel extends BeanStub implements NamedBean {
             ['defaultColDef', 'defaultColGroupDef', 'columnTypes', 'suppressFieldDotNotation'],
             this.recreateColumnDefs.bind(this)
         );
-        // the grid options compare by identity, so a framework re-creating them with an equal value keeps the comparators
-        const gos = this.gos;
-        let accentedSort = gos.get('accentedSort');
-        let caseInsensitiveSort = !!gos.get('caseInsensitiveSort');
-        // all the options of a change set are set before the first event, so it invalidates every comparator they affect
-        // before any refresh, and the rest of the change set has nothing left to do
+        this.syncedAccentedSort = this.gos.get('accentedSort');
+        this.syncedCaseInsensitiveSort = !!this.gos.get('caseInsensitiveSort');
         const onStringSortChanged = () => {
-            const newAccentedSort = gos.get('accentedSort');
-            const newCaseInsensitiveSort = !!gos.get('caseInsensitiveSort');
-            if (!_mergedEqual(newAccentedSort, accentedSort)) {
-                accentedSort = newAccentedSort;
-                ++this.accentedSortVersion;
-                this.gridAccentedSortChanged = true;
-            }
-            if (newCaseInsensitiveSort !== caseInsensitiveSort) {
-                caseInsensitiveSort = newCaseInsensitiveSort;
-                ++this.caseInsensitiveSortVersion;
-                this.gridCaseInsensitiveSortChanged = true;
-            }
-            if (this.gridAccentedSortChanged || this.gridCaseInsensitiveSortChanged) {
-                ++this.stringSortVersion;
-                this.raiseStringComparatorsChanged();
-            }
+            this.syncStringSortOptions();
+            this.raiseStringComparatorsChanged();
         };
         this.addManagedPropertyListener('accentedSort', onStringSortChanged);
         this.addManagedPropertyListener('caseInsensitiveSort', onStringSortChanged);
@@ -517,6 +503,32 @@ export class ColumnModel extends BeanStub implements NamedBean {
             valueColsSvc?.dispatchColChange(source);
         } finally {
             colAnimation?.finish();
+        }
+    }
+
+    /**
+     * Bumps the string sort versions for the `accentedSort` and `caseInsensitiveSort` grid options that changed since the
+     * last sync. Called from their property listeners and before the comparators are read, as other properties of the
+     * same change set, such as `rowData`, can sort before those listeners run. The grid options compare by identity, so
+     * a framework re-creating them with an equal value keeps the comparators.
+     */
+    public syncStringSortOptions(): void {
+        const gos = this.gos;
+        const accentedSort = gos.get('accentedSort');
+        const caseInsensitiveSort = !!gos.get('caseInsensitiveSort');
+        let changed = false;
+        if (accentedSort !== this.syncedAccentedSort && !_mergedEqual(accentedSort, this.syncedAccentedSort)) {
+            ++this.accentedSortVersion;
+            this.gridAccentedSortChanged = changed = true;
+        }
+        this.syncedAccentedSort = accentedSort;
+        if (caseInsensitiveSort !== this.syncedCaseInsensitiveSort) {
+            this.syncedCaseInsensitiveSort = caseInsensitiveSort;
+            ++this.caseInsensitiveSortVersion;
+            this.gridCaseInsensitiveSortChanged = changed = true;
+        }
+        if (changed) {
+            ++this.stringSortVersion;
         }
     }
 

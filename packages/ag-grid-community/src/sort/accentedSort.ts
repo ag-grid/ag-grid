@@ -100,6 +100,7 @@ export function _getColumnStringComparator(
     gos: GridOptionsService
 ): StringComparator | undefined {
     const { accentedSort, caseInsensitiveSort } = column.colDef;
+    colModel.syncStringSortOptions();
     // a colDef change resets `stringComparatorVersion`, so the version it depends on can only change with it
     const version = getStringSortVersion(column.colDef, colModel);
     if (column.stringComparatorVersion !== version) {

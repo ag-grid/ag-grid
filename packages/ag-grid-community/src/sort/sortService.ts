@@ -273,6 +273,7 @@ export class SortService extends BeanStub implements NamedBean {
     public getSortOptions(): SortOption[] {
         let opts = this.opts;
         const { colModel } = this.beans;
+        colModel.syncStringSortOptions();
         const { stringSortVersion, colDefsVersion } = colModel;
         if (
             opts === null ||

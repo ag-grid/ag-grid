@@ -75,6 +75,17 @@ describe('caseInsensitiveSort', () => {
         expect(values).toEqual(caseInsensitiveOrder);
     });
 
+    test('an update that sets rowData before caseInsensitiveSort sorts the new rows with it', () => {
+        const api = createGrid('ci-row-data-first', {});
+        api.applyColumnState({ state: [{ colId: 'code', sort: 'asc' }] });
+
+        // rowData is applied first and sorts the rows before the caseInsensitiveSort event is raised
+        api.updateGridOptions({ rowData: [...codes].reverse().map((code) => ({ code })), caseInsensitiveSort: true });
+        const values: unknown[] = [];
+        api.forEachNodeAfterFilterAndSort((node) => values.push(node.data.code));
+        expect(values).toEqual(['Aa', 'aa', 'AA', 'AZ', 'az', 'B', 'b']);
+    });
+
     test('colDef.caseInsensitiveSort overrides the grid option for that column', () => {
         const onApi = createGrid('ci-col-on', {}, { caseInsensitiveSort: true });
         expect(sortedValues(onApi, 'code')).toEqual(caseInsensitiveOrder);
