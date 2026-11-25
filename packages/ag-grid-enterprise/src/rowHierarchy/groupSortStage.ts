@@ -21,6 +21,7 @@ export class GroupSortStage extends BeanStub implements NamedBean, _IRowNodeSort
         'postSortRows',
         'groupDisplayType',
         'accentedSort',
+        'caseInsensitiveSort',
         'groupMaintainOrder',
     ];
 

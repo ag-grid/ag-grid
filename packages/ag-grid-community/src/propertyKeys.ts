@@ -225,6 +225,7 @@ export const _BOOLEAN_GRID_OPTIONS: KeysWithType<boolean>[] = [
     'groupSuppressBlankHeader',
     'suppressMenuHide',
     'suppressRowDeselection',
+    'caseInsensitiveSort',
     'suppressMultiSort',
     'alwaysMultiSort',
     'singleClickEdit',

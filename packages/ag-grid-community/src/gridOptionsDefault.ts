@@ -170,6 +170,7 @@ export const GRID_OPTION_DEFAULTS = {
     fillHandleDirection: 'xy',
     suppressClearOnFillReduction: false,
     accentedSort: false,
+    caseInsensitiveSort: false,
     suppressMultiSort: false,
     alwaysMultiSort: false,
     suppressMaintainUnsortedOrder: false,

@@ -57,6 +57,17 @@ describe('Set Filter list order follows accentedSort', () => {
         expect(await listOrder(api)).toEqual(['(Select All)', ...[...values].sort((a, b) => a.localeCompare(b))]);
     });
 
+    test('`caseInsensitiveSort` sorts the list without regard to case', async () => {
+        const values = ['b', 'AA', 'az', 'aa', 'B', 'AZ'];
+        const api = await gridsManager.createGridAndWait('grid1', {
+            // a case-sensitive Set Filter lists each case variant, so the order of values that differ only in case shows
+            columnDefs: [{ field: 'name', filter: 'agSetColumnFilter', filterParams: { caseSensitive: true } }],
+            rowData: values.map((name) => ({ name })),
+            caseInsensitiveSort: true,
+        });
+        expect(await listOrder(api)).toEqual(['(Select All)', 'AA', 'aa', 'az', 'AZ', 'b', 'B']);
+    });
+
     test('the object form sorts the list with that locale', async () => {
         const api = await createGrid({ accentedSort: { locales: 'de' } });
         expect(await listOrder(api)).toEqual(germanOrder);

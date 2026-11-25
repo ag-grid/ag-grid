@@ -1090,6 +1090,15 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      */
     accentedSort?: boolean | AccentedSortOptions;
     /**
+     * Set to `true` to sort this column's strings without regard to case, so `aa` sorts before `AZ` and values that differ only in case keep their original order.
+     * Set to `false` to sort this column's strings with regard to case.
+     *
+     * When set, overrides the `caseInsensitiveSort` grid option for this column. Set it on `defaultColDef` to apply it to all columns.
+     * Only applies when both values are strings. Also orders the values in the Set Filter list.
+     * Not used when a `comparator` is provided.
+     */
+    caseInsensitiveSort?: boolean;
+    /**
      * Set to `true` if you want the unsorted icon to be shown when no sort is applied to this column.
      * @default false
      */

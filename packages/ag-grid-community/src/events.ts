@@ -1025,8 +1025,10 @@ export interface ColumnHeaderNameChangedEvent<TData = any, TContext = any> exten
 
 export interface StringComparatorsChangedEvent extends AgEvent<'stringComparatorsChanged'> {
     /** Whether the `accentedSort` grid option changed, so every column without its own `accentedSort` is affected. */
-    gridOption: boolean;
-    /** The columns whose colDef `accentedSort` changed. */
+    accentedSort: boolean;
+    /** Whether the `caseInsensitiveSort` grid option changed, so every column without its own `caseInsensitiveSort` is affected. */
+    caseInsensitiveSort: boolean;
+    /** The columns whose colDef `accentedSort` or `caseInsensitiveSort` changed. */
     columns: Column[];
 }
 
