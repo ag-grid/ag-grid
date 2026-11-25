@@ -64,6 +64,17 @@ describe('caseInsensitiveSort', () => {
         expect(displayed()).toEqual(defaultOrder);
     });
 
+    test('setting accentedSort and caseInsensitiveSort in one update sorts again with both', () => {
+        // the column's own accentedSort makes its comparator depend on the caseInsensitiveSort grid option only
+        const api = createGrid('ci-batched', {}, { accentedSort: false });
+        api.applyColumnState({ state: [{ colId: 'code', sort: 'asc' }] });
+
+        api.updateGridOptions({ accentedSort: true, caseInsensitiveSort: true });
+        const values: unknown[] = [];
+        api.forEachNodeAfterFilterAndSort((node) => values.push(node.data.code));
+        expect(values).toEqual(caseInsensitiveOrder);
+    });
+
     test('colDef.caseInsensitiveSort overrides the grid option for that column', () => {
         const onApi = createGrid('ci-col-on', {}, { caseInsensitiveSort: true });
         expect(sortedValues(onApi, 'code')).toEqual(caseInsensitiveOrder);

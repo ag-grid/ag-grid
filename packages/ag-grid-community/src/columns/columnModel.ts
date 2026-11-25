@@ -152,22 +152,31 @@ export class ColumnModel extends BeanStub implements NamedBean {
             this.recreateColumnDefs.bind(this)
         );
         // the grid options compare by identity, so a framework re-creating them with an equal value keeps the comparators
-        this.addManagedPropertyListener('accentedSort', ({ currentValue, previousValue }) => {
-            if (!_mergedEqual(currentValue, previousValue)) {
-                ++this.stringSortVersion;
+        const gos = this.gos;
+        let accentedSort = gos.get('accentedSort');
+        let caseInsensitiveSort = !!gos.get('caseInsensitiveSort');
+        // all the options of a change set are set before the first event, so it invalidates every comparator they affect
+        // before any refresh, and the rest of the change set has nothing left to do
+        const onStringSortChanged = () => {
+            const newAccentedSort = gos.get('accentedSort');
+            const newCaseInsensitiveSort = !!gos.get('caseInsensitiveSort');
+            if (!_mergedEqual(newAccentedSort, accentedSort)) {
+                accentedSort = newAccentedSort;
                 ++this.accentedSortVersion;
                 this.gridAccentedSortChanged = true;
-                this.raiseStringComparatorsChanged();
             }
-        });
-        this.addManagedPropertyListener('caseInsensitiveSort', ({ currentValue, previousValue }) => {
-            if (Boolean(currentValue) !== Boolean(previousValue)) {
-                ++this.stringSortVersion;
+            if (newCaseInsensitiveSort !== caseInsensitiveSort) {
+                caseInsensitiveSort = newCaseInsensitiveSort;
                 ++this.caseInsensitiveSortVersion;
                 this.gridCaseInsensitiveSortChanged = true;
+            }
+            if (this.gridAccentedSortChanged || this.gridCaseInsensitiveSortChanged) {
+                ++this.stringSortVersion;
                 this.raiseStringComparatorsChanged();
             }
-        });
+        };
+        this.addManagedPropertyListener('accentedSort', onStringSortChanged);
+        this.addManagedPropertyListener('caseInsensitiveSort', onStringSortChanged);
         this.addManagedPropertyListener('pivotMode', (event) =>
             this.setPivotMode(this.gos.get('pivotMode'), _convertColumnEventSourceType(event.source))
         );

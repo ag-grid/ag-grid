@@ -68,6 +68,32 @@ describe('Set Filter list order follows accentedSort', () => {
         expect(await listOrder(api)).toEqual(['(Select All)', 'AA', 'aa', 'az', 'AZ', 'b', 'B']);
     });
 
+    test('setting accentedSort and caseInsensitiveSort in one update orders the list with both', async () => {
+        const values = ['b', 'AA', 'az', 'aa', 'B', 'AZ'];
+        const api = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                {
+                    field: 'name',
+                    filter: 'agSetColumnFilter',
+                    filterParams: { caseSensitive: true },
+                    accentedSort: true,
+                },
+            ],
+            rowData: values.map((name) => ({ name })),
+        });
+        const filter = await ColumnFilterHarness.open(api, 'name');
+        await asyncSetTimeout(0);
+        expect(filter.setFilterItemLabels()).toEqual([
+            '(Select All)',
+            ...[...values].sort((a, b) => a.localeCompare(b)),
+        ]);
+
+        // the column's own accentedSort ignores the grid's, but the grid's caseInsensitiveSort still applies to it
+        api.updateGridOptions({ accentedSort: { locales: 'de' }, caseInsensitiveSort: true });
+        await asyncSetTimeout(0);
+        expect(filter.setFilterItemLabels()).toEqual(['(Select All)', 'AA', 'aa', 'az', 'AZ', 'b', 'B']);
+    });
+
     test('the object form sorts the list with that locale', async () => {
         const api = await createGrid({ accentedSort: { locales: 'de' } });
         expect(await listOrder(api)).toEqual(germanOrder);
