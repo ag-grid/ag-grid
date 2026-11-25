@@ -137,6 +137,18 @@ export function _getRowHeightForNode(
     return _getConfiguredRowHeight(beans, rowNode, allowEstimate, defaultRowHeight);
 }
 
+/**
+ * The height `_getRowHeightForNode` gives every row when nothing sizes rows individually, otherwise `null`.
+ * Must stay in step with the per-row sources `_getRowHeightForNode` consults.
+ */
+export function _getSharedRowHeight(beans: BeanCollection, defaultRowHeight: number): number | null {
+    const gos = beans.gos;
+    if (beans.rowAutoHeight?.active || _isGetRowHeightFunction(gos) || gos.get('masterDetail')) {
+        return null;
+    }
+    return getRowHeightOption(gos, defaultRowHeight);
+}
+
 /** The height configuration gives a row: `getRowHeight`, the detail row settings, the `rowHeight` option or the theme. */
 export function _getConfiguredRowHeight(
     beans: BeanCollection,
@@ -175,12 +187,12 @@ export function _getConfiguredRowHeight(
         return getMasterDetailRowHeight(gos);
     }
 
-    const gridOptionsRowHeight = gos.get('rowHeight');
+    return { height: getRowHeightOption(gos, defaultRowHeight), estimated: false };
+}
 
-    const rowHeight =
-        gridOptionsRowHeight && _isFiniteNumber(gridOptionsRowHeight) ? gridOptionsRowHeight : defaultRowHeight;
-
-    return { height: rowHeight, estimated: false };
+function getRowHeightOption(gos: GridOptionsService, defaultRowHeight: number): number {
+    const rowHeight = gos.get('rowHeight');
+    return rowHeight && _isFiniteNumber(rowHeight) ? rowHeight : defaultRowHeight;
 }
 
 function getMasterDetailRowHeight(gos: GridOptionsService): { height: number; estimated: boolean } {
