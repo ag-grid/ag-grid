@@ -1,7 +1,7 @@
-import { FloatingFilterHarness, GridRows, TestGridsManager } from 'ag-test-utils';
+import { ALL_SEVERITIES, FloatingFilterHarness, GridRows, TestGridsManager } from 'ag-test-utils';
 
 import type { GridApi, GridState } from 'ag-grid-community';
-import { BigIntFilterModule, ClientSideRowModelModule, GridStateModule } from 'ag-grid-community';
+import { BigIntFilterModule, ClientSideRowModelModule, GridStateModule, enableDevValidations } from 'ag-grid-community';
 
 /**
  * The BigInt floating filter must write the same string `filter` into the model as the column filter popup,
@@ -76,6 +76,7 @@ describe('BigInt floating filter with enableFilterHandlers', () => {
     test.each([false, true])(
         'the model holds a string filter when enableFilterHandlers is %s',
         async (enableFilterHandlers) => {
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [348] });
             const api: GridApi = await gridsManager.createGridAndWait('grid1', {
                 columnDefs: [
                     {
