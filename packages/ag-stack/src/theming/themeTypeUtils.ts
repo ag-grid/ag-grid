@@ -1,5 +1,7 @@
 import type { ThemeLogger } from './themeLogger';
 import type {
+    BackdropFilterFunction,
+    BackdropFilterValue,
     BorderValue,
     ColorValue,
     DurationValue,
@@ -24,6 +26,7 @@ const paramTypes = [
     'fontWeight',
     'duration',
     'scrollbarWidth',
+    'backdropFilter',
 ] as const;
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -216,6 +219,48 @@ const durationValueToCss = (value: DurationValue, param: string, themeLogger: Th
     return false;
 };
 
+const backdropFilterFunctionNames = new Set<string>([
+    'blur',
+    'brightness',
+    'contrast',
+    'grayscale',
+    'invert',
+    'opacity',
+    'saturate',
+    'sepia',
+]);
+
+type KeysOfUnion<T> = T extends unknown ? keyof T : never;
+
+const backdropFilterFunctionToCss = (filter: BackdropFilterFunction): string | false => {
+    const names = typeof filter === 'object' && filter ? Object.keys(filter) : undefined;
+    if (names?.length !== 1 || !backdropFilterFunctionNames.has(names[0])) {
+        return false;
+    }
+    const name = names[0] as KeysOfUnion<BackdropFilterFunction>;
+    const argument = (filter as Record<KeysOfUnion<BackdropFilterFunction>, LengthValue>)[name];
+    // only blur takes a length; the others take a unitless amount, so numbers don't get px units
+    const argumentCss = name !== 'blur' && typeof argument === 'number' ? String(argument) : lengthValueToCss(argument);
+    return argumentCss === false ? false : `${name}(${argumentCss})`;
+};
+
+const backdropFilterValueToCss = (value: BackdropFilterValue): string | false => {
+    if (typeof value === 'string') {
+        return value;
+    }
+    if (Array.isArray(value)) {
+        if (value.length === 0) {
+            return 'none';
+        }
+        const functions = value.map(backdropFilterFunctionToCss);
+        return functions.includes(false) ? false : functions.join(' ');
+    }
+    if (typeof value === 'object' && value && 'ref' in value) {
+        return paramToVariableExpression(value.ref);
+    }
+    return false;
+};
+
 const paramValidators: Record<
     ParamType,
     (value: unknown, param: string, themeLogger: ThemeLogger | null) => string | false
@@ -232,6 +277,7 @@ const paramValidators: Record<
     fontWeight: fontWeightValueToCss,
     duration: durationValueToCss,
     scrollbarWidth: scrollbarWidthValueToCss,
+    backdropFilter: backdropFilterValueToCss,
 };
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */

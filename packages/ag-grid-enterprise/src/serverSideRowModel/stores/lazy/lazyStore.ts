@@ -178,17 +178,6 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         const selectionSvc = this.selectionSvc;
         selectionSvc?.beginSelectionBatch(); // one selectionChanged for the rows the transaction deselects
         try {
-            // Remove first, so a row removed and re-added with the same ID is moved, matching the Client-Side Row Model.
-            const rowCountBeforeRemove = this.cache.getRowCount();
-            if (transaction.remove?.length) {
-                const allIdsToRemove = transaction.remove.map((data) =>
-                    idFunc({ level: this.level, parentKeys: this.parentRowNode.getRoute() ?? [], data })
-                );
-                const allUniqueIdsToRemove = [...new Set(allIdsToRemove)];
-                removedNodes = this.cache.removeRowNodes(allUniqueIdsToRemove);
-                this.deselectRemovedNodes(removedNodes);
-            }
-
             if (transaction.update?.length) {
                 updatedNodes = this.cache.updateRowNodes(transaction.update);
             }
@@ -197,18 +186,18 @@ export class LazyStore extends BeanStub implements IServerSideStore {
                 let addIndex = transaction.addIndex;
                 if (addIndex != null && addIndex < 0) {
                     addIndex = undefined;
-                } else if (addIndex != null && addIndex <= rowCountBeforeRemove) {
-                    // an index that was in bounds before the removal still adds the rows, at the end at most
-                    addIndex = Math.min(addIndex, this.cache.getRowCount());
                 }
                 const { inserted, skipped } = this.cache.insertRowNodes(transaction.add, addIndex);
                 insertedNodes = inserted;
                 unapplied = skipped.length ? skipped : undefined;
             }
 
-            const rowCount = transaction.rowCount;
-            if (transaction.remove?.length && rowCount != null && rowCount >= 0) {
-                this.cache.setTransactionRowCount(rowCount);
+            if (transaction.remove?.length) {
+                const allIdsToRemove = transaction.remove.map((data) =>
+                    idFunc({ level: this.level, parentKeys: this.parentRowNode.getRoute() ?? [], data })
+                );
+                const allUniqueIdsToRemove = [...new Set(allIdsToRemove)];
+                removedNodes = this.cache.removeRowNodes(allUniqueIdsToRemove, transaction.rowCount);
             }
 
             const isClientSideSortingEnabled = this.gos.get('serverSideEnableClientSideSort');
@@ -219,6 +208,8 @@ export class LazyStore extends BeanStub implements IServerSideStore {
                 // if client side sorting, we need to sort the rows after the transaction
                 this.cache.clientSideSortRows();
             }
+
+            this.deselectRemovedNodes(removedNodes);
         } finally {
             selectionSvc?.endSelectionBatch();
         }
