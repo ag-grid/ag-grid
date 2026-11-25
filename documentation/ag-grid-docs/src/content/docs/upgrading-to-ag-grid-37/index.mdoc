@@ -46,10 +46,11 @@ To automate the upgrade, use the [`ag-update` AI skill](./skills), which reads t
 ### Filtering
 
 - Restoring column filters, the Advanced Filter or a toolbar-managed Quick Filter from `initialState` now fires `filterChanged` with `source: 'gridInitializing'`, instead of `'columnFilter'`, `'advancedFilter'` or `'quickFilter'`. Restoring with `api.setState()` still reports `'api'`. See [Grid State](./grid-state/).
+- Typing in the Advanced Filter Builder dropdowns now moves to the first value that starts with the typed text, instead of the closest fuzzy match.
 
 ### Cell Editing
 
-- When `allowTyping` is not enabled and no `searchType` is set, typing in the [Rich Select Cell Editor](./provided-cell-editors-rich-select-customisation/#search-values) and the Advanced Filter Builder dropdowns now moves to the first value that starts with the typed text, instead of the closest fuzzy match. To keep the previous behaviour, set `searchType: 'fuzzy'`.
+- When `allowTyping` is not enabled and no `searchType` is set, typing in the [Rich Select Cell Editor](./provided-cell-editors-rich-select-customisation/#search-values) now moves to the first value that starts with the typed text, instead of the closest fuzzy match. To keep the previous behaviour, set `searchType: 'fuzzy'` in `cellEditorParams`.
 
 ### Validation
 
