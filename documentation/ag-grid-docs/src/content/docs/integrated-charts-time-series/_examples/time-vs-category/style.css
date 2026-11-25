@@ -1,7 +1,7 @@
 .wrapper {
     display: grid;
     grid-template-rows: auto 300px 400px;
-    gap: 8px;
+    gap: var(--controls-gap);
 }
 
 #axisBtn {

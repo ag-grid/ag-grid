@@ -7,6 +7,7 @@ import type {
     DragItem,
     DropTarget,
     HeaderTooltipCallbackParams,
+    ResolvedTooltip,
     SortDef,
     SortDirection,
     SortIndicatorComp,
@@ -17,8 +18,7 @@ import {
     DragSourceType,
     KeyCode,
     _createElement,
-    _getHeaderTooltipComponentDefinition,
-    _resolveHeaderTooltipValue,
+    _resolveHeaderTooltip,
     _resolvePivotSort,
 } from 'ag-grid-community';
 
@@ -112,8 +112,8 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
         return this.displayName!;
     }
 
-    protected getTooltip(params: HeaderTooltipCallbackParams): string | null | undefined {
-        return _resolveHeaderTooltipValue(params.colDef, params);
+    protected getTooltip(params: HeaderTooltipCallbackParams): ResolvedTooltip {
+        return _resolveHeaderTooltip(this.gos, params);
     }
 
     protected override getTooltipLocation(): TooltipLocation {
@@ -131,12 +131,8 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
         return {
             colDef: this.column.colDef,
             column: this.column,
-            valueFormatted: this.displayName,
+            valueFormatted: this.getDisplayValue(),
         };
-    }
-
-    protected override getTooltipComponentDefinition() {
-        return _getHeaderTooltipComponentDefinition(this.column.colDef);
     }
 
     protected override addAdditionalAriaInstructions(

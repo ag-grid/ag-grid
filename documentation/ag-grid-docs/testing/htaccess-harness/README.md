@@ -210,7 +210,7 @@ migration has run on it.
 **Rows are tab-separated:** `host  path  status  location  [assertion]...`. The full reference is in
 `lib/rows.mjs`.
 
-**`host`:** `www`, `apex`, `blog`, `charts`, or any literal hostname (`angulargrid.com`, `localhost`, ...). It is sent as the `Host` header.
+**`host`:** `www`, `apex`, `blog`, `charts`, or any literal hostname (`react-grid.ag-grid.com`, `localhost`, ...). It is sent as the `Host` header.
 
 **`location`:** compared **exactly**.
 
@@ -243,7 +243,7 @@ real http request. The main listener stands in for https. A chain follows each L
 
 **How a chain is followed:**
 
-- It is followed locally while the target host is one the docroot serves: `*.ag-grid.com`, `angulargrid.com`.
+- It is followed locally while the target host is one the docroot serves: `*.ag-grid.com`.
 - An off-site target ends the chain.
 - A row expecting `final=200` gets its end page created automatically.
 

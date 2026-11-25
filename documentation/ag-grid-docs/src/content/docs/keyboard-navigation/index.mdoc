@@ -231,6 +231,8 @@ It is possible to stop the grid acting on particular events. To do this implemen
 
 The callback is available as a [column callback](./column-properties/#reference-columns-suppressKeyboardEvent) (set on the column definition). If you want it to apply to all columns then apply to the `defaultColDef` property.
 
+When {% kbd "Delete" /%} (or {% kbd "⌫ Backspace" /%} on macOS) [clears a cell range](./cell-selection/#delete-cell-range), the callback is called for each editable cell in the range, not only the focused cell. `params.event` is the key press on the focused cell. Return `true` to keep that cell's value.
+
 ### Example: Suppress Keyboard Navigation
 
 The example below demonstrates suppressing the following keyboard events:

@@ -294,6 +294,7 @@ export class AgList<
         const { offsetTop, offsetHeight } = itemEl;
 
         if (offsetTop + offsetHeight > scrollTop + clientHeight || offsetTop < scrollTop) {
+            this.pauseHover();
             itemEl.scrollIntoView({ block: 'nearest' });
         }
     }

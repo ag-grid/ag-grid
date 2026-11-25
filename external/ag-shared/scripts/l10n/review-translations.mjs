@@ -16,8 +16,14 @@
 //   BASE_SHA           base ref to diff against (PR base, or origin/latest for dispatch)
 //   HEAD_SHA           head ref (defaults to HEAD)
 //   REPORT_PATH        where to write the Markdown report (default ./l10n-review.md)
+//
+// Outputs (when GITHUB_OUTPUT is set):
+//   verdict            `clean` (nothing flagged), `issues` (flagged, or no clear verdict),
+//                      `skipped` (no translated locale files changed), or `unavailable` (the
+//                      review did not run)
 import { execFileSync } from 'node:child_process';
-import { readFileSync, writeFileSync } from 'node:fs';
+import { appendFileSync, readFileSync, realpathSync, writeFileSync } from 'node:fs';
+import { pathToFileURL } from 'node:url';
 
 const SRC_DIR = process.env.LOCALE_SRC_DIR;
 const MODEL = 'claude-opus-5-5';
@@ -25,6 +31,28 @@ const REPORT_PATH = process.env.REPORT_PATH || 'l10n-review.md';
 // Locale file names are BCP 47 tags: language (2–3 letters), optional script (e.g. Latn), region.
 // Covers sr-Latn-RS.ts and fil-PH.ts as well as the common xx-YY.ts shape.
 const LOCALE_FILE = /\/[a-z]{2,3}(-[A-Z][a-z]{3})?-[A-Z]{2}\.ts$/;
+
+// The exact verdict line, optionally wrapped in bold or code formatting.
+const VERDICT_LINE = /^(\*\*|`)?VERDICT:\s*(clean|issues)\1$/i;
+
+/**
+ * Split the reviewer's leading `VERDICT: clean|issues` line from the review body. A missing or
+ * unrecognised verdict reads as `issues`, so an unclear review is never shown as clean.
+ */
+export function splitVerdict(text) {
+    const lines = text.replace(/\r\n/g, '\n').trim().split('\n');
+    const m = VERDICT_LINE.exec(lines[0] ?? '');
+    if (!m) return { verdict: 'issues', review: text.trim() };
+    return { verdict: m[2].toLowerCase(), review: lines.slice(1).join('\n').trim() };
+}
+
+function setVerdict(verdict) {
+    if (!process.env.GITHUB_OUTPUT) return;
+    appendFileSync(process.env.GITHUB_OUTPUT, `verdict=${verdict}\n`);
+    // Surface the verdict on the run summary as a workflow annotation.
+    const level = verdict === 'unavailable' ? 'warning' : 'notice';
+    console.log(`::${level} title=Translation review::Verdict: ${verdict}`);
+}
 
 function git(args) {
     return execFileSync('git', args, { encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 }).trimEnd();
@@ -61,11 +89,12 @@ async function callAnthropic(apiKey, system, userText) {
 
         if (res.ok) {
             const data = await res.json();
-            return data.content
+            const text = data.content
                 .filter((b) => b.type === 'text')
                 .map((b) => b.text)
                 .join('')
                 .trim();
+            return { text, stopReason: data.stop_reason };
         }
 
         // Retry transient failures; give up on client errors.
@@ -82,12 +111,14 @@ async function callAnthropic(apiKey, system, userText) {
 async function main() {
     if (!SRC_DIR) {
         console.log('LOCALE_SRC_DIR not set — nothing to review.');
+        setVerdict('unavailable');
         return;
     }
 
     const apiKey = process.env.ANTHROPIC_API_KEY;
     if (!apiKey) {
         console.log('ANTHROPIC_API_KEY not set — skipping translation review.');
+        setVerdict('unavailable');
         return;
     }
 
@@ -95,12 +126,14 @@ async function main() {
     const head = process.env.HEAD_SHA || 'HEAD';
     if (!base) {
         console.log('BASE_SHA not set — nothing to diff.');
+        setVerdict('unavailable');
         return;
     }
 
     const files = changedLocaleFiles(base, head);
     if (files.length === 0) {
         console.log('No translated locale files changed — skipping review.');
+        setVerdict('skipped');
         return;
     }
     console.log(`Reviewing ${files.length} changed locale file(s): ${files.join(', ')}`);
@@ -118,12 +151,19 @@ async function main() {
         'Review ONLY the changed lines shown in the diffs, using en-US.ts for context.',
         'Flag: mistranslations or wrong meaning; altered, missing, or mistranslated placeholders/formatters; inappropriate tone or register for product UI / screen-reader text; obviously unnatural phrasing.',
         'Do NOT flag stylistic preferences where the translation is correct, or anything outside the changed lines.',
-        'Output concise GitHub-flavoured Markdown. If nothing is concerning across all locales, respond with a single line stating translations look correct. Otherwise, add a `### <locale>` section ONLY for locales that have issues, each finding as a bullet citing the key; then end with one line listing all the locales with no issues together, e.g. "No issues found in: de-DE, fr-FR, ja-JP." Never give a clean locale its own heading.',
+        'Start your response with exactly one line: `VERDICT: clean` if nothing is concerning across all locales, otherwise `VERDICT: issues`.',
+        'After that line, output concise GitHub-flavoured Markdown. If nothing is concerning across all locales, respond with a single line stating translations look correct. Otherwise, add a `### <locale>` section ONLY for locales that have issues, each finding as a bullet citing the key; then end with one line listing all the locales with no issues together, e.g. "No issues found in: de-DE, fr-FR, ja-JP." Never give a clean locale its own heading.',
     ].join('\n');
 
     const userText = `## en-US.ts (source of truth, for context)\n\n\`\`\`typescript\n${enUs}\n\`\`\`\n\n## Changed translations to review\n\n${diffs}`;
 
-    const review = await callAnthropic(apiKey, system, userText);
+    const response = await callAnthropic(apiKey, system, userText);
+    let { verdict, review } = splitVerdict(response.text);
+    if (response.stopReason !== 'end_turn') {
+        // A reply that did not finish normally may be cut off, so it is never shown as clean.
+        verdict = 'issues';
+        review += `\n\n_The review response was incomplete (stop reason: \`${response.stopReason}\`)._`;
+    }
 
     const report = [
         '<!-- l10n-translation-review -->',
@@ -138,11 +178,16 @@ async function main() {
     ].join('\n');
 
     writeFileSync(REPORT_PATH, report);
-    console.log(`Wrote review to ${REPORT_PATH}`);
+    setVerdict(verdict);
+    console.log(`Wrote review to ${REPORT_PATH} (verdict: ${verdict})`);
 }
 
-main().catch((err) => {
-    // Advisory job — log and exit 0 so the build is never blocked.
-    console.error('Translation review failed:', err.message);
-    process.exit(0);
-});
+// Run only when executed directly, so tests can import splitVerdict.
+if (process.argv[1] && import.meta.url === pathToFileURL(realpathSync(process.argv[1])).href) {
+    main().catch((err) => {
+        // Advisory job — log and exit 0 so the build is never blocked.
+        console.error('Translation review failed:', err.message);
+        setVerdict('unavailable');
+        process.exit(0);
+    });
+}

@@ -154,6 +154,8 @@ export {
     _isGridSuppliedFilterParam,
 } from './filter/filterDataTypeUtils';
 export { _getDefaultFilter, _getFilterKey, _resolveFilter } from './filter/filterDefResolver';
+export { _legacyFilterMethods, _reportFilterModifiedListened, _warnLegacyFilterMode } from './filter/legacyFilterMode';
+export type { LegacyFilterMethods } from './filter/legacyFilterMode';
 export type { ResolvedFilter } from './filter/filterDefResolver';
 export { _getDisplayHandler, _getRowHandler } from './filter/pairedFilterHandler';
 export { translateForFilter as _translateForFilter } from './filter/filterLocaleText';
@@ -418,8 +420,8 @@ export {
 export {
     _getCellTooltipComponentDefinition,
     _getHeaderTooltipComponentDefinition,
-    _getShouldDisplayTooltip,
-    _isShowTooltipWhenTruncated,
+    _isAutomaticTooltipEnabled,
+    _resolveTextTooltip,
     type TooltipFeature,
     type TooltipSource,
     type TooltipSourceParams,
@@ -431,6 +433,7 @@ export {
     _resolveCellTooltipValue,
     _resolveGroupTooltipValue,
     _resolveHeaderTooltipValue,
+    _resolveHeaderTooltip,
     type LegacyTooltipFieldResolution,
 } from './tooltip/tooltipValueUtils';
 export type { ChangedCellsPath, ChangedPath, ChangedRowsPath, IChangedPathFactory } from './utils/changedPath';

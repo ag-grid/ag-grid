@@ -2,7 +2,10 @@ import { _exists, _getValueUsingDotField } from 'ag-stack';
 
 import type { AgColumn } from '../entities/agColumn';
 import type { AbstractColDef, ColDef } from '../entities/colDef';
+import type { GridOptionsService } from '../gridOptionsService';
 import type { HeaderTooltipCallbackParams, TooltipCallbackParams } from './tooltipComponent';
+import type { ResolvedTooltip } from './tooltipFeature';
+import { _getHeaderTooltipComponentDefinition, _resolveTextTooltip } from './tooltipFeature';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export type LegacyTooltipFieldResolution =
@@ -87,6 +90,22 @@ export function _resolveHeaderTooltipValue<TData, TValue, TContext>(
         return legacyGetter(params) ?? _evaluateTooltipDefinition(definition, params);
     }
     return _evaluateTooltipDefinition(definition, params);
+}
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export function _resolveHeaderTooltip(
+    gos: GridOptionsService,
+    params: HeaderTooltipCallbackParams,
+    componentValue?: any
+): ResolvedTooltip {
+    const colDef = params.colDef;
+    return _resolveTextTooltip(gos, {
+        value: _resolveHeaderTooltipValue(colDef, params, componentValue),
+        automatic: componentValue == null && colDef?.headerTooltip === undefined && !colDef?.headerTooltipValueGetter,
+        params,
+        componentDefinition:
+            componentValue != null ? (colDef ?? undefined) : _getHeaderTooltipComponentDefinition(colDef),
+    });
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */

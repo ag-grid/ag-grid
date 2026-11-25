@@ -21,10 +21,9 @@ ModuleRegistry.registerModules([ColumnApiModule, ClientSideRowModelModule]);
         <div class="example-wrapper">
             <div class="example-controls">
                 <div class="controls-row">
-                    <div>
-                        <input type="checkbox" id="pinFirstColumnOnLoad" />
-                        <label for="pinFirstColumnOnLoad">Pin first column on load</label>
-                    </div>
+                    <label for="pinFirstColumnOnLoad"
+                        ><input type="checkbox" id="pinFirstColumnOnLoad" />Pin first column on load</label
+                    >
                     <button id="reloadGridButton" (click)="reloadGrid()">Reload Grid</button>
                 </div>
             </div>

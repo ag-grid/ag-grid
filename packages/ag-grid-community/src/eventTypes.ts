@@ -186,6 +186,7 @@ const _INTERNAL_EVENTS = [
     'columnHeaderEditHighlightChanged',
     'columnShowValuesAsChanged',
     'stringComparatorsChanged',
+    'filterModifiedListened',
 ] as const;
 
 // We define as a callback to help with tree shaking (esbuild)

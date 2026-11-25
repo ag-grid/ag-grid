@@ -43,6 +43,7 @@ const gridOptions: GridOptions = {
         { athlete: 'Shelly-Ann Fraser-Pryce', country: 'Jamaica', sport: 'Athletics' },
         { athlete: 'Eliud Kipchoge', country: 'Kenya', sport: 'Athletics' },
     ],
+    tooltipShowMode: 'standard',
     pagination: true,
     paginationPageSize: 3,
     paginationPageSizeSelector: false,

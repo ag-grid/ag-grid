@@ -1,6 +1,8 @@
 import {
+    ALL_SEVERITIES,
     AdvancedFilterHarness,
     ColumnFilterHarness,
+    LEGACY_FILTER_WARNING_IDS,
     TestGridsManager,
     asyncSetTimeout,
     installFilterLayoutMock,
@@ -8,7 +10,7 @@ import {
 } from 'ag-test-utils';
 
 import type { ColDef, FilterInputCallbackParams, GridOptions, TextMatcherParams } from 'ag-grid-community';
-import { setupAgTestIds } from 'ag-grid-community';
+import { enableDevValidations, setupAgTestIds } from 'ag-grid-community';
 
 import { MinimalFilter, PARITY_MODULES, getDisplayedIds } from './advanced-filter-parity-test-utils';
 
@@ -609,6 +611,7 @@ describe('Advanced Filter matches the column filter', () => {
 
         // A component named through `components` owns its `filterParams` exactly as one supplied directly does.
         test('a custom filter component registered by name keeps its own `filterParams`', async () => {
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: LEGACY_FILTER_WARNING_IDS });
             const api = await gridsManager.createGridAndWait('advancedFilterGrid', {
                 columnDefs: [
                     { field: 'id' },

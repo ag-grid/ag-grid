@@ -375,6 +375,7 @@ describe('Filter Manager API — whole-grid model & external filters', () => {
     test.each([false, true])(
         'setFilterModel with a condition its filter lacks filters again only to clear an applied model (enableFilterHandlers: %s)',
         async (enableFilterHandlers) => {
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [348] });
             const api: GridApi = await gridsManager.createGridAndWait('grid1', {
                 columnDefs: threeFilterCols,
                 enableFilterHandlers,
@@ -415,6 +416,7 @@ describe('Filter Manager API — whole-grid model & external filters', () => {
     test.each([false, true])(
         'setState with a filter model its filter completes filters the rows as the completed model does (enableFilterHandlers: %s)',
         async (enableFilterHandlers) => {
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [348] });
             const restore = async (filterModel: object) => {
                 const api: GridApi = await gridsManager.createGridAndWait('grid1', {
                     columnDefs: threeFilterCols,

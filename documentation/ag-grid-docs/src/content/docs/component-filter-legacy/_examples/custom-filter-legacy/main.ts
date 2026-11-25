@@ -31,6 +31,7 @@ const columnDefs: ColDef[] = [
 let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
+    enableFilterHandlers: false,
     defaultColDef: {
         flex: 1,
         minWidth: 100,

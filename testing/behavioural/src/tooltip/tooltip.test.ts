@@ -777,6 +777,7 @@ describe('Tooltips', () => {
             columnDefs: [
                 {
                     field: 'A',
+                    tooltip: false,
                     cellRendererSelector: (params) =>
                         params.data?.showDetail ? { component: TooltipRenderer } : undefined,
                 },
@@ -1409,7 +1410,7 @@ describe('Tooltips', () => {
                     {
                         field: 'A',
                         width: 200,
-                        tooltip: 'Should not show',
+                        tooltip: true,
                         cellRendererSelector: () => undefined,
                     },
                 ],
@@ -1507,6 +1508,7 @@ describe('Tooltips', () => {
                 public init(params: ICellRendererParams): void {
                     this.eGui = document.createElement('span');
                     this.eGui.textContent = String(params.value);
+                    params.setTooltip('Selector tooltip', () => true);
                 }
                 public getGui(): HTMLElement {
                     return this.eGui;
@@ -1521,7 +1523,7 @@ describe('Tooltips', () => {
                     {
                         field: 'A',
                         width: 200,
-                        tooltip: 'Selector tooltip',
+                        tooltip: true,
                         cellRendererSelector: (params): CellRendererSelectorResult | undefined =>
                             params.data.A === 'AGE' ? { component: PlainRenderer } : undefined,
                     },
@@ -1535,7 +1537,7 @@ describe('Tooltips', () => {
             const api = await gridMgr.createGridAndWait('myGrid-tooltip-whenTruncated-mixedSelector', gridOptions);
             const gridDiv = getGridElement(api)! as HTMLElement;
 
-            // Row with an active renderer: always shows regardless of truncation.
+            // The active renderer supplies its own tooltip predicate.
             const rendererCell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'A')));
             await userEvent.hover(rendererCell);
             await waitForTooltips(1);

@@ -7,7 +7,7 @@ ignore:
             Local workspace package - its dependencies are scanned and triaged in its own project
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T10:22:59.685Z
-    - '@nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6 > brace-expansion@2.1.4':
+    - '@nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6 > brace-expansion@2.1.4':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
@@ -23,7 +23,7 @@ ignore:
             Local workspace package - its dependencies are scanned and triaged in its own project
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T10:22:59.685Z
-    - '@nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6 > brace-expansion@2.1.4':
+    - '@nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6 > brace-expansion@2.1.4':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
@@ -57,7 +57,7 @@ ignore:
         reason: Used in build & dev - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T11:46:21.570Z
-    - '@nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6':
+    - '@nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6':
         reason: Build dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
@@ -75,7 +75,7 @@ ignore:
         reason: Used in build & dev - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T11:46:21.570Z
-    - '@nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6':
+    - '@nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6':
         reason: Build dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z

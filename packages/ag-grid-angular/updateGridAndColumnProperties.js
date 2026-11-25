@@ -60,7 +60,7 @@ function extractTypesFromNode(srcFile, node, { typeLookup, eventTypeLookup, publ
 }
 
 function generateAngularInputOutputs({ typeLookup, eventTypeLookup, docLookup }) {
-    const skippableProperties = ['gridOptions', 'reactiveCustomComponents', 'renderingMode'];
+    const skippableProperties = ['gridOptions', 'renderingMode'];
     const skippableEvents = ['gridPreDestroyed'];
     const skippableEventTypes = ['GridPreDestroyedEvent'];
     let propsToWrite = [];

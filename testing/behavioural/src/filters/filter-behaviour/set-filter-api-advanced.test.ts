@@ -1,5 +1,6 @@
 import { userEvent } from '@testing-library/user-event';
 import {
+    ALL_SEVERITIES,
     ColumnFilterHarness,
     FilterDom,
     GridRows,
@@ -26,6 +27,7 @@ import {
     ClientSideRowModelModule,
     GridStateModule,
     TooltipModule,
+    enableDevValidations,
     getGridElement,
     setupAgTestIds,
 } from 'ag-grid-community';
@@ -61,6 +63,7 @@ describe('Set Filter — handler value manipulation API', () => {
     )(
         'a model without values given through $entry is refused, with enableFilterHandlers $enableFilterHandlers and preservePreviousValues $preservePreviousValues',
         async ({ entry, enableFilterHandlers, preservePreviousValues }) => {
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [348] });
             const numberModel = { filterType: 'number', type: 'lessThan', filter: 20 };
             const fromState = entry === 'the initial state';
             const api: GridApi = await gridsManager.createGridAndWait('grid1', {

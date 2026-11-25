@@ -50,11 +50,15 @@ export interface IProvidedFilter extends IFilter {
      * Applies the model shown in the UI (so that `getModel()` will now return what was in the UI
      * when `applyModel()` was called).
      * @param source The source of the method call. Default 'api'.
+     *
+     * @deprecated v37 Use `enableFilterHandlers` and the grid filter model API (`api.setColumnFilterModel`) instead. See [Migrating to Filter Handlers](https://www.ag-grid.com/javascript-data-grid/enable-filter-handlers-migration/).
      */
     applyModel(source?: 'api' | 'ui' | 'rowDataUpdated'): boolean;
     /**
      * Returns the filter model from the UI. If changes have been made to the UI but not yet
      * applied, this model will reflect those changes.
+     *
+     * @deprecated v37 Use `enableFilterHandlers` and the grid filter model API (`api.getColumnFilterModel`) instead. See [Migrating to Filter Handlers](https://www.ag-grid.com/javascript-data-grid/enable-filter-handlers-migration/).
      */
     getModelFromUi(): any;
 }

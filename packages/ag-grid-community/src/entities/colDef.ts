@@ -463,6 +463,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     suppressNoteActions?: boolean | SuppressNoteActionsCallback<TData, TValue>;
     /**
      * Allows the user to suppress certain keyboard events in the grid cell.
+     * When Delete (or Backspace on macOS) clears a cell range, this is called for each editable cell in the range, and returning `true` keeps that cell's value.
      * @default false
      */
     suppressKeyboardEvent?: SuppressKeyboardEventFunc<TData, TValue>;
@@ -937,6 +938,22 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      */
     initialAggFunc?: string | IAggFunc<TData, TValue>;
     /**
+     * Function to compute the value shown for this column on group rows, total rows, the grand total row and
+     * tree data parent rows, while the column is aggregated. Not called for leaf rows, group columns or pivot
+     * result columns. An open group whose aggregate is shown on its total row displays no value, so the getter is
+     * not called to display it.
+     * <br /><br />
+     * The returned value is the cell value used for rendering, export, clipboard and `api.getCellValue`, and for
+     * client-side sorting and filtering. It is not stored, so parent groups still aggregate the computed aggregates
+     * of their children.
+     * Return `params.value` to keep the value shown without this function.
+     * <br /><br />
+     * With `groupRowEditable`, group cells in this column are editable only when `groupRowValueSetter` is a function,
+     * as the built-in distribution cannot reverse this getter.
+     * @agModule `RowGroupingModule` / `PivotModule` / `TreeDataModule` / `ServerSideRowModelModule`
+     */
+    aggValueGetter?: AggValueGetterFunc<TData, TValue>;
+    /**
      * The position of this column in the order of value columns when aggregating in pivot mode.
      * When aggregating by a single column, any number can be used. When aggregating by multiple
      * columns, this determines the order (e.g. `0` for first, `1` for second).
@@ -1325,6 +1342,28 @@ export interface ValueGetterParams<TData = any, TValue = any, TContext = any> ex
 }
 export type ValueGetterFunc<TData = any, TValue = any, TContext = any> = (
     params: ValueGetterParams<TData, TValue, TContext>
+) => TValue | null | undefined;
+export interface AggValueGetterParams<TData = any, TValue = any, TContext = any> extends ValueGetterParams<
+    TData,
+    TValue,
+    TContext
+> {
+    /** The value shown without `aggValueGetter`. For the built-in `avg` and `count` functions in the Client-Side Row
+     *  Model this is the aggregation's result object; read its `value` property for the number. */
+    value: TValue | null | undefined;
+    /** The column's active aggregation function. */
+    aggFunc: string | IAggFunc<TData, TValue> | null | undefined;
+    /**
+     * The group row's computed aggregates, keyed by column ID. Read-only.
+     * `undefined` with the Server-Side Row Model, where aggregates are read from `data`.
+     */
+    aggData: { [colId: string]: any } | undefined;
+    /** This column's computed aggregate, a result object for the built-in `avg` and `count` functions.
+     *  `undefined` with the Server-Side Row Model. */
+    aggValue: TValue | null | undefined;
+}
+export type AggValueGetterFunc<TData = any, TValue = any, TContext = any> = (
+    params: AggValueGetterParams<TData, TValue, TContext>
 ) => TValue | null | undefined;
 export type HeaderLocation =
     | 'chart'

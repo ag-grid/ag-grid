@@ -1,8 +1,11 @@
 import type { IComponent } from 'ag-stack';
 
+import type { BeanCollection } from '../../context/context';
 import type { IDragAndDropImageComponent, IDragAndDropImageParams } from '../../dragAndDrop/dragAndDropImageComponent';
 import type { ColDef, ColGroupDef } from '../../entities/colDef';
 import type { IFloatingFilterComp, IFloatingFilterParams } from '../../filter/floating/floatingFilter';
+import { _isAuthorFloatingFilter } from '../../filter/floating/floatingFilterMapper';
+import { _warnLegacyFilterMode } from '../../filter/legacyFilterMode';
 import type { ISimpleFilter } from '../../filter/provided/iSimpleFilter';
 import type {
     IHeaderGroupComp,
@@ -307,12 +310,15 @@ export function _getBuiltInTooltipCompDetails(
  * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export function _getFloatingFilterCompDetails(
-    userCompFactory: UserComponentFactory,
+    beans: BeanCollection,
     def: IFilterDef,
     params: IFloatingFilterParams<any>,
     defaultFloatingFilter: string
 ): UserCompDetails<IFloatingFilterComp> | undefined {
-    return userCompFactory.getCompDetails(def, FloatingFilterComponent, defaultFloatingFilter, params);
+    if (_isAuthorFloatingFilter(beans, def.floatingFilterComponent)) {
+        _warnLegacyFilterMode(beans, 344);
+    }
+    return beans.userCompFactory.getCompDetails(def, FloatingFilterComponent, defaultFloatingFilter, params);
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */

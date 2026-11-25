@@ -1,5 +1,12 @@
 import { waitFor, within } from '@testing-library/dom';
-import { ALL_SEVERITIES, GridColumns, GridRows, asyncSetTimeout, clickMenuOption } from 'ag-test-utils';
+import {
+    ALL_SEVERITIES,
+    GridColumns,
+    GridRows,
+    LEGACY_FILTER_WARNING_IDS,
+    asyncSetTimeout,
+    clickMenuOption,
+} from 'ag-test-utils';
 import { vi } from 'vitest';
 
 import type {
@@ -968,6 +975,7 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
     });
 
     test('a columnDefs update made from inside the callback refreshes the filter with the new filterParams and re-filters the rows', async () => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: LEGACY_FILTER_WARNING_IDS });
         ModuleRegistry.registerModules([CustomFilterModule]);
         type MinParams = IFilterParams & { min: number };
         const refreshedWith: number[] = [];

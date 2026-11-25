@@ -202,7 +202,11 @@ export const behaviouralConfig = (isolatedFiles: boolean) =>
                 dir: path.resolve(thisDir, 'src'),
                 include: isolatedFiles ? ISOLATED_TEST_FILES : ['**/*.test.ts', '**/*.test.tsx'],
                 exclude: isolatedFiles ? undefined : ['**/node_modules/**', ...ISOLATED_TEST_FILES],
-                benchmark: { include: isolatedFiles ? [] : ['**/*.bench.ts', '**/*.bench.tsx'] },
+                benchmark: {
+                    include: isolatedFiles ? [] : ['**/*.bench.ts', '**/*.bench.tsx'],
+                    // `*.large.bench.ts` calls take seconds each, so they run only under `./benches.sh --large`.
+                    exclude: ['**/node_modules/**', ...(process.env.AG_BENCH_LARGE ? [] : ['**/*.large.bench.ts'])],
+                },
                 sequence: isBench ? { sequencer: await benchSequencer() } : undefined,
                 css: isBench,
                 browser: {

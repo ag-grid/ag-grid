@@ -1,42 +1,78 @@
 import { ensureGridReady, expect, test, waitForGridContent } from '@utils/grid/test-utils';
+import type { Locator, Page } from 'playwright/test';
+
+async function expectTruncated(source: Locator, truncated: boolean): Promise<void> {
+    await expect
+        .poll(() =>
+            source.evaluate((element) => {
+                const text = element.querySelector<HTMLElement>('.ag-cell-value') ?? element;
+                return text.scrollWidth > text.clientWidth;
+            })
+        )
+        .toBe(truncated);
+}
+
+async function expectTooltip(page: Page, source: Locator, text?: string): Promise<void> {
+    const tooltip = page.locator('.ag-tooltip');
+    await source.hover();
+    if (text) {
+        await expect(tooltip).toBeVisible();
+        await expect(tooltip).toContainText(text);
+    } else {
+        // Observe past tooltipShowDelay (500ms); no visible event signals a suppressed tooltip.
+        await page.waitForTimeout(900);
+        await expect(tooltip).toHaveCount(0);
+    }
+    await page.mouse.move(0, 0);
+    await expect(tooltip).toHaveCount(0);
+}
 
 test.agExample(import.meta, () => {
-    test.eachFramework('whenTruncated shows tooltips only for truncated content', async ({ agIdFor, page }) => {
+    test.eachFramework('auto supplies unconfigured tooltips only for truncated text', async ({ agIdFor, page }) => {
         await ensureGridReady(page);
         await waitForGridContent(page);
 
-        const tooltip = page.locator('.ag-tooltip');
+        const countryHeader = agIdFor.headerCell('country').locator('.ag-header-cell-text');
+        await expectTruncated(countryHeader, true);
+        await expectTooltip(page, countryHeader, 'Country of Athlete');
 
-        // Positive: the Country column is only 100px wide, so its "Country of Athlete"
-        // header is truncated and a tooltip is shown under tooltipShowMode='whenTruncated'.
-        await agIdFor.headerCell('country').hover();
-        await expect(tooltip).toBeVisible();
-        await expect(tooltip).toContainText('Country of Athlete');
-
-        // Move away and let the tooltip hide before the negative case.
-        await page.mouse.move(0, 0);
-        await expect(tooltip).toHaveCount(0);
-
-        // Negative: whenTruncated must NOT show a tooltip when the content fits. Find a
-        // country cell whose text is not truncated (scrollWidth <= clientWidth) and assert
-        // no tooltip appears — an always-on grid would show one here and fail the test.
-        const countryCells = page.locator('.ag-cell[col-id="country"]');
-        const count = await countryCells.count();
-        let untruncatedIndex = -1;
-        for (let i = 0; i < count; i++) {
-            const isTruncated = await countryCells.nth(i).evaluate((el) => {
-                const value = (el.querySelector('.ag-cell-value') as HTMLElement) ?? (el as HTMLElement);
-                return value.scrollWidth > value.clientWidth + 1;
-            });
-            if (!isTruncated) {
-                untruncatedIndex = i;
-                break;
-            }
-        }
-        expect(untruncatedIndex).toBeGreaterThanOrEqual(0);
-
-        await countryCells.nth(untruncatedIndex).hover();
-        await page.waitForTimeout(900); // past tooltipShowDelay (500ms)
-        await expect(tooltip).toHaveCount(0);
+        const countryCell = agIdFor.cell('4', 'country');
+        await expect(countryCell).toContainText('Russia');
+        await expectTruncated(countryCell, false);
+        await expectTooltip(page, countryCell);
     });
+
+    test.eachFramework(
+        'auto requires truncation for configured tooltips matching the default value',
+        async ({ agIdFor, page }) => {
+            await ensureGridReady(page);
+            await waitForGridContent(page);
+
+            const athleteHeader = agIdFor.headerCell('athlete').locator('.ag-header-cell-text');
+            await expectTruncated(athleteHeader, false);
+            await expectTooltip(page, athleteHeader);
+
+            const athleteCell = agIdFor.cell('3', 'athlete');
+            await expect(athleteCell).toContainText('Natalie Coughlin');
+            await expectTruncated(athleteCell, true);
+            await expectTooltip(page, athleteCell, 'Natalie Coughlin');
+        }
+    );
+
+    test.eachFramework(
+        'auto shows different configured tooltips even when the text fits',
+        async ({ agIdFor, page }) => {
+            await ensureGridReady(page);
+            await waitForGridContent(page);
+
+            const sportCell = agIdFor.cell('0', 'sport');
+            await expect(sportCell).toContainText('Swimming');
+            await expectTruncated(sportCell, false);
+            await expectTooltip(page, sportCell, 'Sport: Swimming');
+
+            const sportHeader = agIdFor.headerCell('sport').locator('.ag-header-cell-text');
+            await expectTruncated(sportHeader, false);
+            await expectTooltip(page, sportHeader, 'Sport played by the athlete');
+        }
+    );
 });

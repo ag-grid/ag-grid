@@ -63,4 +63,40 @@ describe('BaseAriaAnnouncementService', () => {
 
         service.destroy();
     });
+
+    test('joins a batch with the locale separator, leaving out blank values', () => {
+        vi.useFakeTimers();
+        const { container, service } = createService();
+        const localeSvc = {
+            getLocaleTextFunc: () => (key: string, defaultValue: string) =>
+                key === 'ariaAnnouncementSeparator' ? '。 ' : defaultValue,
+        };
+        service.preWireBeans({ localeSvc } as any);
+
+        service.announceValue('一', 'a');
+        service.announceValue('', 'b');
+        service.announceValue('二', 'c');
+        vi.runAllTimers();
+
+        expect(container.textContent).toBe('一。 二');
+        service.destroy();
+    });
+
+    test('joins with ". " when there is no locale service, and a blank batch still resets the repeat check', () => {
+        vi.useFakeTimers();
+        const { container, service } = createService();
+
+        service.announceValue('A', 'a');
+        service.announceValue('B', 'b');
+        vi.runAllTimers();
+        expect(container.textContent).toBe('A. B');
+
+        service.announceValue('', 'a');
+        vi.runAllTimers();
+        service.announceValue('A. B', 'a');
+        vi.runAllTimers();
+        expect(container.textContent).toBe('A. B');
+
+        service.destroy();
+    });
 });

@@ -56,7 +56,8 @@ export interface GroupRowValueSetterParams<TData = any, TValue = any, TContext =
     colDef: ColDef<TData, TValue>;
 
     /** The value before the change. May be `null` or `undefined` — for example when the group has no aggregated
-     *  value yet; the callback must handle this. */
+     *  value yet; the callback must handle this. With `colDef.aggValueGetter`, this is the getter's result, the value
+     *  the cell showed, unless `distributing` is `true`. */
     oldValue: TValue | null | undefined;
 
     /** The value after the change. May be `null` or `undefined` if the edit clears the value; the callback must
@@ -74,6 +75,13 @@ export interface GroupRowValueSetterParams<TData = any, TValue = any, TContext =
 
     /** Whether the aggregated value actually changed compared to the previous value. */
     valueChanged: boolean;
+
+    /**
+     * `true` when this call writes a child group while the column's function `groupRowValueSetter` distributes a
+     * parent's edit. `newValue` and `oldValue` are then stored aggregates, so with `colDef.aggValueGetter` reverse
+     * the getter only when this is `false`.
+     */
+    distributing?: boolean;
 
     /**
      * The immediate children that contribute to this group's aggregation.

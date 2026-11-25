@@ -51,7 +51,8 @@ const VueExample = defineComponent({
                         <button v-on:click="onChangeMonth(-1)"><i class="fa fa-chevron-left"></i></button>
                         <button v-on:click="onChangeMonth(1)"><i class="fa fa-chevron-right"></i></button>
                         <span id="monthName" style="width: 100px; display: inline-block;">Year to Jan</span>
-                        <span class="legend-item gap-left">
+                        <span class="gap-left">Legend:</span>
+                        <span class="legend-item">
                             <span class="legend-swatch cell-bud"></span>
                             Actual
                         </span>

@@ -9,7 +9,6 @@ import type { ColDef, ColGroupDef } from '../entities/colDef';
 import type { GridOptions } from '../entities/gridOptions';
 import { INITIAL_GRID_OPTION_KEYS } from '../gridOptionsInitial';
 import type { AdvancedFilterModel } from '../interfaces/advancedFilterModel';
-import type { RowNodeEventType } from '../interfaces/iRowNode';
 import type { IconName } from '../utils/icon';
 import { ICON_NAME_TO_VALUE } from '../utils/iconNameToValue';
 import { validateApiFunction } from './apiFunctionValidator';
@@ -49,6 +48,10 @@ export class ValidationService extends BeanStub implements NamedBean {
 
     public processGridOptions(options: GridOptions): void {
         this.processOptions(options, GRID_OPTIONS_VALIDATORS());
+        if (options.enableFilterHandlers !== false) {
+            return;
+        }
+        this.beans.log.deprecated(348);
     }
 
     public validateApiFunction<TFunctionName extends ApiFunctionName>(
@@ -146,12 +149,6 @@ export class ValidationService extends BeanStub implements NamedBean {
         const conditions = model.conditions;
         for (let i = 0, len = conditions.length; i < len; ++i) {
             this.collectAdvancedFilterColIds(conditions[i], colIds);
-        }
-    }
-
-    public checkRowEvents(eventType: RowNodeEventType): void {
-        if (DEPRECATED_ROW_NODE_EVENTS.has(eventType)) {
-            this.warn(10, { eventType });
         }
     }
 
@@ -326,12 +323,6 @@ export class ValidationService extends BeanStub implements NamedBean {
         });
     }
 }
-
-const DEPRECATED_ROW_NODE_EVENTS: Set<RowNodeEventType> = new Set([
-    'firstChildChanged',
-    'lastChildChanged',
-    'childIndexChanged',
-]);
 
 function suggestIconNames(iconName: string): string[] {
     const hyphenatedName = iconName.replace(/[A-Z]/g, (char) => `-${char.toLowerCase()}`);

@@ -75,4 +75,11 @@ export class BaseEventService<
     public dispatchEvent(event: AgRawEvents<TGlobalEvents, TCommon>): void {
         this.globalSvc.dispatchEvent(this.addCommonToEvents ? this.gos.addCommon<any>(event) : event);
     }
+
+    /** Like `dispatchEvent`, but a sync listener that throws does not stop later ones; returns the errors thrown, in order. */
+    public dispatchEventCollectingErrors(event: AgRawEvents<TGlobalEvents, TCommon>): unknown[] {
+        return this.globalSvc.dispatchEventCollectingErrors(
+            this.addCommonToEvents ? this.gos.addCommon<any>(event) : event
+        );
+    }
 }

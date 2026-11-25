@@ -55,6 +55,9 @@ export const ROWS = [
 
 export const AGE_LT_20 = { filterType: 'number', type: 'lessThan', filter: 20 };
 
+/** The console logs the `enableFilterHandlers: false` deprecation once per page, so only a file's first grid would capture it. */
+const FILTER_HANDLERS_FALSE_DEPRECATION = '348';
+
 /** The phase a test is in, and each model a `RecordingFilter` was given with the phase it came in. */
 export const timeline = { phase: 'before', customSetModelSeen: [] as string[] };
 
@@ -158,7 +161,12 @@ export function setupAsWithRowsSuite(enableFilterHandlers: boolean) {
     /** The calls made on a grid given its rows first, or before they load and then loaded. */
     const run = async (scenario: Scenario, withRows: boolean) => {
         const warnings: string[] = [];
-        const report = (...args: any[]) => warnings.push(/#(\d+)/.exec(args.join(' '))?.[1] ?? args.join(' '));
+        const report = (...args: any[]) => {
+            const code = /#(\d+)/.exec(args.join(' '))?.[1] ?? args.join(' ');
+            if (code !== FILTER_HANDLERS_FALSE_DEPRECATION) {
+                warnings.push(code);
+            }
+        };
         const warn = vi.spyOn(console, 'warn').mockImplementation(report);
         const error = vi.spyOn(console, 'error').mockImplementation(report);
         const events: string[] = [];
@@ -400,7 +408,9 @@ export function describeScenariosBeforeRows(enableFilterHandlers: boolean): void
             const warnings: string[] = [];
             vi.spyOn(console, 'warn').mockImplementation((...args: any[]) => {
                 const code = /#(\d+)/.exec(args.join(' '))?.[1] ?? args.join(' ').slice(0, 60);
-                warnings.push(`${timeline.phase}:${code}`);
+                if (code !== FILTER_HANDLERS_FALSE_DEPRECATION) {
+                    warnings.push(`${timeline.phase}:${code}`);
+                }
             });
             vi.spyOn(console, 'error').mockImplementation((...args: any[]) => {
                 const code = /#(\d+)/.exec(args.join(' '))?.[1] ?? args.join(' ').slice(0, 60);
@@ -794,7 +804,12 @@ export function describeScenariosAsWithRows(enableFilterHandlers: boolean): void
             timeline.phase = 'before';
             timeline.customSetModelSeen = [];
             const warnings: string[] = [];
-            const report = (...args: any[]) => warnings.push(/#(\d+)/.exec(args.join(' '))?.[1] ?? args.join(' '));
+            const report = (...args: any[]) => {
+                const code = /#(\d+)/.exec(args.join(' '))?.[1] ?? args.join(' ');
+                if (code !== FILTER_HANDLERS_FALSE_DEPRECATION) {
+                    warnings.push(code);
+                }
+            };
             const warn = vi.spyOn(console, 'warn').mockImplementation(report);
             const error = vi.spyOn(console, 'error').mockImplementation(report);
             const api: GridApi = gridsManager.createGrid(withRows ? 'withRows' : 'withoutRows', {
