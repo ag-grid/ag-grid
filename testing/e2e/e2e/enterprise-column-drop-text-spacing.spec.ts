@@ -30,10 +30,7 @@ function getClippedHintPixels(grid: Locator): Promise<number[]> {
                 }
                 if (/hidden|clip/.test(overflowX) || /hidden|clip/.test(overflowY)) {
                     const box = el.getBoundingClientRect();
-                    clipped = Math.max(
-                        clipped,
-                        Math.max(0, box.top - textTop) + Math.max(0, textBottom - box.bottom)
-                    );
+                    clipped = Math.max(clipped, Math.max(0, box.top - textTop) + Math.max(0, textBottom - box.bottom));
                 }
             }
             return clipped;
