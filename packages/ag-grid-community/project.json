@@ -282,7 +282,7 @@
       "inputs": ["allOutputs"],
       "options": {
         "commands": [
-          "node scripts/package/sanity-check-package.js --allowed-ext css scss -- dist/artifacts/contents/{projectRoot}/package"
+          "node scripts/package/sanity-check-package.js --allowed-ext css scss svg -- dist/artifacts/contents/{projectRoot}/package"
         ]
       },
       "configurations": {
