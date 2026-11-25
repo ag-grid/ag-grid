@@ -23,7 +23,7 @@ export const highContrastIconSvgs: Record<string, string> = {
     'chevron-up':
         '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="currentColor"><path d="M4 12l5-5 5 5" fill="none" stroke="currentColor" stroke-width="2.83"/></svg>',
     'color-picker':
-        '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="currentColor"><path d="M7 3 0 10l6 6 4-4h6v-2h-2l-1-1z"/><path d="M15 13c-.8 1.3-1.6 2.1-1.6 3.2a1.6 1.6 0 0 0 3.2 0c0-1.1-.8-1.9-1.6-3.2z"/></svg>',
+        '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="currentColor"><path d="M7 3 0 10l6 6 5-5 2 2 2-2z"/><path d="M15 13c-.8 1.3-1.6 2.1-1.6 3.2a1.6 1.6 0 0 0 3.2 0c0-1.1-.8-1.9-1.6-3.2z"/></svg>',
     columns:
         '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="currentColor"><path fill-rule="evenodd" d="M2 3h14v12H2zM4 5v8h4V5zm6 0v8h4V5z"/></svg>',
     contracted:
