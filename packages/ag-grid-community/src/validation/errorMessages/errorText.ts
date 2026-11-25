@@ -75,6 +75,11 @@ const moduleImportMsg = (moduleNames: ModuleName[], usesAgGridProvider?: boolean
 For more info see: ${getValidationDocLink()}/modules/`;
 };
 
+const legacyFilterMigrationLink = () => `${getValidationDocLink()}/enable-filter-handlers-migration/`;
+
+const legacyFilterModeAdvice = () =>
+    `Legacy filter mode stops being the default in v38, when \`enableFilterHandlers\` defaults to \`true\`. Migrate to filter handlers: ${legacyFilterMigrationLink()} . Or, to keep legacy filter mode for now, set \`enableFilterHandlers: false\`.`;
+
 function convertToUserModuleName(moduleName: ModuleName, inModuleRegistration = false) {
     if (inModuleRegistration && (moduleName === 'IntegratedCharts' || moduleName === 'Sparklines')) {
         return `${moduleName}Module.with(AgChartsEnterpriseModule)`;
@@ -956,6 +961,18 @@ export const AG_GRID_ERRORS = {
         `Advanced Filter model names colId \`${colId}\`, but no column has this id, so that condition cannot be applied.` as const,
     342: ({ colId }: { colId: string }) =>
         `Advanced Filter model names column \`${colId}\`, which is not available in the Advanced Filter, so that condition cannot be applied. A column is available when filtering is enabled on it and it is visible, grouped, or \`includeHiddenColumnsInAdvancedFilter\` is set.` as const,
+    343: () =>
+        `A custom filter component is used without \`enableFilterHandlers\` set, so it runs in legacy filter mode. ${legacyFilterModeAdvice()}` as const,
+    344: () =>
+        `A custom floating filter component is used without \`enableFilterHandlers\` set, so it runs in legacy filter mode. ${legacyFilterModeAdvice()}` as const,
+    345: () =>
+        `The \`filterModified\` event is listened to without \`enableFilterHandlers\` set. It is deprecated and does not fire with filter handlers; use \`filterUiChanged\` or \`floatingFilterUiChanged\` instead. ${legacyFilterModeAdvice()}` as const,
+    346: () =>
+        `A Multi Filter sets \`buttons\` or \`closeOnApply\` without \`enableFilterHandlers\` set. With filter handlers, buttons on the child filters are ignored and buttons on the Multi Filter apply to all of its children. ${legacyFilterModeAdvice()}` as const,
+    347: () =>
+        `A legacy Multi Filter method (\`getModel\`, \`setModel\`, \`isFilterActive\`, \`doesFilterPass\`, \`applyModel\` or \`getModelFromUi\`) was called without \`enableFilterHandlers\` set. With filter handlers, the Multi Filter instance does not have these methods; use the grid's filter model API instead. ${legacyFilterModeAdvice()}` as const,
+    348: () =>
+        `\`enableFilterHandlers: false\` is deprecated. Legacy filter mode will be removed in a major version after v38. See ${legacyFilterMigrationLink()}` as const,
     // When adding a code above this line, raise `MAX_ERROR_ID` below to match.
 };
 
@@ -971,7 +988,7 @@ export type ErrorId = keyof ErrorMap;
  *
  * @knipIgnore Read by the docs site's error-page route
  */
-export const MAX_ERROR_ID = 342;
+export const MAX_ERROR_ID = 348;
 
 type ErrorValue<TId extends ErrorId | null> = TId extends ErrorId ? ErrorMap[TId] : never;
 export type GetErrorParams<TId extends ErrorId> =

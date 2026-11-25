@@ -1,6 +1,6 @@
 import { waitFor } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
-import { TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
+import { ALL_SEVERITIES, LEGACY_FILTER_WARNING_IDS, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import type {
     ColDef,
@@ -21,6 +21,7 @@ import {
     CustomFilterModule,
     RowSelectionModule,
     ScrollApiModule,
+    enableDevValidations,
     getGridElement,
 } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule, RowNumbersModule, ShowValuesAsModule } from 'ag-grid-enterprise';
@@ -1743,6 +1744,7 @@ describe('the column events of one call', () => {
     });
 
     test('a filter refresh throwing during a columnDefs update throws to the caller, and the next update raises its own grid events and refreshes every filter', async () => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: LEGACY_FILTER_WARNING_IDS });
         const refreshed: string[] = [];
         let failing = true;
         class ThrowingFilter implements IFilterComp {

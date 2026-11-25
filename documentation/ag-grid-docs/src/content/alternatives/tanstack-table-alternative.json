@@ -1,0 +1,92 @@
+{
+    "meta": {
+        "title": "The TanStack Table alternative with a ready-made grid UI | AG Grid",
+        "description": "Looking for a TanStack Table alternative? AG Grid is a JavaScript data grid for React, Angular, Vue and JavaScript with a free MIT-licensed core. Compare features, pricing and licensing.",
+        "targetTerm": "tanstack table alternative"
+    },
+    "analyticsPrefix": "alternative-tanstack-table",
+    "technicalReviewer": "james",
+    "lastUpdated": "2026-11-23",
+    "competitor": {
+        "name": "TanStack Table",
+        "slug": "tanstack-table",
+        "url": "https://tanstack.com/table",
+        "logo": "/images/compare/logos/tanstack-table.png"
+    },
+    "hero": {
+        "heading": "A TanStack Table alternative",
+        "subHeading": "Looking for a TanStack Table alternative? AG Grid is a complete JavaScript data grid with its own UI, virtualisation, editing and export, free under the MIT licence in AG Grid Community."
+    },
+    "whySwitch": {
+        "heading": "Why teams look for a TanStack Table alternative",
+        "reasons": [
+            "TanStack Table is headless, so the developer writes all the table markup and CSS.",
+            "Virtualisation needs the separate TanStack Virtual package, and cell editing is not in its core.",
+            "Its built-in features do not include pivoting, CSV or Excel export, or charts."
+        ]
+    },
+    "whyProduct": [
+        {
+            "title": "One grid for every framework",
+            "body": "Official packages for React, Angular and Vue, plus plain JavaScript, with the same grid features in each."
+        },
+        {
+            "title": "Large datasets in the free version",
+            "body": "Row and column virtualisation are on by default in AG Grid Community, and the Infinite Row Model loads data from the server as users scroll."
+        },
+        {
+            "title": "Analysis built into the grid",
+            "body": "AG Grid Enterprise adds row grouping, aggregation, pivoting, master/detail, Excel export and integrated charts to the same component."
+        },
+        {
+            "title": "Clear licensing",
+            "body": "AG Grid Community is MIT licensed. AG Grid Enterprise is a perpetual licence with one year of updates and support."
+        }
+    ],
+    "features": [
+        "Ready-made grid UI",
+        "Row virtualisation",
+        "Cell editing",
+        "Pivoting",
+        "Integrated charts",
+        "CSV export",
+        "Excel (.xlsx) export",
+        "Accessibility"
+    ],
+    "faq": [
+        {
+            "question": "What is the difference between AG Grid and TanStack Table?",
+            "answer": "AG Grid renders a complete grid UI with built-in virtualisation, editing and export. TanStack Table is headless: it provides the table logic and you write the markup and CSS."
+        },
+        {
+            "question": "Is AG Grid free like TanStack Table?",
+            "answer": "AG Grid Community is free under the MIT licence, as TanStack Table is. AG Grid Enterprise is a paid licence for features such as pivoting, Excel export and integrated charts."
+        },
+        {
+            "question": "How much does an AG Grid licence cost?",
+            "answer": "AG Grid Community is free. AG Grid Enterprise, and the Enterprise Bundle with AG Charts Enterprise, are paid perpetual licences that include one year of updates and support. See [AG Grid pricing](/license-pricing/) for prices."
+        }
+    ],
+    "proseClaims": [
+        {
+            "claim": "TanStack Table is headless: it provides table state and logic, and you write the markup and CSS.",
+            "sourceUrl": "https://tanstack.com/table/latest/docs/overview",
+            "checkedOn": "2026-11-11"
+        },
+        {
+            "claim": "TanStack Table has no built-in virtualisation and pairs with the separate TanStack Virtual package.",
+            "sourceUrl": "https://tanstack.com/table/latest/docs/framework/react/guide/virtualization",
+            "checkedOn": "2026-11-11"
+        },
+        {
+            "claim": "TanStack Table has no cell editing in its core, and its built-in features do not include pivoting, CSV or Excel export, or charts.",
+            "sourceUrl": "https://tanstack.com/table/latest/docs/overview",
+            "checkedOn": "2026-11-11"
+        },
+        {
+            "claim": "TanStack Table is MIT licensed.",
+            "sourceUrl": "https://github.com/TanStack/table/blob/main/LICENSE",
+            "checkedOn": "2026-11-11"
+        }
+    ]
+}

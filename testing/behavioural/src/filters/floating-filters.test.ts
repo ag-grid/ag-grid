@@ -1,5 +1,5 @@
 import { fireEvent, getByTestId, waitFor } from '@testing-library/dom';
-import { GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
+import { ALL_SEVERITIES, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import type {
     ColDef,
@@ -22,6 +22,7 @@ import {
     RowApiModule,
     TextFilterModule,
     agTestIdFor,
+    enableDevValidations,
     getGridElement,
     setupAgTestIds,
 } from 'ag-grid-community';
@@ -464,6 +465,10 @@ describe('Floating Filters', () => {
     describe.each([false, true])(
         'a custom filter giving its model as a string, with enableFilterHandlers %s',
         (enableFilterHandlers) => {
+            beforeEach(() => {
+                enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [348] });
+            });
+
             const describeModel = (model: number | null) => (model == null ? '' : `>${model}`);
             const passes = (value: number | null | undefined, model: number | null | undefined) =>
                 model == null || (value != null && value > model);
@@ -533,6 +538,7 @@ describe('Floating Filters', () => {
     test.each([false, true])(
         'with enableFilterHandlers %s, a floating filter replaced by another component shows the model set before',
         async (enableFilterHandlers) => {
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [348] });
             class ModelFloatingFilter implements IFloatingFilterComp {
                 private readonly eGui = document.createElement('input');
                 public init(): void {

@@ -142,8 +142,8 @@ before	ag-grid.com	/archive/36.2.0/react-data-grid/getting-started/?q=1	-	301	$W
 after	ag-grid.com	/archive/36.2.0/react-data-grid/getting-started/?q=1	-	301	$W/archive/36.2.0/react-data-grid/getting-started/?q=1
 before	react-grid.ag-grid.com	/archive/36.1.0/react-data-grid/getting-started/	-	301	$W/react-data-grid/getting-started/
 after	react-grid.ag-grid.com	/archive/36.1.0/react-data-grid/getting-started/	-	301	$W/archive/36.1.0/react-data-grid/getting-started/
-before	www.angulargrid.com	/archive/36.0.0/react-data-grid/getting-started/	-	301	$W/react-data-grid/getting-started/
-after	www.angulargrid.com	/archive/36.0.0/react-data-grid/getting-started/	-	301	$W/archive/36.0.0/react-data-grid/getting-started/
+before	angular-grid.ag-grid.com	/archive/36.0.0/react-data-grid/getting-started/	-	301	$W/react-data-grid/getting-started/
+after	angular-grid.ag-grid.com	/archive/36.0.0/react-data-grid/getting-started/	-	301	$W/archive/36.0.0/react-data-grid/getting-started/
 before	blog.ag-grid.com	/archive/36.2.0/react-data-grid/getting-started/	-	301	$W/blog/react-data-grid/getting-started/
 after	blog.ag-grid.com	/archive/36.2.0/react-data-grid/getting-started/	-	301	$W/archive/36.2.0/react-data-grid/getting-started/
 before	blog.ag-grid.com	/archive/36.0.0/react-data-grid/getting-started/	-	200	ct:text/html
@@ -151,7 +151,7 @@ after	blog.ag-grid.com	/archive/36.0.0/react-data-grid/getting-started/	-	301	$W
 # A slash-less URL gets its slash in the same hop, as the archive-aware generator does it.
 after	ag-grid.com	/archive/36.2.0/react-data-grid/getting-started	-	301	$W/archive/36.2.0/react-data-grid/getting-started/
 after	blog.ag-grid.com	/archive/36.0.0/react-data-grid/getting-started?q=1	-	301	$W/archive/36.0.0/react-data-grid/getting-started/?q=1
-after	angulargrid.com	/charts/archive/14.0.0/react/bar-series	-	301	$W/charts/archive/14.0.0/react/bar-series/
+after	javascript-grid.ag-grid.com	/charts/archive/14.0.0/react/bar-series	-	301	$W/charts/archive/14.0.0/react/bar-series/
 after	ag-grid.com	/charts/archive/14.2.0/react/bar-series	-	301	$W/charts/archive/14.2.0/react/bar-series/
 after	react-grid.ag-grid.com	/studio/archive/2.0.0/react/getting-started	-	301	$W/studio/archive/2.0.0/react/getting-started/
 # ...but a file keeps its name.
@@ -160,7 +160,7 @@ after	ag-grid.com	/archive/36.2.0/images/logo.png	-	301	$W/archive/36.2.0/images
 # .htaccess is in that directory), so the root's <If> redirect adds the slash and the host at once.
 both	ag-grid.com	/archive/36.2.0	-	301	$W/archive/36.2.0/
 both	blog.ag-grid.com	/archive/36.0.0?q=1	-	301	$W/archive/36.0.0/?q=1
-both	angulargrid.com	/charts/archive/14.1.0	-	301	$W/charts/archive/14.1.0/
+both	angular-grid.ag-grid.com	/charts/archive/14.1.0	-	301	$W/charts/archive/14.1.0/
 both	ag-grid.com	/studio/archive/3.0.0	-	301	$W/studio/archive/3.0.0/
 # An archive with no .htaccess of its own is the root's rewrite rules' to answer.
 both	ag-grid.com	/archive/35.3.1	-	301	$W/archive/35.3.1/
@@ -213,8 +213,8 @@ before	blog.ag-grid.com	/charts/archive/14.0.0/react/bar-series/	-	200	ct:text/h
 after	blog.ag-grid.com	/charts/archive/14.0.0/react/bar-series/	-	301	$W/charts/archive/14.0.0/react/bar-series/
 before	ag-grid.com	/charts/archive/14.1.0/react/bar-series/	-	200	ct:text/html
 after	ag-grid.com	/charts/archive/14.1.0/react/bar-series/	-	301	$W/charts/archive/14.1.0/react/bar-series/
-before	angulargrid.com	/charts/archive/14.2.0/react/bar-series/	-	200	ct:text/html
-after	angulargrid.com	/charts/archive/14.2.0/react/bar-series/	-	301	$W/charts/archive/14.2.0/react/bar-series/
+before	javascript-grid.ag-grid.com	/charts/archive/14.2.0/react/bar-series/	-	200	ct:text/html
+after	javascript-grid.ag-grid.com	/charts/archive/14.2.0/react/bar-series/	-	301	$W/charts/archive/14.2.0/react/bar-series/
 both	ag-grid.com	/charts/archive/14.2.0/react/bar-series/	-	301	$W/charts/archive/14.2.0/react/bar-series/
 both	www.ag-grid.com	/charts/archive/14.1.0/react/bar-series/	text/markdown	200	ct:text/markdown
 # Charts' own prefix-match Redirect defect (finding 2) is in-archive, so the migration leaves it.

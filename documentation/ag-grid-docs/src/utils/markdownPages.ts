@@ -56,6 +56,10 @@ export const GRID_MARKDOWN_PAGE_GROUPS: MarkdownPageGroup[] = [
         pattern: 'compare(?:/[^/.]+)?',
     },
     {
+        describes: 'Alternative pages and their hub, rendered from the alternativePages collection.',
+        pattern: 'alternatives(?:/[^/.]+)?',
+    },
+    {
         // /privacy/your-choice is deliberately absent: it is a post-submission confirmation page,
         // disallowed in robots.txt and excluded from the sitemap, like the /contact result pages.
         describes: 'Legal and policy pages.',

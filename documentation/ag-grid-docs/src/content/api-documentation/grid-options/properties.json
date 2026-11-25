@@ -2356,7 +2356,7 @@
         },
         "tooltipShowMode": {},
         "tooltipTrigger": {
-            "description": "Whether ordinary tooltips show on `hover`, `focus` or `hoverOrFocus`. Focus uses the configured show delay unless overridden by the source. Built-in control tooltips always support hover and immediate focus. Does not apply to browser tooltips.",
+            "description": "Whether ordinary tooltips show on `hover`, `focus` or `hoverOrFocus`. The `focus` trigger applies wherever ordinary grid tooltips are supported, including cells, headers, Set Filter values, menu items and tool panel items. Focus uses the configured show delay unless overridden by the source. Built-in control tooltips always support hover and immediate focus. Does not apply to browser tooltips.",
             "more": {
                 "name": "Tooltip Trigger",
                 "url": "./tooltips-show-hide/#tooltip-trigger"

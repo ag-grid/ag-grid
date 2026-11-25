@@ -123,6 +123,12 @@ async function startMonitoring({
             // Recorded on astro:page-load instead, see trackVirtualPageViews
             pageViewInstrumentation: { trackVirtualPageViews: false },
             urlAttributeScrubber: scrubErrorPageQuery,
+            // By default the SDK runs every event listener and timer inside its own function, to catch
+            // errors thrown in them. Long animation frames then name that function, not the code it
+            // called, which hides what makes a slow interaction slow. Errors in our own scripts are
+            // still reported in full; those in third-party callbacks lose their message and stack.
+            wrapEventHandlers: false,
+            wrapTimers: false,
         });
         sdk = dash0;
         state = 'running';

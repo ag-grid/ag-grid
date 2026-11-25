@@ -1,6 +1,7 @@
-import { ColumnFilterHarness, GridRows, asyncSetTimeout } from 'ag-test-utils';
+import { ALL_SEVERITIES, ColumnFilterHarness, GridRows, asyncSetTimeout } from 'ag-test-utils';
 
 import type { ColDef, GridApi } from 'ag-grid-community';
+import { enableDevValidations } from 'ag-grid-community';
 
 import { ROWS, floatingChildren, setupMultiFilterSuite } from './multiFilterHarness';
 import { FILTERS_SIDEBAR, openFiltersPanel } from './toolPanelHarness';
@@ -10,6 +11,10 @@ describe('Multi Filter — sub-filter combos & combined model (coverage)', () =>
     const gridsManager = setupMultiFilterSuite();
 
     describe.each([false, true])('filterParams.filters changed (enableFilterHandlers: %s)', (enableFilterHandlers) => {
+        beforeEach(() => {
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [348] });
+        });
+
         const TEXT_CHILD = { filter: 'agTextColumnFilter', filterParams: { debounceMs: 0, maxNumConditions: 1 } };
 
         const colDefsWith = (filters: object[], extra?: object) => [

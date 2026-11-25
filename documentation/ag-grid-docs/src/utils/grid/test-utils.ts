@@ -913,6 +913,7 @@ export async function serializeGridDom(page: Page, options?: ConsistentDomOption
 export { gridApiHandle } from './test/gridApiHandle';
 export { type EventLog, type GridEventLog, gridEventLog } from './test/gridEventLog';
 export { recreateGrid } from './test/recreateGrid';
+export { dismissValidationOverlay } from './test/dismissValidationOverlay';
 export { ensureGridReady, waitForGridContent } from './test/waitForGrid';
 export { orderedValues } from './test/orderedValues';
 export { repeat } from './test/repeat';

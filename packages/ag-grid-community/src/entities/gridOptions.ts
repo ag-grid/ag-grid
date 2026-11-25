@@ -321,7 +321,7 @@ export interface GridOptions<TData = any> {
     tooltipTrigger?: 'hover' | 'focus' | 'hoverOrFocus';
     /**
      * Preferred tooltip placement. Flips or shifts to stay within the available space.
-     * Return `undefined` from the callback to use the default placement: `top` for built-in controls, otherwise `top-start`.
+     * Return `undefined` from the callback to use the default placement: towards the grid for Side Bar tabs, `top` for other built-in controls, otherwise `top-start`.
      * Does not apply to browser tooltips.
      * @agModule `TooltipModule`
      */
@@ -382,14 +382,16 @@ export interface GridOptions<TData = any> {
     tooltipMouseTrack?: boolean;
     /**
      * Controls tooltips for grid-rendered text, including cells, headers, Set Filter items and tool panel labels.
-     * - `whenTruncated` - Automatically shows displayed text when truncated. Configured tooltips that repeat
-     *   the raw or displayed value require truncation; different content does not.
+     * - `auto` - Automatically shows truncated text and configured tooltips with different content.
      * - `standard` - Shows only configured tooltips, without requiring truncation.
-     * Applies to browser tooltips too. Custom components must supply their own truncation check.
-     * @default 'whenTruncated'
+     * - `whenTruncated` - Shows only configured tooltips, and only when the target text is truncated.
+     * - `whenDifferent` - Shows only configured tooltips that differ from the default tooltip value:
+     *   the formatted value when available, otherwise the raw value.
+     * Applies to browser tooltips too. Custom components can supply their own display predicate.
+     * @default 'auto'
      * @agModule `TooltipModule`
      */
-    tooltipShowMode?: 'standard' | 'whenTruncated';
+    tooltipShowMode?: 'auto' | 'standard' | 'whenTruncated' | 'whenDifferent';
     /**
      * Set to `true` for custom tooltip content containing focusable controls. Tab can enter the tooltip and
      * Escape closes it and returns focus to its source. All tooltips remain visible while hovered.
@@ -860,6 +862,8 @@ export interface GridOptions<TData = any> {
      *
      * Note that grid-provided filters (except for the Multi Filter) always use filter handlers.
      * The Multi Filter will also use a filter handler if this is enabled.
+     *
+     * The default becomes `true` in v38. Setting `false` (legacy filter mode) is deprecated in v37, and legacy filter mode and this option will be removed in a major version after v38. See [Migrating to Filter Handlers](https://www.ag-grid.com/javascript-data-grid/enable-filter-handlers-migration/).
      * @initial
      */
     enableFilterHandlers?: boolean;
@@ -2921,6 +2925,7 @@ export interface GridOptions<TData = any> {
     onFilterChanged?(event: FilterChangedEvent<TData>): void;
     /**
      * Filter was modified but not applied  (when using `enableFilterHandlers = false`). Used when filters have 'Apply' buttons.
+     * @deprecated v37 Use `onFilterUiChanged` and `onFloatingFilterUiChanged` with `enableFilterHandlers` instead. See [Migrating to Filter Handlers](https://www.ag-grid.com/javascript-data-grid/enable-filter-handlers-migration/).
      */
     onFilterModified?(event: FilterModifiedEvent<TData>): void;
     /**

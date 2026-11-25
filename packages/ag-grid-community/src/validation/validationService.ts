@@ -48,6 +48,10 @@ export class ValidationService extends BeanStub implements NamedBean {
 
     public processGridOptions(options: GridOptions): void {
         this.processOptions(options, GRID_OPTIONS_VALIDATORS());
+        if (options.enableFilterHandlers !== false) {
+            return;
+        }
+        this.beans.log.deprecated(348);
     }
 
     public validateApiFunction<TFunctionName extends ApiFunctionName>(

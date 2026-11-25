@@ -51,6 +51,8 @@ export class BigIntFloatingFilter extends TextInputFloatingFilter<IBigIntFloatin
 
     protected override convertValue<TValue>(value: string | null | undefined): TValue | null {
         const { gos, params } = this;
-        return stringToBigInt(this.bigintParser, value, gos, params.column) as TValue | null;
+        // The model holds a bigint as a string, as the column filter writes it: a bigint cannot be serialised.
+        const bigint = stringToBigInt(this.bigintParser, value, gos, params.column);
+        return (bigint === null ? null : String(bigint)) as TValue | null;
     }
 }

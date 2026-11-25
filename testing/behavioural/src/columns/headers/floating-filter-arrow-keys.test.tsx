@@ -1,11 +1,17 @@
 import '@testing-library/jest-dom/vitest';
 import { cleanup, render, waitFor } from '@testing-library/react';
-import { TestGridsManager } from 'ag-test-utils';
+import { ALL_SEVERITIES, LEGACY_FILTER_WARNING_IDS, TestGridsManager } from 'ag-test-utils';
 import React from 'react';
 import { afterEach, describe, expect, test } from 'vitest';
 
 import type { ColDef, GridApi, IFloatingFilterComp } from 'ag-grid-community';
-import { ClientSideRowModelModule, CustomFilterModule, NumberFilterModule, TextFilterModule } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    CustomFilterModule,
+    NumberFilterModule,
+    TextFilterModule,
+    enableDevValidations,
+} from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
 
 import { dispatchKeyDown } from '../../navigation/navigation-test-utils';
@@ -80,6 +86,7 @@ describe('floating filter arrow keys do not scroll the grid viewport', () => {
     });
 
     test.each(ARROW_KEYS)('%s on a custom floating filter checkbox prevents the default scroll', async (key) => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: LEGACY_FILTER_WARNING_IDS });
         const eGridDiv = await createGrid(formInputsColumnDefs);
 
         focusElement(eGridDiv, 'input[type="checkbox"]');
@@ -87,6 +94,7 @@ describe('floating filter arrow keys do not scroll the grid viewport', () => {
     });
 
     test.each(ARROW_KEYS)('%s on a custom floating filter radio keeps its default behaviour', async (key) => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: LEGACY_FILTER_WARNING_IDS });
         const eGridDiv = await createGrid(formInputsColumnDefs);
 
         focusElement(eGridDiv, 'input[type="radio"]');

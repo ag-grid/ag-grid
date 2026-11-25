@@ -1,0 +1,60 @@
+---
+import DecisionHubPage from '@ag-website-shared/components/decision-pages/DecisionHubPage.astro';
+import { buildBreadcrumbList } from '@ag-website-shared/utils/structuredData';
+import { DISABLE_MARKDOWN_DOCS } from '@constants';
+import Layout from '@layouts/Layout.astro';
+import { getDecisionPageCollections } from '@utils/decisionPageCollections';
+import {
+    ALTERNATIVES_HUB,
+    ALTERNATIVES_HUB_LINK,
+    GRID_DECISION_SITE,
+    alternativesHubCards,
+} from '@utils/decisionPages';
+import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
+import { type CollectionEntry, getEntry } from 'astro:content';
+
+const cards = alternativesHubCards(await getDecisionPageCollections());
+
+const { data: metadata } = (await getEntry('metadata', 'metadata')) as CollectionEntry<'metadata'>;
+const pageUrl = new URL(Astro.url.pathname, metadata.canonicalUrlBase).href;
+const markdownUrl = DISABLE_MARKDOWN_DOCS ? undefined : urlWithBaseUrl('/alternatives.md');
+
+const pageStructuredData = [
+    {
+        '@type': 'CollectionPage',
+        '@id': pageUrl,
+        url: pageUrl,
+        name: ALTERNATIVES_HUB.title,
+        description: ALTERNATIVES_HUB.description,
+        hasPart: cards.map(({ url }) => ({ '@id': new URL(url, metadata.canonicalUrlBase).href })),
+    },
+    buildBreadcrumbList({
+        pageUrl,
+        items: [
+            {
+                name: GRID_DECISION_SITE.productName,
+                url: new URL(GRID_DECISION_SITE.urls.home, metadata.canonicalUrlBase).href,
+            },
+            { name: ALTERNATIVES_HUB_LINK.name, url: pageUrl },
+        ],
+    }),
+];
+---
+
+<Layout
+    title={ALTERNATIVES_HUB.title}
+    description={ALTERNATIVES_HUB.description}
+    showDocsNav={false}
+    showSearchBar={true}
+    pageStructuredData={pageStructuredData}
+    markdownUrl={markdownUrl}
+>
+    <DecisionHubPage
+        site={GRID_DECISION_SITE}
+        heading={ALTERNATIVES_HUB.heading}
+        subHeading={ALTERNATIVES_HUB.subHeading}
+        listHeading={ALTERNATIVES_HUB.listHeading}
+        cards={cards}
+        analyticsPrefix="alternatives-hub"
+    />
+</Layout>

@@ -29,7 +29,7 @@ Setting delays will have no effect if using Browser Tooltips as Browser Tooltips
 
 ## Tooltip Trigger
 
-`tooltipTrigger` controls what shows configured tooltips, including cells, headers, menu items and tool panel items:
+`tooltipTrigger` controls what shows ordinary grid tooltips, including cells, headers, Set Filter values, menu items and tool panel items:
 
 - `'hover'` (default): show on mouse hover only.
 - `'focus'`: show on keyboard focus only, after `tooltipShowDelay`.
@@ -45,7 +45,7 @@ const gridOptions = {
 
 {% apiDocumentation source="grid-options/properties.json" section="tooltips" names=["tooltipTrigger"] /%}
 
-Built-in control tooltips ignore `tooltipTrigger`. Non-focusable header icons and resize handles do not show their hints on header focus. See [Column Header Navigation](./keyboard-navigation/#column-header-navigation) for keyboard actions, including resizing.
+Built-in control tooltips ignore `tooltipTrigger`. Non-focusable header icons, resize handles and filter-panel chevrons show their action hints on hover only; focusing the enclosing header or filter title retains its text-tooltip behaviour. See [Column Header Navigation](./keyboard-navigation/#column-header-navigation) for keyboard actions, including resizing.
 
 Existing accessible names are preserved; identical tooltip text is not repeated as a description. In combined mode, the most recently hovered or focused element owns the tooltip; moving away does not restore an earlier element's tooltip.
 

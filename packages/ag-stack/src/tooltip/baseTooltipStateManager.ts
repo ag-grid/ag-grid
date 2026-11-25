@@ -23,6 +23,7 @@ enum TooltipStates {
 
 interface TooltipOwner {
     canShowTooltip(): boolean;
+    containsSource(element: HTMLElement): boolean;
     hideTooltip(forceHide?: boolean): void;
     isTooltipFocused(): boolean;
     hasFocusedSourceWithin(element: HTMLElement): boolean;
@@ -363,13 +364,14 @@ export abstract class BaseTooltipStateManager<
         window.clearTimeout(this.hoverGraceTimeout);
         this.hoverGraceTimeout = undefined;
         const owner = this.sharedState.owner;
-        // Empty built-in hints must not displace their parent's tooltip; ordinary sources may still be mounting.
+        // Empty nested hints must not displace their parent's tooltip; unrelated sources may still be mounting.
         if (
             owner &&
             owner !== this &&
             (owner.isTooltipFocused() ||
                 owner.hasFocusedSourceWithin(this.tooltipCtrl.getGui()) ||
-                (this.tooltipCtrl.control && !this.canShowTooltip()))
+                ((this.tooltipCtrl.control || owner.containsSource(this.tooltipCtrl.getGui())) &&
+                    !this.canShowTooltip()))
         ) {
             return;
         }
@@ -433,6 +435,10 @@ export abstract class BaseTooltipStateManager<
 
     public canShowTooltip(): boolean {
         return this.isTooltipAllowed() && this.getTooltipDetails() != null;
+    }
+
+    public containsSource(element: HTMLElement): boolean {
+        return this.tooltipCtrl.getGui().contains(element);
     }
 
     /** Hides any visible tooltip for the scroll's duration; bodyScrollEnd re-attempts and revalidates the pointer. */

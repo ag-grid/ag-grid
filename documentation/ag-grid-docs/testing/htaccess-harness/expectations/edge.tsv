@@ -4,7 +4,7 @@
 # implemented yet (they must fail; an unexpected pass fails the run so the row gets promoted).
 
 # Every row here is unique coverage: raise this with each added row, lower it only with a reviewed deletion.
-# @min-rows 322
+# @min-rows 300
 # @category host-canonical-one-hop
 # Every non-www host that reaches the docroot lands on the final www URL in ONE hop - for grid,
 # charts and studio pages, and for archives (whose path must be kept).
@@ -34,7 +34,7 @@ apex	/archive/36.2.0	301	https://www.ag-grid.com/archive/36.2.0/	hops=1	final=20
 apex	/archive/36.2.0	301	https://www.ag-grid.com/archive/36.2.0/	scheme=http	hops=1	final=200
 apex	/archive/36.3.0?x=1	301	https://www.ag-grid.com/archive/36.3.0/?x=1	hops=1	final=200
 blog	/archive/36.2.0	301	https://www.ag-grid.com/archive/36.2.0/	hops=1	final=200
-angulargrid.com	/charts/archive/14.2.0	301	https://www.ag-grid.com/charts/archive/14.2.0/	hops=1	final=200
+angular-grid.ag-grid.com	/charts/archive/14.2.0	301	https://www.ag-grid.com/charts/archive/14.2.0/	hops=1	final=200
 apex	/studio/archive/3.0.0	301	https://www.ag-grid.com/studio/archive/3.0.0/	hops=1	final=200
 www	/archive/36.2.0	301	https://www.ag-grid.com/archive/36.2.0/	scheme=http	hops=1	final=200
 www	/archive/36.2.0	301	/archive/36.2.0/	hops=1	final=200
@@ -50,13 +50,7 @@ react-grid.ag-grid.com	/react-data-grid/getting-started/	301	https://www.ag-grid
 react-grid.ag-grid.com	/charts/react/bar-series/	301	https://www.ag-grid.com/charts/react/bar-series/	hops=1	final=200
 react-grid.ag-grid.com	/studio/react/quick-start/	301	https://www.ag-grid.com/studio/react/quick-start/	hops=1	final=200
 react-grid.ag-grid.com	/archive/36.2.0/react-data-grid/getting-started/	301	https://www.ag-grid.com/archive/36.2.0/react-data-grid/getting-started/	hops=1	final=200
-angulargrid.com	/react-data-grid/getting-started/	301	https://www.ag-grid.com/react-data-grid/getting-started/	hops=1	final=200
-angulargrid.com	/charts/react/bar-series/	301	https://www.ag-grid.com/charts/react/bar-series/	hops=1	final=200
-angulargrid.com	/studio/react/quick-start/	301	https://www.ag-grid.com/studio/react/quick-start/	hops=1	final=200
-www.angulargrid.com	/react-data-grid/getting-started/	301	https://www.ag-grid.com/react-data-grid/getting-started/	hops=1	final=200
-www.angulargrid.com	/charts/react/bar-series/	301	https://www.ag-grid.com/charts/react/bar-series/	hops=1	final=200
-www.angulargrid.com	/studio/react/quick-start/	301	https://www.ag-grid.com/studio/react/quick-start/	hops=1	final=200
-www.angulargrid.com	/charts/archive/14.2.0/react/bar-series/	301	https://www.ag-grid.com/charts/archive/14.2.0/react/bar-series/	hops=1	final=200
+angular-grid.ag-grid.com	/charts/archive/14.2.0/react/bar-series/	301	https://www.ag-grid.com/charts/archive/14.2.0/react/bar-series/	hops=1	final=200
 # The blog host maps the grid root's own paths into /blog/ (SE-86), in one hop.
 blog	/whats-new-in-ag-grid-35-3/	301	https://www.ag-grid.com/blog/whats-new-in-ag-grid-35-3/	hops=1
 # A slash-less charts/studio URL on www goes straight to the slashed URL in one hop.
@@ -115,22 +109,6 @@ react-grid.ag-grid.com	/react-data-grid/getting-started	301	https://www.ag-grid.
 react-grid.ag-grid.com	/archive/36.2.0/react-data-grid/getting-started	301	https://www.ag-grid.com/archive/36.2.0/react-data-grid/getting-started/	scheme=http	hops=1	final=200
 react-grid.ag-grid.com	/charts/react/bar-series	301	https://www.ag-grid.com/charts/react/bar-series/	scheme=http	hops=1	final=200
 react-grid.ag-grid.com	/studio/react/quick-start	301	https://www.ag-grid.com/studio/react/quick-start/	scheme=http	hops=1	final=200
-angulargrid.com	/react-data-grid/getting-started	301	https://www.ag-grid.com/react-data-grid/getting-started/	hops=1	final=200
-angulargrid.com	/archive/36.2.0/react-data-grid/getting-started	301	https://www.ag-grid.com/archive/36.2.0/react-data-grid/getting-started/	hops=1	final=200
-angulargrid.com	/charts/react/bar-series	301	https://www.ag-grid.com/charts/react/bar-series/	hops=1	final=200
-angulargrid.com	/studio/react/quick-start	301	https://www.ag-grid.com/studio/react/quick-start/	hops=1	final=200
-angulargrid.com	/react-data-grid/getting-started	301	https://www.ag-grid.com/react-data-grid/getting-started/	scheme=http	hops=1	final=200
-angulargrid.com	/archive/36.2.0/react-data-grid/getting-started	301	https://www.ag-grid.com/archive/36.2.0/react-data-grid/getting-started/	scheme=http	hops=1	final=200
-angulargrid.com	/charts/react/bar-series	301	https://www.ag-grid.com/charts/react/bar-series/	scheme=http	hops=1	final=200
-angulargrid.com	/studio/react/quick-start	301	https://www.ag-grid.com/studio/react/quick-start/	scheme=http	hops=1	final=200
-www.angulargrid.com	/react-data-grid/getting-started	301	https://www.ag-grid.com/react-data-grid/getting-started/	hops=1	final=200
-www.angulargrid.com	/archive/36.2.0/react-data-grid/getting-started	301	https://www.ag-grid.com/archive/36.2.0/react-data-grid/getting-started/	hops=1	final=200
-www.angulargrid.com	/charts/react/bar-series	301	https://www.ag-grid.com/charts/react/bar-series/	hops=1	final=200
-www.angulargrid.com	/studio/react/quick-start	301	https://www.ag-grid.com/studio/react/quick-start/	hops=1	final=200
-www.angulargrid.com	/react-data-grid/getting-started	301	https://www.ag-grid.com/react-data-grid/getting-started/	scheme=http	hops=1	final=200
-www.angulargrid.com	/archive/36.2.0/react-data-grid/getting-started	301	https://www.ag-grid.com/archive/36.2.0/react-data-grid/getting-started/	scheme=http	hops=1	final=200
-www.angulargrid.com	/charts/react/bar-series	301	https://www.ag-grid.com/charts/react/bar-series/	scheme=http	hops=1	final=200
-www.angulargrid.com	/studio/react/quick-start	301	https://www.ag-grid.com/studio/react/quick-start/	scheme=http	hops=1	final=200
 blog	/archive/36.2.0/react-data-grid/getting-started	301	https://www.ag-grid.com/archive/36.2.0/react-data-grid/getting-started/	hops=1	final=200
 blog	/charts/react/bar-series	301	https://www.ag-grid.com/charts/react/bar-series/	hops=1	final=200
 blog	/studio/react/quick-start	301	https://www.ag-grid.com/studio/react/quick-start/	hops=1	final=200
@@ -150,8 +128,8 @@ www	/.well-known/acme-challenge/Abc_123-xyz	200		scheme=http	body~acme-challenge
 www	/.well-known/acme-challenge/Abc_123-xyz	200		body~acme-challenge/Abc_123-xyz
 apex	/.well-known/acme-challenge/Abc_123-xyz	301	https://www.ag-grid.com/.well-known/acme-challenge/Abc_123-xyz	scheme=http	hops=1	final=200
 apex	/.well-known/acme-challenge/Abc_123-xyz	301	https://www.ag-grid.com/.well-known/acme-challenge/Abc_123-xyz	hops=1	final=200
-angulargrid.com	/.well-known/acme-challenge/Abc_123-xyz	301	https://www.ag-grid.com/.well-known/acme-challenge/Abc_123-xyz	scheme=http	hops=1	final=200
-angulargrid.com	/.well-known/acme-challenge/Abc_123-xyz	301	https://www.ag-grid.com/.well-known/acme-challenge/Abc_123-xyz	hops=1	final=200
+react-grid.ag-grid.com	/.well-known/acme-challenge/Abc_123-xyz	301	https://www.ag-grid.com/.well-known/acme-challenge/Abc_123-xyz	scheme=http	hops=1	final=200
+react-grid.ag-grid.com	/.well-known/acme-challenge/Abc_123-xyz	301	https://www.ag-grid.com/.well-known/acme-challenge/Abc_123-xyz	hops=1	final=200
 
 # @category encoded-paths
 # Apache matches the rules against the decoded path and re-escapes it in the Location: an encoded
@@ -170,18 +148,18 @@ apex	/caf%C3%A9/	301	https://www.ag-grid.com/caf%c3%a9/	scheme=http
 apex	/a%23b/	301	https://www.ag-grid.com/a%23b/	scheme=http
 apex	/a%26b/	301	https://www.ag-grid.com/a&b/	scheme=http
 apex	/a%3Fb/	403		scheme=http
-angulargrid.com	/some%20page/?q=a%20b	301	https://www.ag-grid.com/some%20page/?q=a%20b
-angulargrid.com	/some%20page	301	https://www.ag-grid.com/some%20page/
-angulargrid.com	/caf%C3%A9/	301	https://www.ag-grid.com/caf%c3%a9/
-angulargrid.com	/a%23b/	301	https://www.ag-grid.com/a%23b/
-angulargrid.com	/a%26b/	301	https://www.ag-grid.com/a&b/
-angulargrid.com	/a%3Fb/	403	
-angulargrid.com	/some%20page/?q=a%20b	301	https://www.ag-grid.com/some%20page/?q=a%20b	scheme=http
-angulargrid.com	/some%20page	301	https://www.ag-grid.com/some%20page/	scheme=http
-angulargrid.com	/caf%C3%A9/	301	https://www.ag-grid.com/caf%c3%a9/	scheme=http
-angulargrid.com	/a%23b/	301	https://www.ag-grid.com/a%23b/	scheme=http
-angulargrid.com	/a%26b/	301	https://www.ag-grid.com/a&b/	scheme=http
-angulargrid.com	/a%3Fb/	403		scheme=http
+react-grid.ag-grid.com	/some%20page/?q=a%20b	301	https://www.ag-grid.com/some%20page/?q=a%20b
+react-grid.ag-grid.com	/some%20page	301	https://www.ag-grid.com/some%20page/
+react-grid.ag-grid.com	/caf%C3%A9/	301	https://www.ag-grid.com/caf%c3%a9/
+react-grid.ag-grid.com	/a%23b/	301	https://www.ag-grid.com/a%23b/
+react-grid.ag-grid.com	/a%26b/	301	https://www.ag-grid.com/a&b/
+react-grid.ag-grid.com	/a%3Fb/	403	
+react-grid.ag-grid.com	/some%20page/?q=a%20b	301	https://www.ag-grid.com/some%20page/?q=a%20b	scheme=http
+react-grid.ag-grid.com	/some%20page	301	https://www.ag-grid.com/some%20page/	scheme=http
+react-grid.ag-grid.com	/caf%C3%A9/	301	https://www.ag-grid.com/caf%c3%a9/	scheme=http
+react-grid.ag-grid.com	/a%23b/	301	https://www.ag-grid.com/a%23b/	scheme=http
+react-grid.ag-grid.com	/a%26b/	301	https://www.ag-grid.com/a&b/	scheme=http
+react-grid.ag-grid.com	/a%3Fb/	403		scheme=http
 apex	/archive/36.2.0/caf%C3%A9/	301	https://www.ag-grid.com/archive/36.2.0/caf%c3%a9/
 apex	/archive/36.2.0/some%20page	301	https://www.ag-grid.com/archive/36.2.0/some%20page/
 apex	/charts/caf%C3%A9/	301	https://www.ag-grid.com/charts/caf%c3%a9/

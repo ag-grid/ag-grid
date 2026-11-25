@@ -128,6 +128,15 @@ describe('initWebsiteMonitoring', () => {
         expect(dash0.init).toHaveBeenCalledTimes(1);
     });
 
+    test('leaves event listeners and timers unwrapped, so slow interactions name the scripts they ran', async () => {
+        await initWebsiteMonitoring();
+        await fireGtmTag(WEBSITE_MONITORING_GTM_START_SCRIPT);
+
+        expect(dash0.init).toHaveBeenCalledWith(
+            expect.objectContaining({ wrapEventHandlers: false, wrapTimers: false })
+        );
+    });
+
     test('starts only once when GTM sends start repeatedly', async () => {
         await fireGtmTag(WEBSITE_MONITORING_GTM_START_SCRIPT);
         await initWebsiteMonitoring();

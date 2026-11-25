@@ -370,7 +370,7 @@ RequestHeader edit* If-None-Match '-gzip"' '"'
 
     # Slash-less directory URLs on a non-canonical host or scheme: add the slash and canonicalise
     # in the same hop.
-    RewriteCond %{HTTP_HOST}:%{SERVER_PORT} ^(?:www\\.ag-grid\\.com:80|(?:ag-grid\\.com|angulargrid\\.ag-grid\\.com|angular-grid\\.ag-grid\\.com|javascript-grid\\.ag-grid\\.com|react-grid\\.ag-grid\\.com|angulargrid\\.com|www\\.angulargrid\\.com):[0-9]+)$ [NC]
+    RewriteCond %{HTTP_HOST}:%{SERVER_PORT} ^(?:www\\.ag-grid\\.com:80|(?:ag-grid\\.com|angulargrid\\.ag-grid\\.com|angular-grid\\.ag-grid\\.com|javascript-grid\\.ag-grid\\.com|react-grid\\.ag-grid\\.com):[0-9]+)$ [NC]
     RewriteCond %{REQUEST_URI} /+[^\\.]+$
     RewriteCond %{REQUEST_URI} !^/\\.well-known/acme-challenge/[0-9a-zA-Z_-]+$
     RewriteCond %{REQUEST_URI} !^/\\.well-known/cpanel-dcv/[0-9a-zA-Z_-]+$
@@ -379,7 +379,7 @@ RequestHeader edit* If-None-Match '-gzip"' '"'
     RewriteRule ^(.+[^/])$ https://www.ag-grid.com%{REQUEST_URI}/ [R=301,L]
     # A bare archive root on a non-canonical host or scheme: add the slash and canonicalise in the
     # same hop.
-    RewriteCond %{HTTP_HOST}:%{SERVER_PORT} ^(?:www\\.ag-grid\\.com:80|(?:ag-grid\\.com|angulargrid\\.ag-grid\\.com|angular-grid\\.ag-grid\\.com|javascript-grid\\.ag-grid\\.com|react-grid\\.ag-grid\\.com|angulargrid\\.com|www\\.angulargrid\\.com):[0-9]+)$ [NC]
+    RewriteCond %{HTTP_HOST}:%{SERVER_PORT} ^(?:www\\.ag-grid\\.com:80|(?:ag-grid\\.com|angulargrid\\.ag-grid\\.com|angular-grid\\.ag-grid\\.com|javascript-grid\\.ag-grid\\.com|react-grid\\.ag-grid\\.com):[0-9]+)$ [NC]
     RewriteCond %{DOCUMENT_ROOT}%{REQUEST_URI} -d
     RewriteRule ^archive/[^/]+$ https://www.ag-grid.com%{REQUEST_URI}/ [R=301,L]
 
@@ -405,11 +405,6 @@ RequestHeader edit* If-None-Match '-gzip"' '"'
     RewriteCond %{HTTP_HOST} ^javascript-grid\\.ag-grid\\.com$ [NC]
     RewriteRule ^(.*)$ https://www.ag-grid.com/$1 [R=301,L]
     RewriteCond %{HTTP_HOST} ^react-grid\\.ag-grid\\.com$ [NC]
-    RewriteRule ^(.*)$ https://www.ag-grid.com/$1 [R=301,L]
-
-    # Redirect angulargrid.com to www.ag-grid.com
-    RewriteCond %{HTTP_HOST} ^angulargrid\\.com$ [OR]
-    RewriteCond %{HTTP_HOST} ^www\\.angulargrid\\.com$
     RewriteRule ^(.*)$ https://www.ag-grid.com/$1 [R=301,L]
 
     # Old PHP-era grid archives (15.0.0-26.2.0): Jira-backed pages and include fragments
@@ -673,7 +668,7 @@ RequestHeader edit* If-None-Match '-gzip"' '"'
     # is left untouched. Placed after host/https canonicalization but before the
     # trailing-slash 301 so the canonical (slashed) docs URL negotiates in one hop.
     RewriteCond %{HTTP_ACCEPT} text/markdown
-    RewriteCond %{REQUEST_URI} ^/((?:react|angular|vue|javascript)-data-grid/[^/.]+|(?:react|angular|vue)-data-grid|about|changelog|documentation-archive|example|license-pricing|pipeline|roadmap|whats-new|community(?:/(?:beyond-the-prompt|events|media|showcase|tools-extensions))?|session/[^/.]+|campaigns/bryntum-[^/.]+|landing-pages/[^/.]+|react-table|compare(?:/[^/.]+)?|cookies|eula/(?:commercial|community)|modern-slavery|privacy|terms-of-use|example-(?:finance|hr|inventory)|contact|niall|licensing|reference|sitemap|theme-builder)/?$
+    RewriteCond %{REQUEST_URI} ^/((?:react|angular|vue|javascript)-data-grid/[^/.]+|(?:react|angular|vue)-data-grid|about|changelog|documentation-archive|example|license-pricing|pipeline|roadmap|whats-new|community(?:/(?:beyond-the-prompt|events|media|showcase|tools-extensions))?|session/[^/.]+|campaigns/bryntum-[^/.]+|landing-pages/[^/.]+|react-table|compare(?:/[^/.]+)?|alternatives(?:/[^/.]+)?|cookies|eula/(?:commercial|community)|modern-slavery|privacy|terms-of-use|example-(?:finance|hr|inventory)|contact|niall|licensing|reference|sitemap|theme-builder)/?$
     RewriteCond %{DOCUMENT_ROOT}/%1.md -f
     RewriteRule ^ /%1.md [L]
 
@@ -3061,7 +3056,7 @@ RequestHeader edit* If-None-Match '-gzip"' '"'
 
 # A bare archive root on a non-canonical host or scheme, where the archive has its own .htaccess:
 # add the slash and canonicalise in one hop (mod_rewrite leaves this request to mod_dir).
-<If "'%{HTTP_HOST}:%{SERVER_PORT}' =~ m#^(?:www\\.ag-grid\\.com:80|(?:ag-grid\\.com|angulargrid\\.ag-grid\\.com|angular-grid\\.ag-grid\\.com|javascript-grid\\.ag-grid\\.com|react-grid\\.ag-grid\\.com|angulargrid\\.com|www\\.angulargrid\\.com|blog\\.ag-grid\\.com):[0-9]+)$#i && %{REQUEST_URI} =~ m#^/(?:charts/|studio/)?archive/[^/]+$# && -d '%{DOCUMENT_ROOT}%{REQUEST_URI}'">
+<If "'%{HTTP_HOST}:%{SERVER_PORT}' =~ m#^(?:www\\.ag-grid\\.com:80|(?:ag-grid\\.com|angulargrid\\.ag-grid\\.com|angular-grid\\.ag-grid\\.com|javascript-grid\\.ag-grid\\.com|react-grid\\.ag-grid\\.com|blog\\.ag-grid\\.com):[0-9]+)$#i && %{REQUEST_URI} =~ m#^/(?:charts/|studio/)?archive/[^/]+$# && -d '%{DOCUMENT_ROOT}%{REQUEST_URI}'">
     Redirect 301 "https://www.ag-grid.com%{REQUEST_URI}/"
 </If>
 
@@ -3074,7 +3069,7 @@ Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
 
 # SE-80: negotiated pages content-negotiate on Accept (see the markdown rewrite), so shared
 # caches must key on it. Scoped to the negotiated paths so the rest of the site keeps its default.
-<If "%{REQUEST_URI} =~ m#^/(?:(?:react|angular|vue|javascript)-data-grid/[^/.]+|(?:react|angular|vue)-data-grid|about|changelog|documentation-archive|example|license-pricing|pipeline|roadmap|whats-new|community(?:/(?:beyond-the-prompt|events|media|showcase|tools-extensions))?|session/[^/.]+|campaigns/bryntum-[^/.]+|landing-pages/[^/.]+|react-table|compare(?:/[^/.]+)?|cookies|eula/(?:commercial|community)|modern-slavery|privacy|terms-of-use|example-(?:finance|hr|inventory)|contact|niall|licensing|reference|sitemap|theme-builder)(?:/|/index\\.html)?$# || %{REQUEST_URI} =~ m#^/(?:index\\.html)?$#">
+<If "%{REQUEST_URI} =~ m#^/(?:(?:react|angular|vue|javascript)-data-grid/[^/.]+|(?:react|angular|vue)-data-grid|about|changelog|documentation-archive|example|license-pricing|pipeline|roadmap|whats-new|community(?:/(?:beyond-the-prompt|events|media|showcase|tools-extensions))?|session/[^/.]+|campaigns/bryntum-[^/.]+|landing-pages/[^/.]+|react-table|compare(?:/[^/.]+)?|alternatives(?:/[^/.]+)?|cookies|eula/(?:commercial|community)|modern-slavery|privacy|terms-of-use|example-(?:finance|hr|inventory)|contact|niall|licensing|reference|sitemap|theme-builder)(?:/|/index\\.html)?$# || %{REQUEST_URI} =~ m#^/(?:index\\.html)?$#">
     Header append Vary Accept
 </If>
 
@@ -3181,7 +3176,7 @@ RequestHeader edit* If-None-Match '-gzip"' '"'
 
     # SE-80: content-negotiate docs pages to their markdown variant on Accept: text/markdown.
     RewriteCond %{HTTP_ACCEPT} text/markdown
-    RewriteCond %{REQUEST_URI} ^/((?:react|angular|vue|javascript)-data-grid/[^/.]+|(?:react|angular|vue)-data-grid|about|changelog|documentation-archive|example|license-pricing|pipeline|roadmap|whats-new|community(?:/(?:beyond-the-prompt|events|media|showcase|tools-extensions))?|session/[^/.]+|campaigns/bryntum-[^/.]+|landing-pages/[^/.]+|react-table|compare(?:/[^/.]+)?|cookies|eula/(?:commercial|community)|modern-slavery|privacy|terms-of-use|example-(?:finance|hr|inventory)|contact|niall|licensing|reference|sitemap|theme-builder)/?$
+    RewriteCond %{REQUEST_URI} ^/((?:react|angular|vue|javascript)-data-grid/[^/.]+|(?:react|angular|vue)-data-grid|about|changelog|documentation-archive|example|license-pricing|pipeline|roadmap|whats-new|community(?:/(?:beyond-the-prompt|events|media|showcase|tools-extensions))?|session/[^/.]+|campaigns/bryntum-[^/.]+|landing-pages/[^/.]+|react-table|compare(?:/[^/.]+)?|alternatives(?:/[^/.]+)?|cookies|eula/(?:commercial|community)|modern-slavery|privacy|terms-of-use|example-(?:finance|hr|inventory)|contact|niall|licensing|reference|sitemap|theme-builder)/?$
     RewriteCond %{DOCUMENT_ROOT}/%1.md -f
     RewriteRule ^ /%1.md [L]
 
@@ -3195,7 +3190,7 @@ RequestHeader edit* If-None-Match '-gzip"' '"'
 
 # SE-80: negotiated pages content-negotiate on Accept (see the markdown rewrite), so shared
 # caches must key on it. Scoped to the negotiated paths so the rest of the site keeps its default.
-<If "%{REQUEST_URI} =~ m#^/(?:(?:react|angular|vue|javascript)-data-grid/[^/.]+|(?:react|angular|vue)-data-grid|about|changelog|documentation-archive|example|license-pricing|pipeline|roadmap|whats-new|community(?:/(?:beyond-the-prompt|events|media|showcase|tools-extensions))?|session/[^/.]+|campaigns/bryntum-[^/.]+|landing-pages/[^/.]+|react-table|compare(?:/[^/.]+)?|cookies|eula/(?:commercial|community)|modern-slavery|privacy|terms-of-use|example-(?:finance|hr|inventory)|contact|niall|licensing|reference|sitemap|theme-builder)(?:/|/index\\.html)?$# || %{REQUEST_URI} =~ m#^/(?:index\\.html)?$#">
+<If "%{REQUEST_URI} =~ m#^/(?:(?:react|angular|vue|javascript)-data-grid/[^/.]+|(?:react|angular|vue)-data-grid|about|changelog|documentation-archive|example|license-pricing|pipeline|roadmap|whats-new|community(?:/(?:beyond-the-prompt|events|media|showcase|tools-extensions))?|session/[^/.]+|campaigns/bryntum-[^/.]+|landing-pages/[^/.]+|react-table|compare(?:/[^/.]+)?|alternatives(?:/[^/.]+)?|cookies|eula/(?:commercial|community)|modern-slavery|privacy|terms-of-use|example-(?:finance|hr|inventory)|contact|niall|licensing|reference|sitemap|theme-builder)(?:/|/index\\.html)?$# || %{REQUEST_URI} =~ m#^/(?:index\\.html)?$#">
     Header append Vary Accept
 </If>
 

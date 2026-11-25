@@ -1,3 +1,4 @@
+import type { ITooltipFeature } from 'ag-stack';
 import {
     RefPlaceholder,
     _addManagedElementListeners,
@@ -68,6 +69,7 @@ export class FilterCardComp extends Component {
     private summaryComp?: FilterSummaryComp;
     private detailComp?: FilterDetailComp;
     private tooltipFeature?: TooltipFeature;
+    private expandTooltip?: ITooltipFeature;
 
     constructor(private readonly id: string) {
         super(FilterCardElement);
@@ -105,6 +107,26 @@ export class FilterCardComp extends Component {
                     ),
             })
         );
+        this.expandTooltip = this.addTooltip({
+            control: 'filterExpand',
+            getGui: () => this.eExpandIcon,
+            getLocation: () => 'filterToolPanelColumnGroup',
+            getTooltip: () => ({
+                value: this.state?.expanded
+                    ? this.getLocaleTextFunc()('tooltipCollapseFilter', 'Collapse filter')
+                    : this.getLocaleTextFunc()('tooltipExpandFilter', 'Expand filter'),
+                params: { column: this.state?.column },
+            }),
+        });
+        this.addTooltip({
+            control: 'filterRemove',
+            getGui: () => eDelete,
+            getLocation: () => 'filterToolPanelColumnGroup',
+            getTooltip: () => ({
+                value: this.getLocaleTextFunc()('tooltipRemoveFilter', 'Remove filter'),
+                params: { column: this.state?.column },
+            }),
+        });
     }
 
     public refresh(newState: FilterPanelFilterState): void {
@@ -114,6 +136,7 @@ export class FilterCardComp extends Component {
 
         this.eTitle.textContent = name;
         this.tooltipFeature?.refreshTooltip();
+        this.expandTooltip?.refreshTooltip();
 
         _setDisplayed(eEditing, isEditing);
 

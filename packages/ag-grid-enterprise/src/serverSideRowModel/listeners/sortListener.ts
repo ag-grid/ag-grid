@@ -1,4 +1,11 @@
-import type { BeanCollection, NamedBean, SortModelItem, SortService, StoreRefreshAfterParams } from 'ag-grid-community';
+import type {
+    BeanCollection,
+    NamedBean,
+    SortModelItem,
+    SortService,
+    StoreRefreshAfterParams,
+    StringComparatorsChangedEvent,
+} from 'ag-grid-community';
 import { BeanStub, _getSortModel, _isServerSideRowModel } from 'ag-grid-community';
 
 import type { ServerSideRowModel } from '../serverSideRowModel';
@@ -23,7 +30,30 @@ export class SortListener extends BeanStub implements NamedBean {
             return;
         }
 
-        this.addManagedEventListeners({ sortChanged: this.onSortChanged.bind(this) });
+        this.addManagedEventListeners({
+            sortChanged: this.onSortChanged.bind(this),
+            stringComparatorsChanged: this.onStringComparatorsChanged.bind(this),
+        });
+    }
+
+    /**
+     * Client-side sorting re-sorts the loaded rows, as the sort model, and so `sortChanged`, stays the same.
+     * Only when a sorted column's string comparator changed, from its own `accentedSort` or the grid option it falls
+     * back to, and the sort uses it.
+     */
+    private onStringComparatorsChanged({ gridOption, columns }: StringComparatorsChangedEvent): void {
+        if (!this.gos.get('serverSideEnableClientSideSort')) {
+            return;
+        }
+        const sortedColAffected = this.sortSvc.getSortOptions().some(
+            ({ column, colComparator }) =>
+                // a column comparator replaces the string comparator for every row; a leaf comparator only for leaves
+                !colComparator &&
+                (columns.includes(column) || (gridOption && column.getColDef().accentedSort === undefined))
+        );
+        if (sortedColAffected) {
+            this.serverSideRowModel.clientSideResort();
+        }
     }
 
     private onSortChanged(): void {
