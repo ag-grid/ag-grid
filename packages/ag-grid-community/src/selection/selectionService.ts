@@ -480,26 +480,26 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         if (!csrm || !selectedCount) {
             return;
         }
-        const createdCount = 'size' in createdNodes ? createdNodes.size : createdNodes.length;
-        // OPTIMIZATION: walk the smaller side; per-row Map lookups hash every row id, which slows large loads
-        if (createdCount < selectedCount) {
-            for (const node of createdNodes) {
-                const id = node.id!;
-                if (selectedNodes.has(id)) {
-                    node.__selected = true;
-                    selectedNodes.set(id, node);
+        // OPTIMIZATION: walk the selection when it is smaller than a set of created nodes; per-row Map lookups
+        // hash every row id, which slows large loads. A set holds unique ids, so both walks bind the same nodes.
+        if ('size' in createdNodes && createdNodes.size >= selectedCount) {
+            for (const [id, node] of selectedNodes) {
+                if (node.group && !node.data) {
+                    continue;
+                }
+                const liveNode = csrm.getRowNode(id);
+                if (liveNode && createdNodes.has(liveNode)) {
+                    liveNode.__selected = true;
+                    selectedNodes.set(id, liveNode);
                 }
             }
             return;
         }
-        for (const [id, node] of selectedNodes) {
-            if (node.group && !node.data) {
-                continue; // data-less groups are never created by the node manager
-            }
-            const liveNode = csrm.getRowNode(id);
-            if (liveNode && liveNode !== node) {
-                liveNode.__selected = true;
-                selectedNodes.set(id, liveNode);
+        for (const node of createdNodes) {
+            const id = node.id!;
+            if (selectedNodes.has(id)) {
+                node.__selected = true;
+                selectedNodes.set(id, node);
             }
         }
     }

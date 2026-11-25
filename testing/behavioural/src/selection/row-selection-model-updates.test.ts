@@ -202,34 +202,43 @@ describe('Row Selection Grid Options', () => {
 
     describe('selection re-sync for new client-side rows', () => {
         test.each([
-            { name: 'fewer added rows than selected rows', selectedIds: ['1', '2', '3'], extraAdds: [] },
-            { name: 'more added rows than selected rows', selectedIds: ['2'], extraAdds: [{ id: '4', sport: 'golf' }] },
-        ])('an add transaction duplicating a selected id leaves it selected: $name', ({ selectedIds, extraAdds }) => {
+            { name: 'one duplicate, several selected', selectedIds: ['1', '2', '3'], duplicates: 1 },
+            { name: 'two duplicates in one batch', selectedIds: ['2'], duplicates: 2 },
+        ])('an add transaction duplicating a selected id keeps it selected ($name)', ({ selectedIds, duplicates }) => {
             enableDevValidations({ suppress: [2] });
             const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
-            const [api] = createGrid({
-                columnDefs,
-                rowSelection: { mode: 'multiRow' },
-                getRowId: (p) => p.data.id,
-                rowData: [
-                    { id: '1', sport: 'football' },
-                    { id: '2', sport: 'rugby' },
-                    { id: '3', sport: 'tennis' },
-                ],
-            });
-            api.setNodesSelected({ nodes: selectedIds.map((id) => api.getRowNode(id)!), newValue: true });
-            const original = api.getRowNode('2')!;
+            try {
+                const [api] = createGrid({
+                    columnDefs,
+                    rowSelection: { mode: 'multiRow' },
+                    getRowId: (p) => p.data.id,
+                    rowData: [
+                        { id: '1', sport: 'football' },
+                        { id: '2', sport: 'rugby' },
+                        { id: '3', sport: 'tennis' },
+                    ],
+                });
+                api.setNodesSelected({ nodes: selectedIds.map((id) => api.getRowNode(id)!), newValue: true });
 
-            api.applyTransaction({ add: [{ id: '2', sport: 'cricket' }, ...extraAdds] });
-            expect(warn).toHaveBeenCalledTimes(1);
-            warn.mockRestore();
+                api.applyTransaction({
+                    add: Array.from({ length: duplicates }, () => ({ id: '2', sport: 'cricket' })),
+                });
+                expect(warn).toHaveBeenCalled();
 
-            const replacement = api.getRowNode('2')!;
-            expect(replacement).not.toBe(original);
-            expect(replacement.isSelected()).toBe(true);
-            const selected = api.getSelectedNodes();
-            expect(selected.map((n) => n.id).sort()).toEqual(selectedIds);
-            expect(selected.find((n) => n.id === '2')).toBe(replacement);
+                const replacement = api.getRowNode('2')!;
+                const withId2: boolean[] = [];
+                api.forEachNode((node) => {
+                    if (node.id === '2') {
+                        withId2.push(node.isSelected()!);
+                    }
+                });
+                expect(withId2).toEqual(new Array(duplicates + 1).fill(true));
+                const selected = api.getSelectedNodes();
+                expect(selected.map((n) => n.id).sort()).toEqual(selectedIds);
+                expect(selected.find((n) => n.id === '2')).toBe(replacement);
+            } finally {
+                warn.mockRestore();
+            }
         });
 
         test("a group selected with groupSelects 'self' survives a rowData update that adds rows", () => {
