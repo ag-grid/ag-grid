@@ -22,8 +22,15 @@ import {
     ScrollApiModule,
     TextFilterModule,
 } from 'ag-grid-community';
-import type { GridOptions, IRowNode, ModelUpdatedEvent, RowNode } from 'ag-grid-community';
-import { TreeDataModule } from 'ag-grid-enterprise';
+import type {
+    GetDetailRowDataParams,
+    GridApi,
+    GridOptions,
+    IRowNode,
+    ModelUpdatedEvent,
+    RowNode,
+} from 'ag-grid-community';
+import { MasterDetailModule, RowGroupingModule, TreeDataModule } from 'ag-grid-enterprise';
 
 describe('ag-grid row data', () => {
     const gridsManager = new TestGridsManager({
@@ -1405,6 +1412,95 @@ describe('ag-grid row data', () => {
                 keepRenderedRows: false,
                 newPage: false,
             });
+        });
+    });
+
+    describe('row heights and tops', () => {
+        const heightsGridsManager = new TestGridsManager({
+            modules: [ClientSideRowModelModule, MasterDetailModule, RowApiModule, RowGroupingModule],
+        });
+
+        afterEach(() => heightsGridsManager.reset());
+
+        const rowData = [
+            { g: 'a', n: 1 },
+            { g: 'a', n: 2 },
+            { g: 'b', n: 3 },
+        ];
+
+        /** `id top height`, with `~` after the height when it is estimated, for each displayed row. */
+        const layout = (api: GridApi): string[] => {
+            const rows: string[] = [];
+            for (let i = 0; i < api.getDisplayedRowCount(); ++i) {
+                const { id, rowTop, rowHeight, rowHeightEstimated } = api.getDisplayedRowAtIndex(i) as RowNode;
+                rows.push(`${id} ${rowTop} ${rowHeight}${rowHeightEstimated ? '~' : ''}`);
+            }
+            return rows;
+        };
+
+        const sizing: Record<string, GridOptions> = {
+            theme: {},
+            rowHeight: { rowHeight: 37 },
+            getRowHeight: { getRowHeight: ({ node, data }) => (node.group ? 50 : 20 + data.n) },
+        };
+        const flat: GridOptions = { columnDefs: [{ field: 'g' }, { field: 'n' }] };
+        const grouped: GridOptions = {
+            columnDefs: [{ field: 'g', rowGroup: true, hide: true }, { field: 'n' }],
+            groupDefaultExpanded: -1,
+        };
+
+        test.each([
+            ['theme', 'flat', flat, ['0 0 42', '1 42 42', '2 84 42']],
+            [
+                'theme',
+                'grouped',
+                grouped,
+                ['row-group-g-a 0 42', '0 42 42', '1 84 42', 'row-group-g-b 126 42', '2 168 42'],
+            ],
+            ['rowHeight', 'flat', flat, ['0 0 37', '1 37 37', '2 74 37']],
+            [
+                'rowHeight',
+                'grouped',
+                grouped,
+                ['row-group-g-a 0 37', '0 37 37', '1 74 37', 'row-group-g-b 111 37', '2 148 37'],
+            ],
+            ['getRowHeight', 'flat', flat, ['0 0 21', '1 21 22', '2 43 23']],
+            [
+                'getRowHeight',
+                'grouped',
+                grouped,
+                ['row-group-g-a 0 50', '0 50 21', '1 71 22', 'row-group-g-b 93 50', '2 143 23'],
+            ],
+        ])('%s gives %s rows their heights and tops', (sizingName, _shape, shape, expected) => {
+            const api = heightsGridsManager.createGrid('myGrid', { ...shape, ...sizing[sizingName], rowData });
+            expect(layout(api)).toEqual(expected);
+        });
+
+        test('an expanded master row is followed by its detail row at detailRowHeight', async () => {
+            const api = heightsGridsManager.createGrid('myGrid', {
+                ...flat,
+                rowHeight: 37,
+                rowData,
+                masterDetail: true,
+                detailRowHeight: 120,
+                isRowMaster: (data) => data.n === 2,
+                detailCellRendererParams: {
+                    detailGridOptions: { columnDefs: [{ field: 'n' }] },
+                    getDetailRowData: (params: GetDetailRowDataParams) => params.successCallback([]),
+                },
+            });
+            api.getRowNode('1')!.setExpanded(true);
+            await waitFor(() => expect(layout(api)).toEqual(['0 0 37', '1 37 37', 'detail_1 74 120', '2 194 37']));
+        });
+
+        test('a row given a height keeps it until the rowHeight option changes', async () => {
+            const api = heightsGridsManager.createGrid('myGrid', { ...flat, rowData });
+            api.getDisplayedRowAtIndex(1)!.setRowHeight(80);
+            api.onRowHeightChanged();
+            expect(layout(api)).toEqual(['0 0 42', '1 42 80', '2 122 42']);
+
+            api.setGridOption('rowHeight', 30);
+            await waitFor(() => expect(layout(api)).toEqual(['0 0 30', '1 30 30', '2 60 30']));
         });
     });
 });
