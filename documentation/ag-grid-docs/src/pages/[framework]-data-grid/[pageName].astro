@@ -95,10 +95,15 @@ const { Content } = await render(page);
 
 const movedAnchorUrls = movedAnchors
     ? Object.fromEntries(
-          Object.entries(movedAnchors).map(([id, target]) => [
-              id,
-              urlWithBaseUrl(`/${currentFramework}-data-grid/${target}`),
-          ])
+          await Promise.all(
+              Object.entries(movedAnchors).map(async ([id, target]) => {
+                  const targetPageName = target.split('/')[0];
+                  if (!(await getEntry('docs', targetPageName))) {
+                      throw new Error(`${pageName}: moved anchor '${id}' points to missing page '${targetPageName}'`);
+                  }
+                  return [id, urlWithBaseUrl(`/${currentFramework}-data-grid/${target}`)];
+              })
+          )
       )
     : undefined;
 

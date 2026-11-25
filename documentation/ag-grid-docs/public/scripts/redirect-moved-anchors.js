@@ -29,7 +29,8 @@
     }
 
     function getTarget(hash) {
-        var id = decodeURIComponent(hash.slice(1));
+        // Moved heading ids are plain `[a-z0-9-]`, so the fragment is compared as it is, without decoding
+        var id = hash.slice(1);
         if (!id || document.getElementById(id) || !Object.prototype.hasOwnProperty.call(movedAnchors, id)) {
             return null;
         }
