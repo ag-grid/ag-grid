@@ -127,7 +127,7 @@
     "pack:verify": {
       "executor": "nx:run-commands",
       "dependsOn": ["pack:extract"],
-      "inputs": ["allOutputs"],
+      "inputs": ["allOutputs", "{workspaceRoot}/scripts/package/sanity-check-package.js"],
       "options": {
         "commands": ["node scripts/package/sanity-check-package.js dist/artifacts/contents/{projectRoot}/package"]
       },
