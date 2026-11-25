@@ -144,7 +144,7 @@ ag-studio opts in. With the input on, the key is the only guard against a stale 
 
 ### Changes
 
-- **[scripts]** `scripts/install-for-cloud/setup-terminal-title.sh` writes the title escape to `/dev/tty`, silently skipping it without a terminal. Before, the line it appends to `CLAUDE_ENV_FILE` printed the escape to stdout, so every Claude Code Bash command's captured output started with `ESC]0;<repo>: <branch>BEL`, breaking values passed on to the next command (`command contains control characters`) and JSON parsed from output.
+- **[scripts]** `scripts/install-for-cloud/setup-terminal-title.sh` writes the title escape to `/dev/tty`, silently skipping it without a terminal. The line ends in `|| true`, so it succeeds without a terminal too and a shell running with `errexit` still reaches the command. Before, the line it appends to `CLAUDE_ENV_FILE` printed the escape to stdout, so every Claude Code Bash command's captured output started with `ESC]0;<repo>: <branch>BEL`, breaking values passed on to the next command (`command contains control characters`) and JSON parsed from output.
 
 ### Migration Actions
 
