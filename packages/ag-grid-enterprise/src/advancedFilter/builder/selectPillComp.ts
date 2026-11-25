@@ -79,7 +79,7 @@ export class SelectPillComp extends AgRichSelect<AutocompleteEntry> {
     protected override createPickerComponent() {
         if (!this.values) {
             const { values } = this.params.getEditorParams();
-            this.values = values!;
+            this.setValues(values!);
             const key = (this.value as AutocompleteEntry).key;
             const value = values!.find((value) => value.key === key) ?? {
                 key,

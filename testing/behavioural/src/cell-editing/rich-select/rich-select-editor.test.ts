@@ -679,4 +679,210 @@ describe('Rich Select cell editor', () => {
         await waitFor(() => expect(api.getEditingCells()).toHaveLength(0));
         expect(getAllRows(api)[0].data.a).toBeUndefined();
     });
+
+    // With `allowTyping` off and no `searchType`, typing moves the highlight like the grid's other dropdowns.
+    describe('typing without allowTyping', () => {
+        const ANIMALS = ['Ant', 'Lemur', 'Lion', 'Llama', 'Lynx'];
+
+        afterEach(() => vi.useRealTimers());
+
+        const openWithValues = async (values: string[], value: string, params: object = {}) => {
+            const api = await createGrid({
+                columnDefs: [baseColDef({ values, ...params })],
+                rowData: [{ id: '0', a: value }],
+                getRowId: (p) => p.data.id,
+            });
+            const gridDiv = getGridElement(api)! as HTMLElement;
+            const popup = await openEditor(api, gridDiv, 0, 'a');
+            const type = (text: string) => {
+                for (const key of text) {
+                    pressKey(gridDiv, key);
+                }
+            };
+            const highlighted = () => getHighlightedRow(popup)?.textContent?.trim();
+            return { type, highlighted };
+        };
+
+        test('the same character cycles through matching values and wraps round', async () => {
+            const { type, highlighted } = await openWithValues(ANIMALS, 'Ant');
+
+            const visited: (string | undefined)[] = [];
+            for (let i = 0; i < 5; ++i) {
+                type('l');
+                visited.push(highlighted());
+            }
+
+            expect(visited).toEqual(['Lemur', 'Lion', 'Llama', 'Lynx', 'Lemur']);
+        });
+
+        test('a repeated character followed by another matches the combined text', async () => {
+            const { type, highlighted } = await openWithValues(ANIMALS, 'Ant');
+
+            type('ll');
+            expect(highlighted()).toBe('Lion');
+
+            type('a');
+            expect(highlighted()).toBe('Llama');
+        });
+
+        test('typed text matches the start of a value, ignoring case, accents and leading spaces', async () => {
+            vi.useFakeTimers({ toFake: ['Date'] });
+            const { type, highlighted } = await openWithValues(['Cambodia', '  Chad', 'Côte d’Ivoire'], 'Cambodia');
+
+            type('CHA');
+            expect(highlighted()).toBe('Chad');
+
+            vi.setSystemTime(Date.now() + 1001);
+            type('co');
+            expect(highlighted()).toBe('Côte d’Ivoire');
+        });
+
+        test('the highlight stays put when no value starts with the typed text', async () => {
+            const { type, highlighted } = await openWithValues(ANIMALS, 'Lion');
+
+            type('q');
+
+            expect(highlighted()).toBe('Lion');
+        });
+
+        test('characters combine while each pause is within one second', async () => {
+            vi.useFakeTimers({ toFake: ['Date'] });
+            const { type, highlighted } = await openWithValues(['Bisque', 'Black', 'Blue'], 'Bisque');
+
+            type('b');
+            vi.setSystemTime(Date.now() + 999);
+            type('l');
+            vi.setSystemTime(Date.now() + 999);
+            type('u');
+            expect(highlighted()).toBe('Blue');
+
+            vi.setSystemTime(Date.now() + 1001);
+            type('b');
+            expect(highlighted()).toBe('Bisque');
+        });
+
+        test('an explicit searchDebounceDelay sets the longest pause that combines characters', async () => {
+            vi.useFakeTimers({ toFake: ['Date'] });
+            const { type, highlighted } = await openWithValues(['Bisque', 'Black', 'Blue'], 'Bisque', {
+                searchDebounceDelay: 200,
+            });
+
+            type('b');
+            vi.setSystemTime(Date.now() + 201);
+            type('lu');
+
+            expect(highlighted()).toBe('Black');
+        });
+
+        test('Space continues the typed text in a single-select editor', async () => {
+            const { type, highlighted } = await openWithValues(['Newark', 'New York', 'New Delhi'], 'Newark');
+
+            type('new d');
+
+            expect(highlighted()).toBe('New Delhi');
+        });
+
+        test('the character that starts editing begins the typed text', async () => {
+            const api = await createGrid({
+                columnDefs: [baseColDef({ values: ANIMALS })],
+                rowData: [{ id: '0', a: 'Ant' }],
+                getRowId: (p) => p.data.id,
+            });
+            const gridDiv = getGridElement(api)! as HTMLElement;
+            api.setFocusedCell(0, 'a');
+            api.startEditingCell({ rowIndex: 0, colKey: 'a', key: 'l' });
+            const highlighted = () => gridDiv.querySelector('.ag-rich-select-row-highlighted')?.textContent?.trim();
+            await waitFor(() => expect(highlighted()).toBe('Lemur'));
+
+            pressKey(gridDiv, 'l');
+
+            expect(highlighted()).toBe('Lion');
+        });
+
+        describe('with values from a Promise', () => {
+            const COLOURS = ['Ant', 'Blue', 'Bloom'];
+
+            const startEditingWithKey = async (values: () => Promise<string[]>, key: string) => {
+                const api = await createGrid({
+                    columnDefs: [baseColDef({ values })],
+                    rowData: [{ id: '0', a: 'Ant' }],
+                    getRowId: (p) => p.data.id,
+                });
+                const gridDiv = getGridElement(api)! as HTMLElement;
+                api.setFocusedCell(0, 'a');
+                api.startEditingCell({ rowIndex: 0, colKey: 'a', key });
+                const highlighted = () => gridDiv.querySelector('.ag-rich-select-row-highlighted')?.textContent?.trim();
+                return { gridDiv, highlighted };
+            };
+
+            test('the character that starts editing applies once the values load', async () => {
+                let resolveValues!: (values: string[]) => void;
+                const { gridDiv, highlighted } = await startEditingWithKey(
+                    () => new Promise<string[]>((resolve) => (resolveValues = resolve)),
+                    'b'
+                );
+                await waitFor(() => expect(gridDiv.querySelector('.ag-rich-select-list')).not.toBeNull());
+
+                resolveValues(COLOURS);
+                await waitFor(() => expect(highlighted()).toBe('Blue'));
+
+                pressKey(gridDiv, 'l');
+                expect(highlighted()).toBe('Blue');
+            });
+
+            test('the character that starts editing applies when the values load before the list opens', async () => {
+                const { gridDiv, highlighted } = await startEditingWithKey(() => Promise.resolve(COLOURS), 'b');
+
+                await waitFor(() => expect(highlighted()).toBe('Blue'));
+
+                pressKey(gridDiv, 'l');
+                expect(highlighted()).toBe('Blue');
+            });
+
+            test('characters typed while the values load combine with the one that starts editing', async () => {
+                vi.useFakeTimers({ toFake: ['Date'] });
+                let resolveValues!: (values: string[]) => void;
+                const { gridDiv, highlighted } = await startEditingWithKey(
+                    () => new Promise<string[]>((resolve) => (resolveValues = resolve)),
+                    'b'
+                );
+                await waitFor(() => expect(gridDiv.querySelector('.ag-rich-select-list')).not.toBeNull());
+
+                pressKey(gridDiv, 'l');
+                pressKey(gridDiv, 'o');
+                vi.setSystemTime(Date.now() + 2000);
+                resolveValues(COLOURS);
+
+                await waitFor(() => expect(highlighted()).toBe('Bloom'));
+            });
+
+            test('characters typed into an open list apply once the values load', async () => {
+                let resolveValues!: (values: string[]) => void;
+                const api = await createGrid({
+                    columnDefs: [
+                        baseColDef({ values: () => new Promise<string[]>((resolve) => (resolveValues = resolve)) }),
+                    ],
+                    rowData: [{ id: '0', a: 'Newark' }],
+                    getRowId: (p) => p.data.id,
+                });
+                const gridDiv = getGridElement(api)! as HTMLElement;
+                const popup = await openEditor(api, gridDiv, 0, 'a');
+
+                for (const key of 'new d') {
+                    pressKey(gridDiv, key);
+                }
+                resolveValues(['Newark', 'New York', 'New Delhi']);
+
+                await waitFor(() => expect(getHighlightedRow(popup)?.textContent?.trim()).toBe('New Delhi'));
+            });
+        });
+
+        test('an explicit searchType keeps its own search', async () => {
+            const { type, highlighted } = await openWithValues(ANIMALS, 'Ant', { searchType: 'match' });
+
+            type('ll');
+
+            expect(highlighted()).toBe('Llama');
+        });
+    });
 });

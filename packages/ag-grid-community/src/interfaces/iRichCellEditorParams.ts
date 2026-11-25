@@ -130,8 +130,11 @@ export interface IRichCellEditorParams<TData = any, TValue = any, GValue = any> 
      *  - `match` - Matches if the value starts with the text typed.
      *  - `matchAny` - Matches if the value contains the text typed.
      *  - `fuzzy` - Matches the closest value to text typed.
+     *
+     * When not set and `allowTyping=false`, typing highlights the first value that starts with the typed text, ignoring case and accents,
+     * and repeating a character cycles through the values starting with it. With `filterList` or paged values, `fuzzy` is used instead.
      * Note: When a cellRenderer is specified, this option will not work.
-     * @default 'fuzzy'
+     * @default 'fuzzy' unless allowTyping is false (see above)
      */
     searchType?: 'match' | 'matchAny' | 'fuzzy';
     /**
@@ -154,8 +157,9 @@ export interface IRichCellEditorParams<TData = any, TValue = any, GValue = any> 
      */
     suppressMultiSelectPillRenderer?: boolean;
     /**
-     * The value in `ms` for the search algorithm debounce delay
-     * @default 300
+     * The value in `ms` for the search algorithm debounce delay.
+     * For the typing behaviour used when `searchType` is not set and `allowTyping=false`, this is the longest pause between keystrokes that continues the typed text.
+     * @default 1000 for that typing behaviour, otherwise 300
      */
     searchDebounceDelay?: number;
     /** A string value to be used when no value has been selected. */

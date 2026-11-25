@@ -1,6 +1,7 @@
 import type { AgBeanCollection, AgEvent, BaseEvents, BaseProperties, IPropertiesService } from 'ag-stack';
 import {
     AgAbstractComponent,
+    AgTypeAhead,
     KeyCode,
     _addManagedElementListeners,
     _clearElement,
@@ -23,11 +24,6 @@ export type AgListEvent = 'fieldValueChanged' | 'selectedItem' | 'activeItemChan
 export interface AgListActiveItemChangedEvent extends AgEvent<'activeItemChanged'> {
     activeId: string | null;
 }
-
-const TYPE_AHEAD_TIMEOUT_MS = 1000;
-
-const normaliseForTypeAhead = (text: string): string =>
-    text.normalize('NFD').replace(/\p{M}/gu, '').toLocaleLowerCase();
 
 export class AgList<
     TBeanCollection extends AgBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
@@ -71,8 +67,7 @@ export class AgList<
     private value: TValue | null;
     private displayValue: string | null;
 
-    private typedText = '';
-    private lastTypedTime = 0;
+    private readonly typeAhead = new AgTypeAhead();
 
     private isHoverPaused = false;
     private lastPointerPosition: string | null = null;
@@ -142,42 +137,28 @@ export class AgList<
     }
 
     public hasActiveTypeAhead(): boolean {
-        return this.typedText !== '' && Date.now() - this.lastTypedTime <= TYPE_AHEAD_TIMEOUT_MS;
+        return this.typeAhead.isActive();
     }
 
     /** The typed text and hover state only apply while the list is open. */
     public resetInputTracking(): void {
-        this.typedText = '';
+        this.typeAhead.reset();
         this.isHoverPaused = false;
         this.lastPointerPosition = null;
     }
 
-    /** A repeated character cycles through the options starting with it; other text matches the first option starting with it. */
     public typeCharacter(char: string): void {
-        const typedChar = normaliseForTypeAhead(char);
-        if (typedChar === '') {
+        const { options, listItems, highlightedItem } = this;
+        const highlightedIdx = highlightedItem ? listItems.indexOf(highlightedItem) : -1;
+        const matchIdx = this.typeAhead.type(char, options.length, (idx) => options[idx].text, highlightedIdx);
+        if (matchIdx == null) {
             return;
         }
         this.pauseHover();
-        const typedText = (this.hasActiveTypeAhead() ? this.typedText : '') + typedChar;
-        this.typedText = typedText;
-        this.lastTypedTime = Date.now();
-
-        const { options, listItems, highlightedItem } = this;
-        const firstChar = typedText[0];
-        const isCycling = typedText === firstChar.repeat(typedText.length);
-        const searchText = isCycling ? firstChar : typedText;
-        const startIdx = isCycling && highlightedItem ? listItems.indexOf(highlightedItem) + 1 : 0;
-
-        for (let i = 0, len = options.length; i < len; ++i) {
-            const idx = (startIdx + i) % len;
-            // Cell editors can supply non-string option text at runtime.
-            const optionText = normaliseForTypeAhead(String(options[idx].text ?? '').trimStart());
-            if (optionText.startsWith(searchText)) {
-                this.highlightItem(listItems[idx]);
-                return;
-            }
+        if (matchIdx === -1) {
+            return;
         }
+        this.highlightItem(listItems[matchIdx]);
     }
 
     public addOptions(listOptions: ListOption<TValue>[]): this {

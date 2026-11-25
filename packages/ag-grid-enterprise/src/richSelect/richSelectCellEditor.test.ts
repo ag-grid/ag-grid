@@ -69,6 +69,8 @@ function createRichSelectMock() {
         setIsLoading,
         setSearchStringCreator: vi.fn(),
         setLoadMoreRowsCallback,
+        isTypeAheadSearch: vi.fn(() => false),
+        typeAheadCharacter: vi.fn(),
         searchTextFromString: vi.fn((value?: string | null) => {
             if (useAsyncSearch) {
                 asyncRequests?.onSearch(value ?? '');
@@ -300,6 +302,8 @@ describe('RichSelectCellEditor', () => {
             setAsyncValuesSource: vi.fn(),
             resetAsyncValues: vi.fn(),
             setSearchStringCreator: vi.fn(),
+            isTypeAheadSearch: vi.fn(() => false),
+            typeAheadCharacter: vi.fn(),
             searchTextFromString: vi.fn(),
         };
         const processEventKeySpy = vi.spyOn(editor as any, 'processEventKey');

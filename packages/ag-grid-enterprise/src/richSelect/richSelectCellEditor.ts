@@ -94,11 +94,11 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
                         richSelect.setSearchStringCreator(searchStringCallback);
                     }
 
-                    this.consumeInitialEventKey(eventKey);
+                    this.consumeInitialEventKeyOnValuesLoaded(eventKey);
                 })
                 .catch((error) => {
                     _consoleError('Rich Select', error);
-                    this.consumeInitialEventKey(eventKey);
+                    this.consumeInitialEventKeyOnValuesLoaded(eventKey);
                 });
         }
 
@@ -386,6 +386,14 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
         });
     }
 
+    private consumeInitialEventKeyOnValuesLoaded(eventKey: string | null | undefined): void {
+        // Type-ahead waits for `afterGuiAttached`, as `showPicker()` resets the highlight; the widget holds keys until values load.
+        if (this.eEditor.isTypeAheadSearch()) {
+            return;
+        }
+        this.consumeInitialEventKey(eventKey);
+    }
+
     private consumeInitialEventKey(eventKey: string | null | undefined): void {
         if (!eventKey || this.initialEventKeyProcessed) {
             return;
@@ -403,7 +411,12 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
         if (eventKey === KeyCode.BACKSPACE) {
             this.eEditor.searchTextFromString(null);
         } else if (eventKey?.length === 1) {
-            this.eEditor.searchTextFromString(eventKey);
+            const richSelect = this.eEditor;
+            if (richSelect.isTypeAheadSearch()) {
+                richSelect.typeAheadCharacter(eventKey);
+            } else {
+                richSelect.searchTextFromString(eventKey);
+            }
         }
     }
 

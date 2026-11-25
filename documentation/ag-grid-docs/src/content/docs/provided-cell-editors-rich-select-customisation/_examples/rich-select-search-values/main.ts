@@ -19,11 +19,20 @@ ModuleRegistry.registerModules([TextEditorModule, ClientSideRowModelModule, Rich
 
 const columnDefs: ColDef[] = [
     {
+        headerName: 'Default',
+        field: 'color',
+        cellEditor: 'agRichSelectCellEditor',
+        cellEditorParams: {
+            values: colors,
+        } as IRichCellEditorParams,
+    },
+    {
         headerName: 'Fuzzy Search',
         field: 'color',
         cellEditor: 'agRichSelectCellEditor',
         cellEditorParams: {
             values: colors,
+            searchType: 'fuzzy',
         } as IRichCellEditorParams,
     },
     {
