@@ -451,10 +451,7 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
 
     private dispatchSelectionChanged(source: SelectionEventSourceType): void {
         if (this.selectionBatchDepth > 0) {
-            // a transaction's removals report `rowDataChanged`, whatever else the batch changed
-            if (this.pendingSelectionSource !== 'rowDataChanged') {
-                this.pendingSelectionSource = source;
-            }
+            this.pendingSelectionSource = source; // the latest: a transaction's removals follow its updates
             return;
         }
         this.eventSvc.dispatchEvent({
