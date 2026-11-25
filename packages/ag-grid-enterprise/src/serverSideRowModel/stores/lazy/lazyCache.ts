@@ -9,6 +9,7 @@ import type {
     RowNodeSorter,
     RowRenderer,
     ServerSideGroupLevelParams,
+    SortOption,
     SortService,
     WithoutGridCommon,
 } from 'ag-grid-community';
@@ -45,6 +46,8 @@ export class LazyCache extends BeanStub {
     private serverSideRowModel: ServerSideRowModel;
     private rowNodeSorter?: RowNodeSorter;
     private sortSvc?: SortService;
+    /** The sort options the rows were last client-side sorted with. A comparator change rebuilds the options. */
+    private sortedWith: SortOption[] | null = null;
     private lazyBlockLoadingSvc: LazyBlockLoadingService;
     private colModel: ColumnModel;
 
@@ -1168,6 +1171,7 @@ export class LazyCache extends BeanStub {
         if (!isAnySort || !rowNodeSorter) {
             return;
         }
+        this.sortedWith = sortOptions;
 
         // the node map does not need entirely recreated, only the indexes need updated.
         const allNodes = new Array(this.nodeMap.getSize());
@@ -1180,6 +1184,18 @@ export class LazyCache extends BeanStub {
             const node = sortedNodes[i];
             nodesMap.set({ id: node.id!, node, index: i });
         }
+    }
+
+    /**
+     * Re-sorts the rows for changed comparators, unless already sorted with them, as when the sort changed in the same
+     * update. Returns whether it sorted.
+     */
+    public clientSideResortRows(): boolean {
+        if (this.sortSvc?.getSortOptions() === this.sortedWith) {
+            return false;
+        }
+        this.clientSideSortRows();
+        return true;
     }
 
     /**
