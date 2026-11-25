@@ -151,7 +151,7 @@ describe('missing param handling', () => {
     });
 
     it('renders an error taking no params in full with no params supplied', () => {
-        expect(getErrorText({ errorCode: 239 })).toContain('Theming API and CSS File Themes');
+        expect(getErrorText({ errorCode: 239 })).toContain('Theming API and Legacy Themes');
     });
 
     it('reads the destructured param names of an error that takes them', () => {
