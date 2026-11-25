@@ -95,7 +95,10 @@ export function _findFocusableElements(
     return excludeNodes.size ? nodes.filter((element) => !excludeNodes.has(element)) : nodes;
 }
 
-/** Named radios are one Tab stop, the focused or checked radio, as managed Tab handling bypasses the browser. */
+/**
+ * Named radios are one Tab stop, the focused or checked radio, as managed Tab handling bypasses the browser.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
 export function _removeNonTabStopRadios(
     rootNode: HTMLElement,
     elements: HTMLElement[],

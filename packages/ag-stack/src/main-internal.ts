@@ -265,6 +265,7 @@ export {
     _focusIntoTabbableFirst,
     _isKeyboardMode,
     _registerKeyboardFocusEvents,
+    _removeNonTabStopRadios,
     _resetKeyboardMode,
     _scrollHorizontallyToShow,
 } from './utils/focus';
