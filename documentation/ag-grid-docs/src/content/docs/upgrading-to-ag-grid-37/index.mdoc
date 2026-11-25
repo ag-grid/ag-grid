@@ -132,8 +132,8 @@ The following deprecated APIs have now been removed.
 
 ### Filtering
 
-- Set Filter instance methods `setFilterValues()`, `resetFilterValues()`, `refreshFilterValues()`, `getFilterKeys()` and `getFilterValues()` - removed, call them on the Set Filter handler instead, via `api.getColumnFilterHandler<SetFilterHandler>(colKey)`.
-- `ISetFilter` - removed, use `SetFilterUi` for the instance from `api.getColumnFilterInstance()` and `SetFilterHandler` for the handler from `api.getColumnFilterHandler()`. Its typed `getModel()` and `setModel()` go with it. For `getModelFromUi()`, use `api.getColumnFilterModel(key, true)` instead.
+- Set Filter instance methods `setFilterValues()`, `resetFilterValues()`, `refreshFilterValues()`, `getFilterKeys()` and `getFilterValues()` - removed, call them on the Set Filter handler instead, via `api.getColumnFilterHandler<SetFilterHandler>(colKey)`. For a Set Filter inside a Multi Filter, use `getChildFilterInstance<SetFilterUi>(index).getFilterHandler()`.
+- `ISetFilter` - removed, use `SetFilterUi` for the instance from `api.getColumnFilterInstance()` and `SetFilterHandler` for the handler from `api.getColumnFilterHandler()`. Its typed `getModel()` and `setModel()` go with it. For `getModelFromUi()`, use `api.getColumnFilterModel(key, true)` instead (requires `enableFilterHandlers`; in legacy filter mode the instance methods are still available on `IProvidedFilter`).
 - `onNewRowsLoaded()` on grid-provided filter instances and `onAnyFilterChanged()` on the Set Filter instance - removed, they were internal no-ops with no replacement. Custom legacy filters that implement them are still called.
 - `suppressAdvancedFilterEval` - removed, it had no effect.
 - `ScalarFilterParams` - removed, use `IScalarFilterParams & IFilterParams` instead.
