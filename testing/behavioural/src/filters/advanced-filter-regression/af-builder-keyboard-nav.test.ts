@@ -97,6 +97,26 @@ describe('Advanced Filter — builder keyboard navigation & reorder', () => {
         await waitFor(() => expect(wrapper.classList.contains(HIGHLIGHT)).toBe(false));
     });
 
+    test('typing in an open column pill highlights the column it starts, and Enter selects it', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', OPTS);
+        api.setAdvancedFilterModel(AND_MODEL);
+        await asyncSetTimeout(0);
+
+        const builder = await AdvancedFilterBuilderHarness.open(api);
+        const [condition] = await builder.conditionItems();
+        const pill = await builder.openColumnPicker(condition);
+        const highlighted = () =>
+            document.querySelector('.ag-rich-select-row-highlighted')?.textContent?.trim() ?? null;
+
+        for (const key of 'ag') {
+            pill.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true }));
+        }
+        expect(highlighted()).toBe('Age');
+
+        pill.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+        await waitFor(() => expect(builder.columnPillText(condition)).toBe('Age'));
+    });
+
     test('the Move Down button reorders sibling conditions (keyboard Enter)', async () => {
         const api = await gridsManager.createGridAndWait('grid1', OPTS);
         api.setAdvancedFilterModel(AND_MODEL);

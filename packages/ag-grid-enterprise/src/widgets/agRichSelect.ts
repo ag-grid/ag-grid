@@ -544,7 +544,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
     /**
      * This method updates the list of select options
      */
-    private setValues(values: TValue[] | undefined): void {
+    protected setValues(values: TValue[] | undefined): void {
         this.values = values;
         this.searchStrings = this.getSearchStringsFromValues(values ?? []);
     }

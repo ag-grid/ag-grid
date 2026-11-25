@@ -81,6 +81,11 @@ export class AdvancedFilterBuilderHarness {
         return this;
     }
 
+    /** Opens the column pill on `item` and returns the pill, which handles the picker's keys. */
+    public openColumnPicker(item: HTMLElement): Promise<HTMLElement> {
+        return this.openPillPicker(item, COLUMN_PILL);
+    }
+
     /** Opens the operator pill on `item` and selects `displayName` from the rich-select. */
     public async selectOperator(item: HTMLElement, displayName: string): Promise<this> {
         await this.selectPill(item, OPTION_PILL, displayName);
@@ -180,6 +185,11 @@ export class AdvancedFilterBuilderHarness {
     /** Display text of value pill `index` on `item`. */
     public valuePillText(item: HTMLElement, index = 0): string {
         return this.valuePills(item)[index]?.querySelector(PILL_DISPLAY)?.textContent?.trim() ?? '';
+    }
+
+    /** Display text of the column pill on `item`. */
+    public columnPillText(item: HTMLElement): string {
+        return this.liveItem(item).querySelector(`${COLUMN_PILL} ${PILL_DISPLAY}`)?.textContent?.trim() ?? '';
     }
 
     /** Display text of the operator pill on `item`. */
