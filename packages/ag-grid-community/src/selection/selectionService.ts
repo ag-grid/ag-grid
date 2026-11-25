@@ -474,6 +474,36 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         }
     }
 
+    public syncInCreatedNodes(createdNodes: ReadonlySet<RowNode> | readonly RowNode[]): void {
+        const { csrm, selectedNodes } = this;
+        const selectedCount = selectedNodes.size;
+        if (!csrm || !selectedCount) {
+            return;
+        }
+        const createdCount = Array.isArray(createdNodes) ? createdNodes.length : (createdNodes as ReadonlySet<RowNode>).size;
+        // OPTIMIZATION: walk the smaller side; per-row Map lookups hash every row id, which slows large loads
+        if (createdCount < selectedCount) {
+            for (const node of createdNodes) {
+                const id = node.id!;
+                if (selectedNodes.has(id)) {
+                    node.__selected = true;
+                    selectedNodes.set(id, node);
+                }
+            }
+            return;
+        }
+        for (const [id, node] of selectedNodes) {
+            if (node.group && !node.data) {
+                continue; // data-less groups are never created by the node manager
+            }
+            const liveNode = csrm.getRowNode(id);
+            if (liveNode && liveNode !== node) {
+                liveNode.__selected = true;
+                selectedNodes.set(id, liveNode);
+            }
+        }
+    }
+
     public createDaemonNode(rowNode: RowNode): RowNode | undefined {
         if (!rowNode.id) {
             return undefined;

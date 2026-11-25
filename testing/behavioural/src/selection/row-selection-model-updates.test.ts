@@ -9,7 +9,7 @@ import {
     waitForEvent,
 } from 'ag-test-utils';
 
-import { PinnedRowModule, RowSelectionModule, TextEditorModule } from 'ag-grid-community';
+import { PinnedRowModule, RowSelectionModule, TextEditorModule, enableDevValidations } from 'ag-grid-community';
 import { CellSelectionModule, ClipboardModule } from 'ag-grid-enterprise';
 
 import {
@@ -197,6 +197,65 @@ describe('Row Selection Grid Options', () => {
             await asyncSetTimeout(0);
 
             expect(sources).toEqual(['rowDataChanged', 'selectableChanged']);
+        });
+    });
+
+    describe('selection re-sync for new client-side rows', () => {
+        test.each([
+            { name: 'fewer added rows than selected rows', selectedIds: ['1', '2', '3'], extraAdds: [] },
+            { name: 'more added rows than selected rows', selectedIds: ['2'], extraAdds: [{ id: '4', sport: 'golf' }] },
+        ])('an add transaction duplicating a selected id leaves it selected: $name', ({ selectedIds, extraAdds }) => {
+            enableDevValidations({ suppress: [2] });
+            const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+            const [api] = createGrid({
+                columnDefs,
+                rowSelection: { mode: 'multiRow' },
+                getRowId: (p) => p.data.id,
+                rowData: [
+                    { id: '1', sport: 'football' },
+                    { id: '2', sport: 'rugby' },
+                    { id: '3', sport: 'tennis' },
+                ],
+            });
+            api.setNodesSelected({ nodes: selectedIds.map((id) => api.getRowNode(id)!), newValue: true });
+            const original = api.getRowNode('2')!;
+
+            api.applyTransaction({ add: [{ id: '2', sport: 'cricket' }, ...extraAdds] });
+            expect(warn).toHaveBeenCalledOnce();
+            warn.mockRestore();
+
+            const replacement = api.getRowNode('2')!;
+            expect(replacement).not.toBe(original);
+            expect(replacement.isSelected()).toBe(true);
+            const selected = api.getSelectedNodes();
+            expect(selected.map((n) => n.id).sort()).toEqual(selectedIds);
+            expect(selected.find((n) => n.id === '2')).toBe(replacement);
+        });
+
+        test("a group selected with groupSelects 'self' survives a rowData update that adds rows", () => {
+            const [api] = createGrid({
+                columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'sport' }],
+                groupDefaultExpanded: -1,
+                rowSelection: { mode: 'multiRow', groupSelects: 'self' },
+                getRowId: (p) => p.data.id,
+                rowData: [
+                    { id: '1', country: 'Ireland', sport: 'football' },
+                    { id: '2', country: 'Ireland', sport: 'rugby' },
+                ],
+            });
+            const group = api.getDisplayedRowAtIndex(0)!;
+            expect(group.group).toBe(true);
+            api.setNodesSelected({ nodes: [group], newValue: true });
+
+            api.setGridOption('rowData', [
+                { id: '1', country: 'Ireland', sport: 'football' },
+                { id: '2', country: 'Ireland', sport: 'rugby' },
+                { id: '3', country: 'France', sport: 'golf' },
+            ]);
+
+            expect(api.getSelectedNodes()).toEqual([group]);
+            expect(group.isSelected()).toBe(true);
+            expect(['1', '2', '3'].map((id) => api.getRowNode(id)!.isSelected())).toEqual([false, false, false]);
         });
     });
 

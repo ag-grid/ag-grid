@@ -47,6 +47,8 @@ export interface ISelectionService {
         event?: Event
     ): boolean;
     syncInRowNode(rowNode: RowNode, oldNode?: RowNode): void;
+    /** CSRM: after a batch of new nodes is created, rebinds selected ids to the live nodes now holding them. */
+    syncInCreatedNodes?(createdNodes: ReadonlySet<RowNode> | readonly RowNode[]): void;
     reset(source: SelectionEventSourceType): void;
     getBestCostNodeSelection(): RowNode[] | undefined;
     isEmpty(): boolean;
