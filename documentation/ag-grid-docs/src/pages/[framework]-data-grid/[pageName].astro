@@ -38,6 +38,7 @@ const {
     headings: pageHeadings,
     migrationVersion,
     technicalReviewer,
+    movedAnchors,
 } = page.data;
 
 const { data: metadata } = (await getEntry('metadata', 'metadata')) as CollectionEntry<'metadata'>;
@@ -91,6 +92,15 @@ const menuData = isApiPage ? apiNavData : docsNavData;
 const markdownUrl = DISABLE_MARKDOWN_DOCS ? undefined : urlWithBaseUrl(`/${currentFramework}-data-grid/${pageName}.md`);
 
 const { Content } = await render(page);
+
+const movedAnchorUrls = movedAnchors
+    ? Object.fromEntries(
+          Object.entries(movedAnchors).map(([id, target]) => [
+              id,
+              urlWithBaseUrl(`/${currentFramework}-data-grid/${target}`),
+          ])
+      )
+    : undefined;
 
 const headings = await getHeadings({
     pageHeadings,
@@ -171,6 +181,17 @@ const headings = await getHeadings({
         {!hideSideMenu && <SideNavigation client:load headings={headings} delayedScrollSpy={Boolean(pageHeadings)} />}
     </div>
 </Layout>
+
+{/* Sends a visit to a moved section's old anchor on to its new page. Externalised to a 'self'
+    script to stay off the CSP hash list, and re-run on every client-side navigation that lands here. */}
+{movedAnchorUrls && (
+    <script
+        is:inline
+        data-astro-rerun
+        src={urlWithBaseUrl('/scripts/redirect-moved-anchors.js')}
+        data-moved-anchors={JSON.stringify(movedAnchorUrls)}
+    ></script>
+)}
 
 <script>
     import { initNavScrollPositionSync } from '@ag-website-shared/utils/navScrollPosition';

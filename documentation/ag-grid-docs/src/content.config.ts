@@ -54,6 +54,13 @@ const docs = defineCollection({
          * emitted as the page's `reviewedBy` in JSON-LD. See `TECHNICAL_REVIEWERS`.
          */
         technicalReviewer: z.enum(TECHNICAL_REVIEWER_KEYS).optional(),
+
+        /**
+         * Sections moved off this page to another one, keyed by the old heading id. Each value is the
+         * new location as `<pageName>/#<headingId>`. A visit to an old anchor is sent on to the new
+         * location, so external links and bookmarks keep working (see `redirect-moved-anchors.js`).
+         */
+        movedAnchors: z.record(z.string(), z.string().regex(/^[a-z0-9-]+\/#[a-z0-9-]+$/)).optional(),
     }),
 });
 
