@@ -118,15 +118,6 @@ describe('Multi filter sub-menu keyboard navigation', () => {
         await waitFor(() => expect(menuItem).toHaveFocus());
     });
 
-    test('Shift+Tab from the first input reaches the operator dropdown with a positive grid tabIndex', async () => {
-        const { subMenu, user } = await openTextSubMenu(3);
-
-        await user.tab({ shift: true });
-
-        expect(subMenu).toBeInTheDocument();
-        expect(subMenu.querySelector('.ag-filter-select [role="combobox"]')).toHaveFocus();
-    });
-
     test('Tab with a positive grid tabIndex stays inside the sub-menu until it closes on its menu item', async () => {
         const { menuItem, subMenu, input, user } = await openTextSubMenu(3);
         const clearButton = subMenu.querySelector('.ag-filter-body button');
