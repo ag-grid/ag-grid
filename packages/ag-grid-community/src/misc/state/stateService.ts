@@ -6,6 +6,7 @@ import { _applyColumnState, _getColumnState } from '../../columns/columnStateUti
 import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
 import type { AgColumn } from '../../entities/agColumn';
+import type { GridChanges } from '../../gridChanges';
 import { _isCellSelectionEnabled, _isClientSideRowModel } from '../../gridOptionsUtils';
 import type { CellRange } from '../../interfaces/IRangeService';
 import type {
@@ -15,6 +16,7 @@ import type {
     ColumnHeaderNameState,
     ColumnOrderState,
     ColumnPinningState,
+    ColumnSizeState,
     ColumnSizingState,
     ColumnVisibilityState,
     FilterState,
@@ -43,6 +45,8 @@ export class StateService extends BeanStub implements NamedBean {
     beanName = 'stateSvc' as const;
 
     private updateRowGroupExpansionStateTimer: ReturnType<typeof setTimeout> | number = 0;
+    /** Set once the initial state is applied: from then the row group expansion state follows the rows. */
+    private rowGroupExpansionTracked = false;
 
     private isClientSideRowModel: boolean;
     private cachedState: GridState;
@@ -141,6 +145,11 @@ export class StateService extends BeanStub implements NamedBean {
         const state = migrateGridStateModel(providedState);
         delete state.partialColumnState;
         this.cachedState = state;
+        const syncSvc = this.beans.syncSvc;
+        // the cache holds the state given until the columns are read back
+        const changes = syncSvc.changes;
+        changes.columnState = true;
+        changes.columnGroupState = true;
 
         this.startSuppressEvents();
         this.applyInitialFilterState();
@@ -151,9 +160,14 @@ export class StateService extends BeanStub implements NamedBean {
 
         this.setGridReadyState(state, source, ignoreSet);
 
-        this.setColumnsInitialisedState(state, source, !!ignoreSet, ignoreSet);
-
-        this.setRowCountState(state, source, ignoreSet);
+        // one update, so the columns and the filters it restores refresh the rows together
+        syncSvc.beginUpdate();
+        try {
+            this.setColumnsInitialisedState(state, source, !!ignoreSet, ignoreSet);
+            this.setRowCountState(state, source, ignoreSet);
+        } finally {
+            syncSvc.endUpdate();
+        }
 
         setTimeout(() => {
             if (this.isAlive()) {
@@ -185,25 +199,6 @@ export class StateService extends BeanStub implements NamedBean {
         });
     }
 
-    private updateColumnAndGroupState(): void {
-        this.updateColumnState([
-            'aggregation',
-            'columnOrder',
-            'columnPinning',
-            'columnSizing',
-            'columnVisibility',
-            'columnHeaderName',
-            'pivot',
-            'rowGroup',
-            'showValuesAs',
-            'sort',
-        ]);
-        this.updateCachedState('columnGroup', this.getColumnGroupState());
-        // Every user-column mutation rebuilds the column tree, so this covers creation, removal and
-        // property-only edits (e.g. a cell data type change) alike.
-        this.updateCachedState('userColumns', this.beans.userColumnSvc!.getState());
-    }
-
     private setColumnsInitialisedState(
         state: GridState,
         source: 'gridInitializing' | 'api',
@@ -214,8 +209,6 @@ export class StateService extends BeanStub implements NamedBean {
         this.setUserColumnsState(state, source, ignoreSet);
         this.applyColumnGridState(state, source, partialColumnState, ignoreSet);
         this.setColumnGroupState(state, source, ignoreSet);
-
-        this.updateColumnAndGroupState();
     }
 
     /** Recreates the user-column layer (columns the user created at runtime, plus their overrides and
@@ -236,44 +229,11 @@ export class StateService extends BeanStub implements NamedBean {
         if (!changed && !adopted) {
             return;
         }
-        if (calculatedColsSvc) {
-            // This calls colModel.rebuildCols as part of refreshDynamicColumns
-            calculatedColsSvc.refreshDynamicColumns(source);
-        } else {
-            colModel.rebuildCols(source);
-        }
+        colModel.rebuildCols(source);
     }
 
     private setupStateOnColumnsInitialised(initialState: GridState, partialColumnState: boolean): void {
         this.setColumnsInitialisedState(initialState, 'gridInitializing', partialColumnState);
-
-        const onUpdate = (state: keyof GridState) => () => this.updateColumnState([state]);
-        this.addManagedEventListeners({
-            columnValueChanged: onUpdate('aggregation'),
-            columnMoved: onUpdate('columnOrder'),
-            columnPinned: onUpdate('columnPinning'),
-            columnResized: onUpdate('columnSizing'),
-            columnVisible: onUpdate('columnVisibility'),
-            columnPivotChanged: onUpdate('pivot'),
-            columnPivotModeChanged: onUpdate('pivot'),
-            columnRowGroupChanged: onUpdate('rowGroup'),
-            columnShowValuesAsChanged: onUpdate('showValuesAs'),
-            sortChanged: onUpdate('sort'),
-            newColumnsLoaded: ({ source }) => {
-                this.updateColumnAndGroupState();
-                // When setGridOption('columnDefs') changes row groups, columnRowGroupChanged fires
-                // while changeEventsDispatching=true, so CSRM defers its re-group to newColumnsLoaded.
-                // Re-read expansion state here so the cache reflects the post-re-group node IDs.
-                if (source !== 'gridInitializing' && this.isClientSideRowModel) {
-                    this.onRowGroupOpenedDebounced();
-                }
-            },
-            columnGroupOpened: () => this.updateCachedState('columnGroup', this.getColumnGroupState()),
-            columnHeaderNameChanged: () => {
-                this.updateColumnState(['columnHeaderName']);
-                this.updateCachedState('columnGroup', this.getColumnGroupState());
-            },
-        });
     }
 
     private setRowCountState(
@@ -293,26 +253,45 @@ export class StateService extends BeanStub implements NamedBean {
         const shouldSetState = <TKey extends GridStateKey>(prop: TKey, propState: GridState[TKey]) =>
             !ignoreSet?.has(prop) && (propState || source === 'api');
 
-        if (shouldSetState('filter', filterState)) {
-            this.setFilterStateDeferringPivot(filterState, source);
-        }
-        if (shouldSetState('quickFilter', quickFilterState)) {
-            this.setQuickFilterState(quickFilterState, source);
-        }
-        if (
-            shouldSetState('rowGroupExpansion', rowGroupExpansionState) ||
-            shouldSetState('ssrmRowGroupExpansion', ssrmRowGroupExpansion)
-        ) {
-            this.setRowGroupExpansionState(ssrmRowGroupExpansion, rowGroupExpansionState, source);
-        }
-        if (shouldSetState('rowSelection', rowSelectionState)) {
-            this.setRowSelectionState(rowSelectionState, source);
-        }
-        if (shouldSetState('pagination', paginationState)) {
-            this.setPaginationState(paginationState, source);
-        }
-        if (shouldSetState('rowPinning', rowPinning)) {
-            this.setRowPinningState(rowPinning);
+        const expansionKey = this.gos.get('ssrmExpandAllAffectsAllRows')
+            ? 'ssrmRowGroupExpansion'
+            : 'rowGroupExpansion';
+        const setExpansion =
+            !ignoreSet?.has(expansionKey) &&
+            (shouldSetState('rowGroupExpansion', rowGroupExpansionState) ||
+                shouldSetState('ssrmRowGroupExpansion', ssrmRowGroupExpansion));
+        const { colModel, syncSvc } = this.beans;
+        // one update, so the filters and the expansion it restores refresh the rows together
+        syncSvc.beginUpdate();
+        try {
+            if (colModel.isPivotActive()) {
+                syncSvc.flushChanges(); // a filter may name the pivot result columns this builds
+            }
+            if (shouldSetState('filter', filterState)) {
+                this.setFilterStateDeferringPivot(filterState, source);
+            }
+            if (shouldSetState('quickFilter', quickFilterState)) {
+                this.setQuickFilterState(quickFilterState, source);
+            }
+            if (setExpansion) {
+                this.setRowGroupExpansionState(
+                    ignoreSet?.has('ssrmRowGroupExpansion') ? undefined : ssrmRowGroupExpansion,
+                    ignoreSet?.has('rowGroupExpansion') ? undefined : rowGroupExpansionState,
+                    source
+                );
+            }
+            syncSvc.flushChanges(); // the selection and the page read the rows the changes so far leave
+            if (shouldSetState('rowSelection', rowSelectionState)) {
+                this.setRowSelectionState(rowSelectionState, source);
+            }
+            if (shouldSetState('pagination', paginationState)) {
+                this.setPaginationState(paginationState, source);
+            }
+            if (shouldSetState('rowPinning', rowPinning)) {
+                this.setRowPinningState(rowPinning);
+            }
+        } finally {
+            syncSvc.endUpdate();
         }
 
         const updateCachedState = this.updateCachedState.bind(this);
@@ -324,15 +303,23 @@ export class StateService extends BeanStub implements NamedBean {
         updateCachedState('pagination', this.getPaginationState());
     }
 
+    /** Re-reads the row group expansion state after a change that opens or closes groups without an expansion event. */
+    public onRowGroupsChanged(): void {
+        if (!this.rowGroupExpansionTracked) {
+            return;
+        }
+        clearTimeout(this.updateRowGroupExpansionStateTimer); // read now: the queued read would repeat it
+        this.updateRowGroupExpansionStateTimer = 0;
+        this.updateGroupExpansionState();
+    }
+
     private setupStateOnRowCountReady(initialState: GridState): void {
+        this.rowGroupExpansionTracked = true;
         this.applyInitialFilterState();
         this.setRowCountState({ ...initialState, filter: undefined }, 'gridInitializing');
 
         const updateCachedState = this.updateCachedState.bind(this);
-        const updateRowGroupExpansionState = () => {
-            this.updateRowGroupExpansionStateTimer = 0;
-            this.updateGroupExpansionState();
-        };
+        const updateRowGroupExpansionState = () => this.onRowGroupsChanged();
         const updateFilterState = () => updateCachedState('filter', this.getFilterState());
         // A case-only edit (`abc` -> `ABC`) parses to the same filter, so it dispatches no `filterChanged`.
         this.addManagedPropertyListener('quickFilterText', () =>
@@ -344,8 +331,6 @@ export class StateService extends BeanStub implements NamedBean {
             filterChanged: updateFilterState,
             rowExpansionStateChanged: this.onRowGroupOpenedDebounced,
             expandOrCollapseAll: updateRowGroupExpansionState,
-            // `groupDefaultExpanded`/`isGroupOpenByDefault` updates expansion state without an expansion event
-            columnRowGroupChanged: updateRowGroupExpansionState,
             rowDataUpdated: () => {
                 if (gos.get('groupDefaultExpanded') !== 0 || gos.get('isGroupOpenByDefault')) {
                     // once rows are loaded, they may be expanded, start the timer only once
@@ -517,7 +502,8 @@ export class StateService extends BeanStub implements NamedBean {
             pivotIndex: reset(shouldSetPivotState),
             pinned: reset(shouldSetColumnPinningState),
             hide: reset(shouldSetColumnVisibilityState),
-            flex: reset(shouldSetColumnSizingState),
+            // an omitted columnSizing keeps the layout, colDef flex included
+            flex: columnSizingState ? reset(shouldSetColumnSizingState) : undefined,
             headerName: reset(shouldSetHeaderNameState),
             // `null` pivotSort would clear the colDef default ('asc') on every pivoted column; width/sortType are no-ops.
             // Including to enable type checking to guard against missing properties in the future
@@ -575,8 +561,10 @@ export class StateService extends BeanStub implements NamedBean {
             for (const { colId, sort } of pivotState.pivotSortModel ?? []) {
                 getColumnState(colId).pivotSort = sort;
             }
+        }
+        if (shouldSetPivotState && (pivotState || this.gos.get('pivotMode'))) {
             this.gos.updateGridOptions({
-                options: { pivotMode: !!pivotState.pivotMode },
+                options: { pivotMode: !!pivotState?.pivotMode },
                 source: source as any,
             });
         }
@@ -623,7 +611,9 @@ export class StateService extends BeanStub implements NamedBean {
                     applyOrder,
                     defaultState,
                 },
-                source
+                source,
+                false,
+                shouldSetPivotState
             );
         }
     }
@@ -640,27 +630,31 @@ export class StateService extends BeanStub implements NamedBean {
             return;
         }
 
-        if (columnStates) {
-            const secondaryColumnStates: ColumnState[] = [];
-            for (const columnState of columnStates) {
-                if (colModel.colsById[columnState.colId]?.colDef.pivotKeys != null) {
-                    secondaryColumnStates.push(columnState);
-                }
+        // one column update: the result columns' state and their groups' are laid out and told once
+        const syncSvc = beans.syncSvc;
+        syncSvc.beginUpdate();
+        try {
+            if (columnStates) {
+                const secondaryColumnStates = columnStates.filter(
+                    (columnState) => colModel.colsById[columnState.colId]?.colDef.pivotKeys != null
+                );
+
+                _applyColumnState(
+                    beans,
+                    {
+                        state: secondaryColumnStates,
+                        applyOrder,
+                    },
+                    source
+                );
             }
 
-            _applyColumnState(
-                beans,
-                {
-                    state: secondaryColumnStates,
-                    applyOrder,
-                },
-                source
-            );
-        }
-
-        if (columnGroupStates) {
-            // no easy/performant way of knowing which column groups are pivot column groups
-            _setColGroupState(beans, columnGroupStates, source);
+            if (columnGroupStates) {
+                // no easy/performant way of knowing which column groups are pivot column groups
+                _setColGroupState(beans, columnGroupStates, source);
+            }
+        } finally {
+            syncSvc.endUpdate();
         }
     }
 
@@ -1017,39 +1011,45 @@ export class StateService extends BeanStub implements NamedBean {
         this.beans.expansionSvc?.setExpansionState(state, source);
     }
 
-    private updateColumnState(features: (keyof GridState)[]): void {
-        const newColumnState = this.getColumnGridState();
-        let hasChanged = false;
+    /** Called as each column update ends: the column state the update changed is computed once, its changes told. */
+    public refreshColumnState(changes: GridChanges): void {
+        // a change recorded before the columns are ready waits for the first end after
+        if (!this.beans.colModel.ready || !changes.columnState) {
+            return;
+        }
+        changes.columnState = false;
         const cachedState = this.cachedState;
-        for (const key of Object.keys(newColumnState) as (keyof GridState)[]) {
-            const value = (newColumnState as any)[key];
-            if (!_jsonEquals(value, cachedState[key])) {
-                hasChanged = true;
+        const next: GridState = { ...cachedState, ...this.getColumnGridState() };
+        // read only when recorded: a sort, a resize or a move changes neither the groups nor the user columns
+        if (changes.columnGroupState) {
+            changes.columnGroupState = false;
+            next.columnGroup = this.getColumnGroupState();
+            next.userColumns = this.beans.userColumnSvc!.getState();
+        }
+        const sources: (keyof GridState)[] = [];
+        for (let i = 0, len = COLUMN_STATE_KEYS.length; i < len; ++i) {
+            const key = COLUMN_STATE_KEYS[i];
+            if (!_jsonEquals(next[key], cachedState[key])) {
+                sources.push(key);
             }
         }
-
-        this.cachedState = {
-            ...cachedState,
-            ...newColumnState,
-        };
-        if (hasChanged) {
-            this.dispatchStateUpdateEvent(features);
+        // the sizing lists the columns in their order: a move alone resizes nothing
+        const sizingAt = sources.includes('columnOrder') ? sources.indexOf('columnSizing') : -1;
+        if (sizingAt !== -1 && isSameSizing(cachedState.columnSizing, next.columnSizing)) {
+            sources.splice(sizingAt, 1);
+        }
+        if (sources.length) {
+            this.cachedState = next;
+            this.dispatchStateUpdateEvent(sources);
         }
     }
 
     private updateCachedState<K extends keyof GridState>(key: K, value: GridState[K]): void {
-        const existingValue = this.cachedState[key];
-        this.setCachedStateValue(key, value);
-        if (!_jsonEquals(value, existingValue)) {
+        const cachedState = this.cachedState;
+        if (!_jsonEquals(value, cachedState[key])) {
+            this.cachedState = { ...cachedState, [key]: value };
             this.dispatchStateUpdateEvent([key]);
         }
-    }
-
-    private setCachedStateValue<K extends keyof GridState>(key: K, value: GridState[K]): void {
-        this.cachedState = {
-            ...this.cachedState,
-            [key]: value,
-        };
     }
 
     private refreshStaleState(): void {
@@ -1057,7 +1057,7 @@ export class StateService extends BeanStub implements NamedBean {
         for (const key of staleStateKeys) {
             // only row selection supported for now
             if (key === 'rowSelection') {
-                this.setCachedStateValue(key, this.getRowSelectionState());
+                this.updateCachedState(key, this.getRowSelectionState());
             }
         }
         staleStateKeys.clear();
@@ -1111,3 +1111,41 @@ export class StateService extends BeanStub implements NamedBean {
         this.stopSuppressEvents('gridInitializing');
     }
 }
+
+/** Whether two sizings hold the same widths and flexes, whatever the order of their columns. */
+function isSameSizing(a: ColumnSizingState | undefined, b: ColumnSizingState | undefined): boolean {
+    const aModel = a?.columnSizingModel;
+    const bModel = b?.columnSizingModel;
+    if (!aModel || !bModel) {
+        return aModel === bModel;
+    }
+    if (aModel.length !== bModel.length) {
+        return false;
+    }
+    const byId = new Map<string, ColumnSizeState>();
+    for (let i = 0, len = aModel.length; i < len; ++i) {
+        byId.set(aModel[i].colId, aModel[i]);
+    }
+    for (let i = 0, len = bModel.length; i < len; ++i) {
+        const entry = bModel[i];
+        const prev = byId.get(entry.colId);
+        if (prev?.width !== entry.width || prev?.flex !== entry.flex) {
+            return false;
+        }
+    }
+    return true;
+}
+const COLUMN_STATE_KEYS: readonly (keyof GridState)[] = [
+    'aggregation',
+    'columnOrder',
+    'columnPinning',
+    'columnSizing',
+    'columnVisibility',
+    'columnHeaderName',
+    'pivot',
+    'rowGroup',
+    'showValuesAs',
+    'sort',
+    'columnGroup',
+    'userColumns',
+];

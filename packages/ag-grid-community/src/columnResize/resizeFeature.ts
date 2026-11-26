@@ -1,6 +1,5 @@
 import { _getAriaLabel, _setDisplayed } from 'ag-stack';
 
-import { _cancelColumnWidthAnimation } from '../columns/columnWidthAnimation';
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
 import { getDragSign } from '../entities/agColumn';
@@ -111,7 +110,7 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
         this.takeFromAdjacent = beans.colResize!.takesFromAdjacent(shiftKey);
         this.dragSign = getDragSign(this.gos.get('enableRtl'), column.pinnedLane);
 
-        _cancelColumnWidthAnimation(beans);
+        beans.colAnimation?.cancelWidthAnimation();
         this.toggleColumnResizing(true);
     }
 

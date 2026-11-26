@@ -105,8 +105,8 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
     }
 
     public execute(rootNode: RowNode, params: RefreshModelParams): void {
-        const changedPath = params.changedPath!;
         const refreshResult = this.initRefresh(params);
+        const changedPath = params.changedPath;
         if (refreshResult !== 'skip') {
             const changedRowNodes = params.changedRowNodes;
             if (changedRowNodes) {
@@ -175,6 +175,11 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
                 }
             } else {
                 params.animate = false;
+                if (params.groupingOnlyChangedRows) {
+                    // merged with the column change that altered them: every row is grouped again
+                    params.changedRowNodes = undefined;
+                    params.changedPath = undefined;
+                }
                 // If the top-level group column changed, every existing node ID will differ after
                 // rebuild, so no group nodes can be reused. Check before makeGroupColumns overwrites groupCols.
                 const topLevelChanged = groupCols[0]?.col.getId() !== cols?.[0]?.getId();

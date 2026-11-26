@@ -223,6 +223,7 @@ export class AlignedGridsService extends BeanStub implements NamedBean {
                 const widths: number[] = [];
                 // the cols the other grid resized bound this grid's flex pass as they bounded its own
                 let resizingCols: AgColumn[] | undefined = isResize ? columns : undefined;
+                let flexCleared = false;
                 for (let i = 0, len = masterColumns.length; i < len; ++i) {
                     const column = masterColumns[i];
                     const flexedThere = isCenterFlex(column);
@@ -247,6 +248,7 @@ export class AlignedGridsService extends BeanStub implements NamedBean {
                     // ownership travels with the width, else auto-sizing here undoes the other grid's user resize
                     col.setUserSized(column.isUserSized());
                     // a copied width is a fixed one, even where it leaves this col's width as it was
+                    flexCleared ||= col.flex != null;
                     col.flex = null;
                     if (flexed && resizingCols === columns) {
                         // flexed there and fixed here: its width is copied, but it bounds nothing
@@ -256,6 +258,10 @@ export class AlignedGridsService extends BeanStub implements NamedBean {
                     }
                     columns.push(col);
                     widths.push(column.actualWidth);
+                }
+                if (flexCleared) {
+                    // no width may change with it: the grid state reads it as the resize's update ends
+                    beans.syncSvc.changes.columnState = true;
                 }
                 colResize?.setClampedColumnWidths(columns, widths, finished, 'alignedGridChanged', resizingCols);
                 break;

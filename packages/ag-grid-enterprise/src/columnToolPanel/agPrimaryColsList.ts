@@ -129,7 +129,6 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
             columnRowGroupChanged: listener,
             columnValueChanged: listener,
             columnVisible: listener,
-            newColumnsLoaded: listener,
         });
 
         this.expandGroupsByDefault = !contractColumnSelection;
@@ -346,6 +345,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
         } else if (this.customColumnLayout && !pivotModeActive) {
             // A custom layout set via setColumnLayout owns the panel: grid column changes leave it untouched
             // until the app calls setColumnLayout again to pick up added/removed columns.
+            this.fireSelectionChangedEvent();
             return;
         } else {
             this.buildTreeFromProvidedColumnDefs();
@@ -449,6 +449,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
         // the rebuilt tree defaults every group to `expandGroupsByDefault`, so expansion - live, or
         // restored from grid state - has to be re-applied and the list re-flattened
         this.setExpandedStates(expandedStates);
+        this.markFilteredColumns();
         this.flattenAndFilterModel();
     }
 
@@ -460,9 +461,6 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
         this.groupsExist = colDefs.some((colDef) => {
             return colDef && (colDef as ColGroupDef).children !== undefined;
         });
-
-        this.markFilteredColumns();
-        this.flattenAndFilterModel();
     }
 
     private buildTreeFromProvidedColumnDefs(): void {

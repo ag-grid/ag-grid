@@ -11,6 +11,15 @@ import type { BeanStub } from '../../../context/beanStub';
 import type { AgColumn } from '../../../entities/agColumn';
 import { getSortDefFromInput } from '../../../entities/agColumn';
 import type { HeaderClassParams } from '../../../entities/colDef';
+import {
+    HEADER_CHANGE_FLAG_COLUMN_CELL_OPTIONS,
+    HEADER_CHANGE_FLAG_DISPLAY_NAMES,
+    HEADER_CHANGE_FLAG_ENABLE_ADVANCED_FILTER,
+    HEADER_CHANGE_FLAG_SELECTION_OPTIONS,
+    HEADER_CHANGE_FLAG_SHOW_VALUES_AS,
+    HEADER_CHANGE_FLAG_SORT,
+} from '../../../gridChanges';
+import type { HeaderChanges } from '../../../gridChanges';
 import { _addGridCommonParams, _getEnableColumnSelection, _isLegacyMenuEnabled } from '../../../gridOptionsUtils';
 import { ColumnHighlightPosition } from '../../../interfaces/iColumn';
 import type { IHeader, IHeaderParams } from '../../../interfaces/iHeader';
@@ -86,9 +95,11 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         this.setupMovingCss(compBean);
         this.refreshPinnedEdges();
         this.setupMenuClass(compBean);
-        this.setupSortableClass(compBean);
+        this.setupSortableClass();
         this.setupWrapTextClass();
-        this.refreshSpanHeaderHeight();
+        // only a spanning cell reads the column row height, a walk of every displayed column
+        const headerHeight = this.column.isSpanHeaderHeight() ? getColumnHeaderRowHeight(beans) : 0;
+        this.refreshSpanHeaderHeight(getGroupRowsHeight(beans), headerHeight);
 
         this.setupAutoHeight({
             wrapperElement: eHeaderCompWrapper,
@@ -125,52 +136,9 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
 
         this.addResizeAndMoveKeyboardListeners(compBean);
 
-        compBean.addManagedPropertyListeners(
-            ['suppressMovableColumns', 'suppressMenuHide', 'suppressAggFuncInHeader', 'enableAdvancedFilter'],
-            () => this.refresh()
-        );
-        compBean.addManagedPropertyListener('cellSelection', () => this.refreshAria());
-        compBean.addManagedListeners(column, {
-            colDefChanged: () => this.refresh(),
-            headerNameChanged: () => this.refresh(),
-            formulaRefChanged: () => this.refresh(),
-            headerHighlightChanged: this.onHeaderHighlightChanged.bind(this),
-        });
+        compBean.addManagedListeners(column, { headerHighlightChanged: this.onHeaderHighlightChanged.bind(this) });
 
-        const listener = () => this.checkDisplayName();
-        const colId = column.colId;
-        compBean.addManagedEventListeners({
-            columnValueChanged: listener,
-            columnRowGroupChanged: listener,
-            columnPivotChanged: listener,
-            columnPinned: ({ columns }) => {
-                if (!columns?.includes(column)) {
-                    return;
-                }
-
-                this.refreshHeaderStyles();
-                this.refreshFunctions.headerClasses?.();
-            },
-            headerHeightChanged: this.onHeaderHeightChanged.bind(this),
-            // Toggle the edit highlight in place (no header component recreation).
-            columnHeaderEditHighlightChanged: (event) => {
-                if (!event.colId || event.colId === colId) {
-                    this.refreshEditHighlight();
-                }
-            },
-        });
         this.refreshEditHighlight();
-
-        if (beans.showValuesAsSvc) {
-            // The active mode (and its dormancy, which flips on grouping/pivot change) feed the header aria description.
-            const refreshShowValuesAsAria = () => this.refreshAriaShowValuesAs();
-            compBean.addManagedListeners(column, { columnStateUpdated: refreshShowValuesAsAria });
-            compBean.addManagedEventListeners({
-                columnRowGroupChanged: refreshShowValuesAsAria,
-                columnPivotChanged: refreshShowValuesAsAria,
-                columnPivotModeChanged: refreshShowValuesAsAria,
-            });
-        }
 
         compBean.addDestroyFunc(() => {
             this.headerCompGuard.invalidate();
@@ -285,18 +253,42 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         }
         this.selectAllFeature = compBean.createOptionalManagedBean(selectionSvc.createSelectAllFeature(this.column));
         this.selectAllFeature?.setComp(this);
+    }
 
-        compBean.addManagedPropertyListener('rowSelection', () => {
-            const selectAllFeature = selectionSvc.createSelectAllFeature(this.column);
-            if (selectAllFeature && !this.selectAllFeature) {
-                this.selectAllFeature = compBean.createManagedBean(selectAllFeature);
-                this.selectAllFeature?.setComp(this);
-                this.comp.refreshSelectAllGui();
-            } else if (this.selectAllFeature && !selectAllFeature) {
-                this.comp.removeSelectAllGui();
-                this.selectAllFeature = this.destroyBean(this.selectAllFeature);
-            }
-        });
+    public override onGridChanges(changes: HeaderChanges): void {
+        const names = (changes & HEADER_CHANGE_FLAG_DISPLAY_NAMES) !== 0;
+        // display name can change if aggFunc different, eg sum(Gold) is now max(Gold)
+        const redrawn =
+            (changes & (HEADER_CHANGE_FLAG_COLUMN_CELL_OPTIONS | HEADER_CHANGE_FLAG_ENABLE_ADVANCED_FILTER)) !== 0 ||
+            (names && this.displayName !== this.calculateDisplayName());
+        if (redrawn) {
+            this.refresh(); // redraws the aria, sort and show-values parts too
+        }
+        if ((changes & HEADER_CHANGE_FLAG_SELECTION_OPTIONS) !== 0) {
+            this.refreshSelectionOptions(redrawn);
+        }
+        const sort = (changes & HEADER_CHANGE_FLAG_SORT) !== 0;
+        const showValuesAs =
+            (changes & HEADER_CHANGE_FLAG_SHOW_VALUES_AS) !== 0 && this.beans.showValuesAsSvc !== undefined;
+        if (names || sort || showValuesAs) {
+            this.refreshNamesAndSort(redrawn, names || sort, sort, showValuesAs);
+        }
+    }
+
+    /** `cellSelection` or `rowSelection` changed: the aria description and the select-all checkbox follow. */
+    private refreshSelectionOptions(ariaDrawn: boolean): void {
+        if (!ariaDrawn) {
+            this.refreshAria();
+        }
+        const selectAllFeature = this.beans.selectionSvc?.createSelectAllFeature(this.column);
+        if (selectAllFeature && !this.selectAllFeature) {
+            this.selectAllFeature = (this.compBean ?? this).createManagedBean(selectAllFeature);
+            this.selectAllFeature?.setComp(this);
+            this.comp.refreshSelectAllGui();
+        } else if (this.selectAllFeature && !selectAllFeature) {
+            this.comp.removeSelectAllGui();
+            this.selectAllFeature = this.destroyBean(this.selectAllFeature);
+        }
     }
 
     public getSelectAllGui(): HTMLElement | undefined {
@@ -447,7 +439,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         this.refreshFunctions[name] = func;
     }
 
-    private refresh(): void {
+    public override refresh(): void {
         this.updateState();
         this.refreshHeaderComp();
         this.refreshAria();
@@ -456,7 +448,19 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         }
     }
 
-    private refreshEditHighlight(): void {
+    public override refreshHeaderClasses(): void {
+        this.refreshFunctions.headerClasses?.();
+    }
+
+    /** Called by the header row as a formula cell edit starts or stops. */
+    public setFormulaRefShown(shown: boolean): void {
+        const headerComp = this.comp?.getUserCompInstance();
+        if (isHeaderComp(headerComp)) {
+            headerComp.setFormulaRefShown(shown);
+        }
+    }
+
+    public override refreshEditHighlight(): void {
         this.comp.toggleCss(
             CSS_COLUMN_HEADER_EDIT_HIGHLIGHTED,
             !!this.beans.colHeaderEditSvc?.isHighlightedColumn(this.column)
@@ -509,13 +513,6 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         return this.beans.colNames.getDisplayNameForColumn(this.column, 'header', true);
     }
 
-    private checkDisplayName(): void {
-        // display name can change if aggFunc different, eg sum(Gold) is now max(Gold)
-        if (this.displayName !== this.calculateDisplayName()) {
-            this.refresh();
-        }
-    }
-
     private workOutDraggable(): boolean {
         const colDef = this.column.colDef;
         const isSuppressMovableColumns = this.gos.get('suppressMovableColumns');
@@ -557,7 +554,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         listener();
     }
 
-    private setupSortableClass(compBean: BeanStub): void {
+    private setupSortableClass(): void {
         const updateSortableCssClass = () => {
             this.comp.toggleCss('ag-header-cell-sortable', !!this.sortable);
         };
@@ -565,12 +562,36 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         updateSortableCssClass();
 
         this.setRefreshFunction('updateSortable', updateSortableCssClass);
-        compBean.addManagedEventListeners({
-            sortChanged: () => {
+    }
+
+    /** `sortStyles`: the header component restyles its sort, as after a name change too. */
+    private refreshNamesAndSort(redrawn: boolean, sortStyles: boolean, sort: boolean, showValuesAs: boolean): void {
+        if (!redrawn) {
+            if (showValuesAs) {
+                this.refreshAriaShowValuesAs();
+            }
+            if (sort) {
                 this.refreshAriaSort();
-                this.announceAriaDescription();
-            },
-        });
+            }
+        }
+        if (sort) {
+            this.announceAriaDescription();
+            const measure = this.measureAutoHeight;
+            if (measure) {
+                // after the sort styles: the cell's own padding and border are measured, and no resize reports them
+                window.setTimeout(measure);
+            }
+        }
+        const headerComp = redrawn ? undefined : this.comp.getUserCompInstance();
+        if (!isHeaderComp(headerComp)) {
+            return;
+        }
+        if (showValuesAs) {
+            headerComp.refreshShowValuesAs();
+        }
+        if (sortStyles) {
+            headerComp.refreshSortStyles();
+        }
     }
 
     private setupFilterClass(compBean: BeanStub): void {
@@ -602,21 +623,14 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         this.comp.toggleCss('ag-header-highlight-after', afterOn);
     }
 
-    protected override onDisplayedColumnsChanged(): void {
-        super.onDisplayedColumnsChanged();
-        if (!this.isAlive()) {
-            return;
-        }
-        this.onHeaderHeightChanged();
+    protected override refreshPinnedStyles(): void {
+        this.refreshHeaderStyles();
+        this.refreshFunctions.headerClasses?.();
     }
 
-    private onHeaderHeightChanged() {
-        this.refreshSpanHeaderHeight();
-    }
-
-    private refreshSpanHeaderHeight() {
-        const { eGui, column, comp, beans } = this;
-        const groupHeaderHeight = getGroupRowsHeight(this.beans);
+    /** `getGroupRowsHeight` and `getColumnHeaderRowHeight`, read once by the caller for all the cells it refreshes. */
+    public refreshSpanHeaderHeight(groupHeaderHeight: number[], headerHeight: number): void {
+        const { eGui, column, comp } = this;
         const isZeroGroupHeight = groupHeaderHeight.reduce((total, next) => total + next, 0) === 0;
 
         comp.toggleCss('ag-header-parent-hidden', isZeroGroupHeight);
@@ -632,8 +646,6 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         const { numberOfParents, isSpanningTotal } = this.column.getColumnGroupPaddingInfo();
 
         comp.toggleCss('ag-header-span-height', numberOfParents > 0);
-
-        const headerHeight = getColumnHeaderRowHeight(beans);
 
         if (numberOfParents === 0) {
             // if spanning has stopped then need to reset these values.

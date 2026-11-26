@@ -90,6 +90,9 @@ export interface RefreshModelParams<TData = any> {
     /** true if this update is due to columns changing, ie no rows were changed */
     afterColumnsChanged?: boolean;
 
+    /** `changedRowNodes` is for the grouping alone: a column change asks the stages after it for every row. */
+    groupingOnlyChangedRows?: boolean;
+
     /** true if all we did is changed row height, data still the same, no need to clear the undo/redo stacks */
     keepUndoRedoStack?: boolean;
 }

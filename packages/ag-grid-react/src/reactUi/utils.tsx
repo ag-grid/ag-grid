@@ -138,14 +138,17 @@ export function getNextValueIfDifferent<T extends { diffIndex: number }>(
         return prev;
     }
 
-    // If maintaining dom order just return next
     // If either side is empty there is no previous order to maintain
-    if (maintainOrder || prevLen === 0 || nextLen === 0) {
+    if (prevLen === 0 || nextLen === 0) {
         return next;
     }
 
     if (_areEqual(prev, next)) {
         return prev;
+    }
+    // If maintaining dom order just return next
+    if (maintainOrder) {
+        return next;
     }
 
     // Values are matched by a `diffIndex` stamp instead of a map: each `prev` value is stamped with its index, and a

@@ -3,6 +3,7 @@ import { _jsonEquals } from 'ag-stack';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import { RowNode } from '../entities/rowNode';
+import type { RowChanges } from '../gridChanges';
 import { _addRowHeightChangedListener, _getRowHeightAsNumber, _getRowIdCallback } from '../gridOptionsUtils';
 import type { IDatasource } from '../interfaces/iDatasource';
 import type { IRowModel, RowBounds, RowModelType } from '../interfaces/iRowModel';
@@ -51,8 +52,6 @@ export class InfiniteRowModel extends BeanStub implements NamedBean, IRowModel {
         this.rowHeight = _getRowHeightAsNumber(beans);
 
         this.addEventListeners();
-
-        this.addDestroyFunc(() => this.destroyCache());
     }
 
     public start(): void {
@@ -61,6 +60,7 @@ export class InfiniteRowModel extends BeanStub implements NamedBean, IRowModel {
 
     public override destroy(): void {
         this.destroyDatasource();
+        this.destroyCache();
         super.destroy();
         this.rootNode = null;
     }
@@ -75,9 +75,6 @@ export class InfiniteRowModel extends BeanStub implements NamedBean, IRowModel {
 
     private addEventListeners(): void {
         this.addManagedEventListeners({
-            filterChanged: this.reset.bind(this),
-            sortChanged: this.reset.bind(this),
-            newColumnsLoaded: this.onColumnEverything.bind(this),
             storeUpdated: this.dispatchModelUpdatedEvent.bind(this),
         });
         _addRowHeightChangedListener(this, () => this.refreshRowHeight());
@@ -96,6 +93,14 @@ export class InfiniteRowModel extends BeanStub implements NamedBean, IRowModel {
             this.cacheParams.rowHeight = rowHeight;
         }
         this.updateRowHeights();
+    }
+
+    public refreshAfterChange(change: RowChanges): void {
+        if (change.filter || change.sort) {
+            this.reset();
+        } else if (change.columnsLoaded) {
+            this.onColumnEverything();
+        }
     }
 
     private onColumnEverything(): void {

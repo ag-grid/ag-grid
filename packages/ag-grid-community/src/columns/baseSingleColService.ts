@@ -32,7 +32,7 @@ export abstract class BaseSingleColService extends BeanStub {
         const existing = this.column;
         if (want && !existing) {
             const colDef = this.createColDef();
-            const colId = colDef.colId!;
+            const colId = this.beans.colModel.getServiceColId(colDef.colId!, null);
             this.gos.validateColDef(colDef, colId, true);
             const col = new AgColumn(colDef, null, colId, false, this.colKind);
             this.beans.context.createBean(col);
@@ -46,41 +46,36 @@ export abstract class BaseSingleColService extends BeanStub {
         return existing;
     }
 
-    /** Rebuild the colDef on the existing column and re-apply its state, unless the colDef is unchanged. */
-    protected refreshColDef(source: ColumnEventType): void {
+    /** Rebuilds the column's colDef and re-applies its state; returns whether the colDef changed. */
+    public refreshColDef(source: ColumnEventType): boolean {
         const col = this.column;
         if (!col) {
-            return;
+            return false;
         }
         const beans = this.beans;
-        const colModel = beans.colModel;
-        colModel.beginColUpdate();
-        try {
-            const prevWidth = col.colDef.width;
-            const colDef = this.createColDef();
-            if (!col.setColDef(colDef, null, source)) {
-                return;
-            }
-            const state = _getColumnStateFromColDef(beans, colDef, col.colId);
-            const stateFlex = state.flex;
-            if (stateFlex != null && stateFlex <= 0) {
-                // `flex: 0` ends the flex, as on a column definition, so a width applies
-                state.flex = null;
-            }
-            const width = state.width;
-            if (((stateFlex === undefined ? col.flex : stateFlex) ?? 0) > 0) {
-                // a flexing column takes no colDef width, as `AgColumn.reapplyColDef`
-                state.width = undefined;
-            } else if (width == null || this.keepsColDefWidth(col, width, prevWidth)) {
-                state.width = Math.max(col.actualWidth, col.minWidth);
-            } else {
-                state.width = Math.max(width, col.minWidth);
-                col.resetWidthOwnership();
-            }
-            _applyColumnState(beans, { state: [state] }, source, true);
-        } finally {
-            colModel.endColUpdate();
+        const prevWidth = col.colDef.width;
+        const colDef = this.createColDef();
+        if (!col.setColDef(colDef, null, source)) {
+            return false;
         }
+        const state = _getColumnStateFromColDef(beans, colDef, col.colId);
+        const stateFlex = state.flex;
+        if (stateFlex != null && stateFlex <= 0) {
+            // `flex: 0` ends the flex, as on a column definition, so a width applies
+            state.flex = null;
+        }
+        const width = state.width;
+        if (((stateFlex === undefined ? col.flex : stateFlex) ?? 0) > 0) {
+            // a flexing column takes no colDef width, as `AgColumn.reapplyColDef`
+            state.width = undefined;
+        } else if (width == null || this.keepsColDefWidth(col, width, prevWidth)) {
+            state.width = Math.max(col.actualWidth, col.minWidth);
+        } else {
+            state.width = Math.max(width, col.minWidth);
+            col.resetWidthOwnership();
+        }
+        _applyColumnState(beans, { state: [state] }, source, true);
+        return true;
     }
 
     /** Whether an update setting `width` keeps the current width; a column definition's `width` applies on every update. */

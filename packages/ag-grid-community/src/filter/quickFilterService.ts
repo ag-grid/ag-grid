@@ -1,5 +1,5 @@
 import type { AgEvent } from 'ag-stack';
-import { _exists } from 'ag-stack';
+import { _areEqual, _exists } from 'ag-stack';
 
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
@@ -21,7 +21,9 @@ export class QuickFilterService extends BeanStub<QuickFilterServiceEvent> implem
     beanName = 'quickFilter' as const;
 
     // the columns the quick filter should use. this will be all primary columns plus the autoGroupColumns if any exist
-    private colsToUse: AgColumn[];
+    private colsToUse: AgColumn[] = [];
+    /** The `colModel.colDefsVersion` the rows' cached text was built for. */
+    private colDefsVersion = -1;
 
     private quickFilter: string | null = null;
     private quickFilterParts: string[] | null = null;
@@ -31,19 +33,7 @@ export class QuickFilterService extends BeanStub<QuickFilterServiceEvent> implem
     private matcher?: (quickFilterParts: string[], rowQuickFilterAggregateText: string) => boolean;
 
     public postConstruct(): void {
-        const resetListener = this.resetCache.bind(this);
         const gos = this.gos;
-        this.addManagedEventListeners({
-            columnPivotModeChanged: resetListener,
-            newColumnsLoaded: resetListener,
-            columnRowGroupChanged: resetListener,
-            columnVisible: () => {
-                if (!gos.get('includeHiddenColumnsInQuickFilter')) {
-                    this.resetCache();
-                }
-            },
-        });
-
         this.addManagedPropertyListener('quickFilterText', (e) => this.setFilter(e.currentValue));
         this.addManagedPropertyListeners(
             ['includeHiddenColumnsInQuickFilter', 'applyQuickFilterBeforePivotOrAgg'],
@@ -63,21 +53,37 @@ export class QuickFilterService extends BeanStub<QuickFilterServiceEvent> implem
     // a) user provides 'field' into autoGroupCol of normal grid, so now because a valid col to filter leafs on
     // b) using tree data and user depends on autoGroupCol for first col, and we also want to filter on this
     //    (tree data is a bit different, as parent rows can be filtered on, unlike row grouping)
-    public refreshCols(): void {
-        const { autoColSvc, colModel, gos, pivotResultCols } = this.beans;
-        const pivotMode = colModel.pivotMode;
+    private updateColsToUse(): boolean {
+        const { autoColSvc, colModel, gos, pivotResultCols, syncSvc } = this.beans;
+        const pivotResult = colModel.pivotMode && !gos.get('applyQuickFilterBeforePivotOrAgg');
         const groupAutoCols = autoColSvc?.columns;
         const providedCols = colModel.colDefList;
 
-        let columnsForQuickFilter =
-            (pivotMode && !gos.get('applyQuickFilterBeforePivotOrAgg') ? pivotResultCols?.pivotCols : providedCols) ??
-            [];
+        let columnsForQuickFilter = (pivotResult ? pivotResultCols?.pivotCols : providedCols) ?? [];
         if (groupAutoCols?.length) {
             columnsForQuickFilter = columnsForQuickFilter.concat(groupAutoCols);
         }
-        this.colsToUse = gos.get('includeHiddenColumnsInQuickFilter')
+        const colsToUse = gos.get('includeHiddenColumnsInQuickFilter')
             ? columnsForQuickFilter
             : columnsForQuickFilter.filter((col) => col.visible || col.rowGroupActive);
+        const colDefsVersion = colModel.colDefsVersion;
+        const colsChanged = !_areEqual(colsToUse, this.colsToUse);
+        // the rows' cached text is built from these columns and their definitions
+        if (colDefsVersion !== this.colDefsVersion || colsChanged) {
+            this.colDefsVersion = colDefsVersion;
+            this.resetCache();
+        }
+        this.colsToUse = colsToUse;
+        // the rows refresh builds the pivot result columns and filters by them next: there only a show or hide asks
+        return colsChanged && (!pivotResult || syncSvc.changes.rowChanges.columnsVisible);
+    }
+
+    /** Re-reads the matched columns; a change the rows did not make re-filters them while a quick filter is set. */
+    public refreshCols(): void {
+        if (!this.updateColsToUse() || !this.isFilterPresent()) {
+            return;
+        }
+        this.beans.syncSvc.filterChanged(true, true);
     }
 
     public isFilterPresent(): boolean {
@@ -98,6 +104,9 @@ export class QuickFilterService extends BeanStub<QuickFilterServiceEvent> implem
     }
 
     public resetCache(): void {
+        if (!this.gos.get('cacheQuickFilter')) {
+            return; // no row holds a text: only the cache writes one
+        }
         this.beans.rowModel.forEachNode((node) => (node.quickFilterAggregateText = null));
     }
 
@@ -174,8 +183,9 @@ export class QuickFilterService extends BeanStub<QuickFilterServiceEvent> implem
     }
 
     private onColumnConfigChanged(): void {
-        this.refreshCols();
-        this.resetCache();
+        // the quickFilterChanged below refreshes the rows
+        this.colDefsVersion = -1; // these options change every row's cached text
+        this.updateColsToUse();
         if (this.isFilterPresent()) {
             this.dispatchLocalEvent({ type: 'quickFilterChanged' });
         }

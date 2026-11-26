@@ -1,13 +1,11 @@
 import type {
     ColDef,
     ColumnEventType,
-    ColumnHeaderNameChangedEvent,
     ColumnState,
     IAutoColService,
     IRowNode,
     ITooltipParams,
     NamedBean,
-    PropertyValueChangedEvent,
     RowNode,
     TooltipCallbackParams,
     TooltipComponentSelectorResult,
@@ -18,20 +16,26 @@ import {
     GROUP_AUTO_COLUMN_ID,
     _addColumnDefaultAndTypes,
     _applyColumnState,
-    _convertColumnEventSourceType,
     _getColumnStateFromColDef,
     _getLegacyTooltipFieldValue,
     _isCellTooltipConfigured,
     _isClientSideRowModel,
-    _isColumnsSortingCoupledToGroup,
     _isGroupHideColumnsUntilExpanded,
     _isGroupMultiAutoColumn,
     _isGroupUseEntireRow,
     _mergeDeep,
+    _mergedEqual,
     _resolveGroupTooltipValue,
 } from 'ag-grid-community';
 
 import { isGroupFilterDef } from './rowHierarchyUtils';
+
+const AUTO_COLS_NONE = 0;
+const AUTO_COLS_SINGLE = 1;
+const AUTO_COLS_MULTI = 2;
+const AUTO_COLS_TREE_DATA = 3;
+type AutoColsMode =
+    typeof AUTO_COLS_NONE | typeof AUTO_COLS_SINGLE | typeof AUTO_COLS_MULTI | typeof AUTO_COLS_TREE_DATA;
 
 const hasTooltipComponent = (colDef: ColDef | undefined): colDef is ColDef =>
     !!colDef && (colDef.tooltipComponent != null || colDef.tooltipComponentSelector != null);
@@ -49,89 +53,66 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
     private singleColumnTooltipDef?: ColDef;
     private singleColumnLeafTooltipDef?: ColDef;
 
-    /** Flips true on the first `modelUpdated` — used to detect the CSRM-no-rowData edge case
-     *  where the modelUpdated hook (and therefore the visibility update) never fires. */
-    private modelEverUpdated = false;
-
-    public postConstruct(): void {
-        this.addManagedPropertyListener('autoGroupColumnDef', this.updateColumns.bind(this));
-        this.addManagedEventListeners({ columnHeaderNameChanged: this.onHeaderNameChanged.bind(this) });
-
-        this.setupGroupHideColumnsUntilExpanded();
-    }
-
     /** A multi auto col copies its row-group column's name into its colDef, so re-derive it on a rename. */
-    private onHeaderNameChanged({ column, source }: ColumnHeaderNameChangedEvent): void {
-        if (!column) {
-            return;
-        }
+    public onHeaderNameChanged(column: AgColumn, source: ColumnEventType): void {
         const cols = this.columns;
         for (let i = 0, len = cols.length; i < len; ++i) {
             const col = cols[i];
-            if (col.colDef.showRowGroup === column.getColId()) {
-                // setColDef alone, as refreshCols does: re-applying colDef state would reset width and sort.
-                col.setColDef(this.createAutoColDef(col.colId, column as AgColumn, i), null, source);
+            if (col.derivedFromCol === column) {
+                // the definition alone, as refreshCols does: re-applying colDef state would reset width and sort.
+                this.redefineCol(col, i, source);
             }
         }
     }
 
-    private setupGroupHideColumnsUntilExpanded() {
-        const updateGroupColumnVisibility = () => {
-            this.modelEverUpdated = true;
-            this.updateGroupColumnVisibility(true);
-        };
-        this.addManagedEventListeners({
-            // modelUpdated is fired when rowGroup events are fired so we do not duplicate work by also listening to "rowGroupOpened" and "expandOrCollapseAll"
-            modelUpdated: updateGroupColumnVisibility,
-        });
-        // Ensure the properties are reactive.
-        this.addManagedPropertyListeners(
-            ['groupHideColumnsUntilExpanded', 'groupDisplayType', 'groupHideOpenParents'],
-            updateGroupColumnVisibility
-        );
+    public updateColumnVisibility(): void {
+        const columns = this.columns;
+        const len = columns.length;
+        // without the option a level of the column count shows them all; with it, -1 still shows the first
+        let level = len;
+        if (_isGroupHideColumnsUntilExpanded(this.gos)) {
+            // capped where every auto col shows; one col shows at any level, so no row is read
+            const maxLevel = len - 2;
+            const nodes = maxLevel < 0 ? null : this.beans.rowModel?.rootNode?.childrenAfterGroup;
+            level = this.getDeepestExpandedLevel(nodes, maxLevel);
+        }
+        let changed = false;
+        for (let i = 0; i < len; ++i) {
+            const col = columns[i];
+            const visible = level >= i - 1;
+            if (visible !== col.visible) {
+                col.setVisible(visible, 'api');
+                changed = true;
+            }
+        }
+        if (changed) {
+            this.beans.visibleCols.markLayoutOwed('api');
+        }
     }
 
     /** Generates or destroys auto-group columns based on grouping state. ColumnGroupService owns
      *  the balanced-tree wrappers and catches depth-only changes. */
     public refreshCols(source: ColumnEventType): AgColumn[] | null {
-        const beans = this.beans;
-        const { colModel, gos, rowGroupColsSvc } = beans;
-        const isPivotMode = colModel.pivotMode;
-        const groupFullWidthRow = _isGroupUseEntireRow(gos, isPivotMode);
-        // Suppress auto-col separately for group vs pivot: in CSRM the user provides their own group
-        // column for the normal view, but pivot columns are grid-generated (no chance to provide one),
-        // so grouping must be suppressible independently. With Viewport/SSRM the user may also want
-        // full control of the group column.
-        const suppressAutoColumn = isPivotMode ? gos.get('pivotSuppressAutoColumn') : this.isSuppressAutoCol();
-
-        const treeData = gos.get('treeData');
-        const rowGroupCols = rowGroupColsSvc?.columns;
-        const groupingActive = (rowGroupCols && rowGroupCols.length > 0) || treeData;
-        const noAutoCols = !groupingActive || suppressAutoColumn || groupFullWidthRow;
+        const rowGroupCols = this.beans.rowGroupColsSvc?.columns;
+        const autoColsMode = this.getAutoColsMode(!!rowGroupCols?.length);
         const currentCols = this.columns;
 
-        if (noAutoCols) {
+        if (autoColsMode === AUTO_COLS_NONE) {
             if (currentCols.length > 0) {
                 this.destroyColumns();
             }
             return null;
         }
 
-        const multiRequested = _isGroupMultiAutoColumn(gos);
-        const doingMultiAutoColumn = !treeData && multiRequested;
-        if (treeData && multiRequested) {
+        const doingMultiAutoColumn = autoColsMode === AUTO_COLS_MULTI;
+        if (autoColsMode === AUTO_COLS_TREE_DATA && _isGroupMultiAutoColumn(this.gos)) {
             this.warn(182); // multipleColumns isn't supported with tree data — a single auto col is used
         }
 
-        // Cheap "same as before?" check — bench-critical: refreshCols runs on every pivot / grouping
-        // transaction. Matches colIds element-by-element (no intermediate array); reuse the instances in place.
+        // Bench-critical: refreshCols runs on every pivot / grouping transaction, so compare without an array.
         if (autoColsInOrder(currentCols, rowGroupCols, doingMultiAutoColumn)) {
             // Existing col instances stay; refresh their colDefs so options changes propagate.
-            for (let i = 0, len = currentCols.length; i < len; ++i) {
-                const col = currentCols[i];
-                const rowGroupCol = doingMultiAutoColumn ? rowGroupCols![i] : undefined;
-                col.setColDef(this.createAutoColDef(col.colId, rowGroupCol, i), null, source);
-            }
+            this.applyAutoGroupColumnDef(source);
             return currentCols;
         }
 
@@ -139,33 +120,74 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
         // slide), creating only genuinely new cols and destroying only removed ones.
         const newCols = this.reconcileAutoCols(currentCols, doingMultiAutoColumn ? rowGroupCols! : undefined, source);
         this.columns = newCols;
-        if (!this.modelEverUpdated && _isClientSideRowModel(this.gos)) {
-            // Mid-refreshCols: set visibility flags only; the enclosing refresh does the display refresh.
-            this.updateGroupColumnVisibility(false);
-        }
         return newCols;
     }
 
-    public updateColumns(event: PropertyValueChangedEvent<'autoGroupColumnDef'>) {
+    public isColKept(col: AgColumn, rowGroupCols: ReadonlySet<AgColumn>): boolean {
+        const autoColsMode = this.getAutoColsMode(rowGroupCols.size > 0);
+        if (autoColsMode === AUTO_COLS_MULTI) {
+            const rowGroupCol = col.derivedFromCol;
+            return rowGroupCol !== null && rowGroupCols.has(rowGroupCol);
+        }
+        return autoColsMode !== AUTO_COLS_NONE && col.derivedFromCol === null;
+    }
+
+    /** The auto columns grouping calls for: none, the one shared column, one per row group column, or tree data's one. */
+    private getAutoColsMode(anyColGrouped: boolean): AutoColsMode {
+        const gos = this.gos;
+        const isPivotMode = this.beans.colModel.pivotMode;
+        const treeData = gos.get('treeData');
+        // suppressed separately for grouping and for pivoting: a pivot's group column is grid-generated, where
+        // the user may supply their own for the plain view, or want full control of it with Viewport or SSRM
+        const suppressAutoColumn = isPivotMode ? gos.get('pivotSuppressAutoColumn') : this.isSuppressAutoCol();
+        if (!(anyColGrouped || treeData) || suppressAutoColumn || _isGroupUseEntireRow(gos, isPivotMode)) {
+            return AUTO_COLS_NONE;
+        }
+        if (treeData) {
+            return AUTO_COLS_TREE_DATA;
+        }
+        return _isGroupMultiAutoColumn(gos) ? AUTO_COLS_MULTI : AUTO_COLS_SINGLE;
+    }
+
+    public applyAutoGroupColumnDef(source: ColumnEventType): void {
+        const cols = this.columns;
+        for (let i = 0, len = cols.length; i < len; ++i) {
+            this.redefineCol(cols[i], i, source);
+        }
+    }
+
+    /** Defines `col` from the options again; the rows follow a new comparator or new filter params it uses. */
+    private redefineCol(col: AgColumn, index: number | undefined, source: ColumnEventType): void {
+        const oldColDef = col.colDef;
+        const colDef = this.createAutoColDef(col.colId, col.derivedFromCol ?? undefined, index);
+        // an unchanged definition changes neither; only rows sorted and filtered on the client read them
+        if (!col.setColDef(colDef, null, source) || !_isClientSideRowModel(this.gos)) {
+            return;
+        }
+        const changes = this.beans.syncSvc.changes;
+        // the comparator orders the groups of a sorted auto column; a coupling it flips, the row node sorter tells
+        if (col.sortDef.direction != null && !_mergedEqual(colDef.comparator, oldColDef.comparator)) {
+            changes.sortChanged();
+        }
+        if (col.isFilterActive() && !_mergedEqual(colDef.filterParams, oldColDef.filterParams)) {
+            changes.filterChanged(true, true);
+        }
+    }
+
+    public applyColDefState(source: ColumnEventType): void {
         const cols = this.columns;
         const len = cols.length;
         if (len === 0) {
             return;
         }
         const beans = this.beans;
-        const source = _convertColumnEventSourceType(event.source);
         const state = new Array<ColumnState>(len);
-        const colModel = beans.colModel;
-        colModel.beginColUpdate();
-        try {
-            for (let i = 0; i < len; ++i) {
-                state[i] = this.updateOneAutoCol(cols[i], i, source);
-            }
-            // one state pass lays the auto cols out once, and tells them together
-            _applyColumnState(beans, { state }, source, true);
-        } finally {
-            colModel.endColUpdate();
+        for (let i = 0; i < len; ++i) {
+            const col = cols[i];
+            state[i] = _getColumnStateFromColDef(beans, col.colDef, col.colId);
         }
+        // one state pass lays the auto cols out once, and tells them together
+        _applyColumnState(beans, { state }, source, true);
     }
 
     public override destroy(): void {
@@ -184,27 +206,54 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
         }
     }
 
-    /** Reconcile the auto-col set to `rowGroupCols` (undefined ⇒ the single shared auto col): reuse existing
-     *  instances by colId, create only genuinely new cols, and destroy only the ones no longer present. */
+    /** Reconcile the auto cols to `rowGroupCols` (undefined: the one shared auto col), kept by source column. */
     private reconcileAutoCols(
         currentCols: AgColumn[],
         rowGroupCols: readonly AgColumn[] | undefined,
         source: ColumnEventType
     ): AgColumn[] {
-        const survivors = new Map<string, AgColumn>();
+        const survivors = new Map<AgColumn | null, AgColumn>();
         for (let i = 0, len = currentCols.length; i < len; ++i) {
             const col = currentCols[i];
-            survivors.set(col.colId, col);
+            survivors.set(col.derivedFromCol, col);
         }
         let result: AgColumn[];
         if (rowGroupCols) {
             const len = rowGroupCols.length;
             result = new Array<AgColumn>(len);
+            let created = false;
             for (let i = 0; i < len; ++i) {
-                result[i] = this.reuseOrCreateAutoCol(survivors, rowGroupCols[i], i, source);
+                const kept = this.reuseAutoCol(survivors, rowGroupCols[i], i, source);
+                if (kept === undefined) {
+                    created = true;
+                } else {
+                    result[i] = kept;
+                }
+            }
+            if (created) {
+                // after every kept column is placed, so a new column's id skips theirs
+                const claimed = new Set<string>();
+                for (let i = 0; i < len; ++i) {
+                    const kept = result[i];
+                    if (kept === undefined) {
+                        continue;
+                    }
+                    claimed.add(kept.colId);
+                }
+                for (let i = 0; i < len; ++i) {
+                    if (result[i] !== undefined) {
+                        continue;
+                    }
+                    const newCol = this.createAutoCol(rowGroupCols[i], i, claimed);
+                    claimed.add(newCol.colId);
+                    result[i] = newCol;
+                }
             }
         } else {
-            result = [this.reuseOrCreateAutoCol(survivors, undefined, undefined, source)];
+            result = [
+                this.reuseAutoCol(survivors, undefined, undefined, source) ??
+                    this.createAutoCol(undefined, undefined, null),
+            ];
         }
         // Whatever's left in `survivors` was removed from the grouping — destroy those instances.
         for (const col of survivors.values()) {
@@ -215,21 +264,33 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
         return result;
     }
 
-    /** Reuse the existing auto col for `rowGroupCol` (refreshing its colDef + index) if present, else create it. */
-    private reuseOrCreateAutoCol(
-        survivors: Map<string, AgColumn>,
+    /** The existing auto col for `rowGroupCol`, its colDef and index refreshed, or undefined when it has none. */
+    private reuseAutoCol(
+        survivors: Map<AgColumn | null, AgColumn>,
         rowGroupCol: AgColumn | undefined,
         index: number | undefined,
         source: ColumnEventType
-    ): AgColumn {
-        const colId = autoColId(rowGroupCol);
-        const existing = survivors.get(colId);
+    ): AgColumn | undefined {
+        const sourceCol = rowGroupCol ?? null;
+        const existing = survivors.get(sourceCol);
         if (existing !== undefined) {
-            survivors.delete(colId);
-            existing.setColDef(this.createAutoColDef(colId, rowGroupCol, index), null, source);
-            return existing;
+            survivors.delete(sourceCol);
+            this.redefineCol(existing, index, source);
         }
-        return this.createOneAutoCol(colId, rowGroupCol, index);
+        return existing;
+    }
+
+    /** `claimed`: the ids of this reconcile's auto cols, which the new one skips. */
+    private createAutoCol(
+        rowGroupCol: AgColumn | undefined,
+        index: number | undefined,
+        claimed: ReadonlySet<string> | null
+    ): AgColumn {
+        const colId = this.beans.colModel.getServiceColId(autoColId(rowGroupCol), claimed);
+        const newCol = new AgColumn(this.createAutoColDef(colId, rowGroupCol, index), null, colId, true, 'auto-group');
+        newCol.derivedFromCol = rowGroupCol ?? null;
+        this.beans.context.createBean(newCol);
+        return newCol;
     }
 
     private isSuppressAutoCol() {
@@ -242,31 +303,12 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
         return gos.get('treeDataDisplayType') === 'custom';
     }
 
-    // rowGroupCol and index are missing if groupDisplayType != "multipleColumns"
-    private createOneAutoCol(colId: string, rowGroupCol: AgColumn | undefined, index: number | undefined): AgColumn {
-        const colDef = this.createAutoColDef(colId, rowGroupCol, index);
-        const newCol = new AgColumn(colDef, null, colId, true, 'auto-group');
-        this.beans.context.createBean(newCol);
-        return newCol;
-    }
-
-    /** Refreshes an auto group col to load changes from defaultColDef or autoGroupColDef, returning the state to apply */
-    private updateOneAutoCol(colToUpdate: AgColumn, index: number, source: ColumnEventType): ColumnState {
-        const beans = this.beans;
-        const oldColDef = colToUpdate.colDef;
-        const underlyingColId = typeof oldColDef.showRowGroup == 'string' ? oldColDef.showRowGroup : undefined;
-        const underlyingColumn = underlyingColId != null ? beans.colModel.getNonPivotCol(underlyingColId) : undefined;
-        const colId = colToUpdate.colId;
-        const colDef = this.createAutoColDef(colId, underlyingColumn ?? undefined, index);
-        colToUpdate.setColDef(colDef, null, source);
-        return _getColumnStateFromColDef(beans, colDef, colId);
-    }
-
     private createAutoColDef(colId: string, underlyingColumn?: AgColumn, index?: number): ColDef {
         // if one provided by user, use it, otherwise create one
         let res: ColDef = this.createBaseColDef(underlyingColumn);
 
-        const autoGroupColumnDef = this.gos.get('autoGroupColumnDef');
+        const gos = this.gos;
+        const autoGroupColumnDef = gos.get('autoGroupColumnDef');
         _mergeDeep(res, autoGroupColumnDef);
 
         res = _addColumnDefaultAndTypes(this.beans, res, colId, true);
@@ -283,7 +325,7 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
         }
 
         // For tree data the filter is always allowed
-        if (!this.gos.get('treeData')) {
+        if (!gos.get('treeData')) {
             // we would only allow filter if the user has provided field or value getter. otherwise the filter
             // would not be able to work.
             const noFieldOrValueGetter =
@@ -298,7 +340,11 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
             res.headerCheckboxSelection = false;
         }
 
-        const isSortingCoupled = _isColumnsSortingCoupledToGroup(this.gos);
+        // the grid shows and hides auto cols: one past the first starts hidden until its group is expanded
+        res.hide = !!index && _isGroupHideColumnsUntilExpanded(gos);
+        res.initialHide = undefined;
+
+        const isSortingCoupled = !!this.beans.rowNodeSorter?.sortingCoupledToGroup;
         const hasOwnData = res.valueGetter || res.field != null;
         if (isSortingCoupled && !hasOwnData) {
             // if col is coupled sorting, and has sort attribute, we want to ignore this
@@ -446,50 +492,8 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
         return deepest;
     }
 
-    /** Sets auto-col visibility flags for the "group hide columns until expanded" feature. When called
-     *  mid-`refreshCols` (`canRefresh=false`), only the flags are set — the enclosing refresh assembles
-     *  the new colsList and runs `visibleCols.refresh` itself, so refreshing here would run against the
-     *  stale colsList and dispatch a premature `displayedColumnsChanged`. */
-    private updateGroupColumnVisibility(canRefresh: boolean): void {
-        const columns = this.columns;
-        if (columns.length === 0) {
-            return;
-        }
-        const { gos, visibleCols, rowModel, colModel } = this.beans;
-        const isFeatureEnabled = _isGroupHideColumnsUntilExpanded(gos);
-        let changed = false;
-        colModel.beginColUpdate();
-        try {
-            if (!isFeatureEnabled) {
-                if (setAllColumnsVisible(columns)) {
-                    changed = true;
-                }
-            } else if (columns.length > 1) {
-                // Only applies with multiple columns: the first is always visible, so a single
-                // column needs no adjustment.
-                const maxLevel = columns.length - 2;
-                const rootChildren = rowModel?.rootNode?.childrenAfterGroup;
-                const deepestExpandedLevel = this.getDeepestExpandedLevel(rootChildren, maxLevel);
-
-                if (deepestExpandedLevel >= maxLevel) {
-                    if (setAllColumnsVisible(columns)) {
-                        changed = true;
-                    }
-                } else {
-                    for (let level = 0; level < columns.length - 1; level++) {
-                        if (setColumnVisible(columns[level + 1], deepestExpandedLevel >= level)) {
-                            changed = true;
-                        }
-                    }
-                }
-            }
-            if (changed && canRefresh) {
-                // skipTreeBuild=false: visibility changed, so the displayed-col partition must be rebuilt.
-                visibleCols.refresh('api', false);
-            }
-        } finally {
-            colModel.endColUpdate();
-        }
+    public isHidingUntilExpanded(): boolean {
+        return this.columns.length > 0 && _isGroupHideColumnsUntilExpanded(this.gos);
     }
 }
 
@@ -497,7 +501,7 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
 const autoColId = (rowGroupCol?: AgColumn): string =>
     rowGroupCol ? `${GROUP_AUTO_COLUMN_ID}-${rowGroupCol.colId}` : GROUP_AUTO_COLUMN_ID;
 
-/** True when `currentCols` already matches the colIds `rowGroupCols` implies, in order — the no-allocation
+/** True when `currentCols` were generated for `rowGroupCols`, in order — the no-allocation
  *  fast path skipping the reconcile. */
 const autoColsInOrder = (
     currentCols: readonly AgColumn[],
@@ -505,34 +509,15 @@ const autoColsInOrder = (
     doingMultiAutoColumn: boolean
 ): boolean => {
     if (!doingMultiAutoColumn || !rowGroupCols) {
-        return currentCols.length === 1 && currentCols[0].colId === GROUP_AUTO_COLUMN_ID;
+        return currentCols.length === 1 && currentCols[0].derivedFromCol === null;
     }
     const len = rowGroupCols.length;
     if (currentCols.length !== len) {
         return false;
     }
-    for (let i = 0; i < len; ++i) {
-        if (currentCols[i].colId !== autoColId(rowGroupCols[i])) {
-            return false;
-        }
+    let i = 0;
+    while (i < len && currentCols[i].derivedFromCol === rowGroupCols[i]) {
+        ++i;
     }
-    return true;
-};
-
-const setColumnVisible = (col: AgColumn, visible: boolean): boolean => {
-    if (visible !== col.visible) {
-        col.setVisible(visible, 'api');
-        return true;
-    }
-    return false;
-};
-
-const setAllColumnsVisible = (columns: AgColumn[]): boolean => {
-    let changed = false;
-    for (let i = 0, len = columns.length; i < len; ++i) {
-        if (setColumnVisible(columns[i], true)) {
-            changed = true;
-        }
-    }
-    return changed;
+    return i === len;
 };

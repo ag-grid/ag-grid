@@ -41,11 +41,13 @@ export class ColumnHeaderEditService extends BeanStub implements NamedBean, ICol
     }
 
     public isHighlightedColumn(column: AgColumn): boolean {
-        return !this.isHighlightSuppressed() && this.editingTarget === column;
+        return this.editingTarget === column && !this.isHighlightSuppressed();
     }
 
+    // by id: the columns tool panel edits its own copy of the group
     public isHighlightedGroup(columnGroup: AgProvidedColumnGroup): boolean {
-        return !this.isHighlightSuppressed() && this.editingTarget === columnGroup;
+        const target = this.editingTarget;
+        return isProvidedColumnGroup(target) && target.groupId === columnGroup.groupId && !this.isHighlightSuppressed();
     }
 
     // Toggle the edited header's highlight without recreating the header component.
@@ -62,10 +64,12 @@ export class ColumnHeaderEditService extends BeanStub implements NamedBean, ICol
         if (!target) {
             return;
         }
+        const beans = this.beans;
+        beans.ctrlsSvc.getHeaderRowContainerCtrl()?.onEditHighlightChanged(target);
         if (isProvidedColumnGroup(target)) {
-            this.beans.eventSvc.dispatchEvent({ type: 'columnHeaderEditHighlightChanged', groupId: target.groupId });
+            beans.eventSvc.dispatchEvent({ type: 'columnHeaderEditHighlightChanged', groupId: target.groupId });
         } else {
-            this.beans.eventSvc.dispatchEvent({ type: 'columnHeaderEditHighlightChanged', colId: target.getColId() });
+            beans.eventSvc.dispatchEvent({ type: 'columnHeaderEditHighlightChanged', colId: target.getColId() });
         }
     }
 
@@ -88,15 +92,22 @@ export class ColumnHeaderEditService extends BeanStub implements NamedBean, ICol
 
     private applyHeaderName(target: EditTarget, headerName: string | null): void {
         if (isProvidedColumnGroup(target)) {
-            if (!_setColGroupHeaderNameOverride(this.beans, target.groupId, headerName)) {
-                return;
+            const beans = this.beans;
+            const syncSvc = beans.syncSvc;
+            // one column update, its grid event raised inside, as a column's rename does
+            syncSvc.beginUpdate();
+            try {
+                if (!_setColGroupHeaderNameOverride(beans, target.groupId, headerName)) {
+                    return;
+                }
+                _dispatchGroupHeaderNameChangedEvent(
+                    beans.eventSvc,
+                    getGridColumnGroup(beans, target),
+                    'uiColumnHeaderEdit'
+                );
+            } finally {
+                syncSvc.endUpdate();
             }
-            const { beans } = this;
-            _dispatchGroupHeaderNameChangedEvent(
-                beans.eventSvc,
-                getGridColumnGroup(beans, target),
-                'uiColumnHeaderEdit'
-            );
         } else {
             target.setHeaderNameOverride(headerName, 'uiColumnHeaderEdit');
         }
@@ -162,7 +173,8 @@ export class ColumnHeaderEditService extends BeanStub implements NamedBean, ICol
         this.removePopupColListener = this.addManagedEventListeners({
             columnHeaderNameChanged: (event) => {
                 const eventId = isGroup ? event.columnGroup?.getGroupId() : event.column?.getColId();
-                if (!eventId || eventId === targetId) {
+                // a group column shows the name of the column it groups by
+                if (!eventId || eventId === targetId || (!isGroup && eventId === target.derivedFromCol?.getColId())) {
                     onNameChanged();
                 }
             },

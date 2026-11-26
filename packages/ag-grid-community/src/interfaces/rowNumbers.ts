@@ -1,5 +1,6 @@
 import type { AgColumn } from '../entities/agColumn';
 import type { ColDef } from '../entities/colDef';
+import type { GridOptions } from '../entities/gridOptions';
 import type { ColumnEventType } from '../events';
 import type { AgColumnHeader } from '../headerRendering/cells/column/agColumnHeader';
 import type { CellCtrl } from '../rendering/cell/cellCtrl';
@@ -67,8 +68,14 @@ export interface RowNumbersOptions extends Pick<
 export interface IRowNumbersService {
     column: AgColumn | null;
     refreshCols(): AgColumn<any> | null;
+    /** Adds the options {@link applyOptions} reads to those one column update applies; called once. */
+    addOptionKeysTo(keys: Set<keyof GridOptions>): void;
+    /** Follows an options change, reading `rowNumbers` and `cellSelection`; whether the columns need a refresh. */
+    applyOptions(changedProps: ReadonlySet<keyof GridOptions>, source: ColumnEventType): boolean;
     /** Restore the colDef width and let the next autosize measure from scratch, for a column state reset. */
     resetColumnState(source: ColumnEventType): void;
+    /** Fits the column unless a fit has run since it was created, its state reset or what the fit reads changed. */
+    fitUnfittedColumn(): void;
     setupForHeader(comp: AgColumnHeader): void;
     handleMouseDownOnCell(cell: CellPosition, mouseEvent: MouseEvent): boolean;
     handleKeyDownOnCell(cell: CellPosition, event: KeyboardEvent): boolean;

@@ -6,8 +6,9 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
+import type { GridOptions } from '../entities/gridOptions';
 import type { RowNode } from '../entities/rowNode';
-import { _isClientSideRowModel, _isColumnsSortingCoupledToGroup, _isGroupUseEntireRow } from '../gridOptionsUtils';
+import { _isClientSideRowModel, _isGroupUseEntireRow } from '../gridOptionsUtils';
 import type { IFormulaService } from '../interfaces/formulas';
 import type { SortOption } from '../interfaces/iSortOption';
 import type { ValueService } from '../valueService/valueService';
@@ -18,8 +19,9 @@ import type { ValueService } from '../valueService/valueService';
 export class RowNodeSorter extends BeanStub implements NamedBean {
     beanName = 'rowNodeSorter' as const;
 
-    private primaryColumnsSortGroups: boolean = false;
-    private pivotActive: boolean = false;
+    /** Whether sorting a row group column sorts its groups: no `treeData` and no `autoGroupColumnDef.comparator`. */
+    public sortingCoupledToGroup = false;
+
     private firstLeaf: (row: RowNode) => RowNode | undefined;
 
     private colModel: ColumnModel;
@@ -28,24 +30,30 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
 
     public postConstruct(): void {
         this.firstLeaf = _isClientSideRowModel(this.gos) ? _csrmFirstLeaf : defaultGetLeaf;
+        this.refreshGroupCoupling();
+    }
 
-        const updatePivotModeState = () => {
-            this.pivotActive = this.colModel.isPivotActive();
-        };
+    /** Follows an options change: {@link sortingCoupledToGroup} reads `treeData` and `autoGroupColumnDef`. */
+    public applyOptions(changedProps: ReadonlySet<keyof GridOptions>): void {
+        if (!changedProps.has('treeData') && !changedProps.has('autoGroupColumnDef')) {
+            return;
+        }
+        const wasCoupled = this.sortingCoupledToGroup;
+        this.refreshGroupCoupling();
+        const beans = this.beans;
+        // a sorted row group column orders the groups only while coupled, whichever column shows them
+        if (
+            wasCoupled !== this.sortingCoupledToGroup &&
+            _isClientSideRowModel(this.gos) &&
+            !!beans.rowGroupColsSvc?.columns.some((col) => col.sortDef.direction != null)
+        ) {
+            beans.syncSvc.changes.sortChanged();
+        }
+    }
 
-        const updateOptions = () => {
-            this.primaryColumnsSortGroups = _isColumnsSortingCoupledToGroup(this.gos);
-        };
-
-        this.addManagedPropertyListeners(['autoGroupColumnDef', 'treeData'], updateOptions);
-
-        this.addManagedEventListeners({
-            columnPivotModeChanged: updatePivotModeState,
-            columnPivotChanged: updatePivotModeState,
-        });
-
-        updateOptions();
-        updatePivotModeState();
+    private refreshGroupCoupling(): void {
+        const gos = this.gos;
+        this.sortingCoupledToGroup = !gos.get('autoGroupColumnDef')?.comparator && !gos.get('treeData');
     }
 
     public wireBeans(beans: BeanCollection): void {
@@ -95,7 +103,7 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
     }
 
     private getValue(node: RowNode, column: AgColumn): any {
-        if (this.primaryColumnsSortGroups) {
+        if (this.sortingCoupledToGroup) {
             if (node.rowGroupColumn === column) {
                 return this.getGroupDataValue(node, column);
             }
@@ -119,7 +127,7 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
         // because they're group rows, no display cols exist, so groupData never populated.
         // instead delegate to getting value from leaf child.
         // Formulas are currently not supported on row-group columns, so no formula resolution is needed here.
-        if (_isGroupUseEntireRow(this.gos, this.pivotActive)) {
+        if (_isGroupUseEntireRow(this.gos, this.colModel.isPivotActive())) {
             const leafChild = this.firstLeaf(node);
             return leafChild && this.valueSvc.getValueFromData(column, leafChild);
         }

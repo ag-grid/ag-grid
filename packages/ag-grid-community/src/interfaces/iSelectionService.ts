@@ -26,9 +26,6 @@ export interface ISelectionService {
     /** Drops a node leaving the model from the selection. Event-free; the single `selectionChanged`
      *  (carrying `source`) is emitted when the refresh's selection batch ends. CSRM only. */
     removeFromSelection?(node: RowNode, source: SelectionEventSourceType): void;
-    /** Dispatches the coalesced `selectionChanged` left pending by `removeFromSelection` when the refresh
-     *  that would normally flush it is deferred. CSRM only. */
-    flushPendingSelectionChanged?(): void;
     /** Asks the row again, removes the selection it holds itself if `isRowSelectable` rejects it, and shows the row's selection. Server-side only. */
     refreshRowSelection?(rowNode: RowNode): void;
     /**

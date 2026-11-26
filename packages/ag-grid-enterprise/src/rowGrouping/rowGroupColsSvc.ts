@@ -27,14 +27,16 @@ export class RowGroupColsSvc extends OrderedColsService implements NamedBean, IR
         const reordered = columns.slice();
         reordered.splice(toIndex, 0, reordered.splice(fromIndex, 1)[0]);
         const colModel = this.colModel;
-        colModel.beginColUpdate();
+        const syncSvc = this.beans.syncSvc;
+        syncSvc.beginUpdate();
         try {
             this.resetActiveCols(reordered);
+            this.onColumnsChanged();
             // Reorder: multiple group cols must resnap to the new hierarchy order, sliding as they go.
-            this.stageColChange(movedColumn);
-            colModel.stageColChanges(source, 'reorder');
+            this.recordColChange(movedColumn);
+            colModel.stageColRefresh(source);
         } finally {
-            colModel.endColUpdate();
+            syncSvc.endUpdate();
         }
     }
 

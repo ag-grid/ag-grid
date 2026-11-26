@@ -193,6 +193,10 @@ export class GroupStage<TData> extends BeanStub implements NamedBean, _IRowNodeG
         this.strategyType = wantedType;
         this.treeData = wantedType === 'tree';
         this.grouping = wantedType === 'group';
+        const beans = this.beans;
+        if (beans.showValuesAsSvc) {
+            beans.syncSvc.showValuesAsChanged(); // the header cells show what applies to the grouping
+        }
         if (wantedType === 'none') {
             this.strategy = null;
             return null;

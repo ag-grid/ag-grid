@@ -98,6 +98,7 @@ export class ColumnResizeService extends BeanStub implements NamedBean {
             return;
         }
 
+        this.beans.colAnimation?.cancelWidthAnimation(); // a resize by hand applies at once
         this.applyColumnWidths(columns, widths, finished, source, columns, false);
     }
 
@@ -210,44 +211,53 @@ export class ColumnResizeService extends BeanStub implements NamedBean {
         // the caller uses `columns` again, so listeners get a copy
         columnsReused: boolean
     ): void {
-        let atLeastOneColChanged = false;
-        let pinnedColChanged = false;
+        let colsForEvent: AgColumn[] | undefined;
+        let flexColumns: AgColumn[] | null = null;
+        // one column update: the layout and its events, then `columnResized` after them, as without one
+        const syncSvc = this.beans.syncSvc;
+        syncSvc.beginUpdate();
+        try {
+            let atLeastOneColChanged = false;
+            let pinnedColChanged = false;
 
-        for (let i = 0, len = columns.length; i < len; ++i) {
-            const col = columns[i];
-            const newWidth = widths[i];
+            for (let i = 0, len = columns.length; i < len; ++i) {
+                const col = columns[i];
+                const newWidth = widths[i];
 
-            if (col.actualWidth !== newWidth) {
-                col.setActualWidth(newWidth, source);
-                atLeastOneColChanged = true;
-                pinnedColChanged ||= col.pinnedLane !== 1;
+                if (col.actualWidth !== newWidth) {
+                    col.setActualWidth(newWidth, source);
+                    atLeastOneColChanged = true;
+                    pinnedColChanged ||= col.pinnedLane !== 1;
+                }
             }
-        }
 
-        let flexedCols: AgColumn[] | undefined;
+            let flexedCols: AgColumn[] | undefined;
 
-        if (atLeastOneColChanged) {
-            const { colFlex, visibleCols, colViewport, ctrlsSvc } = this.beans;
-            flexedCols = colFlex?.refreshFlexedColumns({
-                resizingCols,
-                skipSetLeft: true,
-                // A pinned resize moves the centre boundary with no DOM resize; 0 is "not laid out yet".
-                viewportWidth:
-                    (pinnedColChanged && ctrlsSvc.get('gridBodyCtrl')?.getReportedCenterWidth()) || undefined,
-            });
-            visibleCols.updateBodyWidths(source, visibleCols.setLeftValues());
-            colViewport.checkViewportColumns();
-        }
-
-        // a finished resize always reports, changed or not, so a stream of moves is always seen to end
-        if (atLeastOneColChanged || finished) {
-            let colsForEvent = columns;
-            if (flexedCols?.length) {
-                colsForEvent = resizingCols ? columns.concat(flexedCols) : joinReflexed(columns, flexedCols);
-            } else if (columnsReused) {
-                colsForEvent = columns.slice();
+            if (atLeastOneColChanged) {
+                const { colFlex, visibleCols, ctrlsSvc } = this.beans;
+                flexedCols = colFlex?.refreshFlexedColumns({
+                    resizingCols,
+                    skipSetLeft: true,
+                    // A pinned resize moves the centre boundary with no DOM resize; 0 is "not laid out yet".
+                    viewportWidth:
+                        (pinnedColChanged && ctrlsSvc.get('gridBodyCtrl')?.getReportedCenterWidth()) || undefined,
+                });
+                visibleCols.updateBodyWidths(source, visibleCols.setLeftValues());
             }
-            const flexColumns = resizingCols ? (flexedCols ?? []) : null;
+            // a finished resize always reports, changed or not, so a stream of moves is always seen to end
+            if (atLeastOneColChanged || finished) {
+                colsForEvent = columns;
+                if (flexedCols?.length) {
+                    colsForEvent = resizingCols ? columns.concat(flexedCols) : joinReflexed(columns, flexedCols);
+                } else if (columnsReused) {
+                    colsForEvent = columns.slice();
+                }
+                flexColumns = resizingCols ? (flexedCols ?? []) : null;
+            }
+        } finally {
+            syncSvc.endUpdate();
+        }
+        if (colsForEvent) {
             dispatchColumnResizedEvent(this.eventSvc, colsForEvent, finished, source, flexColumns);
         }
     }

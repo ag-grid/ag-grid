@@ -118,7 +118,6 @@ export class GridBodyScrollFeature extends BeanStub {
         const invalidateHorizontalScroll = this.invalidateHorizontalScroll.bind(this);
 
         this.addManagedEventListeners({
-            displayedColumnsWidthChanged: this.onDisplayedColumnsWidthChanged.bind(this),
             bodyHeightChanged: invalidateVerticalScroll,
             // We only invalidate horizontal scrolling when the viewport switches
             // between scrollable and non-scrollable, avoiding unnecessary
@@ -204,7 +203,7 @@ export class GridBodyScrollFeature extends BeanStub {
         return this.pendingFakeVScrollTop ?? this.eGridViewport.scrollTop;
     }
 
-    private onDisplayedColumnsWidthChanged(): void {
+    public onDisplayedColumnsWidthChanged(): void {
         if (this.enableRtl) {
             // because RTL is all backwards, a change in the width of the row
             // can cause a change in the scroll position, without a scroll event,

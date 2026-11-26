@@ -4,6 +4,7 @@ import type {
     AgColumn,
     CellValueChangedEvent,
     FormulaFunctionParams,
+    GridOptions,
     IFormulaDataService,
     IFormulaService,
     NamedBean,
@@ -11,7 +12,7 @@ import type {
     RowNodeDataChangedEvent,
     _ChangedRowNodes,
 } from 'ag-grid-community';
-import { BeanStub, _convertColumnEventSourceType } from 'ag-grid-community';
+import { BeanStub } from 'ag-grid-community';
 
 import { getRestrictedReferenceMessage } from '../calculatedColumns/calculatedColumnUtils';
 import { parseFormula } from './ast/parsers';
@@ -28,6 +29,7 @@ import { isValidFunctionName } from './refUtils';
 
 /** Shared params object for `rowRenderer.refreshCells`, hoisted to avoid per-call allocation. */
 const REFRESH_CELLS_PARAMS = { suppressFlash: true, force: true } as const;
+const SUPPRESS_FLASH_PARAMS = { suppressFlash: true } as const;
 
 /** A1-style column-label alphabet and its length (base 26). */
 const COL_REF_ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -99,10 +101,25 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
     /** Calculated columns use formula evaluation without enabling editable formula behaviours. */
     private calculatedColumnsActive = false;
 
-    /** The `colDefsVersion` the references were last rebuilt and the cache dropped for. */
+    /** The `colDefsVersion` the references and the cache were last checked for. */
     private refreshedColDefsVersion = -1;
+    /** The `colsMovedVersion` the references were last checked for. */
+    private refreshedColsMovedVersion = -1;
     /** Set when the active state changes, until the column refresh that changed it settles. */
     private activeChanged = false;
+    /** The refresh the cells owe the open column update (forced after a formula mode change), until it runs. */
+    private colUpdateCells: typeof REFRESH_CELLS_PARAMS | typeof SUPPRESS_FLASH_PARAMS | null = null;
+
+    public addOptionKeysTo(keys: Set<keyof GridOptions>): void {
+        keys.add('masterDetail').add('enableCellExpressions');
+    }
+
+    public applyOptions(changedProps: ReadonlySet<keyof GridOptions>): boolean {
+        return (
+            this.formulaColumnsPresent &&
+            (changedProps.has('masterDetail') || changedProps.has('enableCellExpressions'))
+        );
+    }
 
     public hasCachedRows(): boolean {
         return this.cachedResult.size > 0;
@@ -146,18 +163,49 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
         }
     }
 
-    public onColsRefreshed(): void {
+    public isColRefreshOwed(): boolean {
+        const colModel = this.beans.colModel;
+        return (
+            this.activeChanged ||
+            this.colUpdateCells !== null ||
+            colModel.colDefsVersion !== this.refreshedColDefsVersion ||
+            colModel.colsMovedVersion !== this.refreshedColsMovedVersion
+        );
+    }
+
+    /** New definitions or an active state change drop every cached formula; a new order re-evaluates the moved refs. */
+    public refreshForColChanges(): void {
+        const { colDefsVersion, colsMovedVersion } = this.beans.colModel;
+        const colDefsChanged = colDefsVersion !== this.refreshedColDefsVersion;
+        const colsMoved = colsMovedVersion !== this.refreshedColsMovedVersion;
+        this.refreshedColDefsVersion = colDefsVersion;
+        this.refreshedColsMovedVersion = colsMovedVersion;
         if (this.activeChanged) {
             this.activeChanged = false;
-            this.refreshForCols();
+            this.rebuildColRefMap();
+            this.refreshFormulas(false);
+            // every formula cell changes mode (value, editor, error style): all redrawn
+            this.colUpdateCells = REFRESH_CELLS_PARAMS;
+        } else if (colDefsChanged && this.isEvaluationActive()) {
+            this.rebuildColRefMap();
+            this.refreshFormulas(false);
+            this.colUpdateCells ??= SUPPRESS_FLASH_PARAMS;
+        } else if (colsMoved && this.isEvaluationActive() && this.rebuildColRefMap() && this.cachedResult.size !== 0) {
+            // the columns are the same instances: parsed ASTs stay, absolute refs re-resolve by label
+            ++this.valueCacheVersion;
+            this.colUpdateCells ??= SUPPRESS_FLASH_PARAMS;
         }
     }
 
-    /** Rebuilds the references and drops every cached formula, whose columns may have been recreated. */
-    private refreshForCols(): void {
-        this.rebuildColRefMap();
-        this.refreshFormulas(true);
-        this.refreshedColDefsVersion = this.beans.colModel.colDefsVersion;
+    /** Once the cells a column update redefined are redrawn, refreshes those whose formula value it changed. */
+    public refreshCellsForColChanges(): void {
+        const cells = this.colUpdateCells;
+        if (cells === null) {
+            return;
+        }
+        this.colUpdateCells = null;
+        // unforced, a redefined cell already shows its new value and is skipped
+        this.beans.rowRenderer.refreshCells(cells);
     }
 
     public isEvaluationActive(): boolean {
@@ -194,7 +242,7 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
                 this.warn(295, { blockedService: 'Row Groups' });
                 return false;
             }
-            if (col.isAllowValue() || col.isValueActive() || col.aggFunc) {
+            if (col.isAllowValue() || col.isValueActive()) {
                 this.warn(295, { blockedService: 'Value Aggregation' });
                 return false;
             }
@@ -214,29 +262,6 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
             this.onRowDataChanged(event.node as RowNode);
         };
 
-        const onNewColumnsLoaded = () => {
-            // skipped when the column refresh of these definitions already did it
-            if (this.isEvaluationActive() && this.refreshedColDefsVersion !== this.beans.colModel.colDefsVersion) {
-                this.refreshForCols();
-            }
-        };
-        const onColumnMoved = () => {
-            if (!this.isEvaluationActive()) {
-                return;
-            }
-            // Rebuild unconditionally: `col.formulaRef` is read by the header and formula input,
-            // and absolute `COLUMN("A",true)` refs resolve via `colRefMap`, so both must reflect
-            // the new order even when no formula has been evaluated yet.
-            this.rebuildColRefMap();
-            if (this.cachedResult.size === 0) {
-                return;
-            }
-            // Column instances are stable across a reorder — only their positions changed. Parsed
-            // ASTs keep referring to the right colIds; only absolute `COLUMN("A",true)` refs pick
-            // up different columns via colRefMap. Bumping the value version re-evaluates surviving
-            // cells while preserving their parsed ASTs.
-            this.bumpValueCacheAndRefresh();
-        };
         const onPinnedRowsChanged = () => {
             const cache = this.cachedResult;
             if (!this.isEvaluationActive() || cache.size === 0) {
@@ -269,19 +294,9 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
             this.refreshFormulas(true);
         };
 
-        // there is no need to check for treeData here because the columnModel
-        // already calls `refreshAll` when treeData is updated
-        this.addManagedPropertyListeners(['masterDetail', 'enableCellExpressions'], (e) => {
-            if (this.formulaColumnsPresent) {
-                this.beans.colModel.refreshAll(_convertColumnEventSourceType(e.source));
-            }
-        });
-
         this.addManagedListeners(this.beans.eventSvc, {
             cellValueChanged: onCellValueChanged,
             rowNodeDataChanged: onRowNodeDataChanged,
-            newColumnsLoaded: onNewColumnsLoaded,
-            columnMoved: onColumnMoved,
             modelUpdated: onModelUpdated,
             storeUpdated: onModelUpdated,
             pinnedRowDataChanged: onPinnedRowsChanged,
@@ -375,7 +390,11 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
             needsRefresh = reordered || removals.length > 0 || adds.size > 0 || updates.size > 0;
         }
 
-        if (needsRefresh) {
+        if (!changed && this.beans.syncSvc.updateDepth > 0) {
+            // a column update's own rows refresh: its cells refresh once, as the update's columns are redrawn
+            ++this.valueCacheVersion;
+            this.colUpdateCells ??= SUPPRESS_FLASH_PARAMS;
+        } else if (needsRefresh) {
             this.bumpValueCacheAndRefresh();
         }
     }
@@ -456,21 +475,22 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
     }
 
     /**
-     * Rebuild the A1-style label -> AgColumn map from the current primary column order.
+     * Rebuild the A1-style label -> AgColumn map from the current primary column order; whether a label moved.
      * Does NOT touch the formula cache; callers are responsible for invalidating values if needed.
      */
-    private rebuildColRefMap() {
+    private rebuildColRefMap(): boolean {
         const { beans, colRefMap, colToRefMap } = this;
         colRefMap.clear();
         colToRefMap.clear();
 
         if (!this.isEvaluationActive()) {
-            return;
+            return false;
         }
         const list = beans.colModel.colsList;
         if (!list) {
-            return;
+            return false;
         }
+        let labelsChanged = false;
 
         let idx = 0;
         for (let i = 0, len = list.length; i < len; ++i) {
@@ -490,11 +510,14 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
             }
             if (col.formulaRef !== label) {
                 col.formulaRef = label;
+                labelsChanged = true;
+                col.headerChanged();
                 col.dispatchColEvent('formulaRefChanged', 'api');
             }
             colRefMap.set(label, col);
             colToRefMap.set(col, label);
         }
+        return labelsChanged;
     }
 
     /** Lookup a column by A1-style reference label, e.g. "A", "AB". */

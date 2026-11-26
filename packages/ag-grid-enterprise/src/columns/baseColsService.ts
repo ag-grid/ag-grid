@@ -1,4 +1,4 @@
-import { _indexMap } from 'ag-stack';
+import { _areEqual, _indexMap } from 'ag-stack';
 
 import type {
     AgColumn,
@@ -11,7 +11,7 @@ import type {
     IColsService,
     _ColumnChangedEventType,
 } from 'ag-grid-community';
-import { BeanStub, _dispatchColumnChangedEvent } from 'ag-grid-community';
+import { BeanStub } from 'ag-grid-community';
 
 export abstract class BaseColsService extends BeanStub implements IColsService {
     protected colModel: ColumnModel;
@@ -31,10 +31,7 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
     private extractColsWithValue: Set<AgColumn> | null = null;
 
     /** Cols changed since the last flush; non-null = dirty. Dispatched once by {@link dispatchColChange}. */
-    public pendingChanged: Set<AgColumn> | null = null;
-
-    /** A staged change moved the active set/order → re-stamp indexes once at flush ({@link flushReindex}). */
-    private reindexPending = false;
+    private pendingChanged: Set<AgColumn> | null = null;
 
     /** Order index recorded per active col during the current state-apply pass; consumed by {@link sortByPendingState}. */
     protected pendingStateOrder: Map<AgColumn, number> | null = null;
@@ -71,7 +68,7 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
         }
     }
 
-    /** Active columns, in order. Ref-stable until the next edit. */
+    /** Active columns, in order. Never changed in place: a new array after a change to them, even one later undone. */
     public get columns(): AgColumn[] {
         let cache = this.colsCache;
         if (cache === null) {
@@ -132,13 +129,17 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
                 this.onColActiveChanged(col, false, source);
             }
         }
+        let at = 0;
+        let sameOrder = targetArr === null && before.length === targetSet.size;
         for (const col of targetSet) {
+            sameOrder &&= before[at++] === col;
             if (this.writeColActive(col, true, source) && runSideEffects) {
                 this.onColActiveChanged(col, true, source);
             }
         }
         this.activeColSet = targetSet;
-        this.colsCache = targetArr;
+        this.colsCache = targetArr ?? (sameOrder ? before : null); // an unchanged result keeps its array
+        this.onColumnsChanged();
     }
 
     /** After a flush, dispatch batched per-col side-effects (rowGroup `columnVisible`). Default no-op. */
@@ -177,7 +178,6 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
         if (pending === null) {
             return 'none';
         }
-        this.reindexPending = true;
         return membership ? 'membership' : 'reorder';
     }
 
@@ -204,19 +204,29 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
         if (change === 'none') {
             return; // identical membership + order — nothing to refresh or dispatch
         }
-        colModel.beginColUpdate();
+        const syncSvc = this.beans.syncSvc;
+        syncSvc.beginUpdate();
         try {
             this.applyActiveCols(before, orderedSet, orderedArr, source, true);
-            colModel.stageColChanges(source, change); // animated refresh, run when the update ends
+            colModel.stageColRefresh(source); // animated refresh, run when the update ends
+            if (change === 'membership') {
+                colModel.stageEverythingChanged(source); // a reorder keeps the set, so raises no legacy event
+            }
         } finally {
-            colModel.endColUpdate();
+            syncSvc.endUpdate();
         }
     }
 
     /** Seat a col into `res`; base adds just the col, `OrderedColsService` seats its virtuals first.
      *  `provided`, when given, is the caller's own resolved list — `OrderedColsService` reads it to tell an
      *  explicit level selection apart from a bare source col. */
-    protected seatActiveCol(res: Set<AgColumn>, col: AgColumn, _provided?: Set<AgColumn>): void {
+    protected seatActiveCol(
+        res: Set<AgColumn>,
+        col: AgColumn,
+        _provided: Set<AgColumn> | undefined,
+        _asNewGrid: boolean,
+        _newColDefs: boolean
+    ): void {
         res.add(col);
     }
 
@@ -225,15 +235,9 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
         const res = new Set<AgColumn>();
         const provided = new Set(cols);
         for (let i = 0, len = cols.length; i < len; ++i) {
-            this.seatActiveCol(res, cols[i], provided);
+            this.seatActiveCol(res, cols[i], provided, false, true);
         }
         return res;
-    }
-
-    /** Stage a membership/order change of one col: mark the set for re-index at flush + record for dispatch. */
-    protected stageColChange(col: AgColumn): void {
-        this.reindexPending = true;
-        this.pendingColChangeSet().add(col);
     }
 
     /** Stages, in their order in `before`, the cols a removal moved: the first removed one and every one after it. */
@@ -247,21 +251,19 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
         this.stageColsFrom(before, i);
     }
 
-    /** {@link stageColChange} for `cols` from `start` on, in their order. */
+    /** Records `cols` from `start` on, in their order, for the next {@link dispatchColChange}. */
     private stageColsFrom(cols: AgColumn[], start: number): void {
         const len = cols.length;
         if (start >= len) {
             return;
         }
-        this.reindexPending = true;
         const pending = this.pendingColChangeSet();
         for (let i = start; i < len; ++i) {
             pending.add(cols[i]);
         }
     }
 
-    /** Record a col for the next {@link dispatchColChange} WITHOUT a re-index — for value-only changes that
-     *  keep the active set/order unchanged (a `Set` dedupes the payload). */
+    /** Records a col for the next {@link dispatchColChange} (a `Set` dedupes the payload). */
     protected recordColChange(col: AgColumn): void {
         this.pendingColChangeSet().add(col);
     }
@@ -275,15 +277,6 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
         return pending;
     }
 
-    /** Re-stamp active-col indexes once if a staged change moved the set; called when the column update ends, before
-     *  refresh/dispatch read the stamped positions. */
-    public flushReindex(): void {
-        if (this.reindexPending) {
-            this.reindexPending = false;
-            this.onColumnsChanged();
-        }
-    }
-
     /** Dispatch this service's staged change (if any); called when the column update that staged it ends. */
     public dispatchColChange(source: ColumnEventType): void {
         // Drain batched side-effects (rowGroup visibility) unconditionally, so they're never stranded.
@@ -291,7 +284,7 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
         const pending = this.pendingChanged;
         if (pending) {
             this.pendingChanged = null;
-            _dispatchColumnChangedEvent(this.eventSvc, this.eventName, Array.from(pending), source);
+            this.colModel.dispatchColumnChangedEvent(this.eventName, Array.from(pending), source);
         }
     }
 
@@ -309,10 +302,11 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
         }
 
         const colModel = this.colModel;
+        const syncSvc = this.beans.syncSvc;
         // a removal reports the cols it moves up, so it needs the order before it
         const before = add ? null : this.columns;
         const sizeBefore = this.activeColSet.size;
-        colModel.beginColUpdate();
+        syncSvc.beginUpdate();
         try {
             let changed = false;
             for (let i = 0, len = keys.length; i < len; ++i) {
@@ -331,18 +325,21 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
             } else {
                 this.stageRemovedFrom(before);
             }
-            colModel.stageColChanges(src, 'membership'); // add/remove → animated refresh, run when the update ends
+            this.onColumnsChanged();
+            colModel.stageColRefresh(src); // add/remove → animated refresh, run when the update ends
+            colModel.stageEverythingChanged(src);
         } finally {
-            colModel.endColUpdate();
+            syncSvc.endUpdate();
         }
     }
 
-    /** Bucket one primary col for the pass; no-op if not in this role. `colIsNew` ⇒ `initial*` props apply. */
-    public abstract extractCol(col: AgColumn, colIsNew: boolean, source: ColumnEventType): void;
+    /** Bucket one primary col for the pass; no-op if not in this role. `colIsNew` ⇒ `initial*` props apply.
+     *  Without `newColDefs` an existing col keeps its role and place. */
+    public abstract extractCol(col: AgColumn, colIsNew: boolean, source: ColumnEventType, newColDefs: boolean): void;
 
     /** Finalise the pass: order the buckets, diff vs the previous active cols (flagging changes), re-seat,
      *  then release the buckets. */
-    public commitExtract(source: ColumnEventType): void {
+    public commitExtract(source: ColumnEventType, asNewGrid: boolean, newColDefs: boolean): void {
         const extractColsWithIndex = this.extractColsWithIndex;
         const extractColsWithValue = this.extractColsWithValue;
         const activeColSet = this.activeColSet;
@@ -356,28 +353,28 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
                 extractColsWithIndex.sort((a, b) => a.key - b.key);
             }
             for (let i = 0, len = extractColsWithIndex.length; i < len; ++i) {
-                this.seatActiveCol(res, extractColsWithIndex[i].col);
+                this.seatActiveCol(res, extractColsWithIndex[i].col, undefined, asNewGrid, newColDefs);
             }
         }
         if (extractColsWithValue !== null) {
-            // Existing value cols keep their prior order...
-            for (let i = 0, len = previousCols.length; i < len; ++i) {
+            // Existing value cols keep their prior order (none as new)...
+            for (let i = 0, len = asNewGrid ? 0 : previousCols.length; i < len; ++i) {
                 const col = previousCols[i];
                 if (extractColsWithValue.has(col)) {
-                    this.seatActiveCol(res, col);
+                    this.seatActiveCol(res, col, undefined, false, newColDefs);
                 }
             }
             // ...then newly-included value cols in col-def order.
             for (const col of extractColsWithValue) {
-                if (!activeColSet.has(col)) {
-                    this.seatActiveCol(res, col);
+                if (!asNewGrid && activeColSet.has(col)) {
+                    continue;
                 }
+                this.seatActiveCol(res, col, undefined, asNewGrid, newColDefs);
             }
         }
 
-        // Rebuild path (no side-effects); reuse `res` as the active set, array view materialises lazily.
+        // Rebuild path (no side-effects); reuse `res` as the active set, the previous array kept when unchanged.
         this.applyActiveCols(previousCols, res, null, source, false);
-        this.onColumnsChanged();
         this.extractColsWithIndex = null;
         this.extractColsWithValue = null;
     }
@@ -393,26 +390,23 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
         this.pendingStateChanged = true;
     }
 
-    /** Re-order + re-stamp active cols when this apply changed membership/order; else keep insertion order. */
-    public sortByPendingState(): void {
-        if (!this.pendingStateChanged) {
-            return;
-        }
-        this.pendingStateChanged = false;
-        const cols = this.columns;
-        if (cols.length > 0 && this.sortPendingCols(cols)) {
-            this.resetActiveCols(cols);
+    public sortByPendingState(_source: ColumnEventType): void {
+        if (this.pendingStateChanged) {
+            this.pendingStateChanged = false;
+            const cols = this.columns;
+            const sorted = cols.length > 0 ? this.sortPendingCols(cols) : null;
+            if (sorted !== null && !_areEqual(sorted, cols)) {
+                this.resetActiveCols(sorted);
+                this.beans.syncSvc.changes.columnState = true; // a reorder alone raises no event to record it
+            }
+            this.pendingStateOrder = null;
         }
         this.onColumnsChanged();
-        this.pendingStateOrder = null;
     }
 
-    protected sortPendingCols(cols: AgColumn[]): boolean {
-        if (this.pendingStateOrder) {
-            cols.sort(this.compareByStateIndex);
-            return true;
-        }
-        return false;
+    /** A sorted copy of `cols`, or null to keep their order; never sorts `cols`, which callers may hold. */
+    protected sortPendingCols(cols: readonly AgColumn[]): AgColumn[] | null {
+        return this.pendingStateOrder ? cols.slice().sort(this.compareByStateIndex) : null;
     }
 
     protected readonly compareByStateIndex = (a: AgColumn, b: AgColumn): number => {

@@ -6,7 +6,6 @@ import {
     ROW_NUMBERS_COLUMN_ID,
     _BaseSingleColService,
     _addGridCommonParams,
-    _convertColumnEventSourceType,
     _createElement,
     _getFirstRow,
     _getRowNode,
@@ -26,11 +25,12 @@ import type {
     ColDef,
     ColKind,
     ColumnEventType,
+    GridOptions,
+    IRangeSelectionExtension,
     IRangeService,
     IRowNumbersRowResizeFeature,
     IRowNumbersService,
     NamedBean,
-    PropertyValueChangedEvent,
     RowNode,
     RowNumbersOptions,
     RowPosition,
@@ -40,17 +40,13 @@ import type {
     _HeaderComp,
 } from 'ag-grid-community';
 
-import type {
-    RangeSelectionExtension,
-    RangeSelectionExtensionRegistry,
-} from '../rangeSelection/rangeSelectionExtensions';
 import { RowNumbersRowResizeFeature, _isRowNumbersResizerEnabled } from './rowNumbersRowResizeFeature';
 
 const ROWS_CHANGED_DEBOUNCE = FAST_TEST_TIMINGS ? 0 : 10;
 
 export class RowNumbersService
     extends _BaseSingleColService
-    implements NamedBean, IRowNumbersService, RangeSelectionExtension
+    implements NamedBean, IRowNumbersService, IRangeSelectionExtension
 {
     beanName = 'rowNumbersSvc' as const;
 
@@ -72,6 +68,7 @@ export class RowNumbersService
     private rowNumberOverrides: RowNumbersOptions | null = null;
     private lastColumnResized: number = 0;
     private autoSizedTextLength: number = 0;
+    private fittedCol: AgColumn | null = null;
 
     private readonly boundValueGetter = (params: ValueGetterParams): string => this.valueGetter(params);
     private readonly boundCellClass = (params: CellClassParams): string[] => this.getCellClass(params);
@@ -88,14 +85,8 @@ export class RowNumbersService
             pinnedRowsChanged: () => onRowsChanged_debounced(true),
         });
 
-        this.addManagedPropertyListeners(['rowNumbers', 'cellSelection'], (e: PropertyValueChangedEvent<any>) => {
-            this.updateColumns(e);
-            // the cells' range classes read `cellSelection`, and an unchanged colDef refreshes no cell
-            this.refreshCells(true);
-        });
-
         this.refreshSelectionIntegration();
-        this.registerRangeSelectionExtension();
+        this.rangeSvc?.registerRangeSelectionExtension(this);
     }
 
     public shouldSkipColumn(column: AgColumn): boolean {
@@ -113,15 +104,6 @@ export class RowNumbersService
         return (
             range.columns.length === allColumns.length && allColumns.every((column) => range.columns.includes(column))
         );
-    }
-
-    private registerRangeSelectionExtension(): void {
-        const rangeSvc = this.rangeSvc as RangeSelectionExtensionRegistry | undefined;
-        if (!rangeSvc) {
-            return;
-        }
-        rangeSvc.registerRangeSelectionExtension(this);
-        this.addDestroyFunc(() => rangeSvc.unregisterRangeSelectionExtension?.(this));
     }
 
     public isEnabled(): boolean {
@@ -173,31 +155,39 @@ export class RowNumbersService
         rangeSvc.handleCellKeyboardSelect(keyboardEvent, cellPosition);
     }
 
-    public updateColumns(event: PropertyValueChangedEvent<any>): void {
-        const source = _convertColumnEventSourceType(event.source);
+    public addOptionKeysTo(keys: Set<keyof GridOptions>): void {
+        keys.add('rowNumbers').add('cellSelection');
+    }
+
+    public applyOptions(changedProps: ReadonlySet<keyof GridOptions>, source: ColumnEventType): boolean {
+        if (!changedProps.has('rowNumbers') && !changedProps.has('cellSelection')) {
+            return false;
+        }
         const prevOverrides = this.rowNumberOverrides;
         this.refreshSelectionIntegration();
         const had = this.column !== null;
         const column = this.refreshCols();
-        // a new column, or a change to what the fit reads, is fitted at once; any other change keeps the widest width
+        // a new column, or a change to what the fit reads, is fitted once laid out; others keep the widest width
         if (!column) {
-            if (had) {
-                this.beans.colModel.refreshAll(source);
-            }
-        } else if (!had) {
-            this.beans.colModel.refreshAll(source);
-            this.autoSize(column, true);
-        } else {
-            const { minWidth, maxWidth } = column;
-            this.refreshColDef(source);
-            if (
-                column.minWidth !== minWidth ||
-                column.maxWidth !== maxWidth ||
-                fitInputsChanged(prevOverrides, this.rowNumberOverrides)
-            ) {
-                this.autoSize(column, true);
-            }
+            return had;
         }
+        if (!had) {
+            return true;
+        }
+        const { minWidth, maxWidth } = column;
+        const redefined = this.refreshColDef(source);
+        if (
+            column.minWidth !== minWidth ||
+            column.maxWidth !== maxWidth ||
+            fitInputsChanged(prevOverrides, this.rowNumberOverrides)
+        ) {
+            this.fittedCol = null;
+        }
+        // the cells' range classes read `cellSelection`; a redefined column's cells the update redraws
+        if (!redefined) {
+            this.refreshCells(true);
+        }
+        return false;
     }
 
     /** `width` is the fit floor: re-sent, or below `minWidth`, it keeps the fitted or dragged width. */
@@ -211,10 +201,19 @@ export class RowNumbersService
             return;
         }
         column.resetActualWidth(source);
-        this.autoSizedTextLength = 0;
+        this.fittedCol = null;
+    }
+
+    public fitUnfittedColumn(): void {
+        const column = this.column;
+        if (!column || column === this.fittedCol) {
+            return;
+        }
+        this.autoSize(column, true);
     }
 
     public override destroy(): void {
+        this.rangeSvc?.unregisterRangeSelectionExtension(this);
         this.rowNumberOverrides = null;
         super.destroy();
     }
@@ -366,6 +365,7 @@ export class RowNumbersService
             return;
         }
         this.autoSizedTextLength = text.length;
+        this.fittedCol = column;
         const measured = this.beans.autoWidthCalc?.getPreferredWidthForElements([this.createDummyElement(text)], 2);
         if (measured == null) {
             return;

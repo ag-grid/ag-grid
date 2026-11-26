@@ -37,12 +37,9 @@ export type { IColumnHeaderEditService } from './interfaces/columnHeaderEdit';
 export { _getClientSideRowModel, _getServerSideRowModel, _getViewportRowModel } from './api/rowModelApiUtils';
 export { ChangedRowNodes as _ChangedRowNodes } from './clientSideRowModel/changedRowNodes';
 export { _csrmFirstLeaf, _csrmReorderAllLeafs } from './clientSideRowModel/clientSideRowModelUtils';
-export {
-    _dispatchColumnChangedEvent,
-    _dispatchGroupHeaderNameChangedEvent,
-    dispatchColumnVisibleEvent,
-} from './columns/columnEventUtils';
-export { _buildColumnTree } from './columns/buildColumnTree';
+export { _dispatchGroupHeaderNameChangedEvent, dispatchColumnVisibleEvent } from './columns/columnEventUtils';
+export { _buildColumnTree } from './columns/columnTree/columnTreeBuilder';
+export type { ColumnIdAllocator } from './columns/columnTree/matching/columnIdAllocator';
 export { _addColumnDefaultAndTypes, _createUserColumn } from './columns/colDefUtils';
 export { UserColumnService as _UserColumnService } from './columns/userColumns/userColumnService';
 export { _isCalculatedColumnsEnabled, _normaliseCalculatedExpression } from './columns/calculatedColumnUtils';
@@ -55,7 +52,6 @@ export { _getDrawnColSpan } from './columns/columnSpanUtils';
 export {
     _convertColumnEventSourceType,
     _destroyColumnTreeAll,
-    _destroyColumnTreeUnused,
     _getColumnStateFromColDef,
     _isHeaderNameChangeForGroup,
     isColumnGroupAutoCol,
@@ -243,7 +239,6 @@ export {
     _isCellSelectionEnabled,
     _isClientSideRowModel,
     _isColumnMenuAnchoringEnabled,
-    _isColumnsSortingCoupledToGroup,
     _isDomLayout,
     _isFullWidthGroupRow,
     _isGetRowHeightFunction,
@@ -303,6 +298,7 @@ export type { IAggFuncService } from './interfaces/iAggFuncService';
 export type { IAggregatedChildrenSvc as _IAggregatedChildrenSvc } from './interfaces/iAggregatedChildrenSvc';
 export type { ICellRangeFeature } from './interfaces/iCellRangeFeature';
 export type { IAutoColService } from './interfaces/iAutoColService';
+export type { RowChanges as _RowChanges } from './gridChanges';
 export type { IClientSideRowModel } from './interfaces/iClientSideRowModel';
 export type { IClipboardService } from './interfaces/iClipboardService';
 export type {
@@ -330,8 +326,12 @@ export type { IGroupEditService as _IGroupEditService } from './interfaces/iGrou
 export type { IGroupFilterService } from './interfaces/iGroupFilterService';
 export type { IRowGroupingEditValueSvc as _IRowGroupingEditValueSvc } from './interfaces/iRowGroupingEditValueSvc';
 export type { IRowGroupPanelBuilder as _IRowGroupPanelBuilder } from './interfaces/iRowGroupPanelBuilder';
-export type { IGroupHierarchyColService } from './interfaces/iGroupHierarchyColService';
-export type { ColumnTreeBuild, ColumnTreeEdit } from './columns/buildColumnTree';
+export type {
+    IGroupHierarchyColService,
+    KeptHierarchyLevel,
+    KeptHierarchyLevels,
+} from './interfaces/iGroupHierarchyColService';
+export type { ColumnTreeBuild, ColumnTreeEdit } from './columns/columnTree/columnTreeBuilder';
 
 export type { IMenuFactory, ShowMenuAfterButtonClickOptions } from './interfaces/iMenuFactory';
 export type { IMultiFilterService } from './interfaces/iMultiFilterService';
@@ -346,7 +346,7 @@ export type { IPinnedSectionCompHost } from './interfaces/iPinnedSectionCompHost
 export type { IPinnedRowModel } from './interfaces/iPinnedRowModel';
 export type { IPivotColDefService } from './interfaces/iPivotColDefService';
 export type { IPivotResultColsService } from './interfaces/iPivotResultColsService';
-export type { IRangeService } from './interfaces/IRangeService';
+export type { IRangeSelectionExtension, IRangeService } from './interfaces/IRangeService';
 export type { IRowChildrenService } from './interfaces/iRowChildrenService';
 export type { IRowModel } from './interfaces/iRowModel';
 

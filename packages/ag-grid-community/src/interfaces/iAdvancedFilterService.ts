@@ -1,3 +1,4 @@
+import type { GridOptions } from '../entities/gridOptions';
 import type { FilterChangedEventSourceType } from '../events';
 import type { AdvancedFilterModel } from './advancedFilterModel';
 import type { IAdvancedFilterCtrl } from './iAdvancedFilterCtrl';
@@ -6,6 +7,9 @@ import type { IRowNode } from './iRowNode';
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IAdvancedFilterService {
     isEnabled(): boolean;
+
+    /** Follows an options change, reading `enableAdvancedFilter`; raises `advancedFilterEnabledChanged` on a toggle. */
+    applyOptions(changedProps: ReadonlySet<keyof GridOptions>): void;
 
     isFilterPresent(): boolean;
 

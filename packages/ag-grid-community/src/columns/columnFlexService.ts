@@ -119,9 +119,8 @@ export class ColumnFlexService extends BeanStub implements NamedBean {
             if (i > flexAfterDisplayIndex && flex != null && flex > 0) {
                 continue;
             }
-            const width = col.actualWidth;
-            col.setActualWidth(width, source);
-            unfrozenSpace -= width;
+            // kept at its width, so no width is set: inference still gives the column its inferred width
+            unfrozenSpace -= col.actualWidth;
         }
 
         // a. Check for flexible items. If all the flex items on the line are
@@ -208,7 +207,6 @@ export class ColumnFlexService extends BeanStub implements NamedBean {
         if (params.updateBodyWidths) {
             visibleCols.updateBodyWidths(source, widths);
         }
-
         if (params.fireResizedEvent) {
             const changedColumns: AgColumn[] = [];
             for (let i = 0; i < itemCount; ++i) {
@@ -246,6 +244,7 @@ export class ColumnFlexService extends BeanStub implements NamedBean {
     // change flex when required by the applyColumnState method.
     public setColFlex(column: AgColumn, flex: number | null, source: ColumnEventType) {
         column.flex = flex ?? null;
+        this.beans.syncSvc.changes.columnState = true;
         column.dispatchStateUpdatedEvent('flex', source);
     }
 }

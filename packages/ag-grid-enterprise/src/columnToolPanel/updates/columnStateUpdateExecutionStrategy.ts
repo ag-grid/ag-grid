@@ -14,7 +14,6 @@ import type {
 import {
     BeanStub,
     _applyColumnState,
-    _dispatchColumnChangedEvent,
     _resolvePivotSort,
     _setColsVisible,
     isColumnGroupAutoCol,
@@ -268,7 +267,7 @@ class SynchronousColumnStateUpdateStrategy implements ColumnStateConcreteUpdateS
     }
 
     public setPivotMode(pivotMode: boolean, eventType: ColumnEventType): void {
-        const { gos, colModel, ctrlsSvc } = this.beans;
+        const { gos, colModel, syncSvc } = this.beans;
         if (pivotMode === colModel.pivotMode) {
             return;
         }
@@ -278,25 +277,31 @@ class SynchronousColumnStateUpdateStrategy implements ColumnStateConcreteUpdateS
             this.lastPivotColIds = currentPivotColIds;
         }
 
-        if (!pivotMode) {
-            const cols = this.beans.colModel.colDefList;
-            _applyColumnState(
-                this.beans,
-                {
-                    state: cols.map((col) => ({
-                        colId: col.colId,
-                        pivot: false,
-                        pivotIndex: null,
-                    })),
-                },
-                eventType
-            );
+        // one column update, as the deferred strategy's commit: the rows refresh once turning pivot mode on, twice off
+        syncSvc.beginUpdate();
+        try {
+            if (!pivotMode) {
+                const cols = this.beans.colModel.colDefList;
+                _applyColumnState(
+                    this.beans,
+                    {
+                        state: cols.map((col) => ({
+                            colId: col.colId,
+                            pivot: false,
+                            pivotIndex: null,
+                        })),
+                    },
+                    eventType
+                );
+            }
+            gos.updateGridOptions({ options: { pivotMode }, source: eventType as any }); // update grid option + refresh
+            const lastPivotColIds = this.lastPivotColIds;
+            if (pivotMode && lastPivotColIds.length > 0) {
+                this.beans.pivotColsSvc?.setColumns(lastPivotColIds, eventType);
+            }
+        } finally {
+            syncSvc.endUpdate();
         }
-        gos.updateGridOptions({ options: { pivotMode }, source: eventType as any }); // update grid option + refresh
-        if (pivotMode && this.lastPivotColIds.length > 0) {
-            this.beans.pivotColsSvc?.setColumns(this.lastPivotColIds, eventType);
-        }
-        ctrlsSvc.getHeaderRowContainerCtrl()?.refresh();
     }
 
     public progressSortFromEvent(column: AgColumn, event: MouseEvent | KeyboardEvent): void {
@@ -321,9 +326,14 @@ class SynchronousColumnStateUpdateStrategy implements ColumnStateConcreteUpdateS
 
     public progressPivotSortFromEvent(column: AgColumn): void {
         column.pivotSort = getNextPivotSort(_resolvePivotSort(this.beans, column.pivotSort));
-        // Pivot membership is unchanged, so applyColumnState wouldn't fire this - dispatch it to trigger
-        // the pivot refresh (columnPivotChanged → refreshModel step 'pivot') that re-derives column order.
-        _dispatchColumnChangedEvent(this.beans.eventSvc, 'columnPivotChanged', [column], 'uiColumnSorted');
+        // raised here as no column state apply runs: the update's end refreshes the rows from the pivot step
+        const { colModel, syncSvc } = this.beans;
+        syncSvc.beginUpdate();
+        try {
+            colModel.dispatchColumnChangedEvent('columnPivotChanged', [column], 'uiColumnSorted');
+        } finally {
+            syncSvc.endUpdate();
+        }
     }
 
     public getPivotSort(column: AgColumn): SortDirection | undefined {
@@ -430,39 +440,24 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
 
         const sortedEntries = operations.sort((a, b) => a.seq - b.seq);
 
-        // Consecutive role-column operations share one update, so one refresh. The others read live model state a
-        // deferred role op leaves stale (`colModel.colsList`, `pivotColsSvc.columns`), so the update closes before each.
-        const colModel = beans.colModel;
-        let threw = false;
-        let error: unknown;
-        // a listener's throw is rethrown once every operation is applied
-        const closeUpdate = () => {
-            try {
-                colModel.endColUpdate();
-            } catch (e) {
-                error = threw ? error : e;
-                threw = true;
-            }
-        };
+        const { colModel, syncSvc } = beans;
         try {
-            colModel.beginColUpdate();
+            // one update: each role change, row refresh and layout event once for the whole apply
+            syncSvc.beginUpdate();
             try {
                 for (const operation of sortedEntries) {
-                    if (!isRoleColumnOperation(operation)) {
-                        // Close + reopen the update to run the staged role changes, so this op reads fresh state.
-                        closeUpdate();
-                        colModel.beginColUpdate();
+                    const type = operation.type;
+                    if (type === 'pivotMode' || type === 'columnOrder' || type === 'columnState' || type === 'sort') {
+                        // these raise their events at once: the role changes staged before them are raised first
+                        colModel.settleColChanges();
                     }
                     this.applyOperation(operation);
                 }
             } finally {
-                closeUpdate();
+                syncSvc.endUpdate();
             }
         } finally {
             this.reset();
-        }
-        if (threw) {
-            throw error;
         }
     }
 
@@ -502,7 +497,7 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
                 break;
             }
             case 'pivotMode': {
-                const { colModel, ctrlsSvc, gos } = beans;
+                const { colModel, gos } = beans;
                 if (operation.pivotMode !== colModel.pivotMode) {
                     // Remember the cols being pivoted on so re-enabling pivot mode restores them.
                     const currentPivotColIds = beans.pivotColsSvc?.columns.map((col) => col.colId) ?? [];
@@ -526,7 +521,6 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
                             beans.pivotColsSvc?.setColumns(pivotColIds, operation.eventType);
                         }
                     }
-                    ctrlsSvc.getHeaderRowContainerCtrl()?.refresh();
                 }
                 break;
             }
@@ -866,13 +860,6 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
         this.sequence = currentDraft.seq;
         this.state.sort = currentDraft;
     }
-}
-
-/** Operations that mutate a role set via `setColumns` (deferred refresh) — safe to batch together. Excludes
- *  pivotMode/columnOrder/columnState/sort, which run their own refreshes and are order-sensitive. */
-function isRoleColumnOperation(operation: CommitOperation): boolean {
-    const type = operation.type;
-    return type === 'rowGroup' || type === 'aggregation' || type === 'pivot';
 }
 
 function getDraftColumns(beans: BeanStub['beans'], colIds: string[] | undefined): AgColumn[] {

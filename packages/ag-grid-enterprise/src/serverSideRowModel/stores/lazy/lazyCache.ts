@@ -1186,12 +1186,11 @@ export class LazyCache extends BeanStub {
         }
     }
 
-    /**
-     * Re-sorts the rows for changed comparators, unless already sorted with them, as when the sort changed in the same
-     * update. Returns whether it sorted.
-     */
+    /** Re-sorts the rows when a string comparator their sort uses changed since they were sorted; whether it sorted. */
     public clientSideResortRows(): boolean {
-        if (this.sortSvc?.getSortOptions() === this.sortedWith) {
+        const sortedWith = this.sortedWith;
+        const sortOptions = this.sortSvc?.getSortOptions();
+        if (!sortedWith || !sortOptions || !isStringComparatorChanged(sortedWith, sortOptions)) {
             return false;
         }
         this.clientSideSortRows();
@@ -1391,3 +1390,22 @@ export class LazyCache extends BeanStub {
         return [startOfBlock, startOfBlock + blockSize];
     }
 }
+
+/** Whether `next` sorts other columns, or by another string comparator that no column comparator replaces. */
+const isStringComparatorChanged = (sortedWith: SortOption[], next: SortOption[]): boolean => {
+    const len = next.length;
+    if (len !== sortedWith.length) {
+        return true;
+    }
+    for (let i = 0; i < len; ++i) {
+        const option = next[i];
+        const old = sortedWith[i];
+        if (
+            option.column !== old.column ||
+            (!option.colComparator && option.stringComparator !== old.stringComparator)
+        ) {
+            return true;
+        }
+    }
+    return false;
+};

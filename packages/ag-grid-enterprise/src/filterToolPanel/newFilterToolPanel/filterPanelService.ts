@@ -178,6 +178,7 @@ export class FilterPanelService
         states.delete(id);
         selectableFilter?.clearActive(id);
         colFilter?.destroyFilter(column);
+        this.beans.ctrlsSvc.getHeaderRowContainerCtrl()?.getFloatingFilterCtrlForColumn(column)?.onFilterSwitched();
         this.eventSvc.dispatchEvent({
             type: 'filterSwitched',
             column,

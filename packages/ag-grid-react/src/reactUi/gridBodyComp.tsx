@@ -123,7 +123,14 @@ const GridBodyComp = () => {
             },
             setPinnedSection,
             setColumnMovingCss: (cssClass: string, flag: boolean) => cssManager.current!.toggleCss(cssClass, flag),
-            updateLayoutClasses: setLayoutClass,
+            updateLayoutClasses: (cssClass, params) => {
+                // on the element, as React writing the root's className would drop the classes the ctrl toggles there
+                const manager = cssManager.current!;
+                manager.toggleCss(_getLayoutCssClass('autoHeight'), params.autoHeight);
+                manager.toggleCss(_getLayoutCssClass('normal'), params.normal);
+                manager.toggleCss(_getLayoutCssClass('print'), params.print);
+                setLayoutClass(cssClass);
+            },
             setCellSelectableCss: (cssClass: string | null, flag: boolean) =>
                 setCellSelectableCss(flag ? cssClass : null),
             setRowAnimationCssOnScrollableArea: (animate: boolean) =>
@@ -169,7 +176,8 @@ const GridBodyComp = () => {
         };
     }, [context, gos, overlays, rangeSvc, rootElement]);
 
-    const rootClasses = useMemo(() => classesList('ag-root', 'ag-unselectable', layoutClass), [layoutClass]);
+    // written once: its layout class changes on the element (updateLayoutClasses)
+    const [rootClasses] = useState(() => classesList('ag-root', 'ag-unselectable', layoutClass));
     const gridViewportClasses = useMemo(
         () =>
             classesList(

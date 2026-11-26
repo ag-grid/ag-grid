@@ -93,16 +93,29 @@ export class ValueService extends BeanStub implements NamedBean {
         }
     }
 
+    /** Follows an options change before the rows refresh for it: reads `treeData`. */
+    public applyOptions(changedProps: ReadonlySet<keyof GridOptions>): void {
+        if (!changedProps.has('treeData')) {
+            return;
+        }
+        this.isTreeData = this.gos.get('treeData');
+    }
+
+    private readonly onCellValueChanged = (event: CellValueChangedEvent): void =>
+        this.callColumnCellValueChangedHandler(event);
+
+    public override destroy(): void {
+        this.eventSvc.removeListener('cellValueChanged', this.onCellValueChanged, true);
+        super.destroy();
+    }
+
     public postConstruct(): void {
         this.init();
 
         // We listen to our own event and use it to call the columnSpecific callback,
         // this way the handler calls are correctly interleaved with other global events
-        const listener = (event: CellValueChangedEvent) => this.callColumnCellValueChangedHandler(event);
-        this.eventSvc.addListener('cellValueChanged', listener, true);
-        this.addDestroyFunc(() => this.eventSvc.removeListener('cellValueChanged', listener, true));
+        this.eventSvc.addListener('cellValueChanged', this.onCellValueChanged, true);
 
-        this.addManagedPropertyListener('treeData', (propChange) => (this.isTreeData = propChange.currentValue));
         this.addManagedPropertyListener(
             'groupSuppressBlankHeader',
             (propChange) => (this.groupSuppressBlankHeader = propChange.currentValue)

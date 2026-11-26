@@ -20,10 +20,14 @@ import type {
     ColDef,
     ColKey,
     ColumnEventType,
+    ColumnIdAllocator,
+    ColumnModel,
     ColumnState,
     ColumnTreeBuild,
+    GridOptions,
     HeaderPosition,
     ICalculatedColumnsService,
+    IRowGroupColsService,
     NamedBean,
     RefreshCalculatedColumnsParams,
     _UserColumnService,
@@ -39,7 +43,7 @@ import {
     _warnOnce,
 } from 'ag-grid-community';
 
-import { appendColumnToTree } from '../columns/columnTreeEdit';
+import { appendColumnToTree, getBuildColumn } from '../columns/columnTreeEdit';
 import { inspectFormulaExpression } from '../formula/ast/parsers';
 import type { FormulaError } from '../formula/ast/utils';
 import type { MenuRestoreFocusParams, MenuUtils } from '../menu/menuUtils';
@@ -134,11 +138,14 @@ type DynamicCalculatedColumn = {
     parentGroupId?: string | null;
     /** Validation metadata parked alongside the column by `resetColumnState`. */
     parkedExpressionError?: CalculatedExpressionError;
+    /** A move of it, or the last ordered column state, left it away from its source: order-keeping rebuilds keep it. */
+    placedByUser?: boolean;
 };
 
 type ProcessColDef = NonNullable<CalculatedColumnsOptions['processColDef']>;
 
-type BuildColumnLookup = {
+type ColDefProcessor = {
+    processColDef: ProcessColDef;
     hasCol: (colId: string) => boolean;
     getCol: (colId: string) => AgColumn | null;
 };
@@ -153,6 +160,7 @@ type OpenCalculatedColumnDialog = {
 type KnownCalculatedColumn = {
     column: AgColumn;
     colDef: ColDef;
+    validationState: CalculatedColumnValidationState;
 };
 
 type PendingLiveApplyUpdate = {
@@ -170,14 +178,11 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
     private readonly inactiveDynamicColumns = new Map<string, DynamicCalculatedColumn>();
     /** Highest `calculated_N` index handed out to this grid, so {@link createUniqueColId} never reuses one. */
     private lastCalculatedColIndex = 0;
-    private validationStatesByColId = new Map<string, CalculatedColumnValidationState>();
-    private validationStatesInitialised = false;
     // Guards the first lifecycle pass so the initial column set establishes a baseline without emitting events.
     private lifecycleInitialised = false;
     private knownCalculatedColumns = new Map<string, KnownCalculatedColumn>();
-    // Re-entry counter: while > 0 (a programmatic rebuild via {@link refreshDynamicColumns}), lifecycle/validation
-    // dispatch is skipped — the imperative caller emits its own events; declarative loads run with it at 0.
-    private suppressValidationChecks = 0;
+    /** The columns the option was just turned on for, as authored: the next build's start resolves them. */
+    private turnedOnColumns: Map<string, KnownCalculatedColumn> | null = null;
     private readonly openDialogsByColId = new Map<string, OpenCalculatedColumnDialog>();
     private readonly liveCreationColumnIds = new Set<string>();
     private readonly pendingLiveApplyUpdatesByColId = new Map<string, PendingLiveApplyUpdate>();
@@ -185,40 +190,47 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
     private readonly formulaErrorsByExpression = new Map<string, FormulaError | null>();
     // Guaranteed present: registered by CalculatedColumnsModule alongside this service.
     private userColumnSvc!: _UserColumnService;
+    /** The `calculatedColumns` option last applied. */
+    private appliedCalculatedColumns: GridOptions['calculatedColumns'];
 
     public postConstruct(): void {
         this.userColumnSvc = this.beans.userColumnSvc!;
         this.userColumnSvc.registerOwner(() => this.isEnabled(), USER_OWNED_PROPERTIES);
-        this.addManagedEventListeners({
-            newColumnsLoaded: (event) => {
-                this.checkColumnLifecycle(event.source);
-                this.checkValidationStates(event.source);
-            },
-        });
-        this.addManagedPropertyListener('calculatedColumns', ({ previousValue, currentValue }) => {
-            const enabled = _isCalculatedColumnsEnabled(currentValue);
-            const enablementChanged = enabled !== _isCalculatedColumnsEnabled(previousValue);
-            const previousOptions = typeof previousValue === 'object' ? previousValue : undefined;
-            const options = typeof currentValue === 'object' ? currentValue : undefined;
-            const rebuild = enablementChanged || (enabled && previousOptions?.processColDef !== options?.processColDef);
+        this.appliedCalculatedColumns = this.gos.get('calculatedColumns');
+    }
 
-            if (rebuild) {
-                if (enabled) {
-                    this.adoptUserColumns();
-                } else {
-                    this.clearDynamicColumnInstances();
-                }
-                this.refreshDynamicColumns('gridOptionsChanged');
-                this.checkValidationStates('gridOptionsChanged');
-            }
-            if (
-                rebuild ||
-                (previousOptions?.suppressColumnHighlighting === true) !==
-                    (options?.suppressColumnHighlighting === true)
-            ) {
-                this.refreshOpenDialogHighlights();
-            }
-        });
+    public addOptionKeysTo(keys: Set<keyof GridOptions>): void {
+        keys.add('calculatedColumns');
+    }
+
+    public applyOptions(changedProps: ReadonlySet<keyof GridOptions>): boolean {
+        if (!changedProps.has('calculatedColumns')) {
+            return false;
+        }
+        const previousValue = this.appliedCalculatedColumns;
+        const currentValue = this.gos.get('calculatedColumns');
+        this.appliedCalculatedColumns = currentValue;
+        const enabled = _isCalculatedColumnsEnabled(currentValue);
+        const enablementChanged = enabled !== _isCalculatedColumnsEnabled(previousValue);
+        const previousOptions = typeof previousValue === 'object' ? previousValue : undefined;
+        const options = typeof currentValue === 'object' ? currentValue : undefined;
+        const rebuild = enablementChanged || (enabled && previousOptions?.processColDef !== options?.processColDef);
+
+        if (rebuild && enabled) {
+            this.adoptUserColumns();
+        } else if (rebuild) {
+            this.clearDynamicColumnInstances();
+        }
+        if (enablementChanged && enabled) {
+            this.recordColumnsTurnedOn();
+        }
+        if (
+            rebuild ||
+            (previousOptions?.suppressColumnHighlighting === true) !== (options?.suppressColumnHighlighting === true)
+        ) {
+            this.refreshOpenDialogHighlights();
+        }
+        return rebuild;
     }
 
     public isEnabled(): boolean {
@@ -268,7 +280,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             updates.push({ colId, colDef, validation });
         }
         if (updates.length) {
-            this.refreshDynamicColumns('api');
+            this.rebuildColsAndValidate('api');
         }
         if (params?.columns == null) {
             for (const dialog of this.openDialogsByColId.values()) {
@@ -323,7 +335,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         for (const cellCtrl of cellCtrls) {
             cellCtrl.refreshCalculatedColumnCss();
         }
-        this.beans.ctrlsSvc.getHeaderRowContainerCtrl()?.refresh();
+        this.beans.ctrlsSvc.getHeaderRowContainerCtrl()?.onHeaderClassesChanged(column);
     }
 
     private refreshOpenDialogHighlights(): void {
@@ -377,6 +389,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         const merged = _addColumnDefaultAndTypes(this.beans, nextColDef, targetColId);
         const changed =
             !_mergedEqual(merged, current) || !_mergedEqual(nextExpressionError, entry?.calculatedExpressionError);
+        const previousColumns = this.knownCalculatedColumns;
         // Skip when unchanged: a redundant override entry would needlessly re-apply on every later rebuild.
         if (changed) {
             if (dynamicColumn) {
@@ -385,10 +398,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             } else {
                 this.setDeclaredColOverride(targetColumn, nextColDef, nextExpressionError);
             }
-            this.refreshDynamicColumns(source);
-            if (calcExpr !== undefined) {
-                this.beans.formula?.refreshFormulas(false);
-            }
+            colModel.rebuildCols(source);
         }
         const nextColumn = colModel.colsById[targetColId] ?? targetColumn;
         this.dispatchChangedEvents(
@@ -399,9 +409,8 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             oldExpressionValidation
         );
         if (changed) {
-            this.checkValidationStates(source, true);
+            this.dispatchValidationChanges(source, previousColumns);
         }
-        this.refreshCalculatedColumn(targetColId);
     }
 
     private getFormulaError(expression: string): FormulaError | null {
@@ -522,7 +531,8 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             instance: null,
         });
         this.recordCreatedColumn(colId, nextColDef, getParentGroupId(anchorColumn));
-        this.refreshDynamicColumns('calculatedColumn');
+        const previousColumns = this.knownCalculatedColumns;
+        this.beans.colModel.rebuildCols('calculatedColumn');
         const newColumn = this.beans.colModel.colsById[colId];
         if (newColumn) {
             this.dispatchCreatedOrRemovedEvent(
@@ -530,7 +540,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
                 this.getEventCommonParams(newColumn, draft.calculatedExpression, 'calculatedColumn')
             );
         }
-        this.checkValidationStates('calculatedColumn', true);
+        this.dispatchValidationChanges('calculatedColumn', previousColumns);
         return newColumn ?? undefined;
     }
 
@@ -554,12 +564,13 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             }
         }
         this.userColumnSvc.removeColumn(colId, !wasDynamic);
-        this.refreshDynamicColumns(source);
+        const previousColumns = this.knownCalculatedColumns;
+        this.beans.colModel.rebuildCols(source);
         this.dispatchCreatedOrRemovedEvent(
             'calculatedColumnRemoved',
             this.getEventCommonParams(column, expression, source)
         );
-        this.checkValidationStates(source, true);
+        this.dispatchValidationChanges(source, previousColumns);
     }
 
     /** Records a created (API/dialog-added) calc col in the user-column layer. */
@@ -616,17 +627,39 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         }
     }
 
-    public contributeTo(build: ColumnTreeBuild): void {
-        if (!this.isEnabled()) {
+    public beginBuild(ids: ColumnIdAllocator): void {
+        const turnedOn = this.turnedOnColumns;
+        if (turnedOn !== null) {
+            // inside the build, so a column option a `dataTypeMatcher` sets while they merge is applied after it
+            this.turnedOnColumns = null;
+            const beans = this.beans;
+            turnedOn.forEach((entry, colId) => {
+                const colDef = _addColumnDefaultAndTypes(beans, entry.colDef, colId);
+                if (colDef.calculatedExpression === undefined) {
+                    turnedOn.delete(colId);
+                } else {
+                    entry.colDef = pickUserOwnedProperties(colDef);
+                }
+            });
+            this.knownCalculatedColumns = turnedOn;
+        }
+        const dynamicColumns = this.dynamicColumns;
+        if (dynamicColumns.size === 0 || !this.isEnabled()) {
             return;
         }
-        const { dynamicColumns } = this;
-        const userColumnSvc = this.userColumnSvc;
+        for (const colId of dynamicColumns.keys()) {
+            ids.held.set(colId, null);
+        }
+    }
+
+    public contributeTo(build: ColumnTreeBuild): void {
+        const dynamicColumns = this.dynamicColumns;
         // Overrides/removals of `columnDefs`-declared cols are applied by the build from the user-column
         // layer; here we only splice in dynamic (API/dialog-added) cols, so nothing to do without them.
-        if (dynamicColumns.size === 0) {
+        if (dynamicColumns.size === 0 || !this.isEnabled()) {
             return;
         }
+        const userColumnSvc = this.userColumnSvc;
 
         // Place each dynamic col. `appendColumnToTree(col, anchorId)` positions it in the TREE (inheriting
         // a leaf anchor's group membership); `anchoredToColId` is stamped so order restoration also seats
@@ -636,10 +669,31 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         const buildToken = build.buildToken;
         const newColDefs = build.newColDefs;
         const processColDef = this.getOptions()?.processColDef;
-        const processDynamicColDef = processColDef ? this.createColDefProcessor(processColDef, build.columns) : null;
+        const colDefProcessor = processColDef ? this.createColDefProcessor(processColDef, build) : null;
+        if (colDefProcessor) {
+            // Anchors first, so a column added from another reads this build's instance of it.
+            const processed = new Set<string>();
+            const process = (colId: string): void => {
+                const dc = dynamicColumns.get(colId);
+                if (dc === undefined || processed.has(colId)) {
+                    return;
+                }
+                processed.add(colId); // before the anchor, so an anchor cycle ends
+                const anchorId = dc.anchorColId;
+                if (anchorId != null) {
+                    process(anchorId);
+                }
+                this.getOrCreateColumn(dc, colId, buildToken, source, newColDefs, colDefProcessor);
+            };
+            for (const colId of dynamicColumns.keys()) {
+                process(colId);
+            }
+        }
         dynamicColumns.forEach((dc, colId) => {
             const anchorId = dc.anchorColId;
-            const agCol = this.getOrCreateColumn(dc, colId, buildToken, source, newColDefs, processDynamicColDef);
+            const agCol = colDefProcessor
+                ? dc.instance! // created by the passes above
+                : this.getOrCreateColumn(dc, colId, buildToken, source, newColDefs, null);
             agCol.buildToken = buildToken; // So the post-build sweep keeps the col alive.
             if (anchorId != null && anchorId !== colId && !userColumnSvc.getEntry(anchorId)?.removed) {
                 agCol.anchoredToColId = anchorId;
@@ -651,49 +705,173 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         });
     }
 
-    /** `colsById` is seeded after the build, so `processColDef` resolves columns against the ones built so far, the
-     *  auto group columns the incoming grouping keeps, and the dynamic columns spliced in alongside them. */
-    private createColDefProcessor(
-        processColDef: ProcessColDef,
-        builtColumns: AgColumn[]
-    ): (dc: DynamicCalculatedColumn, colId: string) => ColDef {
-        const colsById = new Map(builtColumns.map((col) => [col.colId, col]));
-        const autoCols = this.getKeptAutoCols(builtColumns);
-        for (let i = 0, len = autoCols.length; i < len; ++i) {
-            colsById.set(autoCols[i].colId, autoCols[i]);
+    public seatCalculatedCols(
+        colsList: AgColumn[],
+        colsById: Record<string, AgColumn>,
+        keptCols: ReadonlyMap<AgColumn, number> | null
+    ): AgColumn[] {
+        if (this.dynamicColumns.size === 0) {
+            return colsList;
         }
-        const dynamicColumns = this.dynamicColumns;
-        const lookup: BuildColumnLookup = {
-            hasCol: (colId) => colsById.has(colId) || dynamicColumns.has(colId),
-            getCol: (colId) => colsById.get(colId) ?? dynamicColumns.get(colId)?.instance ?? null,
-        };
-        return (dc, colId) => this.processUserColDef(processColDef, dc, colId, lookup);
+        let followers: Map<AgColumn, AgColumn[]> | null = null;
+        let seated: Set<AgColumn> | null = null;
+        // Map order is add order, so each source's list ends with its newest follower.
+        for (const dc of this.dynamicColumns.values()) {
+            const col = dc.instance;
+            if (col?.inColsList) {
+                if (keptCols === null) {
+                    dc.placedByUser = false; // an order from the definitions the column is in resets its move
+                }
+                if (this.isSeatedBySource(col, colsById, keptCols)) {
+                    followers ??= new Map();
+                    seated ??= new Set();
+                    const rootId = keptCols?.has(col) ? this.rootSourceId(dc) : null;
+                    const source = colsById[rootId ?? col.anchoredToColId!] ?? colsById[col.anchoredToColId!];
+                    addFollower(followers, source, col, keptCols);
+                    seated.add(col);
+                }
+            }
+        }
+        if (followers === null || seated === null) {
+            return colsList;
+        }
+        const result: AgColumn[] = [];
+        for (let i = 0, len = colsList.length; i < len; ++i) {
+            const col = colsList[i];
+            if (!seated.has(col)) {
+                pushWithFollowers(result, col, followers);
+            }
+        }
+        if (result.length < colsList.length) {
+            const pushed = new Set(result);
+            for (const col of seated) {
+                if (pushed.has(col)) {
+                    continue;
+                }
+                result.push(col); // a source cycle no shown column reaches
+            }
+        }
+        return result;
     }
 
-    /** Row grouping is extracted from the build after `contributeTo`, and auto group columns are refreshed after that,
-     *  so `autoColSvc.columns` still holds the previous build's. Keep those the incoming grouping does not remove.
-     *  Dynamic columns are not in `builtColumns` yet, so their previous build's instances stand in for them. */
-    private getKeptAutoCols(builtColumns: AgColumn[]): AgColumn[] {
-        const { autoColSvc, rowGroupColsSvc, colModel, gos } = this.beans;
-        const autoCols = autoColSvc?.columns;
-        if (!autoCols?.length || gos.get('treeData')) {
-            return autoCols ?? [];
-        }
-        const previousCols = new Set(colModel.colDefList);
-        const groupedColIds = new Set<string>();
-        const addIfGrouped = (col: AgColumn | null) => {
-            if (col && rowGroupColsSvc?.willExtractCol(col, !previousCols.has(col))) {
-                groupedColIds.add(col.colId);
+    /** The source a calculated col's chain of calculated sources starts from. */
+    private rootSourceId(dc: DynamicCalculatedColumn | undefined): string | null {
+        const dynamicColumns = this.dynamicColumns;
+        let anchorId = dc?.anchorColId ?? null;
+        for (let steps = dynamicColumns.size; anchorId != null && steps > 0; --steps) {
+            const next = dynamicColumns.get(anchorId);
+            if (next === undefined) {
+                return anchorId;
             }
-        };
-        for (let i = 0, len = builtColumns.length; i < len; ++i) {
-            addIfGrouped(builtColumns[i]);
+            anchorId = next.anchorColId ?? null;
         }
-        this.dynamicColumns.forEach((dc) => addIfGrouped(dc.instance));
-        return autoCols.filter((autoCol) => {
-            const showRowGroup = autoCol.colDef.showRowGroup;
-            return typeof showRowGroup === 'string' ? groupedColIds.has(showRowGroup) : groupedColIds.size > 0;
-        });
+        return null; // no source, or a source cycle
+    }
+
+    /** Whether only cols sharing its chain's root stand between `cols[index]` and its source or that root. */
+    private isAtSeat(cols: readonly AgColumn[], index: number, sourceId: string, rootId: string): boolean {
+        const dynamicColumns = this.dynamicColumns;
+        for (let i = index - 1; i >= 0; --i) {
+            const colId = cols[i].colId;
+            if (colId === sourceId || colId === rootId) {
+                return true;
+            }
+            if (this.rootSourceId(dynamicColumns.get(colId)) !== rootId) {
+                return false;
+            }
+        }
+        return false;
+    }
+
+    public markPlacedByOrder(order: readonly AgColumn[], start: number, end: number): void {
+        const dynamicColumns = this.dynamicColumns;
+        for (let i = dynamicColumns.size === 0 ? end : start; i < end; ++i) {
+            const col = order[i];
+            const dc = col.isCalculatedCol ? dynamicColumns.get(col.colId) : undefined;
+            const rootId = dc?.instance === col ? this.rootSourceId(dc) : null;
+            if (rootId != null) {
+                dc!.placedByUser = !this.isAtSeat(order, i, dc!.anchorColId!, rootId);
+            }
+        }
+    }
+
+    /** A col with a shown source moves; with `keptCols`, one not user-placed if it or a chain source lost its place. */
+    private isSeatedBySource(
+        col: AgColumn,
+        colsById: Record<string, AgColumn>,
+        keptCols: ReadonlyMap<AgColumn, number> | null
+    ): boolean {
+        const dynamicColumns = this.dynamicColumns;
+        let current = col;
+        for (let steps = dynamicColumns.size; steps > 0; --steps) {
+            // a col kept ahead of a placed source of its chain still follows the chain's root
+            if (
+                keptCols !== null &&
+                dynamicColumns.get(current.colId)?.placedByUser &&
+                (current === col || keptCols.get(col)! > keptCols.get(current)!)
+            ) {
+                return false;
+            }
+            const anchorId = current.anchoredToColId;
+            const anchor = anchorId == null ? undefined : colsById[anchorId];
+            if (anchor === undefined || anchor === current || !anchor.inColsList) {
+                return false;
+            }
+            if (keptCols === null || !keptCols.has(current) || !keptCols.has(anchor)) {
+                return true;
+            }
+            if (!anchor.isCalculatedCol) {
+                return false;
+            }
+            current = anchor;
+        }
+        return false;
+    }
+
+    /** `colsById` is seeded after the build, so `processColDef` resolves columns against the ones built so far, the
+     *  auto group columns the grouping declared before the callbacks run keeps, and the dynamic columns spliced in. */
+    private createColDefProcessor(processColDef: ProcessColDef, build: ColumnTreeBuild): ColDefProcessor {
+        const { colModel, autoColSvc } = this.beans;
+        const previousCols = colModel.colsById;
+        const dynamicColumns = this.dynamicColumns;
+        // none to keep without a group column: the previous build's are the only ones a lookup can return
+        const rowGroupCols = autoColSvc?.columns.length ? this.getRowGroupColsOf(build) : null;
+        const getCol = (colId: string): AgColumn | null => {
+            const col = getBuildColumn(build, colId);
+            if (col) {
+                return col;
+            }
+            const autoCol = previousCols[colId];
+            if (rowGroupCols !== null && autoCol?.colKind === 'auto-group') {
+                return autoColSvc!.isColKept(autoCol, rowGroupCols) ? autoCol : null;
+            }
+            return dynamicColumns.get(colId)?.instance ?? null;
+        };
+        return {
+            processColDef,
+            hasCol: (colId) => getCol(colId) !== null || dynamicColumns.has(colId),
+            getCol,
+        };
+    }
+
+    /** Cols `build` groups as declared before its callbacks run: its own, the hierarchy's, and the calculated ones by
+     *  their previous instances. */
+    private getRowGroupColsOf(build: ColumnTreeBuild): Set<AgColumn> {
+        const { rowGroupColsSvc, colModel, groupHierarchyColSvc } = this.beans;
+        const rowGroupCols = new Set<AgColumn>();
+        if (!rowGroupColsSvc) {
+            return rowGroupCols;
+        }
+        const newColDefs = build.newColDefs;
+        addRowGroupCols(rowGroupCols, rowGroupColsSvc, colModel, build.columns, newColDefs);
+        addRowGroupCols(rowGroupCols, rowGroupColsSvc, colModel, groupHierarchyColSvc?.columns, newColDefs);
+        for (const dc of this.dynamicColumns.values()) {
+            const col = dc.instance;
+            if (col && rowGroupColsSvc.willExtractCol(col, colModel.isColNew(col), newColDefs)) {
+                rowGroupCols.add(col);
+            }
+        }
+        return rowGroupCols;
     }
 
     private clearDynamicColumnInstances(): void {
@@ -715,6 +893,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             this.dynamicColumns.forEach((dynamicColumn, colId) => {
                 dynamicColumn.parentGroupId = getParentGroupId(dynamicColumn.instance);
                 dynamicColumn.parkedExpressionError = this.userColumnSvc.getEntry(colId)?.calculatedExpressionError;
+                dynamicColumn.placedByUser = false;
                 dynamicColumn.instance = null;
                 this.inactiveDynamicColumns.set(colId, dynamicColumn);
             });
@@ -828,11 +1007,14 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         if (!inactive.size) {
             return false;
         }
-        let restored = false;
+        const stateColIds = new Set<string>();
         for (let i = 0, len = state.length; i < len; ++i) {
-            const colId = state[i].colId;
-            const dynamicColumn = inactive.get(colId);
-            if (dynamicColumn === undefined) {
+            stateColIds.add(state[i].colId);
+        }
+        let restored = false;
+        // In parked order, not the state's: the map's order is the add order the placement reads.
+        for (const [colId, dynamicColumn] of inactive) {
+            if (!stateColIds.has(colId)) {
                 continue;
             }
             inactive.delete(colId);
@@ -857,13 +1039,11 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         buildToken: number,
         source: ColumnEventType,
         newColDefs: boolean,
-        processDynamicColDef: ((dc: DynamicCalculatedColumn, colId: string) => ColDef) | null
+        colDefProcessor: ColDefProcessor | null
     ): AgColumn {
         const beans = this.beans;
-        const colDef = processDynamicColDef ? processDynamicColDef(dc, colId) : dc.colDef;
-        dc.resolvedAuthoredColDef = processDynamicColDef
-            ? _addColumnDefaultAndTypes(beans, dc.colDef, colId)
-            : undefined;
+        const colDef = colDefProcessor ? this.processUserColDef(colDefProcessor, dc, colId) : dc.colDef;
+        dc.resolvedAuthoredColDef = colDefProcessor ? _addColumnDefaultAndTypes(beans, dc.colDef, colId) : undefined;
         const existing = dc.instance;
         if (existing !== null) {
             // Reuse the owned instance (always alive: contributed/stamped every refresh, nulled when
@@ -884,24 +1064,19 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
     /** Applies `calculatedColumns.processColDef` to a dialog-created column's stored colDef. The result becomes the
      *  column's own colDef (`userProvidedColDef`) on purpose, so data type and show-values-as reads see it; the
      *  stored colDef is left untouched so the dialog and grid state only ever see the user's values. */
-    private processUserColDef(
-        processColDef: ProcessColDef,
-        dc: DynamicCalculatedColumn,
-        colId: string,
-        lookup: BuildColumnLookup
-    ): ColDef {
+    private processUserColDef(processor: ColDefProcessor, dc: DynamicCalculatedColumn, colId: string): ColDef {
         const storedColDef = dc.colDef;
         const anchorId = dc.anchorColId;
         const expression = storedColDef.calculatedExpression ?? '';
         const error = this.userColumnSvc.getEntry(colId)?.calculatedExpressionError;
-        const result = processColDef(
+        const result = processor.processColDef(
             _addGridCommonParams(this.gos, {
                 colDef: { ...storedColDef },
-                sourceColumn: anchorId == null ? null : lookup.getCol(anchorId),
+                sourceColumn: anchorId == null ? null : processor.getCol(anchorId),
                 expressionValidation: this.getExpressionValidation(
                     expression,
                     error?.expression === expression ? error : undefined,
-                    lookup.hasCol
+                    processor.hasCol
                 ),
             })
         );
@@ -924,17 +1099,6 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         return colDef;
     }
 
-    /** Rebuild the column tree for a calc-col mutation. Suppresses lifecycle/validation dispatch during the
-     *  rebuild so the imperative caller (or column-state op) emits its own events, not duplicates. */
-    public refreshDynamicColumns(source: ColumnEventType): void {
-        this.suppressValidationChecks++;
-        try {
-            this.beans.colModel.rebuildCols(source);
-        } finally {
-            this.suppressValidationChecks--;
-        }
-    }
-
     private createUniqueColId(): string {
         const { colModel } = this.beans;
         const userColumnSvc = this.userColumnSvc;
@@ -949,6 +1113,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             // but whose entry a new column with the same colId would overwrite.
         } while (
             colModel.getCol(colId) !== undefined ||
+            colModel.getColGroup(colId) !== undefined || // column and group ids are one namespace
             parked.has(colId) ||
             userColumnSvc.getEntry(colId) !== undefined
         );
@@ -1421,7 +1586,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             this.beans.colModel.getCol(colId)?.isCalculatedCol &&
             this.getOptions()?.processColDef
         ) {
-            this.refreshDynamicColumns('calculatedColumn');
+            this.rebuildColsAndValidate('calculatedColumn');
         }
     }
 
@@ -1547,25 +1712,26 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         return state === 'valid' ? { valid: true } : { valid: false, reason: state };
     }
 
-    private forEachCalculatedColumn(callback: (column: AgColumn, colId: string, expression: string) => void): void {
+    /** Dialog/state rebuilds silently update the baseline so later declarative loads do not replay their changes. */
+    public onColumnsLoaded(source: ColumnEventType, silent: boolean): void {
+        const previousColumns = this.knownCalculatedColumns;
+        const nextColumns = new Map<string, KnownCalculatedColumn>();
+        // nothing while the option is off, nor in a build it was turned on during: the one staged behind it tells
+        const shouldDispatch =
+            this.lifecycleInitialised && !silent && this.isEnabled() && this.turnedOnColumns === null;
+        const dynamicColumns = this.dynamicColumns;
+
         const cols = this.beans.colModel.colDefList;
         for (let i = 0, len = cols.length; i < len; ++i) {
             const column = cols[i];
             if (column.isCalculatedCol) {
-                callback(column, column.colId, column.colDef.calculatedExpression ?? '');
+                nextColumns.set(column.colId, {
+                    column,
+                    colDef: pickUserOwnedProperties(this.getResolvedAuthoredColDef(column)),
+                    validationState: this.getExpressionValidationState(column.colDef.calculatedExpression ?? ''),
+                });
             }
         }
-    }
-
-    /** Dialog/state rebuilds silently update the baseline so later declarative loads do not replay their changes. */
-    private checkColumnLifecycle(source: ColumnEventType): void {
-        const previousColumns = this.knownCalculatedColumns;
-        const nextColumns = new Map<string, KnownCalculatedColumn>();
-        const shouldDispatch = this.lifecycleInitialised && this.suppressValidationChecks === 0;
-
-        this.forEachCalculatedColumn((column, colId) => {
-            nextColumns.set(colId, { column, colDef: pickUserOwnedProperties(this.getResolvedAuthoredColDef(column)) });
-        });
         // establish the baseline before dispatch, including silent state-restoration rebuilds.
         this.knownCalculatedColumns = nextColumns;
         this.lifecycleInitialised = true;
@@ -1581,13 +1747,14 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             }
 
             const previousColumn = previousColumns.get(colId);
-            if (previousColumn == null) {
+            if (previousColumn != null) {
+                this.dispatchChangedEvents(column, previousColumn.colDef, colDef, source);
+            } else if (!dynamicColumns.has(colId)) {
+                // one the user created is told by the call creating it: here the option turned it back on
                 this.dispatchCreatedOrRemovedEvent(
                     'calculatedColumnCreated',
                     this.getEventCommonParams(column, expression, source)
                 );
-            } else {
-                this.dispatchChangedEvents(column, previousColumn.colDef, colDef, source);
             }
         });
 
@@ -1609,6 +1776,10 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
                 );
             }
         });
+
+        if (shouldDispatch) {
+            this.dispatchValidationChanges(source, previousColumns);
+        }
     }
 
     private dispatchChangedEvents(
@@ -1641,35 +1812,50 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         }
     }
 
-    private checkValidationStates(source: ColumnEventType, forceDispatch = false): void {
-        if (this.suppressValidationChecks > 0) {
-            return;
-        }
-
-        const shouldDispatch = forceDispatch || this.validationStatesInitialised;
-        const previousStates = this.validationStatesByColId;
-        const nextStates = new Map<string, CalculatedColumnValidationState>();
-
-        this.forEachCalculatedColumn((column, colId, expression) => {
-            const state = this.getExpressionValidationState(expression);
-            nextStates.set(colId, state);
-
-            const previousState = previousStates.get(colId);
-            const hasPreviousState = previousState !== undefined;
-            const stateChanged =
-                (hasPreviousState && previousState !== state) || (!hasPreviousState && state !== 'valid');
-            if (shouldDispatch && stateChanged) {
-                const valid = state === 'valid';
-                this.dispatchValidationStateChangedEvent(
-                    this.getEventCommonParams(column, expression, source),
-                    valid,
-                    valid ? undefined : state
-                );
+    /** Records each declared column the user did not remove, as authored and valid, for the next build to resolve. */
+    private recordColumnsTurnedOn(): void {
+        const userColumnSvc = this.userColumnSvc;
+        const known = new Map<string, KnownCalculatedColumn>();
+        const cols = this.beans.colModel.colDefList;
+        for (let i = 0, len = cols.length; i < len; ++i) {
+            const column = cols[i];
+            const declared = column.userProvidedColDef;
+            // the user's change of it, which the option applies again; null for one the user removed
+            const override = declared ? userColumnSvc.overrideFor(declared) : undefined;
+            if (override !== null) {
+                const colDef = override ?? declared ?? column.colDef;
+                known.set(column.colId, { column, colDef, validationState: 'valid' });
             }
-        });
+        }
+        this.turnedOnColumns = known;
+    }
 
-        this.validationStatesByColId = nextStates;
-        this.validationStatesInitialised = true;
+    public rebuildColsAndValidate(source: ColumnEventType): void {
+        const previousColumns = this.knownCalculatedColumns;
+        const turnedOn = this.turnedOnColumns;
+        this.turnedOnColumns = null; // a silent rebuild compares no definition with them
+        this.beans.colModel.rebuildCols(source);
+        if (this.knownCalculatedColumns === previousColumns) {
+            this.turnedOnColumns = turnedOn; // staged behind a build in flight, or no columns yet: kept for that build
+        }
+        this.dispatchValidationChanges(source, previousColumns);
+    }
+
+    private dispatchValidationChanges(
+        source: ColumnEventType,
+        previousColumns: ReadonlyMap<string, KnownCalculatedColumn>
+    ): void {
+        this.knownCalculatedColumns.forEach(({ column, validationState }, colId) => {
+            if ((previousColumns.get(colId)?.validationState ?? 'valid') === validationState) {
+                return;
+            }
+            const valid = validationState === 'valid';
+            this.dispatchValidationStateChangedEvent(
+                this.getEventCommonParams(column, column.colDef.calculatedExpression ?? '', source),
+                valid,
+                valid ? undefined : validationState
+            );
+        });
     }
 
     private getEventCommonParams(
@@ -1715,14 +1901,58 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             label: name,
         }));
     }
-
-    private refreshCalculatedColumn(colId: string): void {
-        window.setTimeout(() => {
-            const beans = this.beans;
-            const column = this.isAlive() && beans.colModel.colsById[colId];
-            if (column) {
-                beans.rowRenderer.refreshCells({ columns: [column], force: true });
-            }
-        }, 0);
-    }
 }
+
+const addRowGroupCols = (
+    rowGroupCols: Set<AgColumn>,
+    rowGroupColsSvc: IRowGroupColsService,
+    colModel: ColumnModel,
+    cols: AgColumn[] | undefined,
+    newColDefs: boolean
+): void => {
+    if (!cols) {
+        return;
+    }
+    for (let i = 0, len = cols.length; i < len; ++i) {
+        const col = cols[i];
+        if (rowGroupColsSvc.willExtractCol(col, colModel.isColNew(col), newColDefs)) {
+            rowGroupCols.add(col);
+        }
+    }
+};
+
+/** Lists `col` after `source`; kept cols in their kept order, before the new ones, as the list is pushed in reverse. */
+const addFollower = (
+    followers: Map<AgColumn, AgColumn[]>,
+    source: AgColumn,
+    col: AgColumn,
+    keptCols: ReadonlyMap<AgColumn, number> | null
+): void => {
+    let cols = followers.get(source);
+    if (cols === undefined) {
+        cols = [];
+        followers.set(source, cols);
+    }
+    const keptAt = keptCols?.get(col);
+    if (keptCols === null || keptAt === undefined) {
+        cols.push(col);
+        return;
+    }
+    let at = cols.length;
+    while (at > 0 && (keptCols.get(cols[at - 1]) ?? -1) < keptAt) {
+        --at;
+    }
+    cols.splice(at, 0, col);
+};
+
+/** Pushes `col`, then each col seated after it, newest first, each followed by its own. */
+const pushWithFollowers = (result: AgColumn[], col: AgColumn, followers: Map<AgColumn, AgColumn[]>): void => {
+    result.push(col);
+    const cols = followers.get(col);
+    if (cols === undefined) {
+        return;
+    }
+    for (let i = cols.length - 1; i >= 0; --i) {
+        pushWithFollowers(result, cols[i], followers);
+    }
+};

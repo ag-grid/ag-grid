@@ -1,14 +1,14 @@
-import type { AgBeanStubEvent, AgEvent, IAgEventEmitter, StringComparator } from 'ag-stack';
+import type { IAgEventEmitter, StringComparator } from 'ag-stack';
 import { LocalEventService, _escapeString } from 'ag-stack';
 
 import { _addColumnDefaultAndTypes } from '../columns/colDefUtils';
-import type { QueuedEventOwner } from '../columns/columnModel';
 import { updateSomeColumnState } from '../columns/columnStateUtils';
 import type { ColumnStateParams } from '../columns/columnStateUtils';
 import type { VisibleColsService } from '../columns/visibleColsService';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { ColumnEvent, ColumnEventType, ColumnStateUpdatedEvent } from '../events';
+import { HEADER_CHANGE_FLAG_COL_DEFS, HEADER_CHANGE_FLAG_HEADER_NAME_OVERRIDE } from '../gridChanges';
 import { _addGridCommonParams } from '../gridOptionsUtils';
 import type {
     Column,
@@ -23,6 +23,7 @@ import type {
 import { ColumnHighlightPosition } from '../interfaces/iColumn';
 import type { IRowNode } from '../interfaces/iRowNode';
 import type { SortDef, SortDirection, SortType } from '../interfaces/iSort';
+import type { ColEventOwner } from '../syncService';
 import { _mergedEqual } from '../utils/mergeDeep';
 import { _clamp } from '../utils/number';
 import { _isProtoField } from '../utils/value';
@@ -129,6 +130,14 @@ const COL_FLAG_HIGHLIGHT_AFTER = 0x00008000;
 const COL_FLAG_WIDTH_SET = 0x00010000;
 /** Redefined since its filter, if any, last derived its params. */
 const COL_FLAG_FILTER_REDEFINED = 0x00020000;
+/** A column build gave its id by position or with a suffix, not from its def's own colId or field. */
+const COL_FLAG_ID_GENERATED = 0x00040000;
+/** Its cells must re-read a new definition, which they are then taken to do. */
+const COL_FLAG_CELLS_REDEFINED = 0x00080000;
+/** Its header cells redraw at the header's next follow: renamed, redefined or given another formula reference. */
+const COL_FLAG_HEADER_CHANGED = 0x00100000;
+/** With {@link COL_FLAG_HEADER_CHANGED}: redefined, so its floating filter rebuilds. */
+const COL_FLAG_HEADER_REDEFINED = 0x00200000;
 
 // Runtime wrapper around a (logic-free) column definition, holding all runtime state plus logic.
 // Child of either the original or the displayed tree; each group class implements only its own tree's interface.
@@ -138,7 +147,7 @@ const COL_FLAG_FILTER_REDEFINED = 0x00020000;
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class AgColumn<TValue = any>
     extends BeanStub<ColumnEventName>
-    implements Column, IAgEventEmitter<ColumnEventName>, QueuedEventOwner
+    implements Column, IAgEventEmitter<ColumnEventName>, ColEventOwner
 {
     public readonly isColumn = true as const;
 
@@ -212,8 +221,10 @@ export class AgColumn<TValue = any>
     public stringComparatorVersion = -1;
     public lastQueuedEventAt: number = 0;
 
-    /** Most recent build token that claimed this col — used to detect "already used in this refresh". */
+    /** The latest build that claimed this col, or the build that destroyed it. */
     public buildToken: number = 0;
+    /** The build that created this col; 0 when no column build did. */
+    public createdBuildToken: number = 0;
     /** 0-based index in `VisibleColsService.allCols` (displayed, visual order — RTL reversed), stamped each refresh. `-1` = not displayed. */
     public allColsIndex: number = -1;
     /** Slot in a row's colSpans cache, stamped with `allColsIndex`; `-1` without `colDef.colSpan` or not displayed. */
@@ -237,10 +248,11 @@ export class AgColumn<TValue = any>
      *  when none. `showValuesAs.type` is the active mode; the active mode is owned by column state. */
     public showValuesAs: AgShowValuesAsResolved | null = null;
 
-    /** colId this column sits immediately after in display order. Order restoration seats new cols after
-     *  this anchor — handles anchors absent from the tree (e.g. auto-group col) and stacks same-anchor adds
-     *  newest-first. `undefined` = not anchored. Column-kind agnostic (currently set by the calc-column contributor). */
+    /** colId of the column a dynamic calculated column sits right after in display order, seated there by the
+     *  calculated columns service (also after an auto-group col, which has no tree slot). `undefined` = not anchored. */
     public anchoredToColId: string | undefined = undefined;
+    /** The column a group or hierarchy column was generated for; reused, and kept in a saved order, only for it. */
+    public derivedFromCol: AgColumn | null = null;
 
     /** `COL_FLAG_*` bits; outside this file, read and written through the methods naming them. */
     public colFlags: number = 0;
@@ -265,8 +277,7 @@ export class AgColumn<TValue = any>
 
     constructor(
         public colDef: ColDef<any, TValue>,
-        // kept only for object-identity checks in ColumnFactory (matching an updated col list to an
-        // existing column); this.colDef can't serve as it is the merge result
+        // the def as given: the next build matches by it (object, colId, field, header); colDef is the merge result
         public userProvidedColDef: ColDef<any, TValue> | null,
         public readonly colId: string,
         public readonly primary: boolean,
@@ -318,7 +329,7 @@ export class AgColumn<TValue = any>
         const oldColDef = this.colDef;
         this.userProvidedColDef = userProvidedColDef;
         this.colDef = colDef;
-        if (_mergedEqual(colDef, oldColDef)) {
+        if (_mergedEqual(colDef, oldColDef) && !this.isDotNotationStale()) {
             this.initCalculatedColumnState(colDef);
             return false;
         }
@@ -330,7 +341,7 @@ export class AgColumn<TValue = any>
         if (!_mergedEqual(colDef.accentedSort, oldColDef.accentedSort)) {
             // an equal `accentedSort` keeps the comparator, so client-side sorting does not re-sort for nothing
             this.stringComparatorVersion = -1;
-            colModel.accentedSortChangedCols.push(this);
+            this.beans.syncSvc.changes.rowChanges.sortComparators = true;
         }
         showValuesAsSvc?.resolveColumn(this, false); // colDef change — `initialShowValuesAs` is create-only
         this.initMinAndMaxWidths();
@@ -339,43 +350,62 @@ export class AgColumn<TValue = any>
         if (colDef.spanRows !== oldColDef.spanRows) {
             rowSpanSvc?.columnRowSpanChanged(this);
         }
-        this.colFlags |= COL_FLAG_FILTER_REDEFINED;
-        // an update of its own when none is open, so the filter re-derives its params once the columns are final
-        colModel.beginColUpdate();
-        try {
-            this.dispatchColEvent('colDefChanged', source);
-            pivotResultCols?.recreateColDefsForSource(this, source);
-        } finally {
-            colModel.endColUpdate();
-        }
+        this.colFlags |=
+            COL_FLAG_FILTER_REDEFINED | COL_FLAG_CELLS_REDEFINED | COL_FLAG_HEADER_CHANGED | COL_FLAG_HEADER_REDEFINED;
+        this.beans.syncSvc.changes.headerChanges |= HEADER_CHANGE_FLAG_COL_DEFS;
+        this.dispatchColEvent('colDefChanged', source);
+        pivotResultCols?.recreateColDefsForSource(this, source);
         return true;
     }
 
     /** Re-apply `def` to a reused column. Stateful attrs are only (re)applied when the user authored the
-     *  definitions (`newColDefs`); an internal rebuild (e.g. calc-col add) must leave live state intact. */
-    public reapplyColDef(def: ColDef, source: ColumnEventType, newColDefs: boolean): void {
-        const merged = _addColumnDefaultAndTypes(this.beans, def, this.colId);
+     *  definitions (`newColDefs`); an internal rebuild (e.g. calc-col add) must leave live state intact. `merged`:
+     *  `def` merged with the defaults and column types, when the caller already made it. */
+    public reapplyColDef(
+        def: ColDef,
+        source: ColumnEventType,
+        newColDefs: boolean,
+        merged = _addColumnDefaultAndTypes(this.beans, def, this.colId)
+    ): void {
         this.setColDef(merged, def, source);
         if (newColDefs) {
-            updateSomeColumnState(
-                this.beans,
-                this,
-                merged.hide,
-                merged.sort,
-                merged.sortIndex,
-                merged.pinned,
-                merged.flex,
-                source
-            );
-            // `initialPivotSort` is create-only, so an update honours an explicit `pivotSort` only.
-            const pivotSort = merged.pivotSort;
-            if (pivotSort !== undefined) {
-                this.pivotSort = normalizeSortDirection(pivotSort);
-            }
-            // Read `flex` after the state update so a flex→fixed switch applies before width.
-            const colFlex = this.flex;
-            if (colFlex == null || colFlex <= 0) {
-                this.setActualWidth(merged.width ?? this.actualWidth, source);
+            this.applyColDefState(merged.hide, source);
+            this.beans.pivotResultCols?.reapplyStateForSource(this, source);
+        }
+    }
+
+    /** Applies the stateful attributes of the column's merged colDef, with `hide` as given (`undefined`: kept). */
+    public applyColDefState(hide: boolean | null | undefined, source: ColumnEventType): void {
+        const colDef = this.colDef;
+        updateSomeColumnState(
+            this.beans,
+            this,
+            hide,
+            colDef.sort,
+            colDef.sortIndex,
+            colDef.pinned,
+            colDef.flex,
+            source
+        );
+        // `initialPivotSort` is create-only, so an update honours an explicit `pivotSort` only.
+        const pivotSort = colDef.pivotSort;
+        if (pivotSort !== undefined) {
+            this.pivotSort = normalizeSortDirection(pivotSort);
+        }
+        // Read `flex` after the state update so a flex→fixed switch applies before width.
+        const colFlex = this.flex;
+        const flexes = colFlex != null && colFlex > 0;
+        // a pinned column never flexes, so it takes the width whatever its flex
+        if (!flexes || this.pinned) {
+            const width = colDef.width;
+            const actualWidth = this.actualWidth;
+            // no width of its own keeps the column's, set again only when its new bounds move it
+            if (width != null || actualWidth < this.minWidth || actualWidth > this.maxWidth) {
+                this.setActualWidth(width ?? actualWidth, source);
+                if (flexes) {
+                    // the width clears a flex, which the pinned column keeps for when it is unpinned
+                    this.flex = colFlex;
+                }
             }
         }
     }
@@ -404,6 +434,21 @@ export class AgColumn<TValue = any>
         this.colFlags &= ~COL_FLAG_WIDTH_SET;
         this.initDotNotation();
         this.initTooltip();
+    }
+
+    /** Whether a dotted `field` or `tooltipField` was read under the other `suppressFieldDotNotation`. */
+    private isDotNotationStale(): boolean {
+        const { field, tooltipField } = this.colDef;
+        const fieldDotted = typeof field === 'string' && field.includes('.');
+        const tooltipDotted = typeof tooltipField === 'string' && tooltipField.includes('.');
+        if (!fieldDotted && !tooltipDotted) {
+            return false;
+        }
+        const suppress = this.gos.get('suppressFieldDotNotation');
+        return (
+            (fieldDotted && (this.fieldPath === null) !== suppress) ||
+            (tooltipDotted && ((this.colFlags & COL_FLAG_TOOLTIP_FIELD_CONTAINS_DOTS) !== 0) === suppress)
+        );
     }
 
     private initDotNotation(): void {
@@ -736,6 +781,29 @@ export class AgColumn<TValue = any>
         return (flags & COL_FLAG_FILTER_REDEFINED) !== 0;
     }
 
+    /** Whether its cells must re-read its definition, which they are then taken to do. */
+    public takeCellsRedefined(): boolean {
+        const flags = this.colFlags;
+        this.colFlags = flags & ~COL_FLAG_CELLS_REDEFINED;
+        return (flags & COL_FLAG_CELLS_REDEFINED) !== 0;
+    }
+
+    /** Call inside a column update, on a new name, definition or formula reference: its header cell redraws in it. */
+    public headerChanged(): void {
+        this.colFlags |= COL_FLAG_HEADER_CHANGED;
+        this.beans.syncSvc.changes.headerChanges |= HEADER_CHANGE_FLAG_COL_DEFS;
+    }
+
+    /** Whether its header cells must redraw (`null`: no; else whether it was redefined), as they are then taken to. */
+    public takeHeaderChange(): boolean | null {
+        const flags = this.colFlags;
+        if ((flags & COL_FLAG_HEADER_CHANGED) === 0) {
+            return null;
+        }
+        this.colFlags = flags & ~(COL_FLAG_HEADER_CHANGED | COL_FLAG_HEADER_REDEFINED);
+        return (flags & COL_FLAG_HEADER_REDEFINED) !== 0;
+    }
+
     /** @deprecated v33 Use `api.isColumnHovered(column)` instead. */
     public isHovered(): boolean {
         this.warn(261);
@@ -778,6 +846,9 @@ export class AgColumn<TValue = any>
     public setVisible(visible: boolean, source: ColumnEventType): void {
         if (this.visible !== visible) {
             this.visible = visible;
+            const changes = this.beans.syncSvc.changes;
+            changes.rowChanges.columnsVisible = true;
+            changes.columnState = true;
             let group = this.originalParent;
             while (group) {
                 if (!group.setExpandable()) {
@@ -867,6 +938,15 @@ export class AgColumn<TValue = any>
         this.colFlags = userSized ? this.colFlags | COL_FLAG_USER_SIZED : this.colFlags & ~COL_FLAG_USER_SIZED;
     }
 
+    public isIdGenerated(): boolean {
+        return (this.colFlags & COL_FLAG_ID_GENERATED) !== 0;
+    }
+
+    /** Set once, by the column build that creates it. */
+    public markIdGenerated(): void {
+        this.colFlags |= COL_FLAG_ID_GENERATED;
+    }
+
     public getAutoHeaderHeight(): number | null {
         return this.autoHeaderHeight;
     }
@@ -908,6 +988,7 @@ export class AgColumn<TValue = any>
         if (this.actualWidth !== actualWidth) {
             // disable flex for this column if it was manually resized.
             this.actualWidth = actualWidth;
+            this.beans.syncSvc.changes.columnState = true;
             if (this.flex != null && source !== 'flex' && source !== 'gridInitializing') {
                 this.flex = null;
             }
@@ -924,12 +1005,12 @@ export class AgColumn<TValue = any>
         }
         if (actualWidth !== this.reportedWidth) {
             this.reportedWidth = actualWidth;
-            // a column still flexed was sized by its flex pass, as any other resize ends its flex
-            const widthSource = this.flex != null ? 'flex' : source;
+            // a flexed column was sized by its flex pass (any other resize ends its flex); a pinned one never flexes
+            const widthSource = this.flex != null && !this.pinned ? 'flex' : source;
             this.dispatchColEvent('widthChanged', widthSource);
             this.dispatchStateUpdatedEvent('width', widthSource);
         } else if (widthSet) {
-            this.dispatchStateUpdatedEvent('width', this.flex != null ? 'flex' : source);
+            this.dispatchStateUpdatedEvent('width', this.flex != null && !this.pinned ? 'flex' : source);
         }
         // read after `widthChanged`, whose listener's own update may have moved the column and reported it
         const left = this.left;
@@ -1008,12 +1089,17 @@ export class AgColumn<TValue = any>
             return;
         }
         this.headerNameOverride = headerName;
-        const colModel = this.beans.colModel;
+        const { syncSvc, autoColSvc, pivotResultCols } = this.beans;
+        const changes = syncSvc.changes;
+        changes.columnState = true;
+        changes.headerChanges |= HEADER_CHANGE_FLAG_HEADER_NAME_OVERRIDE;
         // one update with the auto columns a rename redefines, so each is told once all hold the new name
-        colModel.beginColUpdate();
+        syncSvc.beginUpdate();
         try {
-            // Column-scoped event for the column's own header cell and tool panel entry, so they refresh
-            // without filtering by colId; the grid-level event drives the state service.
+            autoColSvc?.onHeaderNameChanged(this, source);
+            pivotResultCols?.onValueColRenamed(this, source);
+            this.headerChanged();
+            // for the column's tool panel entry and filters; the grid-level event drives the state service
             this.dispatchColEvent('headerNameChanged', source);
             this.beans.eventSvc.dispatchEvent({
                 type: 'columnHeaderNameChanged',
@@ -1023,24 +1109,24 @@ export class AgColumn<TValue = any>
                 source,
             });
         } finally {
-            colModel.endColUpdate();
+            syncSvc.endUpdate();
         }
     }
 
     public dispatchColEvent(type: ColumnEventName, source: ColumnEventType, additionalEventAttributes?: any): void {
-        const localEventService = this.localEventService;
-        if (localEventService?.hasListeners(type)) {
-            this.raise(
-                localEventService,
-                _addGridCommonParams<ColumnEvent>(this.gos, {
-                    type,
-                    column: this,
-                    columns: [this],
-                    source,
-                    ...additionalEventAttributes,
-                })
-            );
+        if (!this.localEventService?.hasListeners(type)) {
+            return;
         }
+        this.beans.syncSvc.raiseColEvent(
+            this,
+            _addGridCommonParams<ColumnEvent>(this.gos, {
+                type,
+                column: this,
+                columns: [this],
+                source,
+                ...additionalEventAttributes,
+            })
+        );
     }
 
     /** `key` names the `ColumnState` property updated. */
@@ -1049,10 +1135,9 @@ export class AgColumn<TValue = any>
         if (dataTypeSvc?.isPendingInference) {
             dataTypeSvc.columnStateUpdated(this, key);
         }
-        const localEventService = this.localEventService;
-        if (localEventService?.hasListeners('columnStateUpdated')) {
-            this.raise(
-                localEventService,
+        if (this.localEventService?.hasListeners('columnStateUpdated')) {
+            this.beans.syncSvc.raiseColEvent(
+                this,
                 _addGridCommonParams<ColumnStateUpdatedEvent>(this.gos, {
                     type: 'columnStateUpdated',
                     column: this,
@@ -1062,23 +1147,6 @@ export class AgColumn<TValue = any>
                 })
             );
         }
-    }
-
-    private raise(
-        localEventService: LocalEventService<ColumnEventName | AgBeanStubEvent>,
-        event: AgEvent<ColumnEventName>
-    ): void {
-        const colModel = this.beans.colModel;
-        if (colModel.colUpdateDepth > 0) {
-            colModel.queueColEvent(this, event);
-        } else {
-            localEventService.dispatchEvent(event);
-        }
-    }
-
-    /** A column destroyed since the event was queued has dropped its listeners. */
-    public raiseQueuedEvent(event: AgEvent<ColumnEventName>): void {
-        this.localEventService?.dispatchEvent(event);
     }
 }
 

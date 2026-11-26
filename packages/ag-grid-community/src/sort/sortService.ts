@@ -4,7 +4,6 @@ import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
 import { _normalizeSortType, getSortDefFromInput, getSortingOrder } from '../entities/agColumn';
 import type { ColumnEventType, SortChangedEvent } from '../events';
-import { _isColumnsSortingCoupledToGroup } from '../gridOptionsUtils';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { DisplaySortDef, SortDef, SortDirection } from '../interfaces/iSort';
 import type { SortModelItem } from '../interfaces/iSortModelItem';
@@ -58,8 +57,8 @@ export class SortService extends BeanStub implements NamedBean {
         source: ColumnEventType,
         cycleIndex?: number
     ): void {
-        const { gos, showRowGroupCols, colModel } = this.beans;
-        const coupled = _isColumnsSortingCoupledToGroup(gos);
+        const { gos, showRowGroupCols, syncSvc } = this.beans;
+        const coupled = !!this.beans.rowNodeSorter?.sortingCoupledToGroup;
 
         const columnsToUpdate: AgColumn[] = [column];
         if (column.showRowGroup && coupled) {
@@ -72,7 +71,7 @@ export class SortService extends BeanStub implements NamedBean {
             }
         }
 
-        colModel.beginColUpdate();
+        syncSvc.beginUpdate();
         try {
             // Only the clicked column (always first) carries the cycle position; coupled sources share the def.
             for (let i = 0, len = columnsToUpdate.length; i < len; ++i) {
@@ -98,7 +97,7 @@ export class SortService extends BeanStub implements NamedBean {
             }
             this.dispatchSortChangedEvents(source, updatedColumns);
         } finally {
-            colModel.endColUpdate();
+            syncSvc.endUpdate();
         }
     }
 
@@ -116,8 +115,8 @@ export class SortService extends BeanStub implements NamedBean {
     }
 
     private updateSortIndex(lastColToChange: AgColumn, source: ColumnEventType) {
-        const { gos, colModel } = this.beans;
-        const isCoupled = _isColumnsSortingCoupledToGroup(gos);
+        const colModel = this.beans.colModel;
+        const isCoupled = !!this.beans.rowNodeSorter?.sortingCoupledToGroup;
         const lastSortIndexCol = isCoupled ? (lastColToChange.showRowGroupCol ?? lastColToChange) : lastColToChange;
 
         // Read the old-order list before mutating sortIndex below.
@@ -152,10 +151,17 @@ export class SortService extends BeanStub implements NamedBean {
     // Called by API when data changes out-of-band; we can't know what changed, so drop everything.
     public onSortChanged(source: string, columns?: AgColumn[]): void {
         this.invalidate();
-        this.dispatchSortChangedEvents(source, columns);
+        const syncSvc = this.beans.syncSvc;
+        syncSvc.beginUpdate();
+        try {
+            this.dispatchSortChangedEvents(source, columns);
+        } finally {
+            syncSvc.endUpdate();
+        }
     }
 
     public dispatchSortChangedEvents(source: string, columns?: AgColumn[]): void {
+        this.beans.syncSvc.changes.sortChanged();
         const event: WithoutGridCommon<SortChangedEvent> = { type: 'sortChanged', source, columns };
         this.eventSvc.dispatchEvent(event);
     }
@@ -222,7 +228,7 @@ export class SortService extends BeanStub implements NamedBean {
      *  interleaves each display group col with its source row-group cols (shared display index). */
     private loadSortedCols(): AgColumn[] {
         const { colModel, showRowGroupCols } = this.beans;
-        const coupled = _isColumnsSortingCoupledToGroup(this.gos);
+        const coupled = !!this.beans.rowNodeSorter?.sortingCoupledToGroup;
         const pivotMode = colModel.pivotMode;
         const allCols = colModel.getAllCols();
         const sorted: AgColumn[] = [];
@@ -256,7 +262,7 @@ export class SortService extends BeanStub implements NamedBean {
         const len = sortedCols.length;
         const showRowGroupCols = this.beans.showRowGroupCols;
         let idx: number;
-        if (_isColumnsSortingCoupledToGroup(this.gos) && showRowGroupCols) {
+        if (this.beans.rowNodeSorter?.sortingCoupledToGroup && showRowGroupCols) {
             // Coupled mode: source cols share their display group col's index (enterprise).
             idx = showRowGroupCols.fillCoupledSortIndexMap(sortedCols, map);
         } else {
@@ -309,7 +315,7 @@ export class SortService extends BeanStub implements NamedBean {
     public getDisplaySort(column: AgColumn): DisplaySortDef | null {
         const colSortDef = column.getSortDef();
         // Mixed sort only on a coupled group display col — check the cheap flags before the linked-col lookup.
-        if (!column.showRowGroup || !_isColumnsSortingCoupledToGroup(this.gos)) {
+        if (!column.showRowGroup || !this.beans.rowNodeSorter?.sortingCoupledToGroup) {
             return colSortDef;
         }
         const linkedColumns = this.beans.showRowGroupCols?.getSourceColumnsForGroupColumn(column);
@@ -340,29 +346,18 @@ export class SortService extends BeanStub implements NamedBean {
         return this.displaySortCount;
     }
 
-    public setupHeader(comp: Component, column: AgColumn): void {
-        const refreshStyles = () => {
-            const { type, direction } = getSortDefFromInput(column.getSortDef());
-            comp.toggleCss('ag-header-cell-sorted-asc', direction === 'asc');
-            comp.toggleCss('ag-header-cell-sorted-desc', direction === 'desc');
-            comp.toggleCss('ag-header-cell-sorted-abs-asc', type === 'absolute' && direction === 'asc');
-            comp.toggleCss('ag-header-cell-sorted-abs-desc', type === 'absolute' && direction === 'desc');
-            comp.toggleCss('ag-header-cell-sorted-none', !direction);
-            if (column.showRowGroup) {
-                const isMixed = this.beans.showRowGroupCols?.isGroupSortMixed(column, direction) ?? true;
-                comp.toggleCss('ag-header-cell-sorted-mixed', isMixed);
-            }
-        };
-
-        comp.addManagedEventListeners({
-            sortChanged: refreshStyles,
-            columnPinned: refreshStyles,
-            columnRowGroupChanged: refreshStyles,
-            displayedColumnsChanged: refreshStyles,
-        });
-
-        // A column already sorted when its header is created (e.g. from initialState) must have correct styles
-        refreshStyles();
+    /** Sets the sort classes of `comp`, the header of the sortable `column`, from the column's sort. */
+    public refreshHeaderStyles(comp: Component, column: AgColumn): void {
+        const { type, direction } = getSortDefFromInput(column.getSortDef());
+        comp.toggleCss('ag-header-cell-sorted-asc', direction === 'asc');
+        comp.toggleCss('ag-header-cell-sorted-desc', direction === 'desc');
+        comp.toggleCss('ag-header-cell-sorted-abs-asc', type === 'absolute' && direction === 'asc');
+        comp.toggleCss('ag-header-cell-sorted-abs-desc', type === 'absolute' && direction === 'desc');
+        comp.toggleCss('ag-header-cell-sorted-none', !direction);
+        if (column.showRowGroup) {
+            const isMixed = this.beans.showRowGroupCols?.isGroupSortMixed(column, direction) ?? true;
+            comp.toggleCss('ag-header-cell-sorted-mixed', isMixed);
+        }
     }
 
     public initCol(column: AgColumn): void {

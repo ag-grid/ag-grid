@@ -105,6 +105,16 @@ export class RowContainerCtrl extends BeanStub {
     // Maintaining a constant reference enables optimization in React.
     private readonly EMPTY_CTRLS = [];
     private containerWidth: number | null = null;
+    private ePreventScroll: HTMLElement | null = null;
+    private stopViewportResize: (() => void) | null = null;
+
+    // the views do not scroll while the drag service drags, such as rows by their drag handle
+    private readonly preventScrollWhileDragging = (e: TouchEvent): void => {
+        if (!this.beans.dragSvc?.dragging || !e.cancelable) {
+            return;
+        }
+        e.preventDefault();
+    };
 
     constructor(private readonly name: RowContainerName) {
         super();
@@ -176,8 +186,7 @@ export class RowContainerCtrl extends BeanStub {
         );
     }
 
-    /** Pushed by `GridBodyCtrl.updateWidths`. Several events report one column change, so the same
-     *  width arrives more than once per refresh. */
+    /** Pushed by `GridBodyCtrl.updateWidths`, which can push the same width again. */
     public setContainerWidth(width: number): void {
         if (width !== this.containerWidth) {
             this.containerWidth = width;
@@ -187,16 +196,12 @@ export class RowContainerCtrl extends BeanStub {
 
     private addListeners(): void {
         const { spannedRowRenderer, gos } = this.beans;
-        const onDisplayedColumnsChanged = this.onDisplayedColumnsChanged.bind(this);
 
         this.addManagedEventListeners({
             stylesChanged: this.setPinnedRowBorderWidth.bind(this),
-            displayedColumnsChanged: onDisplayedColumnsChanged,
-            displayedColumnsWidthChanged: onDisplayedColumnsChanged,
             displayedRowsChanged: (params) => this.onDisplayedRowsChanged(params.afterScroll),
         });
 
-        onDisplayedColumnsChanged();
         this.onDisplayedRowsChanged();
 
         if (spannedRowRenderer && this.options.getSpannedRowCtrls && gos.get('enableCellSpan')) {
@@ -229,35 +234,26 @@ export class RowContainerCtrl extends BeanStub {
         listener();
     }
 
-    public onDisplayedColumnsChanged(): void {
-        if (this.isScrollingCenterContainer()) {
-            this.beans.ctrlsSvc.getGridBodyCtrl()?.updateColumnViewport();
-        }
-    }
-
-    // this methods prevents the grid views from being scrolled while the dragService is being used
-    // eg. the view should not scroll up and down while dragging rows using the rowDragComp.
     private addPreventScrollWhileDragging(): void {
-        const { dragSvc } = this.beans;
-        if (!dragSvc) {
+        if (!this.beans.dragSvc) {
             return;
         }
-        const preventScroll = (e: TouchEvent) => {
-            if (dragSvc.dragging) {
-                if (e.cancelable) {
-                    e.preventDefault();
-                }
-            }
-        };
-
         const ePreventScroll = this.eViewport ?? this.eContainer;
-        ePreventScroll.addEventListener('touchmove', preventScroll, { passive: false });
-        this.addDestroyFunc(() => ePreventScroll.removeEventListener('touchmove', preventScroll));
+        this.ePreventScroll = ePreventScroll;
+        ePreventScroll.addEventListener('touchmove', this.preventScrollWhileDragging, { passive: false });
     }
 
+    /** One listener, the viewport size feature's. */
     public registerViewportResizeListener(listener: () => void) {
-        const unsubscribeFromResize = _observeResize(this.beans, this.eViewport, listener);
-        this.addDestroyFunc(() => unsubscribeFromResize());
+        this.stopViewportResize = _observeResize(this.beans, this.eViewport, listener);
+    }
+
+    public override destroy(): void {
+        this.ePreventScroll?.removeEventListener('touchmove', this.preventScrollWhileDragging);
+        this.ePreventScroll = null;
+        this.stopViewportResize?.();
+        this.stopViewportResize = null;
+        super.destroy();
     }
 
     public isViewportInTheDOMTree(): boolean {

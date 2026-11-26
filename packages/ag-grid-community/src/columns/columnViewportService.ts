@@ -29,13 +29,15 @@ export class ColumnViewportService extends BeanStub implements NamedBean {
     // same as colsWithinViewport, except we always include columns with headerAutoHeight
     private headerColsWithinViewport: AgColumn[] = [];
 
-    /** `-1` never matches a real version, so the first extraction always runs. */
+    /** The layout the rendered columns were extracted for; `-1`, never a real version, once the viewport moves. */
     private extractedLayoutVersion = -1;
     private extractedGroupVersion = -1;
 
     /** Bumped whenever the rendered header sections are rebuilt, so a header row can tell whether the set
      *  it last rendered is still the current one. */
     public headerRowsVersion = 0;
+    /** Bumped when the rendered columns change, so a row can tell whether its cells are for the current set. */
+    public renderedColsVersion = 0;
 
     // all columns & groups to be rendered, indexed by group level (a dense counter from zero, hence an
     // array): used by header rows to get all items to render for that row.
@@ -65,20 +67,13 @@ export class ColumnViewportService extends BeanStub implements NamedBean {
     }
 
     public setScrollPosition(scrollWidth: number, scrollPosition: number, afterScroll: boolean = false): void {
-        // Same viewport over the same layout extracts the same columns, so there is nothing to look at.
-        if (
-            scrollWidth === this.scrollWidth &&
-            scrollPosition === this.scrollPosition &&
-            this.visibleCols.layoutVersion === this.extractedLayoutVersion
-        ) {
-            return;
+        if (scrollWidth !== this.scrollWidth || scrollPosition !== this.scrollPosition) {
+            this.scrollWidth = scrollWidth;
+            this.scrollPosition = scrollPosition;
+            this.viewportLeft = scrollPosition;
+            this.viewportRight = scrollWidth + scrollPosition;
+            this.extractedLayoutVersion = -1;
         }
-
-        this.scrollWidth = scrollWidth;
-        this.scrollPosition = scrollPosition;
-        this.viewportLeft = scrollPosition;
-        this.viewportRight = scrollWidth + scrollPosition;
-
         if (this.colModel.ready) {
             this.checkViewportColumns(afterScroll);
         }
@@ -135,16 +130,8 @@ export class ColumnViewportService extends BeanStub implements NamedBean {
         return this.suppressColumnVirtualisation || (this.viewportRight === 0 && !_isRealCssEngine());
     }
 
-    public clear(): void {
-        this.rowsOfHeadersToRenderLeft = [];
-        this.rowsOfHeadersToRenderRight = [];
-        this.rowsOfHeadersToRenderCenter = [];
-        this.columnsToRenderLeft = [];
-        this.columnsToRenderRight = [];
-        this.columnsToRenderCenter = [];
-        this.colsWithinViewport = [];
-        this.headerColsWithinViewport = [];
-        this.extractedLayoutVersion = -1;
+    /** A column definition can change the header rows with nothing moving (header height spanning). */
+    public invalidateHeaderRows(): void {
         this.extractedGroupVersion = -1;
     }
 
@@ -194,11 +181,14 @@ export class ColumnViewportService extends BeanStub implements NamedBean {
         return left != null && left > this.viewportLeft;
     };
 
-    // checks what columns are currently displayed due to column virtualisation. dispatches an event
-    // if the list of columns has changed.
-    // + setColumnWidth(), setViewportPosition(), setColumnDefs(), sizeColumnsToFit()
+    /** Extracts the rendered columns and reports a changed set, unless the layout and viewport are as last extracted. */
     public checkViewportColumns(afterScroll: boolean = false): void {
-        const { leftCols, rightCols, layoutVersion } = this.visibleCols;
+        const visibleCols = this.visibleCols;
+        const layoutVersion = visibleCols.layoutVersion;
+        if (layoutVersion === this.extractedLayoutVersion) {
+            return;
+        }
+        const { leftCols, rightCols } = visibleCols;
         const groupVersion = this.colGroupSvc?.groupVersion ?? 0;
 
         this.extractViewportColumns();
@@ -218,13 +208,20 @@ export class ColumnViewportService extends BeanStub implements NamedBean {
             this.calculateHeaderRows();
         }
         // Only the rendered columns: a regroup leaves the cells alone, and the header rows it does
-        // affect are re-read on the `displayedColumnsChanged` that every rebuild dispatches after this.
-        if (changed) {
-            this.eventSvc.dispatchEvent({
-                type: 'virtualColumnsChanged',
-                afterScroll,
-            });
+        // affect are laid out again by the displayed columns change every rebuild reports after this.
+        if (!changed) {
+            return;
         }
+        ++this.renderedColsVersion;
+        if (!afterScroll) {
+            visibleCols.onVirtualColumnsChanged();
+            return;
+        }
+        // a scroll's own fast path, outside any column update: laid out before the event its listeners read
+        const { rowRenderer, ctrlsSvc } = this.beans;
+        ctrlsSvc.getHeaderRowContainerCtrl()?.layOutHeaderCells(false, true, 0);
+        rowRenderer.layOutCells(false, true, false, null, rowRenderer.rowCtrlsMade);
+        this.eventSvc.dispatchEvent({ type: 'virtualColumnsChanged', afterScroll });
     }
 
     private calculateHeaderRows(): void {

@@ -219,6 +219,7 @@ export class CsrmExpansionService
 
         // ensure row model updates (e.g. footer creation) complete before refreshing cells
         this.dispatchStateUpdatedEvent();
+        this.beans.rowModel.refreshAfterExpansion?.();
 
         // when using footers we need to refresh the group row, as the aggregation
         // values jump between group and footer, because the footer can be callback

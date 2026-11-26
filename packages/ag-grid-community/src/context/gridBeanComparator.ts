@@ -39,6 +39,8 @@ const orderedCoreBeans: BeanName[] = [
     'colFilter',
     'quickFilter',
     'filterManager',
+    // its options listener runs the column update, in the place the column model's would
+    'syncSvc',
     'colModel',
     'headerNavigation',
     'pageBounds',
@@ -74,7 +76,6 @@ const orderedCoreBeans: BeanName[] = [
     'ctrlsSvc',
     'pinnedCols',
     'dataTypeSvc',
-    'syncSvc',
     'overlays',
     'stateSvc',
     'expansionSvc',

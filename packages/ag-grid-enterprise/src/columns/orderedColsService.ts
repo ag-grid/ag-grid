@@ -34,19 +34,22 @@ export abstract class OrderedColsService extends BaseColsService implements IOrd
 
     /** Hierarchy virtuals apply only to the ordered services — kept here so `BaseColsService` stays hierarchy-free. */
     private groupHierarchCols?: IGroupHierarchyColService;
+    /** Hierarchy cols and sources the state pass sets this role on or off, each to whether the pass changed it. */
+    private readonly stateDecided = new Map<AgColumn, boolean>();
 
     public override wireBeans(beans: BeanCollection): void {
         super.wireBeans(beans);
         this.groupHierarchCols = beans.groupHierarchyColSvc;
     }
 
-    private getActiveHierarchyCols(): IGroupHierarchyColService | undefined {
-        const svc = this.groupHierarchCols;
-        return svc?.columns.length ? svc : undefined;
-    }
-
-    public override extractCol(col: AgColumn, colIsNew: boolean): void {
-        if (!this.willExtractCol(col, colIsNew)) {
+    public override extractCol(col: AgColumn, colIsNew: boolean, _source: ColumnEventType, newColDefs: boolean): void {
+        if (!colIsNew && !newColDefs) {
+            if (this.activeColSet.has(col)) {
+                this.bucketByKey(col, null); // a rebuild keeps an existing col's place
+            }
+            return;
+        }
+        if (!this.willExtractCol(col, colIsNew, newColDefs)) {
             return;
         }
         const colDef = col.colDef;
@@ -54,72 +57,83 @@ export abstract class OrderedColsService extends BaseColsService implements IOrd
         this.bucketByKey(col, key);
     }
 
-    public willExtractCol(col: AgColumn, colIsNew: boolean): boolean {
+    public willExtractCol(col: AgColumn, colIsNew: boolean, newColDefs: boolean): boolean {
+        if (!colIsNew && !newColDefs) {
+            return this.activeColSet.has(col); // only definitions set again decide an existing col's role
+        }
         const colDef = col.colDef;
         const include = decideExtractCol(colDef[this.enableProp], colDef[this.indexProp]);
         if (include !== undefined) {
             return include;
         }
+        if (colIsNew) {
+            return !!decideExtractCol(colDef[this.initialEnableProp], colDef[this.initialIndexProp]);
+        }
         // At extract time membership still reflects the prior state — the order set is the role-generic read.
-        return colIsNew
-            ? !!decideExtractCol(colDef[this.initialEnableProp], colDef[this.initialIndexProp])
-            : this.activeColSet.has(col);
+        if (!this.activeColSet.has(col)) {
+            return false;
+        }
+        // A hierarchy level its own def leaves undecided follows its source when the source decides false.
+        const source = col.derivedFromCol;
+        return !source || decideExtractCol(source.colDef[this.enableProp], source.colDef[this.indexProp]) !== false;
     }
 
-    /** This col's hierarchy virtuals (date-part group levels) to seat immediately before it; undefined if none. */
-    private getActiveVirtuals(column: AgColumn): AgColumn[] | undefined {
-        return this.groupHierarchCols?.getVirtualCols(column);
-    }
-
-    /** Seat the col's hierarchy virtuals before it (bulk path; their flags are set later by the diff).
-     *
-     *  A caller that names any of `col`'s virtuals itself is choosing levels explicitly, so its list is taken
-     *  literally and the unnamed levels are left out — the only way to express "group by just this level", and
-     *  what the drop zone needs so a level the user removed is not re-seated by the next full-list set. A list
-     *  naming no virtual still gets every configured level. Either way the result is a function of the list
-     *  alone, never of the current state.
-     */
-    protected override seatActiveCol(res: Set<AgColumn>, col: AgColumn, provided?: Set<AgColumn>): void {
-        const virtuals = this.getActiveVirtuals(col);
-        if (virtuals !== undefined) {
-            const len = virtuals.length;
-            let explicit = false;
-            if (provided !== undefined) {
-                for (let i = 0; i < len; ++i) {
-                    if (provided.has(virtuals[i])) {
-                        explicit = true;
-                        break;
-                    }
-                }
-            }
-            if (!explicit) {
-                for (let i = 0; i < len; ++i) {
-                    res.add(virtuals[i]);
+    /** Seats the col's levels before it: those `provided` names, else all, or only new ones unless new definitions
+     *  set this role's flag or index on the col. */
+    protected override seatActiveCol(
+        res: Set<AgColumn>,
+        col: AgColumn,
+        provided: Set<AgColumn> | undefined,
+        asNewGrid: boolean,
+        newColDefs: boolean
+    ): void {
+        const virtuals = this.groupHierarchCols?.getVirtualCols(col);
+        if (virtuals !== undefined && !choosesAnyLevel(virtuals, provided, undefined)) {
+            const colDef = col.colDef;
+            const keepLevels =
+                !asNewGrid &&
+                !provided &&
+                (!newColDefs || decideExtractCol(colDef[this.enableProp], colDef[this.indexProp]) === undefined);
+            const colModel = this.colModel;
+            for (let i = 0, len = virtuals.length; i < len; ++i) {
+                const level = virtuals[i];
+                if (!keepLevels || colModel.isColNew(level)) {
+                    res.add(level);
                 }
             }
         }
         res.add(col);
     }
 
-    /** Incremental activate also seats (and flags) the col's hierarchy virtuals before it. */
+    /** Activating an inactive col also seats (and flags) its hierarchy virtuals before it, as `seatActiveCol` does. */
     protected override setColActive(
         col: AgColumn,
         active: boolean,
         source: ColumnEventType,
         runSideEffects = false
     ): boolean {
-        if (active) {
-            const virtuals = this.getActiveVirtuals(col);
-            if (virtuals !== undefined) {
-                const set = this.activeColSet;
-                for (let i = 0, len = virtuals.length; i < len; ++i) {
-                    const vc = virtuals[i];
-                    set.add(vc);
-                    this.writeColActive(vc, true, source);
-                }
-            }
+        const hierarchy = this.groupHierarchCols;
+        const virtuals = active && !this.activeColSet.has(col) ? hierarchy?.getVirtualCols(col) : undefined;
+        if (virtuals !== undefined) {
+            this.seatLevels(virtuals, source, undefined);
         }
         return super.setColActive(col, active, source, runSideEffects);
+    }
+
+    /** Seats `virtuals` but those in `excluded` (flags and per-col events); whether any was not seated already. */
+    private seatLevels(
+        virtuals: readonly AgColumn[],
+        source: ColumnEventType,
+        excluded: ReadonlyMap<AgColumn, boolean> | undefined
+    ): boolean {
+        let seated = false;
+        for (let i = 0, len = virtuals.length; i < len; ++i) {
+            const level = virtuals[i];
+            if (!excluded?.has(level) && super.setColActive(level, true, source)) {
+                seated = true;
+            }
+        }
+        return seated;
     }
 
     public override syncColState(
@@ -142,23 +156,73 @@ export abstract class OrderedColsService extends BaseColsService implements IOrd
                 return;
             }
         }
+        // `super`: the pass seats hierarchy levels at its end, so the order of its items cannot change them.
+        let changed = super.setColActive(column, typeof idx === 'number' || !!enable, source);
         if (typeof idx === 'number') {
             // An explicit index can reorder an already-active col, so flag regardless of whether it flipped.
-            this.setColActive(column, true, source);
             this.recordPendingStateOrder(column, idx);
-        } else if (this.setColActive(column, !!enable, source)) {
-            this.pendingStateChanged = true;
+            changed = true;
+        }
+        this.pendingStateChanged ||= changed;
+        if (column.colKind === 'hierarchy' || this.groupHierarchCols?.getVirtualCols(column) !== undefined) {
+            const decided = this.stateDecided;
+            decided.set(column, changed || decided.get(column) === true);
         }
     }
 
-    /** Fold hierarchy ordering in front of the state-index sort; else fall back to the base index sort. */
-    protected override sortPendingCols(cols: AgColumn[]): boolean {
-        const hierarchy = this.getActiveHierarchyCols();
-        if (hierarchy) {
-            cols.sort((a, b) => hierarchy.compareVirtualColumns(a, b) ?? this.compareByStateIndex(a, b));
-            return true;
+    /** Ends a state pass: a source it activated without its levels gets every level it left unset, then the sort. */
+    public override sortByPendingState(source: ColumnEventType): void {
+        const { stateDecided: decided, activeColSet: active, groupHierarchCols } = this;
+        for (const col of decided.keys()) {
+            const virtuals = active.has(col) ? groupHierarchCols?.getVirtualCols(col) : undefined;
+            if (
+                virtuals !== undefined &&
+                !choosesAnyLevel(virtuals, decided, active) &&
+                this.seatLevels(virtuals, source, decided)
+            ) {
+                decided.set(col, true);
+                this.pendingStateChanged = true;
+            }
         }
-        return super.sortPendingCols(cols);
+        super.sortByPendingState(source);
+        decided.clear();
+    }
+
+    /** A hierarchy col without an index sorts before its active source col if the pass changed either, else stays. */
+    protected override sortPendingCols(cols: readonly AgColumn[]): AgColumn[] | null {
+        const hierarchy = this.groupHierarchCols;
+        if (!hierarchy?.columns.length) {
+            return super.sortPendingCols(cols);
+        }
+        const { activeColSet, pendingStateOrder, stateDecided } = this;
+        // Groups by first member (stable sort); a joining hierarchy col is in its source's group.
+        const groups = new Set<AgColumn>();
+        for (let i = 0, len = cols.length; i < len; ++i) {
+            const col = cols[i];
+            const source = col.colKind === 'hierarchy' ? col.derivedFromCol : null;
+            const joins =
+                source !== null &&
+                activeColSet.has(source) &&
+                !pendingStateOrder?.has(col) &&
+                (stateDecided.get(source) === true || stateDecided.get(col) === true);
+            groups.add(joins ? source : col);
+        }
+        const heads = Array.from(groups).sort(this.compareByStateIndex);
+        const res: AgColumn[] = [];
+        for (let i = 0, len = heads.length; i < len; ++i) {
+            const head = heads[i];
+            const virtuals = hierarchy.getVirtualCols(head);
+            if (virtuals) {
+                for (let j = 0, vLen = virtuals.length; j < vLen; ++j) {
+                    const level = virtuals[j];
+                    if (activeColSet.has(level) && !groups.has(level)) {
+                        res.push(level);
+                    }
+                }
+            }
+            res.push(head);
+        }
+        return res;
     }
 
     /** Stamps synthetic `indexProp` onto `incoming`/`accumulator` so a `cellDataType`-inferred rowGroup/pivot
@@ -248,6 +312,24 @@ export abstract class OrderedColsService extends BaseColsService implements IOrd
             }
         }
     }
+}
+
+/** Whether `chosen` holds one of a source's levels (and `active`, if given): then its levels are those, else all. */
+function choosesAnyLevel(
+    virtuals: readonly AgColumn[],
+    chosen: ReadonlySet<AgColumn> | ReadonlyMap<AgColumn, boolean> | undefined,
+    active: ReadonlySet<AgColumn> | undefined
+): boolean {
+    if (!chosen) {
+        return false;
+    }
+    for (let i = 0, len = virtuals.length; i < len; ++i) {
+        const level = virtuals[i];
+        if (chosen.has(level) && (active === undefined || active.has(level))) {
+            return true;
+        }
+    }
+    return false;
 }
 
 function decideExtractCol(value: boolean | null | undefined, index: number | null | undefined): boolean | undefined {

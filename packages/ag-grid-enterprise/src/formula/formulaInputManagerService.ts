@@ -1,14 +1,9 @@
-import type { IFormulaInputManagerService, NamedBean } from 'ag-grid-community';
+import type { IFormulaInputManagerService, IRangeSelectionExtension, NamedBean } from 'ag-grid-community';
 import { BeanStub } from 'ag-grid-community';
-
-import type {
-    RangeSelectionExtension,
-    RangeSelectionExtensionRegistry,
-} from '../rangeSelection/rangeSelectionExtensions';
 
 export class FormulaInputManagerService
     extends BeanStub
-    implements IFormulaInputManagerService, NamedBean, RangeSelectionExtension
+    implements IFormulaInputManagerService, NamedBean, IRangeSelectionExtension
 {
     public readonly beanName = 'formulaInputManager' as const;
 
@@ -16,7 +11,12 @@ export class FormulaInputManagerService
     private activeEditorDeactivate: (() => void) | null = null;
 
     public postConstruct(): void {
-        this.registerRangeSelectionExtension();
+        this.beans.rangeSvc?.registerRangeSelectionExtension(this);
+    }
+
+    public override destroy(): void {
+        this.beans.rangeSvc?.unregisterRangeSelectionExtension(this);
+        super.destroy();
     }
 
     public registerActiveEditor(editorId: number, onDeactivate: () => void): boolean {
@@ -56,14 +56,5 @@ export class FormulaInputManagerService
             return !!target.closest('.ag-cell-editor');
         }
         return !!target.closest('.ag-formula-input-field');
-    }
-
-    private registerRangeSelectionExtension(): void {
-        const rangeSvc = this.beans.rangeSvc as RangeSelectionExtensionRegistry | undefined;
-        if (!rangeSvc) {
-            return;
-        }
-        rangeSvc.registerRangeSelectionExtension(this);
-        this.addDestroyFunc(() => rangeSvc.unregisterRangeSelectionExtension?.(this));
     }
 }

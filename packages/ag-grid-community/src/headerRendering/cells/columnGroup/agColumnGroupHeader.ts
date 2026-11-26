@@ -97,6 +97,7 @@ export class AgColumnGroupHeader extends Component implements IHeaderGroupComp {
     private readonly agLabel: HTMLElement = RefPlaceholder;
 
     private innerHeaderGroupComponent: IInnerHeaderGroupComponent | undefined;
+    private innerHeaderGroupComponentClass: unknown;
     private isLoadingInnerComponent: boolean = false;
     private expandTooltips?: ITooltipFeature[];
     private tooltipExpanded?: boolean;
@@ -122,26 +123,22 @@ export class AgColumnGroupHeader extends Component implements IHeaderGroupComp {
     }
 
     public refresh(params: IHeaderGroupParams): boolean {
-        const { innerHeaderGroupComponent, isLoadingInnerComponent } = this;
-        // Inner component still resolving: let the grid recreate so the two stay in sync.
-        if (isLoadingInnerComponent) {
+        const innerHeaderGroupComponent = this.innerHeaderGroupComponent;
+        // resolved as init resolves it: an inner component still loading, added, removed or swapped is recreated, as is
+        // one without refresh or whose refresh fails
+        const details = _getInnerHeaderGroupCompDetails(this.beans.userCompFactory, params, params);
+        if (
+            this.isLoadingInnerComponent ||
+            details?.componentClass !== this.innerHeaderGroupComponentClass ||
+            (innerHeaderGroupComponent && !innerHeaderGroupComponent.refresh?.(details!.params))
+        ) {
             return false;
         }
-        if (innerHeaderGroupComponent) {
-            // Delegate to a custom inner component when it supports refresh; otherwise recreate.
-            if (!innerHeaderGroupComponent.refresh) {
-                return false;
-            }
-            const handled = innerHeaderGroupComponent.refresh(params);
-            if (handled) {
-                this.params = params;
-            }
-            return handled;
-        }
-        // Default text label: update in place rather than recreating the component.
         this.params = params;
-        const { displayName } = params;
-        this.agLabel.textContent = _exists(displayName) ? _toString(displayName) : '';
+        if (!innerHeaderGroupComponent) {
+            const displayName = params.displayName;
+            this.agLabel.textContent = displayName != null ? _toString(displayName) : '';
+        }
         return true;
     }
 
@@ -160,6 +157,7 @@ export class AgColumnGroupHeader extends Component implements IHeaderGroupComp {
             return;
         }
 
+        this.innerHeaderGroupComponentClass = userCompDetails.componentClass;
         this.isLoadingInnerComponent = true;
         userCompDetails.newAgStackInstance().then((comp) => {
             this.isLoadingInnerComponent = false;

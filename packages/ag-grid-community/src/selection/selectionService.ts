@@ -1000,15 +1000,6 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         });
     }
 
-    /** Flushes a `selectionChanged` left pending by `removeFromSelection` when its refresh was deferred,
-     *  so an unrelated later batch can't emit it with the wrong source. */
-    public flushPendingSelectionChanged(): void {
-        const pendingSelectionSource = this.pendingSelectionSource;
-        if (this.selectionBatchDepth === 0 && pendingSelectionSource) {
-            this.dispatchSelectionChanged(pendingSelectionSource);
-        }
-    }
-
     /** Closes the batch, in a `finally`; the outermost asks the changed rows, then emits one `selectionChanged`. */
     public endSelectionBatch(): void {
         try {
@@ -1029,8 +1020,9 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
                 dataChangedRows = this.dataChangedRows;
             }
         } finally {
-            if (--this.selectionBatchDepth === 0) {
-                this.flushPendingSelectionChanged();
+            const pendingSelectionSource = --this.selectionBatchDepth === 0 ? this.pendingSelectionSource : null;
+            if (pendingSelectionSource) {
+                this.dispatchSelectionChanged(pendingSelectionSource);
             }
         }
     }

@@ -185,7 +185,6 @@ const _INTERNAL_EVENTS = [
     'showRowGroupColsSetChanged',
     'columnHeaderEditHighlightChanged',
     'columnShowValuesAsChanged',
-    'stringComparatorsChanged',
     'filterModifiedListened',
 ] as const;
 

@@ -22,6 +22,8 @@ export interface IRowModeFeature {
     getAllCellCtrls(): CellCtrl[];
     recreateCell(cellCtrl: CellCtrl): void;
     destroyCells(): void;
+    /** Called by the row as it is destroyed, before its cells are. */
+    destroy(): void;
     isSuppressMouseEvent(mouseEvent: MouseEvent): boolean;
     onDisplayedColumnsChanged(): void;
     onVirtualColumnsChanged(): void;

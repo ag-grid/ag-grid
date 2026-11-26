@@ -1,5 +1,5 @@
+import type { ColumnTreeBuild } from '../columns/columnTree/columnTreeBuilder';
 import type { AgColumn } from '../entities/agColumn';
-import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { ColDef, ColGroupDef, ColKey } from '../entities/colDef';
 import type { ColumnEventType } from '../events';
 
@@ -9,23 +9,8 @@ export interface IPivotResultColsService {
     /** Generated pivot result leaf columns. Null when not pivoting. */
     readonly pivotCols: AgColumn[] | null;
 
-    /** Balanced-tree wrappers around `pivotCols`. Empty when not pivoting. */
-    readonly pivotTree: (AgColumn | AgProvidedColumnGroup)[];
-
-    /** Tree depth of `pivotTree` (max group nesting). */
-    readonly pivotTreeDepth: number;
-
-    /** True iff any `pivotTree` group has `marryChildren`.
-     *  Feeds `ColumnModel.hasMarryChildren` while pivoting. */
-    readonly pivotHasMarryChildren: boolean;
-
-    /** Non-padding `pivotTree` groups keyed by `groupId`.
-     *  Feeds `ColumnModel.colsGroupsById` while pivoting. */
-    readonly pivotGroupsById: Map<string, AgProvidedColumnGroup>;
-
-    /** Flat list of all `pivotTree` groups (padding and non-padding).
-     *  Feeds `ColumnModel.colsAllGroups` while pivoting. */
-    readonly pivotAllGroups: AgProvidedColumnGroup[];
+    /** The last pivot result build: its tree and groups while `pivotCols` is set, kept across a clear for reuse. */
+    readonly pivotBuild: ColumnTreeBuild | null;
 
     /** Build pivoting column-state order as parked primaries (`colsById` not `colsList`) first.
      *  Then append displayed cols; return `colsList` directly when none are parked. */
@@ -51,6 +36,13 @@ export interface IPivotResultColsService {
     getAggregationOrderedList(): AgColumn[] | null;
 
     /** Rebuild `colDef`s for pivot result cols whose `pivotValueColumn` is `sourceCol` via reverse-map lookup.
-     *  No-op when not pivoting. */
+     *  No-op with no pivot result cols applied: cleared ones are redefined by the build that shows them again. */
     recreateColDefsForSource(sourceCol: AgColumn, source: ColumnEventType): void;
+
+    /** `valueCol` was renamed: the generated pivot result cols made from it are re-derived as the update ends. */
+    onValueColRenamed(valueCol: AgColumn, source: ColumnEventType): void;
+
+    /** Re-apply the stateful attributes of the pivot result cols derived from `sourceCol`, whose definition was set:
+     *  at once, or for cleared ones at the build that shows them again. */
+    reapplyStateForSource(sourceCol: AgColumn, source: ColumnEventType): void;
 }

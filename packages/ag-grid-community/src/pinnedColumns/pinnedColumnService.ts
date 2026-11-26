@@ -9,7 +9,6 @@ import { getColGroupAfter } from '../entities/agColumnGroup';
 import type { ColKey } from '../entities/colDef';
 import type { ColumnEventType } from '../events';
 import type { GridBodyCtrl } from '../gridBodyComp/gridBodyCtrl';
-import { SetPinnedWidthFeature } from '../gridBodyComp/rowContainer/setPinnedWidthFeature';
 import { _isDomLayout } from '../gridOptionsUtils';
 import type { ProcessUnpinnedColumnsParams } from '../interfaces/iCallbackParams';
 import type { ColumnPinnedType } from '../interfaces/iColumn';
@@ -27,47 +26,66 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
 
     public leftWidth: number;
     public rightWidth: number;
+    private leftWidthEventOwed = false;
+    private rightWidthEventOwed = false;
 
     public postConstruct(): void {
         this.beans.ctrlsSvc.whenReady(this, (p) => {
             this.gridBodyCtrl = p.gridBodyCtrl;
         });
-        const listener = this.checkContainerWidths.bind(this);
-        this.addManagedEventListeners({
-            displayedColumnsChanged: listener,
-            displayedColumnsWidthChanged: listener,
-            columnPinned: this.keepPinnedColumnsNarrowerThanViewport.bind(this),
+        this.addManagedPropertyListener('domLayout', () => {
+            const visibleCols = this.beans.visibleCols;
+            this.refreshWidths(
+                visibleCols.getLeftStickyColumnContainerWidth(),
+                visibleCols.getRightStickyColumnContainerWidth()
+            );
+            this.raiseWidthEvents();
         });
-        this.addManagedPropertyListener('domLayout', listener);
     }
 
-    private checkContainerWidths() {
-        const { gos, visibleCols, eventSvc } = this.beans;
-        const printLayout = _isDomLayout(gos, 'print');
+    /** Called by the body widths' layout and on a `domLayout` change; its events wait for {@link raiseWidthEvents}. */
+    public refreshWidths(leftWidth: number, rightWidth: number): void {
+        const printLayout = _isDomLayout(this.gos, 'print');
 
-        const newLeftWidth = printLayout ? 0 : visibleCols.getLeftStickyColumnContainerWidth();
-        const newRightWidth = printLayout ? 0 : visibleCols.getRightStickyColumnContainerWidth();
+        const newLeftWidth = printLayout ? 0 : leftWidth;
+        const newRightWidth = printLayout ? 0 : rightWidth;
+        const leftChanged = newLeftWidth !== this.leftWidth;
+        const rightChanged = newRightWidth !== this.rightWidth;
+        if (!leftChanged && !rightChanged) {
+            return;
+        }
+        this.leftWidth = newLeftWidth;
+        this.rightWidth = newRightWidth;
+        this.leftWidthEventOwed ||= leftChanged;
+        this.rightWidthEventOwed ||= rightChanged;
+        this.gridBodyCtrl?.onPinnedWidthChanged();
+    }
 
-        if (newLeftWidth != this.leftWidth) {
-            this.leftWidth = newLeftWidth;
+    /** Raises the width events of the sides refreshed since the last call, with the other width events. */
+    public raiseWidthEvents(): void {
+        const eventSvc = this.eventSvc;
+        // Unused by the grid; still raised as applications may listen to them by name.
+        if (this.leftWidthEventOwed) {
+            this.leftWidthEventOwed = false;
             eventSvc.dispatchEvent({ type: 'leftPinnedWidthChanged' });
         }
-
-        if (newRightWidth != this.rightWidth) {
-            this.rightWidth = newRightWidth;
+        if (this.rightWidthEventOwed) {
+            this.rightWidthEventOwed = false;
             eventSvc.dispatchEvent({ type: 'rightPinnedWidthChanged' });
         }
     }
 
-    public keepPinnedColumnsNarrowerThanViewport(): void {
-        if (!this.gridBodyCtrl) {
-            return;
+    /** Unpins the pinned columns the viewport has no room for; whether it unpinned any. `viewportWidth`: just
+     *  measured, else measured here, as a resize may not have been observed yet. */
+    public keepPinnedColumnsNarrowerThanViewport(viewportWidth: number | undefined): boolean {
+        if (!this.gridBodyCtrl || !(this.leftWidth || this.rightWidth)) {
+            return false;
         }
 
-        const bodyWidth = this.gridBodyCtrl.getViewportWidthWithoutScrollbar();
+        const bodyWidth = this.gridBodyCtrl.getViewportWidthWithoutScrollbar(viewportWidth);
 
         if (bodyWidth <= MIN_CENTER_VIEWPORT_WIDTH) {
-            return;
+            return false;
         }
 
         const processedColumnsToRemove = this.getPinnedColumnsOverflowingViewport(
@@ -79,7 +97,7 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
         let columnsToRemove = columns;
 
         if (!columnsToRemove.length && !hasLockedPinned) {
-            return;
+            return false;
         }
 
         if (processUnpinnedColumns) {
@@ -90,20 +108,16 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
             columnsToRemove = processUnpinnedColumns(params) as AgColumn[];
         }
 
+        columnsToRemove = columnsToRemove?.filter((col) => !isRowNumberCol(col));
         if (!columnsToRemove?.length) {
-            return;
+            return false;
         }
-
-        columnsToRemove = columnsToRemove.filter((col) => !isRowNumberCol(col));
         this.setColsPinned(columnsToRemove, null, 'viewportSizeFeature');
-    }
-
-    public createPinnedWidthFeature(isLeft: boolean, ...elements: (HTMLElement | undefined)[]): SetPinnedWidthFeature {
-        return new SetPinnedWidthFeature(isLeft, elements);
+        return true;
     }
 
     public setColsPinned(keys: ColKey[], pinned: ColumnPinnedType, source: ColumnEventType): void {
-        const { colModel, visibleCols, gos, colAnimation } = this.beans;
+        const { colModel, syncSvc, visibleCols, gos, colAnimation } = this.beans;
         if (!colModel.ready) {
             return;
         }
@@ -119,7 +133,7 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
         const actualPinned = toPinnedSide(pinned);
 
         let updatedCols: AgColumn[] | null = null;
-        colModel.beginColUpdate();
+        syncSvc.beginUpdate();
         try {
             for (let i = 0, len = keys.length; i < len; ++i) {
                 const key = keys[i];
@@ -134,15 +148,13 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
             if (updatedCols) {
                 // Slide the pinned/unpinned cols and the gap they leave, rather than jumping.
                 colAnimation?.start();
-                try {
-                    visibleCols.refresh(source, false);
-                    dispatchColumnPinnedEvent(this.eventSvc, updatedCols, source);
-                } finally {
-                    colAnimation?.finish();
-                }
+                visibleCols.refresh(source, false);
+                dispatchColumnPinnedEvent(this.eventSvc, updatedCols, source);
+                // after the viewport's own unpins too, as processUnpinnedColumns may leave columns overflowing
+                this.keepPinnedColumnsNarrowerThanViewport(undefined);
             }
         } finally {
-            colModel.endColUpdate();
+            syncSvc.endUpdate();
         }
     }
 
@@ -153,6 +165,7 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
 
     public setColPinned(column: AgColumn, pinned: ColumnPinnedType, source: ColumnEventType): void {
         writeColPinned(column, pinned);
+        this.beans.syncSvc.changes.columnState = true;
         column.dispatchStateUpdatedEvent('pinned', source);
     }
 

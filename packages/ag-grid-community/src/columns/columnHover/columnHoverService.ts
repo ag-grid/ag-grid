@@ -1,3 +1,5 @@
+import { _areEqual } from 'ag-stack';
+
 import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
 import type { AgColumn } from '../../entities/agColumn';
@@ -12,7 +14,9 @@ const CSS_COLUMN_HOVER = 'ag-column-hover';
 export class ColumnHoverService extends BeanStub implements NamedBean {
     beanName = 'colHover' as const;
 
-    private selectedColumns: AgColumn[] | null;
+    private selectedColumns: AgColumn[] | null = null;
+    /** The hovered columns while `columnHoverHighlight` is on: those whose cells show the hover class. */
+    private shownColumns: AgColumn[] | null = null;
 
     public postConstruct() {
         this.addManagedPropertyListener('columnHoverHighlight', ({ currentValue }) => {
@@ -82,9 +86,22 @@ export class ColumnHoverService extends BeanStub implements NamedBean {
     }
 
     private updateState(columns: AgColumn[] | null): void {
+        const shown = this.gos.get('columnHoverHighlight') ? columns : null;
+        const shownChanged = !_areEqual(shown, this.shownColumns);
+        if (!shownChanged && _areEqual(columns, this.selectedColumns)) {
+            return; // the pointer moved to another cell of the hovered columns
+        }
         this.selectedColumns = columns;
-        this.eventSvc.dispatchEvent({
-            type: 'columnHoverChanged',
-        });
+        this.shownColumns = shown;
+        this.eventSvc.dispatchEvent({ type: 'columnHoverChanged' });
+        if (shownChanged) {
+            const rowCtrls = this.beans.rowRenderer.getAllRowCtrls();
+            for (let i = 0, len = rowCtrls.length; i < len; ++i) {
+                const cellCtrls = rowCtrls[i].getAllCellCtrls();
+                for (let j = 0, cellsLen = cellCtrls.length; j < cellsLen; ++j) {
+                    cellCtrls[j].onColumnHover();
+                }
+            }
+        }
     }
 }

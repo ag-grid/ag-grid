@@ -43,7 +43,7 @@ export class PivotModePanel extends Component {
     }
 
     public postConstruct(): void {
-        const { columnStateUpdateStrategy, ctrlsSvc } = this.beans;
+        const columnStateUpdateStrategy = this.beans.columnStateUpdateStrategy;
         this.setTemplate(PivotModePanelElement, [AgToggleButtonSelector]);
 
         const cbPivotMode = this.cbPivotMode;
@@ -73,10 +73,7 @@ export class PivotModePanel extends Component {
             this.onPivotModeValueChanged?.();
         };
 
-        const onPivotModeChanged = () => {
-            this.syncFromGrid();
-            ctrlsSvc.getHeaderRowContainerCtrl()?.refresh();
-        };
+        const onPivotModeChanged = () => this.syncFromGrid();
 
         this.addManagedListeners(cbPivotMode, { fieldValueChanged: onBtPivotMode });
         this.addManagedEventListeners({

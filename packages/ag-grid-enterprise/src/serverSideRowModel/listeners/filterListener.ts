@@ -34,11 +34,11 @@ export class FilterListener extends BeanStub implements NamedBean {
 
         this.addManagedEventListeners({
             advancedFilterEnabledChanged: () => this.onFilterChanged(true),
-            filterChanged: () => this.onFilterChanged(),
         });
     }
 
-    private onFilterChanged(advancedFilterEnabledChanged?: boolean): void {
+    /** The server-side row model calls it as the rows refresh for a filter change. */
+    public onFilterChanged(advancedFilterEnabledChanged?: boolean): void {
         const storeParams = this.serverSideRowModel.getParams();
         if (!storeParams) {
             return;

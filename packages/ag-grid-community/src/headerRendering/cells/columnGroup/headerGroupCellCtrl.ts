@@ -1,16 +1,19 @@
-import { KeyCode, _getActiveDomElement, _last, _setAriaColSpan } from 'ag-stack';
+import { KeyCode, _areEqual, _getActiveDomElement, _last, _setAriaColSpan } from 'ag-stack';
 
 import type { GroupResizeFeature } from '../../../columnResize/groupResizeFeature';
 import { _setColGroupOpen } from '../../../columns/columnGroups/columnGroupState';
-import { setupCompBean } from '../../../components/emptyBean';
+import { EmptyBean, setupCompBean } from '../../../components/emptyBean';
 import { ComponentInstanceGuard } from '../../../components/framework/componentInstanceGuard';
 import { _getHeaderGroupCompDetails } from '../../../components/framework/userCompUtils';
 import type { BeanStub } from '../../../context/beanStub';
 import type { AgColumn } from '../../../entities/agColumn';
 import type { AgColumnGroup } from '../../../entities/agColumnGroup';
 import { edgeLeafColumn } from '../../../entities/agColumnGroup';
+import type { AgProvidedColumnGroup } from '../../../entities/agProvidedColumnGroup';
 import type { HeaderClassParams } from '../../../entities/colDef';
 import type { ColumnEventType } from '../../../events';
+import { HEADER_CHANGE_FLAG_GROUP_CELL_OPTIONS, HEADER_CHANGE_FLAG_HEADER_NAME_OVERRIDE } from '../../../gridChanges';
+import type { HeaderChanges } from '../../../gridChanges';
 import { _addGridCommonParams, _getEnableColumnSelection } from '../../../gridOptionsUtils';
 import { ColumnHighlightPosition } from '../../../interfaces/iColumn';
 import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
@@ -71,6 +74,10 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
     private ariaEl: HTMLElement | null = null;
     /** The colspan last written to `ariaEl`; null for a new one. */
     private drawnAriaColSpan: number | null = null;
+    /** Owns what follows the group's leaves: set up for `leafCols`, as the build `leafColsBuildToken` gave them. */
+    private leafColsBean: EmptyBean | undefined = undefined;
+    private leafCols: AgColumn[] = [];
+    private leafColsBuildToken = 0;
 
     public override wireComp(
         comp: IHeaderGroupCellComp,
@@ -80,7 +87,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         compBean: BeanStub<any> | undefined
     ): void {
         const { column, beans } = this;
-        const { colNames, colHover, rangeSvc, colResize } = beans;
+        const { colNames, rangeSvc, colResize } = beans;
         this.comp = comp;
         compBean = setupCompBean(this, compBean);
         // ahead of `setGui`, whose displayed-columns refresh writes `aria-colspan`
@@ -91,10 +98,8 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
 
         this.displayName = colNames.getDisplayNameForColumnGroup(column, 'header');
 
-        this.refreshHeaderStyles();
         this.addClasses();
-        this.setupMovingCss(compBean);
-        this.setupExpandable(compBean);
+        this.setupExpandable(compBean); // draws the header styles, which follow the expanded state
         this.setupTooltip();
         this.refreshAnnouncement();
 
@@ -106,14 +111,14 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         this.setupUserComp();
         this.addHeaderMouseListeners(compBean, eHeaderCompWrapper);
 
-        compBean.addManagedPropertyListener('groupHeaderHeight', this.refreshMaxHeaderHeight.bind(this));
         this.refreshMaxHeaderHeight();
 
-        const leafCols = column.getProvidedColumnGroup().getLeafColumns();
+        const providedGroup = column.getProvidedColumnGroup();
+        this.wireLeafCols(providedGroup, providedGroup.getLeafColumns());
+        compBean.addDestroyFunc(() => {
+            this.leafColsBean = this.destroyBean(this.leafColsBean);
+        });
 
-        this.addLeafColumnListeners(compBean, leafCols);
-
-        colHover?.createHoverFeature(compBean, leafCols, eGui);
         rangeSvc?.createRangeHighlightFeature(compBean, column, comp);
         if (colResize) {
             this.resizeFeature = compBean.createManagedBean(colResize.createGroupResizeFeature(comp, eResize, column));
@@ -130,13 +135,6 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
             })
         );
 
-        this.addHighlightListeners(compBean, leafCols);
-
-        compBean.addManagedPropertyListener('cellSelection', () => {
-            this.refreshSelectableCss();
-            this.refreshAnnouncement();
-        });
-        compBean.addManagedPropertyListener('suppressMovableColumns', this.onSuppressColMoveChange);
         this.addResizeAndMoveKeyboardListeners(compBean);
         // Make sure this is the last destroy func as it clears the gui and comp
         compBean.addDestroyFunc(() => {
@@ -158,6 +156,18 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         });
     }
 
+    public override onGridChanges(changes: HeaderChanges): void {
+        if ((changes & HEADER_CHANGE_FLAG_GROUP_CELL_OPTIONS) !== 0) {
+            this.refreshMaxHeaderHeight();
+            this.refreshSelectableCss();
+            this.refreshAnnouncement();
+            this.onSuppressColMoveChange();
+        }
+        if ((changes & HEADER_CHANGE_FLAG_HEADER_NAME_OVERRIDE) !== 0) {
+            this.refreshDisplayName();
+        }
+    }
+
     private refreshMaxHeaderHeight(): void {
         const { gos, comp } = this;
 
@@ -175,27 +185,35 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         }
     }
 
-    private addLeafColumnListeners(compBean: BeanStub, leafCols: AgColumn[]): void {
-        compBean.addManagedEventListeners({
-            columnPinned: ({ columns }) => {
-                // All fragments can be reused for different pinned sections when the group splits or merges.
-                if (columns && leafCols.some((col) => columns.includes(col))) {
-                    this.refreshHeaderStyles();
-                }
-            },
-        });
+    /** A build keeping this group can give it other leaves; the header follows them, as a new header would. */
+    private wireLeafCols(providedGroup: AgProvidedColumnGroup, leafCols: AgColumn[]): void {
+        const bean = this.createBean(new EmptyBean());
+        this.leafColsBean = bean;
+        this.leafCols = leafCols;
+        this.leafColsBuildToken = providedGroup.buildToken;
+        this.beans.colHover?.createHoverFeature(bean, leafCols, this.eGui);
+        // the header goes dark while its whole group is dragged
+        const column = this.column;
+        const onMovingChanged = () => this.comp.toggleCss('ag-header-cell-moving', column.isMoving());
+        const highlighted = this.beans.gos.get('suppressMoveWhenColumnDragging');
+        for (let i = 0, len = leafCols.length; i < len; ++i) {
+            const col = leafCols[i];
+            bean.addManagedListeners(
+                col,
+                highlighted
+                    ? {
+                          movingChanged: onMovingChanged,
+                          headerHighlightChanged: this.onLeafColumnHighlightChanged.bind(this, col),
+                      }
+                    : { movingChanged: onMovingChanged }
+            );
+        }
+        onMovingChanged();
     }
 
-    private addHighlightListeners(compBean: BeanStub, columns: AgColumn[]): void {
-        if (!this.beans.gos.get('suppressMoveWhenColumnDragging')) {
-            return;
-        }
-
-        for (const column of columns) {
-            compBean.addManagedListeners(column, {
-                headerHighlightChanged: this.onLeafColumnHighlightChanged.bind(this, column),
-            });
-        }
+    /** All fragments can be reused for different pinned sections when the group splits or merges. */
+    protected override refreshPinnedStyles(): void {
+        this.refreshHeaderStyles();
     }
 
     private onLeafColumnHighlightChanged(column: AgColumn): void {
@@ -241,14 +259,26 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         this.comp.toggleCss('ag-header-highlight-after', afterOn);
     }
 
-    protected override onDisplayedColumnsChanged(): void {
+    public override onDisplayedColumnsChanged(): void {
         super.onDisplayedColumnsChanged();
+        this.resizeFeature?.refresh(); // null until `wireComp` creates it, or without the resize module
+        const column = this.column;
+        const leafColsBean = this.leafColsBean;
+        const providedGroup = column.getProvidedColumnGroup();
+        if (leafColsBean !== undefined && providedGroup.buildToken !== this.leafColsBuildToken) {
+            this.leafColsBuildToken = providedGroup.buildToken;
+            const leafCols = providedGroup.getLeafColumns();
+            if (!_areEqual(leafCols, this.leafCols)) {
+                this.destroyBean(leafColsBean);
+                this.wireLeafCols(providedGroup, leafCols);
+            }
+            this.onSuppressColMoveChange(); // a leaf may have gained or lost lockPosition or suppressMovable
+        }
         const ariaEl = this.ariaEl;
         if (ariaEl === null) {
             return;
         }
         // hidden columns keep their aria slots, so the group spans from its first leaf's slot to its last's
-        const column = this.column;
         const last = edgeLeafColumn(column, false, true);
         const colSpan = last ? last.ariaColIndex - column.ariaColIndex + 1 : 1;
         if (colSpan !== this.drawnAriaColSpan) {
@@ -323,7 +353,8 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
     /** Attempt an in-place refresh of the existing group header component; falls back to recreation. */
     private attemptUserCompRefresh(): boolean {
         const userComp = this.comp.getUserCompInstance();
-        return userComp?.refresh ? userComp.refresh(this.createUserCompParams()) : false;
+        const compDetails = _getHeaderGroupCompDetails(this.beans.userCompFactory, this.createUserCompParams());
+        return userComp?.refresh && compDetails ? userComp.refresh(compDetails.params) : false; // the params init got
     }
 
     private addHeaderMouseListeners(compBean: BeanStub, eHeaderCompWrapper: HTMLElement): void {
@@ -405,25 +436,10 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
             expandableChanged: listener,
             headerNameChanged: () => this.refreshDisplayName(),
         });
-        const groupId = providedColGroup.groupId;
-        compBean.addManagedEventListeners({
-            // A group's headerValueGetter may read its columns' names, so column renames refresh it too.
-            columnHeaderNameChanged: (event) => {
-                if (event.column) {
-                    this.refreshDisplayName();
-                }
-            },
-            // Toggle the edit highlight in place (no header component recreation).
-            columnHeaderEditHighlightChanged: (event) => {
-                if (!event.groupId || event.groupId === groupId) {
-                    this.refreshEditHighlight();
-                }
-            },
-        });
         this.refreshEditHighlight();
     }
 
-    private refreshEditHighlight(): void {
+    public override refreshEditHighlight(): void {
         this.comp.toggleCss(
             CSS_COLUMN_HEADER_EDIT_HIGHLIGHTED,
             !!this.beans.colHeaderEditSvc?.isHighlightedGroup(this.column.getProvidedColumnGroup())
@@ -479,23 +495,6 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         for (const c of classes) {
             this.comp.toggleCss(c, true);
         }
-    }
-
-    private setupMovingCss(compBean: BeanStub): void {
-        const { column } = this;
-        const providedColumnGroup = column.getProvidedColumnGroup();
-        const leafColumns = providedColumnGroup.getLeafColumns();
-
-        // function adds or removes the moving css, based on if the col is moving.
-        // this is what makes the header go dark when it is been moved (gives impression to
-        // user that the column was picked up).
-        const listener = () => this.comp.toggleCss('ag-header-cell-moving', column.isMoving());
-
-        for (const col of leafColumns) {
-            compBean.addManagedListeners(col, { movingChanged: listener });
-        }
-
-        listener();
     }
 
     private readonly onSuppressColMoveChange = () => {
@@ -581,8 +580,6 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         beans.ariaAnnounce?.announceValue(ariaAnnouncement, 'columnHeader');
     }
 
-    // unlike columns, this will only get called once, as we don't react on props on column groups
-    // (we will always destroy and recreate this comp if something changes)
     public setDragSource(eHeaderGroup: HTMLElement): void {
         if (!this.isAlive() || this.isSuppressMoving()) {
             return;

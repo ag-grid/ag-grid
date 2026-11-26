@@ -6,6 +6,7 @@ import type {
     FilterChangedEventSourceType,
     FilterManager,
     FilterValueService,
+    GridOptions,
     IAdvancedFilterService,
     IRowNode,
     NamedBean,
@@ -71,7 +72,7 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
     private expressionParams: FilterExpressionFunctionParams | null;
 
     public postConstruct(): void {
-        this.setEnabled(this.gos.get('enableAdvancedFilter'), true);
+        this.applyEnabledOption(true);
 
         this.ctrl = this.createManagedBean(new AdvancedFilterCtrl(this.enabled));
 
@@ -82,7 +83,6 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
             },
         };
 
-        this.addManagedPropertyListener('enableAdvancedFilter', (event) => this.setEnabled(!!event.currentValue));
         this.addManagedPropertyListener('includeHiddenColumnsInAdvancedFilter', () => this.revalidateAndApply());
         this.addManagedEventListeners({
             dataTypesInferred: () => this.onDataTypesInferred(),
@@ -298,9 +298,17 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
         return this.ctrl;
     }
 
-    private setEnabled(enabled: boolean, silent?: boolean): void {
+    public applyOptions(changedProps: ReadonlySet<keyof GridOptions>): void {
+        if (!changedProps.has('enableAdvancedFilter')) {
+            return;
+        }
+        this.applyEnabledOption(false);
+    }
+
+    private applyEnabledOption(silent: boolean): void {
         const previousValue = this.enabled;
         const gos = this.gos;
+        const enabled = gos.get('enableAdvancedFilter');
         const isValidRowModel = _isClientSideRowModel(gos) || _isServerSideRowModel(gos);
         if (enabled && !isValidRowModel) {
             this.warn(123);

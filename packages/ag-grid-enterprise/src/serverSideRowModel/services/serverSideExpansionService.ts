@@ -77,8 +77,7 @@ export class ServerSideExpansionService
             this.setStrategy(isExpandAllState ? new ExpandAllStrategy() : new ExpandStrategy());
         }
         this.strategy.setExpandedState(state as any); // cast to any, as we know the type is correct due to the previous assertion
-        // Flags first: the listeners on `dispatchStateUpdatedEvent` create the child stores and
-        // recompute the display indexes, so dispatching first reads a still-collapsed model.
+        // flags first: `dispatchStateUpdatedEvent` opens the child stores from them
         this.updateAllNodes();
         this.dispatchStateUpdatedEvent();
     }
@@ -160,6 +159,13 @@ export class ServerSideExpansionService
             type: 'expandOrCollapseAll',
             source: expanded ? 'expandAll' : 'collapseAll',
         });
+    }
+
+    /** Each node's child store and detail node follow its expanded state before the readers are told. */
+    protected override dispatchStateUpdatedEvent(): void {
+        this.serverSideRowModel.forEachNode((node) => this.updateExpandedState(node));
+        this.eventSvc.dispatchEvent({ type: 'storeUpdated' });
+        super.dispatchStateUpdatedEvent();
     }
 
     private isExpandAllStrategy(

@@ -44,9 +44,9 @@ export class ValueColsSvc extends BaseColsService implements NamedBean, IValueCo
 
     /** Value cols are included from a truthy aggFunc; `undefined` falls back to `initialAggFunc`
      *  (new cols) or the current flag (existing). Ordering is driven by `valueIndex`/`initialValueIndex`. */
-    public override extractCol(col: AgColumn, colIsNew: boolean, source: ColumnEventType): void {
+    public override extractCol(col: AgColumn, colIsNew: boolean, source: ColumnEventType, newColDefs: boolean): void {
         const colDef = col.colDef;
-        const aggFunc = colDef.aggFunc;
+        const aggFunc = colIsNew || newColDefs ? colDef.aggFunc : undefined;
         let include: boolean;
         if (aggFunc !== undefined) {
             include = aggFunc !== null && aggFunc !== '';
@@ -62,14 +62,14 @@ export class ValueColsSvc extends BaseColsService implements NamedBean, IValueCo
             // total) to a value column, using the mode's `defaultAggFunc`.
             const modeAggFunc = col.showValuesAs?.def.defaultAggFunc;
             if (modeAggFunc) {
-                this.bucketCol(col, colIsNew);
+                this.bucketCol(col, colIsNew, newColDefs);
                 if (!col.aggFunc) {
                     writeAggFunc(col, modeAggFunc, source);
                 }
             }
             return;
         }
-        this.bucketCol(col, colIsNew);
+        this.bucketCol(col, colIsNew, newColDefs);
         if (aggFunc != null && aggFunc !== '') {
             writeAggFunc(col, aggFunc, source);
         } else if (!col.aggFunc) {
@@ -77,15 +77,18 @@ export class ValueColsSvc extends BaseColsService implements NamedBean, IValueCo
         }
     }
 
-    /** Seat an included value col: indexed (`valueIndex`, or `initialValueIndex` for new cols) cols are
-     *  sorted by `commitExtract`; the rest keep their prior/col-def order. */
-    private bucketCol(col: AgColumn, colIsNew: boolean): void {
+    /** Seat an included value col: indexed (`valueIndex` for new cols or definitions, or `initialValueIndex` for new
+     *  cols) cols are sorted by `commitExtract`; the rest keep their prior/col-def order. */
+    private bucketCol(col: AgColumn, colIsNew: boolean, newColDefs: boolean): void {
+        if (!colIsNew && !newColDefs) {
+            this.bucketByKey(col, null); // a rebuild keeps an existing col's place
+            return;
+        }
         const colDef = col.colDef;
         const key = colDef.valueIndex ?? (colIsNew ? colDef.initialValueIndex : null);
         this.bucketByKey(col, key);
     }
 
-    // Imperative-only (the base gates on `runSideEffects`); the state/agg-func paths set the func explicitly.
     protected override onColActiveChanged(column: AgColumn, active: boolean, source: ColumnEventType): void {
         // A newly-active col with no agg-func picks up the default for its cell-data type.
         const aggFuncSvc = this.aggFuncSvc;
@@ -112,9 +115,10 @@ export class ValueColsSvc extends BaseColsService implements NamedBean, IValueCo
         if (!column) {
             return;
         }
+        const syncSvc = this.beans.syncSvc;
         // read only for a removal, which reports the value cols it shifts up as removeColumns does
         const before = column.aggregationActive && !isAggFuncSet(aggFunc) ? this.columns : null;
-        colModel.beginColUpdate();
+        syncSvc.beginUpdate();
         try {
             const change = this.applyAggFunc(column, aggFunc, source);
             if (change === AGG_UNCHANGED) {
@@ -125,14 +129,18 @@ export class ValueColsSvc extends BaseColsService implements NamedBean, IValueCo
             // keeps positions and re-aggregates event-driven, so just record it for dispatch (no reindex/rebuild).
             if (before !== null) {
                 this.stageRemovedFrom(before);
-            } else if (membershipChanged) {
-                this.stageColChange(column);
             } else {
                 this.recordColChange(column);
             }
-            colModel.stageColChanges(source, membershipChanged ? 'membership' : 'dispatch');
+            if (membershipChanged) {
+                this.onColumnsChanged();
+                colModel.stageColRefresh(source);
+                colModel.stageEverythingChanged(source);
+            } else {
+                colModel.stageColDispatch(source);
+            }
         } finally {
-            colModel.endColUpdate();
+            syncSvc.endUpdate();
         }
     }
 

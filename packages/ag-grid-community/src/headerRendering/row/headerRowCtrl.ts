@@ -3,6 +3,9 @@ import { destroyCompBean, setupCompBean } from '../../components/emptyBean';
 import { BeanStub } from '../../context/beanStub';
 import type { AgColumn, ColumnLane } from '../../entities/agColumn';
 import type { AgColumnGroup } from '../../entities/agColumnGroup';
+import { isColumnGroup } from '../../entities/agColumnGroup';
+import { HEADER_CHANGE_FLAG_SUPPRESS_HEADER_FOCUS } from '../../gridChanges';
+import type { HeaderChanges } from '../../gridChanges';
 import { _isDomLayout } from '../../gridOptionsUtils';
 import type { BrandedType } from '../../interfaces/brandedType';
 import type { HeaderColumnId } from '../../interfaces/iColumn';
@@ -49,6 +52,10 @@ export class HeaderRowCtrl extends BeanStub implements CompBeanOwner {
     private isPrintLayout: boolean;
     private isEnsureDomOrder: boolean;
     private renderedHeaderRowsVersion = -1;
+    /** The column layout this row's cells were created in, so that layout's walk skips them. */
+    private cellsLayoutVersion = -1;
+    private drawnTop = -1;
+    private drawnHeight = -1;
     private retainedFocusedCtrl: HeaderCellCtrl | null = null;
 
     constructor(
@@ -69,7 +76,8 @@ export class HeaderRowCtrl extends BeanStub implements CompBeanOwner {
     public setRowIndex(rowIndex: number): void {
         this.rowIndex = rowIndex;
         this.comp?.setRowIndex(this.getAriaRowIndex());
-        this.onRowHeightChanged();
+        const beans = this.beans;
+        this.onRowHeightChanged(getGroupRowsHeight(beans), getColumnHeaderRowHeight(beans));
     }
 
     public postConstruct(): void {
@@ -94,11 +102,14 @@ export class HeaderRowCtrl extends BeanStub implements CompBeanOwner {
      */
     public setComp(comp: IHeaderRowComp, compBean: BeanStub | undefined, initCompState: boolean = true): void {
         this.comp = comp;
+        this.drawnTop = -1;
+        this.drawnHeight = -1;
         compBean = setupCompBean(this, compBean);
 
         if (initCompState) {
             this.setRowIndex(this.rowIndex);
             this.onVirtualColumnsChanged();
+            this.cellsLayoutVersion = this.beans.visibleCols.layoutVersion;
         }
         // width is managed directly regardless of framework and so is not included in initCompState
         // The first row of a grid mounts before any width has been pushed, and still needs its groups sized.
@@ -106,7 +117,7 @@ export class HeaderRowCtrl extends BeanStub implements CompBeanOwner {
         if (rowWidth != null) {
             comp.setWidth(`${rowWidth}px`);
         }
-        this.refreshPinnedCellGroupWidths();
+        this.comp?.refreshPinnedCellGroupWidths();
 
         this.addEventListeners(compBean);
         this.refreshAccessibility();
@@ -128,59 +139,142 @@ export class HeaderRowCtrl extends BeanStub implements CompBeanOwner {
     }
 
     private addEventListeners(compBean: BeanStub): void {
-        const onHeightChanged = this.onRowHeightChanged.bind(this);
-        const onDisplayedColumnsChanged = this.onDisplayedColumnsChanged.bind(this);
-        const refreshAccessibility = this.refreshAccessibility.bind(this);
-        const refreshPinnedCellGroupWidths = this.refreshPinnedCellGroupWidths.bind(this);
-        compBean.addManagedEventListeners({
-            displayedColumnsWidthChanged: refreshPinnedCellGroupWidths,
-            leftPinnedWidthChanged: refreshPinnedCellGroupWidths,
-            rightPinnedWidthChanged: refreshPinnedCellGroupWidths,
-            displayedColumnsChanged: onDisplayedColumnsChanged,
-            virtualColumnsChanged: (params) => this.onVirtualColumnsChanged(params.afterScroll),
-            columnGroupHeaderHeightChanged: onHeightChanged,
-            columnHeaderHeightChanged: onHeightChanged,
-            stylesChanged: onHeightChanged,
-            advancedFilterEnabledChanged: onHeightChanged,
-            overlayExclusiveChanged: refreshAccessibility,
-        });
-
-        compBean.addManagedPropertyListeners(['suppressHeaderFocus'], refreshAccessibility);
-
         // when print layout changes, it changes what columns are in what section
-        compBean.addManagedPropertyListener('domLayout', onDisplayedColumnsChanged);
+        compBean.addManagedPropertyListener('domLayout', () => {
+            const beans = this.beans;
+            const groupRowsHeight = getGroupRowsHeight(beans);
+            const headerHeight = getColumnHeaderRowHeight(beans);
+            this.onDisplayedColumnsChanged(this.type === 'column' ? groupRowsHeight : null, headerHeight, 0);
+            this.onRowHeightChanged(groupRowsHeight, headerHeight);
+        });
         compBean.addManagedPropertyListener('ensureDomOrder', (e) => {
             this.isEnsureDomOrder = e.currentValue;
             this.onVirtualColumnsChanged(false, true);
         });
-
-        compBean.addManagedPropertyListeners(
-            [
-                'headerHeight',
-                'pivotHeaderHeight',
-                'groupHeaderHeight',
-                'pivotGroupHeaderHeight',
-                'floatingFiltersHeight',
-            ],
-            onHeightChanged
-        );
     }
 
-    private onDisplayedColumnsChanged(): void {
+    /** Called by the header row container with what a column update changed, when no layout walks the cells. */
+    public onGridChanges(changes: HeaderChanges): void {
+        const focus = (changes & HEADER_CHANGE_FLAG_SUPPRESS_HEADER_FOCUS) !== 0;
+        if (focus) {
+            this.refreshAccessibility();
+        }
+        // each kind of cell ignores the changes it does not follow
+        if (changes === 0) {
+            return;
+        }
+        const allCtrls = this.allCtrls;
+        for (let i = 0, len = allCtrls.length; i < len; ++i) {
+            const ctrl = allCtrls[i];
+            if (!ctrl.eGui) {
+                continue;
+            }
+            if (focus) {
+                ctrl.refreshTabIndex();
+            }
+            ctrl.onGridChanges(changes);
+        }
+    }
+
+    /** The row and its cells enter or leave the tab order: an exclusive overlay or `suppressHeaderFocus` changed. */
+    public refreshFocusable(): void {
+        this.refreshAccessibility();
+        const allCtrls = this.allCtrls;
+        for (let i = 0, len = allCtrls.length; i < len; ++i) {
+            allCtrls[i].refreshTabIndex();
+        }
+    }
+
+    /** The column's cell, when drawn. */
+    public getMountedCellCtrl(column: AgColumn): AbstractHeaderCellCtrl | undefined {
+        const ctrl = this.getHeaderCellCtrl(column);
+        return ctrl?.eGui ? ctrl : undefined;
+    }
+
+    /** The spanning cells take their top and height from the heights the container read once for every cell. */
+    public refreshSpanHeaderHeights(groupRowsHeight: number[], headerHeight: number): void {
+        const allCtrls = this.allCtrls;
+        for (let i = 0, len = allCtrls.length; i < len; ++i) {
+            const ctrl = allCtrls[i];
+            if (ctrl instanceof HeaderCellCtrl && ctrl.eGui) {
+                ctrl.refreshSpanHeaderHeight(groupRowsHeight, headerHeight);
+            }
+        }
+    }
+
+    public setFormulaRefsShown(shown: boolean): void {
+        const allCtrls = this.allCtrls;
+        for (let i = 0, len = allCtrls.length; i < len; ++i) {
+            const ctrl = allCtrls[i];
+            if (ctrl instanceof HeaderCellCtrl && ctrl.eGui) {
+                ctrl.setFormulaRefShown(shown);
+            }
+        }
+    }
+
+    /** The cells of the group `groupId` re-apply the header name editor's highlight. */
+    public refreshGroupEditHighlight(groupId: string): void {
+        const allCtrls = this.allCtrls;
+        for (let i = 0, len = allCtrls.length; i < len; ++i) {
+            const ctrl = allCtrls[i];
+            const column = ctrl.column;
+            if (ctrl.eGui && isColumnGroup(column) && column.getProvidedColumnGroup().groupId === groupId) {
+                ctrl.refreshEditHighlight?.();
+            }
+        }
+    }
+
+    /** Once per column layout and print layout change; a column row's spanning cells take the heights in this walk. */
+    public onDisplayedColumnsChanged(
+        groupRowsHeight: number[] | null,
+        headerHeight: number,
+        changes: HeaderChanges
+    ): void {
         const isPrintLayout = _isDomLayout(this.gos, 'print');
         const layoutChanged = isPrintLayout !== this.isPrintLayout;
         this.isPrintLayout = isPrintLayout;
         this.onVirtualColumnsChanged(false, layoutChanged);
-        if (layoutChanged) {
-            this.refreshCellPositions();
+        // what the update changed is followed in the same walk
+        const focus = (changes & HEADER_CHANGE_FLAG_SUPPRESS_HEADER_FOCUS) !== 0;
+        if (focus) {
+            this.refreshAccessibility();
         }
-        this.onRowHeightChanged();
+        const followed = changes !== 0;
+        const allCtrls = this.allCtrls;
+        const cellsLaidOut = this.cellsLayoutVersion === this.beans.visibleCols.layoutVersion;
+        // cells made in this layout took their span heights when created
+        const spans = !cellsLaidOut && groupRowsHeight !== null;
+        const walk = !cellsLaidOut || followed;
+        for (let i = 0, len = walk ? allCtrls.length : 0; i < len; ++i) {
+            const ctrl = allCtrls[i];
+            if (!ctrl.eGui) {
+                continue;
+            }
+            if (!cellsLaidOut) {
+                ctrl.onDisplayedColumnsChanged();
+            }
+            if (spans && ctrl instanceof HeaderCellCtrl) {
+                ctrl.refreshSpanHeaderHeight(groupRowsHeight, headerHeight);
+            }
+            if (focus) {
+                ctrl.refreshTabIndex();
+            }
+            if (followed) {
+                ctrl.onGridChanges(changes);
+            }
+        }
+        if (layoutChanged) {
+            this.refreshCellPositions(true);
+        }
     }
 
-    public refreshCellPositions(): void {
+    public refreshCellPositions(sectionWidthsChanged: boolean): void {
         const allCtrls = this.allCtrls;
         for (let i = 0, len = allCtrls.length; i < len; ++i) {
             allCtrls[i].refreshPosition();
+        }
+        if (sectionWidthsChanged) {
+            this.comp?.refreshPinnedCellGroupWidths();
         }
     }
 
@@ -195,37 +289,37 @@ export class HeaderRowCtrl extends BeanStub implements CompBeanOwner {
     /** Pushed by `GridBodyCtrl.updateWidths`, so the row does not derive it from the viewport itself. */
     public setRowWidth(width: number): void {
         this.comp?.setWidth(`${width}px`);
-        this.refreshPinnedCellGroupWidths();
     }
 
-    private refreshPinnedCellGroupWidths(): void {
-        this.comp?.refreshPinnedCellGroupWidths();
-    }
-
-    private onRowHeightChanged(): void {
-        if (!this.comp) {
+    public onRowHeightChanged(groupRowsHeight: number[], headerHeight: number): void {
+        const comp = this.comp;
+        if (!comp) {
             return;
         }
-        const { topOffset, rowHeight } = this.getTopAndHeight();
+        const { topOffset, rowHeight } = this.getTopAndHeight(groupRowsHeight, headerHeight);
 
         // header rows must be positioned with `top`: using transforms creates a stacking context per row,
         // which breaks spanHeaderHeight clipping when header and pinned lanes share the pinned-top host.
-        this.comp.setTop(`${topOffset}px`);
-        this.comp.setHeight(rowHeight + 'px');
+        if (topOffset !== this.drawnTop) {
+            this.drawnTop = topOffset;
+            comp.setTop(`${topOffset}px`);
+        }
+        if (rowHeight !== this.drawnHeight) {
+            this.drawnHeight = rowHeight;
+            comp.setHeight(rowHeight + 'px');
+        }
     }
 
-    public getTopAndHeight() {
+    private getTopAndHeight(groupRowsHeight: number[], headerHeight: number) {
         let topOffset = 0;
 
-        const groupHeadersHeight = getGroupRowsHeight(this.beans);
-        for (let i = 0; i < groupHeadersHeight.length; i++) {
+        for (let i = 0; i < groupRowsHeight.length; i++) {
             if (i === this.rowIndex && this.type === 'group') {
-                return { topOffset, rowHeight: groupHeadersHeight[i] };
+                return { topOffset, rowHeight: groupRowsHeight[i] };
             }
-            topOffset += groupHeadersHeight[i];
+            topOffset += groupRowsHeight[i];
         }
 
-        const headerHeight = getColumnHeaderRowHeight(this.beans);
         if (this.type === 'column') {
             return { topOffset, rowHeight: headerHeight };
         }
@@ -235,11 +329,11 @@ export class HeaderRowCtrl extends BeanStub implements CompBeanOwner {
         return { topOffset, rowHeight: filterHeight };
     }
 
-    private onVirtualColumnsChanged(afterScroll: boolean = false, force: boolean = false): void {
+    public onVirtualColumnsChanged(afterScroll: boolean = false, force: boolean = false): void {
         if (!this.comp) {
             return;
         }
-        // Both `virtualColumnsChanged` and `displayedColumnsChanged` land here for one column change, and
+        // A rendered-columns layout and the displayed one can both land here for one column change, and
         // the version covers only the rendered sections, not a ctrl kept alive for focus outside them.
         const headerRowsVersion = this.beans.colViewport.headerRowsVersion;
         if (
@@ -399,7 +493,7 @@ export class HeaderRowCtrl extends BeanStub implements CompBeanOwner {
     }
 
     public focusHeader(column: AgColumn | AgColumnGroup, event?: KeyboardEvent): boolean {
-        const ctrl = this.allCtrls.find((ctrl) => ctrl.column == column);
+        const ctrl = this.getHeaderCellCtrl(column);
 
         if (!ctrl) {
             return false;

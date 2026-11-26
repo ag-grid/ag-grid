@@ -74,8 +74,8 @@ export class BodyDropPivotTarget extends BeanStub implements DropListener {
 
     /** Callback for when drag stops */
     public onDragStop(_draggingEvent: GridDraggingEvent): void {
-        const { colModel, valueColsSvc, rowGroupColsSvc, pivotColsSvc } = this.beans;
-        colModel.beginColUpdate();
+        const { syncSvc, valueColsSvc, rowGroupColsSvc, pivotColsSvc } = this.beans;
+        syncSvc.beginUpdate();
         try {
             if (this.columnsToAggregate.length > 0) {
                 valueColsSvc?.addColumns(this.columnsToAggregate, 'toolPanelDragAndDrop');
@@ -87,7 +87,7 @@ export class BodyDropPivotTarget extends BeanStub implements DropListener {
                 pivotColsSvc?.addColumns(this.columnsToPivot, 'toolPanelDragAndDrop');
             }
         } finally {
-            colModel.endColUpdate();
+            syncSvc.endUpdate();
         }
     }
 

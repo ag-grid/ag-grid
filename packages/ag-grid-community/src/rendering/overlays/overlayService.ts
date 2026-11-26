@@ -569,6 +569,7 @@ export class OverlayService extends BeanStub implements NamedBean {
     private setExclusive(exclusive: boolean): void {
         if (this.oldExclusive !== exclusive) {
             this.oldExclusive = exclusive;
+            this.beans.ctrlsSvc.getHeaderRowContainerCtrl()?.onOverlayExclusiveChanged();
             this.eventSvc.dispatchEvent({ type: 'overlayExclusiveChanged' });
         }
     }

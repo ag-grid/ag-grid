@@ -2,6 +2,7 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
 import type { RowNode } from '../entities/rowNode';
+import type { RowChanges } from '../gridChanges';
 import { _isCellSelectionEnabled, _isClientSideRowModel } from '../gridOptionsUtils';
 import { RowDragComp, _getRowDragCountText } from './rowDragComp';
 import { RowDragFeature } from './rowDragFeature';
@@ -21,20 +22,9 @@ export class RowDragService extends BeanStub implements NamedBean {
         ctrl.addDestroyFunc(() => dragAndDrop.removeDropTarget(rowDragFeature));
         this.rowDragFeature = rowDragFeature;
 
-        const refreshVisibility = () => this.refreshVisibility();
-
-        this.addManagedPropertyListeners(
-            ['rowDragManaged', 'suppressRowDrag', 'refreshAfterGroupEdit'],
-            refreshVisibility
+        this.addManagedPropertyListeners(['rowDragManaged', 'suppressRowDrag', 'refreshAfterGroupEdit'], () =>
+            this.refreshVisibility()
         );
-
-        this.addManagedEventListeners({
-            newColumnsLoaded: refreshVisibility,
-            columnRowGroupChanged: refreshVisibility,
-            columnPivotModeChanged: refreshVisibility,
-            sortChanged: refreshVisibility,
-            filterChanged: refreshVisibility,
-        });
 
         this.visibility = this.computeVisibility();
     }
@@ -132,7 +122,15 @@ export class RowDragService extends BeanStub implements NamedBean {
         return 'visible';
     }
 
-    private refreshVisibility(): void {
+    /** The handles follow the columns loaded, the grouping, the pivot mode, the filter and the sort. */
+    public refreshAfterChange(change: RowChanges): void {
+        if (!(change.columnsLoaded || change.rowGroups || change.pivotMode || change.filter || change.sort)) {
+            return;
+        }
+        this.refreshVisibility();
+    }
+
+    public refreshVisibility(): void {
         const previousVisibility = this.visibility;
         const newVisibility = this.computeVisibility();
         if (previousVisibility !== newVisibility) {

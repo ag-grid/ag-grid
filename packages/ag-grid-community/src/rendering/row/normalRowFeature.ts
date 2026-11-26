@@ -23,6 +23,8 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
     private readonly cellByCol = new Map<AgColumn, CellCtrl>();
     /** The `displayedColsVersion` the cells were laid out at. */
     private cellCtrlsColsVersion = -1;
+    /** The `renderedColsVersion` the cells were laid out at. */
+    private cellCtrlsRenderedVersion = -1;
     /** The cells the last layout kept only because they are focused or editing, outside the columns their lanes render. */
     private keptCellCtrls: CellCtrl[] | null = null;
     /** The drawn colSpans by `colSpanIndex`, 0 where not read yet, so a horizontal scroll asks no `colSpan` callback. */
@@ -54,7 +56,7 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
         } else {
             this.giveLanes(false);
         }
-        // the comp attaches its pinned sections on its first refresh; later width changes reach it as events
+        // the comp attaches its pinned sections on its first refresh; the row renderer pushes later width changes
         this.rowCtrl.refreshPinnedCellGroupWidths();
     }
 
@@ -128,12 +130,28 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
     }
 
     public onDisplayedColumnsChanged(): void {
+        if (this.isLaidOutForColumns()) {
+            return;
+        }
         // skip animations to avoid stale valueGetters when column sets change
         this.updateColumnLists(true);
     }
 
     public onVirtualColumnsChanged(): void {
+        if (this.isLaidOutForColumns()) {
+            return;
+        }
         this.updateColumnLists(false, true, true);
+    }
+
+    /** Laid out after the column change, as a row the column update's model refresh recreated. */
+    private isLaidOutForColumns(): boolean {
+        const beans = this.beans;
+        return (
+            !this.cellsStale &&
+            this.cellCtrlsColsVersion === beans.visibleCols.displayedColsVersion &&
+            this.cellCtrlsRenderedVersion === beans.colViewport.renderedColsVersion
+        );
     }
 
     public renderFocusedCell(): void {
@@ -280,6 +298,7 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
         const centerCols = printLayout
             ? getColsForRow(rowNode, visibleCols.allCols, colSpans)
             : beans.colViewport.getColsWithinViewport(rowNode, colSpans);
+        this.cellCtrlsRenderedVersion = beans.colViewport.renderedColsVersion;
         this.centerCellCtrls = this.createCellCtrls(prevCenter, centerCols, colSpans, 1, inOrder, focusedCol);
         if (printLayout) {
             // Print layout flows every column through the centre, so the pinned ctrls are orphaned.
@@ -570,16 +589,6 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
                 const cellCtrls = this.getAllCellCtrls();
                 for (let i = 0, len = cellCtrls.length; i < len; ++i) {
                     cellCtrls[i].onCellChanged(event);
-                }
-            },
-        });
-        // a colDef update can add, change or drop a legacy `rowSpan`
-        this.addManagedEventListeners({
-            newColumnsLoaded: () => {
-                const beans = this.beans;
-                const cellCtrls = this.getAllCellCtrls();
-                for (let i = 0, len = cellCtrls.length; i < len; ++i) {
-                    _refreshCellRowSpan(beans, cellCtrls[i]);
                 }
             },
         });

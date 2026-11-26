@@ -1,8 +1,10 @@
-import type { ColumnTreeBuild } from '../columns/buildColumnTree';
 import type { ColumnState } from '../columns/columnStateUtils';
+import type { ColumnTreeBuild } from '../columns/columnTree/columnTreeBuilder';
+import type { ColumnIdAllocator } from '../columns/columnTree/matching/columnIdAllocator';
 import type { Bean } from '../context/bean';
 import type { AgColumn } from '../entities/agColumn';
 import type { ColDef, ColKey } from '../entities/colDef';
+import type { GridOptions } from '../entities/gridOptions';
 import type { CalculatedColumnExpressionValidation, ColumnEventType } from '../events';
 import type { Column } from './iColumn';
 import type { AgGridCommon } from './iCommon';
@@ -208,14 +210,33 @@ export interface ICalculatedColumnsService extends Bean {
     /** Build-time dynamic calc-col hook: keep owned AgColumns alive and splice them at anchors (the user-column
      *  layer handles overrides/removals of `columnDefs`-declared cols). */
     contributeTo(build: ColumnTreeBuild): void;
+    /** Raises the calculated column events a build's new columns owe, after `newColumnsLoaded`; a `silent` build
+     *  raises none and records its columns as the baseline the next build compares with. */
+    onColumnsLoaded(source: ColumnEventType, silent: boolean): void;
+    /** Adds the options {@link applyOptions} reads to those one column update applies; called once. */
+    addOptionKeysTo(keys: Set<keyof GridOptions>): void;
+    /** Rebuilds the columns, raising no created, changed or removed event, then tells their validation changes. */
+    rebuildColsAndValidate(source: ColumnEventType): void;
+    /** Follows an options change, reading `calculatedColumns`; whether the columns need a build for it. */
+    applyOptions(changedProps: ReadonlySet<keyof GridOptions>): boolean;
+    /** As a build starts: resolves what a turn on recorded; reserves in `ids` the colIds `contributeTo` builds. */
+    beginBuild(ids: ColumnIdAllocator): void;
+    /** Records where a move or ordered state left `order[start..end)`: one away from its source stays there. */
+    markPlacedByOrder(order: readonly AgColumn[], start: number, end: number): void;
+    /** `colsList` with each dynamic col right after its source, the newest nearest. Without `keptCols` (an order
+     *  from the definitions) the user's moves of them are forgotten; with it, only cols the user did not place move,
+     *  and only when the rebuild did not keep them, or a source up their chain, in place. */
+    seatCalculatedCols(
+        colsList: AgColumn[],
+        colsById: Record<string, AgColumn>,
+        keptCols: ReadonlyMap<AgColumn, number> | null
+    ): AgColumn[];
     /** Clear dynamic calc-col state; with `preserveCreatedColumns`, park added cols for `restoreDynamicColumnDefs`, and return whether caller must rebuild. */
     resetDynamicColumnDefs(preserveCreatedColumns?: boolean): boolean;
     /** Adopt restored user-column layer entries describing calc cols; returns whether the caller must rebuild. */
     adoptUserColumns(): boolean;
     /** Re-add parked dynamic cols referenced by `state` and return whether any were restored (caller rebuilds). */
     restoreDynamicColumnDefs(state: ColumnState[]): boolean;
-    /** Run a suppressed rebuild after calc-col mutation so column-state ops avoid spurious calc lifecycle events. */
-    refreshDynamicColumns(source: ColumnEventType): void;
     isEnabled(): boolean;
     isHighlightedColumn(column: AgColumn | null): boolean;
     getExpressionError(column: AgColumn): CalculatedExpressionError | undefined;

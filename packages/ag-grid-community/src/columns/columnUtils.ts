@@ -3,11 +3,11 @@ import type { AgPropertyChangedSource } from 'ag-stack';
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import { _isSortDefValid, getSortDefFromInput, isSortDirectionValid } from '../entities/agColumn';
-import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { ColDef, ColGroupDef } from '../entities/colDef';
 import type { ColumnEventType, ColumnHeaderNameChangedEvent } from '../events';
 import type { Column } from '../interfaces/iColumn';
 import type { ColumnState } from './columnStateUtils';
+import type { ColumnTreeBuild } from './columnTree/columnTreeBuilder';
 
 export const GROUP_AUTO_COLUMN_ID = 'ag-Grid-AutoColumn';
 export const SELECTION_COLUMN_ID = 'ag-Grid-SelectionColumn';
@@ -91,47 +91,23 @@ export function getSortDefFromColDef(colDef: ColDef) {
 }
 
 /** Destroys every still-alive node via flat lists (not `.children`, which a reused group may have replaced);
- *  the `isAlive()` guard de-dups nodes reachable via multiple paths (hierarchy cols sit in colDefList + wrappers).
+ *  the `isAlive()` guard de-dups nodes reachable via multiple paths (hierarchy cols sit in the columns + wrappers).
  *  @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export const _destroyColumnTreeAll = (
-    cols: readonly AgColumn[] | null,
-    allGroups: readonly AgProvidedColumnGroup[] | null
-): void => {
-    if (cols) {
-        for (let i = 0, len = cols.length; i < len; ++i) {
-            const col = cols[i];
-            if (col.isAlive()) {
-                col.destroy();
-            }
-        }
+export const _destroyColumnTreeAll = (build: ColumnTreeBuild | null): void => {
+    if (!build) {
+        return;
     }
-    if (allGroups) {
-        for (let i = 0, len = allGroups.length; i < len; ++i) {
-            const group = allGroups[i];
-            if (group.isAlive()) {
-                group.destroy();
-            }
-        }
-    }
-};
-
-/** Destroys prev-build nodes absent from the new build. Walks flat prev lists, not `.children`:
- *  orphans whose parent's array was replaced are otherwise unreachable.
- *  @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export const _destroyColumnTreeUnused = (
-    prevCols: readonly AgColumn[],
-    prevAllGroups: readonly AgProvidedColumnGroup[],
-    buildToken: number
-): void => {
-    for (let i = 0, len = prevCols.length; i < len; ++i) {
-        const col = prevCols[i];
-        if (col.buildToken !== buildToken && col.isAlive()) {
+    const cols = build.columns;
+    for (let i = 0, len = cols.length; i < len; ++i) {
+        const col = cols[i];
+        if (col.isAlive()) {
             col.destroy();
         }
     }
-    for (let i = 0, len = prevAllGroups.length; i < len; ++i) {
-        const group = prevAllGroups[i];
-        if (group.buildToken !== buildToken && group.isAlive()) {
+    const allGroups = build.allGroups;
+    for (let i = 0, len = allGroups.length; i < len; ++i) {
+        const group = allGroups[i];
+        if (group.isAlive()) {
             group.destroy();
         }
     }

@@ -88,6 +88,10 @@ export class ToolPanelColumnGroupComp extends Component {
     private tooltipFeature?: TooltipFeature;
     private expandTooltip?: ITooltipFeature;
     private labelRendererFeature?: ColumnSelectionLabelRendererFeature;
+    private touchListener: TouchListener | null = null;
+    private iconsTouchListener: TouchListener | null = null;
+    private contextMenu: ToolPanelContextMenu | null = null;
+    private dragSource: GridDragSource | null = null;
 
     constructor(
         public readonly modelItem: ColumnModelItem,
@@ -199,10 +203,10 @@ export class ToolPanelColumnGroupComp extends Component {
         this.addManagedEventListeners({ columnHeaderNameChanged: this.onHeaderNameChanged.bind(this) });
 
         const touchListener = new TouchListener(this.getGui(), false);
+        this.touchListener = touchListener;
         this.addManagedListeners(touchListener, {
             longTap: (e: LongTapEvent) => this.onContextMenu(e.touchStart),
         });
-        this.addDestroyFunc(touchListener.destroy.bind(touchListener));
 
         this.addManagedListeners(focusWrapper, {
             keydown: this.handleKeyDown.bind(this),
@@ -271,7 +275,8 @@ export class ToolPanelColumnGroupComp extends Component {
     }
 
     private onContextMenu(e: MouseEvent | Touch | KeyboardEvent): void {
-        const contextMenu = this.createBean(
+        this.destroyContextMenu();
+        this.contextMenu = this.createBean(
             new ToolPanelContextMenu(
                 this.columnGroup,
                 e,
@@ -283,11 +288,25 @@ export class ToolPanelColumnGroupComp extends Component {
                 this.refocusIfLost
             )
         );
-        this.addDestroyFunc(() => {
-            if (contextMenu.isAlive()) {
-                this.destroyBean(contextMenu);
-            }
-        });
+    }
+
+    private destroyContextMenu(): void {
+        const contextMenu = this.contextMenu;
+        this.contextMenu = null;
+        if (contextMenu?.isAlive()) {
+            this.destroyBean(contextMenu);
+        }
+    }
+
+    public override destroy(): void {
+        this.touchListener?.destroy();
+        this.iconsTouchListener?.destroy();
+        this.destroyContextMenu();
+        const dragSource = this.dragSource;
+        if (dragSource) {
+            this.beans.dragAndDrop!.removeDragSource(dragSource);
+        }
+        super.destroy();
     }
 
     private addVisibilityListenersToAllChildren(): void {
@@ -329,7 +348,11 @@ export class ToolPanelColumnGroupComp extends Component {
             getDefaultIconName: () => (hideColumnOnExit ? 'hide' : 'notAllowed'),
             getDragItem: () => this.createDragItem(),
             onDragStarted: () => {
-                hideColumnOnExit = !gos.get('suppressDragLeaveHidesColumns');
+                // the drop unticks the item: a read-only or unticked one changes nothing
+                hideColumnOnExit =
+                    !gos.get('suppressDragLeaveHidesColumns') &&
+                    this.isSelectable() &&
+                    this.cbSelect.getValue() !== false;
                 eventSvc.dispatchEvent({
                     type: 'columnPanelItemDragStart',
                     column: this.columnGroup,
@@ -362,7 +385,7 @@ export class ToolPanelColumnGroupComp extends Component {
         };
 
         dragAndDrop!.addDragSource(dragSource, true);
-        this.addDestroyFunc(() => dragAndDrop!.removeDragSource(dragSource));
+        this.dragSource = dragSource;
     }
 
     private createDragItem() {
@@ -400,8 +423,8 @@ export class ToolPanelColumnGroupComp extends Component {
         _addManagedElementListeners(this, eGroupOpenedIcon, { click: listener });
 
         const touchListener = new TouchListener(eColumnGroupIcons, true);
+        this.iconsTouchListener = touchListener;
         this.addManagedListeners(touchListener, { tap: listener });
-        this.addDestroyFunc(touchListener.destroy.bind(touchListener));
     }
 
     private onLabelClicked(): void {

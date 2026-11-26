@@ -1,4 +1,4 @@
-import type { AgEvent, AgPropertyValueChangedEvent } from 'ag-stack';
+import type { AgEvent } from 'ag-stack';
 import { AgPromise, _exists, _isPromise, _jsonEquals, _removeAllFromArray } from 'ag-stack';
 
 import { _unwrapUserComp } from '../components/framework/unwrapUserComp';
@@ -15,7 +15,7 @@ import type { ColDef } from '../entities/colDef';
 import type { CoreDataTypeDefinition, DataTypeFormatValueFunc } from '../entities/dataType';
 import type { RowNode } from '../entities/rowNode';
 import type { ColumnEventType, FilterChangedEventSourceType } from '../events';
-import type { GridOptionsWithDefaults } from '../gridOptionsDefault';
+import type { RowChanges } from '../gridChanges';
 import { _addGridCommonParams, _getGroupAggFiltering, _isClientSideRowModel } from '../gridOptionsUtils';
 import type { ContainerType } from '../interfaces/iAfterGuiAttachedParams';
 import type { Column } from '../interfaces/iColumn';
@@ -301,16 +301,8 @@ export class ColumnFilterService
 
     public postConstruct(): void {
         this.addManagedEventListeners({
-            gridColumnsChanged: this.onColumnsChanged.bind(this),
-            dataTypesInferred: () => {
-                this.beans.setFilterSvc?.createPreservingFilters();
-                this.processFilterModelUpdateQueue();
-            },
-            newColumnsLoaded: this.warnIfAuthorFilters.bind(this),
             filterModifiedListened: this.warnFilterModifiedListened.bind(this),
         });
-
-        this.addManagedPropertyListener('pivotMode', this.onPivotModeChanged.bind(this));
         const warnIfFilterModifiedHandler = this.warnIfFilterModifiedHandler.bind(this);
         this.addManagedPropertyListener('onFilterModified', warnIfFilterModifiedHandler);
         warnIfFilterModifiedHandler();
@@ -1328,7 +1320,7 @@ export class ColumnFilterService
         _warnLegacyFilterMode(this.beans, 345);
     }
 
-    private onColumnsChanged(): void {
+    public onColumnsChanged(): void {
         const columns: AgColumn[] = [];
         const disposals: AgPromise<boolean>[] = [];
         const { filterManager, groupFilter } = this.beans;
@@ -1628,25 +1620,35 @@ export class ColumnFilterService
         return true;
     }
 
-    /** Whether a column was redefined since the filters last re-derived their params. */
-    public hasRedefinedFilters(): boolean {
-        return this.paramsColDefsVersion !== this.beans.colModel.colDefsVersion;
-    }
-
-    /** Re-derives the params of the filters redefined so far, running their user callbacks. Only called after a
-     *  layout: by `VisibleColsService.refresh` before its layout events, and at the start of each outermost
-     *  `endColUpdate` pass, so the re-filter that follows a column definitions change reads the new params. */
-    public refreshRedefinedFilters(): void {
-        const version = this.beans.colModel.colDefsVersion;
-        if (version === this.paramsColDefsVersion) {
-            return;
+    /** Before a column update's rows refresh: the filters follow its pivot mode, redefined columns, inferred types. */
+    public applyRowChanges(change: RowChanges): void {
+        if (change.columnsLoaded) {
+            this.warnIfAuthorFilters();
         }
-        this.allColumnFilters.forEach((wrapper, colId) => {
-            if (wrapper.column.takeFilterRedefined()) {
+        if (change.pivotMode) {
+            this.onPivotModeChanged();
+        }
+        // re-derives the redefined filters' params (user callbacks), so the rows re-filter on them
+        const version = this.beans.colModel.colDefsVersion;
+        const redefined = version !== this.paramsColDefsVersion;
+        if (redefined) {
+            this.allColumnFilters.forEach((wrapper, colId) => {
+                if (!wrapper.column.takeFilterRedefined()) {
+                    return;
+                }
                 this.filterParamsChanged(colId);
-            }
-        });
-        this.paramsColDefsVersion = version;
+            });
+            this.paramsColDefsVersion = version;
+        }
+        const dataTypesInferred = change.dataTypesInferred;
+        if (redefined || dataTypesInferred) {
+            // before the rows refresh, so a filter keeping values that leave the data sees them first
+            this.beans.setFilterSvc?.createPreservingFilters();
+        }
+        if (dataTypesInferred) {
+            // the models set while the types were unknown: their re-filter joins this update's rows refresh
+            this.processFilterModelUpdateQueue();
+        }
     }
 
     public filterParamsChanged(colId: string, source: FilterChangedEventSourceType = 'api'): void {
@@ -2150,11 +2152,11 @@ export class ColumnFilterService
      * still be active but just re-applied to the non-pivoted data.
      * This should also apply vice-versa (i.e. applying a filter and then pivoting)
      */
-    private onPivotModeChanged(event: AgPropertyValueChangedEvent<GridOptionsWithDefaults, 'pivotMode'>): void {
-        const { colModel, pivotColsSvc } = this.beans;
+    private onPivotModeChanged(): void {
+        const colModel = this.beans.colModel;
         const groupFilterEnabled = !!_getGroupAggFiltering(this.gos);
-        // Can't rely on `colModel.isPivotMode()` because this event hasn't reached to colModel yet
-        const isPivotMode = event.currentValue;
+        const isPivotMode = colModel.pivotMode;
+        const isPivotActive = colModel.isPivotActive();
 
         const from = isPivotMode ? this.activeColumnFilters : this.activeAggregateFilters;
         const to = isPivotMode ? this.activeAggregateFilters : this.activeColumnFilters;
@@ -2163,8 +2165,6 @@ export class ColumnFilterService
 
         for (const filter of from) {
             const column = colModel.colsById[filter.colId];
-            // Can't rely on `colModel.isPivotActive()` because this event hasn't reached to colModel yet
-            const isPivotActive = isPivotMode && !!pivotColsSvc?.columns.length;
             // Our condition is isPivotMode === isAggFilter because:
             // - if we've enabled pivot mode, we want to only move aggregate filters to `activeAggregateFilters`,
             // - if we've disabled pivot mode, we want to only move non-aggregate filters to `activeColumnFilters`,

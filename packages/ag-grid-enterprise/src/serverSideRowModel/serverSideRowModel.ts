@@ -4,9 +4,9 @@ import type {
     AdvancedFilterModel,
     AgColumn,
     BeanCollection,
+    ColumnEventType,
     ColumnModel,
     ColumnNameService,
-    ColumnPivotChangedEvent,
     ColumnVO,
     FilterManager,
     FilterModel,
@@ -26,6 +26,7 @@ import type {
     SortModelItem,
     SortService,
     StoreRefreshAfterParams,
+    _RowChanges,
 } from 'ag-grid-community';
 import {
     BeanStub,
@@ -41,6 +42,8 @@ import {
     _isRowSelection,
 } from 'ag-grid-community';
 
+import type { FilterListener } from './listeners/filterListener';
+import type { ListenerUtils } from './listeners/listenerUtils';
 import type { NodeManager } from './nodeManager';
 import type { LazyStore } from './stores/lazy/lazyStore';
 import type { StoreFactory } from './stores/storeFactory';
@@ -74,6 +77,8 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
     private nodeManager: NodeManager;
     private storeFactory: StoreFactory;
     private pivotColDefSvc?: IPivotColDefService;
+    private listenerUtils: ListenerUtils;
+    private filterListener: FilterListener;
 
     public wireBeans(beans: BeanCollection) {
         this.colModel = beans.colModel;
@@ -88,6 +93,8 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
         this.nodeManager = beans.ssrmNodeManager as NodeManager;
         this.storeFactory = beans.ssrmStoreFactory as StoreFactory;
         this.pivotColDefSvc = beans.pivotColDefSvc;
+        this.listenerUtils = beans.ssrmListenerUtils as ListenerUtils;
+        this.filterListener = beans.ssrmFilterListener as FilterListener;
     }
 
     public rootNode: RowNode;
@@ -129,14 +136,8 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
     }
 
     public postConstruct(): void {
-        const resetListener = this.resetRootStore.bind(this);
         this.addManagedEventListeners({
-            newColumnsLoaded: this.onColumnEverything.bind(this),
             storeUpdated: this.onStoreUpdated.bind(this),
-            columnValueChanged: resetListener,
-            columnPivotChanged: this.onPivotChanged.bind(this),
-            columnRowGroupChanged: resetListener,
-            columnPivotModeChanged: resetListener,
         });
         _addRowHeightChangedListener(this, () => this.onRowHeightStyleChanged());
 
@@ -151,7 +152,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
                 'removePivotHeaderRowWhenSingleValueColumn',
                 'cacheBlockSize',
             ],
-            resetListener
+            this.resetRootStore.bind(this)
         );
         this.addManagedPropertyListeners(
             ['groupAllowUnbalanced', 'groupTotalRow', 'grandTotalRow', 'alwaysShowGrandTotalRow'],
@@ -214,11 +215,39 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
         return cache.isLastRowIndexKnown();
     }
 
-    private onColumnEverything(): void {
+    public refreshAfterChange(change: _RowChanges): void {
+        if (change.rowGroups || change.values || change.pivotMode) {
+            this.resetRootStore();
+            return;
+        }
+        let reset = false;
+        // a pivot change raised with new columns (a columnDefs pivotSort) is re-derived before they are compared
+        if (change.pivot || change.pivotResultNames) {
+            reset = this.onPivotChanged(change.pivotSource);
+        }
+        if (change.columnsLoaded) {
+            reset = this.onColumnEverything() || reset;
+        }
+        if (reset) {
+            // a new store reads the sort and filter models as it starts
+            return;
+        }
+        if (change.filter) {
+            this.filterListener.onFilterChanged();
+        }
+        if (change.sort) {
+            this.refreshAfterSort();
+        } else if (change.sortComparators && this.gos.get('serverSideEnableClientSideSort')) {
+            this.clientSideResort();
+        }
+    }
+
+    /** Whether it reset the store. */
+    private onColumnEverything(): boolean {
         // if first time, always reset
         if (!this.storeParams) {
             this.resetRootStore();
-            return;
+            return true;
         }
 
         // check if anything pertaining to fetching data has changed, and if it has, reset, but if
@@ -271,31 +300,32 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
         } else {
             // cols may have changed even if we didn't do a reset. storeParams ref will be provided when getRows
             // is called, so it's important to keep it up to date.
-            const newParams = this.createStoreParams();
-            this.storeParams.rowGroupCols = newParams.rowGroupCols;
-            this.storeParams.pivotCols = newParams.pivotCols;
-            this.storeParams.valueCols = newParams.valueCols;
+            this.storeParams.rowGroupCols = rowGroupColumnVos;
+            this.storeParams.pivotCols = pivotColumnVos;
+            this.storeParams.valueCols = valueColumnVos;
         }
+        return resetRequired;
     }
 
     /** A `pivotSort` toggle reorders the pivot result columns without changing what the server is asked for,
-     *  so re-derive the column defs from the fields already loaded instead of refetching every block. */
-    private onPivotChanged(event: ColumnPivotChangedEvent): void {
+     *  so re-derive the column defs from the fields already loaded not refetching every block; whether it reset. */
+    private onPivotChanged(source: ColumnEventType): boolean {
         if (!this.arePivotColsUnchanged()) {
             this.resetRootStore();
-            return;
+            return true;
         }
         const pivotResultCols = this.pivotResultCols;
         // Application-supplied columns win: `setPivotResultColumns` hands the order to the application, even if
         // this row model generated columns from `pivotResultFields` earlier. Re-order the applied ones in place.
         if (pivotResultCols?.suppliedColDefs) {
-            pivotResultCols.resortPivotResultCols(event.source);
-            return;
+            pivotResultCols.resortPivotResultCols(source);
+            return false;
         }
         const pivotResultFields = this.pivotResultFields;
         if (this.managingPivotResultColumns && pivotResultFields) {
             this.generateSecondaryColumns(pivotResultFields);
         }
+        return false;
     }
 
     /** True when the active pivot columns, in order, match the ones the current store was built with. */
@@ -321,10 +351,21 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
         this.nodeManager.clear();
     }
 
-    public refreshAfterSort(newSortModel: SortModelItem[], params: StoreRefreshAfterParams): void {
-        if (this.storeParams) {
-            this.storeParams.sortModel = newSortModel;
+    /** A column update's rows refresh for a sort change. */
+    private refreshAfterSort(): void {
+        const storeParams = this.storeParams;
+        if (!storeParams) {
+            return; // no datasource set
         }
+        const newSortModel = _getSortModel(this.sortSvc);
+        const changedColumns = findChangedColumnsInSort(newSortModel, storeParams.sortModel);
+        const listenerUtils = this.listenerUtils;
+        const params: StoreRefreshAfterParams = {
+            valueColChanged: listenerUtils.isSortingWithValueColumn(changedColumns),
+            secondaryColChanged: listenerUtils.isSortingWithSecondaryColumn(changedColumns),
+            changedColumns,
+        };
+        storeParams.sortModel = newSortModel;
 
         const rootStore = this.getRootStore();
         if (!rootStore) {
@@ -449,6 +490,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
             this.pivotResultCols?.setPivotResultCols(null, 'api');
             this.managingPivotResultColumns = false;
             this.pivotResultFields = undefined;
+            this.beans.syncSvc.settleRefreshedColumns(); // told before the reset's modelUpdated
         }
 
         // this gets the row to render rows (or remove the previously rendered rows, as it's blank to start).
@@ -804,4 +846,16 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
     public onRowHeightChangedDebounced(): void {
         this.onRowHeightChanged_debounced();
     }
+}
+
+/** The columns of either model whose sort or place in the sort differs, once per model listing it. */
+function findChangedColumnsInSort(newSortModel: SortModelItem[], oldSortModel: SortModelItem[]): string[] {
+    const allColsInBothSorts = newSortModel.map((sm) => sm.colId).concat(oldSortModel.map((sm) => sm.colId));
+    return allColsInBothSorts.filter((colId) => {
+        const oldIndex = oldSortModel.findIndex((sm) => sm.colId === colId);
+        const newIndex = newSortModel.findIndex((sm) => sm.colId === colId);
+        return (
+            oldIndex !== newIndex || (oldIndex !== -1 && oldSortModel[oldIndex].sort !== newSortModel[newIndex].sort)
+        );
+    });
 }

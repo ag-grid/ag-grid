@@ -49,10 +49,13 @@ export const _toStringOrNull = (value: any): string | null => {
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export const _jsonEquals = <T1, T2>(val1: T1, val2: T2): boolean => {
-    const val1Json = val1 ? JSON.stringify(val1) : null;
-    const val2Json = val2 ? JSON.stringify(val2) : null;
-
-    return val1Json === val2Json;
+    if ((val1 as unknown) === val2) {
+        return true; // same reference or both `null` / `undefined`
+    }
+    if (val1 == null || val2 == null) {
+        return val1 == null && val2 == null; // `null` and `undefined` are both "no value"
+    }
+    return JSON.stringify(val1) === JSON.stringify(val2);
 };
 
 /**

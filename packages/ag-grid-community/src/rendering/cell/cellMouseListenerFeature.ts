@@ -5,7 +5,7 @@ import type { BeanCollection } from '../../context/context';
 import type { CellClickedEvent, CellDoubleClickedEvent, CellMouseDownEvent } from '../../events';
 import { _interpretAsRightClick } from '../../gridOptionsUtils';
 import { _isStopPropagationForAgGrid } from '../../utils/gridEvent';
-import { _suppressCellMouseEvent } from '../renderUtils';
+import { _getCellCtrlForEventTarget, _suppressCellMouseEvent } from '../renderUtils';
 import type { CellCtrl } from './cellCtrl';
 
 export function _onCellMouseEvent(
@@ -265,7 +265,10 @@ function onMouseOut(beans: BeanCollection, cellCtrl: CellCtrl, mouseEvent: Mouse
     }
     const { eventSvc, colHover } = beans;
     eventSvc.dispatchEvent(cellCtrl.createEvent(mouseEvent, 'cellMouseOut'));
-    colHover?.clearMouseOver();
+    // a cell of the same column keeps the column hovered, so its mouseover changes nothing
+    if (colHover && _getCellCtrlForEventTarget(beans.gos, mouseEvent.relatedTarget)?.column !== cellCtrl.column) {
+        colHover.clearMouseOver();
+    }
 }
 
 function onMouseOver(beans: BeanCollection, cellCtrl: CellCtrl, mouseEvent: MouseEvent): void {

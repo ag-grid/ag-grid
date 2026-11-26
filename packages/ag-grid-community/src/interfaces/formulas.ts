@@ -1,6 +1,7 @@
 import type { ChangedRowNodes } from '../clientSideRowModel/changedRowNodes';
 import type { Bean } from '../context/bean';
 import type { AgColumn } from '../entities/agColumn';
+import type { GridOptions } from '../entities/gridOptions';
 import type { RowNode } from '../entities/rowNode';
 import type { AgGridCommon } from './iCommon';
 import type { IRowNode } from './iRowNode';
@@ -77,7 +78,16 @@ export interface IFormulaService extends Bean {
     isEvaluationActive(): boolean;
     isFormula(value: unknown): value is `=${string}`;
     setFormulasActive(columns: AgColumn[]): void;
-    onColsRefreshed(): void;
+    /** Adds the options {@link applyOptions} reads to those one column update applies; called once. */
+    addOptionKeysTo(keys: Set<keyof GridOptions>): void;
+    /** Whether an options change switches formula support for the columns present: a column refresh re-checks it. */
+    applyOptions(changedProps: ReadonlySet<keyof GridOptions>): boolean;
+    /** Whether a column update's pass has formulas or formula cells to refresh. */
+    isColRefreshOwed(): boolean;
+    /** Called at each pass of a column update, before the rows refresh. */
+    refreshForColChanges(): void;
+    /** Called at each pass of a column update and as it ends, once the redefined cells are redrawn. */
+    refreshCellsForColChanges(): void;
     resolveValue(col: AgColumn, row: RowNode): unknown;
     getDataSourceFormula(row: RowNode, col: AgColumn): string | undefined;
     getFormulaError(col: AgColumn, row: RowNode): Error | null;

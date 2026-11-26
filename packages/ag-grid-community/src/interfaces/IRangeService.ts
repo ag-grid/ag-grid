@@ -12,6 +12,14 @@ import type { ICellRangeFeature } from './iCellRangeFeature';
 import type { RowPosition } from './iRowPosition';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export interface IRangeSelectionExtension {
+    shouldSuppressRangeSelection?(eventTarget: EventTarget | null): boolean;
+    shouldSkipColumn?(column: AgColumn): boolean;
+    isAllColumnsSelectionCell?(cellPosition: CellPosition): boolean;
+    isAllColumnsRange?(range: CellRange, allColumns: AgColumn[]): boolean;
+}
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IRangeService {
     readonly autoScrollService: AutoScrollService;
     isEmpty(): boolean;
@@ -61,6 +69,8 @@ export interface IRangeService {
     createHeaderGroupCellMouseListenerFeature(column: AgColumnGroup, eGui: HTMLElement): BeanStub;
     forEachRowInRange(cellRange: CellRange, callback: (row: RowPosition) => void): void;
     handleColumnSelection(column: AgColumn | AgColumnGroup, event: MouseEvent | KeyboardEvent): void;
+    registerRangeSelectionExtension(extension: IRangeSelectionExtension): void;
+    unregisterRangeSelectionExtension(extension: IRangeSelectionExtension): void;
 }
 
 export enum CellRangeType {

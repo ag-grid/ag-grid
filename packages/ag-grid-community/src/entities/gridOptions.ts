@@ -475,7 +475,7 @@ export interface GridOptions<TData = any> {
      */
     defaultColDef?: ColDef<TData>;
     /**
-     * A default column group definition. All column group definitions will use these properties. Items defined in the actual column group definition get precedence.
+     * A default column group definition. All column group definitions will use these properties, except `groupId`. Items defined in the actual column group definition get precedence.
      * @initial
      */
     defaultColGroupDef?: Partial<ColGroupDef<TData>>;

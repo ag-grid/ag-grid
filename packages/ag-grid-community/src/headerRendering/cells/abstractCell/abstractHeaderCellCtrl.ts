@@ -21,8 +21,10 @@ import { getDragSign } from '../../../entities/agColumn';
 import type { AgColumnGroup } from '../../../entities/agColumnGroup';
 import type { AgProvidedColumnGroup } from '../../../entities/agProvidedColumnGroup';
 import type { HeaderClassParams, HeaderStyle, SuppressHeaderKeyboardEventParams } from '../../../entities/colDef';
+import type { HeaderChanges } from '../../../gridChanges';
 import { _addGridCommonParams, _isDomLayout, _setDomData } from '../../../gridOptionsUtils';
 import type { BrandedType } from '../../../interfaces/brandedType';
+import type { ColumnPinnedType } from '../../../interfaces/iColumn';
 import {
     getAnchoredPosition,
     getPrintLayoutOffset,
@@ -63,6 +65,8 @@ export abstract class AbstractHeaderCellCtrl<
     public readonly instanceId: HeaderCellCtrlInstanceId;
     /** Scratch for the React list diff, trusted only where the list diffed holds this at that index. */
     public diffIndex = 0;
+    /** The lane React last rendered this cell in; -1 before its first render. */
+    public renderedLane = -1;
 
     private isResizing = false;
     private resizeToggleTimeout = 0;
@@ -80,6 +84,10 @@ export abstract class AbstractHeaderCellCtrl<
     // what was last written to the comp, so a layout that leaves it costs no write; `-1` or null for a new one
     private drawnWidth = -1;
     private drawnAriaColIndex: number | null = null;
+    /** The pinned side the header styles and classes were last drawn for. */
+    private drawnPinned: ColumnPinnedType = null;
+    /** Measures the header's auto height again; set while it is measured. */
+    protected measureAutoHeight: (() => void) | undefined = undefined;
     /** The `left`, or `right` when anchored right. */
     private drawnPosition: number | null = null;
     private drawnRightAnchored = false;
@@ -87,6 +95,14 @@ export abstract class AbstractHeaderCellCtrl<
     private targetLeft: number | null = null;
     private userStyleKeys: string[] | undefined;
 
+    /** Redraws what the cell shows of its column's name and formula reference and, when `redefined`, definition. */
+    public refresh?(redefined: boolean): void;
+    /** Re-applies the column's header classes: a calculated column's highlight changes them, not its definition. */
+    public refreshHeaderClasses?(): void;
+    /** Re-applies the highlight of the header the header name editor is open on. */
+    public refreshEditHighlight?(): void;
+    /** Redraws the header styles and classes for the pinned side the column, or group fragment, moved to. */
+    protected abstract refreshPinnedStyles(): void;
     protected abstract resizeHeader(delta: number, takeFromAdjacent: boolean): void;
     protected abstract getHeaderClassParams(): HeaderClassParams;
 
@@ -98,14 +114,6 @@ export abstract class AbstractHeaderCellCtrl<
 
         // unique id to this instance, including the column ID to help with debugging in React as it's used in 'key'
         this.instanceId = (column.getUniqueId() + '-' + instanceIdSequence++) as HeaderCellCtrlInstanceId;
-    }
-
-    public postConstruct(): void {
-        const refreshTabIndex = this.refreshTabIndex.bind(this);
-        this.addManagedPropertyListeners(['suppressHeaderFocus'], refreshTabIndex);
-        this.addManagedEventListeners({
-            overlayExclusiveChanged: refreshTabIndex,
-        });
     }
 
     public setComp(
@@ -166,10 +174,8 @@ export abstract class AbstractHeaderCellCtrl<
     protected setGui(eGui: HTMLElement, compBean: BeanStub): void {
         this.eGui = eGui;
         this.drawnAriaColIndex = null;
+        this.drawnPinned = this.column.pinned; // the cell being wired draws for the side it has
         this.addDomData(compBean);
-        compBean.addManagedListeners(this.beans.eventSvc, {
-            displayedColumnsChanged: this.onDisplayedColumnsChanged.bind(this),
-        });
 
         _addManagedElementListeners(compBean, this.eGui, {
             focus: this.onGuiFocus.bind(this),
@@ -267,6 +273,7 @@ export abstract class AbstractHeaderCellCtrl<
         };
 
         let stopResizeObserver: (() => void) | undefined;
+        const measure = () => measureHeight(0);
 
         const checkMeasuring = () => {
             const newValue = this.column.isAutoHeaderHeight();
@@ -283,7 +290,8 @@ export abstract class AbstractHeaderCellCtrl<
             isMeasuring = true;
             this.comp.toggleCss('ag-header-cell-auto-height', true);
             measureHeight(0); // ensure measuring after the class has added, otherwise will measure incorrect height
-            stopResizeObserver = _observeResize(this.beans, wrapperElement, () => measureHeight(0));
+            stopResizeObserver = _observeResize(this.beans, wrapperElement, measure);
+            this.measureAutoHeight = measure;
         };
 
         const stopMeasuring = () => {
@@ -291,6 +299,7 @@ export abstract class AbstractHeaderCellCtrl<
             if (stopResizeObserver) {
                 stopResizeObserver();
             }
+            this.measureAutoHeight = undefined;
             this.comp.toggleCss('ag-header-cell-auto-height', false);
             stopResizeObserver = undefined;
             // Only clear the stored height when auto-height is genuinely off. A displayed
@@ -305,22 +314,13 @@ export abstract class AbstractHeaderCellCtrl<
 
         compBean.addDestroyFunc(() => stopMeasuring());
 
-        // Displaying the sort icon changes the available area for text, so sort changes can affect height
-        compBean.addManagedEventListeners({
-            sortChanged: () => {
-                // Rendering changes for sort, happen after the event... not ideal
-                if (isMeasuring) {
-                    window.setTimeout(() => measureHeight(0));
-                }
-            },
-        });
-
         if (checkMeasuringCallback) {
             checkMeasuringCallback(checkMeasuring);
         }
     }
 
-    protected onDisplayedColumnsChanged(): void {
+    /** Called by the header row once per column layout, and for a new cell. */
+    public onDisplayedColumnsChanged(): void {
         const { comp, column, beans, eGui } = this;
         if (!comp || !column || !eGui) {
             return;
@@ -331,7 +331,15 @@ export abstract class AbstractHeaderCellCtrl<
             this.drawnAriaColIndex = ariaColIndex;
             _setAriaColIndex(eGui, ariaColIndex); // for react, we don't use JSX, as it slowed down column moving
         }
+        const pinned = column.pinned;
+        if (pinned !== this.drawnPinned) {
+            this.drawnPinned = pinned;
+            this.refreshPinnedStyles();
+        }
     }
+
+    /** Called by the header row with what a column update changed, when its cells follow it. */
+    public abstract onGridChanges(changes: HeaderChanges): void;
 
     protected addResizeAndMoveKeyboardListeners(compBean: BeanStub): void {
         // a resize held as the focus leaves, or the header goes, never gets its keyup here
@@ -344,7 +352,7 @@ export abstract class AbstractHeaderCellCtrl<
         compBean.addDestroyFunc(endKeyboardResize);
     }
 
-    private refreshTabIndex(): void {
+    public refreshTabIndex(): void {
         const suppressHeaderFocus = _isHeaderFocusSuppressed(this.beans);
         if (this.eGui) {
             _addOrRemoveAttribute(this.eGui, 'tabindex', suppressHeaderFocus ? null : '-1');
@@ -400,6 +408,7 @@ export abstract class AbstractHeaderCellCtrl<
         this.isResizing = true;
         this.resizeMultiplier += 1;
         const takeFromAdjacent = !!this.beans.colResize?.takesFromAdjacent(e.shiftKey);
+        this.beans.colAnimation?.cancelWidthAnimation(); // a resize by hand applies at once
         this.resizeHeader(this.getViewportAdjustedResizeDiff(e, takeFromAdjacent), takeFromAdjacent);
         this.resizeFeature?.toggleColumnResizing(true);
     }
@@ -566,9 +575,10 @@ export abstract class AbstractHeaderCellCtrl<
         this.drawnWidth = width;
         this.setWidth(width);
         this.drawnPosition = null;
-        const { gos, colAnimation } = beans;
+        const colAnimation = beans.colAnimation;
         const oldLeft = column.oldLeft;
-        if (oldLeft == null || !colAnimation?.isActive() || gos.get('suppressColumnMoveAnimation')) {
+        // an active animation implies `suppressColumnMoveAnimation` is off: setting it ends the window
+        if (oldLeft == null || !colAnimation?.isActive()) {
             this.refreshLeft(width);
             return;
         }
@@ -576,8 +586,11 @@ export abstract class AbstractHeaderCellCtrl<
         this.targetLeft = left;
         this.placeAt(oldLeft, width);
         colAnimation.executeNextVMTurn(() => {
+            const eGui = this.eGui;
             // a layout since has placed the cell itself
-            if (this.targetLeft === left) {
+            if (eGui && this.targetLeft === left) {
+                // so the slide starts where the cell was placed, also when mounted late (React)
+                colAnimation.computeStyles(eGui);
                 this.placeAt(left, this.drawnWidth);
             }
         });

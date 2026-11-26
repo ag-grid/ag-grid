@@ -2,7 +2,6 @@ import type { BeanCollection } from '../context/context';
 import { AgColumn } from '../entities/agColumn';
 import type { ColDef } from '../entities/colDef';
 import { DefaultColumnTypes } from '../entities/defaultColumnTypes';
-import { _isColumnsSortingCoupledToGroup } from '../gridOptionsUtils';
 import { _mergeDeep } from '../utils/mergeDeep';
 import { convertColumnTypes } from './columnUtils';
 
@@ -19,6 +18,7 @@ export function _createUserColumn(
     const merged = _addColumnDefaultAndTypes(beans, userColDef, colId);
     const column = new AgColumn(merged, userColDef, colId, isPrimary, 'user');
     column.buildToken = buildToken;
+    column.createdBuildToken = buildToken;
     beans.context.createBean(column);
     return column;
 }
@@ -30,7 +30,7 @@ export function _addColumnDefaultAndTypes(
     colId: string,
     isAutoCol?: boolean
 ): ColDef {
-    const { gos, dataTypeSvc } = beans;
+    const { gos, dataTypeSvc, rowNodeSorter } = beans;
     const res: ColDef = {} as ColDef;
 
     const defaultColDef = gos.get('defaultColDef');
@@ -53,7 +53,7 @@ export function _addColumnDefaultAndTypes(
     }
 
     const autoGroupColDef = gos.get('autoGroupColumnDef');
-    if (autoGroupColDef && colDef.rowGroup && _isColumnsSortingCoupledToGroup(gos)) {
+    if (autoGroupColDef && colDef.rowGroup && rowNodeSorter?.sortingCoupledToGroup) {
         _mergeDeep(
             res,
             { sort: autoGroupColDef.sort, initialSort: autoGroupColDef.initialSort } satisfies Partial<ColDef>,

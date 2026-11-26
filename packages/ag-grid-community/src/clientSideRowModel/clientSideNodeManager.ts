@@ -299,7 +299,9 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
     }
 
     private dispatchRowDataUpdateStarted(data?: TData[] | null): void {
-        this.eventSvc.dispatchEvent({ type: 'rowDataUpdateStarted', rowData: data ?? null });
+        const rowData = data ?? null;
+        this.eventSvc.dispatchEvent({ type: 'rowDataUpdateStarted', rowData });
+        this.beans.dataTypeSvc?.onRowDataUpdateStarted(rowData);
     }
 
     private createRowNode(data: TData, level: number, sourceRowIndex?: number): RowNode<TData> {

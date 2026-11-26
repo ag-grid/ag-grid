@@ -260,6 +260,10 @@ export abstract class BaseEditStrategy extends BeanStub {
             ? cellCtrl.value
             : beans.valueSvc.getDisplayValue(position.column as AgColumn, position.rowNode, 'edit', false);
 
+        // only the formula module's headers show what is being edited
+        if (beans.formula && (type === 'cellEditingStarted' || type === 'cellEditingStopped')) {
+            beans.ctrlsSvc.getHeaderRowContainerCtrl()?.onCellEditingChanged(type === 'cellEditingStarted');
+        }
         this.eventSvc.dispatchEvent({
             ..._createCellEvent(beans, event ?? null, type as T, position, value),
             ...payload,

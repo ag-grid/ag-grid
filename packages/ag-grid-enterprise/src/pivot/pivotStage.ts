@@ -5,6 +5,7 @@ import type {
     BeanCollection,
     ChangedPath,
     ClientSideRowModelStage,
+    ColumnEventType,
     GridOptions,
     IPivotResultColsService,
     NamedBean,
@@ -47,6 +48,7 @@ export class PivotStage extends BeanStub implements NamedBean, _IRowNodePivotSta
     private uniqueValues: Map<string, any> = new Map();
 
     private aggregationColumnsHashLastTime: string | null;
+    private aggregationColumnsLastTime: AgColumn[] | null = null;
     private aggregationFuncsHashLastTime: string;
     private pivotOrderLastTime: string[] = [];
 
@@ -67,6 +69,7 @@ export class PivotStage extends BeanStub implements NamedBean, _IRowNodePivotSta
 
     private executePivotOff(): boolean {
         this.aggregationColumnsHashLastTime = null;
+        this.aggregationColumnsLastTime = null;
         this.pivotOrderLastTime = [];
         this.uniqueValues = new Map();
         if (this.pivotResultCols.pivotCols) {
@@ -107,15 +110,17 @@ export class PivotStage extends BeanStub implements NamedBean, _IRowNodePivotSta
 
         const uniqueValuesChanged = this.setUniqueValues(uniqueValues);
 
-        const aggregationColumns = valueColsSvc?.columns ?? [];
-        const aggregationColumnsHash = aggregationColumns
-            .map((column) => `${column.getId()}-${column.colDef.headerName}`)
-            .join('#');
-        const aggregationFuncsHash = aggregationColumns.map((column) => column.aggFunc?.toString()).join('#');
+        const aggregationColumns = valueColsSvc?.columns ?? null;
+        const aggregationColumnsHash = valueColNamesHash(aggregationColumns);
+        const aggregationFuncsHash = aggregationColumns?.map((column) => column.aggFunc?.toString()).join('#') ?? '';
 
-        const aggregationColumnsChanged = this.aggregationColumnsHashLastTime !== aggregationColumnsHash;
+        // A new `columns` array: the value cols or their order changed (one replaced by a new col with its id too).
+        const aggregationColumnsChanged =
+            this.aggregationColumnsHashLastTime !== aggregationColumnsHash ||
+            this.aggregationColumnsLastTime !== aggregationColumns;
         const aggregationFuncsChanged = this.aggregationFuncsHashLastTime !== aggregationFuncsHash;
         this.aggregationColumnsHashLastTime = aggregationColumnsHash;
+        this.aggregationColumnsLastTime = aggregationColumns;
         this.aggregationFuncsHashLastTime = aggregationFuncsHash;
 
         const groupColumnsHash = (rowGroupColsSvc?.columns ?? []).map((column) => column.getId()).join('#');
@@ -150,6 +155,11 @@ export class PivotStage extends BeanStub implements NamedBean, _IRowNodePivotSta
         }
         this.lastTimeFailed = false;
         return false;
+    }
+
+    public refreshColDefs(source: ColumnEventType): void {
+        this.aggregationColumnsHashLastTime = valueColNamesHash(this.beans.valueColsSvc?.columns ?? null);
+        this.pivotResultCols.setPivotResultCols(this.pivotColDefSvc.createPivotColumnDefs(this.uniqueValues), source);
     }
 
     private setUniqueValues(newValues: Map<string, any>): boolean {
@@ -313,3 +323,7 @@ function computePivotOrder(
     }
     return result;
 }
+
+/** The names the value columns show their pivot result headers with (an override wins over the definition's). */
+const valueColNamesHash = (valueCols: AgColumn[] | null): string =>
+    valueCols?.map((column) => column.headerNameOverride ?? column.colDef.headerName).join('#') ?? '';

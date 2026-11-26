@@ -27,6 +27,7 @@ import type {
     GridOptionsService,
     ICellRangeFeature,
     IHeaderCellComp,
+    IRangeSelectionExtension,
     IRangeService,
     IRowModel,
     IRowNode,
@@ -63,7 +64,6 @@ import { CellRangeFeature } from './cellRangeFeature';
 import { DragListenerFeature } from './dragListenerFeature';
 import { HeaderGroupCellMouseListenerFeature } from './headerGroupCellMouseListenerFeature';
 import { RangeHeaderHighlightFeature } from './rangeHeaderHighlightFeature';
-import type { RangeSelectionExtension, RangeSelectionExtensionRegistry } from './rangeSelectionExtensions';
 
 enum SelectionMode {
     NORMAL,
@@ -75,7 +75,7 @@ interface ColumnRangeSelectionContext {
     root?: AgColumn;
 }
 
-export class RangeService extends BeanStub implements NamedBean, IRangeService, RangeSelectionExtensionRegistry {
+export class RangeService extends BeanStub implements NamedBean, IRangeService {
     beanName = 'rangeSvc' as const;
 
     private rowModel: IRowModel;
@@ -85,7 +85,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
     private cellNavigation: CellNavigationService;
     private ctrlsSvc: CtrlsService;
     private selectionMode: SelectionMode;
-    private readonly rangeSelectionExtensions: RangeSelectionExtension[] = [];
+    private readonly rangeSelectionExtensions: IRangeSelectionExtension[] = [];
 
     public wireBeans(beans: BeanCollection) {
         this.rowModel = beans.rowModel;
@@ -154,14 +154,14 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
         });
     }
 
-    public registerRangeSelectionExtension(extension: RangeSelectionExtension): void {
+    public registerRangeSelectionExtension(extension: IRangeSelectionExtension): void {
         if (this.rangeSelectionExtensions.includes(extension)) {
             return;
         }
         this.rangeSelectionExtensions.push(extension);
     }
 
-    public unregisterRangeSelectionExtension(extension: RangeSelectionExtension): void {
+    public unregisterRangeSelectionExtension(extension: IRangeSelectionExtension): void {
         _removeFromArray(this.rangeSelectionExtensions, extension);
     }
 

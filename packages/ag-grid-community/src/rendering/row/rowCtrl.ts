@@ -135,7 +135,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> implements CompBeanOwner {
 
     private rowGui: RowGui | undefined;
     public compBean: BeanStub<any> | undefined = undefined;
-    private readonly rowModeFeature: IRowModeFeature;
+    public readonly rowModeFeature: IRowModeFeature;
     private mappedPinnedWidths: MappedPinnedCellGroupWidths | undefined = undefined;
 
     /** A spanned row's cell height belongs to the rows it covers, so auto height reaches it via the span. */
@@ -168,6 +168,9 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> implements CompBeanOwner {
     public businessKey: string | null = null;
     private businessKeyForNodeFunc: ((node: IRowNode<any>) => string) | undefined;
 
+    /** The row renderer's `rowCtrlsMade` once this row was made: a refresh asked before it skips it. */
+    public readonly madeAt: number;
+
     public isEmbeddedFullWidth = false;
     public embeddedSectionHasContent: HorizontalSectionMap<boolean> = {
         left: true,
@@ -186,6 +189,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> implements CompBeanOwner {
         this.beans = beans;
         this.gos = beans.gos;
         this.paginationPage = beans.pagination?.getCurrentPage() ?? 0;
+        this.madeAt = ++beans.rowRenderer.rowCtrlsMade;
         // Transformed rows create stacking contexts which prevent spanned centre cells,
         // regular pinned cells, and spanned pinned cells from being layered independently.
         // Top positioning keeps those sections in the same stacking context, allowing
@@ -225,7 +229,6 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> implements CompBeanOwner {
         const feature = this.isFullWidth() ? new FullWidthRowFeature(this) : new NormalRowFeature(this);
 
         this.createBean(feature, context);
-        this.addDestroyFunc(() => this.destroyBean(feature, context));
         return feature;
     }
 
@@ -644,11 +647,6 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> implements CompBeanOwner {
             pinnedRowsChanged: this.onPinnedRowsChanged.bind(this),
             pinnedRowDataChanged: this.onPinnedRowsChanged.bind(this),
             stickyBottomOffsetChanged: this.onStickyBottomOffsetChanged.bind(this),
-            displayedColumnsChanged: this.onDisplayedColumnsChanged.bind(this),
-            displayedColumnsWidthChanged: this.refreshPinnedCellGroupWidths.bind(this),
-            leftPinnedWidthChanged: this.refreshPinnedCellGroupWidths.bind(this),
-            rightPinnedWidthChanged: this.refreshPinnedCellGroupWidths.bind(this),
-            virtualColumnsChanged: this.onVirtualColumnsChanged.bind(this),
             cellFocused: this.onCellFocusChanged.bind(this),
             cellFocusCleared: this.onCellFocusChanged.bind(this),
             cellEditingStopped: releaseAfterEdit,
@@ -763,14 +761,6 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> implements CompBeanOwner {
         const { rowNode, rowGui } = this;
         const dragging = rowNode.dragging;
         rowGui?.rowComp.toggleCss('ag-row-dragging', dragging);
-    }
-
-    private onDisplayedColumnsChanged(): void {
-        this.rowModeFeature.onDisplayedColumnsChanged();
-    }
-
-    private onVirtualColumnsChanged(): void {
-        this.rowModeFeature.onVirtualColumnsChanged();
     }
 
     public getRowPosition(): RowPosition {
@@ -1300,6 +1290,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> implements CompBeanOwner {
         this.beans.eventSvc.dispatchEvent(event);
         this.destroyRowDragComp();
         destroyCompBean(this);
+        this.rowModeFeature.destroy();
         super.destroy();
     }
 

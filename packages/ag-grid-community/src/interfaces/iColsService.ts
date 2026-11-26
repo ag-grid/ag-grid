@@ -10,22 +10,16 @@ export type ColumnChangedEventType = 'columnValueChanged' | 'columnPivotChanged'
 export interface IColsService {
     columns: AgColumn[];
 
-    /** Cols staged since the last flush; non-null = awaiting dispatch when the column update ends. */
-    readonly pendingChanged: Set<AgColumn> | null;
-
     /** Dispatch this service's staged change (if any); called when the column update that staged it ends. */
     dispatchColChange(source: ColumnEventType): void;
-
-    /** Re-stamp active-col indexes once if a staged change moved the set; called when the column update ends. */
-    flushReindex(): void;
 
     setColumns(colKeys: ColKey[] | undefined, source: ColumnEventType): void;
     addColumns(keys: (ColKey | null | undefined)[] | undefined, source: ColumnEventType): void;
     removeColumns(keys: (ColKey | null | undefined)[] | undefined, source: ColumnEventType): void;
 
     /** Recompute active cols with a shared scan: call {@link extractCol} per primary col, then finalise via {@link commitExtract}. */
-    extractCol(col: AgColumn, colIsNew: boolean, source: ColumnEventType): void;
-    commitExtract(source: ColumnEventType): void;
+    extractCol(col: AgColumn, colIsNew: boolean, source: ColumnEventType, newColDefs: boolean): void;
+    commitExtract(source: ColumnEventType, asNewGrid: boolean, newColDefs: boolean): void;
 
     syncColState(
         column: AgColumn,
@@ -33,15 +27,16 @@ export interface IColsService {
         defaultState: ColumnStateParams | undefined,
         source: ColumnEventType
     ): void;
+    /** Ends a state pass: re-orders by the indexes its `syncColState` calls recorded. */
+    sortByPendingState(source: ColumnEventType): void;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.  */
 export interface IOrderedColsService extends IColsService {
     /** Whether {@link IColsService.extractCol} would make `col` active, without staging it. */
-    willExtractCol(col: AgColumn, colIsNew: boolean): boolean;
+    willExtractCol(col: AgColumn, colIsNew: boolean, newColDefs: boolean): boolean;
     /** Assigns synthetic indexes to `incoming` and adds new entries to `accumulator`; both mutated. */
     restoreColumnOrder(incoming: { [colId: string]: ColumnState }, accumulator: { [colId: string]: ColumnState }): void;
-    sortByPendingState(): void;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.  */
@@ -58,14 +53,12 @@ export interface IPivotColsService extends IOrderedColsService {
      *  keeping each group's within-group (user) column order. Stable: equal group rank keeps sticky order. */
     reRankByPivotGroupOrder(
         defColsList: AgColumn[],
-        stickyOrder: string[],
+        stickyOrder: AgColumn[],
         colsById: Record<string, AgColumn>
-    ): string[];
+    ): AgColumn[];
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.  */
 export interface IValueColsService extends IColsService {
     setColumnAggFunc(key: ColKey | undefined, aggFunc: ColAggFunc, source: ColumnEventType): void;
-    /** Re-order active value cols by the `valueIndex` recorded during the last `syncColState` pass. */
-    sortByPendingState(): void;
 }

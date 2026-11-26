@@ -1,4 +1,6 @@
+import type { GridOptions } from '../entities/gridOptions';
 import type { RowNode } from '../entities/rowNode';
+import type { RowChanges } from '../gridChanges';
 import type { OverlayType } from '../rendering/overlays/overlayComponent';
 
 export interface RowBounds {
@@ -28,6 +30,15 @@ export interface IRowModel {
      * row-data update and its pipeline refresh, or an SSRM store giving a row new data. Unset on other models.
      */
     readonly refreshingData?: boolean;
+
+    /** Called by the sync service after each pass of a column update, or at once outside one, with what changed. */
+    refreshAfterChange?(change: Readonly<RowChanges>): void;
+    /** Adds the options {@link applyOptions} applies to those the sync service listens to; called once. */
+    addOptionKeysTo?(keys: Set<keyof GridOptions>): void;
+    /** Applies the row options an options change changed; inside the column update when the change has one. */
+    applyOptions?(changedProps: Set<keyof GridOptions>): void;
+    /** Maps the rows again after groups were opened or closed one by one, keeping the rendered rows; CSRM only. */
+    refreshAfterExpansion?(): void;
 
     /** Returns the rowNode at the given index. */
     getRow(index: number): RowNode | undefined;

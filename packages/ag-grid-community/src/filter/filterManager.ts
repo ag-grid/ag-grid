@@ -6,6 +6,7 @@ import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { RowNode } from '../entities/rowNode';
 import type { FilterChangedEvent, FilterChangedEventSourceType } from '../events';
+import type { RowChanges } from '../gridChanges';
 import { _getGroupAggFiltering } from '../gridOptionsUtils';
 import type { AdvancedFilterModel } from '../interfaces/advancedFilterModel';
 import type { IAdvancedFilterService } from '../interfaces/iAdvancedFilterService';
@@ -39,14 +40,7 @@ export class FilterManager extends BeanStub implements NamedBean {
     private alwaysPassFilter?: (rowNode: IRowNode) => boolean;
 
     public postConstruct(): void {
-        const refreshFiltersForAggregations = this.refreshFiltersForAggregations.bind(this);
-        const updateAdvFilterColumns = this.updateAdvFilterColumns.bind(this);
         this.addManagedEventListeners({
-            columnValueChanged: refreshFiltersForAggregations,
-            columnPivotChanged: this.onPivotColumnsChanged.bind(this),
-            columnPivotModeChanged: refreshFiltersForAggregations,
-            newColumnsLoaded: updateAdvFilterColumns,
-            columnVisible: updateAdvFilterColumns,
             advancedFilterEnabledChanged: ({ enabled }) => this.onAdvFilterEnabledChanged(enabled),
         });
 
@@ -166,18 +160,20 @@ export class FilterManager extends BeanStub implements NamedBean {
         return this.isAdvFilterEnabled() && this.advancedFilter.isHeaderActive();
     }
 
-    private refreshFiltersForAggregations() {
-        if (_getGroupAggFiltering(this.gos) && this.isAnyFilterPresent()) {
+    /** Before an update's rows refresh, filters follow its columns: re-run once on a re-aggregation, show or hide. */
+    public applyRowChanges(change: RowChanges): void {
+        this.colFilter?.applyRowChanges(change);
+        // regenerated pivot value columns leave a filter classified against the old ones, whatever `groupAggFiltering`
+        const reaggregates = change.pivot || ((change.values || change.pivotMode) && !!_getGroupAggFiltering(this.gos));
+        if (reaggregates && this.isAnyFilterPresent()) {
             this.onFilterChanged();
         }
-    }
-
-    // Regenerated pivot value columns leave any active filter classified against the old columns, so
-    // re-evaluate regardless of `groupAggFiltering`. This refresh runs the full pipeline including the
-    // pivot stage, so ClientSideRowModel skips its own pivot refresh when a filter is present.
-    private onPivotColumnsChanged() {
-        if (this.isAnyFilterPresent()) {
-            this.onFilterChanged();
+        const columnsVisible = change.columnsVisible;
+        if (change.columnsLoaded || columnsVisible) {
+            this.updateAdvFilterColumns();
+        }
+        if (columnsVisible) {
+            this.quickFilter?.refreshCols();
         }
     }
 
@@ -203,6 +199,8 @@ export class FilterManager extends BeanStub implements NamedBean {
             }
 
             this.eventSvc.dispatchEvent(filterChangedEvent);
+            const primary = columns.length === 0 || columns.some((col) => col.primary);
+            this.beans.syncSvc.filterChanged(!filterChangedEvent.afterDataChange, primary);
 
             this.colFilter?.updateAfterFilterChanged();
         });

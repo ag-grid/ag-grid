@@ -27,10 +27,6 @@ import { ROW_CONTAINER_NAMES } from './rowContainer/rowContainerCtrl';
 import type { ScrollVisibleService } from './scrollVisibleService';
 
 const CSS_CLASS_CELL_SELECTABLE = 'ag-selectable';
-const CSS_CLASS_COLUMN_MOVING = 'ag-column-moving';
-const CSS_CLASS_COLUMN_WIDTH_ANIMATION = 'ag-animate-autosize';
-/** The 0.2s width transition plus a few frames, as a transition starts at the first style recalc after the writes. */
-const COLUMN_WIDTH_ANIMATION_MS = 250;
 
 export interface PinnedSectionState {
     height: number;
@@ -87,14 +83,8 @@ export class GridBodyCtrl extends BeanStub {
 
     private reportedViewportWidth: number | null = null;
     private scrollableAreaWidth: number | null = null;
-    // -1 so the first push writes 0px too, which a detail grid needs to stop inheriting its master's widths
-    private pinnedLeftWidth = -1;
-    private pinnedRightWidth = -1;
 
     public scrollFeature: GridBodyScrollFeature;
-
-    private columnWidthAnimationDepth = 0;
-    private columnWidthAnimationTimeout: number | undefined;
 
     public setComp(
         comp: IGridBodyComp,
@@ -138,8 +128,7 @@ export class GridBodyCtrl extends BeanStub {
         this.disableBrowserDragging();
         this.addStopEditingWhenGridLosesFocus();
         this.updatePinnedColumnStickyOffsets();
-        this.updatePinnedWidths();
-        this.updateScrollingClasses();
+        this.onPinnedWidthChanged();
 
         // Every completion of the registered set, not just the first: React may re-create a consumer,
         // and it is sized by this push rather than by asking.
@@ -153,12 +142,6 @@ export class GridBodyCtrl extends BeanStub {
         const toggleRowResizeStyle = this.toggleRowResizeStyles.bind(this);
         const updatePinnedColumnStickyOffsets = this.updatePinnedColumnStickyOffsets.bind(this);
 
-        const onPinnedWidthChanged = () => {
-            this.updatePinnedWidths();
-            this.updateWidths();
-            this.updateScrollingClasses();
-        };
-
         // Wrappers, not `bind`: both take an optional measured width, which an event argument would fill.
         const updateWidths = (): void => this.updateWidths();
         const updateViewportGeometry = (): void => this.updateViewportGeometry();
@@ -167,10 +150,6 @@ export class GridBodyCtrl extends BeanStub {
 
         this.addManagedEventListeners({
             gridColumnsChanged: this.onGridColumnsChanged.bind(this),
-            displayedColumnsChanged: updateWidths,
-            displayedColumnsWidthChanged: updateWidths,
-            leftPinnedWidthChanged: onPinnedWidthChanged,
-            rightPinnedWidthChanged: onPinnedWidthChanged,
             scrollVisibilityChanged: this.onScrollVisibilityChanged.bind(this),
             scrollbarWidthChanged: updateViewportGeometry,
             scrollGapChanged: this.updateScrollingClasses.bind(this),
@@ -214,7 +193,6 @@ export class GridBodyCtrl extends BeanStub {
     private onGridColumnsChanged(): void {
         const columns = this.beans.colModel.colsList;
         this.comp.setColumnCount(columns.length);
-        this.updateWidths();
         // Row-group / pivot columns declared in the initial column defs are only populated by the time the
         // grid columns are refreshed, which is after this ctrl is constructed.
         this.setGridRole();
@@ -234,7 +212,7 @@ export class GridBodyCtrl extends BeanStub {
     }
 
     /** The one place the horizontal widths are worked out; consumers are pushed the result. */
-    private updateWidths(viewportWidth: number = this.getReportedViewportWidth()): void {
+    public updateWidths(viewportWidth: number = this.getReportedViewportWidth()): void {
         const verticalScrollShowing = this.scrollVisibleSvc.verticalScrollShowing;
         const scrollbarWidth = this.getVerticalScrollbarWidth(verticalScrollShowing);
         // Collapsing the scroll range lets the browser clamp the scroll position, which the next report
@@ -454,56 +432,9 @@ export class GridBodyCtrl extends BeanStub {
         }
     }
 
-    // used by ColumnAnimationService
-    public setColumnMovingCss(moving: boolean): void {
-        this.comp.setColumnMovingCss(CSS_CLASS_COLUMN_MOVING, moving);
-    }
-
-    /** Animates the column widths and positions laid out until the matching `finishColumnWidthAnimation`; nestable. */
-    public startColumnWidthAnimation(): void {
-        this.columnWidthAnimationDepth++;
-        const gos = this.gos;
-        if (!gos.get('animateColumnResizing') || gos.get('enableRtl')) {
-            return;
-        }
-        window.clearTimeout(this.columnWidthAnimationTimeout);
-        this.columnWidthAnimationTimeout = undefined;
-        this.comp.setColumnMovingCss(CSS_CLASS_COLUMN_WIDTH_ANIMATION, true);
-    }
-
-    /**
-     * `skipTransition` removes the class before any style recalc sees it, so nothing laid out since animates. It does
-     * so even while an outer window, such as a pending async auto-size, is still open.
-     */
-    public finishColumnWidthAnimation(skipTransition?: boolean): void {
-        const depth = Math.max(0, this.columnWidthAnimationDepth - 1);
-        this.columnWidthAnimationDepth = depth;
-        if (skipTransition) {
-            this.removeColumnWidthAnimation();
-            return;
-        }
-        if (depth > 0 || !this.eGridBody.classList.contains(CSS_CLASS_COLUMN_WIDTH_ANIMATION)) {
-            return;
-        }
-        window.clearTimeout(this.columnWidthAnimationTimeout);
-        // The class must outlive the width writes: a transition only starts if a style recalc sees it.
-        this.columnWidthAnimationTimeout = window.setTimeout(() => {
-            this.columnWidthAnimationTimeout = undefined;
-            if (this.isAlive()) {
-                this.comp.setColumnMovingCss(CSS_CLASS_COLUMN_WIDTH_ANIMATION, false);
-            }
-        }, COLUMN_WIDTH_ANIMATION_MS);
-    }
-
-    /** Ends any open or lingering animation window so widths written next apply immediately. */
-    public cancelColumnWidthAnimation(): void {
-        this.removeColumnWidthAnimation();
-    }
-
-    private removeColumnWidthAnimation(): void {
-        window.clearTimeout(this.columnWidthAnimationTimeout);
-        this.columnWidthAnimationTimeout = undefined;
-        this.comp.setColumnMovingCss(CSS_CLASS_COLUMN_WIDTH_ANIMATION, false);
+    /** Sets a class of the column animations, owned by the column animation service. */
+    public setColumnAnimationCss(cssClass: string, on: boolean): void {
+        this.comp.setColumnMovingCss(cssClass, on);
     }
 
     public setCellTextSelection(selectable: boolean = false): void {
@@ -514,28 +445,22 @@ export class GridBodyCtrl extends BeanStub {
         const {
             eGridBody: { classList },
             scrollVisibleSvc,
-            beans: { visibleCols },
         } = this;
         classList.toggle('ag-body-vertical-content-no-gap', !scrollVisibleSvc.verticalScrollGap);
         classList.toggle('ag-body-horizontal-content-no-gap', !scrollVisibleSvc.horizontalScrollGap);
-        classList.toggle('ag-has-left-pinned-cols', visibleCols.getLeftStickyColumnContainerWidth() > 0);
-        classList.toggle('ag-has-right-pinned-cols', visibleCols.getRightStickyColumnContainerWidth() > 0);
+        const pinnedCols = this.beans.pinnedCols;
+        classList.toggle('ag-has-left-pinned-cols', !!pinnedCols?.leftWidth);
+        classList.toggle('ag-has-right-pinned-cols', !!pinnedCols?.rightWidth);
     }
 
     /** Read by the sticky group header labels' offsets. */
-    private updatePinnedWidths(): void {
-        const visibleCols = this.beans.visibleCols;
-        const leftWidth = visibleCols.getLeftStickyColumnContainerWidth();
-        const rightWidth = visibleCols.getRightStickyColumnContainerWidth();
+    public onPinnedWidthChanged(): void {
+        const pinnedCols = this.beans.pinnedCols;
+        // written on the first call too, 0px included: a detail grid stops inheriting its master's widths
         const style = this.eGridViewport.style;
-        if (leftWidth !== this.pinnedLeftWidth) {
-            this.pinnedLeftWidth = leftWidth;
-            style.setProperty('--ag-internal-pinned-left-width', `${leftWidth}px`);
-        }
-        if (rightWidth !== this.pinnedRightWidth) {
-            this.pinnedRightWidth = rightWidth;
-            style.setProperty('--ag-internal-pinned-right-width', `${rightWidth}px`);
-        }
+        style.setProperty('--ag-internal-pinned-left-width', `${pinnedCols?.leftWidth ?? 0}px`);
+        style.setProperty('--ag-internal-pinned-right-width', `${pinnedCols?.rightWidth ?? 0}px`);
+        this.updateScrollingClasses();
     }
 
     private updatePinnedColumnStickyOffsets(): void {

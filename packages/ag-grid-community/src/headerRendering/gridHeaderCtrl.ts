@@ -32,7 +32,6 @@ export class GridHeaderCtrl extends BeanStub {
         // for setting ag-pivot-on / ag-pivot-off CSS classes
         this.addManagedEventListeners({
             columnPivotModeChanged: this.onPivotModeChanged.bind(this, beans),
-            displayedColumnsChanged: this.onDisplayedColumnsChanged.bind(this, beans),
         });
 
         this.onPivotModeChanged(beans);
@@ -66,9 +65,12 @@ export class GridHeaderCtrl extends BeanStub {
     }
 
     private setupHeaderHeight(): void {
-        const listener = this.setHeaderHeight.bind(this);
-        listener();
+        this.setHeaderHeight();
 
+        const listener = () => {
+            this.setHeaderHeight();
+            this.beans.ctrlsSvc.getHeaderRowContainerCtrl()?.placeRows();
+        };
         this.addManagedPropertyListeners(
             [
                 'headerHeight',
@@ -80,23 +82,26 @@ export class GridHeaderCtrl extends BeanStub {
             listener
         );
 
+        const setHeaderHeightNextFrame = _throttleToFrame(this, () => this.beans, this.setHeaderHeight.bind(this));
         this.addManagedEventListeners({
-            headerRowsChanged: listener,
-            displayedColumnsChanged: listener,
             columnHeaderHeightChanged: listener,
-            // Deferred to a frame to avoid a feedback loop.
-            columnGroupHeaderHeightChanged: _throttleToFrame(this, () => this.beans, listener),
+            // the rows move at once; the header's own height follows a frame later, to avoid a feedback loop
+            columnGroupHeaderHeightChanged: () => {
+                setHeaderHeightNextFrame();
+                this.beans.ctrlsSvc.getHeaderRowContainerCtrl()?.placeRows();
+            },
             stylesChanged: listener,
-            advancedFilterEnabledChanged: listener,
         });
     }
 
-    private setHeaderHeight(): void {
+    /** The header's height from its rows and options; the rows' owner calls it when their count changes. */
+    public setHeaderHeight(): void {
         const { beans } = this;
 
         let totalHeaderHeight: number = 0;
 
-        const groupHeight = getGroupRowsHeight(beans).reduce((prev, curr) => prev + curr, 0);
+        const groupRowsHeight = getGroupRowsHeight(beans);
+        const groupHeight = groupRowsHeight.reduce((prev, curr) => prev + curr, 0);
         const headerHeight = getColumnHeaderRowHeight(beans);
 
         if (beans.filterManager?.hasFloatingFilters()) {
@@ -114,9 +119,9 @@ export class GridHeaderCtrl extends BeanStub {
 
         if (this.headerHeight !== totalHeaderHeight) {
             this.headerHeight = totalHeaderHeight;
-            this.eventSvc.dispatchEvent({
-                type: 'headerHeightChanged',
-            });
+            beans.visibleCols.invalidateScrollCheck(); // the body's share of the viewport moved
+            beans.ctrlsSvc.getHeaderRowContainerCtrl()?.onHeaderHeightChanged(groupRowsHeight, headerHeight);
+            this.eventSvc.dispatchEvent({ type: 'headerHeightChanged' });
         }
     }
 
@@ -127,11 +132,13 @@ export class GridHeaderCtrl extends BeanStub {
         this.comp.toggleCss('ag-pivot-off', !pivotMode);
     }
 
-    private onDisplayedColumnsChanged(beans: BeanCollection): void {
-        const columns = beans.visibleCols.allCols;
+    /** Follows the displayed columns, as their owner raises `displayedColumnsChanged`. */
+    public onDisplayedColumnsChanged(): void {
+        const columns = this.beans.visibleCols.allCols;
         const shouldAllowOverflow = columns.some((col) => col.isSpanHeaderHeight());
 
         this.comp.toggleCss('ag-header-allow-overflow', shouldAllowOverflow);
+        this.setHeaderHeight();
     }
 
     protected onTabKeyDown(e: KeyboardEvent): void {

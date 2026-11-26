@@ -16,6 +16,8 @@ import type { HeaderClassParams } from '../../../entities/colDef';
 import type { ColumnEvent, FilterChangedEvent } from '../../../events';
 import { _getFilterModel } from '../../../filter/columnFilterUtils';
 import { translateColumnFilterLabel } from '../../../filter/filterAriaLabels';
+import { HEADER_CHANGE_FLAG_COLUMN_CELL_OPTIONS, HEADER_CHANGE_FLAG_DISPLAY_NAMES } from '../../../gridChanges';
+import type { HeaderChanges } from '../../../gridChanges';
 import { _addGridCommonParams, _isLegacyMenuEnabled } from '../../../gridOptionsUtils';
 import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
 import type { PopupToggleResult } from '../../../misc/menu/menuService';
@@ -78,7 +80,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
         this.setupPosition();
         this.setupHover(compBean);
         this.setupFocus(compBean);
-        this.setupAria(compBean);
+        this.refreshButtonLabel();
         this.setupFilterButton();
         this.setupUserComp();
         this.setupSyncWithFilter(compBean);
@@ -86,21 +88,6 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
 
         _addPopupToggleButtonListeners(compBean, this.eButtonShowMainFilter, () => this.toggleParentFilter());
         this.setupFilterChangedListener(compBean);
-        const colDefChanged = () => this.onColDefChanged(compBean);
-        compBean.addManagedListeners(this.column, { colDefChanged });
-        compBean.addManagedEventListeners({
-            columnPinned: ({ columns }) => {
-                if (columns?.includes(this.column)) {
-                    this.refreshHeaderStyles();
-                    this.refreshHeaderClasses();
-                }
-            },
-            filterSwitched: ({ column }) => {
-                if (column === this.column) {
-                    colDefChanged();
-                }
-            },
-        });
         // Make sure this is the last destroy func as it clears the gui and comp
         compBean.addDestroyFunc(() => {
             (this.eButtonShowMainFilter as any) = null;
@@ -179,19 +166,38 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
         );
     }
 
-    private setupAria(compBean: BeanStub): void {
-        const refreshButtonLabel = () => {
+    /** Names the button after the column's display name, and says whether the name it showed differs. */
+    private refreshButtonLabel(): boolean {
+        const { beans, column } = this;
+        const eButton = this.eButtonShowMainFilter;
+        const label = translateColumnFilterLabel(beans, column, this.getLocaleTextFunc(), 'filterMenuOpen');
+        const renamed = label !== _getAriaLabel(eButton);
+        _setAriaLabel(eButton, label);
+        return renamed;
+    }
+
+    protected override refreshPinnedStyles(): void {
+        this.refreshHeaderStyles();
+        this.refreshHeaderClasses();
+    }
+
+    public override refresh(redefined: boolean): void {
+        this.refreshButtonLabel();
+        if (redefined) {
+            this.onColDefChanged(this.compBean ?? this);
+        }
+    }
+
+    public override onGridChanges(changes: HeaderChanges): void {
+        if ((changes & (HEADER_CHANGE_FLAG_COLUMN_CELL_OPTIONS | HEADER_CHANGE_FLAG_DISPLAY_NAMES)) === 0) {
+            return;
+        }
+        // no rename tells the floating filter of this name, so it is built again, as a new cell's is
+        if (this.refreshButtonLabel() && this.active) {
             const { beans, column } = this;
-            _setAriaLabel(
-                this.eButtonShowMainFilter,
-                translateColumnFilterLabel(beans, column, this.getLocaleTextFunc(), 'filterMenuOpen')
-            );
-        };
-        refreshButtonLabel();
-        compBean.addManagedListeners(this.column, {
-            headerNameChanged: refreshButtonLabel,
-            colDefChanged: refreshButtonLabel,
-        });
+            const compDetails = beans.colFilter?.getFloatingFilterCompDetails(column, () => this.showParentFilter());
+            this.updateCompDetails(this.compBean ?? this, compDetails, false);
+        }
     }
 
     private onTabKeyDown(e: KeyboardEvent) {
@@ -332,7 +338,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
         }
     }
 
-    private refreshHeaderClasses(): void {
+    public override refreshHeaderClasses(): void {
         const { column, beans } = this;
         const classes = _getHeaderClassesFromColDef(column.colDef, beans, column, null, true);
 
@@ -447,6 +453,14 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
                 this.eButtonShowMainFilter.classList.toggle('ag-filter-active', this.column.isFilterActive());
             }
         }
+    }
+
+    /** Called through the header container as the filters tool panel switches or removes the column's filter. */
+    public onFilterSwitched(): void {
+        if (!this.eGui) {
+            return;
+        }
+        this.onColDefChanged(this.compBean ?? this);
     }
 
     private onColDefChanged(compBean: BeanStub): void {

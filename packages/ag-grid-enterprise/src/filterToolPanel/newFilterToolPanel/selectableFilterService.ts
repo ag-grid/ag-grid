@@ -204,7 +204,9 @@ export class SelectableFilterService
     }
 
     public switchFilter(column: AgColumn, source: FilterChangedEventSourceType): void {
-        this.beans.colFilter?.filterParamsChanged(column.colId, source);
+        const beans = this.beans;
+        beans.colFilter?.filterParamsChanged(column.colId, source);
+        beans.ctrlsSvc.getHeaderRowContainerCtrl()?.getFloatingFilterCtrlForColumn(column)?.onFilterSwitched();
         this.eventSvc.dispatchEvent({ type: 'filterSwitched', column });
     }
 

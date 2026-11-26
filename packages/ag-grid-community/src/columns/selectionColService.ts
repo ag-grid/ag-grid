@@ -2,31 +2,20 @@ import type { NamedBean } from '../context/bean';
 import type { ColKind } from '../entities/agColumn';
 import type { ColDef, SortComparatorFn } from '../entities/colDef';
 import type { GridOptions } from '../entities/gridOptions';
-import type { ColumnEventType } from '../events';
-import type { PropertyValueChangedEvent } from '../gridOptionsService';
 import { _getCheckboxLocation, _getCheckboxes, _getHeaderCheckbox, _isRowSelection } from '../gridOptionsUtils';
 import { BaseSingleColService } from './baseSingleColService';
-import { SELECTION_COLUMN_ID, _convertColumnEventSourceType } from './columnUtils';
+import { SELECTION_COLUMN_ID } from './columnUtils';
 
 export class SelectionColService extends BaseSingleColService implements NamedBean {
     beanName = 'selectionColSvc' as const;
 
     protected readonly colKind: ColKind = 'selection';
 
+    /** The `rowSelection` the column was last derived from. */
+    private appliedRowSelection: GridOptions['rowSelection'];
+
     public postConstruct(): void {
-        this.addManagedPropertyListener('rowSelection', (event) => {
-            this.onSelectionOptionsChanged(
-                event.currentValue,
-                event.previousValue,
-                _convertColumnEventSourceType(event.source)
-            );
-        });
-
-        this.addManagedPropertyListener('selectionColumnDef', this.updateColumns.bind(this));
-    }
-
-    public updateColumns(event: PropertyValueChangedEvent<'selectionColumnDef'>): void {
-        this.refreshColDef(_convertColumnEventSourceType(event.source));
+        this.appliedRowSelection = this.gos.get('rowSelection');
     }
 
     public isEnabled(): boolean {
@@ -66,6 +55,8 @@ export class SelectionColService extends BaseSingleColService implements NamedBe
             editable: false,
             suppressFillHandle: true,
             suppressAutoSize: true,
+            // sized statically, as its docs say
+            suppressSizeToFit: true,
             // overrides
             ...filteredSelColDef,
             // non-overridable properties
@@ -74,11 +65,18 @@ export class SelectionColService extends BaseSingleColService implements NamedBe
         };
     }
 
-    private onSelectionOptionsChanged(
-        current: GridOptions['rowSelection'],
-        prev: GridOptions['rowSelection'],
-        source: ColumnEventType
-    ) {
+    public addOptionKeysTo(keys: Set<keyof GridOptions>): void {
+        keys.add('rowSelection');
+    }
+
+    /** Follows an options change, reading `rowSelection`; whether the selection column must be refreshed for it. */
+    public applyOptions(changedProps: ReadonlySet<keyof GridOptions>): boolean {
+        if (!changedProps.has('rowSelection')) {
+            return false;
+        }
+        const prev = this.appliedRowSelection;
+        const current = this.gos.get('rowSelection');
+        this.appliedRowSelection = current;
         const prevCheckbox = prev && typeof prev !== 'string' ? _getCheckboxes(prev) : undefined;
         const currCheckbox = current && typeof current !== 'string' ? _getCheckboxes(current) : undefined;
         const checkboxHasChanged = prevCheckbox !== currCheckbox;
@@ -91,9 +89,7 @@ export class SelectionColService extends BaseSingleColService implements NamedBe
         const prevLocation = _getCheckboxLocation(prev);
         const locationChanged = currLocation !== prevLocation;
 
-        if (checkboxHasChanged || headerCheckboxHasChanged || locationChanged) {
-            this.beans.colModel.refreshAll(source);
-        }
+        return checkboxHasChanged || headerCheckboxHasChanged || locationChanged;
     }
 }
 

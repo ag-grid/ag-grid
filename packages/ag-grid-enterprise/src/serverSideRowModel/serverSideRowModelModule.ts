@@ -15,10 +15,8 @@ import { SharedPivotModule } from '../pivot/pivotModule';
 import { SharedTreeDataModule } from '../treeData/treeDataModule';
 import { VERSION } from '../version';
 import { BlockUtils } from './blocks/blockUtils';
-import { ExpandListener } from './listeners/expandListener';
 import { FilterListener } from './listeners/filterListener';
 import { ListenerUtils } from './listeners/listenerUtils';
-import { SortListener } from './listeners/sortListener';
 import { NodeManager } from './nodeManager';
 import { ServerSideRowModel } from './serverSideRowModel';
 import {
@@ -49,7 +47,6 @@ export const ServerSideRowModelModule: _ModuleWithoutApi = {
     rowModels: ['serverSide'],
     beans: [
         ServerSideRowModel,
-        ExpandListener,
         StoreUtils,
         BlockUtils,
         NodeManager,
@@ -61,7 +58,6 @@ export const ServerSideRowModelModule: _ModuleWithoutApi = {
         LazyBlockLoadingService,
         SsrmRowChildrenService,
         ServerSideExpansionService,
-        SortListener,
     ],
     dependsOn: [
         EnterpriseCoreModule,

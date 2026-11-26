@@ -3,7 +3,6 @@ import { RefPlaceholder, _clearElement, _setDisplayed } from 'ag-stack';
 
 import type { AgColumn } from '../entities/agColumn';
 import { _getDisplaySortForColumn } from '../entities/agColumn';
-import { _isColumnsSortingCoupledToGroup } from '../gridOptionsUtils';
 import type { SortDef } from '../interfaces/iSort';
 import type { TooltipLocation } from '../tooltip/tooltipComponent';
 import type { ElementParams } from '../utils/element';
@@ -97,7 +96,7 @@ export class SortIndicatorComp extends Component {
         this.addInIcon('sortAbsoluteDescending', this.eSortAbsoluteDesc, column);
 
         const updateIcons = this.updateIcons.bind(this);
-        const sortUpdated = this.onSortChanged.bind(this);
+        const sortUpdated = this.updateSort.bind(this);
         this.addManagedEventListeners({
             newColumnsLoaded: updateIcons,
             // Watch global events, as row group columns can effect their display column.
@@ -106,7 +105,7 @@ export class SortIndicatorComp extends Component {
             columnRowGroupChanged: sortUpdated,
         });
 
-        this.onSortChanged();
+        this.updateSort();
         this.setupSortTooltips(tooltipLocation);
     }
 
@@ -151,7 +150,7 @@ export class SortIndicatorComp extends Component {
         }
     }
 
-    private onSortChanged(): void {
+    private updateSort(): void {
         this.updateIcons();
         if (!this.suppressOrder) {
             this.updateSortOrder();
@@ -204,12 +203,10 @@ export class SortIndicatorComp extends Component {
     }
 
     private setupMultiSortIndicator() {
-        const { eSortMixed, column, gos } = this;
+        const { eSortMixed, column } = this;
         this.addInIcon('sortUnSort', eSortMixed, column);
-
-        const isColumnShowingRowGroup = column.showRowGroup;
-        const areGroupsCoupled = _isColumnsSortingCoupledToGroup(gos);
-        if (areGroupsCoupled && isColumnShowingRowGroup) {
+        // whether its groups' sorts mix follows the coupling, which can change while the column lives
+        if (column.showRowGroup) {
             this.addManagedEventListeners({
                 // Watch global events, as row group columns can effect their display column.
                 sortChanged: this.updateMultiSortIndicator.bind(this),
@@ -253,7 +250,10 @@ export class SortIndicatorComp extends Component {
     }
 
     public refresh(): void {
-        this.onSortChanged();
+        this.updateSort();
+        if (this.column.showRowGroup) {
+            this.updateMultiSortIndicator();
+        }
     }
 }
 

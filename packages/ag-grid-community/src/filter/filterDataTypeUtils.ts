@@ -120,7 +120,7 @@ type FilterParamsDefMap = CheckDataTypes<{
     object: FilterParamCallback<ITextFilterParams, any>;
 }>;
 
-const BOOLEAN_FILTER_OPTIONS: readonly (string | IFilterOptionDef)[] = [
+const BOOLEAN_FILTER_OPTIONS: (string | IFilterOptionDef)[] = [
     'empty',
     {
         displayKey: 'true',
@@ -160,8 +160,7 @@ const filterParamsForEachDataType: FilterParamsDefMap = {
     boolean: () => ({
         maxNumConditions: 1,
         debounceMs: 0,
-        // A copy per column, so editing the list one colDef carries cannot reach the others.
-        filterOptions: [...BOOLEAN_FILTER_OPTIONS],
+        filterOptions: BOOLEAN_FILTER_OPTIONS,
     }),
     date: () => ({ isValidDate: gridSuppliedIsValidDate }),
     dateString: ({ dataTypeDefinition }) => ({
@@ -250,6 +249,10 @@ const setFilterParamsForEachDataType: FilterParamsDefMap = {
     text: () => undefined,
 };
 
+// one set per data type definition (its `formatValue`), so a column defined again gets equal params
+const filterParamsCache = new WeakMap<DataTypeFormatValueFunc, any>();
+const setFilterParamsCache = new WeakMap<DataTypeFormatValueFunc, any>();
+
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _getFilterParamsForDataType(
     filter: string,
@@ -270,16 +273,25 @@ export function _getFilterParamsForDataType(
     if (typeof existingFilterParams === 'function') {
         return { filterParams: existingFilterParams, filterValueGetter };
     }
-    const filterParamsMap = usingSetFilter ? setFilterParamsForEachDataType : filterParamsForEachDataType;
-    const filterParamsGetter = filterParamsMap[baseDataType];
-    const newFilterParams = filterParamsGetter({ dataTypeDefinition, formatValue, t: translate });
-    const filterParams =
-        typeof existingFilterParams === 'object'
-            ? {
-                  ...newFilterParams,
-                  ...existingFilterParams,
-              }
-            : newFilterParams;
+    const paramsCache = usingSetFilter ? setFilterParamsCache : filterParamsCache;
+    let gridParams = paramsCache.get(formatValue);
+    if (gridParams === undefined) {
+        const filterParamsMap = usingSetFilter ? setFilterParamsForEachDataType : filterParamsForEachDataType;
+        gridParams = filterParamsMap[baseDataType]({ dataTypeDefinition, formatValue, t: translate }) ?? null;
+        paramsCache.set(formatValue, gridParams);
+    }
+    const hasExistingParams = typeof existingFilterParams === 'object';
+    let filterParams: any;
+    if (gridParams !== null) {
+        // a copy per column, the grid's list too, so editing what one colDef carries cannot reach the others
+        filterParams = { ...gridParams, ...(hasExistingParams ? existingFilterParams : undefined) };
+        const filterOptions = filterParams.filterOptions;
+        if (filterOptions !== undefined && filterOptions === gridParams.filterOptions) {
+            filterParams.filterOptions = [...filterOptions];
+        }
+    } else if (hasExistingParams) {
+        filterParams = { ...existingFilterParams };
+    }
     return { filterParams, filterValueGetter };
 }
 

@@ -607,17 +607,19 @@ export class ShowValuesAsService extends BeanStub implements NamedBean, IShowVal
      *  promotes it to a value column (which re-aggregates). Otherwise just redraw the cells: a total mode reads the
      *  root aggregate on demand via the transform params (which aggregates the root lazily), so no re-agg here. */
     private applyModeChangeEffects(column: AgColumn, source: ColumnEventType = 'api', fromState = false): void {
-        const colModel = this.colModel;
-        colModel.beginColUpdate();
+        const syncSvc = this.beans.syncSvc;
+        syncSvc.beginUpdate();
         try {
             column.dispatchStateUpdatedEvent('showValuesAs', source);
+            syncSvc.showValuesAsChanged();
+            syncSvc.changes.columnState = true;
             this.eventSvc.dispatchEvent({ type: 'columnShowValuesAsChanged' });
             if (this.promoteToValueColumn(column, source, fromState)) {
                 return; // promotion re-aggregates and refreshes
             }
             this.rowRenderer.refreshCells({ columns: [column.colId], force: true });
         } finally {
-            colModel.endColUpdate();
+            syncSvc.endUpdate();
         }
     }
 

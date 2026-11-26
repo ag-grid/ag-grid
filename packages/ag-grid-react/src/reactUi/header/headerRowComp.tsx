@@ -18,29 +18,26 @@ import HeaderCellComp from './headerCellComp';
 import HeaderFilterCellComp from './headerFilterCellComp';
 import HeaderGroupCellComp from './headerGroupCellComp';
 
-/** The lane each header cell renders in, keyed by position, so a section change is told without building a key. */
-interface CellSections {
-    isPrint: boolean;
-    ctrls: AbstractHeaderCellCtrl[];
-    lanes: number[];
-}
-
-/** Records `ctrls` and their lanes, returning whether they differ from the last recorded ones. */
-const updateCellSections = (sections: CellSections, ctrls: AbstractHeaderCellCtrl[], isPrint: boolean): boolean => {
-    const lanes = sections.lanes;
-    const len = ctrls.length;
-    let changed = isPrint !== sections.isPrint || (!isPrint && len !== sections.ctrls.length);
-    for (let i = 0; i < len && !isPrint; ++i) {
+/** Records the lanes of `ctrls`, returning whether the print layout toggled or a cell already rendered changed lane. */
+const updateCellSections = (
+    wasPrint: { current: boolean },
+    ctrls: AbstractHeaderCellCtrl[],
+    isPrint: boolean
+): boolean => {
+    let changed = isPrint !== wasPrint.current;
+    wasPrint.current = isPrint;
+    if (isPrint) {
+        return changed;
+    }
+    for (let i = 0, len = ctrls.length; i < len; ++i) {
         const cellCtrl = ctrls[i];
         const lane = cellCtrl.column?.pinnedLane ?? 1;
-        if (cellCtrl !== sections.ctrls[i] || lane !== lanes[i]) {
-            changed = true;
+        const lastLane = cellCtrl.renderedLane;
+        if (lastLane !== lane) {
+            changed ||= lastLane !== -1;
+            cellCtrl.renderedLane = lane;
         }
-        lanes[i] = lane;
     }
-    lanes.length = isPrint ? 0 : len;
-    sections.isPrint = isPrint;
-    sections.ctrls = ctrls;
     return changed;
 };
 
@@ -56,10 +53,10 @@ const partitionByLane = (cellCtrls: AbstractHeaderCellCtrl[]) => {
 
 const HeaderRowComp = ({
     ctrl,
-    setGuiRef,
+    setRowGui,
 }: {
     ctrl: HeaderRowCtrl;
-    setGuiRef?: (eGui: HTMLDivElement | null) => void;
+    setRowGui: (instanceId: number, eGui: HTMLDivElement | null) => void;
 }) => {
     const beans = useContext(BeansContext);
     const { context, visibleCols, gos } = beans;
@@ -73,7 +70,7 @@ const HeaderRowComp = ({
     // Cell ctrls partitioned into 3 sections
     const cellCtrlsRef = useRef<AbstractHeaderCellCtrl[]>([]);
     const prevCellCtrlsRef = useRef<AbstractHeaderCellCtrl[]>([]);
-    const sectionsRef = useRef<CellSections>({ isPrint: false, ctrls: [], lanes: [] });
+    const wasPrintRef = useRef(false);
     const domOrderRef = useRef<boolean>(false);
     const [cellCtrls, setCellCtrls] = useState<AbstractHeaderCellCtrl[]>([]);
     const [tabIndex, setTabIndex] = useState<number | undefined>(() =>
@@ -102,7 +99,7 @@ const HeaderRowComp = ({
     const setRef = useCallback(
         (eRef: HTMLDivElement | null) => {
             eGui.current = eRef;
-            setGuiRef?.(eRef);
+            setRowGui(ctrl.instanceId, eRef);
             if (!eRef || !ctrl.isAlive() || context.isDestroyed()) {
                 compBean.current = context.destroyBean(compBean.current);
                 return;
@@ -113,11 +110,15 @@ const HeaderRowComp = ({
             const updateCellCtrls = (useFlushSync: boolean) => {
                 const isPrint = gos.get('domLayout') === 'print';
                 const cellCtrls = cellCtrlsRef.current;
-                const next = updateCellSections(sectionsRef.current, cellCtrls, isPrint)
-                    ? cellCtrls
-                    : getNextValueIfDifferent(prevCellCtrlsRef.current, cellCtrls, domOrderRef.current);
+                const sectionsChanged = updateCellSections(wasPrintRef, cellCtrls, isPrint);
+                const prev = prevCellCtrlsRef.current;
+                // rendered cells keep their DOM place, as moving one cancels its slide transition
+                let next = getNextValueIfDifferent(prev, cellCtrls, domOrderRef.current, true);
+                if (next === prev && sectionsChanged) {
+                    next = prev.slice(); // the same cells, re-partitioned into their new lanes
+                }
 
-                if (next !== prevCellCtrlsRef.current) {
+                if (next !== prev) {
                     prevCellCtrlsRef.current = next;
                     agFlushSync(useFlushSync, () => setCellCtrls(next));
                 }
@@ -161,7 +162,7 @@ const HeaderRowComp = ({
 
             ctrl.setComp(compProxy, compBean.current);
         },
-        [context, ctrl, refreshPinnedWidths, setGuiRef]
+        [context, ctrl, refreshPinnedWidths, setRowGui]
     );
 
     const isPrint = gos.get('domLayout') === 'print';

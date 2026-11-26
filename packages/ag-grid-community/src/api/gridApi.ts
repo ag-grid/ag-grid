@@ -1241,6 +1241,7 @@ export interface _StateGridApi {
      * Set the current state of the grid.
      * Can be used in conjunction with `api.getState()` or `onStateUpdated` to save and restore grid state.
      * The provided state replaces the grid state rather than patching it: every section it omits is reset unless listed in `propertiesToIgnore`.
+     * The exceptions are `columnOrder` and `columnSizing`: when omitted, the current column order and sizes are kept. An omitted `pivot` turns pivot mode off.
      * @param propertiesToIgnore Top-level state sections to leave as they are, e.g. `['filter']` keeps the current filters.
      * @agModule `GridStateModule`
      */

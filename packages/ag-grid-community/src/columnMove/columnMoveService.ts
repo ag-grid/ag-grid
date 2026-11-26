@@ -1,8 +1,7 @@
 import type { HorizontalDirection } from 'ag-stack';
 import { _last, _moveInArray, _removeFromArray } from 'ag-stack';
 
-import { _setColsVisible } from '../columns/columnStateUtils';
-import { _cancelColumnWidthAnimation } from '../columns/columnWidthAnimation';
+import { _setColsVisible, isColVisibilityLockedInUi } from '../columns/columnStateUtils';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { GridDragSource } from '../dragAndDrop/dragAndDropService';
@@ -10,7 +9,7 @@ import { DragSourceType } from '../dragAndDrop/dragAndDropService';
 import type { AgColumn } from '../entities/agColumn';
 import type { AgColumnGroup } from '../entities/agColumnGroup';
 import { isColumnGroup } from '../entities/agColumnGroup';
-import type { ColDef, ColKey } from '../entities/colDef';
+import type { ColKey } from '../entities/colDef';
 import type { ColumnEventType } from '../events';
 import type { ColumnPinnedType } from '../interfaces/iColumn';
 import type { DragItem } from '../interfaces/iDragItem';
@@ -37,46 +36,64 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
         source: ColumnEventType,
         finished: boolean = true
     ): void {
-        const { colModel, visibleCols } = this.beans;
-        const colAnimation = this.beans.colAnimation;
+        const { colModel, syncSvc, visibleCols, calculatedColsSvc, colAnimation } = this.beans;
         const gridColumns = colModel.colsList;
 
-        if (toIndex > gridColumns.length - columnsToMoveKeys.length) {
+        // we want to pull all the columns out first and put them into an ordered list
+        const movedColumns: AgColumn[] = [];
+        const keysLen = columnsToMoveKeys.length;
+        const seen = keysLen > 1 ? new Set<AgColumn>() : null;
+        for (let i = 0; i < keysLen; ++i) {
+            const col = colModel.getCol(columnsToMoveKeys[i]);
+            // a primary column pivoting hides is no grid column, so it has no place to move from
+            if (col?.inColsList && !seen?.has(col)) {
+                seen?.add(col);
+                movedColumns.push(col);
+            }
+        }
+        if (!movedColumns.length) {
+            return;
+        }
+        const len = movedColumns.length;
+        // the whole index the splice uses, checked against the last slot; `at` below is where a negative one lands
+        const index = Math.trunc(toIndex) || 0;
+        if (index > gridColumns.length - len) {
             // Trying to insert in invalid position
             this.warn(30, { toIndex });
+            return;
+        }
+        if (!this.doesMovePassRules(movedColumns, toIndex)) {
             return;
         }
 
         if (this.gos.get('suppressColumnMoveAnimation')) {
             // a lingering width transition would otherwise slide the moved columns
-            _cancelColumnWidthAnimation(this.beans);
+            this.beans.colAnimation?.cancelWidthAnimation();
         }
-        colAnimation?.start();
+        syncSvc.beginUpdate(); // layout events follow `columnMoved`, as after any column change
         try {
-            // we want to pull all the columns out first and put them into an ordered list
-            const movedColumns: AgColumn[] = [];
-            for (let i = 0, len = columnsToMoveKeys.length; i < len; ++i) {
-                const col = colModel.getCol(columnsToMoveKeys[i]);
-                if (col) {
-                    movedColumns.push(col);
-                }
+            colAnimation?.start();
+            const at = index < 0 ? Math.max(0, gridColumns.length - len + index) : index;
+            let changesOrder = false;
+            for (let i = 0, n = calculatedColsSvc ? len : 0; i < n && !changesOrder; ++i) {
+                changesOrder = gridColumns[at + i] !== movedColumns[i];
             }
-
-            if (this.doesMovePassRules(movedColumns, toIndex)) {
-                _moveInArray(colModel.colsList, movedColumns, toIndex);
-                colModel.markColsListIndexDirty();
-                visibleCols.refresh(source, false);
-                this.eventSvc.dispatchEvent({
-                    type: 'columnMoved',
-                    columns: movedColumns,
-                    column: movedColumns.length === 1 ? movedColumns[0] : null,
-                    toIndex,
-                    finished,
-                    source,
-                });
+            _moveInArray(gridColumns, movedColumns, toIndex);
+            colModel.markColsListIndexDirty();
+            if (changesOrder) {
+                calculatedColsSvc?.markPlacedByOrder(gridColumns, at, at + len);
             }
+            visibleCols.refresh(source, false);
+            this.eventSvc.dispatchEvent({
+                type: 'columnMoved',
+                columns: movedColumns,
+                column: movedColumns.length === 1 ? movedColumns[0] : null,
+                toIndex,
+                finished,
+                source,
+            });
         } finally {
-            colAnimation?.finish();
+            syncSvc.endUpdate();
         }
     }
 
@@ -91,37 +108,19 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
         if (colModel.hasMarryChildren && !doesMovePassMarryChildren(gridOrder, colModel.colsTree)) {
             return false;
         }
-
-        const doesMovePassLockedPositions = (proposedColumnOrder: AgColumn[]) => {
-            const lockPositionToPlacement = (position: ColDef['lockPosition']) => {
-                if (!position) {
-                    return MoveDirection.NONE;
-                }
-                return position === 'left' || position === true ? MoveDirection.LEFT : MoveDirection.RIGHT;
-            };
-
-            const isRtl = gos.get('enableRtl');
-            let lastPlacement = isRtl ? MoveDirection.RIGHT : MoveDirection.LEFT;
-            let rulePassed = true;
-            for (const col of proposedColumnOrder) {
-                const placement = lockPositionToPlacement(col.colDef.lockPosition);
-                if (isRtl) {
-                    if (placement > lastPlacement) {
-                        // If placement goes up, we're not in the correct order
-                        rulePassed = false;
-                    }
-                } else if (placement < lastPlacement) {
-                    // If placement goes down, we're not in the correct order
-                    rulePassed = false;
-                }
-                lastPlacement = placement;
+        // locked columns keep their side: the placements never go back against the reading direction
+        const isRtl = gos.get('enableRtl');
+        let lastPlacement = isRtl ? MoveDirection.RIGHT : MoveDirection.LEFT;
+        for (let i = 0, len = gridOrder.length; i < len; ++i) {
+            const position = gridOrder[i].colDef.lockPosition;
+            let placement = MoveDirection.NONE;
+            if (position) {
+                placement = position === 'left' || position === true ? MoveDirection.LEFT : MoveDirection.RIGHT;
             }
-
-            return rulePassed;
-        };
-
-        if (!doesMovePassLockedPositions(gridOrder)) {
-            return false;
+            if (isRtl ? placement > lastPlacement : placement < lastPlacement) {
+                return false;
+            }
+            lastPlacement = placement;
         }
         return true;
     }
@@ -255,7 +254,8 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
         const { gos, dragAndDrop, visibleCols } = beans;
         let hideColumnOnExit = !gos.get('suppressDragLeaveHidesColumns');
         const isGroup = isColumnGroup(column);
-        const columns = isGroup ? column.getProvidedColumnGroup().getLeafColumns() : [column];
+        // a kept group header's children change with columnDefs: read them as each drag starts
+        let columns: AgColumn[] = [];
         const getDragItem = isGroup
             ? () => createDragItemForGroup(column, visibleCols.allCols)
             : () => createDragItem(column);
@@ -266,7 +266,10 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
             getDragItem,
             dragItemName: displayName,
             onDragStarted: () => {
-                hideColumnOnExit = !gos.get('suppressDragLeaveHidesColumns');
+                columns = isGroup ? column.getProvidedColumnGroup().getLeafColumns() : [column];
+                hideColumnOnExit =
+                    !gos.get('suppressDragLeaveHidesColumns') &&
+                    columns.some((col) => col.isVisible() && !isColVisibilityLockedInUi(col));
                 setColumnsMoving(columns, true);
             },
             onDragStopped: () => setColumnsMoving(columns, false),

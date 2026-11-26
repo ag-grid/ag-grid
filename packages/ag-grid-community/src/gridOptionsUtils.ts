@@ -284,12 +284,6 @@ export function _isGroupRowsSticky(gos: GridOptionsService): boolean {
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export function _isColumnsSortingCoupledToGroup(gos: GridOptionsService): boolean {
-    const autoGroupColumnDef = gos.get('autoGroupColumnDef');
-    return !autoGroupColumnDef?.comparator && !gos.get('treeData');
-}
-
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _getGroupAggFiltering(
     gos: GridOptionsService
 ): ((params: WithoutGridCommon<GetGroupAggFilteringParams>) => boolean) | undefined {

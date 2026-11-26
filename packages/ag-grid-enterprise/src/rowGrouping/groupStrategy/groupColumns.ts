@@ -3,9 +3,11 @@ import type { AgColumn, ColDef } from 'ag-grid-community';
 export interface GroupColumn {
     col: AgColumn;
     field: ColDef['field'];
+    fieldIsPath: boolean;
     type: ColDef['type'];
     keyCreator: ColDef['keyCreator'];
     valueGetter: ColDef['valueGetter'];
+    valueFormatter: ColDef['valueFormatter'];
 }
 
 export const makeGroupColumns = (columns: AgColumn[] | null | undefined, result: GroupColumn[]): void => {
@@ -21,9 +23,11 @@ export const makeGroupColumns = (columns: AgColumn[] | null | undefined, result:
         result[i] = {
             col,
             field: colDef.field,
+            fieldIsPath: col.fieldPath !== null,
             type: colDef.type,
             keyCreator: colDef.keyCreator,
             valueGetter: colDef.valueGetter,
+            valueFormatter: colDef.valueFormatter,
         };
     }
 };
@@ -42,9 +46,12 @@ export const groupColumnsChanged = (groupColumns: GroupColumn[], columns: AgColu
         const bColDef = b.colDef;
         if (
             a.field !== bColDef.field ||
+            a.fieldIsPath !== (b.fieldPath !== null) ||
             a.type !== bColDef.type ||
             a.valueGetter !== bColDef.valueGetter ||
-            a.keyCreator !== bColDef.keyCreator
+            a.keyCreator !== bColDef.keyCreator ||
+            // a key creator can format the key, as the object and date data types do
+            (a.keyCreator != null && a.valueFormatter !== bColDef.valueFormatter)
         ) {
             return true;
         }

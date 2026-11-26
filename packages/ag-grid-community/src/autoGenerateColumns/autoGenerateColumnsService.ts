@@ -3,24 +3,32 @@ import { _camelCaseToHumanText } from 'ag-stack';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { ColDef, ColGroupDef } from '../entities/colDef';
-import type { AutoGenerateColumnDefsOptions } from '../entities/gridOptions';
+import type { AutoGenerateColumnDefsOptions, GridOptions } from '../entities/gridOptions';
 import { _isPlainObject } from '../utils/mergeDeep';
 import { _isProtoField } from '../utils/value';
 
 export class AutoGenerateColumnsService extends BeanStub implements NamedBean {
     beanName = 'autoGenColsSvc' as const;
 
-    public postConstruct(): void {
-        this.generateColumns(true);
-        this.addManagedPropertyListener('rowData', () => this.generateColumns(false));
-        this.addManagedPropertyListener('autoGenerateColumnDefs', () => this.generateColumns(false));
+    /** Adds the options it generates the columns from to those the sync service listens to; called once. */
+    public addOptionKeysTo(keys: Set<keyof GridOptions>): void {
+        keys.add('rowData').add('autoGenerateColumnDefs');
     }
 
-    private generateColumns(isInitial: boolean): void {
+    /** Whether an options change makes it generate the columns again. */
+    public isGenerateOwed(changedProps: ReadonlySet<keyof GridOptions>): boolean {
+        return (
+            (changedProps.has('rowData') || changedProps.has('autoGenerateColumnDefs')) &&
+            !!this.gos.get('autoGenerateColumnDefs')
+        );
+    }
+
+    /** With `autoGenerateColumnDefs` on, sets `columnDefs` from the first row of `rowData`; whether it set new ones. */
+    public generateColumns(isInitial: boolean): boolean {
         const gos = this.gos;
         const optionValue = gos.get('autoGenerateColumnDefs');
         if (!optionValue) {
-            return;
+            return false;
         }
 
         const rowData = gos.get('rowData') ?? [];
@@ -37,7 +45,7 @@ export class AutoGenerateColumnsService extends BeanStub implements NamedBean {
             if (!isInitial) {
                 gos.updateGridOptions({ options: { columnDefs: [] }, source: 'optionsUpdated' });
             }
-            return;
+            return !isInitial;
         }
         let columnDefs = _buildColumnDefs(firstRow, undefined, config, !gos.get('suppressFieldDotNotation'));
 
@@ -50,7 +58,9 @@ export class AutoGenerateColumnsService extends BeanStub implements NamedBean {
             }
         }
 
+        const changed = columnDefs !== gos.get('columnDefs');
         gos.updateGridOptions({ options: { columnDefs }, source: 'optionsUpdated' });
+        return changed;
     }
 }
 

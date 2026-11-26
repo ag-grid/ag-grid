@@ -95,7 +95,8 @@ export function convertColumnState(
         if (hide) {
             hiddenColIds.push(colId);
         }
-        if (flex != null || width) {
+        // a zero width is a width, which restoring the state must keep
+        if (flex != null || width != null) {
             columnSizes.push({ colId, flex: flex ?? undefined, width: width === null ? undefined : width });
         }
     }

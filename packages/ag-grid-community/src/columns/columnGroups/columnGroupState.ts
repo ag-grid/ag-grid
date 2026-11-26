@@ -3,7 +3,6 @@ import type { AgProvidedColumnGroup } from '../../entities/agProvidedColumnGroup
 import { isProvidedColumnGroup } from '../../entities/agProvidedColumnGroup';
 import type { ColumnEventType } from '../../events';
 import { _dispatchGroupHeaderNameChangedEvent } from '../columnEventUtils';
-import { _setColumnWidthAnimation } from '../columnWidthAnimation';
 
 interface ColGroupState {
     groupId: string;
@@ -45,17 +44,26 @@ export const _setColGroupHeaderNameOverride = (
     groupId: string,
     headerName: string | null
 ): boolean => {
-    const { colModel } = beans;
+    const { colModel, syncSvc } = beans;
     const overrides = colModel.groupHeaderNameOverrides;
     if ((overrides.get(groupId) ?? null) === headerName) {
         return false;
     }
-    if (headerName == null) {
-        overrides.delete(groupId);
-    } else {
-        overrides.set(groupId, headerName);
+    const changes = syncSvc.changes;
+    changes.columnState = true;
+    changes.columnGroupState = true;
+    // a column update, so its end tells the state
+    syncSvc.beginUpdate();
+    try {
+        if (headerName == null) {
+            overrides.delete(groupId);
+        } else {
+            overrides.set(groupId, headerName);
+        }
+        colModel.getColGroup(groupId)?.dispatchGroupEvent('headerNameChanged');
+    } finally {
+        syncSvc.endUpdate();
     }
-    colModel.getColGroup(groupId)?.dispatchGroupEvent('headerNameChanged');
     return true;
 };
 
@@ -64,7 +72,7 @@ export const _setColGroupState = (
     stateItems: ColGroupState[],
     source: ColumnEventType
 ): void => {
-    const { colAnimation, visibleCols, eventSvc, colModel } = beans;
+    const { visibleCols, eventSvc, colModel, syncSvc, colAnimation } = beans;
     const groupsById = colModel.colsGroupsById;
     const stateLen = stateItems.length;
     if (!groupsById.size || !stateLen) {
@@ -72,10 +80,8 @@ export const _setColGroupState = (
     }
 
     // one update, so a group is told once every group holds its state and the columns are laid out
-    colModel.beginColUpdate();
+    syncSvc.beginUpdate();
     try {
-        colAnimation?.start();
-        _setColumnWidthAnimation(beans, true);
         let impactedGroups: AgProvidedColumnGroup[] | null = null;
         let renamedGroups: AgProvidedColumnGroup[] | null = null;
         for (let i = 0; i < stateLen; ++i) {
@@ -107,6 +113,8 @@ export const _setColGroupState = (
         }
 
         if (impactedGroups) {
+            colAnimation?.start();
+            colAnimation?.startWidthAnimation();
             visibleCols.refresh(source, true);
             eventSvc.dispatchEvent({
                 type: 'columnGroupOpened',
@@ -115,9 +123,7 @@ export const _setColGroupState = (
             });
         }
     } finally {
-        _setColumnWidthAnimation(beans, false);
-        colAnimation?.finish();
-        colModel.endColUpdate();
+        syncSvc.endUpdate();
     }
 };
 
