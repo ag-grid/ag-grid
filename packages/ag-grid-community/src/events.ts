@@ -8,6 +8,7 @@ import type { GridOptions } from './entities/gridOptions';
 import type { RowNode } from './entities/rowNode';
 import type { AgEventType, AgInternalEventType, AgPublicEventType, BuildEventTypeMap } from './eventTypes';
 import type { FilterRequestSource } from './filter/iColumnFilter';
+import type { IProvidedFilter } from './filter/provided/iProvidedFilter';
 import type { CellRange, CellRangeParams } from './interfaces/IRangeService';
 import type { GridState } from './interfaces/gridState';
 import type { CalculatedColumnProperty } from './interfaces/iCalculatedColumns';
@@ -448,7 +449,7 @@ export interface FilterModifiedEvent<TData = any, TContext = any> extends AgGlob
     TData,
     TContext
 > {
-    filterInstance: IFilterComp;
+    filterInstance: IFilterComp | IProvidedFilter;
     column: Column;
 }
 

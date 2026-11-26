@@ -193,10 +193,10 @@ describe('Filter Manager API — whole-grid model & external filters', () => {
         api.onFilterChanged();
         await asyncSetTimeout(0);
 
-        // instance.getModel() is deprecated (warns #285), so verify via getColumnFilterModel instead.
+        // grid-provided filter instances no longer have getModel/doesFilterPass; the model is read through the API.
         const instance = await api.getColumnFilterInstance('age');
         expect(instance).toBeTruthy();
-        expect(typeof instance!.doesFilterPass).toBe('function');
+        expect(typeof instance!.doesFilterPass).toBe('undefined');
         expect(api.getColumnFilterModel('age')).toEqual({ filterType: 'number', type: 'greaterThan', filter: 24 });
         await new GridRows(api, 'getColumnFilterInstance number filter').check(`
             ROOT id:ROOT_NODE_ID

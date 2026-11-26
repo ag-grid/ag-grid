@@ -365,7 +365,7 @@ describe('the initial filter state with the Infinite and Server-Side Row Models'
                 rowModelType,
                 enableFilterHandlers,
                 columnDefs: [
-                    { field: 'athlete', filter: 'agTextColumnFilter' },
+                    { field: 'athlete', filter: 'agTextColumnFilter', filterParams: { buttons: ['apply'] } },
                     { field: 'age', filter: 'agNumberColumnFilter' },
                 ],
                 initialState: { filter: { filterModel: { age } } },
@@ -374,16 +374,12 @@ describe('the initial filter state with the Infinite and Server-Side Row Models'
             const agePopup = await ColumnFilterHarness.open(api, 'age');
             const popupInput = agePopup.input('number').value;
             api.hideColumnFilter();
-            // the instance's own setModel: a change of the grid that does not apply the initial state first
-            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [286, 348] });
-            const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
-            const athleteFilter = (await api.getColumnFilterInstance<IFilterComp>('athlete'))!;
-            await athleteFilter.setModel(athlete);
-            api.onFilterChanged();
+            // applying from the filter UI is a change of the grid that does not apply the initial state first
+            const athletePopup = await ColumnFilterHarness.open(api, 'athlete');
+            await athletePopup.setText('Ian');
+            await athletePopup.apply();
+            api.hideColumnFilter();
             await asyncSetTimeout(0);
-            expect(warnSpy.mock.calls.flat().join(' ')).toContain('warning #286');
-            warnSpy.mockRestore();
-            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [348] });
             expect({
                 popupInput,
                 columnModel: api.getColumnFilterModel('age'),

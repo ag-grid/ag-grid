@@ -331,7 +331,7 @@ export class FilterManager extends BeanStub implements NamedBean {
         return !!this.colFilter?.hasFloatingFilters();
     }
 
-    public getColumnFilterInstance<TFilter extends IFilter>(
+    public getColumnFilterInstance<TFilter = IFilter>(
         key: string | AgColumn
     ): Promise<TFilter | null | undefined> {
         if (this.isAdvFilterEnabled()) {

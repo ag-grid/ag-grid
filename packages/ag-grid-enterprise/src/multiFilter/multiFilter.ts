@@ -290,7 +290,7 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
                 if (!wrapper) {
                     return null;
                 }
-                const providedFilter = wrapper.filter as ProvidedFilter<
+                const providedFilter = wrapper.filter as unknown as ProvidedFilter<
                     IMultiFilterModel,
                     unknown,
                     MultiFilterDisplayParams

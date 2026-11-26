@@ -1809,7 +1809,7 @@ export class ColumnFilterService
         return gridColumns.some((col) => col.getColDef().floatingFilter);
     }
 
-    public getFilterInstance<TFilter extends IFilter>(key: string | AgColumn): Promise<TFilter | null | undefined> {
+    public getFilterInstance<TFilter = IFilter>(key: string | AgColumn): Promise<TFilter | null | undefined> {
         const column = this.beans.colModel.getCol(key);
 
         if (!column) {
