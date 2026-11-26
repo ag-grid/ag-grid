@@ -1502,5 +1502,85 @@ describe('ag-grid row data', () => {
             api.setGridOption('rowHeight', 30);
             await waitFor(() => expect(layout(api)).toEqual(['0 0 30', '1 30 30', '2 60 30']));
         });
+
+        // The real theme and CSS sources are measured in testing/e2e/e2e/community-row-height-sources.spec.ts:
+        // happy-dom cannot measure CSS, so this stubs the measured height and announces it as a theme change does.
+        test('a theme row height change moves grouped rows, unless the rowHeight option is set', async () => {
+            const api = heightsGridsManager.createGrid('myGrid', { ...grouped, rowData });
+            const beans = (api.getDisplayedRowAtIndex(0) as any).beans;
+            const applyThemeRowHeight = (height: number) => {
+                vi.spyOn(beans.environment, 'getDefaultRowHeight').mockReturnValue(height);
+                beans.eventSvc.dispatchEvent({ type: 'stylesChanged', rowHeightChanged: true });
+            };
+            try {
+                applyThemeRowHeight(30);
+                await waitFor(() =>
+                    expect(layout(api)).toEqual([
+                        'row-group-g-a 0 30',
+                        '0 30 30',
+                        '1 60 30',
+                        'row-group-g-b 90 30',
+                        '2 120 30',
+                    ])
+                );
+
+                api.setGridOption('rowHeight', 37);
+                applyThemeRowHeight(50);
+                await waitFor(() =>
+                    expect(layout(api)).toEqual([
+                        'row-group-g-a 0 37',
+                        '0 37 37',
+                        '1 74 37',
+                        'row-group-g-b 111 37',
+                        '2 148 37',
+                    ])
+                );
+
+                api.setGridOption('rowHeight', undefined);
+                await waitFor(() =>
+                    expect(layout(api)).toEqual([
+                        'row-group-g-a 0 50',
+                        '0 50 50',
+                        '1 100 50',
+                        'row-group-g-b 150 50',
+                        '2 200 50',
+                    ])
+                );
+            } finally {
+                vi.restoreAllMocks();
+            }
+        });
+
+        test('getRowHeight set and removed after load takes effect on resetRowHeights', async () => {
+            const api = heightsGridsManager.createGrid('myGrid', { ...flat, rowData });
+
+            api.setGridOption('getRowHeight', ({ data }) => 20 + data.n);
+            api.resetRowHeights();
+            await waitFor(() => expect(layout(api)).toEqual(['0 0 21', '1 21 22', '2 43 23']));
+
+            api.setGridOption('getRowHeight', undefined);
+            api.resetRowHeights();
+            await waitFor(() => expect(layout(api)).toEqual(['0 0 42', '1 42 42', '2 84 42']));
+        });
+
+        test('masterDetail turned on after load sizes the detail row, and turned off gives back the shared height', async () => {
+            const api = heightsGridsManager.createGrid('myGrid', {
+                ...flat,
+                rowHeight: 37,
+                rowData,
+                detailRowHeight: 120,
+                isRowMaster: (data) => data.n === 2,
+                detailCellRendererParams: {
+                    detailGridOptions: { columnDefs: [{ field: 'n' }] },
+                    getDetailRowData: (params: GetDetailRowDataParams) => params.successCallback([]),
+                },
+            });
+            api.setGridOption('masterDetail', true);
+            api.getRowNode('1')!.setExpanded(true);
+            await waitFor(() => expect(layout(api)).toEqual(['0 0 37', '1 37 37', 'detail_1 74 120', '2 194 37']));
+
+            api.setGridOption('masterDetail', false);
+            await waitFor(() => expect(layout(api)).toEqual(['0 0 37', '1 37 37', '2 74 37']));
+        });
     });
 });
