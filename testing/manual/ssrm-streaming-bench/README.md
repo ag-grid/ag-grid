@@ -20,7 +20,7 @@ node testing/manual/ssrm-streaming-bench/serve.mjs   # optional port, default 46
 
 Open the printed `http://localhost:4620/` URL. Use `localhost`, not `file://`: the licence watermark is hidden only there.
 
-The top bar has every control (insert interval, per-cell update rate, column count, sync or async transactions, `asyncTransactionWaitMillis`, `cacheBlockSize`, `maxBlocksInCache`, number of grids, backend latency, grouping, trimming fields to the visible columns, `animateRows`, row height, `viewSubscription.debounceMs`). **Apply** reloads the page with the settings in the URL query, so any configuration can be bookmarked, for example `?cols=2000&trim=1` or `?grids=100`. Sort and filter from the column headers; group by dragging `sym` into the row group panel or with `?group=1`.
+The top bar has every control (insert interval, per-cell update rate, column count, sync or async transactions, `asyncTransactionWaitMillis`, `cacheBlockSize`, `maxBlocksInCache`, number of grids, backend latency, grouping, trimming fields to the visible columns, `animateRows`, row height, `viewSubscription.debounceMs`). **Apply** reloads the page with the settings in the URL query, so any configuration can be bookmarked, for example `?cols=2000&trim=1` or `?grids=100`. Sort by clicking the `arrival` or `qty` header and filter `qty` or `sym` from their header filter buttons; group with the **Group by sym** checkbox (`?group=1`).
 
 **Select rows 5-9 + cell range**, **Pause updates** and **Resume updates** drive the selection check. Pause is done by the demo app, not the grid: the feed keeps running and transactions are buffered, then applied in order on resume.
 

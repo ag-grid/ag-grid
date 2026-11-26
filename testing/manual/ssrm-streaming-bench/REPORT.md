@@ -76,7 +76,7 @@ These are proposals only. Nothing was changed in the grid for this work.
 ### Loaded nodes grow under top inserts with an unlimited cache (R7)
 
 - **Measured:** with `maxBlocksInCache` -1 (the default) the loaded node count grew at about the insert rate for the whole 40 s window (S5a, S5d). With a block limit it stopped at the limit (S5b at 5 x 100, S5c at 1 x 500).
-- **Code path:** inserts at index 0 push loaded nodes to higher indexes (`LazyCache.insertRowNodes`), and the oldest row removed at the far end was never loaded, so each insert adds one loaded node. `LazyCache.purgeExcessRows` (around line 735, run from `setDisplayIndexes`) drops blocks beyond `maxBlocksInCache`, but returns early when there is no block limit.
+- **Code path:** inserts at index 0 push loaded nodes to higher indexes (`LazyCache.insertRowNodes`), and the oldest row removed at the far end was never loaded, so each insert adds one loaded node. `LazyCache.purgeExcessRows` (around line 735, run from `setDisplayIndexes`) drops blocks beyond `maxBlocksInCache`, but returns early when there is no block limit: `StoreFactory.getMaxBlocksInCache` (`stores/storeFactory.ts`, around line 58) turns a negative `maxBlocksInCache` into no limit.
 - **Proposed change:** none needed in the grid if the window is set with `maxBlocksInCache`. Whether an unlimited cache should still drop rows pushed far past the viewport is a design question, not a defect.
 - **Workaround today:** set `maxBlocksInCache` (for example `cacheBlockSize: 100, maxBlocksInCache: 5`, or `500` and `1`). Dynamic and auto row height need `maxBlocksInCache` unset, so this rules those out.
 
@@ -101,7 +101,9 @@ These are proposals only. Nothing was changed in the grid for this work.
 - Every row updated once a second across the whole store. View Subscription streams only the rows in view, and only those are measured (R2).
 - Sorting or filtering 100m rows. The mock backend materialises at most 200,000 rows for a non-arrival sort or a filter (`MAX_MATERIALISE` in `src/backend.js`). R9 covers scrolling at 100m in the default arrival order.
 - Live inserts under a non-arrival sort or a filter. The demo falls back to `refreshServerSide({ purge: false })` once a second in that case (`src/grids.js`); this path was not measured.
-- Row order while `animateRows` is on. Earlier runs of S4 reported order mismatches, most likely from rows still fading out with their old `row-index`; this was not investigated, and R5 is judged on S1.
+- Row order while `animateRows` is on. In S4 all 9 order checks reported a mismatch, most likely from rows still fading out with their old `row-index`; this was not investigated, and R5 is judged on S1.
+- Insert rate over a long session with the default cache. S1 uses the default unlimited cache, and its loaded nodes grew from 150 to 257 during the 10 s window. Each insert re-indexes every loaded node, so the 13.19 inserts/s of S1 may not hold over minutes unless `maxBlocksInCache` is set. This was not measured.
+- The harness's own cost with many grids. The feed-off control (S0) covers one grid; with 100 grids the per-frame sampling reads about 100 times as many rows, and no 100-grid control was run, so part of the R10a shortfall may be the harness.
 - `pauseWhenHidden` with many grids. In S9 every grid is on screen, so pausing hidden grids was never exercised.
 
 ## Open questions for the customer
