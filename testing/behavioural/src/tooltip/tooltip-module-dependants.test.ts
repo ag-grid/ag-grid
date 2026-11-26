@@ -30,7 +30,7 @@ describe('Modules that depend on the tooltip core', () => {
     test.each([
         { name: 'are hidden without TooltipModule', modules: [], expectTooltips: false },
         { name: 'are shown with TooltipModule', modules: [TooltipModule], expectTooltips: true },
-    ])('automatic cell and built-in control tooltips $name', async ({ modules, expectTooltips }) => {
+    ])('automatic cell, select and built-in control tooltips $name', async ({ modules, expectTooltips }) => {
         const api = await grids.createGridAndWait(
             'dependants-native',
             {
@@ -38,7 +38,7 @@ describe('Modules that depend on the tooltip core', () => {
                 rowData: [{ value: 'One' }, { value: 'Two' }],
                 pagination: true,
                 paginationPageSize: 1,
-                paginationPageSizeSelector: false,
+                paginationPageSizeSelector: [1, 2],
                 enableBrowserTooltips: true,
             },
             { modules: modules as Module[] }
@@ -46,15 +46,20 @@ describe('Modules that depend on the tooltip core', () => {
         const grid = getGridElement(api)! as HTMLElement;
         const next = getByRole(grid, 'button', { name: 'Next Page' });
         const cell = grid.querySelector<HTMLElement>('.ag-cell')!;
+        const pageSize = grid.querySelector<HTMLElement>('.ag-paging-page-size .ag-select')!;
         setTruncated(cell);
+        setTruncated(pageSize.querySelector<HTMLElement>('.ag-picker-field-display')!);
         fireEvent.mouseEnter(cell);
+        fireEvent.mouseEnter(pageSize);
 
         if (expectTooltips) {
             expect(next).toHaveAttribute('title', 'Go to next page');
             await waitFor(() => expect(cell).toHaveAttribute('title', 'One'));
+            await waitFor(() => expect(pageSize).toHaveAttribute('title', '1'));
         } else {
             expect(next).not.toHaveAttribute('title');
             expect(cell).not.toHaveAttribute('title');
+            expect(pageSize).not.toHaveAttribute('title');
         }
     });
 

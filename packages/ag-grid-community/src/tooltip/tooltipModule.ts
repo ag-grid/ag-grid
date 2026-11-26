@@ -1,9 +1,8 @@
-import { AgHighlightTooltipFeature, AgTooltipComponent } from 'ag-stack';
+import { AgHighlightTooltipFeature, AgTooltipComponent, AgTooltipFeature } from 'ag-stack';
 
 import type { _ModuleWithoutApi } from '../interfaces/iModule';
 import { VERSION } from '../version';
 import { PopupModule } from '../widgets/popupModule';
-import { GridTooltipFeature } from './gridTooltipFeature';
 import tooltipCSS from './tooltip.css';
 import { TooltipCoreService } from './tooltipCoreService';
 import { TooltipService } from './tooltipService';
@@ -18,8 +17,6 @@ export const TooltipCoreModule: _ModuleWithoutApi = {
     version: VERSION,
     beans: [TooltipCoreService, TooltipTouchCoordinator],
     dynamicBeans: {
-        tooltipFeature: GridTooltipFeature as any,
-        highlightTooltipFeature: AgHighlightTooltipFeature as any,
         tooltipStateManager: TooltipStateManager as any,
     },
     userComponents: {
@@ -37,6 +34,10 @@ export const TooltipModule: _ModuleWithoutApi = {
     moduleName: 'Tooltip',
     version: VERSION,
     beans: [TooltipService],
+    dynamicBeans: {
+        tooltipFeature: AgTooltipFeature as any,
+        highlightTooltipFeature: AgHighlightTooltipFeature as any,
+    },
     userComponents: {
         agBuiltInTooltipComponent: {
             classImp: AgTooltipComponent,

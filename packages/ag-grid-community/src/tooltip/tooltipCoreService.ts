@@ -1,16 +1,23 @@
 import type { HighlightTooltipEventType, IEventEmitter } from 'ag-stack';
+import { AgHighlightTooltipFeature, AgTooltipFeature } from 'ag-stack';
 
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
+import type { BeanCollection } from '../context/context';
+import type { AgEventTypeParams } from '../events';
+import type { GridOptionsWithDefaults } from '../gridOptionsDefault';
+import type { GridOptionsService } from '../gridOptionsService';
 import type { ICellEditor } from '../interfaces/iCellEditor';
+import type { AgGridCommon } from '../interfaces/iCommon';
 import type { CellCtrl } from '../rendering/cell/cellCtrl';
 import { _createCellEditorTooltipSource, _createCellTooltipSource } from './cellTooltip';
-import type { TooltipFeature, TooltipSource } from './tooltipFeature';
+import type { ITooltipParams, TooltipLocation } from './tooltipComponent';
+import type { ResolvedTooltip, TooltipFeature, TooltipSource } from './tooltipFeature';
 import { shouldDisplayTextTooltip } from './tooltipFeature';
 
 /**
- * Owns the tooltip feature lifecycle for features that show their own tooltips, such as validation errors.
- * Tooltips the grid shows unprompted (configured, automatic and built-in) are added by `TooltipModule`.
+ * Creates tooltips for features that show their own, such as validation errors. Tooltips the grid shows
+ * unprompted are created through the registry, whose tooltip features only `TooltipModule` registers.
  */
 export class TooltipCoreService extends BeanStub implements NamedBean {
     beanName = 'tooltipCoreSvc' as const;
@@ -34,10 +41,18 @@ export class TooltipCoreService extends BeanStub implements NamedBean {
     }
 
     /** Creates an uninitialised feature for hosts whose element is attached later (ordinary cells). */
-    public createTooltip(source: TooltipSource): TooltipFeature | undefined {
-        const { beans } = this;
+    public createTooltip(source: TooltipSource): TooltipFeature {
         this.configureTextTooltip(source);
-        return beans.registry.createDynamicBean<TooltipFeature>('tooltipFeature', false, source, beans);
+        return new AgTooltipFeature<
+            BeanCollection,
+            GridOptionsWithDefaults,
+            AgEventTypeParams,
+            AgGridCommon<any, any>,
+            GridOptionsService,
+            ITooltipParams,
+            ResolvedTooltip,
+            TooltipLocation
+        >(source, this.beans);
     }
 
     private configureTextTooltip(source: TooltipSource): void {
@@ -52,32 +67,29 @@ export class TooltipCoreService extends BeanStub implements NamedBean {
     public createHighlightTooltip(
         source: TooltipSource,
         highlightTracker: IEventEmitter<HighlightTooltipEventType>
-    ): TooltipFeature | undefined {
-        const { beans } = this;
+    ): TooltipFeature {
         this.configureTextTooltip(source);
-        return beans.registry.createDynamicBean<TooltipFeature>(
-            'highlightTooltipFeature',
-            false,
-            source,
-            highlightTracker,
-            beans
-        );
+        return new AgHighlightTooltipFeature<
+            BeanCollection,
+            GridOptionsWithDefaults,
+            AgEventTypeParams,
+            AgGridCommon<any, any>,
+            GridOptionsService,
+            ITooltipParams,
+            ResolvedTooltip,
+            TooltipLocation
+        >(source, highlightTracker, this.beans);
     }
 
     /** Replaces and initialises a tooltip owned by an already-attached host. */
-    public registerTooltip(
-        owner: BeanStub,
-        source: TooltipSource,
-        current?: TooltipFeature
-    ): TooltipFeature | undefined {
+    public registerTooltip(owner: BeanStub, source: TooltipSource, current?: TooltipFeature): TooltipFeature {
         const { beans } = this;
         owner.destroyBean(current, beans.context);
-        const feature = this.createTooltip(source);
-        return feature ? owner.createBean(feature, beans.context) : undefined;
+        return owner.createBean(this.createTooltip(source), beans.context);
     }
 
     /** Calls through to standalone method for treeshaking via the tooltipCoreSvc */
-    public enableCellTooltipFeature(ctrl: CellCtrl): TooltipFeature | undefined {
+    public enableCellTooltipFeature(ctrl: CellCtrl): TooltipFeature {
         return this.createTooltip(_createCellTooltipSource(this.beans, ctrl));
     }
 

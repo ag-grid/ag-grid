@@ -1,6 +1,8 @@
 import '@testing-library/jest-dom/vitest';
 import { fakeElementAttribute, getVisibleTooltips } from 'ag-test-utils';
 
+import { TooltipModule } from 'ag-grid-community';
+
 import {
     createGrid,
     getCalculatedColumnDialog,
@@ -26,19 +28,23 @@ describe('calculated column validation tooltips', () => {
         test(`shows a Type error after keyboard selection in ${applyMode} mode`, async () => {
             fakeElementAttribute('scrollWidth', 200, '.ag-select .ag-picker-field-display');
             fakeElementAttribute('clientWidth', 100, '.ag-select .ag-picker-field-display');
-            const api = createGrid('type-validation-tooltip', {
-                calculatedColumns: {
-                    applyMode,
-                    getValidationErrors: ({ colDef }) =>
-                        colDef.cellDataType === 'number' ? { cellDataType: ['Use Text'] } : null,
+            const api = createGrid(
+                'type-validation-tooltip',
+                {
+                    calculatedColumns: {
+                        applyMode,
+                        getValidationErrors: ({ colDef }) =>
+                            colDef.cellDataType === 'number' ? { cellDataType: ['Use Text'] } : null,
+                    },
+                    columnDefs: [
+                        { colId: 'profit', headerName: 'Profit', calculatedExpression: '3', cellDataType: 'text' },
+                    ],
+                    rowData: [{ id: 'r1' }],
+                    tooltipTrigger: 'hoverOrFocus',
+                    tooltipShowDelay: 100,
                 },
-                columnDefs: [
-                    { colId: 'profit', headerName: 'Profit', calculatedExpression: '3', cellDataType: 'text' },
-                ],
-                rowData: [{ id: 'r1' }],
-                tooltipTrigger: 'hoverOrFocus',
-                tooltipShowDelay: 100,
-            });
+                [TooltipModule]
+            );
             api.openCalculatedColumnDialog('profit');
             const dialog = getCalculatedColumnDialog();
             const type = dialog.querySelector<HTMLElement>('.ag-picker-field-wrapper')!;
