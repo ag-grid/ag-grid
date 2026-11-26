@@ -87,8 +87,16 @@ The example below shows this in action where the following can be noted:
 - Tree Data is enabled with the Server-Side Row Model using `gridOptions.treeData = true`.
 - Group nodes are determined using the callback `gridOptions.isServerSideGroup(dataItem)`.
 - Group keys are returned from the callback `gridOptions.getServerSideGroupKey(dataItem)`.
+- The first two levels of parent rows open on load through the `isServerSideGroupOpenByDefault` callback. The other
+  examples on this page also use it to open parent rows on load. See
+  [Opening Groups by Default](./server-side-model-grouping/#opening-groups-by-default).
 
 {% gridExampleRunner title="Tree Data" name="tree-data"  exampleHeight=590 /%}
+
+## Aggregating Tree Data
+
+The grid does not calculate aggregated values in the SSRM, so the server returns them on each parent row. See
+[Tree Data Parent Rows](./server-side-model-aggregation/#tree-data-parent-rows) for the shape of the response.
 
 ## Refreshing Tree Data
 

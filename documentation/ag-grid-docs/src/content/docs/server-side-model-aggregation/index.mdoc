@@ -73,6 +73,14 @@ params.success({
 });
 ```
 
+### Tree Data Parent Rows
+
+With [SSRM Tree Data](./server-side-model-tree-data/), the request lists the aggregated columns in `valueCols` in the
+same way, and the server returns each parent row's aggregated values in that row's data under the column's field. A
+parent row is also a record of its own, so when it needs both its own value and the aggregate of its children for the
+same column, return the aggregate under a separate field and read it with `aggValueGetter`, as described in
+[Grouping and Aggregating the Same Column](#grouping-and-aggregating-the-same-column).
+
 ## Updating Aggregated Values After Data Changes
 
 The grid does not calculate aggregated values in the SSRM, so it does not update them when leaf rows change.
@@ -188,8 +196,8 @@ const gridOptions = {
 }
 ```
 
-The grid calls `aggValueGetter` when it reads the value of an aggregated column on a group row, a group total row or
-the grand total row. `params.value` is the value read from the row data, and `params.aggFunc` is the column's
+The grid calls `aggValueGetter` when it reads the value of an aggregated column on a group row, a group total row, the
+grand total row or a [tree data](./server-side-model-tree-data/) parent row. `params.value` is the value read from the row data, and `params.aggFunc` is the column's
 aggregation function, as sent in `valueCols`. `aggValueGetter` does not change the group key: the grid still reads it
 through the column's `field` or `valueGetter`, so the group column and the `groupKeys` of later requests are unchanged.
 For a key read with a `valueGetter`, see
