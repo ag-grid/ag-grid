@@ -84,6 +84,16 @@ describe('_defaultComparator', () => {
             expect(_defaultComparator('a', 'a')).toBe(0);
         });
 
+        it('sorts NaN after all other values, equal to other NaN values', () => {
+            expect(sign(_defaultComparator(Number.NaN, 1))).toBe(1);
+            expect(sign(_defaultComparator(1, Number.NaN))).toBe(-1);
+            expect(sign(_defaultComparator(Number.NaN, 'a'))).toBe(1);
+            expect(sign(_defaultComparator('a', Number.NaN))).toBe(-1);
+            expect(sign(_defaultComparator('a', Number.NaN, (x, y) => x.localeCompare(y)))).toBe(-1);
+            expect(_defaultComparator(Number.NaN, Number.NaN)).toBe(0);
+            expect(sign(_defaultComparator(null, Number.NaN))).toBe(-1);
+        });
+
         it('uses the string comparator when provided and both values are strings', () => {
             const localeCompare = (a: string, b: string) => a.localeCompare(b);
             // localeCompare handles collation, so "à" sorts between "a" and "b" rather than after "z"

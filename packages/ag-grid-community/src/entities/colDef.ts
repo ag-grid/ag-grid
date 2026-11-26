@@ -7,7 +7,7 @@ import type { IFilterDef } from '../interfaces/iFilter';
 import type { ILoadingCellRendererParams } from '../interfaces/iLoadingCellRenderer';
 import type { RowDragTextFunc } from '../interfaces/iRowDragItem';
 import type { IRowNode } from '../interfaces/iRowNode';
-import type { AccentedSortOptions, SortDef, SortDirection, SortType } from '../interfaces/iSort';
+import type { AccentedSortOptions, SortDef, SortDirection, SortMissingValues, SortType } from '../interfaces/iSort';
 import type { DefaultColumnMenuItem, DefaultMenuItem, MenuItemDef } from '../interfaces/menuItem';
 import type { ICellRendererParams } from '../rendering/cellRenderers/iCellRenderer';
 import type {
@@ -1079,6 +1079,18 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      *  - `< 0` Sort valueA before valueB
      */
     comparator?: SortComparatorFn<TData, TValue> | Partial<Record<SortType, SortComparatorFn<TData, TValue>>>;
+    /**
+     * Where missing values (`null` and `undefined`) are placed when sorting this column.
+     *
+     * - `'inOrder'`: missing values are the smallest values, so they are first when sorting ascending and last when sorting descending.
+     * - `'first'`: missing values are always first, in both directions.
+     * - `'last'`: missing values are always last, in both directions, as in Excel.
+     *
+     * Missing values are equal to each other, so they keep their original order.
+     * Not used when a `comparator` is provided.
+     * @default 'inOrder'
+     */
+    sortMissingValues?: SortMissingValues;
     /**
      * Set to `true` to sort this column's strings using locale-specific rules, so accented characters are taken into account, or provide an object to sort
      * using a specific locale and collator options, such as `{ locales: 'de', options: { sensitivity: 'accent' } }`.

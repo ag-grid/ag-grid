@@ -32,6 +32,7 @@ import type { ColumnEventType } from '../events';
 import type { GridOptionsService } from '../gridOptionsService';
 import { _isClientSideRowModel } from '../gridOptionsUtils';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
+import { _markBuiltInComparator } from '../sort/builtInComparators';
 import { _getValueUsingDotPath, _isProtoField } from '../utils/value';
 import type { LogService } from '../validation/logService';
 import { _addColumnDefaultAndTypes } from './colDefUtils';
@@ -615,8 +616,8 @@ export class DataTypeService extends BeanStub implements NamedBean {
             return {
                 cellEditor: 'agTextCellEditor',
                 comparator: {
-                    default: bigintComparator,
-                    absolute: bigintAbsoluteComparator,
+                    default: _markBuiltInComparator(bigintComparator),
+                    absolute: _markBuiltInComparator(bigintAbsoluteComparator),
                 },
             };
         },
@@ -646,7 +647,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
                 cellEditorParams: {
                     useFormatter: true,
                 },
-                comparator: (a: any, b: any) => {
+                comparator: _markBuiltInComparator((a: any, b: any) => {
                     const column = colModel.getNonPivotColById(colId);
                     const colDef = column?.colDef;
                     if (!column || !colDef) {
@@ -658,7 +659,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
                         return 0;
                     }
                     return valA > valB ? 1 : -1;
-                },
+                }),
                 keyCreator: formatValue,
             };
         },

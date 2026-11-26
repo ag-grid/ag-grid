@@ -93,7 +93,12 @@ export const _defaultComparator = (valueA: any, valueB: any, stringComparator?: 
         if (valueA < valueB) {
             return -1;
         }
-        return 0;
+        // Neither is greater: the values are equal, or one is NaN, which compares false with everything.
+        // NaN values are equal to each other and sort after all other values, like Excel error values.
+        if (Number.isNaN(valueA)) {
+            return Number.isNaN(valueB) ? 0 : 1;
+        }
+        return Number.isNaN(valueB) ? -1 : 0;
     }
 
     // Locale-specific comparison, which also handles Chinese / accented collation.

@@ -2,11 +2,14 @@ import { _hasCalculatedExpression, _isCalculatedColumnsEnabled } from '../../col
 import type { UserComponentName } from '../../context/context';
 import { _isSortDefValid, isSortDirectionValid } from '../../entities/agColumn';
 import type { AbstractColDef, ColDef, ColGroupDef, ColumnMenuTab } from '../../entities/colDef';
+import type { SortMissingValues } from '../../interfaces/iSort';
 import { toStringWithNullUndefined } from '../logging';
 import type { Deprecations, ModuleValidation, OptionsValidator, Validations } from '../validationTypes';
 import { _createDeprecationWarning, _createValidationWarning, buildAllValidNames } from '../validationTypes';
 import { validateAccentedSort } from './accentedSortValidation';
 import { USER_COMP_MODULES } from './userCompValidations';
+
+const SORT_MISSING_VALUES: SortMissingValues[] = ['first', 'last', 'inOrder'];
 
 function quote(s: string): string {
     return `"${s}"`;
@@ -260,6 +263,16 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
 
                 return `initialSort must be of non-null type (SortDirection | SortDef), currently it is ${typeof _options.initialSort === 'object' ? JSON.stringify(_options.initialSort) : toStringWithNullUndefined(_options.initialSort)}`;
             },
+        },
+        sortMissingValues: {
+            validate: ({ sortMissingValues }) =>
+                sortMissingValues == null || SORT_MISSING_VALUES.includes(sortMissingValues)
+                    ? null
+                    : _createValidationWarning(320, {
+                          property: 'sortMissingValues',
+                          allowed: SORT_MISSING_VALUES,
+                          value: sortMissingValues,
+                      }),
         },
         accentedSort: {
             validate: ({ accentedSort }) => validateAccentedSort('colDef.accentedSort', accentedSort),
@@ -549,6 +562,7 @@ const colDefPropertyMap: Record<ColOrGroupKey, undefined> = {
     valueFormatter: undefined,
     valueParser: undefined,
     comparator: undefined,
+    sortMissingValues: undefined,
     accentedSort: undefined,
     equals: undefined,
     pivotComparator: undefined,
