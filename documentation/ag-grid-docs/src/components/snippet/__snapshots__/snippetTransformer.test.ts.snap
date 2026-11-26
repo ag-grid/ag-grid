@@ -946,6 +946,86 @@ this.gridApi.applyColumnState({ state: savedState });
 const rowNode = this.gridApi.getRowNode('55');"
 `;
 
+exports[`Snippet Component > given api statements with type arguments > it should create 'angular' snippets 1`] = `
+"// get filter handler
+const countryFilterHandler = this.gridApi.getColumnFilterHandler<SetFilterHandler>('country');"
+`;
+
+exports[`Snippet Component > given api statements with type arguments > it should create 'angular' snippets with space between properties 1`] = `
+"// get filter handler
+const countryFilterHandler = this.gridApi.getColumnFilterHandler<SetFilterHandler>('country');"
+`;
+
+exports[`Snippet Component > given api statements with type arguments > it should create 'angular' snippets without framework context 1`] = `
+"// get filter handler
+const countryFilterHandler = this.gridApi.getColumnFilterHandler<SetFilterHandler>('country');"
+`;
+
+exports[`Snippet Component > given api statements with type arguments > it should create 'angular' snippets without framework context and space between properties 1`] = `
+"// get filter handler
+const countryFilterHandler = this.gridApi.getColumnFilterHandler<SetFilterHandler>('country');"
+`;
+
+exports[`Snippet Component > given api statements with type arguments > it should create 'javascript' snippets 1`] = `
+"// get filter handler
+const countryFilterHandler = api.getColumnFilterHandler<SetFilterHandler>('country');"
+`;
+
+exports[`Snippet Component > given api statements with type arguments > it should create 'javascript' snippets with space between properties 1`] = `
+"// get filter handler
+const countryFilterHandler = api.getColumnFilterHandler<SetFilterHandler>('country');"
+`;
+
+exports[`Snippet Component > given api statements with type arguments > it should create 'javascript' snippets without framework context 1`] = `
+"// get filter handler
+const countryFilterHandler = api.getColumnFilterHandler<SetFilterHandler>('country');"
+`;
+
+exports[`Snippet Component > given api statements with type arguments > it should create 'javascript' snippets without framework context and space between properties 1`] = `
+"// get filter handler
+const countryFilterHandler = api.getColumnFilterHandler<SetFilterHandler>('country');"
+`;
+
+exports[`Snippet Component > given api statements with type arguments > it should create 'react' snippets 1`] = `
+"// get filter handler
+const countryFilterHandler = gridApi.getColumnFilterHandler<SetFilterHandler>('country');"
+`;
+
+exports[`Snippet Component > given api statements with type arguments > it should create 'react' snippets with space between properties 1`] = `
+"// get filter handler
+const countryFilterHandler = gridApi.getColumnFilterHandler<SetFilterHandler>('country');"
+`;
+
+exports[`Snippet Component > given api statements with type arguments > it should create 'react' snippets without framework context 1`] = `
+"// get filter handler
+const countryFilterHandler = gridApi.getColumnFilterHandler<SetFilterHandler>('country');"
+`;
+
+exports[`Snippet Component > given api statements with type arguments > it should create 'react' snippets without framework context and space between properties 1`] = `
+"// get filter handler
+const countryFilterHandler = gridApi.getColumnFilterHandler<SetFilterHandler>('country');"
+`;
+
+exports[`Snippet Component > given api statements with type arguments > it should create 'vue' snippets 1`] = `
+"// get filter handler
+const countryFilterHandler = this.gridApi.getColumnFilterHandler<SetFilterHandler>('country');"
+`;
+
+exports[`Snippet Component > given api statements with type arguments > it should create 'vue' snippets with space between properties 1`] = `
+"// get filter handler
+const countryFilterHandler = this.gridApi.getColumnFilterHandler<SetFilterHandler>('country');"
+`;
+
+exports[`Snippet Component > given api statements with type arguments > it should create 'vue' snippets without framework context 1`] = `
+"// get filter handler
+const countryFilterHandler = this.gridApi.getColumnFilterHandler<SetFilterHandler>('country');"
+`;
+
+exports[`Snippet Component > given api statements with type arguments > it should create 'vue' snippets without framework context and space between properties 1`] = `
+"// get filter handler
+const countryFilterHandler = this.gridApi.getColumnFilterHandler<SetFilterHandler>('country');"
+`;
+
 exports[`Snippet Component > given col defs with arrow function properties > it should create 'angular' snippets 1`] = `
 "<ag-grid-angular
     [columnDefs]="columnDefs"

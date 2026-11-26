@@ -14,7 +14,7 @@ test.agExample(import.meta, () => {
         // Expanding a country lazy-loads its Sport subgroups; with groupTotalRow: 'bottom' a footer
         // row is appended after the group's children.
         await groupRow('United States').locator('.ag-group-contracted').first().click();
-        // Zimbabwe → Swimming is also open by default, so wait for a US-only sport before scrolling.
+        // wait for the sports to load before scrolling
         await expect(
             page
                 .locator('.ag-row-level-1:not(.ag-row-loading) .ag-group-value')

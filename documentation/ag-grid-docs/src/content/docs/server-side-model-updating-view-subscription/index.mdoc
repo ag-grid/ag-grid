@@ -3,7 +3,7 @@ title: "SSRM View Subscription"
 enterprise: true
 ---
 
-View subscription calls your application with the loaded rows that come into view and the rows that leave it, so the server can stream updates for the rows the user can see only. The view subscription only tracks the rows: apply the updates the server streams with [Transactions](./server-side-model-updating-transactions/) or [Single Row Updates](./server-side-model-updating-single-row/).
+View Subscription tells the application which loaded rows enter and leave the view, so the server streams updates only for the rows the user can see. The view subscription only tracks the rows: apply the updates the server streams with [Transactions](./server-side-model-updating-transactions/) or [Single Row Updates](./server-side-model-updating-single-row/).
 
 The example below loads 1,000 stocks in blocks over a simulated websocket, which also streams price updates for the subscribed stocks only. The updates are applied with [Asynchronous Transactions](./server-side-model-updating-transactions/#asynchronous-updates). Note the following:
 
@@ -119,7 +119,7 @@ The grid leaves error handling to you: it does not catch errors thrown by the ha
 
 ## Grand Total Row
 
-With a [Grand Total Row](./server-side-model-grouping/#grand-total-row), the grand total row is passed as a group row with the ID `GRAND_TOTAL_ROW_ID` and an empty `route`. The grand total row sticks to the top or bottom of the grid, or is pinned, so it stays subscribed wherever the grid is scrolled. With `suppressStickyTotalRow` set to `true` or `'grand'`, an unpinned grand total row is subscribed only while it is in view.
+With a [Grand Total Row](./server-side-model-aggregation/#grand-total-row), the grand total row is passed as a group row with the ID `GRAND_TOTAL_ROW_ID` and an empty `route`. The grand total row sticks to the top or bottom of the grid, or is pinned, so it stays subscribed wherever the grid is scrolled. With `suppressStickyTotalRow` set to `true` or `'grand'`, an unpinned grand total row is subscribed only while it is in view.
 
 To apply new totals, update the row with a transaction without a `route`. `getRowId` must return `GRAND_TOTAL_ROW_ID` for the totals data:
 

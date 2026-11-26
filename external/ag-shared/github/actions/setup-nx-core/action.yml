@@ -74,8 +74,20 @@ inputs:
         options:
             - 'true'
             - 'false'
+    skip_install_on_exact_hit:
+        description: >-
+            On an exact node_modules cache hit, trust the restored tree: skip the yarn download
+            cache restore and the `yarn install --immutable` check, and run only the repo's own
+            postinstall. Only safe when node_modules_hash covers everything that changes the tree
+            (lockfile, patches, every package.json including the root one, .yarnrc.yml) and the
+            runner architecture, and when node_modules_paths includes .yarn/install-state.gz.
+        required: false
+        default: 'false'
+        options:
+            - 'true'
+            - 'false'
     node_modules_paths:
-        description: 'Newline-delimited cache paths for the node_modules cache (repo layout specific). Also reused as the wipe list on an inexact cache restore. Supplied by the wrapper.'
+        description: 'Newline-delimited cache paths for the node_modules cache (repo layout specific). Supplied by the wrapper.'
         required: true
     node_modules_hash:
         description: 'Precomputed hashFiles() value keying the node_modules cache. Computed by the wrapper because hashFiles() needs literal glob arguments.'
@@ -83,6 +95,27 @@ inputs:
     nx_cache_hash:
         description: 'Precomputed hashFiles() value keying the Nx cache. Computed by the wrapper because hashFiles() needs literal glob arguments.'
         required: true
+    nx_cache_scheme:
+        description: >-
+            How the Nx cache is shared. legacy: one per-commit cache, saved at the end of rw jobs.
+            merged: restore the base branch cache merged with this PR or branch cache; jobs save
+            nothing themselves, but upload parts (nx-cache-part) that one job merges and saves
+            (nx-cache-save).
+        required: false
+        default: 'legacy'
+        options:
+            - 'legacy'
+            - 'merged'
+    nx_cache_merge_base:
+        description: >-
+            merged only: merge the base branch cache into a PR or branch cache. Set false on the job
+            that runs nx-cache-save, so a PR saves only its own entries; parts already leave base
+            entries out.
+        required: false
+        default: 'true'
+        options:
+            - 'true'
+            - 'false'
 
 outputs:
     base:
@@ -193,10 +226,11 @@ runs:
           uses: actions/cache/restore@v6
           with:
               path: ${{ inputs.node_modules_paths }}
+              # Exact key only, no restore-keys. A prefix match restored a tree from another
+              # lockfile, which the install step then had to delete before reinstalling, so a miss
+              # paid for a ~0.5 GB download, its extraction and an `rm -rf` (measured 40-55s per job)
+              # and kept none of it.
               key: node_modules-${{ runner.os }}-${{ steps.nx_config.outputs.release_branch && format('release-{0}-{1}', steps.nx_config.outputs.release_branch, inputs.node_modules_hash) || inputs.node_modules_hash }}
-              restore-keys: ${{ steps.nx_config.outputs.release_branch && format('node_modules-{0}-release-{1}-', runner.os, steps.nx_config.outputs.release_branch) || format('node_modules-{0}-', runner.os) }}
-              # For releases add release branch to key, otherwise take any latest cache if failed to find it for current yarn.lock
-              # fail-on-cache-miss: true
 
         - name: Restore node_modules
           # Restore only; saved by the explicit "Save node_modules" step after yarn install.
@@ -208,14 +242,13 @@ runs:
           uses: actions/cache/restore@v6
           with:
               path: ${{ inputs.node_modules_paths }}
+              # Exact key only; see the ro restore above.
               key: node_modules-${{ runner.os }}-${{ steps.nx_config.outputs.release_branch && format('release-{0}-{1}', steps.nx_config.outputs.release_branch, inputs.node_modules_hash) || inputs.node_modules_hash }}
-              restore-keys: ${{ steps.nx_config.outputs.release_branch && format('node_modules-{0}-release-{1}-', runner.os, steps.nx_config.outputs.release_branch) || format('node_modules-{0}-', runner.os) }}
-              # For releases add release branch to key, otherwise take any latest cache if failed to find it for current yarn.lock
 
         - name: Cache Nx
           # Post-save works here only because `path` is a literal (see "Restore node_modules");
           # do not parameterise it via inputs.
-          if: inputs.cache_mode == 'rw' && inputs.nx_restore != 'false'
+          if: inputs.cache_mode == 'rw' && inputs.nx_restore != 'false' && inputs.nx_cache_scheme != 'merged'
           uses: actions/cache@v6
           with:
               path: |
@@ -225,7 +258,7 @@ runs:
               restore-keys: cache-nx-v20-${{ inputs.nx_cache_hash }}-
 
         - name: Restore Nx
-          if: inputs.cache_mode == 'ro' && inputs.nx_restore != 'false'
+          if: inputs.cache_mode == 'ro' && inputs.nx_restore != 'false' && inputs.nx_cache_scheme != 'merged'
           id: cache_nx_ro
           uses: actions/cache/restore@v6
           with:
@@ -235,6 +268,122 @@ runs:
               key: cache-nx-v20-${{ inputs.nx_cache_hash }}-${{ github.sha }}
               restore-keys: cache-nx-v20-${{ inputs.nx_cache_hash }}-
               # fail-on-cache-miss: true
+
+        - name: Nx cache scope
+          # Base-branch runs save under `branch-<name>`; PRs and other branches under their own
+          # scope. GitHub restores a PR's own caches before its base branch's, so distinct prefixes
+          # keep a PR's caches from hiding newer base-branch ones, and naming the base branch keeps
+          # a release-branch PR from restoring the default branch's cache. Other bases, such as
+          # `next`, may have no push CI to save a cache, so they fall back to the default branch's.
+          if: inputs.cache_mode != 'off' && inputs.nx_restore != 'false' && inputs.nx_cache_scheme == 'merged'
+          id: nx_scope
+          shell: bash
+          env:
+              BRANCH_TYPE: ${{ steps.nx_config.outputs.type }}
+              PR_NUMBER: ${{ github.event.pull_request.number }}
+              TARGET_BRANCH: ${{ github.base_ref || github.event.repository.default_branch }}
+              DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+              NX_CACHE_HASH: ${{ inputs.nx_cache_hash }}
+          run: |
+              sanitise() { printf '%s' "$1" | tr -c 'A-Za-z0-9._-' '-' ; }
+              if [[ ${BRANCH_TYPE} == 'latest' || ${BRANCH_TYPE} == 'release' ]] ; then
+                base="branch-$(sanitise "${GITHUB_REF_NAME}")"
+                scope="${base}"
+              else
+                base="branch-$(sanitise "${TARGET_BRANCH}")"
+                if [[ ${TARGET_BRANCH} != "${DEFAULT_BRANCH}" && ! ${TARGET_BRANCH} =~ ^b[0-9]+\.[0-9]+\.[0-9]+$ ]] ; then
+                  echo "fallback=cache-nx-v21-branch-$(sanitise "${DEFAULT_BRANCH}")" >> "$GITHUB_OUTPUT"
+                fi
+                if [[ -n ${PR_NUMBER} ]] ; then
+                  scope="pr-${PR_NUMBER}"
+                else
+                  scope="ref-$(sanitise "${GITHUB_REF_NAME}")"
+                fi
+              fi
+              {
+                echo "scope=${scope}"
+                echo "base=cache-nx-v21-${base}"
+                echo "own=cache-nx-v21-${scope}"
+                echo "separate=$([[ ${scope} == "${base}" ]] && echo false || echo true)"
+              } >> "$GITHUB_OUTPUT"
+              # GitHub caches are immutable, so each run, and each re-run of it, saves under its own
+              # key; a later run on the same commit can then publish the entries it adds.
+              echo "NX_CACHE_SAVE_KEY=cache-nx-v21-${scope}-${NX_CACHE_HASH}-${GITHUB_SHA}-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" >> "$GITHUB_ENV"
+
+        - name: Restore base-branch Nx cache
+          if: steps.nx_scope.outputs.scope && (steps.nx_scope.outputs.separate != 'true' || inputs.nx_cache_merge_base != 'false')
+          uses: actions/cache/restore@v6
+          with:
+              path: |
+                  .nx/cache
+                  .nx/workspace-data
+              key: ${{ steps.nx_scope.outputs.base }}-${{ inputs.nx_cache_hash }}-${{ github.sha }}
+              restore-keys: |
+                  ${{ steps.nx_scope.outputs.base }}-${{ inputs.nx_cache_hash }}-${{ github.sha }}-
+                  ${{ steps.nx_scope.outputs.base }}-${{ inputs.nx_cache_hash }}-
+                  ${{ steps.nx_scope.outputs.base }}-
+                  ${{ steps.nx_scope.outputs.fallback && format('{0}-{1}-', steps.nx_scope.outputs.fallback, inputs.nx_cache_hash) || '' }}
+                  ${{ steps.nx_scope.outputs.fallback && format('{0}-', steps.nx_scope.outputs.fallback) || '' }}
+
+        - name: Set aside base-branch Nx cache
+          # Merged after install, so the tidy step below never resets it.
+          if: steps.nx_scope.outputs.separate == 'true' && inputs.nx_cache_merge_base != 'false'
+          shell: bash
+          run: |
+              mkdir -p "${RUNNER_TEMP}/nx-base"
+              for dir in cache workspace-data ; do
+                if [[ -d ".nx/${dir}" ]] ; then mv ".nx/${dir}" "${RUNNER_TEMP}/nx-base/${dir}" ; fi
+              done
+
+        - name: Restore own Nx cache
+          if: steps.nx_scope.outputs.separate == 'true'
+          uses: actions/cache/restore@v6
+          with:
+              path: |
+                  .nx/cache
+                  .nx/workspace-data
+              key: ${{ steps.nx_scope.outputs.own }}-${{ inputs.nx_cache_hash }}-${{ github.sha }}
+              restore-keys: |
+                  ${{ steps.nx_scope.outputs.own }}-${{ inputs.nx_cache_hash }}-${{ github.sha }}-
+                  ${{ steps.nx_scope.outputs.own }}-${{ inputs.nx_cache_hash }}-
+                  ${{ steps.nx_scope.outputs.own }}-
+
+        - name: Check Nx cache DB machine ID
+          # Nx only restores artifacts recorded in its cache DB, which it names after the machine ID
+          # (.nx/workspace-data/<id>-v6.db). Hosted runners share a machine ID only within one runner
+          # image, so a cache saved on another image (an image rollout, or ubuntu-latest vs a pinned
+          # ubuntu-NN.04) is ignored in full. Nx's own "Unrecognized Cache Artifacts" warning is easy
+          # to miss in the log, so raise an annotation. Diagnostic only: it must never fail setup.
+          if: runner.os == 'Linux' && inputs.cache_mode != 'off' && inputs.nx_restore != 'false'
+          continue-on-error: true
+          shell: bash
+          run: |
+              shopt -s nullglob
+              # Same lookup Nx uses on Linux (nx/src/utils/machine-id-cache.js).
+              raw_id=$( (cat /var/lib/dbus/machine-id /etc/machine-id 2>/dev/null || hostname) | head -n 1 | tr -d '[:space:]' | tr '[:upper:]' '[:lower:]')
+              hashed_id=$(printf '%s' "$raw_id" | sha256sum | cut -d' ' -f1)
+              dbs=(.nx/workspace-data/*.db)
+              entries=0
+              if [ -d .nx/cache ]; then
+                  entries=$(find .nx/cache -mindepth 1 -maxdepth 1 -type d ! -name terminalOutputs | wc -l | tr -d ' ')
+              fi
+              echo "Runner image: ${ImageOS:-unknown} ${ImageVersion:-unknown}"
+              echo "Machine ID: ${raw_id} (sha256 ${hashed_id})"
+              echo "Restored Nx cache entries: ${entries}"
+              echo "Restored Nx cache DBs: ${dbs[*]:-none}"
+              if [ "${entries}" -eq 0 ]; then
+                  exit 0
+              fi
+              for db in "${dbs[@]}"; do
+                  name=$(basename "${db}" | tr '[:upper:]' '[:lower:]')
+                  case "${name}" in
+                      "${raw_id}"-* | "${hashed_id}"-*)
+                          echo "Restored Nx cache DB matches this machine."
+                          exit 0
+                          ;;
+                  esac
+              done
+              echo "::warning title=Nx cache DB from another machine::Restored ${entries} Nx cache entries, but no cache DB in .nx/workspace-data matches machine ID ${raw_id} (runner image ${ImageOS:-unknown} ${ImageVersion:-unknown}). Nx will ignore the restored cache, usually because it was saved on a different runner image. See https://nx.dev/troubleshooting/unknown-local-cache"
 
         - name: Setup Node.js
           id: setup_node
@@ -301,10 +450,18 @@ runs:
           # `false` is gated on rw, so an ro+false job never installs and a restore would be
           # wasted.
           #
+          # Also skipped on an exact node_modules hit under skip_install_on_exact_hit, which runs
+          # no `yarn install` at all and so never reads this dir. That removes a ~0.6 GB restore
+          # (measured ~20s) from every job on the common path.
+          #
           # The key carries runner.arch because saved caches are hollowed for the saving
           # runner's architecture (see "Hollow yarn cache"): a runner on another arch would
           # find its native packages present-but-empty and never re-download them.
-          if: inputs.cache_mode != 'off' && (inputs.yarn_postinstall != 'false' || inputs.cache_mode == 'rw')
+          if: >-
+              inputs.cache_mode != 'off'
+              && (inputs.yarn_postinstall != 'false' || inputs.cache_mode == 'rw')
+              && !(inputs.skip_install_on_exact_hit == 'true'
+                   && (steps.cache_rw.outputs.cache-hit == 'true' || steps.cache_ro.outputs.cache-hit == 'true'))
           id: yarn_cache
           uses: actions/cache/restore@v6
           with:
@@ -317,21 +474,23 @@ runs:
           id: yarn_install_slow
           shell: bash
           env:
-              # 'true' only on an exact key hit; an inexact restore-keys fallback can carry a stale hoisting layout.
+              # The node_modules restore is exact-key only, so this is 'true' when a tree was
+              # restored and 'false' when nothing was.
               EXACT_CACHE_HIT: ${{ steps.cache_rw.outputs.cache-hit == 'true' || steps.cache_ro.outputs.cache-hit == 'true' }}
-              NODE_MODULES_PATHS: ${{ inputs.node_modules_paths }}
+              SKIP_INSTALL_ON_EXACT_HIT: ${{ inputs.skip_install_on_exact_hit }}
               SKIP_PLUGIN_BUILD_ENV: ${{ inputs.skip_plugin_build == 'true' && 'AG_SKIP_PLUGIN_BUILD=1' || '' }}
           run: |
               if [[ "${EXACT_CACHE_HIT}" != "true" ]] ; then
-                # Fallback restore: wipe node_modules so install rebuilds hoisting from this
-                # lockfile, avoiding stale-layout cache poisoning. Reuse the newline-delimited
-                # cache-path list: unquoted expansion word-splits and glob-expands it, and the
-                # trailing slashes are harmless to rm -rf. Guarded so a future consumer passing
-                # an empty value cannot turn this into a bare `rm -rf`.
-                if [[ -n "${NODE_MODULES_PATHS//[[:space:]]/}" ]] ; then
-                  rm -rf ${NODE_MODULES_PATHS}
-                fi
+                # Miss: nothing was restored, so this is a fresh install.
                 yarn install --immutable
+              elif [[ "${SKIP_INSTALL_ON_EXACT_HIT}" == "true" && -f .yarn/install-state.gz ]] ; then
+                # Trust the exact hit: the key covers everything that changes the tree, and the
+                # tree was saved only after a fully scripted install, so dependency lifecycle
+                # scripts have already run in it. Skipping the check is what lets the yarn
+                # download cache restore be skipped too (the check refetches into an empty one).
+                # Without install-state.gz the hit is from an entry saved without it; fall
+                # through to the check below, which still produces a correct tree.
+                env ALLOW_SCRIPTS_RUNNING=1 ${SKIP_PLUGIN_BUILD_ENV} yarn postinstall
               elif (YARN_ENABLE_SCRIPTS=false yarn install --immutable) ; then
                 # Exact-hit caches are only saved after a fully-scripted install, so
                 # dependency lifecycle scripts (allow-scripts) have already run in this
@@ -364,27 +523,28 @@ runs:
           # `ro` consumers with no install and no integrity check at all, so an inexact
           # restore-keys fallback was built against silently: a tree predating the current
           # lockfile resolves as a missing module at bundle time rather than a cache error.
-          if: inputs.yarn_postinstall == 'no-install'
+          # Skipped on a trusted exact hit (skip_install_on_exact_hit), for the same reason as
+          # the main install step: the restored tree is the one the key describes.
+          if: >-
+              inputs.yarn_postinstall == 'no-install'
+              && !(inputs.skip_install_on_exact_hit == 'true'
+                   && (steps.cache_rw.outputs.cache-hit == 'true' || steps.cache_ro.outputs.cache-hit == 'true'))
           id: yarn_install_check
           shell: bash
-          env:
-              # 'true' only on an exact key hit; an inexact restore-keys fallback can carry a
-              # node_modules tree that predates this lockfile.
-              EXACT_CACHE_HIT: ${{ steps.cache_rw.outputs.cache-hit == 'true' || steps.cache_ro.outputs.cache-hit == 'true' }}
-          run: |
-              if [[ "${EXACT_CACHE_HIT}" == "true" ]] ; then
-                yarn install --immutable
-              else
-                # Fallback restore: reconcile the tree against this lockfile before any build
-                # reads it. Installing under cache_mode:ro is safe — nothing is saved.
-                yarn install --immutable
-              fi
+          # On a miss this installs from scratch; installing under cache_mode:ro is safe, as
+          # nothing is saved.
+          run: yarn install --immutable
 
         - name: Adopt restored Nx cache DB
           # Nx names its cache DB after the machine ID, which runners don't share predictably.
           if: inputs.cache_mode != 'off' && inputs.nx_restore != 'false'
           shell: bash
           run: node "${{ github.action_path }}/nx-cache-db.mjs" adopt "${RUNNER_TEMP}/nx-cache-state.json"
+
+        - name: Merge base-branch Nx cache
+          if: steps.nx_scope.outputs.separate == 'true' && inputs.nx_cache_merge_base != 'false'
+          shell: bash
+          run: node "${{ github.action_path }}/nx-cache-db.mjs" merge "${RUNNER_TEMP}/nx-cache-state.json" "${RUNNER_TEMP}/nx-base"
 
         - name: Save node_modules
           # Explicit save of the freshly installed tree (see "Restore node_modules" for

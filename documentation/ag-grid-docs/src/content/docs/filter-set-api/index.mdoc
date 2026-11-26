@@ -40,7 +40,7 @@ The Set Filter values can be updated via the Set Filter Handler:
 
 ```{% frameworkTransform=true %}
 // get filter handler
-const countryFilterHandler = api.getColumnFilterHandler('country');
+const countryFilterHandler = api.getColumnFilterHandler<SetFilterHandler>('country');
 ```
 
 The `SetFilterHandler` interface defines the public API for the Set Filter Handler.

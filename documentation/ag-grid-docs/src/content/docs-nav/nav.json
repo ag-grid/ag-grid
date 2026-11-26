@@ -1786,6 +1786,12 @@
                                 },
                                 {
                                     "type": "item",
+                                    "title": "Aggregation",
+                                    "path": "server-side-model-aggregation",
+                                    "isEnterprise": true
+                                },
+                                {
+                                    "type": "item",
                                     "title": "Pivoting",
                                     "path": "server-side-model-pivoting",
                                     "isEnterprise": true

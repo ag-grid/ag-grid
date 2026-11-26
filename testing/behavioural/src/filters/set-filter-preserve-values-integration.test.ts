@@ -141,7 +141,7 @@ describe('Set Filter preservePreviousValues - integration', () => {
             const api = createGrid(rows('A', 'B', 'C'), {
                 filter: 'agSetColumnFilter',
                 filterParams: (params: IFilterParams) => ({
-                    preservePreviousValues: params.rowModel.getType() === 'clientSide',
+                    preservePreviousValues: typeof params.getValue === 'function',
                 }),
             });
             await asyncSetTimeout(0);

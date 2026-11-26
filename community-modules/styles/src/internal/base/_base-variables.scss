@@ -12,6 +12,12 @@
 
         --ag-header-foreground-color: var(--ag-secondary-foreground-color);
 
+        --ag-header-sort-index-text-color: color-mix(
+            in srgb,
+            var(--ag-header-background-color),
+            var(--ag-header-foreground-color) 70%
+        );
+
         --ag-disabled-foreground-color: rgba(0, 0, 0, 0.5);
 
         --ag-background-color: #fff;

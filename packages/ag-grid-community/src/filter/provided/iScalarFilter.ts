@@ -1,10 +1,4 @@
-import type { IFilterParams } from '../../interfaces/iFilter';
 import type { ISimpleFilterParams } from './iSimpleFilter';
-
-/**
- * @deprecated v34 Internal only. Use `IScalarFilterParams`
- */
-export type ScalarFilterParams<TData = any> = IScalarFilterParams & IFilterParams<TData>;
 
 /**
  * Common parameters in `colDef.filterParams` used by all scalar filters. Extended by the specific filter types.

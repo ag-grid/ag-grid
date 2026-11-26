@@ -842,12 +842,6 @@ export interface GridOptions<TData = any> {
      */
     advancedFilterParams?: IAdvancedFilterParams;
     /**
-     * @deprecated As of v34, advanced filter no longer uses function evaluation, so this option has no effect.
-     * @default true
-     * @agModule `AdvancedFilterModule`
-     */
-    suppressAdvancedFilterEval?: boolean;
-    /**
      * When using AG Grid Enterprise, the Set Filter is used by default when `filter: true` is set on column definitions.
      * Set to `true` to prevent this and instead use the Text Filter, Number Filter or Date Filter based on the cell data type,
      * the same as when using AG Grid Community.
@@ -2139,7 +2133,7 @@ export interface GridOptions<TData = any> {
      * Provide an object to sort using a specific locale and collator options, such as `{ locales: 'de', options: { sensitivity: 'accent' } }`.
      * Only applies when both values are strings. Also orders the values in the Set Filter list.
      *
-     * Can be overridden per column with `colDef.accentedSort`.
+     * Equivalent to setting `accentedSort` on the `defaultColDef`, which is the recommended approach. Can be overridden per column with `colDef.accentedSort`.
      * @default false
      */
     accentedSort?: boolean | AccentedSortOptions;

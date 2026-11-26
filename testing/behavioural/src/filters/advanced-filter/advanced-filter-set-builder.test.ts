@@ -460,7 +460,7 @@ describe('Advanced Filter - Set Filter Builder round trip', () => {
                     filters: [
                         { filter: 'agTextColumnFilter' },
                         {
-                            filter: params.rowModel.getType() === 'clientSide' ? 'agSetColumnFilter' : 'x',
+                            filter: typeof params.getValue === 'function' ? 'agSetColumnFilter' : 'x',
                             filterParams: setParams,
                         },
                     ],
@@ -591,7 +591,7 @@ describe('Advanced Filter - Set Filter Builder round trip', () => {
         for (const filterParams of [
             { filters: [setChild] },
             // Children only when called with the grid's params.
-            (params: IFilterParams) => params.rowModel && { filters: [setChild] },
+            (params: IFilterParams) => typeof params.getValue === 'function' && { filters: [setChild] },
         ]) {
             const api = await gridsManager.createGridAndWait('grid1', {
                 ...DEFAULT_OPTIONS,

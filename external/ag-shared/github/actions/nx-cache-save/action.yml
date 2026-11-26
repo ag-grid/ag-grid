@@ -1,0 +1,61 @@
+name: nx-cache-save
+description: "Merge the run's nx-cache-part uploads into the restored Nx cache and save it for this PR or branch. Needs setup-nx-core with nx_cache_scheme: merged."
+
+inputs:
+    max_size_mb:
+        description: 'Delete the oldest entries before saving until the Nx cache fits in this many MB.'
+        required: false
+        default: '4096'
+
+runs:
+    using: 'composite'
+    steps:
+        - name: Check Nx cache scheme
+          if: ${{ !env.NX_CACHE_SAVE_KEY }}
+          shell: bash
+          run: |
+              echo "::error title=nx-cache-save::NX_CACHE_SAVE_KEY is unset; run setup-nx-core with nx_cache_scheme: merged first."
+              exit 1
+
+        - name: Download Nx cache parts
+          uses: actions/download-artifact@v8
+          with:
+              pattern: nx-cache-part-*
+              path: ${{ runner.temp }}/nx-cache-parts
+
+        - name: Merge Nx cache parts
+          id: merge
+          shell: bash
+          run: |
+              shopt -s nullglob
+              # download-artifact extracts a lone match into the path itself, not a subdirectory.
+              parts=()
+              for tar in "${RUNNER_TEMP}"/nx-cache-parts/nx-cache-part.tar "${RUNNER_TEMP}"/nx-cache-parts/*/nx-cache-part.tar ; do
+                [[ -f "${tar}" ]] || continue
+                dir="${tar%.tar}"
+                mkdir -p "${dir}"
+                tar -xf "${tar}" -C "${dir}"
+                parts+=("${dir}")
+              done
+              if [[ ${#parts[@]} -eq 0 ]] ; then
+                echo "No Nx cache parts uploaded in this run."
+                exit 0
+              fi
+              node "${{ github.action_path }}/../setup-nx-core/nx-cache-db.mjs" merge "${RUNNER_TEMP}/nx-cache-state.json" "${parts[@]}"
+
+        - name: Trim Nx cache
+          if: steps.merge.outputs.imported > 0
+          shell: bash
+          env:
+              MAX_SIZE_MB: ${{ inputs.max_size_mb }}
+          run: node "${{ github.action_path }}/../setup-nx-core/nx-cache-db.mjs" trim "${RUNNER_TEMP}/nx-cache-state.json" "${MAX_SIZE_MB}"
+
+        - name: Save Nx cache
+          # Saves only when the merge added something; the restored cache is already saved.
+          if: steps.merge.outputs.imported > 0
+          uses: actions/cache/save@v6
+          with:
+              path: |
+                  .nx/cache
+                  .nx/workspace-data
+              key: ${{ env.NX_CACHE_SAVE_KEY }}

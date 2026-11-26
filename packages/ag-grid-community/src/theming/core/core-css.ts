@@ -284,6 +284,11 @@ export interface CoreParams extends SharedThemeParams {
     headerColumnResizeHandleWidth: LengthValue;
 
     /**
+     * Colour of the sort index number shown beside the sort icon when more than one column is sorted.
+     */
+    headerSortIndexTextColor: ColorValue;
+
+    /**
      * Font family of text in grid cells
      */
     cellFontFamily: FontFamilyValue;
@@ -1026,6 +1031,11 @@ export const coreDefaults: Readonly<Omit<CoreParams, keyof SharedThemeParams>> =
     headerColumnResizeHandleWidth: 2,
     headerColumnResizeHandleColor: {
         ref: 'borderColor',
+    },
+    headerSortIndexTextColor: {
+        ref: 'headerTextColor',
+        mix: 0.7,
+        onto: 'headerBackgroundColor',
     },
     iconButtonColor: { ref: 'iconColor' },
     iconButtonBackgroundColor: 'transparent',

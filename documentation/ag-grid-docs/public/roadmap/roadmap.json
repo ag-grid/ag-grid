@@ -64,7 +64,7 @@
             "status": "shipped",
             "why": "Extends grand total reporting to large, server-backed datasets that can't be loaded entirely client-side.",
             "desc": "Display an always-visible grand total row across the full server-side dataset, supplied and updated by the server.",
-            "link": "./server-side-model-grouping/#grand-total-row"
+            "link": "./server-side-model-aggregation/#grand-total-row"
         },
         {
             "id": "AG-3773",
