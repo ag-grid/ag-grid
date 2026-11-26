@@ -21,11 +21,12 @@ export function valueColIds(colCount) {
 }
 
 export class Backend {
-    constructor({ total, colCount, latencyMs, trim }) {
+    constructor({ total, colCount, latencyMs, trim, changedCols = 0 }) {
         this.total = total;
         this.colIds = valueColIds(colCount);
         this.latencyMs = latencyMs;
         this.trim = trim;
+        this.changedCols = changedCols;
         this.headId = total;
         this.versions = new Map();
         this.visibleCols = null;
@@ -62,7 +63,10 @@ export class Backend {
         };
         const cols = this.trim && this.visibleCols ? this.colIds.filter((c) => this.visibleCols.has(c)) : this.colIds;
         for (const col of cols) {
-            data[col] = hash(id, 10 + +col.slice(1), version) % 100_000;
+            const n = +col.slice(1);
+            // With `changedCols` set, an update changes only the first that many value columns; the rest keep version 0.
+            const v = this.changedCols > 0 && n >= this.changedCols ? 0 : version;
+            data[col] = hash(id, 10 + n, v) % 100_000;
         }
         return data;
     }
@@ -118,7 +122,7 @@ export class Backend {
         return { row: this.row(this.headId), droppedId: String(droppedId), sym: this.sym(this.headId) };
     }
 
-    /** Bumps the version of each live id, so every value column and `px` changes. */
+    /** Bumps the version of each live id, so `px` and every value column (or the first `changedCols`) change. */
     update(ids) {
         const rows = [];
         for (const idStr of ids) {
@@ -199,7 +203,7 @@ export class Backend {
         if (!arrivalOrder) {
             const key = sort.colId;
             const dir = desc ? -1 : 1;
-            const valueOf = (id) => (key === 'sym' ? this.sym(id) : this.row(id)[key]);
+            const valueOf = (id) => (key === 'sym' ? this.sym(id) : key === 'qty' ? this.qty(id) : this.row(id)[key]);
             const values = new Map(ids.map((id) => [id, valueOf(id)]));
             ids.sort((a, b) => (values.get(a) < values.get(b) ? -dir : values.get(a) > values.get(b) ? dir : b - a));
         } else if (!desc) {

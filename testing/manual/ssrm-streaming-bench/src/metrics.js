@@ -40,6 +40,9 @@ class GridTracker {
         this.cells = new Map();
         this.rows = new Map();
         this.refreshFrames = 0;
+        this.cellRefreshFrames = 0;
+        this.rowRefreshFrames = 0;
+        this.lastVisible = null;
         this.added = 0;
         this.removed = 0;
         this.rowIdChanges = 0;
@@ -50,6 +53,14 @@ class GridTracker {
         this.pendingAgg = new Map();
         this.aggLag = { group: [], total: [] };
         this.aggSuperseded = 0;
+        this.aggNotRendered = { group: 0, total: 0 };
+        this.pendingNew = new Map();
+        this.newRowLag = [];
+        this.sortChecks = 0;
+        this.sortViolations = 0;
+        this.viewChecks = 0;
+        this.viewMatches = 0;
+        this.checkMs = 0;
         this.txSync = [];
         this.txQueue = [];
         this.statuses = {};
@@ -77,8 +88,9 @@ class GridTracker {
     }
 
     sampleFrame(now, checkOrder) {
-        let changed = false;
+        let cellsChanged = false;
         const ordered = checkOrder ? [] : null;
+        const visible = [];
         const { top, bottom } = this.visibleBand();
         for (const rowEl of this.centre.children) {
             const rowId = rowEl.getAttribute('row-id');
@@ -91,6 +103,12 @@ class GridTracker {
             const rect = rowEl.getBoundingClientRect();
             if (rect.top < top - 1 || rect.bottom > bottom + 1) {
                 continue;
+            }
+            visible.push([Math.round(rect.top), rowId]);
+            const sentAt = this.pendingNew.get(rowId);
+            if (sentAt != null) {
+                this.newRowLag.push(now - sentAt);
+                this.pendingNew.delete(rowId);
             }
             let rowChanged = false;
             for (const col of this.sampleCols) {
@@ -119,11 +137,18 @@ class GridTracker {
                 row.last = now;
                 row.changes += rowChanged ? 1 : 0;
             }
-            changed ||= rowChanged;
+            cellsChanged ||= rowChanged;
         }
-        if (changed) {
-            this.refreshFrames++;
-        }
+        // A row entering, leaving or moving within the view changes the screen even when no sampled cell text did.
+        const visibleKey = visible
+            .sort((a, b) => a[0] - b[0])
+            .map(([y, id]) => `${id}@${y}`)
+            .join(',');
+        const rowsChanged = this.lastVisible != null && visibleKey !== this.lastVisible;
+        this.lastVisible = visibleKey;
+        this.cellRefreshFrames += cellsChanged ? 1 : 0;
+        this.rowRefreshFrames += rowsChanged ? 1 : 0;
+        this.refreshFrames += cellsChanged || rowsChanged ? 1 : 0;
         if (ordered?.length) {
             this.orderChecks++;
             const k = ordered[0][0] + ordered[0][1];
@@ -134,6 +159,59 @@ class GridTracker {
         const settled = performance.now();
         this.resolveHeads(settled);
         this.resolveAgg(settled);
+    }
+
+    /**
+     * Under a non-default order: visible leaf rows of the same parent must follow the sort and pass the filter, and
+     * (ungrouped only) must be exactly the rows the backend returns for those indexes now.
+     */
+    checkSortedView() {
+        const t0 = performance.now();
+        const { api, backend } = this.grid;
+        const { top, bottom } = this.visibleBand();
+        const rows = [];
+        for (const rowEl of this.centre.children) {
+            const id = rowEl.getAttribute('row-id');
+            const rect = rowEl.getBoundingClientRect();
+            if (id && /^\d+$/.test(id) && rect.top >= top - 1 && rect.bottom <= bottom + 1) {
+                rows.push({ index: +rowEl.getAttribute('row-index'), node: api.getRowNode(id) });
+            }
+        }
+        rows.sort((a, b) => a.index - b.index);
+        const { sortModel, filterModel } = this.grid.order();
+        const sort = sortModel[0];
+        let violation = false;
+        for (let i = 0; i < rows.length; i++) {
+            const { node } = rows[i];
+            if (!node?.data || !backend.passesFilter(+node.id, filterModel)) {
+                violation = true;
+                break;
+            }
+            const prev = rows[i - 1]?.node;
+            if (sort && prev?.data && prev.parent === node.parent) {
+                const a = prev.data[sort.colId];
+                const b = node.data[sort.colId];
+                if (sort.sort === 'asc' ? a > b : a < b) {
+                    violation = true;
+                    break;
+                }
+            }
+        }
+        this.sortChecks++;
+        this.sortViolations += violation ? 1 : 0;
+        if (!this.grid.grouped && rows.length) {
+            const expected = backend.query({
+                startRow: rows[0].index,
+                endRow: rows.at(-1).index + 1,
+                rowGroupCols: [],
+                groupKeys: [],
+                sortModel,
+                filterModel,
+            }).rowData;
+            this.viewChecks++;
+            this.viewMatches += rows.every((r) => expected[r.index - rows[0].index]?.id === r.node?.id) ? 1 : 0;
+        }
+        this.checkMs += performance.now() - t0;
     }
 
     resolveHeads(now) {
@@ -150,11 +228,17 @@ class GridTracker {
         }
     }
 
-    /** Each expected value's lag runs until it, or a later value for the same row, is on screen. */
+    /**
+     * Each expected value's lag runs until it, or a later value for the same row, is on screen. Values for a row that is
+     * not rendered (a group scrolled out of view) are counted as not rendered, not dropped silently.
+     */
     resolveAgg(now) {
         for (const [rowId, queue] of this.pendingAgg) {
             const cell = this.root.querySelector(`.ag-row[row-id="${rowId}"] [col-id="px"]`);
             if (!cell) {
+                for (const p of queue) {
+                    this.aggNotRendered[p.total ? 'total' : 'group']++;
+                }
                 this.pendingAgg.delete(rowId);
                 continue;
             }
@@ -190,7 +274,32 @@ class GridTracker {
         return { rows, cols };
     }
 
+    /** Resolved lags plus, for values still not on screen, their age so far (a lower bound on their lag). */
+    aggSummary(kind, now) {
+        const unresolved = [];
+        for (const queue of this.pendingAgg.values()) {
+            for (const p of queue) {
+                if (!!p.total === (kind === 'total')) {
+                    unresolved.push(now - p.t);
+                }
+            }
+        }
+        return {
+            ...stats([...this.aggLag[kind], ...unresolved]),
+            rendered: this.aggLag[kind].length,
+            stillPending: unresolved.length,
+            stillPendingMaxAgeMs: unresolved.length ? r2(Math.max(...unresolved)) : 0,
+            rowNotRendered: this.aggNotRendered[kind],
+        };
+    }
+
+    onScreen() {
+        const r = this.root.getBoundingClientRect();
+        return r.bottom > 0 && r.top < window.innerHeight && r.right > 0 && r.left < window.innerWidth;
+    }
+
     summary(seconds) {
+        const now = performance.now();
         const cellRates = [];
         for (const c of this.cells.values()) {
             const span = (c.last - c.first) / 1000;
@@ -211,6 +320,8 @@ class GridTracker {
         const sortedRates = [...cellRates].sort((a, b) => a - b);
         return {
             contentRefreshPerS: r2(this.refreshFrames / seconds),
+            cellRefreshPerS: r2(this.cellRefreshFrames / seconds),
+            rowMoveRefreshPerS: r2(this.rowRefreshFrames / seconds),
             perCellRenderedRate: { ...cellStats, p10: r2(sortedRates[Math.floor(0.1 * sortedRates.length)] ?? 0) },
             rowsObserved,
             pctRowsChangedAtLeast1PerS: rowsObserved ? r2((100 * rowsAtLeast1) / rowsObserved) : null,
@@ -222,20 +333,32 @@ class GridTracker {
             orderMismatches: this.orderMismatches,
             headRenderLagMs: stats(this.headLag),
             aggLagMs: {
-                group: stats(this.aggLag.group),
-                total: stats(this.aggLag.total),
+                group: this.aggSummary('group', now),
+                total: this.aggSummary('total', now),
                 superseded: this.aggSuperseded,
             },
+            sortedView: this.sortChecks
+                ? {
+                      checks: this.sortChecks,
+                      orderOrFilterViolations: this.sortViolations,
+                      viewChecks: this.viewChecks,
+                      viewMatchesBackend: this.viewMatches,
+                      newRowInViewLagMs: stats(this.newRowLag),
+                      checkMsPerS: r2(this.checkMs / seconds),
+                  }
+                : undefined,
             txSyncApplyMs: stats(this.txSync),
             txAsyncQueueMs: stats(this.txQueue),
             txStatuses: this.statuses,
             subscribedRows: this.grid.subscribed.size,
+            onScreen: this.onScreen(),
             ...this.visibleCounts(),
             feed: {
                 ...this.grid.stats,
                 backendMs: r2(this.grid.stats.backendMs),
                 insertsEmittedPerS: r2(this.grid.stats.insertsEmitted / seconds),
                 updateTicksPerS: r2(this.grid.stats.updateTicks / seconds),
+                refreshesPerS: r2(this.grid.stats.refreshes / seconds),
                 backendMsPerS: r2(this.grid.stats.backendMs / seconds),
             },
         };
@@ -286,9 +409,13 @@ export class Metrics {
         return grid.cfg.group ? ['px', ...picks.slice(0, 2)] : picks;
     }
 
+    /** Visible value columns whose value an update changes. */
     visibleValueCols(grid) {
         const vis = grid.backend.visibleCols;
-        return vis ? [...vis].filter((c) => /^c\d+$/.test(c)).length : 0;
+        const { changedCols } = grid.backend;
+        return vis
+            ? [...vis].filter((c) => /^c\d+$/.test(c) && !(changedCols > 0 && +c.slice(1) >= changedCols)).length
+            : 0;
     }
 
     frame(now) {
@@ -300,6 +427,9 @@ export class Metrics {
         const checkOrder = this.frameNo % 15 === 0;
         for (const t of this.trackers.values()) {
             t.sampleFrame(now, checkOrder && !t.grid.grouped && t.grid.defaultOrder);
+            if (this.frameNo % 30 === 0 && !t.grid.defaultOrder) {
+                t.checkSortedView();
+            }
         }
         if (this.frameNo % 60 === 0) {
             const g = [...this.trackers.values()][0]?.grid;
@@ -340,6 +470,11 @@ export class Metrics {
                 t.pendingHeads.push({ id: +insertedId, t: performance.now() });
             }
         }
+    }
+
+    /** A row inserted under a non-default order: how long until it is in view, if it ever is. */
+    expectNewRow(grid, rowId) {
+        this.trackers.get(grid.index)?.pendingNew.set(rowId, performance.now());
     }
 
     expectAgg(grid, rowId, text, t, total) {

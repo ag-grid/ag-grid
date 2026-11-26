@@ -32,13 +32,20 @@ export class LiveGrid {
         this.cfg = cfg;
         this.metrics = metrics;
         this.index = index;
-        this.backend = new Backend({ total: cfg.total, colCount: cfg.cols, latencyMs: cfg.latency, trim: cfg.trim });
+        this.backend = new Backend({
+            total: cfg.total,
+            colCount: cfg.cols,
+            latencyMs: cfg.latency,
+            trim: cfg.trim,
+            changedCols: cfg.changed,
+        });
         this.subscribed = new Map();
         this.buffer = [];
         this.paused = false;
         this.timers = [];
         this.defaultOrder = true;
-        this.refreshPending = false;
+        this.refreshRoutes = new Map();
+        this.refreshTimer = null;
         this.resetStats();
 
         this.api = createGrid(el, {
@@ -59,6 +66,7 @@ export class LiveGrid {
             rowSelection: { mode: 'multiRow', checkboxes: false, headerCheckbox: false, enableClickSelection: true },
             cellSelection: true,
             grandTotalRow: cfg.group ? 'bottom' : undefined,
+            viewSubscriptionActive: cfg.live <= 0 || index < cfg.live,
             viewSubscription: {
                 subscribeRows: (rows) => rows.forEach((r) => this.subscribed.set(r.id, r)),
                 unsubscribeRows: (rows) => rows.forEach((r) => this.subscribed.delete(r.id)),
@@ -75,7 +83,7 @@ export class LiveGrid {
     }
 
     resetStats() {
-        this.stats = { insertsEmitted: 0, updateTicks: 0, backendMs: 0, refreshInserts: 0, refetches: 0 };
+        this.stats = { insertsEmitted: 0, updateTicks: 0, backendMs: 0, refreshInserts: 0, refreshes: 0, refetches: 0 };
     }
 
     getRows(params) {
@@ -87,12 +95,21 @@ export class LiveGrid {
         });
     }
 
+    /** The leaf sort and filter the backend applies. Sorting the group column orders groups, not their rows. */
+    order() {
+        const sortModel = this.api
+            .getColumnState()
+            .filter((c) => c.sort && c.colId !== 'ag-Grid-AutoColumn')
+            .sort((a, b) => (a.sortIndex ?? 0) - (b.sortIndex ?? 0))
+            .map(({ colId, sort }) => ({ colId, sort }));
+        return { sortModel, filterModel: this.api.getFilterModel() ?? {} };
+    }
+
     onOrderChanged() {
-        const sorted = this.api.getColumnState().some((c) => c.sort && c.colId !== 'arrival');
-        const arrivalAsc = this.api.getColumnState().some((c) => c.colId === 'arrival' && c.sort === 'asc');
-        const filtered = Object.keys(this.api.getFilterModel() ?? {}).length > 0;
+        const { sortModel, filterModel } = this.order();
+        const arrivalDesc = !sortModel.length || (sortModel[0].colId === 'arrival' && sortModel[0].sort === 'desc');
         this.grouped = this.api.getRowGroupColumns().length > 0;
-        this.defaultOrder = !sorted && !arrivalAsc && !filtered;
+        this.defaultOrder = arrivalDesc && Object.keys(filterModel).length === 0;
         if (this.grouped && !this.backend.groups) {
             this.backend.ensureGroups();
         }
@@ -128,30 +145,51 @@ export class LiveGrid {
         const { row, droppedId, sym } = this.backend.insert();
         this.stats.backendMs += performance.now() - t0;
         this.stats.insertsEmitted++;
+        if (!this.defaultOrder) {
+            this.metrics.expectNewRow(this, row.id);
+        }
         if (this.grouped) {
             const droppedSym = this.backend.sym(+droppedId);
-            const groupKeys = new Set([sym, droppedSym]);
             if (this.api.getRowNode(`g-${sym}`)?.expanded) {
-                this.apply({ route: [sym], add: [row], addIndex: 0 }, row.id);
+                if (this.defaultOrder) {
+                    this.apply({ route: [sym], add: [row], addIndex: 0 }, row.id);
+                } else {
+                    this.refreshLater([sym]);
+                }
             }
             if (this.api.getRowNode(`g-${droppedSym}`)?.expanded) {
                 this.apply({ route: [droppedSym], remove: [{ id: droppedId }] });
             }
-            this.applyGroupUpdates(groupKeys);
+            this.applyGroupUpdates(new Set([sym, droppedSym]));
             return;
         }
         if (!this.defaultOrder) {
-            this.stats.refreshInserts++;
-            if (!this.refreshPending) {
-                this.refreshPending = true;
-                setTimeout(() => {
-                    this.refreshPending = false;
-                    this.api.refreshServerSide({ purge: false });
-                }, 1000);
-            }
+            this.refreshLater([]);
             return;
         }
         this.apply({ add: [row], addIndex: 0, remove: [{ id: droppedId }], rowCount: this.backend.total }, row.id);
+    }
+
+    /**
+     * Under any order but arrival newest-first the app cannot cheaply work out where a new row goes, so it re-reads the
+     * affected store from the backend at most once a second instead of sending a transaction.
+     */
+    refreshLater(route) {
+        this.stats.refreshInserts++;
+        this.refreshRoutes.set(route.join('/'), route);
+        this.refreshTimer ??= setTimeout(() => this.runRefreshes(), 1000);
+    }
+
+    runRefreshes() {
+        this.refreshTimer = null;
+        if (this.paused) {
+            return;
+        }
+        for (const route of this.refreshRoutes.values()) {
+            this.stats.refreshes++;
+            this.api.refreshServerSide({ route, purge: false });
+        }
+        this.refreshRoutes.clear();
     }
 
     updateTick() {
@@ -222,11 +260,13 @@ export class LiveGrid {
         if (!this.cfg.sync) {
             this.api.flushServerSideAsyncTransactions();
         }
+        this.runRefreshes();
         return { applied: buffered.length, ms: Math.round(performance.now() - t0) };
     }
 
     destroy() {
         this.stop();
+        clearTimeout(this.refreshTimer);
         this.api.destroy();
     }
 }

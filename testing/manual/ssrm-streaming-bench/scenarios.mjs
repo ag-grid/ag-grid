@@ -4,7 +4,12 @@
 // About 57 rows x 58 columns visible at 3840x2160: just over the 50 x 50 the requirement names.
 const R3_COLS = 'cols=200&rowHeight=36&colWidth=64';
 
-/** `action` names an extra in-page step that run-bench.mjs runs for the scenario. */
+const QTY_FILTER = { qty: { filterType: 'number', type: 'greaterThan', filter: 500 } };
+
+/**
+ * `action` names an extra in-page step that run-bench.mjs runs for the scenario; `order` is a sort (and filter) applied
+ * through the grid API before the warm-up.
+ */
 export const SCENARIOS = [
     { id: 'S0', title: 'Control: feed off', query: `${R3_COLS}&feed=0` },
     { id: 'S1', title: 'Baseline: 75 ms top inserts, 5 updates/s per cell, async', query: R3_COLS, repeat: 2 },
@@ -49,6 +54,19 @@ export const SCENARIOS = [
         query: 'cols=50&feed=0&latency=500',
         action: 'serverOps',
     },
+    {
+        id: 'S11b',
+        title: 'Live inserts under qty sort (desc) and a qty > 500 filter',
+        query: 'cols=50',
+        order: { sort: [{ colId: 'qty', sort: 'desc' }], filter: QTY_FILTER },
+    },
+    {
+        id: 'S11c',
+        title: 'Grouped, 3 groups expanded, live inserts under qty sort (asc)',
+        query: 'cols=50&group=1',
+        action: 'expandGroups',
+        order: { sort: [{ colId: 'qty', sort: 'asc' }] },
+    },
     { id: 'S3', title: 'S1 with sync transactions', query: `${R3_COLS}&sync=1` },
     { id: 'S2', title: 'S1 at 10 updates/s per cell', query: `${R3_COLS}&rate=10` },
     { id: 'S8a', title: '200 columns, send all fields', query: 'cols=200&colWidth=60', action: 'hscroll' },
@@ -63,6 +81,13 @@ export const SCENARIOS = [
         title: '100 grids, reduced feed (2 inserts/s, 2 updates/s per cell)',
         query: 'cols=50&grids=100&insertMs=500&rate=2',
     },
+    {
+        id: 'S9e',
+        title: '100 grids, 700 px tall, most below the fold (pauseWhenHidden)',
+        query: 'cols=50&grids=100&gridHeight=700',
+    },
+    { id: 'S9f', title: '100 grids, viewSubscriptionActive on 4 of them', query: 'cols=50&grids=100&live=4' },
+    { id: 'S9g', title: '100 grids, 1 value column changed per update', query: 'cols=50&grids=100&changed=1' },
     {
         id: 'S10a',
         title: '100,000 backend rows: scroll top/middle/end',
@@ -203,7 +228,7 @@ export function evaluate(results) {
         const r3 = big && g1.contentRefreshPerS > 1 && s1.snapshot.framesOver1000ms === 0;
         out.R3 = v(
             r3 ? 'pass' : 'fail',
-            `${g1.rows} rows x ${g1.cols} cols visible; ${g1.contentRefreshPerS} content refreshes/s; ${s1.snapshot.fps} fps; max frame ${s1.snapshot.frameMs.max} ms`,
+            `${g1.rows} rows x ${g1.cols} cols visible; ${g1.contentRefreshPerS} content refreshes/s (${g1.cellRefreshPerS} with a sampled cell change, ${g1.rowMoveRefreshPerS} with rows entering or moving); ${s1.snapshot.fps} fps; max frame ${s1.snapshot.frameMs.max} ms`,
             ['S1']
         );
 
@@ -213,7 +238,7 @@ export function evaluate(results) {
         const only = g0(results.S1i);
         const insertsOnly =
             ok(results.S1i) && only
-                ? `; inserts alone (S1i): ${only.insertsAppliedPerS}/s at ${results.S1i.snapshot.fps} fps`
+                ? `; inserts alone (S1i): ${only.insertsAppliedPerS}/s at ${results.S1i.snapshot.fps} fps, ${only.contentRefreshPerS} refreshes/s`
                 : '';
         out.R4 = v(
             rateOk && recycled ? 'pass' : rateOk ? 'partial' : 'fail',
@@ -221,10 +246,20 @@ export function evaluate(results) {
             ['S1', 'S1i', 'S3', 'S4']
         );
 
+        const sortedView = (id) => {
+            const sv = ok(results[id]) && g0(results[id]).sortedView;
+            if (!sv) {
+                return `${id} ${results[id]?.error ?? 'not run'}`;
+            }
+            const match = sv.viewChecks
+                ? `, view equal to the backend's current rows in ${sv.viewMatchesBackend} of ${sv.viewChecks}`
+                : '';
+            return `${id} ${sv.orderOrFilterViolations} order or filter violations in ${sv.checks} checks${match}, new rows in view after p95 ${sv.newRowInViewLagMs.p95 ?? '-'} ms (n ${sv.newRowInViewLagMs.n}), ${g0(results[id]).feed.refreshesPerS} store refreshes/s`;
+        };
         out.R5 = v(
             g1.orderChecks > 0 && g1.orderMismatches === 0 && s1.snapshot.fps >= 1 ? 'pass' : 'fail',
-            `${g1.orderMismatches} mismatches in ${g1.orderChecks} order checks; new top row rendered p95 ${g1.headRenderLagMs.p95} ms after apply`,
-            ['S1']
+            `${g1.orderMismatches} mismatches in ${g1.orderChecks} order checks; new top row rendered p95 ${g1.headRenderLagMs.p95} ms after apply. Other orders, refreshed once a second (not judged): ${sortedView('S11b')}; ${sortedView('S11c')}`,
+            ['S1', 'S11b', 'S11c']
         );
     } else {
         for (const id of ['R2', 'R3', 'R4', 'R5']) {
@@ -232,16 +267,24 @@ export function evaluate(results) {
         }
     }
 
+    // Both categories must have values on screen; values still pending count with their age so far, and values for
+    // rows that were not rendered are reported, not dropped.
     const s6 = g0(results.S6);
-    if (ok(results.S6) && s6 && (s6.aggLagMs.group.n || s6.aggLagMs.total.n)) {
-        const p95 = Math.max(s6.aggLagMs.group.p95 ?? 0, s6.aggLagMs.total.p95 ?? 0);
+    if (ok(results.S6) && s6 && s6.aggLagMs.group.rendered > 0 && s6.aggLagMs.total.rendered > 0) {
+        const { group, total, superseded } = s6.aggLagMs;
+        const p95 = Math.max(group.p95, total.p95);
+        const desc = (name, a) =>
+            `${name} p95 ${a.p95} ms (${a.rendered} on screen, ${a.stillPending} still pending at the end, oldest ${a.stillPendingMaxAgeMs} ms; ${a.rowNotRendered} for rows not rendered, excluded)`;
         out.R6 = v(
             p95 <= 200 ? 'pass' : p95 <= 1000 ? 'partial' : 'fail',
-            `group lag p95 ${s6.aggLagMs.group.p95 ?? '-'} ms (n ${s6.aggLagMs.group.n}), grand total p95 ${s6.aggLagMs.total.p95 ?? '-'} ms (n ${s6.aggLagMs.total.n}); superseded before render ${s6.aggLagMs.superseded}`,
+            `${desc('group', group)}; ${desc('grand total', total)}; superseded before render ${superseded}`,
             ['S6']
         );
     } else {
-        out.R6 = unmeasured(results.S6?.error ?? 'no group/total lag samples', ['S6']);
+        const why = !s6
+            ? (results.S6?.error ?? 'not run')
+            : `group values on screen ${s6.aggLagMs.group.rendered ?? 0}, grand total ${s6.aggLagMs.total.rendered ?? 0}: both are needed`;
+        out.R6 = unmeasured(why, ['S6']);
     }
 
     const combos = ['S5a', 'S5b', 'S5c', 'S5d'].filter((id) => ok(results[id]));
@@ -274,7 +317,7 @@ export function evaluate(results) {
         const cells = s7.rangeStillCoversSameRows;
         out.R8 = v(
             rows && cells ? 'pass' : rows ? 'partial' : 'fail',
-            `rows still selected: ${rows} (indexes ${s7.before.indexes.join(',')} -> ${s7.rows.map((r) => r.index).join(',')}); cell range still on the same row ids: ${cells}; ${s7.resume.applied} buffered transactions applied on resume in ${s7.resume.ms} ms`,
+            `rows still selected: ${rows} (indexes ${s7.before.indexes.join(',')} -> ${s7.rows.map((r) => r.index).join(',')}); cell range still on the same row ids: ${cells}; range re-created from the row ids (workaround): ${s7.restored?.rangeStillCoversSameRows ?? 'not run'} in ${s7.restored?.ms ?? '-'} ms; ${s7.resume.applied} buffered transactions applied on resume in ${s7.resume.ms} ms`,
             ['S7']
         );
     } else {
@@ -300,15 +343,24 @@ export function evaluate(results) {
 
     const feed = (r) =>
         ok(r) ? `${g0(r).feed.insertsEmittedPerS} inserts/s + ${g0(r).feed.updateTicksPerS} update ticks/s` : '-';
-    const minRefresh = (r) => (ok(r) ? Math.min(...r.snapshot.grids.map((x) => x.contentRefreshPerS)) : null);
+    const minRefresh = (r, keep = () => true) =>
+        ok(r) ? Math.min(...r.snapshot.grids.filter(keep).map((x) => x.contentRefreshPerS)) : null;
+    const workaround = (id, keep, what) => {
+        const r = results[id];
+        if (!ok(r)) {
+            return `${id} ${r?.error ?? 'not run'}`;
+        }
+        const live = r.snapshot.grids.filter((x) => x.subscribedRows > 0).length;
+        return `${id} (${what}): slowest of those grids ${minRefresh(r, keep)} refreshes/s, ${r.snapshot.fps} fps, ${live} grids subscribed`;
+    };
     if (ok(results.S9c)) {
         const full = minRefresh(results.S9c);
         const reduced = minRefresh(results.S9d);
         const attached = results.S9c.snapshot.gridsAttached;
         out.R10a = v(
             full > 1 && attached === 100 ? 'pass' : reduced > 1 ? 'partial' : 'fail',
-            `100 grids (${attached} rendered data): slowest grid ${full} refreshes/s, ${results.S9c.snapshot.fps} fps, grid 1 feed delivered ${feed(results.S9c)}; reduced feed: slowest ${reduced ?? '-'} refreshes/s, grid 1 feed delivered ${feed(results.S9d)}`,
-            ['S9a', 'S9b', 'S9c', 'S9d']
+            `100 grids (${attached} rendered data): slowest grid ${full} refreshes/s, ${results.S9c.snapshot.fps} fps, grid 1 feed delivered ${feed(results.S9c)}; reduced feed: slowest ${reduced ?? '-'} refreshes/s, grid 1 feed delivered ${feed(results.S9d)}. Workarounds (not judged): ${workaround('S9e', (x) => x.onScreen, 'grids on screen')}; ${workaround('S9f', (_, i) => i < 4, 'the 4 live grids')}; ${workaround('S9g', () => true, 'all grids')}`,
+            ['S9a', 'S9b', 'S9c', 'S9d', 'S9e', 'S9f', 'S9g']
         );
     } else {
         out.R10a = unmeasured(results.S9c?.error ?? 'not run', ['S9c']);

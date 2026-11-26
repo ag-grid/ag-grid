@@ -10,6 +10,7 @@ ModuleRegistry.registerModules([AllEnterpriseModule]);
 const CONTROLS = {
     insertMs: { label: 'Insert interval (ms, 0 = off)', value: 75 },
     rate: { label: 'Updates / s per cell (0 = off)', value: 5 },
+    changed: { label: 'Value columns changed per update (0 = all)', value: 0 },
     cols: { label: 'Columns', value: 50 },
     colWidth: { label: 'Column width (px)', value: 60 },
     sync: { label: 'Sync transactions', value: false },
@@ -17,6 +18,8 @@ const CONTROLS = {
     block: { label: 'cacheBlockSize', value: 100 },
     maxBlocks: { label: 'maxBlocksInCache (-1 = unlimited)', value: -1 },
     grids: { label: 'Number of grids', value: 1 },
+    live: { label: 'Grids with viewSubscriptionActive (0 = all)', value: 0 },
+    gridHeight: { label: 'Grid height (px, 0 = fit the page)', value: 0 },
     latency: { label: 'Backend latency (ms)', value: 20 },
     group: { label: 'Group by sym', value: false },
     total: { label: 'Backend row count', value: 50_000 },
@@ -75,7 +78,12 @@ version.then((v) => (document.getElementById('version').textContent = `AG Grid $
 const host = document.getElementById('grids');
 const perRow = Math.ceil(Math.sqrt(cfg.grids));
 host.style.gridTemplateColumns = `repeat(${perRow}, 1fr)`;
-host.style.gridTemplateRows = `repeat(${Math.ceil(cfg.grids / perRow)}, 1fr)`;
+host.style.gridTemplateRows = `repeat(${Math.ceil(cfg.grids / perRow)}, ${cfg.gridHeight > 0 ? `${cfg.gridHeight}px` : '1fr'})`;
+if (cfg.gridHeight > 0) {
+    // The page grows past the browser window, so the grids below the fold are out of view: what pauseWhenHidden watches.
+    document.body.style.height = 'auto';
+    host.style.flex = 'none';
+}
 
 const metrics = new Metrics(cfg);
 const grids = Array.from({ length: cfg.grids }, (_, i) => {
@@ -156,6 +164,25 @@ function selectRows(from = 5, to = 9) {
     selection = { ids: nodes.map((n) => n.id), indexes: nodes.map((n) => n.rowIndex) };
     selectionText = `selected ${selection.ids.join(',')}`;
     return selection;
+}
+
+const r1 = (n) => Math.round(n * 10) / 10;
+
+/** The workaround for index-based ranges: re-create the range from the selected row ids' current indexes. */
+function restoreRange() {
+    const { api } = grids[0];
+    const t0 = performance.now();
+    const indexes = selection.ids.map((id) => api.getRowNode(id)?.rowIndex).filter((i) => i != null);
+    api.clearCellSelection();
+    if (indexes.length) {
+        api.addCellRange({
+            rowStartIndex: Math.min(...indexes),
+            rowEndIndex: Math.max(...indexes),
+            columnStart: 'c0',
+            columnEnd: 'c3',
+        });
+    }
+    return { ms: r1(performance.now() - t0), ...checkSelection() };
 }
 
 function checkSelection() {
@@ -284,6 +311,18 @@ async function serverOpsTest() {
     return out;
 }
 
+/** Sorts (and optionally filters) through the grid API, then waits until the backend's rows are on screen. */
+async function applyOrder(sortModel, filterModel) {
+    const grid = grids[0];
+    grid.api.applyColumnState({ state: sortModel, defaultState: { sort: null } });
+    if (filterModel) {
+        grid.api.setFilterModel(filterModel);
+    }
+    await sleep(500);
+    const shown = await until(() => renderedRows(grid, []).filter((r) => /^\d+$/.test(r.id)).length > 5);
+    return { sortModel: grid.order().sortModel, filterModel: grid.order().filterModel, loaded: !!shown };
+}
+
 /** Expands the first n groups, then reports how many group rows are loaded. */
 async function expandGroups(n) {
     const { api } = grids[0];
@@ -339,6 +378,8 @@ window.__bench = {
         grids.map((g) => (g.backend.rowsSent ? Math.round(g.backend.bytesSent / g.backend.rowsSent) : null)),
     selectRows,
     checkSelection,
+    restoreRange,
+    applyOrder,
     scrollCheck,
     serverOpsTest,
     expandGroups,

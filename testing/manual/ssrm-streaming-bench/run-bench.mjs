@@ -1,6 +1,6 @@
 // Runs the scenario matrix in headless Chromium and writes results/results.json + results/results.md.
 //   node run-bench.mjs                 every scenario
-//   node run-bench.mjs --only S1,S4    a subset (merged into the existing results.json)
+//   node run-bench.mjs --only S1,S4    a subset, merged into the existing results.json (each scenario keeps its own provenance)
 //   node run-bench.mjs --report-only   regenerate the tables from results.json
 // Options: --warmup <s> (default 3), --measure <s> (default 10), --chrome <path>.
 import { execSync } from 'node:child_process';
@@ -52,6 +52,13 @@ const run = {
     measureS: measureMs / 1000,
     scenarios: only ? previous.scenarios : {},
 };
+const provenance = (scenario) => ({
+    gitSha: run.gitSha,
+    gridVersion: run.gridVersion,
+    machine: run.machine,
+    warmupS: run.warmupS,
+    measureS: scenario.measureS ?? run.measureS,
+});
 
 try {
     for (const scenario of SCENARIOS.filter((s) => !only || only.includes(s.id))) {
@@ -65,6 +72,7 @@ try {
             title: scenario.title,
             query: scenario.query,
             measuredAt: new Date().toISOString(),
+            provenance: provenance(scenario),
             repeats: runs.slice(1),
         };
         run.finishedAt = new Date().toISOString();
@@ -133,6 +141,12 @@ async function measure(page, scenario, errors) {
         if (scenario.action === 'expandGroups') {
             result.groupsLoaded = await page.evaluate(() => window.__bench.expandGroups(3));
         }
+        if (scenario.order) {
+            result.order = await page.evaluate(
+                ({ sort, filter }) => window.__bench.applyOrder(sort, filter),
+                scenario.order
+            );
+        }
         await page.waitForTimeout(warmupMs);
         if (scenario.action === 'selection') {
             await page.evaluate(() => window.__bench.selectRows(5, 9));
@@ -142,6 +156,7 @@ async function measure(page, scenario, errors) {
             const resume = await page.evaluate(() => window.__bench.resume()[0]);
             await page.waitForTimeout(1000);
             result.action = { ...(await page.evaluate(() => window.__bench.checkSelection())), resume };
+            result.action.restored = await page.evaluate(() => window.__bench.restoreRange());
         } else {
             await page.evaluate(() => window.__bench.reset());
             await page.waitForTimeout(scenario.measureS ? scenario.measureS * 1000 : measureMs);
@@ -153,7 +168,14 @@ async function measure(page, scenario, errors) {
         }
         if (config.grids > 1) {
             const [first, ...rest] = result.snapshot.grids;
-            result.snapshot.grids = [first, ...rest.map((x) => ({ contentRefreshPerS: x.contentRefreshPerS }))];
+            result.snapshot.grids = [
+                first,
+                ...rest.map(({ contentRefreshPerS, subscribedRows, onScreen }) => ({
+                    contentRefreshPerS,
+                    subscribedRows,
+                    onScreen,
+                })),
+            ];
         }
     }
     result.consoleErrors = errors;
@@ -174,6 +196,9 @@ async function uiSmoke(target) {
             block: '200',
             maxBlocks: '4',
             grids: '4',
+            live: '2',
+            gridHeight: '300',
+            changed: '3',
             latency: '40',
             total: '20000',
             rowHeight: '20',
@@ -251,8 +276,8 @@ function writeReports(data) {
         '',
         BANNER,
         '',
-        `Run ${data.startedAt} to ${data.finishedAt ?? '-'}, git ${data.gitSha}, AG Grid ${data.gridVersion ?? '-'}, ${data.warmupS} s warm-up + ${data.measureS} s measured per scenario (S5: 40 s).`,
-        `Machine: ${data.machine.cpu} x ${data.machine.cores}, ${data.machine.memoryGb} GB, ${data.machine.os}, Node ${data.machine.node}, ${data.machine.browser} (headless), viewport ${data.machine.viewport}.`,
+        `Last run ${data.startedAt} to ${data.finishedAt ?? '-'}; ${data.measureS} s measured per scenario (S5: 40 s), each scenario's time in results.json (measuredAt).`,
+        ...provenanceLines(data),
         '',
         '## Per requirement',
         '',
@@ -281,10 +306,31 @@ function writeReports(data) {
             const tail = report.slice(report.indexOf(end));
             writeFileSync(
                 reportFile,
-                `${head}\n\n_Generated from results/results.json (run ${data.startedAt}, git ${data.gitSha})._\n\n${table}\n\n${tail}`
+                `${head}\n\n_Generated from results/results.json (run ${data.startedAt}; per-scenario provenance in results/results.md)._\n\n${table}\n\n${tail}`
             );
         }
     }
+}
+
+/** One line when every scenario was measured in the same environment; otherwise a line per environment, naming its scenarios. */
+function provenanceLines(data) {
+    const describe = (p) =>
+        `git ${p.gitSha}, AG Grid ${p.gridVersion ?? '-'}, ${p.machine.cpu} x ${p.machine.cores}, ${p.machine.memoryGb} GB, ${p.machine.os}, Node ${p.machine.node}, ${p.machine.browser} (headless), viewport ${p.machine.viewport}, ${p.warmupS} s warm-up`;
+    const groups = new Map();
+    for (const [id, r] of Object.entries(data.scenarios)) {
+        const key = r.provenance
+            ? describe(r.provenance)
+            : 'unknown (measured before provenance was recorded per scenario)';
+        groups.set(key, [...(groups.get(key) ?? []), id]);
+    }
+    if (groups.size <= 1) {
+        return [`Measured with ${[...groups.keys()][0] ?? '-'}.`];
+    }
+    return [
+        '**Scenarios were measured in different environments:**',
+        '',
+        ...[...groups].map(([key, ids]) => `- ${ids.join(', ')}: ${key}`),
+    ];
 }
 
 function verdictTable(data) {
