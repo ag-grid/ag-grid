@@ -1,3 +1,4 @@
+import { valueColIds } from './backend.js';
 import { LiveGrid } from './grids.js';
 import { Metrics } from './metrics.js';
 
@@ -290,7 +291,8 @@ async function expandGroups(n) {
 async function horizontalScrollCheck() {
     const grid = grids[0];
     const refetchesBefore = grid.stats.refetches;
-    grid.api.ensureColumnVisible(`c${Math.floor((cfg.cols - 5) / 2)}`, 'start');
+    const valueCols = valueColIds(cfg.cols);
+    grid.api.ensureColumnVisible(valueCols[Math.floor(valueCols.length / 2)], 'start');
     await nextFrame();
     await nextFrame();
     const count = () => {

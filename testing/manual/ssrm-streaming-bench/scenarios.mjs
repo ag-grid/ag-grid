@@ -4,7 +4,7 @@
 // About 57 rows x 58 columns visible at 3840x2160: just over the 50 x 50 the requirement names.
 const R3_COLS = 'cols=200&rowHeight=36&colWidth=64';
 
-/** `action` names a step run in the page after the measurement window (see run-bench.mjs). */
+/** `action` names an extra in-page step that run-bench.mjs runs for the scenario. */
 export const SCENARIOS = [
     { id: 'S0', title: 'Control: feed off', query: `${R3_COLS}&feed=0` },
     { id: 'S1', title: 'Baseline: 75 ms top inserts, 5 updates/s per cell, async', query: R3_COLS, repeat: 2 },

@@ -1,5 +1,6 @@
 // Measures what the browser actually rendered, not what was sent: cell text sampled per frame by row id + col id,
 // DOM row element churn in the centre container, frame timing and transaction timing.
+import { valueColIds } from './backend.js';
 
 const LONG_FRAME_MS = 50;
 
@@ -261,7 +262,7 @@ export class Metrics {
     }
 
     sampleColsFor(grid) {
-        const valueCols = Math.max(0, grid.cfg.cols - 5);
+        const valueCols = valueColIds(grid.cfg.cols).length;
         if (this.cfg.grids > 1) {
             return valueCols ? ['c0'] : ['px'];
         }
