@@ -172,6 +172,68 @@ describe('ag-grid master detail', () => {
         `);
     });
 
+    test('turning masterDetail on after load makes masters of the rows isRowMaster picks, and turning it off resets them', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'k' }],
+            rowData: [
+                { k: '1', records: [{ x: 'a' }] },
+                { k: '2', records: [] },
+            ],
+            getRowId: ({ data }) => data.k,
+            isRowMaster: (data) => data.records.length > 0,
+            detailCellRendererParams: {
+                detailGridOptions: { columnDefs: [{ field: 'x' }] },
+                getDetailRowData: (params: GetDetailRowDataParams) => params.successCallback(params.data.records),
+            },
+        });
+        const masterChanged: string[] = [];
+        const listen = (id: string) =>
+            api.getRowNode(id)!.addEventListener('masterChanged', () => masterChanged.push(id));
+        const masterState = () => {
+            const state: Record<string, [boolean, boolean]> = {};
+            api.forEachNode((node) => (state[node.id!] = [node.master, node.expanded]));
+            return state;
+        };
+        listen('1');
+        listen('2');
+
+        api.applyTransaction({ add: [{ k: '3', records: [{ x: 'b' }] }], update: [{ k: '2', records: [{ x: 'c' }] }] });
+        listen('3');
+        expect(masterState()).toEqual({ '1': [false, false], '2': [false, false], '3': [false, false] });
+        expect(masterChanged).toEqual([]);
+
+        consoleErrorSpy = vitest.spyOn(console, 'error').mockImplementation(() => {});
+        api.setGridOption('masterDetail', true);
+        consoleErrorSpy.mockRestore();
+        expect(masterState()).toEqual({ '1': [true, false], '2': [true, false], '3': [true, false] });
+        expect(masterChanged).toEqual(['1', '2', '3']);
+
+        api.getRowNode('1')!.setExpanded(true);
+        await waitFor(() => expect(api.getDisplayedRowCount()).toBe(4));
+        await new GridRows(api, 'expanded').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ master id:1 k:"1"
+            │ └─┬ detail id:detail_1 k:"1"
+            │ · └─┬ ROOT id:ROOT_NODE_ID
+            │ · · └── LEAF id:0 x:"a"
+            ├── master collapsed id:2 k:"2"
+            └── master collapsed id:3 k:"3"
+        `);
+
+        masterChanged.length = 0;
+        consoleErrorSpy = vitest.spyOn(console, 'error').mockImplementation(() => {});
+        api.setGridOption('masterDetail', false);
+        consoleErrorSpy.mockRestore();
+        expect(masterState()).toEqual({ '1': [false, false], '2': [false, false], '3': [false, false] });
+        expect(masterChanged).toEqual(['1', '2', '3']);
+        await new GridRows(api, 'collapsed').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:1 k:"1"
+            ├── LEAF id:2 k:"2"
+            └── LEAF id:3 k:"3"
+        `);
+    });
+
     test('masterDetail set rowData (without id)', async () => {
         const gridOptions: GridOptions = {
             columnDefs: [{ field: 'k' }],
