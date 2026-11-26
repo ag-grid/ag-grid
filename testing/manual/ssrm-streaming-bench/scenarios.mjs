@@ -56,9 +56,15 @@ export const SCENARIOS = [
     },
     {
         id: 'S11b',
-        title: 'Live inserts under qty sort (desc) and a qty > 500 filter',
+        title: 'Live inserts under a qty > 500 filter (arrival order, newest first)',
         query: 'cols=50',
-        order: { sort: [{ colId: 'qty', sort: 'desc' }], filter: QTY_FILTER },
+        order: { sort: [{ colId: 'arrival', sort: 'desc' }], filter: QTY_FILTER },
+    },
+    {
+        id: 'S11d',
+        title: 'Live inserts under qty sort (desc)',
+        query: 'cols=50',
+        order: { sort: [{ colId: 'qty', sort: 'desc' }] },
     },
     {
         id: 'S11c',
@@ -83,8 +89,13 @@ export const SCENARIOS = [
     },
     {
         id: 'S9e',
-        title: '100 grids, 700 px tall, most below the fold (pauseWhenHidden)',
+        title: '100 grids, 700 px tall, most below the fold, pauseWhenHidden on',
         query: 'cols=50&grids=100&gridHeight=700',
+    },
+    {
+        id: 'S9e0',
+        title: 'S9e with pauseWhenHidden off',
+        query: 'cols=50&grids=100&gridHeight=700&pauseHidden=0',
     },
     { id: 'S9f', title: '100 grids, viewSubscriptionActive on 4 of them', query: 'cols=50&grids=100&live=4' },
     { id: 'S9g', title: '100 grids, 1 value column changed per update', query: 'cols=50&grids=100&changed=1' },
@@ -258,8 +269,8 @@ export function evaluate(results) {
         };
         out.R5 = v(
             g1.orderChecks > 0 && g1.orderMismatches === 0 && s1.snapshot.fps >= 1 ? 'pass' : 'fail',
-            `${g1.orderMismatches} mismatches in ${g1.orderChecks} order checks; new top row rendered p95 ${g1.headRenderLagMs.p95} ms after apply. Other orders, refreshed once a second (not judged): ${sortedView('S11b')}; ${sortedView('S11c')}`,
-            ['S1', 'S11b', 'S11c']
+            `${g1.orderMismatches} mismatches in ${g1.orderChecks} order checks; new top row rendered p95 ${g1.headRenderLagMs.p95} ms after apply. Other orders, refreshed once a second (not judged): ${sortedView('S11b')}; ${sortedView('S11d')}; ${sortedView('S11c')}`,
+            ['S1', 'S11b', 'S11c', 'S11d']
         );
     } else {
         for (const id of ['R2', 'R3', 'R4', 'R5']) {
@@ -351,7 +362,11 @@ export function evaluate(results) {
             return `${id} ${r?.error ?? 'not run'}`;
         }
         const live = r.snapshot.grids.filter((x) => x.subscribedRows > 0).length;
-        return `${id} (${what}): slowest of those grids ${minRefresh(r, keep)} refreshes/s, ${r.snapshot.fps} fps, ${live} grids subscribed`;
+        const rates = r.snapshot.grids
+            .filter(keep)
+            .map((x) => x.contentRefreshPerS)
+            .sort((a, b) => a - b);
+        return `${id} (${what}): those grids ${rates[0]} refreshes/s slowest, ${rates[Math.floor(rates.length / 2)]} median, ${r.snapshot.fps} fps, ${live} grids subscribed`;
     };
     if (ok(results.S9c)) {
         const full = minRefresh(results.S9c);
@@ -359,8 +374,8 @@ export function evaluate(results) {
         const attached = results.S9c.snapshot.gridsAttached;
         out.R10a = v(
             full > 1 && attached === 100 ? 'pass' : reduced > 1 ? 'partial' : 'fail',
-            `100 grids (${attached} rendered data): slowest grid ${full} refreshes/s, ${results.S9c.snapshot.fps} fps, grid 1 feed delivered ${feed(results.S9c)}; reduced feed: slowest ${reduced ?? '-'} refreshes/s, grid 1 feed delivered ${feed(results.S9d)}. Workarounds (not judged): ${workaround('S9e', (x) => x.onScreen, 'grids on screen')}; ${workaround('S9f', (_, i) => i < 4, 'the 4 live grids')}; ${workaround('S9g', () => true, 'all grids')}`,
-            ['S9a', 'S9b', 'S9c', 'S9d', 'S9e', 'S9f', 'S9g']
+            `100 grids (${attached} rendered data): slowest grid ${full} refreshes/s, ${results.S9c.snapshot.fps} fps, grid 1 feed delivered ${feed(results.S9c)}; reduced feed: slowest ${reduced ?? '-'} refreshes/s, grid 1 feed delivered ${feed(results.S9d)}. Workarounds (not judged): ${workaround('S9e', (x) => x.onScreen, 'grids on screen')}; ${workaround('S9e0', (x) => x.onScreen, 'pauseWhenHidden off, grids on screen')}; ${workaround('S9f', (_, i) => i < 4, 'the 4 live grids')}; ${workaround('S9g', () => true, 'all grids')}`,
+            ['S9a', 'S9b', 'S9c', 'S9d', 'S9e', 'S9e0', 'S9f', 'S9g']
         );
     } else {
         out.R10a = unmeasured(results.S9c?.error ?? 'not run', ['S9c']);

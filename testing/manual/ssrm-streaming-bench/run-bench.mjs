@@ -210,14 +210,16 @@ async function uiSmoke(target) {
         for (const k of ['sync', 'group', 'trim', 'animate']) {
             await page.check(`#ctl-${k}`);
         }
+        await page.uncheck('#ctl-pauseHidden');
         await Promise.all([page.waitForNavigation(), page.click('#controls button[type=submit]')]);
         await page.waitForFunction(() => window.__bench);
         const cfg = await page.evaluate(() => window.__bench.config());
         const mismatched = Object.entries(changes)
             .filter(([k, val]) => cfg[k] !== Number(val))
             .map(([k]) => k)
-            .concat(['sync', 'group', 'trim', 'animate'].filter((k) => cfg[k] !== true));
-        target.uiSmoke = { controlsChanged: Object.keys(changes).length + 4, mismatched };
+            .concat(['sync', 'group', 'trim', 'animate'].filter((k) => cfg[k] !== true))
+            .concat(cfg.pauseHidden === false ? [] : ['pauseHidden']);
+        target.uiSmoke = { controlsChanged: Object.keys(changes).length + 5, mismatched };
     } catch (e) {
         target.uiSmoke = { error: e.message.split('\n')[0] };
     } finally {

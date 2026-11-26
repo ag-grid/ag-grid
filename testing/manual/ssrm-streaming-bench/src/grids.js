@@ -71,7 +71,7 @@ export class LiveGrid {
                 subscribeRows: (rows) => rows.forEach((r) => this.subscribed.set(r.id, r)),
                 unsubscribeRows: (rows) => rows.forEach((r) => this.subscribed.delete(r.id)),
                 debounceMs: cfg.subDebounce,
-                pauseWhenHidden: true,
+                pauseWhenHidden: cfg.pauseHidden,
             },
             onSortChanged: () => this.onOrderChanged(),
             onFilterChanged: () => this.onOrderChanged(),

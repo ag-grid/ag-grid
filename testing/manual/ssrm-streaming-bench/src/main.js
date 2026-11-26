@@ -27,6 +27,7 @@ const CONTROLS = {
     animate: { label: 'animateRows', value: false },
     rowHeight: { label: 'Row height (px)', value: 18 },
     subDebounce: { label: 'viewSubscription debounceMs', value: 50 },
+    pauseHidden: { label: 'viewSubscription pauseWhenHidden', value: true },
     feed: { label: 'Start live feed', value: true },
 };
 
