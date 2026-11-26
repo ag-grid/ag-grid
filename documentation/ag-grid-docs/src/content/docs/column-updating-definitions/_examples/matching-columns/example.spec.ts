@@ -1,4 +1,4 @@
-import { ensureGridReady, expect, test, waitForGridContent } from '@utils/grid/test-utils';
+import { clickHeaderToSort, ensureGridReady, expect, test, waitForGridContent } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
     test.eachFramework('Medal columns toggle while matched columns are retained', async ({ agIdFor, page }) => {
@@ -30,8 +30,30 @@ test.agExample(import.meta, () => {
         await expect(agIdFor.headerCell('myAgeCol')).toHaveAttribute('aria-sort', 'ascending');
 
         await page.getByRole('button', { name: 'Exclude Medal Columns' }).click();
+        await expect(agIdFor.headerCell('gold')).toHaveCount(0);
         await page.getByRole('button', { name: 'Include Medal Columns' }).click();
+        await expect(agIdFor.headerCell('gold')).toHaveCount(1);
 
         await expect(agIdFor.headerCell('myAgeCol')).toHaveAttribute('aria-sort', 'ascending');
     });
+
+    test.eachFramework(
+        'Sort on the Country column, which has no colId or field, survives updates',
+        async ({ agIdFor, page }) => {
+            await ensureGridReady(page);
+            await waitForGridContent(page);
+
+            // Country is a new object each time, matched by its headerName: Exclude moves it before Athlete.
+            const country = page.getByRole('columnheader', { name: 'Country' });
+            await clickHeaderToSort(country);
+            await expect(country).toHaveAttribute('aria-sort', 'ascending');
+
+            await page.getByRole('button', { name: 'Exclude Medal Columns' }).click();
+            await expect(agIdFor.headerCell('gold')).toHaveCount(0);
+            await expect(country).toHaveAttribute('aria-sort', 'ascending');
+            await page.getByRole('button', { name: 'Include Medal Columns' }).click();
+            await expect(agIdFor.headerCell('gold')).toHaveCount(1);
+            await expect(country).toHaveAttribute('aria-sort', 'ascending');
+        }
+    );
 });

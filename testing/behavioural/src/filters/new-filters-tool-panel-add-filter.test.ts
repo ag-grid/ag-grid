@@ -1,6 +1,12 @@
 import { waitFor } from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
-import { TestGridsManager, asyncSetTimeout, setNativeInputValue } from 'ag-test-utils';
+import {
+    FloatingFilterHarness,
+    TestGridsManager,
+    asyncSetTimeout,
+    selectRichSelectRow,
+    setNativeInputValue,
+} from 'ag-test-utils';
 
 import type { GridApi } from 'ag-grid-community';
 import { getGridElement } from 'ag-grid-community';
@@ -144,5 +150,52 @@ describe('new filters tool panel add filter picker', () => {
         await asyncSetTimeout(0);
         await asyncSetTimeout(0);
         expect(gridElement.querySelector('.ag-aria-description-container')?.textContent).not.toContain('No matches');
+    });
+
+    test('removing a card added in the panel clears its floating filter, filter model and row filtering', async () => {
+        const api: GridApi = await gridsManager.createGridAndWait('myGrid', {
+            columnDefs: [{ field: 'athlete' }, { field: 'country' }],
+            defaultColDef: { filter: 'agTextColumnFilter', floatingFilter: true },
+            rowData: [
+                { athlete: 'Michael Phelps', country: 'United States' },
+                { athlete: 'Natalie Coughlin', country: 'United States' },
+                { athlete: 'Aleksey Nemov', country: 'Russia' },
+            ],
+            sideBar: { toolPanels: ['filters-new'], defaultToolPanel: 'filters-new' },
+            enableFilterHandlers: true,
+        });
+        const gridElement = getGridElement(api)!;
+        const card = () => gridElement.querySelector<HTMLElement>('.ag-filter-card:not(.ag-filter-card-add)');
+        const countryFloatingFilter = FloatingFilterHarness.get(api, 'country');
+        const observe = () => ({
+            floatingFilter: countryFloatingFilter.input().value,
+            model: api.getColumnFilterModel('country'),
+            rows: api.getDisplayedRowCount(),
+        });
+
+        await userEvent.click(gridElement.querySelector<HTMLElement>('.ag-filter-add-button')!);
+        const searchInput = await waitFor(() => {
+            const el = gridElement.querySelector<HTMLInputElement>('.ag-filter-add-select input');
+            expect(el).not.toBeNull();
+            return el!;
+        });
+        setNativeInputValue(searchInput, 'cou');
+        await selectRichSelectRow('Country', gridElement);
+        await waitFor(() => expect(card()).not.toBeNull());
+        await api.setColumnFilterModel('country', { filterType: 'text', type: 'contains', filter: 'Russia' });
+        api.onFilterChanged();
+
+        await waitFor(() =>
+            expect(observe()).toEqual({
+                floatingFilter: 'Russia',
+                model: { filterType: 'text', type: 'contains', filter: 'Russia' },
+                rows: 1,
+            })
+        );
+
+        await userEvent.click(card()!.querySelector<HTMLElement>('.ag-filter-card-delete')!);
+
+        await waitFor(() => expect(observe()).toEqual({ floatingFilter: '', model: null, rows: 3 }));
+        expect(card()).toBeNull();
     });
 });

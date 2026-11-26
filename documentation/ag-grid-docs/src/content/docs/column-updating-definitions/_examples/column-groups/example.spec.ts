@@ -20,6 +20,22 @@ test.agExample(import.meta, () => {
         await expect(agIdFor.headerCell('country')).toHaveCount(1);
     });
 
+    test.eachFramework('Group B keeps its expanded state across updates (no groupId)', async ({ agIdFor, page }) => {
+        await ensureGridReady(page);
+        await waitForGridContent(page);
+
+        // date is columnGroupShow='open', hidden while Group B is collapsed.
+        await expect(agIdFor.headerCell('date')).toHaveCount(0);
+
+        await groupCell(page, 'Group B').locator('.ag-header-expand-icon-collapsed').first().click();
+        await expect(agIdFor.headerCell('date')).toHaveCount(1);
+
+        // Set B is applied (it adds extraA) and Group B stays expanded.
+        await page.getByRole('button', { name: 'Second Column Set' }).click();
+        await expect(agIdFor.headerCell('extraA')).toHaveCount(1);
+        await expect(agIdFor.headerCell('date')).toHaveCount(1);
+    });
+
     test.eachFramework('Group C child columns are updated by the new set', async ({ agIdFor, page }) => {
         await ensureGridReady(page);
         await waitForGridContent(page);

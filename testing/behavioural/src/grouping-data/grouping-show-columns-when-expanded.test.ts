@@ -1387,7 +1387,7 @@ describe('ag-grid groupHideColumnsUntilExpanded', () => {
         ]);
     });
 
-    test('after moving a row group column to the top, expanding all rows shows both group columns', async () => {
+    test('moving a row group column to the top shows its group column, until expanded as for any other, then collapseAll keeps only that one', async () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: [
                 { field: 'country', rowGroup: true, hide: true },
@@ -1405,6 +1405,7 @@ describe('ag-grid groupHideColumnsUntilExpanded', () => {
 
         api.moveRowGroupColumn(0, 1);
         expect(api.getRowGroupColumns().map((col) => col.getColId())).toEqual(['year', 'country']);
+        expect(getDisplayedColIds(api)).toEqual(['ag-Grid-AutoColumn-year', 'athlete', 'gold']);
 
         api.expandAll();
         expect(getVisibleAutoGroupColIds(api).sort()).toEqual([
@@ -1928,6 +1929,139 @@ describe('ag-grid groupHideColumnsUntilExpanded', () => {
             final: COUNTRY,
         });
     });
+
+    describe('a group column that becomes the top-level one is shown', () => {
+        const YEAR = ['ag-Grid-AutoColumn-year'];
+        const removeCountryGrouping: [string, (api: GridApi) => void][] = [
+            ['applyColumnState', (api) => api.applyColumnState({ state: [{ colId: 'country', rowGroup: false }] })],
+            ['removeRowGroupColumns', (api) => api.removeRowGroupColumns(['country'])],
+            ['setRowGroupColumns', (api) => api.setRowGroupColumns(['year'])],
+            [
+                'setGridOption columnDefs',
+                (api) =>
+                    api.setGridOption('columnDefs', [
+                        { field: 'country', rowGroup: false, hide: true },
+                        { field: 'year', rowGroup: true, hide: true },
+                        { field: 'athlete' },
+                        { field: 'gold' },
+                    ]),
+            ],
+        ];
+
+        test.each(removeCountryGrouping)(
+            'removing the country row group with %s shows the year group column, expanded or collapsed',
+            async (_path, removeCountryRowGroup) => {
+                const api = gridsManager.createGrid('myGrid', {
+                    columnDefs: [
+                        { field: 'country', rowGroup: true, hide: true },
+                        { field: 'year', rowGroup: true, hide: true },
+                        { field: 'athlete' },
+                        { field: 'gold' },
+                    ],
+                    groupDisplayType: 'multipleColumns',
+                    groupHideColumnsUntilExpanded: true,
+                    groupDefaultExpanded: 0,
+                    rowData: twoLevelRowData,
+                    getRowId: (params) => params.data.id,
+                });
+                expect(getVisibleAutoGroupColIds(api)).toEqual(['ag-Grid-AutoColumn-country']);
+
+                removeCountryRowGroup(api);
+                await asyncSetTimeout(0);
+                const afterChange = {
+                    rowGroups: api.getRowGroupColumns().map((col) => col.getColId()),
+                    shown: getVisibleAutoGroupColIds(api),
+                    yearHide: api.getColumnState().find((state) => state.colId === 'ag-Grid-AutoColumn-year')?.hide,
+                };
+
+                api.expandAll();
+                await asyncSetTimeout(0);
+                const expanded = getVisibleAutoGroupColIds(api);
+                api.collapseAll();
+                await asyncSetTimeout(0);
+                const collapsed = getVisibleAutoGroupColIds(api);
+
+                expect({ afterChange, expanded, collapsed }).toEqual({
+                    afterChange: { rowGroups: ['year'], shown: YEAR, yearHide: false },
+                    expanded: YEAR,
+                    collapsed: YEAR,
+                });
+            }
+        );
+
+        test('with three levels, making the deepest level the only row group shows its group column', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    { field: 'country', rowGroup: true, hide: true },
+                    { field: 'year', rowGroup: true, hide: true },
+                    { field: 'sport', rowGroup: true, hide: true },
+                    { field: 'athlete' },
+                    { field: 'gold' },
+                ],
+                groupDisplayType: 'multipleColumns',
+                groupHideColumnsUntilExpanded: true,
+                groupDefaultExpanded: 0,
+                rowData: threeLevelRowData,
+                getRowId: (params) => params.data.id,
+            });
+            expect(getVisibleAutoGroupColIds(api)).toEqual(['ag-Grid-AutoColumn-country']);
+
+            api.setRowGroupColumns(['sport']);
+            await asyncSetTimeout(0);
+
+            expect(getVisibleAutoGroupColIds(api)).toEqual(['ag-Grid-AutoColumn-sport']);
+        });
+    });
+
+    test('the quick filter reads a group column only while its level is shown: the rows follow expandAll, collapseAll and the option', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'sport', rowGroup: true, hide: true },
+                { field: 'gold' },
+            ],
+            groupDisplayType: 'multipleColumns',
+            groupHideColumnsUntilExpanded: true,
+            autoGroupColumnDef: {
+                getQuickFilterText: (params) => (params.column.getColId() === 'ag-Grid-AutoColumn-sport' ? 'deep' : ''),
+            },
+            quickFilterText: 'deep',
+            rowData: threeLevelRowData,
+            getRowId: (params) => params.data.id,
+        });
+        await asyncSetTimeout(0);
+
+        const COUNTRY = ['ag-Grid-AutoColumn-country'];
+        const BOTH = ['ag-Grid-AutoColumn-country', 'ag-Grid-AutoColumn-sport'];
+        const ALL_LEAVES = ['1', '2', '3', '4'];
+
+        const read = async (action?: () => void) => {
+            action?.();
+            await asyncSetTimeout(0);
+            await asyncSetTimeout(0);
+            const leaves: string[] = [];
+            api.forEachNodeAfterFilter((node) => {
+                if (!node.group) {
+                    leaves.push(node.data.id);
+                }
+            });
+            return { shown: getVisibleAutoGroupColIds(api), leaves: leaves.sort() };
+        };
+
+        const start = await read();
+        const expanded = await read(() => api.expandAll());
+        const collapsed = await read(() => api.collapseAll());
+        const optionOff = await read(() => api.setGridOption('groupHideColumnsUntilExpanded', false));
+        const optionOn = await read(() => api.setGridOption('groupHideColumnsUntilExpanded', true));
+
+        expect({ start, expanded, collapsed, optionOff, optionOn }).toEqual({
+            start: { shown: COUNTRY, leaves: [] },
+            expanded: { shown: BOTH, leaves: ALL_LEAVES },
+            collapsed: { shown: COUNTRY, leaves: [] },
+            optionOff: { shown: BOTH, leaves: ALL_LEAVES },
+            optionOn: { shown: COUNTRY, leaves: [] },
+        });
+    });
 });
 
 describe('ag-grid groupHideColumnsUntilExpanded with tree data', () => {
@@ -2306,6 +2440,27 @@ describe('ag-grid auto group columns cannot be hidden or shown by the user', () 
         events: [],
     });
 
+    test('setColumnsVisible(false) on the auto columns is ignored, multiple columns then a single one', async () => {
+        const { api, autoColumnVisibleEvents } = createGrid({ groupDisplayType: 'multipleColumns' });
+        expect(getVisibleAutoGroupColIds(api)).toEqual(MULTI_IDS);
+
+        api.setColumnsVisible(MULTI_IDS, false);
+        expect(await readAutoColumns(api, autoColumnVisibleEvents, MULTI_IDS)).toEqual(shown(MULTI_IDS));
+
+        api.setGridOption('groupDisplayType', 'singleColumn');
+        api.setColumnsVisible(SINGLE_IDS, false);
+        expect(await readAutoColumns(api, autoColumnVisibleEvents, SINGLE_IDS)).toEqual(shown(SINGLE_IDS));
+    });
+
+    test('applyColumnState hide: true on each of the multiple auto columns is ignored', async () => {
+        const { api, autoColumnVisibleEvents } = createGrid({ groupDisplayType: 'multipleColumns' });
+        expect(getVisibleAutoGroupColIds(api)).toEqual(MULTI_IDS);
+
+        api.applyColumnState({ state: MULTI_IDS.map((colId) => ({ colId, hide: true })) });
+
+        expect(await readAutoColumns(api, autoColumnVisibleEvents, MULTI_IDS)).toEqual(shown(MULTI_IDS));
+    });
+
     test('autoGroupColumnDef hide: true leaves the auto columns displayed, multiple columns then a single one', async () => {
         const { api, autoColumnVisibleEvents } = createGrid({
             groupDisplayType: 'multipleColumns',
@@ -2360,7 +2515,56 @@ describe('ag-grid auto group columns cannot be hidden or shown by the user', () 
             });
         }
 
-        test('column state and grid state report the auto column hidden until expanded, before an expand and after collapseAll', async () => {
+        /** Runs `request`, then expects every observer of the auto columns to match what it was before. */
+        async function expectUnchanged(
+            api: GridApi,
+            autoColumnVisibleEvents: string[][],
+            request: () => void
+        ): Promise<void> {
+            const before = await readAutoColumns(api, autoColumnVisibleEvents, [...COUNTRY, ...YEAR]);
+            autoColumnVisibleEvents.length = 0;
+
+            request();
+
+            expect(await readAutoColumns(api, autoColumnVisibleEvents, [...COUNTRY, ...YEAR])).toEqual({
+                ...before,
+                events: [],
+            });
+        }
+
+        test('setColumnsVisible on an auto column is ignored: false on the displayed one, true on one a collapsed group hides, false on one the expansion shows', async () => {
+            const { api, autoColumnVisibleEvents } = createCollapsedGrid();
+            expect(getVisibleAutoGroupColIds(api)).toEqual(COUNTRY);
+
+            await expectUnchanged(api, autoColumnVisibleEvents, () => api.setColumnsVisible(COUNTRY, false));
+            expect(getVisibleAutoGroupColIds(api)).toEqual(COUNTRY);
+
+            await expectUnchanged(api, autoColumnVisibleEvents, () => api.setColumnsVisible(YEAR, true));
+            expect(getVisibleAutoGroupColIds(api)).toEqual(COUNTRY);
+
+            api.setRowNodeExpanded(api.getRowNode('row-group-country-Ireland')!, true, false, true);
+            expect(getVisibleAutoGroupColIds(api)).toEqual([...COUNTRY, ...YEAR]);
+
+            await expectUnchanged(api, autoColumnVisibleEvents, () => api.setColumnsVisible(YEAR, false));
+            expect(getVisibleAutoGroupColIds(api)).toEqual([...COUNTRY, ...YEAR]);
+        });
+
+        test('applyColumnState hide on an auto column is ignored: true on the displayed one, false on one a collapsed group hides', async () => {
+            const { api, autoColumnVisibleEvents } = createCollapsedGrid();
+            expect(getVisibleAutoGroupColIds(api)).toEqual(COUNTRY);
+
+            await expectUnchanged(api, autoColumnVisibleEvents, () =>
+                api.applyColumnState({ state: [{ colId: COUNTRY[0], hide: true }] })
+            );
+            expect(getVisibleAutoGroupColIds(api)).toEqual(COUNTRY);
+
+            await expectUnchanged(api, autoColumnVisibleEvents, () =>
+                api.applyColumnState({ state: [{ colId: YEAR[0], hide: false }] })
+            );
+            expect(getVisibleAutoGroupColIds(api)).toEqual(COUNTRY);
+        });
+
+        test('column state and grid state report each auto column as the grid shows it, collapsed, expanded and collapsed again', async () => {
             const { api, autoColumnVisibleEvents } = createCollapsedGrid();
             const BOTH = [...COUNTRY, ...YEAR];
             const read = async () => {
@@ -2375,6 +2579,7 @@ describe('ag-grid auto group columns cannot be hidden or shown by the user', () 
             expect(await read()).toEqual({ displayed: COUNTRY, hiddenByColumnState: YEAR, hiddenByGridState: YEAR });
 
             api.setRowNodeExpanded(api.getRowNode('row-group-country-Ireland')!, true, false, true);
+            expect(await read()).toEqual({ displayed: BOTH, hiddenByColumnState: [], hiddenByGridState: [] });
 
             api.collapseAll();
             expect(await read()).toEqual({ displayed: COUNTRY, hiddenByColumnState: YEAR, hiddenByGridState: YEAR });

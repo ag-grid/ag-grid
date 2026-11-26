@@ -33,6 +33,38 @@ describe('Value Column Order (valueIndex)', () => {
             .sort((a, b) => a.valueIndex! - b.valueIndex!)
             .map((s) => s.colId);
 
+    test('a column state reordering the value columns raises columnValueChanged and re-orders the pivot result columns', async () => {
+        const valueEvents: string[][] = [];
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { field: 'country', rowGroup: true },
+                { field: 'year', pivot: true },
+                { field: 'gold', aggFunc: 'sum' },
+                { field: 'silver', aggFunc: 'sum' },
+            ],
+            pivotMode: true,
+            rowData,
+            onColumnValueChanged: (e) => valueEvents.push(e.columns!.map((col) => col.getColId())),
+        });
+        const pivotValueOrder = () =>
+            (api.getPivotResultColumns() ?? []).map((col) => col.getColDef().pivotValueColumn?.getColId());
+        await waitFor(() => expect(pivotValueOrder()).toEqual(['gold', 'silver', 'gold', 'silver']));
+
+        api.applyColumnState({
+            state: [
+                { colId: 'silver', valueIndex: 0 },
+                { colId: 'gold', valueIndex: 1 },
+            ],
+        });
+
+        await waitFor(() => expect(valueEvents).toEqual([[]]));
+        expect({ pivot: pivotValueOrder(), order: valueColIdsInOrder(api), valueEvents }).toEqual({
+            pivot: ['silver', 'gold', 'silver', 'gold'],
+            order: ['silver', 'gold'],
+            valueEvents: [[]],
+        });
+    });
+
     test('colDef.valueIndex sets the order of value columns', async () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: [
@@ -104,7 +136,7 @@ describe('Value Column Order (valueIndex)', () => {
         await waitFor(() => expect(valueColIdsInOrder(api)).toEqual(['silver', 'gold']));
     });
 
-    test('column state with valueIndex reorders the value columns', async () => {
+    test('an array getValueColumns returned keeps its order when column state reorders the value columns', async () => {
         const api = await gridsManager.createGridAndWait('myGrid', {
             columnDefs: [
                 { field: 'gold', aggFunc: 'sum' },
@@ -123,6 +155,7 @@ describe('Value Column Order (valueIndex)', () => {
         });
 
         await waitFor(() => expect(valueColIdsInOrder(api)).toEqual(['silver', 'gold']));
+        expect(before.map((col) => col.getColId())).toEqual(['gold', 'silver']);
     });
 
     test('value columns keep their order through a columnDefs update that sets their aggFunc again', async () => {
@@ -200,6 +233,46 @@ describe('Value Column Order (valueIndex)', () => {
             { colId: 'silver', aggFunc: 'sum' },
             { colId: 'bronze', aggFunc: 'sum' },
         ]);
+    });
+
+    const aggregatingDefs = () => [
+        { field: 'g', rowGroup: true },
+        { field: 'a', aggFunc: 'sum' },
+        { field: 'b', aggFunc: 'sum' },
+        { field: 'c', aggFunc: 'sum' },
+        { field: 'd' },
+    ];
+    const aggregatingRow = [{ g: 'x', a: 1, b: 2, c: 3, d: 4 }];
+
+    const valueRecord = (api: ReturnType<typeof gridsManager.createGrid>) => {
+        const state = api.getColumnState();
+        return {
+            valueColumns: valueColIdsInOrder(api),
+            valueIndex: Object.fromEntries(
+                ['a', 'b', 'c', 'd'].map((id) => [id, state.find((s) => s.colId === id)?.valueIndex])
+            ),
+        };
+    };
+
+    test('turning a value column on through column state numbers it after the existing ones, and turning one off renumbers the rest', async () => {
+        const api = await gridsManager.createGridAndWait('myGrid', {
+            columnDefs: aggregatingDefs(),
+            rowData: aggregatingRow,
+        });
+
+        api.applyColumnState({ state: [{ colId: 'd', aggFunc: 'sum' }] });
+
+        expect(valueRecord(api)).toEqual({
+            valueColumns: ['a', 'b', 'c', 'd'],
+            valueIndex: { a: 0, b: 1, c: 2, d: 3 },
+        });
+
+        api.applyColumnState({ state: [{ colId: 'a', aggFunc: null }] });
+
+        expect(valueRecord(api)).toEqual({
+            valueColumns: ['b', 'c', 'd'],
+            valueIndex: { a: null, b: 0, c: 1, d: 2 },
+        });
     });
 });
 

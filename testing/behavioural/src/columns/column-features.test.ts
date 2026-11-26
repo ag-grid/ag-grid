@@ -44,6 +44,7 @@ import {
     ColumnAutoSizeModule,
     ColumnHoverModule,
     DragAndDropModule,
+    GridStateModule,
     RenderApiModule,
     RowAutoHeightModule,
     RowDragModule,
@@ -78,6 +79,41 @@ function getGroupRowHeights(api: GridApi): number[] {
 function getHeaderHeight(api: GridApi): number {
     const header = TestGridsManager.getHTMLElement(api)!.querySelector('.ag-header') as HTMLElement;
     return parseFloat(header.style.height);
+}
+
+/** Every element carrying `ag-column-hover`, as `kind:colId` (cell, header or filter), sorted. */
+function columnHoverMarks(gridElement: HTMLElement): string {
+    return Array.from(gridElement.querySelectorAll('.ag-column-hover'), (element) => {
+        if (element.classList.contains('ag-cell')) {
+            return `cell:${element.getAttribute('col-id')}`;
+        }
+        const kind = element.classList.contains('ag-floating-filter') ? 'filter' : 'header';
+        return `${kind}:${element.closest('[col-id]')?.getAttribute('col-id') ?? element.getAttribute('col-id')}`;
+    })
+        .sort()
+        .join(' ');
+}
+
+function ancestorsNotContaining(element: Element, other: Element | null): Element[] {
+    const chain: Element[] = [];
+    for (let current: Element | null = element; current && !current.contains(other); current = current.parentElement) {
+        chain.push(current);
+    }
+    return chain;
+}
+
+/** Fires the events a browser fires when the pointer moves from `from` (null: from outside the page) onto `to`. */
+function movePointer(from: Element | null, to: Element): void {
+    if (from) {
+        from.dispatchEvent(new MouseEvent('mouseout', { bubbles: true, relatedTarget: to }));
+        for (const element of ancestorsNotContaining(from, to)) {
+            element.dispatchEvent(new MouseEvent('mouseleave', { relatedTarget: to }));
+        }
+    }
+    to.dispatchEvent(new MouseEvent('mouseover', { bubbles: true, relatedTarget: from }));
+    for (const element of ancestorsNotContaining(to, from).reverse()) {
+        element.dispatchEvent(new MouseEvent('mouseenter', { relatedTarget: from }));
+    }
 }
 
 describe('Column Features', () => {
@@ -1198,6 +1234,25 @@ describe('Column Features', () => {
             await waitFor(() => expect(viewport(api2).scrollLeft).toBe(400));
         });
 
+        test('a flex column given the other grid width keeps its width and turns fixed, in its column state and in the grid state', () => {
+            const api1 = gridsManager.createGrid('grid1', { columnDefs: [{ colId: 'a', width: 200 }] });
+            const api2 = gridsManager.createGrid(
+                'grid2',
+                { columnDefs: [{ colId: 'a', flex: 1, minWidth: 300, maxWidth: 300 }] },
+                { modules: [GridStateModule] }
+            );
+            api1.setGridOption('alignedGrids', [{ api: api2 }]);
+            const sizing = () => api2.getState().columnSizing?.columnSizingModel.find((col) => col.colId === 'a');
+            expect(api2.getColumn('a')!.getActualWidth()).toBe(300);
+            expect(sizing()?.flex).toBe(1);
+
+            api1.setColumnWidths([{ key: 'a', newWidth: 300 }]);
+
+            expect(api2.getColumn('a')!.getActualWidth()).toBe(300);
+            expect(api2.getColumnState().find((col) => col.colId === 'a')).toMatchObject({ flex: null, width: 300 });
+            expect(sizing()).toEqual({ colId: 'a', width: 300 });
+        });
+
         test('an aligned grid entry with no grid is reported, and the others are still told', () => {
             enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [18, 19, 20] });
             const errors = vi.spyOn(console, 'error').mockImplementation(() => {});
@@ -1474,6 +1529,32 @@ describe('Column Features', () => {
                 ├── b width:200
                 └── locked width:200 lockPosition:right
             `);
+        });
+
+        test('a move made after an earlier animation ended animates for its whole transition', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ colId: 'a' }, { colId: 'b' }, { colId: 'c' }, { colId: 'd' }],
+            });
+            await asyncSetTimeout(0);
+            const moving = () => api.getGridElement()!.querySelector('.ag-column-moving') !== null;
+            vi.useFakeTimers();
+            try {
+                api.moveColumns(['a'], 1);
+                vi.advanceTimersByTime(100);
+                // joins the first move's animation, which ends 200ms after that move
+                api.moveColumns(['a'], 2);
+                vi.advanceTimersByTime(150);
+                const seen = [moving()];
+                api.moveColumns(['a'], 3);
+                vi.advanceTimersByTime(100);
+                seen.push(moving());
+                vi.advanceTimersByTime(100);
+                seen.push(moving());
+
+                expect(seen).toEqual([false, true, false]);
+            } finally {
+                vi.useRealTimers();
+            }
         });
     });
 
@@ -2999,6 +3080,117 @@ describe('Column Features', () => {
             rowNumberHeader.dispatchEvent(new MouseEvent('mouseover', { bubbles: true }));
             expect(hovered()).toBe('');
             expect(api.isColumnHovered(rowNumbersCol)).toBe(false);
+        });
+
+        test('moving down a hovered column keeps it marked and hovered; moving to the next column moves both', async () => {
+            const api = hoverGridsManager.createGrid('myGrid', {
+                columnDefs: [{ field: 'a' }, { field: 'b' }],
+                defaultColDef: { filter: 'agTextColumnFilter', floatingFilter: true },
+                rowData: [
+                    { a: 'a1', b: 'b1' },
+                    { a: 'a2', b: 'b2' },
+                    { a: 'a3', b: 'b3' },
+                ],
+                columnHoverHighlight: true,
+            });
+            await asyncSetTimeout(0);
+            const gridElement = TestGridsManager.getHTMLElement(api)!;
+            const colA = api.getColumn('a')!;
+            const colB = api.getColumn('b')!;
+            const cell = (rowIndex: number, colId: string) =>
+                gridElement.querySelector(`.ag-row[row-index="${rowIndex}"] .ag-cell[col-id="${colId}"]`)!;
+            const state = () => ({
+                marks: columnHoverMarks(gridElement),
+                aHovered: api.isColumnHovered(colA),
+                bHovered: api.isColumnHovered(colB),
+            });
+            const seen = [state()];
+
+            movePointer(null, cell(0, 'a'));
+            seen.push(state());
+            movePointer(cell(0, 'a'), cell(1, 'a'));
+            seen.push(state());
+            movePointer(cell(1, 'a'), cell(2, 'b'));
+            seen.push(state());
+
+            expect(seen).toEqual([
+                { marks: '', aHovered: false, bHovered: false },
+                { marks: 'cell:a cell:a cell:a filter:a header:a', aHovered: true, bHovered: false },
+                { marks: 'cell:a cell:a cell:a filter:a header:a', aHovered: true, bHovered: false },
+                { marks: 'cell:b cell:b cell:b filter:b header:b', aHovered: false, bHovered: true },
+            ]);
+        });
+
+        test('with columnHoverHighlight off nothing is marked or hovered, and turning it on marks the column hovered next', async () => {
+            const api = hoverGridsManager.createGrid('myGrid', {
+                columnDefs: [{ field: 'a' }, { field: 'b' }],
+                defaultColDef: { filter: 'agTextColumnFilter', floatingFilter: true },
+                rowData: [
+                    { a: 'a1', b: 'b1' },
+                    { a: 'a2', b: 'b2' },
+                    { a: 'a3', b: 'b3' },
+                ],
+            });
+            await asyncSetTimeout(0);
+            const gridElement = TestGridsManager.getHTMLElement(api)!;
+            const colA = api.getColumn('a')!;
+            const colB = api.getColumn('b')!;
+            const cell = (rowIndex: number, colId: string) =>
+                gridElement.querySelector(`.ag-row[row-index="${rowIndex}"] .ag-cell[col-id="${colId}"]`)!;
+            const state = () => ({
+                marks: columnHoverMarks(gridElement),
+                aHovered: api.isColumnHovered(colA),
+                bHovered: api.isColumnHovered(colB),
+            });
+            const seen: ReturnType<typeof state>[] = [];
+
+            movePointer(null, cell(0, 'a'));
+            seen.push(state());
+            movePointer(cell(0, 'a'), cell(0, 'b'));
+            seen.push(state());
+            movePointer(cell(0, 'b'), cell(1, 'a'));
+            api.setGridOption('columnHoverHighlight', true);
+            movePointer(cell(1, 'a'), cell(2, 'a'));
+            seen.push(state());
+
+            expect(seen).toEqual([
+                { marks: '', aHovered: false, bHovered: false },
+                { marks: '', aHovered: false, bHovered: false },
+                { marks: 'cell:a cell:a cell:a filter:a header:a', aHovered: true, bHovered: false },
+            ]);
+        });
+
+        test('hovering a column group header marks the cells of every column in the group', async () => {
+            const api = hoverGridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    { field: 'a' },
+                    { field: 'b' },
+                    { groupId: 'G', headerName: 'G', children: [{ field: 'c' }, { field: 'd' }] },
+                ],
+                defaultColDef: { filter: 'agTextColumnFilter', floatingFilter: true },
+                rowData: [
+                    { a: 'a1', b: 'b1', c: 'c1', d: 'd1' },
+                    { a: 'a2', b: 'b2', c: 'c2', d: 'd2' },
+                    { a: 'a3', b: 'b3', c: 'c3', d: 'd3' },
+                ],
+                columnHoverHighlight: true,
+            });
+            await asyncSetTimeout(0);
+            const gridElement = TestGridsManager.getHTMLElement(api)!;
+            const groupText = Array.from(
+                gridElement.querySelectorAll('.ag-header-group-cell .ag-header-group-text')
+            ).find((element) => element.textContent === 'G')!;
+            const cellMarks = () =>
+                columnHoverMarks(gridElement)
+                    .split(' ')
+                    .filter((mark) => mark.startsWith('cell:'))
+                    .join(' ');
+            const seen = [cellMarks()];
+
+            movePointer(null, groupText);
+            seen.push(cellMarks());
+
+            expect(seen).toEqual(['', 'cell:c cell:c cell:c cell:d cell:d cell:d']);
         });
     });
 });

@@ -53,16 +53,42 @@ describe('columns tool panel drag out of the grid', () => {
         }
     }
 
-    // TODO: disabled due to AG-19380 - re-enable once fixed
-    test.skip('dragging a column item out of the grid shows the hide icon only when the drop would hide the column', async () => {
+    test('dragging a column item out of the grid shows the hide icon only when the drop would hide the column', async () => {
         await createGrid([
             { field: 'a', headerName: 'Locked', lockVisible: true },
             { field: 'b', headerName: 'Plain' },
+            { field: 'c', headerName: 'Hidden', hide: true },
         ]);
 
         const locked = await dragOutOfGrid('.ag-column-select-column', 'Locked');
         const plain = await dragOutOfGrid('.ag-column-select-column', 'Plain');
+        const hidden = await dragOutOfGrid('.ag-column-select-column', 'Hidden');
 
-        expect({ locked, plain }).toEqual({ locked: notAllowed, plain: hides });
+        expect({ locked, plain, hidden }).toEqual({ locked: notAllowed, plain: hides, hidden: notAllowed });
+    });
+
+    test('dragging a column group item out of the grid shows the hide icon only when one of its columns can be hidden', async () => {
+        await createGrid([
+            {
+                headerName: 'AllLocked',
+                groupId: 'allLocked',
+                children: [
+                    { field: 'a', lockVisible: true },
+                    { field: 'b', lockVisible: true },
+                ],
+            },
+            {
+                headerName: 'Mixed',
+                groupId: 'mixed',
+                children: [{ field: 'c', lockVisible: true }, { field: 'd' }],
+            },
+            { headerName: 'AllHidden', groupId: 'allHidden', children: [{ field: 'e', hide: true }] },
+        ]);
+
+        const allLocked = await dragOutOfGrid('.ag-column-select-column-group', 'AllLocked');
+        const mixed = await dragOutOfGrid('.ag-column-select-column-group', 'Mixed');
+        const allHidden = await dragOutOfGrid('.ag-column-select-column-group', 'AllHidden');
+
+        expect({ allLocked, mixed, allHidden }).toEqual({ allLocked: notAllowed, mixed: hides, allHidden: notAllowed });
     });
 });

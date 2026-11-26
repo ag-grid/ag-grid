@@ -1,4 +1,5 @@
-import { waitFor } from '@testing-library/dom';
+import { findByText, waitFor } from '@testing-library/dom';
+import userEvent from '@testing-library/user-event';
 import {
     ALL_SEVERITIES,
     GridColumns,
@@ -8,21 +9,38 @@ import {
     applyTransactionChecked,
     asyncSetTimeout,
 } from 'ag-test-utils';
-import { vi } from 'vitest';
+import { onTestFinished, vi } from 'vitest';
 
 import type {
     ColDef,
     Column,
+    ColumnEventType,
     GridApi,
+    GridOptions,
     IAggFuncParams,
     ICellRendererComp,
     ICellRendererParams,
     IFilterComp,
     IFilterParams,
+    IHeaderComp,
+    IHeaderParams,
 } from 'ag-grid-community';
-import { ClientSideRowModelModule, CustomFilterModule, enableDevValidations, getGridElement } from 'ag-grid-community';
-import { PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
+import {
+    ClientSideRowModelModule,
+    CustomFilterModule,
+    QuickFilterModule,
+    enableDevValidations,
+    getGridElement,
+} from 'ag-grid-community';
+import {
+    ColumnHeaderEditModule,
+    ColumnMenuModule,
+    ColumnsToolPanelModule,
+    PivotModule,
+    RowGroupingModule,
+} from 'ag-grid-enterprise';
 
+import { openToolPanelContextMenu } from '../columnToolPanel/toolPanelContextMenuHarness';
 import { pivotGroups } from './pivotGroups';
 
 describe('pivot column identity across columnDefs updates', () => {
@@ -414,6 +432,29 @@ describe('pivot column identity across columnDefs updates', () => {
         await checkDefaultCols(api, 'cols after context update');
     });
 
+    test('a pivot result column given the colId of a primary column keeps its column when a row adds a pivot key', () => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [273] });
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {}); // warning 273: expected colId collision
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: baseColumnDefs,
+            pivotMode: true,
+            processPivotResultColDef: (colDef: ColDef) => {
+                if (colDef.colId === 'pivot_sport-year_Swimming_gold') {
+                    colDef.colId = 'gold';
+                }
+            },
+        });
+        applyTransactionChecked(api, { add: olympicLikeRows });
+        const column = api.getColumn('gold_1');
+
+        applyTransactionChecked(api, { add: [{ id: 6, country: 'USA', sport: 'Diving', year: 2012, gold: 1 }] });
+
+        expect(api.getColumn('pivot_sport-year_Diving_gold')?.getColDef().pivotKeys).toEqual(['Diving']);
+        expect(column?.getColDef().pivotKeys).toEqual(['Swimming']);
+        expect(api.getColumn('gold_1')).toBe(column);
+        expect(warn.mock.calls.flat().join(' ')).toContain('warning #273');
+    });
+
     test('processPivotResultColDef can attach pivot-col-specific context on every recreate', async () => {
         // The supported way to attach context per pivot result col is via
         // `processPivotResultColDef`, which runs on initial creation and every
@@ -725,8 +766,49 @@ describe('pivot column identity across columnDefs updates', () => {
         expect(hidden()).toBe(0);
     });
 
-    // TODO: disabled due to AG-6642 - re-enable once fixed
-    test.skip('a pivot result column keeps the width the user gave it over a default column width when another value column is removed, then pivot mode is turned off and on', async () => {
+    test('pivot result columns keep a width and visibility the user gave them over new data, and take the value column width its definition sets again', async () => {
+        const defs = (width: number): ColDef[] => [
+            { field: 'country', rowGroup: true },
+            { field: 'sport', pivot: true },
+            { field: 'gold', aggFunc: 'sum', width },
+        ];
+        const api = gridsManager.createGrid('myGrid', { columnDefs: defs(100), pivotMode: true });
+        applyTransactionChecked(api, { add: olympicLikeRows });
+        await asyncSetTimeout(0);
+        const widths = () =>
+            (api.getPivotResultColumns() ?? [])
+                .map((col) => `${col.getColId()} ${col.getActualWidth()}${col.isVisible() ? '' : ' hidden'}`)
+                .sort();
+        api.applyColumnState({
+            state: [
+                { colId: 'pivot_sport_Swimming_gold', width: 333 },
+                { colId: 'pivot_sport_Gymnastics_gold', hide: true },
+            ],
+        });
+
+        applyTransactionChecked(api, { add: [{ id: 6, country: 'USA', sport: 'Diving', year: 2012, gold: 1 }] });
+        await asyncSetTimeout(0);
+        expect(widths()).toEqual([
+            'pivot_sport_Diving_gold 100',
+            'pivot_sport_Gymnastics_gold 100 hidden',
+            'pivot_sport_Swimming_gold 333',
+        ]);
+
+        const shown: string[] = [];
+        api.addEventListener('columnVisible', (event) => shown.push(String(event.visible)));
+        api.setGridOption('columnDefs', defs(250));
+        await asyncSetTimeout(0);
+        expect({ widths: widths(), shown }).toEqual({
+            widths: [
+                'pivot_sport_Diving_gold 250',
+                'pivot_sport_Gymnastics_gold 250 hidden',
+                'pivot_sport_Swimming_gold 250',
+            ],
+            shown: [],
+        });
+    });
+
+    test('a pivot result column keeps the width the user gave it over a default column width when another value column is removed, then pivot mode is turned off and on', async () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: [
                 { field: 'country', rowGroup: true },
@@ -789,6 +871,118 @@ describe('pivot column identity across columnDefs updates', () => {
         }).toEqual({ width: 250, sort: 'asc', pinned: 'left', visible: true });
     });
 
+    const medalRows = [
+        { country: 'USA', year: 2020, gold: 1 },
+        { country: 'USA', year: 2021, gold: 2 },
+        { country: 'Ireland', year: 2020, gold: 3 },
+    ];
+    const medalDefs = (gold: ColDef): ColDef[] => [
+        { field: 'country', rowGroup: true },
+        { field: 'year', pivot: true },
+        { field: 'gold', aggFunc: 'sum', ...gold },
+    ];
+
+    test('processPivotResultColDef is not called for a value column redefined while pivot mode is off', async () => {
+        const called: string[] = [];
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: medalDefs({ valueFormatter: (params) => `A:${params.value}` }),
+            rowData: medalRows,
+            pivotMode: true,
+            processPivotResultColDef: (colDef) => {
+                called.push(colDef.colId!);
+            },
+        });
+        await asyncSetTimeout(0);
+        const resultIds = ['pivot_year_2020_gold', 'pivot_year_2021_gold'];
+        expect(called.splice(0).sort()).toEqual(resultIds);
+
+        api.setGridOption('pivotMode', false);
+        await asyncSetTimeout(0);
+        called.length = 0;
+
+        const calledDuringUpdate: string[][] = [];
+        for (const label of ['B1', 'B2']) {
+            api.setGridOption('columnDefs', medalDefs({ valueFormatter: (params) => `${label}:${params.value}` }));
+            await asyncSetTimeout(0);
+            calledDuringUpdate.push(called.splice(0));
+        }
+        expect(calledDuringUpdate).toEqual([[], []]);
+
+        api.setGridOption('pivotMode', true);
+        await asyncSetTimeout(0);
+        const usa = api.getRowNode('row-group-country-USA')!;
+        expect({
+            called: called.splice(0).sort(),
+            usa: resultIds.map((colKey) => api.getCellValue({ rowNode: usa, colKey, useFormatter: true })),
+        }).toEqual({ called: resultIds, usa: ['B2:1', 'B2:2'] });
+    });
+
+    test('a columnDefs update while pivot mode is off reaches the pivot result columns when pivot mode returns', async () => {
+        const resultState = (api: GridApi) =>
+            api
+                .getColumnState()
+                .filter((state) => state.colId.startsWith('pivot_'))
+                .map((state) => [state.colId, state.width, state.sort ?? null, state.pinned ?? null])
+                .sort((a, b) => String(a[0]).localeCompare(String(b[0])));
+        const createCell = async (id: string, gold: ColDef, resizeFirstTo?: number) => {
+            const api = gridsManager.createGrid(id, {
+                columnDefs: medalDefs(gold),
+                rowData: medalRows,
+                pivotMode: true,
+            });
+            await asyncSetTimeout(0);
+            if (resizeFirstTo !== undefined) {
+                api.setColumnWidths([{ key: 'pivot_year_2020_gold', newWidth: resizeFirstTo }]);
+            }
+            api.setGridOption('pivotMode', false);
+            await asyncSetTimeout(0);
+            return api;
+        };
+        const pivotOn = async (api: GridApi) => {
+            api.setGridOption('pivotMode', true);
+            await asyncSetTimeout(0);
+            return resultState(api);
+        };
+
+        const b2 = await createCell('b2', { width: 180 }, 250);
+        b2.setGridOption('columnDefs', medalDefs({ width: 180 }));
+        await asyncSetTimeout(0);
+
+        const b3 = await createCell('b3', { width: 180 }, 250);
+
+        const b4 = await createCell('b4', {}, 250);
+        b4.setGridOption('columnDefs', medalDefs({ valueFormatter: (params) => `${params.value}` }));
+        await asyncSetTimeout(0);
+
+        expect({
+            b2: await pivotOn(b2),
+            b3: await pivotOn(b3),
+            b4: await pivotOn(b4),
+        }).toEqual({
+            b2: [
+                ['pivot_year_2020_gold', 180, null, null],
+                ['pivot_year_2021_gold', 180, null, null],
+            ],
+            b3: [
+                ['pivot_year_2020_gold', 250, null, null],
+                ['pivot_year_2021_gold', 180, null, null],
+            ],
+            b4: [
+                ['pivot_year_2020_gold', 250, null, null],
+                ['pivot_year_2021_gold', 200, null, null],
+            ],
+        });
+
+        // the update's width is applied once: a later toggle with no update keeps the user's
+        b2.setColumnWidths([{ key: 'pivot_year_2020_gold', newWidth: 260 }]);
+        b2.setGridOption('pivotMode', false);
+        await asyncSetTimeout(0);
+        expect(await pivotOn(b2)).toEqual([
+            ['pivot_year_2020_gold', 260, null, null],
+            ['pivot_year_2021_gold', 180, null, null],
+        ]);
+    });
+
     test('a value column header change reaches the pivot result columns new data added since the last change', async () => {
         const liveDefs: ColDef[] = [
             { field: 'country', rowGroup: true },
@@ -816,6 +1010,106 @@ describe('pivot column identity across columnDefs updates', () => {
             'pivot_sport_Gymnastics_gold Golds',
             'pivot_sport_Swimming_gold Golds',
         ]);
+    });
+
+    test('a pivot result column kept and redefined by a pivot sort change redraws its header', async () => {
+        let headerClass = 'first';
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { field: 'country', rowGroup: true },
+                { field: 'sport', pivot: true },
+                { field: 'gold', aggFunc: 'sum' },
+            ],
+            pivotMode: true,
+            rowData: olympicLikeRows,
+            processPivotResultColDef: (colDef) => {
+                colDef.headerClass = headerClass;
+            },
+        });
+        const headerClasses = () =>
+            Array.from(getGridElement(api)!.querySelectorAll('.ag-header-cell[col-id^="pivot_"]'), (cell) =>
+                [
+                    cell.getAttribute('col-id'),
+                    cell.classList.contains('first'),
+                    cell.classList.contains('second'),
+                ].join()
+            ).sort();
+        await waitFor(() =>
+            expect(headerClasses()).toEqual([
+                'pivot_sport_Gymnastics_gold,true,false',
+                'pivot_sport_Swimming_gold,true,false',
+            ])
+        );
+
+        headerClass = 'second';
+        api.applyColumnState({ state: [{ colId: 'sport', pivotSort: 'desc' }] });
+
+        await waitFor(() =>
+            expect(headerClasses()).toEqual([
+                'pivot_sport_Gymnastics_gold,false,true',
+                'pivot_sport_Swimming_gold,false,true',
+            ])
+        );
+    });
+
+    test('a column redefined while pivot result columns replace it is not redrawn again by a later change of another', async () => {
+        const refreshes: string[] = [];
+        class Header implements IHeaderComp {
+            private readonly eGui = document.createElement('div');
+            public init(params: IHeaderParams): void {
+                this.eGui.textContent = params.displayName;
+            }
+            public getGui(): HTMLElement {
+                return this.eGui;
+            }
+            public refresh(params: IHeaderParams): boolean {
+                refreshes.push(`header ${params.column.getColId()}`);
+                return true;
+            }
+        }
+        class Renderer implements ICellRendererComp {
+            private readonly eGui = document.createElement('span');
+            public init(params: ICellRendererParams): void {
+                this.eGui.className = 'drawn';
+                refreshes.push(`cell ${params.column!.getColId()}`);
+            }
+            public getGui(): HTMLElement {
+                return this.eGui;
+            }
+            public refresh(params: ICellRendererParams): boolean {
+                refreshes.push(`cell ${params.column!.getColId()}`);
+                return true;
+            }
+        }
+        const columnDefs = (gold: number, year: number): ColDef[] => [
+            { field: 'country', rowGroup: true },
+            { field: 'sport', pivot: true },
+            { field: 'gold', aggFunc: 'sum', headerComponent: Header, cellRenderer: Renderer, minWidth: gold },
+            { field: 'year', headerComponent: Header, cellRenderer: Renderer, minWidth: year },
+        ];
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: columnDefs(51, 51),
+            pivotMode: true,
+            rowData: olympicLikeRows,
+        });
+        await waitFor(() => expect(api.getPivotResultColumns()).toHaveLength(2));
+
+        api.setGridOption('columnDefs', columnDefs(52, 51));
+        api.setGridOption('pivotMode', false);
+        const root = getGridElement(api)!;
+        await waitFor(() =>
+            expect(root.querySelector('.ag-header-cell[col-id="gold"]')?.textContent?.trim()).toBe('sum(Gold)')
+        );
+        await waitFor(() => expect(root.querySelectorAll('.ag-cell[col-id="gold"] .drawn')).toHaveLength(2));
+        refreshes.length = 0;
+
+        api.applyColumnState({ state: [{ colId: 'year', headerName: 'Year 2' }] });
+        expect(refreshes).toEqual(['header year']);
+
+        api.setGridOption('columnDefs', columnDefs(52, 52));
+        await asyncSetTimeout(0);
+        // the header and cell refreshes of one update in no documented order
+        expect([...refreshes].sort()).toEqual(['cell year', 'cell year', 'header year', 'header year']);
     });
 
     test('a value column minWidth change reaches the pivot result columns new data added since the last change', async () => {
@@ -1032,6 +1326,112 @@ describe('pivot column identity across columnDefs updates', () => {
         expect((api.getPivotResultColumns() ?? []).length).toBeGreaterThan(0);
     });
 
+    const allOpen = [
+        { id: 'pivotGroup_sport-year_Gymnastics', path: 'Gymnastics', open: true, expandable: true },
+        { id: 'pivotGroup_sport-year_Gymnastics-2008', path: 'Gymnastics > 2008', open: true, expandable: false },
+        { id: 'pivotGroup_sport-year_Gymnastics-2012', path: 'Gymnastics > 2012', open: true, expandable: false },
+        { id: 'pivotGroup_sport-year_Swimming', path: 'Swimming', open: true, expandable: true },
+        { id: 'pivotGroup_sport-year_Swimming-2008', path: 'Swimming > 2008', open: true, expandable: false },
+        { id: 'pivotGroup_sport-year_Swimming-2012', path: 'Swimming > 2012', open: true, expandable: false },
+    ];
+
+    test.each([
+        { keys: 'pivotMode first', first: 'pivotMode' as const },
+        { keys: 'pivotDefaultExpanded first', first: 'pivotDefaultExpanded' as const },
+    ])(
+        'one update turning pivot mode on and setting pivotDefaultExpanded to -1 opens every pivot result column group ($keys)',
+        async (row) => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    { field: 'country', rowGroup: true, hide: true },
+                    { field: 'sport', pivot: true, hide: true },
+                    { field: 'year', pivot: true, hide: true },
+                    { field: 'gold', aggFunc: 'sum' },
+                ],
+                pivotDefaultExpanded: 0,
+                rowData: olympicLikeRows,
+            });
+            const mode = { pivotMode: true };
+            const expanded = { pivotDefaultExpanded: -1 };
+
+            api.updateGridOptions(row.first === 'pivotMode' ? { ...mode, ...expanded } : { ...expanded, ...mode });
+
+            expect(api.isPivotMode()).toBe(true);
+            expect(pivotGroups(api)).toEqual(allOpen);
+            await asyncSetTimeout(0);
+            expect(pivotGroups(api)).toEqual(allOpen);
+        }
+    );
+
+    test('an update giving columnDefs undefined beside pivotMode true or an autoGroupColumnDef acts as the update without columnDefs', () => {
+        const createGrid = () =>
+            gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    { field: 'country', rowGroup: true, hide: true },
+                    { field: 'sport', hide: true },
+                    { field: 'gold', aggFunc: 'sum' },
+                ],
+                rowData: olympicLikeRows,
+            });
+        const displayedColIds = (api: GridApi) => api.getAllDisplayedColumns().map((col) => col.getColId());
+
+        const withoutColumnDefs = createGrid();
+        withoutColumnDefs.updateGridOptions({ pivotMode: true });
+        const displayedWithout = displayedColIds(withoutColumnDefs);
+        gridsManager.reset();
+
+        const withUndefinedColumnDefs = createGrid();
+        withUndefinedColumnDefs.updateGridOptions({ pivotMode: true, columnDefs: undefined });
+        expect(withUndefinedColumnDefs.isPivotMode()).toBe(true);
+        expect(displayedColIds(withUndefinedColumnDefs)).toEqual(displayedWithout);
+        gridsManager.reset();
+
+        const widthWithout = createGrid();
+        widthWithout.updateGridOptions({ autoGroupColumnDef: { width: 333 } });
+        expect(widthWithout.getColumn('ag-Grid-AutoColumn')!.getActualWidth()).toBe(333);
+        gridsManager.reset();
+
+        const widthApi = createGrid();
+        widthApi.updateGridOptions({ autoGroupColumnDef: { width: 333 }, columnDefs: undefined });
+        expect(widthApi.getColumn('ag-Grid-AutoColumn')!.getActualWidth()).toBe(333);
+    });
+
+    test('unsupported: a grid option set from a callback while an options update is applied does not break the grid or lose the update', () => {
+        // Unsupported usage: this only guards that the grid survives it with every option of both calls applied.
+        let callbackSetColumnDefs = false;
+        const api: GridApi = gridsManager.createGrid(
+            'myGrid',
+            {
+                columnDefs: [
+                    {
+                        field: 'a',
+                        getQuickFilterText: (params) => {
+                            if (!callbackSetColumnDefs) {
+                                callbackSetColumnDefs = true;
+                                api.setGridOption('columnDefs', [{ field: 'a' }, { field: 'b' }, { field: 'c' }]);
+                            }
+                            return String(params.value);
+                        },
+                    },
+                    { field: 'b', enableRowGroup: true },
+                ],
+                rowData: [{ a: 'x', b: 'y' }],
+            },
+            { modules: [QuickFilterModule] }
+        );
+        expect(callbackSetColumnDefs).toBe(false);
+        expect(api.isPivotMode()).toBe(false);
+
+        api.updateGridOptions({ quickFilterText: 'x', pivotMode: true });
+
+        expect(callbackSetColumnDefs).toBe(true);
+        expect({
+            pivotMode: api.isPivotMode(),
+            quickFilterText: api.getGridOption('quickFilterText'),
+            fields: (api.getColumnDefs() ?? []).map((colDef) => ('field' in colDef ? colDef.field : undefined)),
+        }).toEqual({ pivotMode: true, quickFilterText: 'x', fields: ['a', 'b', 'c'] });
+    });
+
     test('pivotDefaultExpanded 1 opens the first pivot group level and leaves the second level closed', () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: [
@@ -1234,35 +1634,39 @@ describe('pivot column identity across columnDefs updates', () => {
         ['an aggFunc', { aggFunc: 'sum' }, {}],
         ['an initialAggFunc', { initialAggFunc: 'sum' }, {}],
         ['an aggFunc and pivot column group totals', { aggFunc: 'sum' }, { pivotColumnGroupTotals: 'after' as const }],
-    ])('a value column with %s given a new hide keeps the pivot result columns', async (_, aggDef: ColDef, options) => {
-        const defs = (hide: boolean): ColDef[] => [
-            { field: 'country', rowGroup: true },
-            { field: 'sport', pivot: true },
-            { field: 'year', pivot: true },
-            { field: 'gold', hide, ...aggDef },
-        ];
-        const api = gridsManager.createGrid('myGrid', {
-            columnDefs: defs(false),
-            pivotMode: true,
-            rowData: [
-                { country: 'A', sport: 'S1', year: 2000, gold: 1 },
-                { country: 'B', sport: 'S1', year: 2004, gold: 3 },
-            ],
-            ...options,
-        });
-        await asyncSetTimeout(0);
-        const pivotCols = api.getPivotResultColumns()!;
-        const colDefChanges = pivotCols.map(() => 0);
-        pivotCols.forEach((col, i) => col.addEventListener('colDefChanged', () => ++colDefChanges[i]));
+    ])(
+        'a value column with %s given a new hide redefines no pivot result column',
+        async (_, aggDef: ColDef, options) => {
+            const defs = (hide: boolean): ColDef[] => [
+                { field: 'country', rowGroup: true },
+                { field: 'sport', pivot: true },
+                { field: 'year', pivot: true },
+                { field: 'gold', hide, ...aggDef },
+            ];
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: defs(false),
+                pivotMode: true,
+                rowData: [
+                    { country: 'A', sport: 'S1', year: 2000, gold: 1 },
+                    { country: 'B', sport: 'S1', year: 2004, gold: 3 },
+                ],
+                ...options,
+            });
+            await asyncSetTimeout(0);
+            const pivotCols = api.getPivotResultColumns()!;
+            const colDefChanges = pivotCols.map(() => 0);
+            pivotCols.forEach((col, i) => col.addEventListener('colDefChanged', () => ++colDefChanges[i]));
 
-        api.setGridOption('columnDefs', defs(true));
-        await asyncSetTimeout(0);
+            api.setGridOption('columnDefs', defs(true));
+            await asyncSetTimeout(0);
 
-        expect(api.getPivotResultColumns()).toEqual(pivotCols);
-        expect(pivotCols.filter((col) => col.getColDef().pivotTotalColumnIds != null).length).toBe(1);
-    });
+            expect(api.getPivotResultColumns()).toEqual(pivotCols);
+            expect(pivotCols.map((col) => col.getColDef().pivotTotalColumnIds != null)).toEqual([false, false, true]);
+            expect(colDefChanges).toEqual(pivotCols.map(() => 0));
+        }
+    );
 
-    test('a row adding a pivot key adds its pivot result column and keeps the others', async () => {
+    test('a row adding a pivot key leaves the definitions of the other pivot result columns unchanged', async () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: [
                 { field: 'country', rowGroup: true },
@@ -1286,9 +1690,10 @@ describe('pivot column identity across columnDefs updates', () => {
             'pivot_sport_S2_gold',
         ]);
         expect(api.getPivotResultColumns()![0]).toBe(s1);
+        expect(colDefChanges).toBe(0);
     });
 
-    test('a value column given a new headerName keeps its pivot result columns', async () => {
+    test('a kept pivot result column gives its filter the redefined column definition in the same update', async () => {
         enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: LEGACY_FILTER_WARNING_IDS });
         const refreshes: { instance: IFilterComp; headerName: unknown }[] = [];
         class RecordingFilter implements IFilterComp {
@@ -1342,6 +1747,7 @@ describe('pivot column identity across columnDefs updates', () => {
         ]);
 
         expect(api.getPivotResultColumns()!.map((col, i) => col === pivotCols[i])).toEqual([true, true, true]);
+        expect(refreshes).toEqual([{ instance, headerName: 'Gold Medals' }]);
     });
 
     test('a value column replaced by one with its colId as field shows the new field in the pivot result columns', async () => {
@@ -1372,7 +1778,21 @@ describe('pivot column identity across columnDefs updates', () => {
         expect(shown).toEqual([1, 3]);
     });
 
-    test('renaming a value column with applyColumnState keeps the pivot result columns and a width the user set', async () => {
+    // The header texts the DOM shows, and each pivot result column's display name, as one reader.
+    const headerSnapshot = (api: GridApi) => ({
+        dom: Array.from(
+            getGridElement(api)!.querySelectorAll('.ag-header-cell-text, .ag-header-group-text'),
+            (el) => el.textContent
+        ),
+        names: (api.getPivotResultColumns() ?? []).map(
+            (col) => `${col.getColId()}: ${api.getDisplayNameForColumn(col, 'header')}`
+        ),
+    });
+
+    const sameInstances = (now: Column[] | null, before: Column[]) =>
+        (now ?? []).map((col, i) => col === before[i]).concat(before.length === (now ?? []).length ? [] : [false]);
+
+    test('renaming a value column with applyColumnState renames every pivot result header in the same call as a grid named so from the start, keeping the columns and a width the user set', async () => {
         const defs = (gold: ColDef): ColDef[] => [
             { field: 'country', pivot: true },
             { field: 'sport', rowGroup: true },
@@ -1395,14 +1815,27 @@ describe('pivot column identity across columnDefs updates', () => {
 
         api.applyColumnState({ state: [{ colId: 'gold', headerName: 'Medals' }] });
 
+        const after = headerSnapshot(api);
         const afterState = {
             same: sameInstances(api.getPivotResultColumns(), colsBefore),
             widths: widths(),
         };
+        gridsManager.reset();
+
+        const control = await gridsManager.createGridAndWait('myGrid', {
+            columnDefs: defs({ field: 'gold', aggFunc: 'sum', headerName: 'Medals' }),
+            pivotMode: true,
+            rowData: olympicLikeRows,
+        });
+        const expected = headerSnapshot(control);
+
+        expect(after).toEqual(expected);
+        expect(after.names).toEqual(['pivot_country_Russia_gold: Medals', 'pivot_country_USA_gold: Medals']);
+        expect(after.dom).not.toEqual(before.dom);
         expect(afterState).toEqual({ same: [true, true], widths: widthsBefore });
     });
 
-    test('renaming a value column keeps the pivot result columns, totals included, and does not call a custom aggFunc', async () => {
+    test('renaming a value column renames the pivot total columns too and does not call a custom aggFunc', async () => {
         const calls = { n: 0 };
         const countingSum = (params: IAggFuncParams) => {
             ++calls.n;
@@ -1424,6 +1857,7 @@ describe('pivot column identity across columnDefs updates', () => {
             pivotColumnGroupTotals: 'before',
             rowData: olympicLikeRows,
         });
+        const before = headerSnapshot(api);
         const colsBefore = [...(api.getPivotResultColumns() ?? [])];
         expect(colsBefore.some((col) => col.getColDef().pivotTotalColumnIds !== undefined)).toBe(true);
         expect(calls.n).toBeGreaterThan(0);
@@ -1431,30 +1865,29 @@ describe('pivot column identity across columnDefs updates', () => {
 
         api.applyColumnState({ state: [{ colId: 'gold', headerName: 'Medals' }] });
 
+        const after = headerSnapshot(api);
         const same = sameInstances(api.getPivotResultColumns(), colsBefore);
         const callsInTheCall = calls.n;
         await asyncSetTimeout(0);
         const callsAfterATurn = calls.n;
+        gridsManager.reset();
+
+        const control = await gridsManager.createGridAndWait('myGrid', {
+            columnDefs: defs({ field: 'gold', aggFunc: countingSum, headerName: 'Medals' }),
+            pivotMode: true,
+            pivotColumnGroupTotals: 'before',
+            rowData: olympicLikeRows,
+        });
+        const expected = headerSnapshot(control);
+
+        expect(after).toEqual(expected);
+        expect(after.names).not.toEqual(before.names);
         expect({ same, callsInTheCall, callsAfterATurn }).toEqual({
             same: colsBefore.map(() => true),
             callsInTheCall: 0,
             callsAfterATurn: 0,
         });
     });
-
-    // The header texts the DOM shows, and each pivot result column's display name, as one reader.
-    const headerSnapshot = (api: GridApi) => ({
-        dom: Array.from(
-            getGridElement(api)!.querySelectorAll('.ag-header-cell-text, .ag-header-group-text'),
-            (el) => el.textContent
-        ),
-        names: (api.getPivotResultColumns() ?? []).map(
-            (col) => `${col.getColId()}: ${api.getDisplayNameForColumn(col, 'header')}`
-        ),
-    });
-
-    const sameInstances = (now: Column[] | null, before: Column[]) =>
-        (now ?? []).map((col, i) => col === before[i]).concat(before.length === (now ?? []).length ? [] : [false]);
 
     test('renaming the only value column leaves the pivot key headers of removePivotHeaderRowWhenSingleValueColumn unchanged and keeps the columns', async () => {
         const defs = (gold: ColDef): ColDef[] => [
@@ -1520,6 +1953,90 @@ describe('pivot column identity across columnDefs updates', () => {
 
         expect(after).toEqual(headerSnapshot(control));
         expect(after.names).not.toEqual(before.names);
+    });
+
+    test('renaming the value column from the columns tool panel renames every pivot result header as a grid named so from the start, each pivot result column reporting a colDefChanged from uiColumnHeaderEdit', async () => {
+        const uiGridsManager = new TestGridsManager({
+            modules: [
+                ClientSideRowModelModule,
+                RowGroupingModule,
+                PivotModule,
+                ColumnsToolPanelModule,
+                ColumnMenuModule,
+                ColumnHeaderEditModule,
+            ],
+        });
+        onTestFinished(() => uiGridsManager.reset());
+        const options = (gold: ColDef): GridOptions => ({
+            columnDefs: [{ field: 'country', pivot: true }, { field: 'sport', rowGroup: true }, gold],
+            pivotMode: true,
+            rowData: olympicLikeRows,
+            sideBar: {
+                toolPanels: [
+                    {
+                        id: 'columns',
+                        labelDefault: 'Columns',
+                        labelKey: 'columns',
+                        iconKey: 'columns',
+                        toolPanel: 'agColumnsToolPanel',
+                    },
+                ],
+                defaultToolPanel: 'columns',
+            },
+        });
+        const api = await uiGridsManager.createGridAndWait(
+            'myGrid',
+            options({ field: 'gold', aggFunc: 'sum', headerNameEditable: true })
+        );
+        const toolPanel = await waitFor(() => {
+            const instance = api.getToolPanelInstance('columns');
+            if (!instance) {
+                throw new Error('the columns tool panel is not attached yet');
+            }
+            return instance;
+        });
+        const gridDiv = getGridElement(api);
+        if (!(gridDiv instanceof HTMLElement)) {
+            throw new Error('the grid element is not an HTMLElement');
+        }
+        const before = headerSnapshot(api);
+        expect(before.names).toEqual(['pivot_country_Russia_gold: Gold', 'pivot_country_USA_gold: Gold']);
+        const sources = new Map<string, ColumnEventType[]>();
+        for (const col of api.getPivotResultColumns() ?? []) {
+            sources.set(col.getColId(), []);
+            col.addEventListener('colDefChanged', (event) => sources.get(col.getColId())!.push(event.source));
+        }
+
+        await openToolPanelContextMenu(toolPanel, gridDiv, 'Gold');
+        await userEvent.click(await findByText(gridDiv, 'Edit Column Name'));
+        const input = await waitFor(() => {
+            const el = document.querySelector<HTMLInputElement>('.ag-column-header-edit-popup-editor input');
+            if (!el) {
+                throw new Error('the column name editor is not open');
+            }
+            return el;
+        });
+        await userEvent.clear(input);
+        await userEvent.type(input, 'Medals');
+        input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true }));
+        await waitFor(() => expect(document.querySelector('.ag-column-header-edit-popup-editor')).toBeNull());
+
+        await waitFor(() =>
+            expect(Object.fromEntries([...sources].map(([id, list]) => [id, [...new Set(list)]]))).toEqual({
+                pivot_country_Russia_gold: ['uiColumnHeaderEdit'],
+                pivot_country_USA_gold: ['uiColumnHeaderEdit'],
+            })
+        );
+        const after = headerSnapshot(api);
+        uiGridsManager.reset();
+
+        const control = await uiGridsManager.createGridAndWait(
+            'myGrid',
+            options({ field: 'gold', aggFunc: 'sum', headerName: 'Medals', headerNameEditable: true })
+        );
+
+        expect(after).toEqual(headerSnapshot(control));
+        expect(after.names).toEqual(['pivot_country_Russia_gold: Medals', 'pivot_country_USA_gold: Medals']);
     });
 
     test('renaming a value column while pivot mode is off creates no pivot result columns, and turning pivot mode on shows the new name as a grid named so from the start', async () => {
@@ -1598,5 +2115,33 @@ describe('pivot column identity across columnDefs updates', () => {
             same: sameInstances(api.getPivotResultColumns(), colsBefore),
             after: headerSnapshot(api),
         }).toEqual({ valueColumnName: 'Medals', same: [true, true], after: before });
+    });
+
+    test('application-supplied pivot result columns of one field keep their columns when cleared and supplied again as copies', async () => {
+        const api = await gridsManager.createGridAndWait('myGrid', {
+            columnDefs: [
+                { field: 'country', pivot: true },
+                { field: 'sport', rowGroup: true },
+                { field: 'gold', aggFunc: 'sum' },
+            ],
+            pivotMode: true,
+            rowData: olympicLikeRows,
+        });
+        const supplied = (): ColDef[] => [
+            { field: 'a', headerName: 'one' },
+            { field: 'a', headerName: 'two' },
+        ];
+        api.setPivotResultColumns(supplied());
+        const colsBefore = [...(api.getPivotResultColumns() ?? [])];
+        api.setColumnWidths([{ key: 'a_1', newWidth: 321 }]);
+
+        api.setPivotResultColumns(null);
+        api.setPivotResultColumns(supplied());
+
+        expect({
+            ids: api.getPivotResultColumns()!.map((col) => col.getColId()),
+            same: sameInstances(api.getPivotResultColumns(), colsBefore),
+            width: api.getColumn('a_1')!.getActualWidth(),
+        }).toEqual({ ids: ['a', 'a_1'], same: [true, true], width: 321 });
     });
 });

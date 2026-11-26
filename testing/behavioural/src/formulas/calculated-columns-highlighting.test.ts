@@ -1,12 +1,14 @@
 import { waitFor } from '@testing-library/dom';
 import '@testing-library/jest-dom/vitest';
-import { ALL_SEVERITIES, clickMenuOption } from 'ag-test-utils';
+import { ALL_SEVERITIES, asyncSetTimeout, clickMenuOption } from 'ag-test-utils';
 import { vi } from 'vitest';
 
+import type { ColDef, IHeaderComp, IHeaderParams } from 'ag-grid-community';
 import { enableDevValidations } from 'ag-grid-community';
 
 import {
     clickDialogButton,
+    closeDialog,
     createGrid,
     findColumnDef,
     getExpressionInput,
@@ -433,5 +435,108 @@ describe('ag-grid calculated columns', () => {
         await waitFor(() => expect(api.getColumn('profit')).toBeNull());
 
         expect(document.querySelectorAll('.ag-calculated-column-form')).toHaveLength(0);
+    });
+
+    /** A header component counting its creations, showing the column's display name. */
+    const countingHeader = (counter: { inits: number }) =>
+        class CountingHeader implements IHeaderComp {
+            private readonly eGui = document.createElement('div');
+            public init(params: IHeaderParams): void {
+                ++counter.inits;
+                this.eGui.textContent = params.displayName;
+            }
+            public getGui(): HTMLElement {
+                return this.eGui;
+            }
+            public refresh(params: IHeaderParams): boolean {
+                this.eGui.textContent = params.displayName;
+                return true;
+            }
+        };
+    const calculatedColumnDefs = (): ColDef[] => [
+        { field: 'revenue' },
+        { field: 'cost' },
+        { colId: 'profit', headerName: 'Profit', calculatedExpression: '[revenue] - [cost]' },
+    ];
+    /** The header and floating filter cells carrying the edit highlight, in document order. */
+    const highlightedHeaderCells = (gridDiv: Element) =>
+        Array.from(
+            gridDiv.querySelectorAll(
+                '.ag-header-cell.ag-calculated-column-highlighted, .ag-floating-filter.ag-calculated-column-highlighted'
+            ),
+            (cell) =>
+                `${cell.getAttribute('col-id')}:${cell.classList.contains('ag-floating-filter') ? 'floating filter' : 'header'}`
+        );
+    const columnHeaderCells = (gridDiv: Element) =>
+        Array.from(gridDiv.querySelectorAll<HTMLElement>('.ag-header-cell[col-id]:not(.ag-floating-filter)'));
+
+    test('the edit dialog highlights its column header and floating filter cells, and closing it removes both, keeping every header component', async () => {
+        const counter = { inits: 0 };
+        const api = createGrid('calculated-column-highlight-header-kept', {
+            defaultColDef: {
+                filter: 'agNumberColumnFilter',
+                floatingFilter: true,
+                headerComponent: countingHeader(counter),
+            },
+            rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
+            columnDefs: calculatedColumnDefs(),
+        });
+        const gridDiv = document.querySelector('#calculated-column-highlight-header-kept')!;
+        await waitFor(() =>
+            expect(columnHeaderCells(gridDiv).map((cell) => cell.textContent!.trim())).toEqual([
+                'Revenue',
+                'Cost',
+                'Profit',
+            ])
+        );
+        expect(counter.inits).toBe(3);
+        const before = columnHeaderCells(gridDiv);
+        counter.inits = 0;
+
+        await openEditDialogViaMenu(api, 'profit');
+        await waitFor(() =>
+            expect(highlightedHeaderCells(gridDiv)).toEqual(['profit:header', 'profit:floating filter'])
+        );
+        expect({ inits: counter.inits, kept: columnHeaderCells(gridDiv).map((cell, i) => cell === before[i]) }).toEqual(
+            { inits: 0, kept: [true, true, true] }
+        );
+
+        closeDialog();
+        await waitFor(() =>
+            expect({
+                dialogs: document.querySelectorAll('.ag-calculated-column-form').length,
+                highlighted: highlightedHeaderCells(gridDiv),
+            }).toEqual({ dialogs: 0, highlighted: [] })
+        );
+        await asyncSetTimeout(0);
+        expect({ inits: counter.inits, kept: columnHeaderCells(gridDiv).map((cell, i) => cell === before[i]) }).toEqual(
+            { inits: 0, kept: [true, true, true] }
+        );
+    });
+
+    test('closing the edit dialog after the column definitions are set again removes the highlight from the column header and floating filter cells', async () => {
+        const api = createGrid('calculated-column-highlight-after-coldefs', {
+            defaultColDef: { filter: 'agNumberColumnFilter', floatingFilter: true },
+            rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
+            columnDefs: calculatedColumnDefs(),
+        });
+        const gridDiv = document.querySelector('#calculated-column-highlight-after-coldefs')!;
+
+        await openEditDialogViaMenu(api, 'profit');
+        await waitFor(() =>
+            expect(highlightedHeaderCells(gridDiv)).toEqual(['profit:header', 'profit:floating filter'])
+        );
+
+        api.setGridOption('columnDefs', calculatedColumnDefs());
+        await asyncSetTimeout(0);
+        expect(document.querySelectorAll('.ag-calculated-column-form')).toHaveLength(1);
+
+        closeDialog();
+        await waitFor(() =>
+            expect({
+                dialogs: document.querySelectorAll('.ag-calculated-column-form').length,
+                highlighted: highlightedHeaderCells(gridDiv),
+            }).toEqual({ dialogs: 0, highlighted: [] })
+        );
     });
 });

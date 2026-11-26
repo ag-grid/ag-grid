@@ -158,6 +158,23 @@ describe('SSRM sort/filter refresh-scope characterisation', () => {
         `);
     });
 
+    test('reversing the sort of a group column re-requests the level it groups', async () => {
+        const requests: Request[] = [];
+        const api = gridsManager.createGrid(null, createGroupedGridOptions(requests));
+        await waitForEvent('firstDataRendered', api);
+        api.applyColumnState({ state: [{ colId: 'country', sort: 'asc' }] });
+        await waitForNoLoadingRows(api);
+        requests.length = 0;
+
+        // the same column at the same place in the sort: only its direction changes
+        api.applyColumnState({ state: [{ colId: 'country', sort: 'desc' }] });
+        await waitForNoLoadingRows(api);
+
+        expect(requests).toEqual([
+            { groupKeys: [], sort: [{ colId: 'country', sort: 'desc', type: 'default' }], filter: expect.anything() },
+        ]);
+    });
+
     test('serverSideSortAllLevels true: applying a sort re-requests all expanded levels', async () => {
         const requests: Request[] = [];
         const api = gridsManager.createGrid(

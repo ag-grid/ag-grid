@@ -1,9 +1,9 @@
 /*
- * Issue: an Angular `innerHeaderComponent` never has its `refresh` method called when the column
- * definitions change, so it keeps showing the old header name. The default header calls
+ * Issue: an Angular `innerHeaderComponent` never had its `refresh` method called when the column
+ * definitions changed, so it kept showing the old header name. The default header called
  * `innerHeaderComponent.refresh?.(params)`, but the Angular component wrapper only proxies the
  * "optional methods" listed for the component type, and `innerHeaderComponent` (and
- * `innerHeaderGroupComponent`) list none, unlike `headerComponent` which lists `refresh`.
+ * `innerHeaderGroupComponent`) listed none, unlike `headerComponent`, which lists `refresh`.
  *
  * Setup: a column with `headerComponentParams.innerHeaderComponent` set to an Angular component
  * implementing `IInnerHeaderAngularComp`, plus a minimal header `template` (see below). The host's
@@ -82,9 +82,7 @@ class TestHostComponent {
     columnDefs: ColDef[] = columnDefs('A', 'B');
 }
 
-// A minimal header template. We need to supply this because of a separate bug
-// default-header-inner-header-component-not-refreshed.test.ts where not supplying a template causes
-// the component to always rebuild and never refresh.
+// A minimal header template, so the header holds only the inner header component and the menu.
 const template = `<div><span data-ref="eMenu"></span><span data-ref="eText"></span></div>`;
 
 function columnDefs(ngHeaderName: string, jsHeaderName: string): ColDef[] {
@@ -109,8 +107,7 @@ async function waitFor(fixture: ComponentFixture<unknown>, condition: () => bool
     }
 }
 
-// TODO: disabled due to AG-19211 - re-enable once fixed
-xdescribe('innerHeaderComponent refresh', () => {
+describe('innerHeaderComponent refresh', () => {
     let fixture: ComponentFixture<TestHostComponent>;
     const text = (selector: string) => fixture.nativeElement.querySelector(selector)?.textContent;
 

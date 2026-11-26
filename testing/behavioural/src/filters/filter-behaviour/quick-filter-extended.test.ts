@@ -9,7 +9,7 @@ import {
     uninstallFilterLayoutMock,
 } from 'ag-test-utils';
 
-import type { GetQuickFilterTextParams, GridApi } from 'ag-grid-community';
+import type { ColDef, GetQuickFilterTextParams, GridApi } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     QuickFilterModule,
@@ -17,7 +17,7 @@ import {
     enableDevValidations,
     setupAgTestIds,
 } from 'ag-grid-community';
-import { PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
+import { PivotModule, RowGroupingModule, TreeDataModule } from 'ag-grid-enterprise';
 
 interface Animal {
     name: string;
@@ -424,5 +424,242 @@ describe('Quick Filter — applyQuickFilterBeforePivotOrAgg', () => {
         await new GridRows(api, 'default-mode does not match raw leaf text').check(`
             ROOT id:ROOT_NODE_ID pivot_sport_Gymnastics_gold:7 pivot_sport_Swimming_gold:2
         `);
+    });
+
+    test('with a quick filter set, each pivot change refreshes the rows once', async () => {
+        const columnDefs: ColDef[] = [
+            { field: 'country', rowGroup: true },
+            { field: 'year', pivot: true },
+            { field: 'sport' },
+            { field: 'gold', aggFunc: 'sum' },
+            { field: 'silver' },
+        ];
+        const api = gridsManager.createGrid('grid', {
+            columnDefs,
+            rowData: [
+                { country: 'USA', year: '2020', sport: 'Golf', gold: 1, silver: 2 },
+                { country: 'USA', year: '2021', sport: 'Tennis', gold: 3, silver: 1 },
+                { country: 'France', year: '2020', sport: 'Tennis', gold: 2, silver: 4 },
+                { country: 'France', year: '2021', sport: 'Golf', gold: 5, silver: 3 },
+            ],
+            quickFilterText: 'usa',
+        });
+        await asyncSetTimeout(0);
+
+        const events: string[] = [];
+        api.addEventListener('filterChanged', () => events.push('filterChanged'));
+        api.addEventListener('modelUpdated', () => events.push('modelUpdated'));
+
+        const displayedGroups = () => {
+            const keys: string[] = [];
+            api.forEachNodeAfterFilter((node) => {
+                if (node.group) {
+                    keys.push(node.key!);
+                }
+            });
+            return keys;
+        };
+        const pivotColIds = () => api.getPivotResultColumns()?.map((col) => col.getColId()) ?? [];
+
+        const step = async (action: () => void) => {
+            const before = pivotColIds();
+            events.length = 0;
+            action();
+            await asyncSetTimeout(0);
+            await asyncSetTimeout(0);
+            const after = pivotColIds();
+            return { changed: after.join() !== before.join(), events: [...events], groups: displayedGroups() };
+        };
+
+        const sportPivotDefs: ColDef[] = [
+            { field: 'country', rowGroup: true },
+            { field: 'year', pivot: false },
+            { field: 'sport', pivot: true },
+            { field: 'gold', aggFunc: 'sum' },
+            { field: 'silver' },
+        ];
+
+        const results = {
+            pivotMode: await step(() => api.setGridOption('pivotMode', true)),
+            pivotColumnAdded: await step(() => api.applyColumnState({ state: [{ colId: 'sport', pivot: true }] })),
+            valueColumnAdded: await step(() => api.applyColumnState({ state: [{ colId: 'silver', aggFunc: 'sum' }] })),
+            columnDefsReplaced: await step(() => api.setGridOption('columnDefs', sportPivotDefs)),
+        };
+
+        const oneRefresh = { changed: true, events: ['modelUpdated'], groups: ['USA'] };
+        // a changed pivot column re-runs the filters over the new pivot result columns
+        const oneRefilter = { changed: true, events: ['filterChanged', 'modelUpdated'], groups: ['USA'] };
+        expect(results).toEqual({
+            pivotMode: oneRefresh,
+            pivotColumnAdded: oneRefilter,
+            valueColumnAdded: oneRefresh,
+            columnDefsReplaced: oneRefilter,
+        });
+
+        // positive control: a changed quick filter text raises filterChanged, then modelUpdated
+        events.length = 0;
+        api.setGridOption('quickFilterText', 'france');
+        await asyncSetTimeout(0);
+        await asyncSetTimeout(0);
+        expect({ events: [...events], groups: displayedGroups() }).toEqual({
+            events: ['filterChanged', 'modelUpdated'],
+            groups: ['France'],
+        });
+    });
+
+    test('in pivot mode a pivot result column hidden then shown through column state: the rows follow, one modelUpdated each', async () => {
+        const api = gridsManager.createGrid('grid', {
+            columnDefs: [
+                { field: 'country', rowGroup: true },
+                { field: 'year', pivot: true },
+                { field: 'gold', aggFunc: 'sum' },
+            ],
+            pivotMode: true,
+            rowData: [
+                { country: 'USA', year: '2020', gold: 1 },
+                { country: 'USA', year: '2021', gold: 2 },
+                { country: 'France', year: '2020', gold: 3 },
+                { country: 'France', year: '2021', gold: 7 },
+            ],
+            quickFilterText: '7',
+        });
+        await asyncSetTimeout(0);
+
+        const events: string[] = [];
+        api.addEventListener('filterChanged', () => events.push('filterChanged'));
+        api.addEventListener('modelUpdated', () => events.push('modelUpdated'));
+
+        const displayedGroups = () => {
+            const keys: string[] = [];
+            api.forEachNodeAfterFilter((node) => {
+                if (node.group) {
+                    keys.push(node.key!);
+                }
+            });
+            return keys;
+        };
+        const ids2021 = (api.getPivotResultColumns() ?? [])
+            .map((col) => col.getColId())
+            .filter((id) => id.includes('2021'));
+        expect(ids2021).toHaveLength(1);
+        const colId = ids2021[0];
+
+        const step = async (action: () => void) => {
+            events.length = 0;
+            action();
+            await asyncSetTimeout(0);
+            await asyncSetTimeout(0);
+            return { groups: displayedGroups(), events: [...events] };
+        };
+
+        const start = displayedGroups();
+        const hidden = await step(() => api.applyColumnState({ state: [{ colId, hide: true }] }));
+        const shown = await step(() => api.applyColumnState({ state: [{ colId, hide: false }] }));
+
+        expect({ start, hidden, shown }).toEqual({
+            start: ['France'],
+            hidden: { groups: [], events: ['modelUpdated'] },
+            shown: { groups: ['France'], events: ['modelUpdated'] },
+        });
+    });
+
+    test('a column hidden then shown through column state on a grouped grid: the rows follow, one modelUpdated each', async () => {
+        const api = gridsManager.createGrid('grid', {
+            columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'sport' }, { field: 'year' }],
+            groupDefaultExpanded: -1,
+            rowData: [
+                { country: 'USA', sport: 'Golf', year: '2020' },
+                { country: 'USA', sport: 'Tennis', year: '2021' },
+                { country: 'France', sport: 'Golf', year: '2021' },
+                { country: 'France', sport: 'Tennis', year: '2020' },
+            ],
+            quickFilterText: 'golf',
+        });
+        await asyncSetTimeout(0);
+
+        const events: string[] = [];
+        api.addEventListener('filterChanged', () => events.push('filterChanged'));
+        api.addEventListener('modelUpdated', () => events.push('modelUpdated'));
+
+        const displayedLeaves = () => {
+            const leaves: string[] = [];
+            api.forEachNodeAfterFilter((node) => {
+                if (!node.group) {
+                    leaves.push(`${node.data.country} ${node.data.sport}`);
+                }
+            });
+            return leaves.sort();
+        };
+        const step = async (action: () => void) => {
+            events.length = 0;
+            action();
+            await asyncSetTimeout(0);
+            await asyncSetTimeout(0);
+            return { leaves: displayedLeaves(), events: [...events] };
+        };
+
+        expect(displayedLeaves()).toEqual(['France Golf', 'USA Golf']);
+        const hidden = await step(() => api.applyColumnState({ state: [{ colId: 'sport', hide: true }] }));
+        const shown = await step(() => api.applyColumnState({ state: [{ colId: 'sport', hide: false }] }));
+
+        expect({ hidden, shown }).toEqual({
+            hidden: { leaves: [], events: ['modelUpdated'] },
+            shown: { leaves: ['France Golf', 'USA Golf'], events: ['modelUpdated'] },
+        });
+    });
+});
+
+describe('Quick Filter — tree data group column', () => {
+    const gridsManager = new TestGridsManager({
+        modules: [ClientSideRowModelModule, QuickFilterModule, TreeDataModule],
+    });
+
+    beforeAll(() => setupAgTestIds());
+    afterEach(() => gridsManager.reset());
+
+    test('the rows follow the tree data group column going and coming back with treeDataDisplayType, one modelUpdated each', async () => {
+        const api = gridsManager.createGrid('grid', {
+            treeData: true,
+            getDataPath: (data) => data.path,
+            columnDefs: [{ field: 'value' }],
+            autoGroupColumnDef: { getQuickFilterText: () => 'deep' },
+            quickFilterText: 'deep',
+            groupDefaultExpanded: -1,
+            rowData: [
+                { path: ['x'], value: 1 },
+                { path: ['y'], value: 2 },
+            ],
+        });
+        await asyncSetTimeout(0);
+
+        const events: string[] = [];
+        api.addEventListener('filterChanged', () => events.push('filterChanged'));
+        api.addEventListener('modelUpdated', () => events.push('modelUpdated'));
+
+        const read = async (action?: () => void) => {
+            events.length = 0;
+            action?.();
+            await asyncSetTimeout(0);
+            await asyncSetTimeout(0);
+            const rows: string[] = [];
+            api.forEachNodeAfterFilter((node) => {
+                rows.push(node.data.path[0]);
+            });
+            const groupColumns = api
+                .getAllDisplayedColumns()
+                .map((col) => col.getColId())
+                .filter((id) => id.startsWith('ag-Grid-AutoColumn'));
+            return { groupColumns, rows: rows.sort(), events: [...events] };
+        };
+
+        const start = await read();
+        const custom = await read(() => api.setGridOption('treeDataDisplayType', 'custom'));
+        const auto = await read(() => api.setGridOption('treeDataDisplayType', 'auto'));
+
+        expect({ start, custom, auto }).toEqual({
+            start: { groupColumns: ['ag-Grid-AutoColumn'], rows: ['x', 'y'], events: [] },
+            custom: { groupColumns: [], rows: [], events: ['modelUpdated'] },
+            auto: { groupColumns: ['ag-Grid-AutoColumn'], rows: ['x', 'y'], events: ['modelUpdated'] },
+        });
     });
 });

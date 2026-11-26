@@ -639,14 +639,23 @@ describe('SSRM viewSubscription integration', () => {
             api.ensureIndexVisible(500, 'top');
 
             await waitFor(() => expect(recorder.subscribed.size).toBe(0));
-            await waitFor(() => expect(pending.length).toBeGreaterThan(0));
+            await waitFor(() => expect(pending.map((params) => params.request.startRow)).toEqual([400, 500]));
             await nextAnimationFrame();
-            expect(recorder.calls.slice(1)).toEqual([{ type: 'unsubscribe', ids: range(0, 5) }]);
+            expect(recorder.calls).toEqual([
+                { type: 'subscribe', ids: range(0, 5) },
+                { type: 'unsubscribe', ids: range(0, 5) },
+            ]);
 
+            // a block asked for after this point is answered at once, so none is left pending
+            defer = false;
             pending.splice(0).forEach((params) => respond(params, rows));
 
             await waitFor(() => expect(recorder.ids()).toEqual(range(500, 505)));
-            expect(recorder.calls.slice(2)).toEqual([{ type: 'subscribe', ids: range(500, 505) }]);
+            expect(recorder.calls).toEqual([
+                { type: 'subscribe', ids: range(0, 5) },
+                { type: 'unsubscribe', ids: range(0, 5) },
+                { type: 'subscribe', ids: range(500, 505) },
+            ]);
             expect(recorder.violations).toEqual([]);
         });
 

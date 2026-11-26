@@ -903,6 +903,37 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
         );
     });
 
+    test('replacing the callback from inside the callback ends on the last callback, with one validation event', async () => {
+        const passthrough: ProcessColDef = (params) => params.colDef;
+        const api = gridWithUserColumn('pcd-nested-option-change', 'u', '[a] * 2', passthrough);
+        await waitFor(() => expect(cellValue(api, 'u')).toBe(20));
+        const events: { colId: string; valid: boolean; reason?: string }[] = [];
+        api.addEventListener('calculatedColumnValidationStateChanged', (event) =>
+            events.push({ colId: event.column.getColId(), valid: event.valid, reason: event.reason })
+        );
+
+        const breaking: ProcessColDef = (params) => ({ ...params.colDef, calculatedExpression: '[missing] * 2' });
+        let calls = 0;
+        let innerCallMade = false;
+        const outer: ProcessColDef = (params) => {
+            if (++calls === 1) {
+                api.setGridOption('calculatedColumns', { processColDef: breaking });
+                innerCallMade = true;
+            }
+            return params.colDef;
+        };
+        api.setGridOption('calculatedColumns', { processColDef: outer });
+
+        await waitFor(() => expect(events).toHaveLength(1), { timeout: 1000 });
+        await asyncSetTimeout(0);
+        await asyncSetTimeout(0);
+
+        expect({ calls: calls > 0, innerCallMade }).toEqual({ calls: true, innerCallMade: true });
+        expect(api.getColumn('u')!.getColDef().calculatedExpression).toBe('[missing] * 2');
+        expect(cellValue(api, 'u')).toBe('#PARSE!');
+        expect(events).toEqual([{ colId: 'u', valid: false, reason: 'unknownReference' }]);
+    });
+
     test('an unchanged restricted expression can still be applied when the callback rewrites it', async () => {
         const changed = vi.fn();
         const api = createGrid('pcd-restricted-unchanged', {

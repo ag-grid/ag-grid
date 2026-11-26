@@ -1,3 +1,4 @@
+import { waitFor } from '@testing-library/dom';
 import { TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import type { ColDef, ColGroupDef, GridApi } from 'ag-grid-community';
@@ -34,6 +35,22 @@ describe('header row tabindex and exclusive overlays', () => {
         api.setGridOption('loading', true);
 
         expect(headerRowTabIndexes()).toEqual([null]);
+    });
+
+    test('header cells leave the tab order while an exclusive overlay is shown, and return after', async () => {
+        const api = gridsManager.createGrid('myGrid', { columnDefs, rowData: [{ athlete: 'a', age: 1 }] });
+        const cellTabIndexes = () =>
+            Array.from(getGridElement(api)!.querySelectorAll('.ag-header-cell')).map((el) =>
+                el.getAttribute('tabindex')
+            );
+
+        await waitFor(() => expect(cellTabIndexes()).toEqual(['-1', '-1']));
+
+        api.setGridOption('loading', true);
+        await waitFor(() => expect(cellTabIndexes()).toEqual([null, null]));
+
+        api.setGridOption('loading', false);
+        await waitFor(() => expect(cellTabIndexes()).toEqual(['-1', '-1']));
     });
 
     test('suppressHeaderFocus keeps header rows out of the tab order', () => {

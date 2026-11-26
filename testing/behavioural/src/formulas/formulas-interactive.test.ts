@@ -1169,6 +1169,75 @@ describe('ag-grid formulas interactive workflows', () => {
         `);
     });
 
+    test('column headers show their formula reference only while a cell of a formula column is being edited', async () => {
+        const api = await createGrid('header-references', {
+            columnDefs: [{ field: 'a' }, { field: 'b', allowFormula: false }, { field: 'c' }],
+            rowData: [{ id: 'r0', a: 'x', b: 'y', c: 'z' }],
+        });
+        const shownReferences = () =>
+            Array.from(
+                getGridElement(api)!.querySelectorAll('.ag-header-cell[col-id] .ag-header-col-ref:not(.ag-hidden)'),
+                (ref) => ref.closest('.ag-header-cell')!.getAttribute('col-id')
+            );
+        const flush = async () => {
+            await asyncSetTimeout(0);
+            await asyncSetTimeout(0);
+        };
+
+        expect(shownReferences()).toEqual([]);
+
+        api.startEditingCell({ rowIndex: 0, colKey: 'a' });
+        await waitFor(() => expect(shownReferences()).toEqual(['a', 'b', 'c']), { timeout: 1000 });
+
+        api.stopEditing();
+        await waitFor(() => expect(shownReferences()).toEqual([]), { timeout: 1000 });
+
+        api.startEditingCell({ rowIndex: 0, colKey: 'b' });
+        await waitFor(() => expect(api.getEditingCells().map((cell) => cell.colId)).toEqual(['b']), {
+            timeout: 1000,
+        });
+        await flush();
+        expect(shownReferences()).toEqual([]);
+        api.stopEditing();
+    });
+
+    test('column headers appearing while a formula cell is being edited show their reference at once, and hide it when editing stops', async () => {
+        const api = await createGrid('header-references-appearing', {
+            columnDefs: [{ field: 'a' }, { field: 'h', hide: true }, { field: 'b' }, { field: 'c' }],
+            rowData: [{ id: 'r0', a: 'x', h: 'w', b: 'y', c: 'z' }],
+        });
+        const shownReferences = () =>
+            Array.from(
+                getGridElement(api)!.querySelectorAll('.ag-header-cell[col-id] .ag-header-col-ref:not(.ag-hidden)'),
+                (ref) => ref.closest('.ag-header-cell')!.getAttribute('col-id')
+            );
+        const editingColIds = () => api.getEditingCells().map((cell) => cell.colId);
+
+        api.startEditingCell({ rowIndex: 0, colKey: 'a' });
+        await waitFor(() => expect(shownReferences()).toEqual(['a', 'b', 'c']), { timeout: 1000 });
+
+        api.setColumnsVisible(['h'], true);
+        await waitFor(() => expect(shownReferences()).toEqual(['a', 'h', 'b', 'c']), { timeout: 1000 });
+        expect(editingColIds()).toEqual(['a']);
+
+        api.setGridOption('columnDefs', [
+            { field: 'a' },
+            { field: 'h', hide: false },
+            { field: 'b' },
+            { field: 'c' },
+            { field: 'd' },
+        ]);
+        await waitFor(() => expect(shownReferences()).toEqual(['a', 'h', 'b', 'c', 'd']), { timeout: 1000 });
+        expect(editingColIds()).toEqual(['a']);
+
+        api.stopEditing();
+        await waitFor(() => expect(shownReferences()).toEqual([]), { timeout: 1000 });
+        const headerColIds = Array.from(getGridElement(api)!.querySelectorAll('.ag-header-cell[col-id]'), (header) =>
+            header.getAttribute('col-id')
+        );
+        expect(headerColIds).toEqual(['ag-Grid-RowNumbersColumn', 'a', 'h', 'b', 'c', 'd']);
+    });
+
     // Inside a shadow root the page's focused element is the host, never the editor, so focus is read through the grid's root.
     test('typing a function name in a formula cell of a grid inside a shadow root suggests the matching functions', async () => {
         const host = document.body.appendChild(document.createElement('div'));

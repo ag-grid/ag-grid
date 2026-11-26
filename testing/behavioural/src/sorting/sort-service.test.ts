@@ -6,8 +6,8 @@
 import { waitFor } from '@testing-library/dom';
 import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
-import type { Column, GridApi, SortModelItem } from 'ag-grid-community';
-import { ClientSideRowModelModule } from 'ag-grid-community';
+import type { Column, GridApi, GridOptions, SortModelItem } from 'ag-grid-community';
+import { ClientSideRowModelModule, GridStateModule } from 'ag-grid-community';
 import { ColumnMenuModule, PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
 
 describe('SortService', () => {
@@ -647,6 +647,41 @@ describe('SortService', () => {
             `);
         });
 
+        test('an auto group column initialSort lands on the row group column, unless the auto column has data of its own', async () => {
+            const createGrid = (autoGroupColumnDef: GridOptions['autoGroupColumnDef']) =>
+                gridMgr.createGridAndWait('g', {
+                    columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'athlete' }],
+                    autoGroupColumnDef,
+                    rowData: [
+                        { country: 'B', athlete: 'x' },
+                        { country: 'A', athlete: 'y' },
+                        { country: 'C', athlete: 'z' },
+                    ],
+                });
+            const sortOf = (api: GridApi, colId: string) =>
+                api.getColumnState().find((state) => state.colId === colId)?.sort ?? null;
+            const groupKeys = (api: GridApi) => {
+                const keys: (string | null | undefined)[] = [];
+                for (let i = 0; i < api.getDisplayedRowCount(); ++i) {
+                    keys.push(api.getDisplayedRowAtIndex(i)?.key);
+                }
+                return keys;
+            };
+
+            const api = await createGrid({ initialSort: 'desc' });
+            await waitFor(() =>
+                expect({
+                    country: sortOf(api, 'country'),
+                    auto: sortOf(api, 'ag-Grid-AutoColumn'),
+                    groups: groupKeys(api),
+                }).toEqual({ country: 'desc', auto: null, groups: ['C', 'B', 'A'] })
+            );
+            gridMgr.reset();
+
+            const withData = await createGrid({ field: 'athlete', initialSort: 'desc' });
+            expect(sortOf(withData, 'ag-Grid-AutoColumn')).toBe('desc');
+        });
+
         test('changing row group columns invalidates sort cache', async () => {
             const api = gridMgr.createGrid('g', {
                 columnDefs: [
@@ -946,14 +981,18 @@ describe('SortService', () => {
             expect(getSortModel(api)).toEqual([{ colId: 'b', sort: 'desc' }]);
         });
 
-        test('applyColumnState setting a sort throws the error of a column comparator that throws sorting the rows', async () => {
+        test('after a comparator threw sorting the rows for an applyColumnState, the next call shows the sort in the header', async () => {
+            let failing = true;
             const api = gridMgr.createGrid('g', {
                 columnDefs: [
                     {
                         colId: 'a',
                         field: 'a',
-                        comparator: () => {
-                            throw new Error('comparator failed on purpose');
+                        comparator: (x: string, y: string) => {
+                            if (failing) {
+                                throw new Error('comparator failed on purpose');
+                            }
+                            return x.localeCompare(y);
                         },
                     },
                     { colId: 'b', field: 'b' },
@@ -966,7 +1005,21 @@ describe('SortService', () => {
             expect(() => api.applyColumnState({ state: [{ colId: 'a', sort: 'asc' }] })).toThrow(
                 'comparator failed on purpose'
             );
+            failing = false;
+            api.setGridOption('rowData', [...rowData]);
             await asyncSetTimeout(0);
+
+            expect({
+                ariaSort: header.getAttribute('aria-sort'),
+                visibleSortIcons: Array.from(header.querySelectorAll<HTMLElement>('.ag-sort-indicator-icon'))
+                    .filter((el) => !el.classList.contains('ag-hidden'))
+                    .map((el) => el.className),
+                sortModel: getSortModel(api),
+            }).toEqual({
+                ariaSort: 'ascending',
+                visibleSortIcons: ['ag-sort-indicator-icon ag-sort-ascending-icon'],
+                sortModel: [{ colId: 'a', sort: 'asc' }],
+            });
         });
 
         test('a comparator throwing in a sort applied with a column hidden throws to the caller, and the next call tells the column it was hidden once the layout is done', async () => {
@@ -1141,6 +1194,37 @@ describe('SortService', () => {
                 ├── b "B" width:200
                 └── c "C" width:200 sort:asc sortIndex:0
             `);
+        });
+    });
+
+    describe('sorted columns without a sort index', () => {
+        test('columns sorted without a sort index are ordered by their displayed order, after a column state reorders them too', () => {
+            const api = gridMgr.createGrid('g', {
+                columnDefs: [
+                    { field: 'a', sort: 'asc' },
+                    { field: 'b', sort: 'asc' },
+                ],
+                rowData: [
+                    { id: 'a1b2', a: 1, b: 2 },
+                    { id: 'a2b1', a: 2, b: 1 },
+                    { id: 'a1b1', a: 1, b: 1 },
+                    { id: 'a2b2', a: 2, b: 2 },
+                ],
+                getRowId: (p) => p.data.id,
+            });
+            const read = () => {
+                const rowIds: string[] = [];
+                api.forEachNodeAfterFilterAndSort((node) => rowIds.push(node.id!));
+                return { rowIds, sortedColumns: getSortModel(api).map((item) => item.colId) };
+            };
+
+            // premise: a then b before the column state
+            expect(read()).toEqual({ rowIds: ['a1b1', 'a1b2', 'a2b1', 'a2b2'], sortedColumns: ['a', 'b'] });
+
+            api.applyColumnState({ state: [{ colId: 'b' }, { colId: 'a' }], applyOrder: true });
+            api.refreshClientSideRowModel('sort');
+
+            expect(read()).toEqual({ rowIds: ['a1b1', 'a2b1', 'a1b2', 'a2b2'], sortedColumns: ['b', 'a'] });
         });
     });
 
@@ -1494,6 +1578,48 @@ describe('SortService', () => {
                 ├── a "A" width:200 sort:asc
                 └── b "B" width:200 sort:desc
             `);
+        });
+    });
+
+    describe('sort of a custom object data type', () => {
+        test('a column sorts by the valueFormatter of its object data type, and by the new one once redefined to another', () => {
+            const dataTypeDefinitions = {
+                byName: {
+                    baseDataType: 'object' as const,
+                    extendsDataType: 'object' as const,
+                    valueFormatter: (params: { value: { name: string; age: number } | null }) =>
+                        params.value?.name ?? '',
+                },
+                byAge: {
+                    baseDataType: 'object' as const,
+                    extendsDataType: 'object' as const,
+                    valueFormatter: (params: { value: { name: string; age: number } | null }) =>
+                        String(params.value?.age ?? ''),
+                },
+            };
+            const columnDefs = (cellDataType: string) => [
+                { colId: 'o', field: 'o', cellDataType, sort: 'asc' as const },
+            ];
+            const api = gridMgr.createGrid('g', {
+                columnDefs: columnDefs('byName'),
+                dataTypeDefinitions,
+                rowData: [
+                    { id: '1', o: { name: 'b', age: 1 } },
+                    { id: '2', o: { name: 'a', age: 3 } },
+                    { id: '3', o: { name: 'c', age: 2 } },
+                ],
+                getRowId: (p) => p.data.id,
+            });
+            const rowIds = () => {
+                const ids: string[] = [];
+                api.forEachNodeAfterFilterAndSort((node) => ids.push(node.id!));
+                return ids;
+            };
+            expect(rowIds()).toEqual(['2', '1', '3']);
+
+            api.setGridOption('columnDefs', columnDefs('byAge'));
+
+            expect(rowIds()).toEqual(['1', '3', '2']);
         });
     });
 
@@ -2053,6 +2179,207 @@ describe('SortService', () => {
                 CENTER
                 └── n "N" width:200 sort:asc sortIndex:0
             `);
+        });
+    });
+
+    describe('sorted classes of the default header', () => {
+        const SORTED = /^ag-header-cell-sorted-/;
+        const classes = (...names: string[]) => names.map((n) => `ag-header-cell-sorted-${n}`).sort();
+
+        /** every rendered header's sorted classes, keyed by col-id, as one object for one full diff */
+        function sortedClasses(api: GridApi): Record<string, string[]> {
+            const root = TestGridsManager.getHTMLElement(api)!;
+            const result: Record<string, string[]> = Object.create(null);
+            for (const header of root.querySelectorAll<HTMLElement>('.ag-header-cell[col-id]')) {
+                const container = header.querySelector('.ag-cell-label-container')!;
+                result[header.getAttribute('col-id')!] = Array.from(container.classList)
+                    .filter((c) => SORTED.test(c))
+                    .sort();
+            }
+            return result;
+        }
+
+        const expectClasses = (api: GridApi, expected: Record<string, string[]>) =>
+            waitFor(() => expect(sortedClasses(api)).toEqual(expected), { timeout: 1000 });
+
+        function clickHeader(api: GridApi, colId: string): void {
+            const root = TestGridsManager.getHTMLElement(api);
+            const label = root?.querySelector<HTMLElement>(`.ag-header-cell[col-id="${colId}"] .ag-header-cell-label`);
+            label!.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+        }
+
+        const stateGridMgr = new TestGridsManager({ modules: [ClientSideRowModelModule, GridStateModule] });
+        afterEach(() => stateGridMgr.reset());
+
+        const rows = [
+            { id: '1', a: 'z', b: 3, c: 5 },
+            { id: '2', a: 'a', b: -4, c: 1 },
+            { id: '3', a: 'm', b: 1, c: 9 },
+        ];
+
+        test('the sorted classes are right at first render, from colDef sort, initialState and an absolute colDef sort', async () => {
+            const byColDef = gridMgr.createGrid('colDef', {
+                columnDefs: [
+                    { colId: 'a', field: 'a', sort: 'asc' },
+                    { colId: 'b', field: 'b', sort: { direction: 'desc', type: 'absolute' } },
+                    { colId: 'c', field: 'c' },
+                    { colId: 'd', field: 'c', sortable: false, sort: 'asc' },
+                ],
+                rowData: rows,
+            });
+            await expectClasses(byColDef, {
+                a: classes('asc'),
+                b: classes('desc', 'abs-desc'),
+                c: classes('none'),
+                d: [],
+            });
+
+            const byState = stateGridMgr.createGrid('state', {
+                columnDefs: [
+                    { colId: 'a', field: 'a' },
+                    { colId: 'b', field: 'b' },
+                ],
+                initialState: { sort: { sortModel: [{ colId: 'b', sort: 'desc' }] } },
+                rowData: rows,
+            });
+            await expectClasses(byState, { a: classes('none'), b: classes('desc') });
+        });
+
+        test('the sorted classes follow applyColumnState, header clicks, a clear, a pin of the sorted column and a combined state', async () => {
+            const api = gridMgr.createGrid('g', {
+                columnDefs: [
+                    { colId: 'a', field: 'a' },
+                    { colId: 'b', field: 'b' },
+                    { colId: 'c', field: 'c', sortable: false },
+                ],
+                rowData: rows,
+            });
+            await expectClasses(api, { a: classes('none'), b: classes('none'), c: [] });
+
+            // applyColumnState: one sorted, then two, then an absolute one
+            api.applyColumnState({ state: [{ colId: 'a', sort: 'asc' }], defaultState: { sort: null } });
+            await expectClasses(api, { a: classes('asc'), b: classes('none'), c: [] });
+
+            api.applyColumnState({
+                state: [
+                    { colId: 'a', sort: 'desc' },
+                    { colId: 'b', sort: 'asc' },
+                ],
+                defaultState: { sort: null },
+            });
+            await expectClasses(api, { a: classes('desc'), b: classes('asc'), c: [] });
+
+            api.applyColumnState({
+                state: [{ colId: 'b', sort: 'desc', sortType: 'absolute' }],
+                defaultState: { sort: null },
+            });
+            await expectClasses(api, { a: classes('none'), b: classes('desc', 'abs-desc'), c: [] });
+
+            api.applyColumnState({
+                state: [{ colId: 'b', sort: 'asc', sortType: 'absolute' }],
+                defaultState: { sort: null },
+            });
+            await expectClasses(api, { a: classes('none'), b: classes('asc', 'abs-asc'), c: [] });
+
+            // cleared by applyColumnState
+            api.applyColumnState({ defaultState: { sort: null } });
+            await expectClasses(api, { a: classes('none'), b: classes('none'), c: [] });
+
+            // header clicks cycle asc -> desc -> none; a click on the non-sortable column changes nothing
+            clickHeader(api, 'a');
+            await expectClasses(api, { a: classes('asc'), b: classes('none'), c: [] });
+            clickHeader(api, 'a');
+            await expectClasses(api, { a: classes('desc'), b: classes('none'), c: [] });
+            clickHeader(api, 'a');
+            await expectClasses(api, { a: classes('none'), b: classes('none'), c: [] });
+            clickHeader(api, 'c');
+            clickHeader(api, 'b');
+            await expectClasses(api, { a: classes('none'), b: classes('asc'), c: [] });
+
+            // a sorted column that is pinned keeps its class in the pinned header, and follows a later change there
+            api.applyColumnState({ state: [{ colId: 'b', pinned: 'left' }] });
+            await expectClasses(api, { a: classes('none'), b: classes('asc'), c: [] });
+            expect(
+                TestGridsManager.getHTMLElement(api)!.querySelector(
+                    '.ag-grid-pinned-left-cells .ag-header-cell[col-id="b"]'
+                )
+            ).not.toBeNull();
+            api.applyColumnState({ state: [{ colId: 'b', sort: 'desc' }], defaultState: { sort: null } });
+            await expectClasses(api, { a: classes('none'), b: classes('desc'), c: [] });
+            clickHeader(api, 'b');
+            await expectClasses(api, { a: classes('none'), b: classes('none'), c: [] });
+
+            // several changes in one applyColumnState: two sorted, one of them pinned (to the other side)
+            api.applyColumnState({
+                state: [
+                    { colId: 'a', sort: 'asc' },
+                    { colId: 'b', sort: 'desc', pinned: 'right' },
+                ],
+                defaultState: { sort: null, pinned: null },
+            });
+            await expectClasses(api, { a: classes('asc'), b: classes('desc'), c: [] });
+            expect(
+                TestGridsManager.getHTMLElement(api)!.querySelector(
+                    '.ag-grid-pinned-right-cells .ag-header-cell[col-id="b"]'
+                )
+            ).not.toBeNull();
+        });
+
+        test('the auto group column is mixed while its row group columns are not all sorted in its direction, across group, sort and combined changes', async () => {
+            const api = gridMgr.createGrid('g', {
+                columnDefs: [
+                    { colId: 'country', field: 'country', rowGroup: true, hide: true },
+                    { colId: 'sport', field: 'sport', hide: true },
+                    { colId: 'year', field: 'year' },
+                    { colId: 'gold', field: 'gold' },
+                ],
+                rowData: [
+                    { id: '1', country: 'IE', sport: 'x', year: 2000, gold: 1 },
+                    { id: '2', country: 'IT', sport: 'y', year: 2004, gold: 2 },
+                    { id: '3', country: 'IT', sport: 'x', year: 2008, gold: 3 },
+                ],
+                suppressGroupChangesColumnVisibility: true,
+                getRowId: (p) => p.data.id,
+            });
+            const none = classes('none');
+            const headers = (autoClasses: string[], yearClasses: string[]) => ({
+                'ag-Grid-AutoColumn': autoClasses,
+                year: yearClasses,
+                gold: none,
+            });
+            await expectClasses(api, headers(none, none));
+
+            // a sorted source column, the auto column itself unsorted
+            api.applyColumnState({ state: [{ colId: 'country', sort: 'asc' }], defaultState: { sort: null } });
+            await expectClasses(api, headers(classes('none', 'mixed'), none));
+
+            // group by both: still mixed; group by the unsorted one only: not mixed; back to the sorted one: mixed
+            api.setRowGroupColumns(['country', 'sport']);
+            await expectClasses(api, headers(classes('none', 'mixed'), none));
+            api.setRowGroupColumns(['sport']);
+            await expectClasses(api, headers(none, none));
+            api.setRowGroupColumns(['country']);
+            await expectClasses(api, headers(classes('none', 'mixed'), none));
+
+            // sort cleared: not mixed
+            api.applyColumnState({ defaultState: { sort: null } });
+            await expectClasses(api, headers(none, none));
+
+            // one applyColumnState: sort two columns, pin one, group by one more
+            api.setRowGroupColumns(['sport']);
+            api.applyColumnState({
+                state: [
+                    { colId: 'year', sort: 'desc', pinned: 'left' },
+                    { colId: 'country', sort: 'asc', rowGroup: true },
+                ],
+                defaultState: { sort: null },
+            });
+            await expectClasses(api, headers(classes('none', 'mixed'), classes('desc')));
+            expect(
+                TestGridsManager.getHTMLElement(api)!.querySelector(
+                    '.ag-grid-pinned-left-cells .ag-header-cell[col-id="year"]'
+                )
+            ).not.toBeNull();
         });
     });
 });

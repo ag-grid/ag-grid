@@ -139,7 +139,7 @@ describe('ag-grid formulas module interop', () => {
         };
 
         const withRowNumbers = ['ag-Grid-RowNumbersColumn', 'a', 'b'];
-        const sameEvents = ['gridColumnsChanged', 'virtualColumnsChanged', 'displayedColumnsChanged', 'modelUpdated'];
+        const sameEvents = ['gridColumnsChanged', 'modelUpdated', 'virtualColumnsChanged', 'displayedColumnsChanged'];
 
         expect(read()).toEqual({ value: 3, text: '3', columns: withRowNumbers, blockerWarnings: 0 });
 
@@ -261,6 +261,116 @@ describe('ag-grid formulas module interop', () => {
         await asyncSetTimeout(rowNumberRefreshBufferMs);
 
         expectBlockedWith('Value Aggregation');
+    });
+
+    test('a column state turning value aggregation on turns formulas off', async () => {
+        // Asserts the blocker warning (#295) fires; suppress only that id so any other still throws.
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [295] });
+        const api = gridsManager.createGrid('formulas-interop-agg-state', {
+            columnDefs: [{ field: 'a', allowFormula: true }, { field: 'b' }],
+            rowData: [{ a: '=1+2', b: 1 }],
+        });
+        await asyncSetTimeout(rowNumberRefreshBufferMs);
+
+        const read = () => ({
+            bAggFunc: api.getColumn('b')!.getAggFunc() ?? null,
+            value: api.getCellValue({ rowNode: api.getDisplayedRowAtIndex(0)!, colKey: 'a' }),
+            text: getGridElement(api)!.querySelector('.ag-row[row-index="0"] [col-id="a"]')!.textContent,
+            valueAggregationWarned: warnSpy!.mock.calls.some((args) =>
+                args.some(
+                    (arg) =>
+                        typeof arg === 'string' &&
+                        (arg.includes('Value Aggregation') || arg.includes(encodeURIComponent('Value Aggregation')))
+                )
+            ),
+        });
+
+        // premise: formulas are active before the column state is applied
+        expect(read()).toEqual({ bAggFunc: null, value: 3, text: '3', valueAggregationWarned: false });
+
+        api.applyColumnState({ state: [{ colId: 'b', aggFunc: 'sum' }] });
+        await waitFor(() =>
+            expect(read()).toEqual({ bAggFunc: 'sum', value: '=1+2', text: '=1+2', valueAggregationWarned: true })
+        );
+    });
+
+    test('a column state turning value aggregation off again turns formulas back on', async () => {
+        // Asserts the blocker warning (#295) fires; suppress only that id so any other still throws.
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [295] });
+        const api = gridsManager.createGrid('formulas-interop-agg-state-off', {
+            columnDefs: [{ field: 'a', allowFormula: true }, { field: 'b' }],
+            rowData: [{ a: '=1+2', b: 1 }],
+        });
+        await asyncSetTimeout(rowNumberRefreshBufferMs);
+
+        const read = () => ({
+            valueColumns: api.getValueColumns().map((col) => col.getColId()),
+            value: api.getCellValue({ rowNode: api.getDisplayedRowAtIndex(0)!, colKey: 'a' }),
+            text: getGridElement(api)!.querySelector('.ag-row[row-index="0"] [col-id="a"]')!.textContent,
+        });
+
+        api.applyColumnState({ state: [{ colId: 'b', aggFunc: 'sum' }] });
+        await waitFor(() => expect(read()).toEqual({ valueColumns: ['b'], value: '=1+2', text: '=1+2' }), {
+            timeout: 500,
+        });
+
+        api.applyColumnState({ state: [{ colId: 'b', aggFunc: null }] });
+        await waitFor(() => expect(read()).toEqual({ valueColumns: [], value: 3, text: '3' }), { timeout: 500 });
+    });
+
+    test('setValueColumns([]) turning value aggregation off turns formulas back on, after a column state or addValueColumns turned it on', async () => {
+        // Asserts the blocker warning (#295) fires; suppress only that id so any other still throws.
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [295] });
+        const api = gridsManager.createGrid('formulas-interop-agg-set-value-cols', {
+            columnDefs: [{ field: 'a', allowFormula: true }, { field: 'b' }],
+            rowData: [{ a: '=1+2', b: 1 }],
+        });
+        await asyncSetTimeout(rowNumberRefreshBufferMs);
+
+        const read = () => ({
+            valueColumns: api.getValueColumns().map((col) => col.getColId()),
+            value: api.getCellValue({ rowNode: api.getDisplayedRowAtIndex(0)!, colKey: 'a' }),
+            text: getGridElement(api)!.querySelector('.ag-row[row-index="0"] [col-id="a"]')!.textContent,
+        });
+        const formulasOff = { valueColumns: ['b'], value: '=1+2', text: '=1+2' };
+        const formulasOn = { valueColumns: [], value: 3, text: '3' };
+
+        api.applyColumnState({ state: [{ colId: 'b', aggFunc: 'sum' }] });
+        await waitFor(() => expect(read()).toEqual(formulasOff), { timeout: 500 });
+        api.setValueColumns([]);
+        await waitFor(
+            () => expect({ after: 'column state', ...read() }).toEqual({ after: 'column state', ...formulasOn }),
+            {
+                timeout: 500,
+            }
+        );
+
+        api.addValueColumns(['b']);
+        await waitFor(() => expect(read()).toEqual(formulasOff), { timeout: 500 });
+        api.setValueColumns([]);
+        await waitFor(
+            () => expect({ after: 'addValueColumns', ...read() }).toEqual({ after: 'addValueColumns', ...formulasOn }),
+            { timeout: 500 }
+        );
+    });
+
+    test('a column with enableValue keeps formulas off while no value aggregation is in use', async () => {
+        // A blocker warning (#295) may fire; suppress only that id so any other still throws.
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [295] });
+        const api = gridsManager.createGrid('formulas-interop-enable-value', {
+            columnDefs: [
+                { field: 'a', allowFormula: true },
+                { field: 'b', enableValue: true },
+            ],
+            rowData: [{ a: '=1+2', b: 1 }],
+        });
+        await asyncSetTimeout(rowNumberRefreshBufferMs);
+
+        expect({
+            valueColumns: api.getValueColumns().map((col) => col.getColId()),
+            value: api.getCellValue({ rowNode: api.getDisplayedRowAtIndex(0)!, colKey: 'a' }),
+            text: getGridElement(api)!.querySelector('.ag-row[row-index="0"] [col-id="a"]')!.textContent,
+        }).toEqual({ valueColumns: [], value: '=1+2', text: '=1+2' });
     });
 
     test('setGridOption columnDefs adds an allowFormula column → formulas activate', async () => {

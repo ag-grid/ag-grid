@@ -12,7 +12,7 @@ import {
 import { mockGridLayout } from 'ag-test-utils/polyfills/mockGridLayout';
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from 'vitest';
 
-import type { ColumnPinnedType, GridApi, GridOptions } from 'ag-grid-community';
+import type { Column, ColumnPinnedType, GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, ColumnApiModule, ColumnAutoSizeModule, ScrollApiModule } from 'ag-grid-community';
 import { ColumnMenuModule, ColumnsToolPanelModule, ContextMenuModule, SideBarModule } from 'ag-grid-enterprise';
 
@@ -124,6 +124,51 @@ describe('Pinned columns wider than the viewport', () => {
                 pinned: ['a:left', 'b:', 'c:left', 'd:'],
                 ownEventsBeforeViewportEvents: true,
                 viewportEvents: [{ colIds: ['b'], pinned: null, source: 'viewportSizeFeature' }],
+            },
+        });
+    });
+
+    // 3 x 300px pinned left in the 600px grid overflow the 550px room by 350px: `a` and `b` are offered
+    test('processUnpinnedColumns is asked again while the pinned columns it left still overflow, until it unpins nothing', async () => {
+        const run = async (answer: (columns: Column[], api: GridApi) => Column[]) => {
+            const calls: string[][] = [];
+            const events: string[] = [];
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: ['a', 'b', 'c', 'd'].map((field, i) => ({
+                    field,
+                    width: 300,
+                    pinned: i < 3 ? ('left' as const) : undefined,
+                })),
+                rowData,
+                processUnpinnedColumns: ({ columns, api }) => {
+                    calls.push(columns.map((col) => col.getColId()));
+                    return answer(columns, api);
+                },
+                onColumnPinned: ({ columns, source }) => {
+                    events.push(`${columns!.map((col) => col.getColId())}:${source}`);
+                },
+            });
+            triggerResizeObservers();
+            await nextAnimationFrame();
+            await asyncSetTimeout(0);
+            const pinned = api.getColumnState().map((col) => `${col.colId}:${col.pinned ?? ''}`);
+            gridsManager.reset();
+            return { calls, events, pinned };
+        };
+
+        const unpinningTheFirst = await run((columns) => [columns[0]]);
+        const unpinningACentreColumn = await run((_columns, api) => [api.getColumn('d')!]);
+
+        expect({ unpinningTheFirst, unpinningACentreColumn }).toEqual({
+            unpinningTheFirst: {
+                calls: [['a', 'b'], ['b']],
+                events: ['a:viewportSizeFeature', 'b:viewportSizeFeature'],
+                pinned: ['a:', 'b:', 'c:left', 'd:'],
+            },
+            unpinningACentreColumn: {
+                calls: [['a', 'b']],
+                events: [],
+                pinned: ['a:left', 'b:left', 'c:left', 'd:'],
             },
         });
     });

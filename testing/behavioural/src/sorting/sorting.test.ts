@@ -2,6 +2,7 @@ import { getByTestId, waitFor } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
 import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
+import type { GridApi, GridOptions } from 'ag-grid-community';
 import {
     CellStyleModule,
     ClientSideRowModelModule,
@@ -9,7 +10,7 @@ import {
     getGridElement,
     setupAgTestIds,
 } from 'ag-grid-community';
-import { RowGroupingModule, RowGroupingPanelModule } from 'ag-grid-enterprise';
+import { RowGroupingModule, RowGroupingPanelModule, TreeDataModule } from 'ag-grid-enterprise';
 
 describe('Sorting', () => {
     const gridMgr = new TestGridsManager({
@@ -697,6 +698,176 @@ describe('Sorting', () => {
             expect(api.getColumn('sport')!.getSort()).toBe('asc');
             expect(groupCol().getSort()).toBe('asc');
         });
+    });
+
+    describe('mixed sort icon of the auto group column', () => {
+        const groupGridMgr = new TestGridsManager({
+            modules: [ClientSideRowModelModule, RowGroupingModule, TreeDataModule],
+        });
+        afterEach(() => groupGridMgr.reset());
+
+        const reversed = (valueA: string, valueB: string) => {
+            if (valueA === valueB) {
+                return 0;
+            }
+            return valueA < valueB ? 1 : -1;
+        };
+        const createGrid = (treeData: boolean, autoGroupColumnDef?: GridOptions['autoGroupColumnDef']) =>
+            groupGridMgr.createGridAndWait('mixed-icon', {
+                columnDefs: [
+                    { field: 'country', rowGroup: true, hide: true },
+                    { field: 'sport', rowGroup: true, hide: true },
+                ],
+                treeData,
+                autoGroupColumnDef,
+                getDataPath: (data) => data.path,
+                rowData: [
+                    { country: 'B', sport: 'x', path: ['B'] },
+                    { country: 'A', sport: 'y', path: ['A'] },
+                ],
+            });
+        const sortCountryAscSportDesc = (api: GridApi) =>
+            api.applyColumnState({
+                state: [
+                    { colId: 'country', sort: 'asc' },
+                    { colId: 'sport', sort: 'desc' },
+                ],
+            });
+        const mixedIcon = (api: GridApi) =>
+            TestGridsManager.getHTMLElement(api)!.querySelector(
+                '.ag-header-cell[col-id="ag-Grid-AutoColumn"] .ag-sort-mixed-icon'
+            );
+        const mixedIconShown = (api: GridApi) => {
+            const icon = mixedIcon(api);
+            return !!icon && !icon.classList.contains('ag-hidden');
+        };
+        const sortOf = (api: GridApi, colId: string) =>
+            api.getColumnState().find((state) => state.colId === colId)?.sort;
+
+        test('shows while coupled row group columns are sorted in different directions, and not once sorting is decoupled or the grid has treeData', async () => {
+            const api = await createGrid(false);
+            expect(mixedIcon(api)).not.toBeNull();
+            expect(mixedIconShown(api)).toBe(false);
+
+            sortCountryAscSportDesc(api);
+            await waitFor(() =>
+                expect({
+                    country: sortOf(api, 'country'),
+                    sport: sortOf(api, 'sport'),
+                    mixed: mixedIconShown(api),
+                }).toEqual({ country: 'asc', sport: 'desc', mixed: true })
+            );
+
+            api.setGridOption('autoGroupColumnDef', { comparator: reversed });
+            await waitFor(() => expect(mixedIconShown(api)).toBe(false));
+            expect({ country: sortOf(api, 'country'), sport: sortOf(api, 'sport') }).toEqual({
+                country: 'asc',
+                sport: 'desc',
+            });
+            groupGridMgr.reset();
+
+            const tree = await createGrid(true);
+            sortCountryAscSportDesc(tree);
+            await waitFor(() =>
+                expect({ country: sortOf(tree, 'country'), sport: sortOf(tree, 'sport') }).toEqual({
+                    country: 'asc',
+                    sport: 'desc',
+                })
+            );
+            await asyncSetTimeout(0);
+            expect(mixedIconShown(tree)).toBe(false);
+        });
+
+        test('shows once the auto group column has no custom comparator any more, coupling its sort to the row group columns again', async () => {
+            const api = await createGrid(false, { comparator: reversed });
+            expect(mixedIcon(api)).not.toBeNull();
+            expect(mixedIconShown(api)).toBe(false);
+
+            api.setGridOption('autoGroupColumnDef', {});
+            await asyncSetTimeout(0);
+            expect(mixedIcon(api)).not.toBeNull();
+            expect(mixedIconShown(api)).toBe(false);
+
+            sortCountryAscSportDesc(api);
+            await waitFor(() =>
+                expect({
+                    country: sortOf(api, 'country'),
+                    sport: sortOf(api, 'sport'),
+                    mixed: mixedIconShown(api),
+                }).toEqual({ country: 'asc', sport: 'desc', mixed: true })
+            );
+        });
+    });
+
+    describe('group order follows the autoGroupColumnDef comparator set at runtime', () => {
+        const groupGridMgr = new TestGridsManager({ modules: [ClientSideRowModelModule, RowGroupingModule] });
+        afterEach(() => groupGridMgr.reset());
+
+        const reversed = (valueA: string, valueB: string) => {
+            if (valueA === valueB) {
+                return 0;
+            }
+            return valueA < valueB ? 1 : -1;
+        };
+        const groupKeys = (api: GridApi) => {
+            const keys: (string | null | undefined)[] = [];
+            api.forEachNodeAfterFilterAndSort((node) => {
+                if (node.group) {
+                    keys.push(node.key);
+                }
+            });
+            return keys;
+        };
+
+        test.each(['groupRows', 'custom'] as const)(
+            'groupDisplayType %s: adding or removing the comparator gives the order of a grid created with that option',
+            async (groupDisplayType) => {
+                const create = (autoGroupColumnDef: GridOptions['autoGroupColumnDef']) =>
+                    groupGridMgr.createGridAndWait('group-order', {
+                        columnDefs: [
+                            { field: 'country', rowGroup: true, hide: true },
+                            ...(groupDisplayType === 'custom'
+                                ? [{ colId: 'grp', showRowGroup: 'country', cellRenderer: 'agGroupCellRenderer' }]
+                                : []),
+                            { field: 'athlete' },
+                        ],
+                        groupDisplayType,
+                        autoGroupColumnDef,
+                        rowData: [
+                            { country: 'B', athlete: 'x' },
+                            { country: 'A', athlete: 'y' },
+                            { country: 'C', athlete: 'z' },
+                        ],
+                    });
+                const sortCountryDesc = async (api: GridApi) => {
+                    api.applyColumnState({ state: [{ colId: 'country', sort: 'desc' }] });
+                    await asyncSetTimeout(0);
+                    return groupKeys(api);
+                };
+                const settled = async (api: GridApi) => {
+                    await asyncSetTimeout(0);
+                    return groupKeys(api);
+                };
+
+                const freshWithout = await sortCountryDesc(await create({}));
+                groupGridMgr.reset();
+                const freshWith = await sortCountryDesc(await create({ comparator: reversed }));
+                groupGridMgr.reset();
+
+                // country desc without a comparator is C, B, A; the reversing comparator must change it
+                expect(freshWithout).toEqual(['C', 'B', 'A']);
+                expect(freshWith).not.toEqual(freshWithout);
+
+                const api = await create({ comparator: reversed });
+                expect(await sortCountryDesc(api)).toEqual(freshWith);
+
+                api.setGridOption('autoGroupColumnDef', {});
+                expect(await settled(api)).toEqual(freshWithout);
+
+                api.setGridOption('autoGroupColumnDef', { comparator: reversed });
+                expect(await settled(api)).toEqual(freshWith);
+            }
+        );
     });
 
     test('a hidden column owning sortIndex 0 leaves the displayed sort indices valid', async () => {

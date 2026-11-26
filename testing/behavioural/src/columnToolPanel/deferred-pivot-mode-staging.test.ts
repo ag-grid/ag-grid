@@ -1,8 +1,8 @@
 import { waitFor } from '@testing-library/dom';
 import { GridColumns, GridRows, asyncSetTimeout, waitForNoLoadingRows } from 'ag-test-utils';
 
-import { DragSourceType, getGridElement } from 'ag-grid-community';
-import type { AgColumn } from 'ag-grid-community';
+import { AgColumn, DragSourceType, getGridElement } from 'ag-grid-community';
+import type { GridApi, IColumnStateUpdateStrategy } from 'ag-grid-community';
 
 import {
     addPrimaryColumnBackToRowGroups,
@@ -437,7 +437,271 @@ describe('deferred column tool panel pivot mode - staging changes and committing
         });
     });
 
-    test('a dragged-in row group and a column hide stay staged, the grid telling its listeners nothing until Apply', async () => {
+    test('turning pivot mode off raises the pivot change before the pivot mode change in the immediate panel, as in the deferred one', async () => {
+        /** The ordered pivot events of switching pivot mode off from the panel's toggle, with pivot columns set. */
+        async function pivotEventsOfTurningPivotModeOff(
+            panel: { gridApi: GridApi; toolPanel: any },
+            deferred: boolean
+        ): Promise<string[]> {
+            const { gridApi, toolPanel } = panel;
+            const toolPanelGui: HTMLElement = toolPanel.getGui();
+            expect({
+                pivotMode: gridApi.isPivotMode(),
+                pivots: gridApi.getPivotColumns().map((c) => c.getColId()),
+            }).toEqual({ pivotMode: true, pivots: ['year'] });
+
+            const raised: string[] = [];
+            for (const type of ['columnPivotChanged', 'columnMoved', 'columnPivotModeChanged'] as const) {
+                gridApi.addEventListener(type, () => {
+                    raised.push(type);
+                });
+            }
+            // The toggle carries its test id on a debounce, after the panel is up.
+            const toggle = await waitFor(() => getPivotModeToggle(toolPanelGui), { timeout: 500 });
+            toggle.click();
+            if (deferred) {
+                // Staged only: the grid has told its listeners nothing yet.
+                expect({ raised, pivotMode: gridApi.isPivotMode() }).toEqual({ raised: [], pivotMode: true });
+                getApplyButton(toolPanelGui).click();
+            }
+
+            await waitFor(() => expect(raised).toContain('columnPivotModeChanged'), { timeout: 500 });
+            // eslint-disable-next-line no-restricted-syntax -- waits a macrotask for any further event to arrive; polling would pass on the first one
+            await asyncSetTimeout(1);
+            expect(gridApi.isPivotMode()).toBe(false);
+            return raised;
+        }
+
+        const deferredPanel = await createDeferredNonPivotGrid();
+        deferredPanel.gridApi.setGridOption('pivotMode', true);
+        await waitFor(() => expect(deferredPanel.gridApi.isPivotMode()).toBe(true), { timeout: 500 });
+        const deferredEvents = await pivotEventsOfTurningPivotModeOff(deferredPanel, true);
+        gridMgr.reset();
+
+        const immediateEvents = await pivotEventsOfTurningPivotModeOff(await createNonDeferredPivotModeGrid(), false);
+
+        // The deferred apply's order is the one the sibling test above pins; the immediate toggle must give the same.
+        expect({
+            deferredEvents,
+            immediateEqualsDeferred: immediateEvents.join() === deferredEvents.join(),
+            immediatePivotChangedFirst:
+                immediateEvents.indexOf('columnPivotChanged') < immediateEvents.indexOf('columnPivotModeChanged'),
+            immediateEvents,
+        }).toEqual({
+            deferredEvents: ['columnPivotChanged', 'columnMoved', 'columnPivotModeChanged'],
+            immediateEqualsDeferred: true,
+            immediatePivotChangedFirst: true,
+            immediateEvents: ['columnPivotChanged', 'columnMoved', 'columnPivotModeChanged'],
+        });
+    });
+
+    type Marker =
+        | 'columnRowGroupChanged'
+        | 'columnValueChanged'
+        | 'columnPivotChanged'
+        | 'columnPivotModeChanged'
+        | 'columnMoved'
+        | 'sortChanged'
+        | 'columnResized'
+        | 'columnVisible';
+    type Stage = (strategy: IColumnStateUpdateStrategy, col: (colId: string) => AgColumn) => void;
+    const stagedRowGroup: Stage = (strategy, col) => strategy.setRowGroupColumns(true, [col('athlete')], 'toolPanelUi');
+    const stagedPivotMode: Stage = (strategy) => strategy.setPivotMode(true, true, 'toolPanelUi');
+    const stagedMove: Stage = (strategy, col) => strategy.moveColumns(true, [col('age')], 4, 'toolPanelUi');
+    type EndState = { rowGroups: string[]; values: string[]; pivots: string[]; pivotMode: boolean };
+    const noEnd: EndState = { rowGroups: [], values: [], pivots: [], pivotMode: false };
+
+    test.each<{
+        first: string;
+        second: string;
+        stageFirst: Stage;
+        stageSecond: Stage;
+        markers: [Marker, Marker];
+        end: Partial<EndState>;
+    }>([
+        {
+            first: 'row group',
+            second: 'pivot mode',
+            stageFirst: stagedRowGroup,
+            stageSecond: stagedPivotMode,
+            markers: ['columnRowGroupChanged', 'columnPivotModeChanged'],
+            end: { rowGroups: ['athlete'], pivotMode: true },
+        },
+        {
+            first: 'row group',
+            second: 'move',
+            stageFirst: stagedRowGroup,
+            stageSecond: stagedMove,
+            markers: ['columnRowGroupChanged', 'columnMoved'],
+            end: { rowGroups: ['athlete'] },
+        },
+        {
+            first: 'row group',
+            second: 'sort',
+            stageFirst: stagedRowGroup,
+            stageSecond: (strategy, col) => strategy.progressSortFromEvent(true, col('age'), new MouseEvent('click')),
+            markers: ['columnRowGroupChanged', 'sortChanged'],
+            end: { rowGroups: ['athlete'] },
+        },
+        {
+            first: 'row group',
+            second: 'hide',
+            stageFirst: stagedRowGroup,
+            stageSecond: (strategy, col) => strategy.setColumnsVisible(true, [col('country')], false, 'toolPanelUi'),
+            markers: ['columnRowGroupChanged', 'columnVisible'],
+            end: { rowGroups: ['athlete'] },
+        },
+        {
+            first: 'row group',
+            second: 'width',
+            stageFirst: stagedRowGroup,
+            stageSecond: (strategy, col) =>
+                strategy.applyColumnState(true, [{ colId: col('age').getColId(), width: 321 }], 'toolPanelUi'),
+            markers: ['columnRowGroupChanged', 'columnResized'],
+            end: { rowGroups: ['athlete'] },
+        },
+        {
+            first: 'value',
+            second: 'pivot mode',
+            stageFirst: (strategy, col) => strategy.setValueColumns(true, [col('gold')], 'toolPanelUi'),
+            stageSecond: stagedPivotMode,
+            markers: ['columnValueChanged', 'columnPivotModeChanged'],
+            end: { values: ['gold'], pivotMode: true },
+        },
+        {
+            first: 'pivot col',
+            second: 'pivot mode',
+            stageFirst: (strategy, col) => strategy.setPivotColumns(true, [col('year')], 'toolPanelUi'),
+            stageSecond: stagedPivotMode,
+            markers: ['columnPivotChanged', 'columnPivotModeChanged'],
+            end: { pivots: ['year'], pivotMode: true },
+        },
+        {
+            first: 'pivot mode',
+            second: 'row group',
+            stageFirst: stagedPivotMode,
+            stageSecond: stagedRowGroup,
+            markers: ['columnPivotModeChanged', 'columnRowGroupChanged'],
+            end: { rowGroups: ['athlete'], pivotMode: true },
+        },
+        {
+            first: 'move',
+            second: 'row group',
+            stageFirst: stagedMove,
+            stageSecond: stagedRowGroup,
+            markers: ['columnMoved', 'columnRowGroupChanged'],
+            end: { rowGroups: ['athlete'] },
+        },
+    ])('one Apply tells $first before $second', async ({ stageFirst, stageSecond, markers, end }) => {
+        const { gridApi, toolPanel } = await createDeferredNonPivotGrid([
+            { field: 'athlete', enableRowGroup: true, enablePivot: true },
+            { field: 'age', enableValue: true },
+            { field: 'country', enableRowGroup: true, enablePivot: true },
+            { field: 'year', enableRowGroup: true, enablePivot: true },
+            { field: 'gold', enableValue: true },
+        ]);
+        const raised: string[] = [];
+        const counts = { modelUpdated: 0, displayedColumnsChanged: 0 };
+        for (const type of markers) {
+            if (type !== 'columnVisible') {
+                gridApi.addEventListener(type, () => {
+                    raised.push(type);
+                });
+            }
+        }
+        gridApi.addEventListener('columnVisible', (event) => {
+            if (markers.includes('columnVisible') && event.columns?.some((col) => col.getColId() === 'country')) {
+                raised.push(`columnVisible ${event.columns.map((col) => col.getColId())}`);
+            }
+        });
+        gridApi.addEventListener('modelUpdated', () => {
+            ++counts.modelUpdated;
+        });
+        gridApi.addEventListener('displayedColumnsChanged', () => {
+            ++counts.displayedColumnsChanged;
+        });
+        const strategy = getUpdateStrategy(toolPanel);
+        const col = (colId: string) => {
+            const column = gridApi.getColumn(colId);
+            if (!(column instanceof AgColumn)) {
+                throw new Error(`no column ${colId}`);
+            }
+            return column;
+        };
+
+        stageFirst(strategy, col);
+        stageSecond(strategy, col);
+        // Staged only: the grid has told its listeners nothing yet.
+        expect(raised).toEqual([]);
+        commitChanges(toolPanel);
+
+        // Positive control: the listener saw this apply's last marker.
+        const last = markers[1] === 'columnVisible' ? 'columnVisible country' : markers[1];
+        await waitFor(() => expect(raised).toContain(last), { timeout: 500 });
+        // eslint-disable-next-line no-restricted-syntax -- waits a macrotask for any further (duplicate) event to arrive; polling would pass on the first event and never catch the duplicate
+        await asyncSetTimeout(1);
+
+        expect({
+            raised,
+            counts,
+            state: {
+                rowGroups: gridApi.getRowGroupColumns().map((c) => c.getColId()),
+                values: gridApi.getValueColumns().map((c) => c.getColId()),
+                pivots: gridApi.getPivotColumns().map((c) => c.getColId()),
+                pivotMode: gridApi.isPivotMode(),
+            },
+        }).toEqual({
+            raised: markers.map((m) => (m === 'columnVisible' ? 'columnVisible country' : m)),
+            counts: { modelUpdated: 1, displayedColumnsChanged: 1 },
+            state: { ...noEnd, ...end },
+        });
+    });
+
+    test('one Apply of a row group dragged in, then pivot mode switched on, raises the row group change first', async () => {
+        const { gridApi, toolPanel, toolPanelGui } = await createDeferredNonPivotGrid([
+            { field: 'athlete', enableRowGroup: true },
+            { field: 'age' },
+            { field: 'country' },
+            { field: 'gold' },
+        ]);
+        const raised: string[] = [];
+        for (const type of ['columnRowGroupChanged', 'columnPivotModeChanged'] as const) {
+            gridApi.addEventListener(type, () => {
+                raised.push(type);
+            });
+        }
+
+        await dragRenderedPrimaryColumnToRowGroups(
+            toolPanel,
+            toolPanelGui,
+            'Athlete',
+            toolPanel.rowGroupDropZonePanel.getGui()
+        );
+        await waitFor(() => expect(getDropZoneText(toolPanel.rowGroupDropZonePanel)).toContain('Athlete'), {
+            timeout: 500,
+        });
+        getPivotModeToggle(toolPanelGui).click();
+
+        // Staged only: the grid has told its listeners nothing yet.
+        expect(raised).toEqual([]);
+        getApplyButton(toolPanelGui).click();
+
+        await waitFor(() => expect(raised).toContain('columnPivotModeChanged'), { timeout: 500 });
+        // eslint-disable-next-line no-restricted-syntax -- waits a macrotask for any further (duplicate) event to arrive; polling would pass on the first event and never catch the duplicate
+        await asyncSetTimeout(1);
+
+        expect({
+            raised,
+            rowGroups: gridApi.getRowGroupColumns().map((col) => col.getColId()),
+            pivotMode: gridApi.isPivotMode(),
+        }).toEqual({
+            raised: ['columnRowGroupChanged', 'columnPivotModeChanged'],
+            rowGroups: ['athlete'],
+            pivotMode: true,
+        });
+    });
+
+    test('one Apply committing a dragged-in row group and a column hide is one column change for grid listeners', async () => {
         const { gridApi, toolPanel, toolPanelGui } = await createDeferredNonPivotGrid([
             { field: 'athlete', enableRowGroup: true },
             { field: 'age' },
@@ -474,11 +738,25 @@ describe('deferred column tool panel pivot mode - staging changes and committing
         expect(getApplyButton(toolPanelGui).disabled).toBe(false);
 
         getApplyButton(toolPanelGui).click();
-        // eslint-disable-next-line no-restricted-syntax -- lets the Apply's events arrive before the grid is torn down
+
+        // Positive control: the listener saw this apply's events.
+        await waitFor(() => expect(raised).toContain('columnRowGroupChanged'), { timeout: 500 });
+        // eslint-disable-next-line no-restricted-syntax -- waits a macrotask for any further (duplicate) event to arrive; polling would pass on the first event and never catch the duplicate
         await asyncSetTimeout(1);
+
+        // Sorted: the order between the two events is outside the contract, their count is the claim.
+        expect({
+            raised: [...raised].sort(),
+            rowGroups: gridApi.getRowGroupColumns().map((col) => col.getColId()),
+            ageVisible: gridApi.getColumn('age')!.isVisible(),
+        }).toEqual({
+            raised: ['columnRowGroupChanged', 'displayedColumnsChanged'],
+            rowGroups: ['athlete'],
+            ageVisible: false,
+        });
     });
 
-    test('a dragged-in row group and a column reordered in the list stay staged, the grid telling its listeners nothing until Apply', async () => {
+    test('one Apply committing a dragged-in row group and a column reordered in the list ends in the order the panel showed', async () => {
         const { gridApi, toolPanel, toolPanelGui } = await createDeferredNonPivotGrid([
             { field: 'athlete', enableRowGroup: true },
             { field: 'age' },
@@ -513,8 +791,52 @@ describe('deferred column tool panel pivot mode - staging changes and committing
         expect(getApplyButton(toolPanelGui).disabled).toBe(false);
 
         getApplyButton(toolPanelGui).click();
-        // eslint-disable-next-line no-restricted-syntax -- lets the Apply's events arrive before the grid is torn down
+
+        // Positive control: the listener saw this apply's event.
+        await waitFor(() => expect(raised).toContain('displayedColumnsChanged'), { timeout: 500 });
+        // eslint-disable-next-line no-restricted-syntax -- waits a macrotask for any further (duplicate) event to arrive; polling would pass on the first event and never catch the duplicate
         await asyncSetTimeout(1);
+
+        expect({
+            raised,
+            rowGroups: gridApi.getRowGroupColumns().map((col) => col.getColId()),
+            order: gridApi.getColumnState().map((state) => state.colId),
+        }).toEqual({
+            raised: ['displayedColumnsChanged'],
+            rowGroups: ['athlete'],
+            order: ['ag-Grid-AutoColumn', 'athlete', 'country', 'gold', 'age'],
+        });
+    });
+
+    test('an aggregation throwing while the commit switches pivot mode off leaves pivot mode off and the grid told of it', async () => {
+        let aggregationArmed = false;
+        const { gridApi, toolPanel } = await createDeferredNonPivotGrid([
+            { field: 'country', rowGroup: true, enableRowGroup: true, enablePivot: true },
+            { field: 'year', pivot: true, enableRowGroup: true, enablePivot: true },
+            {
+                field: 'gold',
+                enableValue: true,
+                aggFunc: (params) => {
+                    if (aggregationArmed) {
+                        throw new Error('aggregation failed');
+                    }
+                    return params.values.reduce((sum, value) => sum + value, 0);
+                },
+            },
+        ]);
+        gridApi.setGridOption('pivotMode', true);
+        await asyncSetTimeout(0);
+        expect(gridApi.isPivotMode()).toBe(true);
+        getUpdateStrategy(toolPanel).setPivotMode(true, false, 'toolPanelUi');
+        const pivotModeChanges: boolean[] = [];
+        gridApi.addEventListener('columnPivotModeChanged', () => pivotModeChanges.push(gridApi.isPivotMode()));
+
+        aggregationArmed = true;
+        expect(() => commitChanges(toolPanel)).toThrow('aggregation failed');
+        aggregationArmed = false;
+
+        expect(gridApi.isPivotMode()).toBe(false);
+        await waitFor(() => expect(pivotModeChanges).toEqual([false]), { timeout: 500 });
     });
 
     test('toggling pivot mode in deferred mode persists pivot state to grid state and restores pivot columns', async () => {

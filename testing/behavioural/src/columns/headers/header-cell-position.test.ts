@@ -1,5 +1,11 @@
 import { waitFor } from '@testing-library/dom';
-import { TestGridsManager, getRevealedElements, installFocusScroll } from 'ag-test-utils';
+import {
+    TestGridsManager,
+    asyncSetTimeout,
+    getRevealedElements,
+    installFocusScroll,
+    nextAnimationFrame,
+} from 'ag-test-utils';
 import { mockGridLayout } from 'ag-test-utils/polyfills/mockGridLayout';
 import { triggerResizeObservers } from 'ag-test-utils/polyfills/mockResizeObserver';
 import { onTestFinished } from 'vitest';
@@ -305,6 +311,133 @@ describe('header cell positions', () => {
         expect(edges()).toEqual(['a', 's']);
     });
 
+    test('header rows stack by their heights, and follow a header height option change', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ groupId: 'g', children: [{ field: 'a' }, { field: 'b' }] }],
+            defaultColDef: { filter: true, floatingFilter: true },
+            rowData: [{ a: 'x', b: 'y' }],
+            groupHeaderHeight: 30,
+            headerHeight: 40,
+            floatingFiltersHeight: 20,
+        });
+        const rows = () =>
+            Array.from(getGridElement(api)!.querySelectorAll<HTMLElement>('.ag-header > .ag-header-row')).map(
+                (row) => ({
+                    kind: (['group', 'column', 'filter'] as const).find((kind) =>
+                        row.classList.contains(`ag-header-row-${kind}`)
+                    ),
+                    top: row.style.top,
+                    height: row.style.height,
+                })
+            );
+        await waitFor(() => expect(rows().map((row) => row.kind)).toEqual(['group', 'column', 'filter']));
+        expect(rows()).toEqual([
+            { kind: 'group', top: '0px', height: '30px' },
+            { kind: 'column', top: '30px', height: '40px' },
+            { kind: 'filter', top: '70px', height: '20px' },
+        ]);
+
+        api.setGridOption('groupHeaderHeight', 50);
+        await waitFor(() =>
+            expect(rows()).toEqual([
+                { kind: 'group', top: '0px', height: '50px' },
+                { kind: 'column', top: '50px', height: '40px' },
+                { kind: 'filter', top: '90px', height: '20px' },
+            ])
+        );
+
+        api.setGridOption('headerHeight', 25);
+        await waitFor(() =>
+            expect(rows()).toEqual([
+                { kind: 'group', top: '0px', height: '50px' },
+                { kind: 'column', top: '50px', height: '25px' },
+                { kind: 'filter', top: '75px', height: '20px' },
+            ])
+        );
+    });
+
+    test('a column header with no group above it spans the group header rows, and follows a header height change', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ headerName: 'Group', children: [{ colId: 'a' }] }, { colId: 'b' }],
+            rowData: [{}],
+            headerHeight: 30,
+            groupHeaderHeight: 40,
+        });
+        const spanStyle = () => {
+            const cell = getGridElement(api)!.querySelector<HTMLElement>('.ag-header-cell[col-id="b"]')!;
+            return { height: cell.style.height, top: cell.style.top };
+        };
+        await waitFor(() => expect(spanStyle()).toEqual({ height: '70px', top: '-40px' }));
+
+        api.setGridOption('groupHeaderHeight', 50);
+
+        await waitFor(() => expect(spanStyle()).toEqual({ height: '80px', top: '-50px' }));
+    });
+
+    test('a column header with no group above it spans the group row while one is shown, through hiding, regrouping and moving', async () => {
+        const grouped = [
+            {
+                headerName: 'Group',
+                children: [
+                    { colId: 'a1', width: 100 },
+                    { colId: 'a2', width: 100 },
+                ],
+            },
+            { colId: 'b', width: 100 },
+            { colId: 'c', width: 100 },
+        ];
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: grouped,
+            rowData: [{}],
+            headerHeight: 30,
+            groupHeaderHeight: 40,
+        });
+        const spanCell = () => {
+            const cell = getGridElement(api)!.querySelector<HTMLElement>('.ag-header-cell[col-id="b"]')!;
+            return {
+                spans: cell.classList.contains('ag-header-span-height'),
+                top: cell.style.top,
+                height: cell.style.height,
+            };
+        };
+        const spanning = { spans: true, top: '-40px', height: '70px' };
+        await waitFor(() => expect(spanCell()).toEqual(spanning));
+
+        // the group row stays while its columns are hidden, so the cell still spans it
+        api.setColumnsVisible(['a1', 'a2'], false);
+        expect(api.getAllDisplayedColumns().map((col) => col.getColId())).toEqual(['b', 'c']);
+        await waitFor(() => expect(spanCell()).toEqual(spanning));
+        api.setColumnsVisible(['a1', 'a2'], true);
+
+        api.setGridOption('columnDefs', [
+            { colId: 'a1', width: 100 },
+            { colId: 'a2', width: 100 },
+            { colId: 'b', width: 100 },
+            { colId: 'c', width: 100 },
+        ]);
+        await waitFor(() => expect(spanCell()).toEqual({ spans: false, top: '0px', height: '30px' }));
+
+        api.setGridOption('columnDefs', grouped);
+        await waitFor(() => expect(spanCell()).toEqual(spanning));
+
+        api.moveColumns(['b'], 0);
+        expect(api.getColumnState().map((state) => state.colId)).toEqual(['b', 'a1', 'a2', 'c']);
+        await waitFor(() => expect(spanCell()).toEqual(spanning));
+
+        api.setGridOption('columnDefs', [
+            { headerName: 'Group', children: [{ colId: 'a1', width: 100 }] },
+            {
+                headerName: 'Other',
+                children: [
+                    { colId: 'a2', width: 100 },
+                    { colId: 'b', width: 100 },
+                ],
+            },
+            { colId: 'c', width: 100 },
+        ]);
+        await waitFor(() => expect(spanCell()).toEqual({ spans: false, top: '0px', height: '30px' }));
+    });
+
     test('an auto-height header is measured again as its column is resized', async () => {
         // the header text wraps, so the narrower its cell the taller it is
         mockGridLayout.useRealOffsetDimensions = true;
@@ -324,6 +457,30 @@ describe('header cell positions', () => {
         triggerResizeObservers(getGridElement(api)!.querySelector('.ag-header-cell-comp-wrapper')!);
 
         await waitFor(() => expect(a.getAutoHeaderHeight()).toBe(40));
+    });
+
+    test('an auto-height header is measured again after a sort that only pads its cell', async () => {
+        // application CSS pads a sorted header cell: its wrapper keeps its size, so no resize is reported
+        mockGridLayout.useRealOffsetDimensions = true;
+        mockGridLayout.elementHeightOverride = (el) =>
+            el.classList.contains('ag-header-cell-comp-wrapper') ? 40 : undefined;
+        const style = document.createElement('style');
+        style.textContent = '.ag-header-cell[aria-sort="ascending"] { padding-top: 30px; }';
+        document.head.appendChild(style);
+        onTestFinished(() => style.remove());
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ colId: 'a', autoHeaderHeight: true, wrapHeaderText: true }],
+            rowData: [{ a: 1 }],
+        });
+        const a = api.getColumn('a')!;
+        await waitFor(() => expect(a.getAutoHeaderHeight()).toBe(40));
+        // the cell's first measure, made before it was in the document, is tried again a frame later
+        await nextAnimationFrame();
+        await asyncSetTimeout(0);
+
+        api.applyColumnState({ state: [{ colId: 'a', sort: 'asc' }] });
+
+        await waitFor(() => expect(a.getAutoHeaderHeight()).toBe(70));
     });
 
     test('an auto-height header still waiting for its content is not measured once auto header height is off', async () => {
@@ -355,8 +512,92 @@ describe('header cell positions', () => {
     });
 });
 
-// TODO: disabled due to AG-19318 - re-enable once fixed
-describe.skip('header height of a server-side grid', () => {
+describe('auto-height headers of columns hidden and shown again', () => {
+    const gridsManager = new TestGridsManager({
+        modules: [ClientSideRowModelModule, ColumnApiModule, TextFilterModule],
+    });
+
+    afterEach(() => {
+        gridsManager.reset();
+        mockGridLayout.useRealOffsetDimensions = false;
+        mockGridLayout.elementHeightOverride = undefined;
+    });
+
+    /** Records every `console.error` and window `error` event until the test ends. */
+    const recordErrors = () => {
+        const errors: string[] = [];
+        const consoleError = vi.spyOn(console, 'error').mockImplementation((...args) => {
+            errors.push(`console.error: ${args.map(String).join(' ')}`);
+        });
+        const onError = (event: ErrorEvent) => errors.push(`error event: ${event.message}`);
+        window.addEventListener('error', onError);
+        onTestFinished(() => {
+            window.removeEventListener('error', onError);
+            consoleError.mockRestore();
+        });
+        return errors;
+    };
+
+    const setUp = async (colIds: string[]) => {
+        mockGridLayout.useRealOffsetDimensions = true;
+        mockGridLayout.elementHeightOverride = (el) =>
+            el.classList.contains('ag-header-cell-comp-wrapper') ? 40 : undefined;
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: colIds.map((colId) => ({ colId, autoHeaderHeight: true, filter: true })),
+            rowData: [{}],
+        });
+        await waitFor(() => expect(api.getColumn(colIds[0])!.getAutoHeaderHeight()).toBe(40));
+        return api;
+    };
+
+    const isFiltered = (api: GridApi, colId: string) =>
+        getGridElement(api)!
+            .querySelector(`.ag-header-row-column .ag-header-cell[col-id="${colId}"]`)
+            ?.classList.contains('ag-header-cell-filtered');
+
+    const filterWhileHidden = async (api: GridApi, colId: string, errors: string[]) => {
+        // An error thrown by an API call is recorded with the others, not only propagated.
+        const recorded = async (call: () => unknown) => {
+            try {
+                await call();
+            } catch (error) {
+                errors.push(`thrown: ${String(error)}`);
+            }
+        };
+
+        await recorded(() => api.setColumnsVisible([colId], false));
+        expect(isFiltered(api, colId)).toBeUndefined();
+
+        await recorded(async () => {
+            await api.setColumnFilterModel(colId, { filterType: 'text', type: 'contains', filter: 'a' });
+            api.onFilterChanged();
+        });
+        await asyncSetTimeout(0);
+        expect(errors).toEqual([]);
+
+        await recorded(() => api.setColumnsVisible([colId], true));
+        await waitFor(() => expect(isFiltered(api, colId)).toBe(true));
+        await asyncSetTimeout(0);
+        expect(errors).toEqual([]);
+    };
+
+    test('a filter changed while the only column is hidden raises no error, and its header is filtered once shown', async () => {
+        const errors = recordErrors();
+        const api = await setUp(['a']);
+
+        await filterWhileHidden(api, 'a', errors);
+    });
+
+    test('a filter changed while a second column is hidden raises no error, and its header is filtered once shown', async () => {
+        const errors = recordErrors();
+        const api = await setUp(['a', 'b']);
+
+        await filterWhileHidden(api, 'b', errors);
+        expect(isFiltered(api, 'a')).toBe(false);
+    });
+});
+
+describe('header height of a server-side grid', () => {
     const gridsManager = new TestGridsManager({ modules: [AllEnterpriseModule] });
 
     afterEach(() => gridsManager.reset());
@@ -433,5 +674,62 @@ describe.skip('header height of a server-side grid', () => {
         await waitFor(() => expect(headerRows()).toEqual(['group', 'column']), { timeout: 1000 });
         expect(header().querySelectorAll('.ag-header-row-group .ag-header-group-cell')).toHaveLength(2);
         await waitFor(() => expect(header().style.height).toBe(heightBefore), { timeout: 1000 });
+    });
+});
+
+describe('the header follows its rows and displayed columns', () => {
+    const gridsManager = new TestGridsManager({ modules: [AllEnterpriseModule] });
+
+    afterEach(() => {
+        gridsManager.reset();
+    });
+
+    test('its height follows group rows, floating filters, the advanced filter and pivot mode; its overflow class the spanning columns', () => {
+        const flat = [
+            { field: 'a', rowGroup: true },
+            { field: 'b', pivot: true },
+            { field: 'c', aggFunc: 'sum' },
+        ];
+        const grouped = [{ headerName: 'G', children: [flat[0], flat[1]] }, flat[2]];
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: flat,
+            headerHeight: 30,
+            groupHeaderHeight: 40,
+            floatingFiltersHeight: 20,
+            pivotHeaderHeight: 35,
+            pivotGroupHeaderHeight: 45,
+            rowData: [{ a: 'x', b: 'p', c: 1 }],
+        });
+        const header = getGridElement(api)!.querySelector<HTMLElement>('.ag-header')!;
+        const state = () => [header.style.height, header.classList.contains('ag-header-allow-overflow')];
+        // each row's height, plus the 1px bottom border of the header
+        expect(state()).toEqual(['31px', true]);
+
+        api.setGridOption('columnDefs', grouped);
+        expect(state()).toEqual(['71px', true]);
+
+        api.setGridOption('defaultColDef', { filter: true, floatingFilter: true });
+        expect(state()).toEqual(['91px', true]);
+
+        api.setGridOption('enableAdvancedFilter', true);
+        expect(state()).toEqual(['71px', true]);
+        api.setGridOption('enableAdvancedFilter', false);
+        expect(state()).toEqual(['91px', true]);
+
+        // the same two rows, at the pivot heights: a pivot group row above the pivot result columns
+        api.setGridOption('pivotMode', true);
+        expect(state()).toEqual(['101px', true]);
+        api.setGridOption('pivotMode', false);
+        expect(state()).toEqual(['91px', true]);
+
+        api.setGridOption('columnDefs', [
+            // no group column, which spans
+            { field: 'a', rowGroup: false, suppressSpanHeaderHeight: true },
+            { field: 'c', aggFunc: null, suppressSpanHeaderHeight: true },
+            { field: 'd', hide: true },
+        ]);
+        expect(state()).toEqual(['51px', false]);
+        api.setColumnsVisible(['d'], true);
+        expect(state()).toEqual(['51px', true]);
     });
 });

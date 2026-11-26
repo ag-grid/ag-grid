@@ -2,7 +2,7 @@ import { waitFor } from '@testing-library/dom';
 import { TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 import { vi } from 'vitest';
 
-import type { GridApi, GridOptions, Module } from 'ag-grid-community';
+import type { Column, GridApi, GridOptions, Module } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     GridStateModule,
@@ -11,6 +11,7 @@ import {
     TextEditorModule,
     TextFilterModule,
     ValidationModule,
+    getGridElement,
 } from 'ag-grid-community';
 import {
     CalculatedColumnsModule,
@@ -52,32 +53,54 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
         }
     });
 
-    test('adding a calculated column passes the auto group column as sourceColumn to processColDef for the columns added from it', async () => {
-        const holder: { firstId?: string } = {};
+    test('sourceColumn is null for a column added from the auto group column in the build that restores it with the column whose callback groups, and that column from the next build on', async () => {
+        const groupingExpression = '[a] * 2';
         const processColDef = vi.fn<ProcessColDef>((params) =>
-            params.colDef.colId === holder.firstId ? { ...params.colDef, rowGroup: false } : undefined
+            params.colDef.calculatedExpression === groupingExpression ? { ...params.colDef, rowGroup: true } : undefined
         );
-        const api = createGrid('pcd-user-grouping-kept-over-process-col-def', {
+        const api = createGrid('pcd-source-auto-group-state-order', {
             rowData: ROW_DATA,
-            columnDefs: [{ field: 'g', rowGroup: true, hide: true }, { field: 'a' }, { field: 'b' }],
+            columnDefs: [{ field: 'a' }, { field: 'b', type: 't' }],
+            columnTypes: { t: {} },
             calculatedColumns: { processColDef },
         });
+        const groupingId = await addViaDialog(api, 'a', groupingExpression);
+        api.applyColumnState({ state: [{ colId: groupingId, rowGroup: true }] });
         await waitForColumn(api, 'ag-Grid-AutoColumn');
-        const firstId = await addViaDialog(api, 'ag-Grid-AutoColumn', '[a] * 2');
-        holder.firstId = firstId;
-        const secondId = await addViaDialog(api, 'ag-Grid-AutoColumn', '[b] * 2');
-        api.setRowGroupColumns([firstId]);
-        const autoColumn = api.getColumn('ag-Grid-AutoColumn');
-        expect(autoColumn).not.toBeNull();
+        const fromGroupId = await addViaDialog(api, 'ag-Grid-AutoColumn', '[b] * 3');
+        expect(api.getRowGroupColumns().map((col) => col.getColId())).toEqual([groupingId]);
+        const restoredState = [{ colId: fromGroupId }, { colId: groupingId }];
+        api.resetColumnState();
+        await waitFor(() => expect([api.getColumn(groupingId), api.getColumn(fromGroupId)]).toEqual([null, null]));
         processColDef.mockClear();
 
-        await addViaDialog(api, 'a', '[a] + [b]');
+        api.applyColumnState({ state: restoredState, applyOrder: true });
+        await waitForColumn(api, groupingId);
+        await waitForColumn(api, fromGroupId);
+        await asyncSetTimeout(0);
 
-        const firstCalls = processColDef.mock.calls.filter(([params]) => params.colDef.colId === firstId);
-        const secondCalls = processColDef.mock.calls.filter(([params]) => params.colDef.colId === secondId);
-        for (const [params] of [...firstCalls, ...secondCalls]) {
-            expect(params.sourceColumn).toBe(autoColumn);
-        }
+        const sourcesOfCalls = () =>
+            processColDef.mock.calls
+                .map(([params]) => [params.colDef.colId, params.sourceColumn?.getColId() ?? null])
+                .sort(([first], [second]) => String(first).localeCompare(String(second)));
+        const expectedPairs = (fromGroupSource: string | null) =>
+            [
+                [fromGroupId, fromGroupSource],
+                [groupingId, 'a'],
+            ].sort(([first], [second]) => String(first).localeCompare(String(second)));
+        expect(sourcesOfCalls()).toEqual(expectedPairs(null));
+        const groupColumn = api.getColumn('ag-Grid-AutoColumn');
+        expect(groupColumn).not.toBeNull();
+        expect(api.getRowGroupColumns().map((col) => col.getColId())).toEqual([groupingId]);
+
+        processColDef.mockClear();
+        api.setGridOption('columnTypes', { t: { headerName: 'B' } });
+
+        expect(sourcesOfCalls()).toEqual(expectedPairs('ag-Grid-AutoColumn'));
+        expect(processColDef.mock.calls.find(([params]) => params.colDef.colId === fromGroupId)![0].sourceColumn).toBe(
+            groupColumn
+        );
+        expect(api.getColumn('ag-Grid-AutoColumn')).toBe(groupColumn);
     });
 
     describe('with a level the user grouped alone under a hierarchy source that is not grouped', () => {
@@ -109,7 +132,7 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
             });
         });
 
-        test('processColDef runs again for a calculated column added from the auto group column when another is added', async () => {
+        test('sourceColumn stays the auto group column for a calculated column added from it when another is added', async () => {
             const processColDef = vi.fn<ProcessColDef>();
             const api = hierarchyGrid('pcd-hierarchy-source-kept', { calculatedColumns: { processColDef } });
             await waitForColumn(api, 'ag-Grid-AutoColumn');
@@ -124,7 +147,44 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
                 autoColumn: 'ag-Grid-AutoColumn',
                 calls: true,
             });
+            for (const [params] of firstCalls) {
+                expect(params.sourceColumn).toBe(autoColumn);
+            }
         });
+    });
+
+    test('adding a calculated column keeps the grouping the user set by a column whose processColDef says rowGroup false, and sourceColumn stays the auto group column for the columns added from it', async () => {
+        const holder: { firstId?: string } = {};
+        const processColDef = vi.fn<ProcessColDef>((params) =>
+            params.colDef.colId === holder.firstId ? { ...params.colDef, rowGroup: false } : undefined
+        );
+        const api = createGrid('pcd-user-grouping-kept-over-process-col-def', {
+            rowData: ROW_DATA,
+            columnDefs: [{ field: 'g', rowGroup: true, hide: true }, { field: 'a' }, { field: 'b' }],
+            calculatedColumns: { processColDef },
+        });
+        await waitForColumn(api, 'ag-Grid-AutoColumn');
+        const firstId = await addViaDialog(api, 'ag-Grid-AutoColumn', '[a] * 2');
+        holder.firstId = firstId;
+        const secondId = await addViaDialog(api, 'ag-Grid-AutoColumn', '[b] * 2');
+        api.setRowGroupColumns([firstId]);
+        const autoColumn = api.getColumn('ag-Grid-AutoColumn');
+        expect(autoColumn).not.toBeNull();
+        processColDef.mockClear();
+
+        await addViaDialog(api, 'a', '[a] + [b]');
+
+        const firstCalls = processColDef.mock.calls.filter(([params]) => params.colDef.colId === firstId);
+        const secondCalls = processColDef.mock.calls.filter(([params]) => params.colDef.colId === secondId);
+        expect({
+            grouped: api.getRowGroupColumns().map((col) => col.getColId()),
+            autoColumnKept: api.getColumn('ag-Grid-AutoColumn') === autoColumn,
+            firstCalled: firstCalls.length > 0,
+            secondCalled: secondCalls.length > 0,
+        }).toEqual({ grouped: [firstId], autoColumnKept: true, firstCalled: true, secondCalled: true });
+        for (const [params] of [...firstCalls, ...secondCalls]) {
+            expect(params.sourceColumn).toBe(autoColumn);
+        }
     });
 
     test('sourceColumn is null once a column rebuild removes the grouping behind the auto group column', async () => {
@@ -180,7 +240,7 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
         expect(processColDef.mock.calls[0][0].sourceColumn).toBe(groupColumn);
     });
 
-    test('a column rebuild ungrouping only a removes the auto group column of a, keeps that of b and calls processColDef', async () => {
+    test('sourceColumn is still the auto group column of b when a column rebuild ungroups only a', async () => {
         const processColDef = vi.fn<ProcessColDef>();
         const api = createGrid('pcd-source-auto-group-other-ungrouped', {
             rowData: ROW_DATA,
@@ -203,6 +263,9 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
         expect(api.getColumn('ag-Grid-AutoColumn-a')).toBeNull();
         expect(api.getColumn('ag-Grid-AutoColumn-b')).not.toBeNull();
         expect(processColDef).toHaveBeenCalled();
+        for (const [params] of processColDef.mock.calls) {
+            expect(params.sourceColumn?.getColId()).toBe('ag-Grid-AutoColumn-b');
+        }
     });
 
     test('sourceColumn is null when a column rebuild ungroups only a and the column was added from the auto group column of a', async () => {
@@ -326,6 +389,167 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
         expect(api.getColumn(ungroupedAutoId)).toBeNull();
         expect(api.getAllGridColumns().map((col) => col.getColId())).not.toContain(ungroupedAutoId);
         expect(api.getRowGroupColumns().map((col) => col.getColId())).toEqual(['a']);
+    });
+
+    test('the group column a build creates for the callback that groups is the live group column after it and through a later regroup, and a column added from it gets it as sourceColumn from the next build on', async () => {
+        const groupingExpression = '[a] * 2';
+        let sourceOfFromGroup: Column | null | undefined;
+        const fromGroupExpression = '[b] * 3';
+        const processColDef = vi.fn<ProcessColDef>((params) => {
+            if (params.colDef.calculatedExpression === groupingExpression) {
+                return { ...params.colDef, rowGroup: true };
+            }
+            if (params.colDef.calculatedExpression === fromGroupExpression) {
+                sourceOfFromGroup = params.sourceColumn;
+            }
+            return undefined;
+        });
+        const api = createGrid('pcd-source-auto-group-made-ahead-live', {
+            rowData: ROW_DATA,
+            columnDefs: [{ field: 'a' }, { field: 'b', type: 't' }],
+            columnTypes: { t: {} },
+            calculatedColumns: { processColDef },
+        });
+        const groupingId = await addViaDialog(api, 'a', groupingExpression);
+        api.applyColumnState({ state: [{ colId: groupingId, rowGroup: true }] });
+        await waitForColumn(api, 'ag-Grid-AutoColumn');
+        const fromGroupId = await addViaDialog(api, 'ag-Grid-AutoColumn', fromGroupExpression);
+        const restoredState = [{ colId: fromGroupId }, { colId: groupingId }];
+        api.resetColumnState();
+        await waitFor(() => expect([api.getColumn(groupingId), api.getColumn(fromGroupId)]).toEqual([null, null]));
+        sourceOfFromGroup = undefined;
+
+        api.applyColumnState({ state: restoredState, applyOrder: true });
+        await waitForColumn(api, groupingId);
+        await waitForColumn(api, fromGroupId);
+        await asyncSetTimeout(0);
+
+        const groupColumn = api.getColumn('ag-Grid-AutoColumn');
+        const groupKeys = () =>
+            [0, 1].map((index) => {
+                const rowNode = api.getDisplayedRowAtIndex(index)!;
+                return api.getCellValue({ rowNode, colKey: 'ag-Grid-AutoColumn' });
+            });
+        const groupCellTexts = () =>
+            [...getGridElement(api)!.querySelectorAll('.ag-cell[col-id="ag-Grid-AutoColumn"]')].map((cell) =>
+                cell.textContent?.trim()
+            );
+        expect(groupColumn).not.toBeNull();
+        expect(sourceOfFromGroup).toBeNull();
+        expect(api.getRowGroupColumns().map((col) => col.getColId())).toEqual([groupingId]);
+        expect(api.getDisplayedCenterColumns().map((col) => col === groupColumn)).toContain(true);
+        const widthChanged = vi.fn();
+        groupColumn!.addEventListener('widthChanged', widthChanged);
+        api.setColumnWidths([{ key: 'ag-Grid-AutoColumn', newWidth: 222 }]);
+        await waitFor(() => expect(widthChanged).toHaveBeenCalled());
+        expect(groupColumn!.getActualWidth()).toBe(222);
+        await waitFor(() => expect(groupKeys()).toEqual([20, 10]));
+        await waitFor(() => expect(groupCellTexts()).toEqual(['20 (1)', '10 (1)']));
+
+        api.setRowGroupColumns([]);
+        expect(api.getColumn('ag-Grid-AutoColumn')).toBeNull();
+        api.setRowGroupColumns([groupingId]);
+        const regrouped = api.getColumn('ag-Grid-AutoColumn');
+        expect(regrouped).not.toBeNull();
+        expect(api.getDisplayedCenterColumns().map((col) => col === regrouped)).toContain(true);
+        await waitFor(() => expect(groupKeys()).toEqual([20, 10]));
+        await waitFor(() => expect(groupCellTexts()).toEqual(['20 (1)', '10 (1)']));
+
+        api.setRowGroupColumns([]);
+        expect(api.getColumn('ag-Grid-AutoColumn')).toBeNull();
+        sourceOfFromGroup = undefined;
+        api.setGridOption('columnTypes', { t: { headerName: 'B' } });
+
+        const rebuilt = api.getColumn('ag-Grid-AutoColumn');
+        expect(api.getRowGroupColumns().map((col) => col.getColId())).toEqual([groupingId]);
+        expect(rebuilt).not.toBeNull();
+        expect(sourceOfFromGroup).toBeNull();
+        await waitFor(() => expect(groupKeys()).toEqual([20, 10]));
+        await waitFor(() => expect(groupCellTexts()).toEqual(['20 (1)', '10 (1)']));
+
+        sourceOfFromGroup = undefined;
+        api.setGridOption('columnTypes', { t: { headerName: 'C' } });
+
+        expect(sourceOfFromGroup).toBe(rebuilt);
+        expect(api.getColumn('ag-Grid-AutoColumn')).toBe(rebuilt);
+    });
+
+    describe('with pivot mode and the auto group column suppressed in it', () => {
+        const pivotGrids = new TestGridsManager({
+            modules: [
+                ClientSideRowModelModule,
+                GridStateModule,
+                CalculatedColumnsModule,
+                FormulaModule,
+                ColumnMenuModule,
+                ContextMenuModule,
+                RowGroupingModule,
+                PivotModule,
+                TextEditorModule,
+                NumberEditorModule,
+                TextFilterModule,
+                NumberFilterModule,
+                ValidationModule,
+            ],
+        });
+        afterEach(() => {
+            pivotGrids.reset();
+        });
+
+        const keyOrders = [
+            { keys: 'columnTypes first', first: 'columnTypes' as const },
+            { keys: 'pivotMode first', first: 'pivotMode' as const },
+        ];
+
+        const createPivotGrid = (id: string, processColDef: ProcessColDef) =>
+            pivotGrids.createGrid(id, {
+                rowData: ROW_DATA,
+                columnDefs: [{ field: 'g', rowGroup: true, hide: true }, { field: 'a', type: 't' }, { field: 'b' }],
+                columnTypes: { t: {} },
+                pivotSuppressAutoColumn: true,
+                calculatedColumns: { processColDef },
+            });
+
+        test.each(keyOrders)(
+            'sourceColumn is null in every call when one option update switches pivot mode on and changes columnTypes, and the auto group column when the next switches it off ($keys)',
+            async (row) => {
+                const processColDef = vi.fn<ProcessColDef>();
+                const api = createPivotGrid(`pcd-source-auto-pivot-on-off-${row.first}`, processColDef);
+                await waitForColumn(api, 'ag-Grid-AutoColumn');
+                const calcId = await addViaDialog(api, 'ag-Grid-AutoColumn', '[a] * 2');
+                await asyncSetTimeout(0);
+                const switchPivotModeAndWidth = async (pivotMode: boolean, width: number) => {
+                    processColDef.mockClear();
+                    const types = { columnTypes: { t: { width } } };
+                    const mode = { pivotMode };
+                    api.updateGridOptions(row.first === 'columnTypes' ? { ...types, ...mode } : { ...mode, ...types });
+                    await asyncSetTimeout(0);
+                };
+
+                await switchPivotModeAndWidth(true, 90);
+
+                expect(api.isPivotMode()).toBe(true);
+                expect(api.getColumn('ag-Grid-AutoColumn')).toBeNull();
+                expect(api.getColumn('a')!.getActualWidth()).toBe(90);
+                expect(api.getColumn(calcId)).not.toBeNull();
+                expect(processColDef).toHaveBeenCalled();
+                for (const [params] of processColDef.mock.calls) {
+                    expect(params.sourceColumn).toBeNull();
+                }
+
+                await switchPivotModeAndWidth(false, 80);
+
+                const autoColumn = api.getColumn('ag-Grid-AutoColumn');
+                expect(api.isPivotMode()).toBe(false);
+                expect(autoColumn).not.toBeNull();
+                expect(api.getColumn('a')!.getActualWidth()).toBe(80);
+                expect(api.getColumn(calcId)).not.toBeNull();
+                expect(processColDef).toHaveBeenCalled();
+                for (const [params] of processColDef.mock.calls) {
+                    expect(params.sourceColumn).toBe(autoColumn);
+                }
+            }
+        );
     });
 
     describe('without the row grouping module', () => {
@@ -491,12 +715,66 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
             });
         }
 
+        type ProcessColDefSpy = ReturnType<typeof vi.fn<ProcessColDef>>;
+
+        function expectEveryCallGot(processColDef: ProcessColDefSpy, api: GridApi, sourceId: string) {
+            const source = api.getColumn(sourceId);
+            expect(source).not.toBeNull();
+            expect(processColDef).toHaveBeenCalled();
+            for (const [params] of processColDef.mock.calls) {
+                expect(params.sourceColumn).toBe(source);
+            }
+        }
+
+        async function addThenRebuild(api: GridApi, processColDef: ProcessColDefSpy, sourceId: string) {
+            await addViaDialog(api, sourceId, '[g]');
+            expectEveryCallGot(processColDef, api, sourceId);
+
+            processColDef.mockClear();
+            api.setGridOption('columnTypes', { t: { headerName: 'G' } });
+            expectEveryCallGot(processColDef, api, sourceId);
+        }
+
         function autoColumnIds(api: GridApi): string[] {
             return api
                 .getAllGridColumns()
                 .map((col) => col.getColId())
                 .filter((colId) => colId.startsWith('ag-Grid-AutoColumn'));
         }
+
+        test('is the hierarchy column on add and on every column rebuild', async () => {
+            const processColDef = vi.fn<ProcessColDef>();
+            const api = hierarchyGrid('pcd-source-hierarchy', processColDef);
+            await waitForColumn(api, HIERARCHY_YEAR);
+            api.setColumnsVisible([HIERARCHY_YEAR], true);
+            await waitFor(() => expect(api.getColumn(HIERARCHY_YEAR)!.isVisible()).toBe(true));
+
+            await addThenRebuild(api, processColDef, HIERARCHY_YEAR);
+        });
+
+        test('is the auto group column of a grouped hierarchy part (multipleColumns) on add and on every column rebuild', async () => {
+            const processColDef = vi.fn<ProcessColDef>();
+            const api = hierarchyGrid('pcd-source-hierarchy-auto-multiple', processColDef, {
+                groupDisplayType: 'multipleColumns',
+            });
+            await waitForColumn(api, HIERARCHY_YEAR);
+            api.setRowGroupColumns([HIERARCHY_YEAR]);
+            await waitFor(() => expect(autoColumnIds(api)).toHaveLength(1));
+
+            await addThenRebuild(api, processColDef, autoColumnIds(api)[0]);
+        });
+
+        test('is the auto group column of a grouped hierarchy part (singleColumn) on add and on every column rebuild', async () => {
+            const processColDef = vi.fn<ProcessColDef>();
+            const api = hierarchyGrid('pcd-source-hierarchy-auto-single', processColDef, {
+                groupDisplayType: 'singleColumn',
+            });
+            await waitForColumn(api, HIERARCHY_YEAR);
+            api.setRowGroupColumns([HIERARCHY_YEAR]);
+            await waitForColumn(api, 'ag-Grid-AutoColumn');
+
+            await addThenRebuild(api, processColDef, 'ag-Grid-AutoColumn');
+        });
 
         test('is null after a column rebuild removes the hierarchy level behind the auto group column (multipleColumns)', async () => {
             const processColDef = vi.fn<ProcessColDef>();
@@ -635,76 +913,5 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
         expect([...calledIds].sort()).toEqual([xId, yId].sort());
         expect(api.getColumn(xId)).not.toBeNull();
         expect(api.getColumn(yId)).not.toBeNull();
-    });
-
-    describe('with pivot mode and the auto group column suppressed in it', () => {
-        const pivotGrids = new TestGridsManager({
-            modules: [
-                ClientSideRowModelModule,
-                GridStateModule,
-                CalculatedColumnsModule,
-                FormulaModule,
-                ColumnMenuModule,
-                ContextMenuModule,
-                RowGroupingModule,
-                PivotModule,
-                TextEditorModule,
-                NumberEditorModule,
-                TextFilterModule,
-                NumberFilterModule,
-                ValidationModule,
-            ] as Module[],
-        });
-        afterEach(() => {
-            pivotGrids.reset();
-        });
-
-        const createPivotGrid = (id: string, processColDef: ProcessColDef) =>
-            pivotGrids.createGrid(id, {
-                rowData: ROW_DATA,
-                columnDefs: [{ field: 'g', rowGroup: true, hide: true }, { field: 'a', type: 't' }, { field: 'b' }],
-                columnTypes: { t: {} },
-                pivotSuppressAutoColumn: true,
-                calculatedColumns: { processColDef },
-            });
-
-        test('sourceColumn is null in every call when one option update switches pivot mode on and changes columnTypes (pivotMode first)', async () => {
-            const processColDef = vi.fn<ProcessColDef>();
-            const api = createPivotGrid(`pcd-source-auto-pivot-on-pivotMode`, processColDef);
-            await waitForColumn(api, 'ag-Grid-AutoColumn');
-            await addViaDialog(api, 'ag-Grid-AutoColumn', '[a] * 2');
-            processColDef.mockClear();
-            const types = { columnTypes: { t: { width: 90 } } };
-            const mode = { pivotMode: true };
-
-            api.updateGridOptions({ ...mode, ...types });
-
-            expect(api.isPivotMode()).toBe(true);
-            expect(processColDef).toHaveBeenCalled();
-            for (const [params] of processColDef.mock.calls) {
-                expect(params.sourceColumn).toBeNull();
-            }
-        });
-
-        test('sourceColumn is the auto group column in every call when one option update switches pivot mode off and changes columnTypes (pivotMode first)', async () => {
-            const processColDef = vi.fn<ProcessColDef>();
-            const api = createPivotGrid(`pcd-source-auto-pivot-off-pivotMode`, processColDef);
-            await waitForColumn(api, 'ag-Grid-AutoColumn');
-            await addViaDialog(api, 'ag-Grid-AutoColumn', '[a] * 2');
-            api.setGridOption('pivotMode', true);
-            processColDef.mockClear();
-            const types = { columnTypes: { t: { width: 90 } } };
-            const mode = { pivotMode: false };
-
-            api.updateGridOptions({ ...mode, ...types });
-
-            const autoColumn = api.getColumn('ag-Grid-AutoColumn');
-            expect(api.isPivotMode()).toBe(false);
-            expect(autoColumn).not.toBeNull();
-            expect(processColDef).toHaveBeenCalled();
-            for (const [params] of processColDef.mock.calls) {
-                expect(params.sourceColumn).toBe(autoColumn);
-            }
-        });
     });
 });

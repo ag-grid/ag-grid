@@ -679,7 +679,7 @@ export class GridColumnsDomValidator {
  *   (`getColDefCol`, which matches by colId and by `field`).
  * - `rowGroupCols`: the current rowGroup columns, or `null` when the SharedRowGrouping module is
  *   not registered (e.g. tree-data-only tests). `getRowGroupColumns` is part of that module.
- * - `isSortingCoupled`: mirrors `_isColumnsSortingCoupledToGroup(gos)` — false when a custom
+ * - `isSortingCoupled`: mirrors `RowNodeSorter.sortingCoupledToGroup` — false when a custom
  *   `autoGroupColumnDef.comparator` or `treeData` is configured.
  */
 interface DisplayedSortContext {
@@ -688,8 +688,8 @@ interface DisplayedSortContext {
     isSortingCoupled: boolean;
 }
 
-// Mirrors `_isColumnsSortingCoupledToGroup`. INTENTIONAL DUPLICATION (black-box check) — keep in
-// sync with the production helper, named here so drift is easier to spot in review.
+// Mirrors `RowNodeSorter.sortingCoupledToGroup`. INTENTIONAL DUPLICATION (black-box check) — keep in
+// sync with the production flag, named here so drift is easier to spot in review.
 function isCoupledSortMode(api: GridApi): boolean {
     return !api.getGridOption('autoGroupColumnDef')?.comparator && !api.getGridOption('treeData');
 }

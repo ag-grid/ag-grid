@@ -482,7 +482,7 @@ describe('Row Numbers Cell Selection', () => {
     const rowNumberCells = (api: GridApi) =>
         Array.from(getGridElement(api)!.querySelectorAll<HTMLElement>(`.ag-cell[col-id="${ROW_NUMBERS_COLUMN_ID}"]`));
 
-    test('a rowNumbers update redefining the column keeps each custom renderer, whether it adds a valueFormatter or changes the width', async () => {
+    test('a rowNumbers update redefining the column refreshes each custom renderer once, whether it adds a valueFormatter or changes the width', async () => {
         const { CountingRowNumberRenderer, inits, refreshes } = countingRowNumberRenderer();
         const [api] = await createGrid({
             columnDefs,
@@ -500,9 +500,10 @@ describe('Row Numbers Cell Selection', () => {
             valueFormatter: (params) => `#${params.value}`,
         });
         await waitFor(() => expect(rowNumberCells(api).map((cell) => cell.textContent)).toEqual(['#1', '#2', '#3']));
-        // keeping the renderer is a negative: nothing positive lands after a late re-creation to poll for
-        // eslint-disable-next-line no-restricted-syntax -- settling window to catch a late re-creation
+        // "once, not twice" is a negative: nothing positive lands after a redundant second refresh to poll for
+        // eslint-disable-next-line no-restricted-syntax -- settling window to catch a second (redundant) refresh
         await asyncSetTimeout(20);
+        expect(refreshes).toEqual([1, 1, 1]);
         expect(inits).toEqual([1, 1, 1]);
         expect(rowNumberCells(api).map((cell, i) => cell === cellsBefore[i])).toEqual([true, true, true]);
 
@@ -512,8 +513,9 @@ describe('Row Numbers Cell Selection', () => {
             width: 90,
         });
         await waitFor(() => expect(api.getColumn(ROW_NUMBERS_COLUMN_ID)!.getActualWidth()).toBe(90));
-        // eslint-disable-next-line no-restricted-syntax -- settling window to catch a late re-creation
+        // eslint-disable-next-line no-restricted-syntax -- settling window to catch a second (redundant) refresh
         await asyncSetTimeout(20);
+        expect(refreshes).toEqual([2, 2, 2]);
         expect(inits).toEqual([1, 1, 1]);
     });
 

@@ -301,6 +301,19 @@ describe('SSRM pivot (characterisation)', () => {
         `);
     });
 
+    const renameDatasource = (getRows: (params: IServerSideGetRowsParams) => void): IServerSideDatasource => ({
+        getRows: (params) => {
+            getRows(params);
+            setTimeout(() => {
+                params.success({
+                    rowData: [{ country: 'USA', '2000_gold': 1, '2004_gold': 2 }],
+                    rowCount: 1,
+                    pivotResultFields: ['2000_gold', '2004_gold'],
+                });
+            }, 0);
+        },
+    });
+
     const headerSnapshot = (api: GridApi) => ({
         dom: Array.from(
             getGridElement(api)!.querySelectorAll('.ag-header-cell-text, .ag-header-group-text'),
@@ -316,6 +329,42 @@ describe('SSRM pivot (characterisation)', () => {
         { field: 'year', pivot: true },
         gold,
     ];
+
+    test('renaming a value column with applyColumnState renames the generated pivot result headers in the same call as a grid named so from the start, with no new getRows request', async () => {
+        const getRows = vi.fn();
+        const api: GridApi = await gridsManager.createGridAndWait('ssrm', {
+            columnDefs: renameColumnDefs({ field: 'gold', aggFunc: 'sum' }),
+            pivotMode: true,
+            rowModelType: 'serverSide',
+            serverSideDatasource: renameDatasource(getRows),
+        });
+        await waitForNoLoadingRows(api);
+        expect(getRows).toHaveBeenCalledTimes(1);
+        const before = headerSnapshot(api);
+        const colsBefore = [...(api.getPivotResultColumns() ?? [])];
+        expect(before.names).toEqual(['2000_gold: Gold', '2004_gold: Gold']);
+
+        api.applyColumnState({ state: [{ colId: 'gold', headerName: 'Medals' }] });
+
+        const after = headerSnapshot(api);
+        const same = (api.getPivotResultColumns() ?? []).map((col, i) => col === colsBefore[i]);
+        await waitForNoLoadingRows(api);
+        const requests = getRows.mock.calls.length;
+        gridsManager.reset();
+
+        const controlGetRows = vi.fn();
+        const control = await gridsManager.createGridAndWait('ssrm', {
+            columnDefs: renameColumnDefs({ field: 'gold', aggFunc: 'sum', headerName: 'Medals' }),
+            pivotMode: true,
+            rowModelType: 'serverSide',
+            serverSideDatasource: renameDatasource(controlGetRows),
+        });
+        await waitForNoLoadingRows(control);
+
+        expect(after).toEqual(headerSnapshot(control));
+        expect(after.names).toEqual(['2000_gold: Medals', '2004_gold: Medals']);
+        expect({ same, requests }).toEqual({ same: [true, true], requests: 1 });
+    });
 
     test('renaming a value column leaves the headers of application-supplied pivot result columns as supplied', async () => {
         const getRows = vi.fn();

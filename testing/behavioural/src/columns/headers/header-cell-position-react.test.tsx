@@ -65,6 +65,31 @@ describe('React header cell positions', () => {
         await waitFor(() => expect(pinnedLane()).toBe(true));
     });
 
+    it('a column header with no group above it spans the group header rows, and follows a header height change', async () => {
+        const apiRef: { current?: GridApi } = {};
+        render(
+            <AgGridReact
+                rowData={[{}]}
+                columnDefs={[{ headerName: 'Group', children: [{ colId: 'a' }] }, { colId: 'b' }]}
+                headerHeight={30}
+                groupHeaderHeight={40}
+                modules={[AllCommunityModule]}
+                onGridReady={(e: GridReadyEvent) => {
+                    apiRef.current = e.api;
+                }}
+            />
+        );
+        const spanStyle = () => {
+            const cell = document.querySelector<HTMLElement>('.ag-header-cell[col-id="b"]');
+            return { height: cell?.style.height, top: cell?.style.top };
+        };
+        await waitFor(() => expect(spanStyle()).toEqual({ height: '70px', top: '-40px' }));
+
+        act(() => apiRef.current!.setGridOption('groupHeaderHeight', 50));
+
+        await waitFor(() => expect(spanStyle()).toEqual({ height: '80px', top: '-50px' }));
+    });
+
     describe('column moves within a pinned section', () => {
         const fourColumns: ColDef[] = [0, 1, 2, 3].map((i) => ({ colId: `c${i}`, field: `c${i}`, width: 100 }));
         const rowData = [{ c0: 1, c1: 2, c2: 3, c3: 4 }];
@@ -93,7 +118,7 @@ describe('React header cell positions', () => {
         const lefts = (elements: HTMLElement[]) =>
             Object.fromEntries(elements.map((el) => [el.getAttribute('col-id'), el.style.left]));
 
-        it('header cells follow their new positions when columns move within the centre section', async () => {
+        it('header cells keep their elements and DOM order when columns move within the centre section, each following its new position', async () => {
             const apiRef = mountFourColumns();
             await waitFor(() => expect(lefts(centre())).toEqual({ c0: '0px', c1: '100px', c2: '200px', c3: '300px' }));
             const before = centre();
@@ -102,10 +127,14 @@ describe('React header cell positions', () => {
             // order becomes c1, c2, c0, c3
             act(() => apiRef.current!.moveColumns(['c0'], 2));
             await waitFor(() => expect(lefts(centre())).toEqual({ c0: '200px', c1: '0px', c2: '100px', c3: '300px' }));
+            expect(ids(centre())).toEqual(['c0', 'c1', 'c2', 'c3']);
+            expect(centre().map((el, i) => el === before[i])).toEqual([true, true, true, true]);
 
             // order becomes c0, c3, c1, c2
             act(() => apiRef.current!.moveColumns(['c1', 'c2'], 2));
             await waitFor(() => expect(lefts(centre())).toEqual({ c0: '0px', c1: '200px', c2: '300px', c3: '100px' }));
+            expect(ids(centre())).toEqual(['c0', 'c1', 'c2', 'c3']);
+            expect(centre().map((el, i) => el === before[i])).toEqual([true, true, true, true]);
         });
 
         it('ensureDomOrder keeps the header cells in column order when columns move', async () => {
@@ -119,9 +148,10 @@ describe('React header cell positions', () => {
             await waitFor(() => expect(ids(centre())).toEqual(['c0', 'c3', 'c1', 'c2']));
         });
 
-        it('a column re-ordered and pinned in one call moves to the pinned section and the other header cells take their new positions', async () => {
+        it('a column re-ordered and pinned in one call moves to the pinned section while the other header cells keep their DOM order', async () => {
             const apiRef = mountFourColumns();
             await waitFor(() => expect(lefts(centre())).toEqual({ c0: '0px', c1: '100px', c2: '200px', c3: '300px' }));
+            const [c0, c1, , c3] = centre();
 
             // order becomes c2 (pinned), c3, c1, c0
             act(() => {
@@ -132,6 +162,8 @@ describe('React header cell positions', () => {
             });
             await waitFor(() => expect(ids(lane('.ag-grid-pinned-left-cells'))).toEqual(['c2']));
             await waitFor(() => expect(lefts(centre())).toEqual({ c0: '200px', c1: '100px', c3: '0px' }));
+            expect(ids(centre())).toEqual(['c0', 'c1', 'c3']);
+            expect(centre().map((el, i) => el === [c0, c1, c3][i])).toEqual([true, true, true]);
         });
     });
 });

@@ -1325,6 +1325,41 @@ describe('Cell Selection', () => {
                 expect(seen).toEqual(['expand', 'select and expand', 'select and expand', 'expand']);
             });
 
+            test('a leaf header announces column selection as the option is turned on and off', async () => {
+                const [api] = await createGrid({
+                    columnDefs: [
+                        {
+                            groupId: 'group',
+                            headerName: 'Group',
+                            children: [{ field: 'year' }, { field: 'day', columnGroupShow: 'open' }],
+                        },
+                        { field: 'sport', sortable: true },
+                    ],
+                    rowData,
+                });
+                const gridDiv = document.getElementById('myGrid')!;
+                const leafAnnouncement = async () => {
+                    api.setFocusedHeader(api.getColumnGroup('group')!);
+                    await waitFor(() => expect(getAriaAnnouncementText(gridDiv)).toContain('column group'));
+                    api.setFocusedHeader('sport');
+                    const text = await waitFor(() => {
+                        const announced = getAriaAnnouncementText(gridDiv);
+                        expect(announced).toContain('to sort');
+                        return announced;
+                    });
+                    return text.includes('toggle selection') ? 'select and sort' : 'sort';
+                };
+                const seen = [await leafAnnouncement()];
+
+                api.setGridOption('cellSelection', { enableColumnSelection: true });
+                seen.push(await leafAnnouncement());
+
+                api.setGridOption('cellSelection', true);
+                seen.push(await leafAnnouncement());
+
+                expect(seen).toEqual(['sort', 'select and sort', 'sort']);
+            });
+
             test('a group header shows it is selectable as column selection is turned on and off', async () => {
                 const [api] = await createGrid({
                     columnDefs: [{ groupId: 'group', headerName: 'Group', children: [{ field: 'sport' }] }],

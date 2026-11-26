@@ -18,6 +18,9 @@ function getScrollPos(el: Element): { top: number; left: number } {
     return pos;
 }
 
+/** The largest element size reported, where the grid's max div height probe (starting at 1,000,000px) stops. */
+const MAX_ELEMENT_SIZE = 1_999_999;
+
 export const mockGridLayout = {
     /** Same as standard default rowHeight, --ag-row-height */
     rowHeight: 42,
@@ -425,7 +428,8 @@ function init(): boolean {
                     return prop === 'clientWidth' ? Math.max(0, size - mockGridLayout.nativeScrollbarWidth) : size;
                 }
                 if (mockGridLayout.useRealOffsetDimensions) {
-                    return this.getBoundingClientRect()[axis];
+                    // capped as a browser does: the grid measures the cap once per worker, whichever mode comes first
+                    return Math.min(this.getBoundingClientRect()[axis], MAX_ELEMENT_SIZE);
                 }
                 if (isHeightProp && inVirtualList(this)) {
                     return this.getBoundingClientRect()[axis];

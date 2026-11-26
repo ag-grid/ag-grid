@@ -1,6 +1,6 @@
 import type { IServerSideDatasource, IServerSideGetRowsRequest } from 'ag-grid-community';
 
-interface IOlympicData {
+export interface IOlympicData {
     athlete: string;
     age: number;
     country: string;

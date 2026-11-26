@@ -1802,6 +1802,60 @@ describe('pivotMode=true', () => {
         expect(pivotOrder(api)).toEqual([...first].reverse());
     });
 
+    test('moveColumns ignores a value column hidden by pivot mode: getColumnState lists each column once, no columnMoved is raised, and the order is unchanged when pivot mode ends', async () => {
+        const createGrid = (id: string) =>
+            gridsManager.createGrid(id, {
+                rowData: [
+                    { a: 'x', b: 1, c: 'p' },
+                    { a: 'y', b: 2, c: 'q' },
+                ],
+                columnDefs: [
+                    { field: 'a', rowGroup: true },
+                    { field: 'b', aggFunc: 'sum' },
+                    { field: 'c', pivot: true },
+                ],
+                pivotMode: true,
+            });
+        const stateIds = (api: ReturnType<typeof createGrid>) => api.getColumnState().map((state) => state.colId);
+        const displayedIds = (api: ReturnType<typeof createGrid>) =>
+            api.getAllDisplayedColumns().map((col) => col.getColId());
+
+        const twin = createGrid('twin');
+        twin.setGridOption('pivotMode', false);
+        const twinDisplayed = displayedIds(twin);
+        gridsManager.reset();
+
+        const api = createGrid('myGrid');
+        const moved: string[] = [];
+        api.addEventListener('columnMoved', (event) =>
+            moved.push(event.columns?.map((col) => col.getColId()).join() ?? '')
+        );
+        const before = stateIds(api);
+
+        api.moveColumns(['b'], 0);
+        await asyncSetTimeout(0);
+        const afterIgnoredMove = { state: stateIds(api), moved: [...moved] };
+
+        api.setGridOption('pivotMode', false);
+        const displayedAfterPivotMode = displayedIds(api);
+
+        // positive control: a move of a real grid column in the same grid does raise columnMoved
+        api.setGridOption('pivotMode', true);
+        api.moveColumns(['pivot_c_q_b'], 0);
+        await asyncSetTimeout(0);
+
+        expect({ twinDisplayed, before, afterIgnoredMove, displayedAfterPivotMode, afterRealMove: moved }).toEqual({
+            twinDisplayed: ['ag-Grid-AutoColumn', 'a', 'b', 'c'],
+            before: ['a', 'b', 'c', 'ag-Grid-AutoColumn', 'pivot_c_p_b', 'pivot_c_q_b'],
+            afterIgnoredMove: {
+                state: ['a', 'b', 'c', 'ag-Grid-AutoColumn', 'pivot_c_p_b', 'pivot_c_q_b'],
+                moved: [],
+            },
+            displayedAfterPivotMode: twinDisplayed,
+            afterRealMove: ['pivot_c_q_b'],
+        });
+    });
+
     describe('pivot toggle preserves primary column live state', () => {
         test('runtime pinned + width on a primary column survive toggling pivotMode on then off', async () => {
             const api = gridsManager.createGrid('myGrid', {

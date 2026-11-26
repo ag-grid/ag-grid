@@ -1,8 +1,15 @@
 import { waitFor } from '@testing-library/dom';
-import { DragEventDispatcher, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
+import { userEvent } from '@testing-library/user-event';
+import { DragEventDispatcher, TestGridsManager, asyncSetTimeout, getVisibleTooltips } from 'ag-test-utils';
 
 import type { ColDef, ColGroupDef, ColumnPinnedType, GridApi, GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule, ColumnApiModule, ColumnAutoSizeModule } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    ColumnApiModule,
+    ColumnAutoSizeModule,
+    LocaleModule,
+    TooltipModule,
+} from 'ag-grid-community';
 
 /**
  * Which way a resize drag moves a header depends on the pinned section and on RTL, and the group and
@@ -1701,6 +1708,7 @@ describe('group header resize handle', () => {
 
     afterEach(() => {
         gridsManager.reset();
+        vi.useRealTimers();
     });
 
     const groupDefs = (resizable: boolean[]): ColGroupDef[] => [
@@ -1744,8 +1752,7 @@ describe('group header resize handle', () => {
         await asyncSetTimeout(0);
     };
 
-    // TODO: disabled due to AG-19353 - re-enable once fixed
-    test.skip('a group shows its resize handle exactly while a columnDefs update leaves a leaf resizable, as in a new grid', async () => {
+    test('a group shows its resize handle exactly while a columnDefs update leaves a leaf resizable, as in a new grid', async () => {
         const api = createGrid([false, false]);
         const notResizable = createGrid([false, false], 'notResizable');
         const resizable = createGrid([true, true], 'resizable');
@@ -1769,8 +1776,7 @@ describe('group header resize handle', () => {
         });
     });
 
-    // TODO: disabled due to AG-19353 - re-enable once fixed
-    test.skip('dragging the handle of a group made resizable by a columnDefs update resizes its leaves', async () => {
+    test('dragging the handle of a group made resizable by a columnDefs update resizes its leaves', async () => {
         const api = createGrid([false, false]);
         api.setGridOption('columnDefs', groupDefs([true, true]));
         await asyncSetTimeout(0);
@@ -1801,4 +1807,144 @@ describe('group header resize handle', () => {
 
         expect(leafWidths(api, 2)).toEqual([100, 100]);
     });
+
+    test('hiding the only resizable leaf of a group hides its resize handle, and showing it again shows it', async () => {
+        const api = createGrid([true, false]);
+        expect(handleShown(api)).toBe(true);
+
+        api.setColumnsVisible(['c0'], false);
+        await asyncSetTimeout(0);
+        const afterHide = handleShown(api);
+
+        api.setColumnsVisible(['c0'], true);
+        await asyncSetTimeout(0);
+        const afterShow = handleShown(api);
+
+        expect({ afterHide, afterShow }).toEqual({ afterHide: false, afterShow: true });
+    });
+
+    test('the resize tooltip of a group goes when its handle hides', async () => {
+        const api = gridsManager.createGrid(
+            'groupHandleTooltipHides',
+            { columnDefs: groupDefs([false, true]), rowData: [{}], tooltipShowDelay: 0, tooltipSwitchShowDelay: 0 },
+            { modules: [ClientSideRowModelModule, ColumnApiModule, TooltipModule] }
+        );
+        expect(handleShown(api)).toBe(true);
+        const bar = handle(api)!;
+        vi.useFakeTimers();
+        const user = userEvent.setup({ delay: null });
+        await user.hover(bar.closest<HTMLElement>('.ag-header-group-cell')!);
+        await user.hover(bar);
+        await vi.advanceTimersByTimeAsync(0);
+        expect(getVisibleTooltips().map((tooltip) => tooltip.textContent)).toEqual(['Resize column']);
+
+        api.setColumnsVisible(['c1'], false);
+        await vi.advanceTimersByTimeAsync(0);
+        await vi.advanceTimersByTimeAsync(100);
+
+        expect({
+            handleShown: handleShown(api),
+            tooltips: getVisibleTooltips().map((tooltip) => tooltip.textContent),
+        }).toEqual({ handleShown: false, tooltips: [] });
+    });
+
+    test.each<{
+        path: string;
+        columnDefs: ColGroupDef[];
+        hide: (api: GridApi) => void;
+        show: (api: GridApi) => void;
+    }>([
+        {
+            path: 'hiding and showing a resizable leaf',
+            columnDefs: [
+                {
+                    headerName: 'G',
+                    groupId: 'G-id',
+                    children: [
+                        { colId: 'a', field: 'a', width: 100, resizable: false },
+                        { colId: 'b', field: 'b', width: 100 },
+                    ],
+                },
+            ],
+            hide: (api) => api.setColumnsVisible(['b'], false),
+            show: (api) => api.setColumnsVisible(['b'], true),
+        },
+        {
+            path: 'closing and opening the group over a resizable leaf shown only when open',
+            columnDefs: [
+                {
+                    headerName: 'G',
+                    groupId: 'G-id',
+                    openByDefault: true,
+                    children: [
+                        { colId: 'a', field: 'a', width: 100, resizable: false },
+                        { colId: 'b', field: 'b', width: 100, columnGroupShow: 'open' },
+                    ],
+                },
+            ],
+            hide: (api) => api.setColumnGroupOpened('G-id', false),
+            show: (api) => api.setColumnGroupOpened('G-id', true),
+        },
+    ])(
+        'a group resize handle hidden and shown again asks for its tooltip as often as one never hidden, by $path',
+        async ({ columnDefs, hide, show }) => {
+            const calls = { cycled: 0, control: 0 };
+            const create = (id: 'cycled' | 'control') =>
+                gridsManager.createGrid(
+                    id,
+                    {
+                        columnDefs,
+                        rowData: [{}],
+                        tooltipShowDelay: 0,
+                        tooltipSwitchShowDelay: 0,
+                        getLocaleText: (params) => {
+                            if (params.key === 'tooltipResizeColumn') {
+                                ++calls[id];
+                            }
+                            return params.defaultValue;
+                        },
+                    },
+                    { modules: [ClientSideRowModelModule, ColumnApiModule, TooltipModule, LocaleModule] }
+                );
+            const cycled = create('cycled');
+            const control = create('control');
+            expect({ cycled: handleShown(cycled), control: handleShown(control) }).toEqual({
+                cycled: true,
+                control: true,
+            });
+
+            for (let cycle = 0; cycle < 3; ++cycle) {
+                hide(cycled);
+                await asyncSetTimeout(0);
+                expect({ cycle, shownAfterHide: handleShown(cycled) }).toEqual({ cycle, shownAfterHide: false });
+                show(cycled);
+                await asyncSetTimeout(0);
+                expect({ cycle, shownAfterShow: handleShown(cycled) }).toEqual({ cycle, shownAfterShow: true });
+            }
+
+            vi.useFakeTimers();
+            const user = userEvent.setup({ delay: null });
+            const hoverHandle = async (api: GridApi, id: 'cycled' | 'control') => {
+                const bar = handle(api)!;
+                calls[id] = 0;
+                await user.hover(bar.closest<HTMLElement>('.ag-header-group-cell')!);
+                await user.hover(bar);
+                await vi.advanceTimersByTimeAsync(0);
+                const tooltips = getVisibleTooltips().map((tooltip) => tooltip.textContent);
+                await user.unhover(bar);
+                await vi.advanceTimersByTimeAsync(100);
+                return tooltips;
+            };
+            expect(getVisibleTooltips()).toEqual([]);
+            const controlTooltips = await hoverHandle(control, 'control');
+            const cycledTooltips = await hoverHandle(cycled, 'cycled');
+
+            expect(calls.control).toBeGreaterThan(0);
+            expect({ cycled: calls.cycled, tooltips: cycledTooltips, controlTooltips }).toEqual({
+                cycled: calls.control,
+                tooltips: ['Resize column'],
+                controlTooltips: ['Resize column'],
+            });
+        }
+    );
 });

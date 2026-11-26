@@ -1,8 +1,8 @@
 import { act, cleanup, render, waitFor } from '@testing-library/react';
 import { asyncSetTimeout } from 'ag-test-utils';
 import { mockGridLayout } from 'ag-test-utils/polyfills/mockGridLayout';
-import React from 'react';
-import { afterEach, beforeAll, describe, expect, test } from 'vitest';
+import React, { Profiler } from 'react';
+import { afterEach, beforeAll, describe, expect, onTestFinished, test, vi } from 'vitest';
 
 import type { ColDef, ColGroupDef, GridApi } from 'ag-grid-community';
 import { ClientSideRowModelModule, ColumnApiModule } from 'ag-grid-community';
@@ -100,8 +100,7 @@ describe('rows drawing a column change (React)', () => {
         unmount();
     });
 
-    // TODO: disabled due to AG-19353 - re-enable once fixed
-    test.skip('a column group shows its resize handle only while one of its columns is resizable, across columnDefs updates', async () => {
+    test('a column group shows its resize handle only while one of its columns is resizable, across columnDefs updates', async () => {
         const columnDefs = (resizable: boolean): (ColDef | ColGroupDef)[] => [
             {
                 groupId: 'medals',
@@ -168,5 +167,62 @@ describe('rows drawing a column change (React)', () => {
 
         const shown = { 'pinned-left': ['country'], scrolling: ['sport', 'gold'] };
         await waitFor(() => expect(renderedCells()).toEqual({ 0: shown, 1: shown }));
+    });
+
+    test('with ensureDomOrder, after mount settles, a sort and equal columnDefs commit React 0 times, removing the only column group once and adding it 3 times, as 36.3 did', async () => {
+        onTestFinished(() => {
+            vi.useRealTimers();
+        });
+        vi.useFakeTimers({ shouldAdvanceTime: true });
+        let api: GridApi | undefined;
+        let commits = 0;
+        const grouped = (): (ColDef | ColGroupDef)[] => [
+            { groupId: 'medals', headerName: 'Medals', children: [{ field: 'gold' }, { field: 'silver' }] },
+            { field: 'country' },
+            { field: 'sport' },
+        ];
+        const flat = (): ColDef[] => [{ field: 'gold' }, { field: 'silver' }, { field: 'country' }, { field: 'sport' }];
+        const view = render(
+            <React.StrictMode>
+                <Profiler id="grid" onRender={() => ++commits}>
+                    <AgGridReact
+                        ensureDomOrder
+                        suppressColumnMoveAnimation
+                        suppressColumnVirtualisation
+                        columnDefs={flat()}
+                        rowData={rowData}
+                        modules={[ClientSideRowModelModule, ColumnApiModule]}
+                        onGridReady={(e) => (api = e.api)}
+                    />
+                </Profiler>
+            </React.StrictMode>
+        );
+        /** The commits one call causes, its timers included (the scrollbar re-check runs 500 ms after a layout). */
+        const commitsOf = async (call: () => void) => {
+            commits = 0;
+            await act(async () => {
+                call();
+                await vi.advanceTimersByTimeAsync(1000);
+            });
+            return commits;
+        };
+
+        await waitFor(() => expect(renderedCells()['0']?.scrolling).toEqual(['gold', 'silver', 'country', 'sport']));
+        await commitsOf(() => {});
+
+        const sort = await commitsOf(() => api!.applyColumnState({ state: [{ colId: 'silver', sort: 'asc' }] }));
+        const equalDefs = await commitsOf(() => api!.setGridOption('columnDefs', flat()));
+        const groupAdded = await commitsOf(() => api!.setGridOption('columnDefs', grouped()));
+        await waitFor(() => expect(document.querySelector('.ag-header-group-cell')).not.toBeNull());
+        const groupRemoved = await commitsOf(() => api!.setGridOption('columnDefs', flat()));
+        await waitFor(() => expect(document.querySelector('.ag-header-group-cell')).toBeNull());
+
+        expect({ sort, equalDefs, groupAdded, groupRemoved }).toEqual({
+            sort: 0,
+            equalDefs: 0,
+            groupAdded: 3,
+            groupRemoved: 1,
+        });
+        view.unmount();
     });
 });

@@ -272,6 +272,61 @@ describe('ag-grid calculated columns', () => {
         `);
     });
 
+    test('a calc col added from one of several auto-group cols is back beside it once grouping is toggled', async () => {
+        const api = createGrid('calculated-autogroup-toggle-multi', {
+            calculatedColumns: { applyMode: 'deferred' },
+            groupDisplayType: 'multipleColumns',
+            rowData: [{ id: 'r1', productType: 'A', country: 'UK', revenue: 10, cost: 3 }],
+            columnDefs: [
+                { field: 'productType', rowGroup: true, hide: true },
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'revenue' },
+                { field: 'cost' },
+            ],
+        });
+        await new GridColumns(api, 'two auto-group toggle - initial').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn-productType "Product Type" width:200
+            ├── ag-Grid-AutoColumn-country "Country" width:200
+            ├── revenue "Revenue" width:200
+            └── cost "Cost" width:200
+        `);
+
+        showColumnMenu(api, 'ag-Grid-AutoColumn-productType');
+        await clickMenuOption('Add Calculated Column');
+        await waitFor(() => getExpressionInput());
+        setExpression('[Revenue] - [Cost]');
+        clickDialogButton('Apply');
+        await new GridColumns(api, 'two auto-group toggle - after add').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn-productType "Product Type" width:200
+            ├── calculated_1 "Untitled" width:200 ƒ
+            ├── ag-Grid-AutoColumn-country "Country" width:200
+            ├── revenue "Revenue" width:200
+            └── cost "Cost" width:200
+        `);
+
+        api.setRowGroupColumns([]);
+        await new GridColumns(api, 'two auto-group toggle - ungrouped').checkColumns(`
+            CENTER
+            ├── calculated_1 "Untitled" width:200 ƒ
+            ├── productType "Product Type" width:200
+            ├── country "Country" width:200
+            ├── revenue "Revenue" width:200
+            └── cost "Cost" width:200
+        `);
+
+        api.setRowGroupColumns(['productType', 'country']);
+        await new GridColumns(api, 'two auto-group toggle - re-grouped').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn-productType "Product Type" width:200
+            ├── calculated_1 "Untitled" width:200 ƒ
+            ├── ag-Grid-AutoColumn-country "Country" width:200
+            ├── revenue "Revenue" width:200
+            └── cost "Cost" width:200
+        `);
+    });
+
     test('dialog inserts calculated columns after the clicked generated auto group column in multiple-columns mode', async () => {
         const api = createGrid('calculated-dialog-multiple-auto-group-order', {
             calculatedColumns: { applyMode: 'deferred' },

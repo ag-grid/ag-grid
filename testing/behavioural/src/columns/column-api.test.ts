@@ -604,6 +604,22 @@ describe('Column API', () => {
             `);
         });
 
+        test.each(['ag-Grid-AutoColumn-total', 'ag-Grid-SelectionColumn-total'])(
+            'applyColumnState applies to a column whose colId %s starts like a grid column',
+            (colId) => {
+                const api = gridsManager.createGrid('myGrid', { columnDefs: [{ colId }, { colId: 'b' }] });
+
+                const success = api.applyColumnState({ state: [{ colId, width: 300, sort: 'asc' }] });
+
+                const state = api.getColumnState().find((s) => s.colId === colId);
+                expect({ success, width: state?.width, sort: state?.sort }).toEqual({
+                    success: true,
+                    width: 300,
+                    sort: 'asc',
+                });
+            }
+        );
+
         // Note: resetColumnState is tested more thoroughly in column-model.test.ts
         // with sort+pin+width modifications
 
@@ -819,7 +835,7 @@ describe('Column API', () => {
             expect([cellFor('a'), cellFor('b'), cellFor('c')]).toEqual(before);
         });
 
-        test('a move after suppressColumnMoveAnimation is turned on and off again while columns slide slides', async () => {
+        test('suppressColumnMoveAnimation set while columns slide makes a move straight after slide none', async () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [{ colId: 'a' }, { colId: 'b' }, { colId: 'c' }],
             });
@@ -830,9 +846,98 @@ describe('Column API', () => {
             api.setGridOption('suppressColumnMoveAnimation', true);
             api.moveColumns(['b'], 2);
 
+            expect(document.querySelector('.ag-column-moving')).toBeNull();
+
             api.setGridOption('suppressColumnMoveAnimation', false);
             api.moveColumns(['c'], 2);
             expect(document.querySelector('.ag-column-moving')).not.toBeNull();
+        });
+
+        test('turning suppressColumnMoveAnimation on while columns slide ends the slide at once and no later column change slides', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ colId: 'a' }, { colId: 'b' }, { colId: 'c' }, { colId: 'd' }],
+                rowData: [{ a: 1, b: 2, c: 3, d: 4 }],
+            });
+            await asyncSetTimeout(0);
+            const gridElement = api.getGridElement()!;
+
+            api.moveColumns(['d'], 0);
+            expect(gridElement.querySelector('.ag-column-moving')).not.toBeNull();
+
+            api.setGridOption('suppressColumnMoveAnimation', true);
+            expect(gridElement.querySelector('.ag-column-moving')).toBeNull();
+
+            api.setColumnWidths([{ key: 'c', newWidth: 333 }]);
+            expect(gridElement.querySelector('.ag-column-moving')).toBeNull();
+        });
+
+        test('setting suppressColumnMoveAnimation to false while columns slide lets the slide run on', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ colId: 'a' }, { colId: 'b' }, { colId: 'c' }],
+            });
+            await asyncSetTimeout(0);
+            const gridElement = api.getGridElement()!;
+
+            api.moveColumns(['c'], 0);
+            const sliding = gridElement.querySelector('.ag-column-moving') !== null;
+            api.setGridOption('suppressColumnMoveAnimation', false);
+
+            expect({ sliding, after: gridElement.querySelector('.ag-column-moving') !== null }).toEqual({
+                sliding: true,
+                after: true,
+            });
+        });
+
+        describe('moveColumns with repeated, unknown and out-of-range keys', () => {
+            const createAbcd = (gridId: string) =>
+                gridsManager.createGrid(gridId, {
+                    columnDefs: [{ colId: 'a' }, { colId: 'b' }, { colId: 'c' }, { colId: 'd' }],
+                });
+            const allColIds = (api: ReturnType<typeof createAbcd>) =>
+                api.getAllGridColumns().map((c: Column) => c.getColId());
+
+            test('a repeated key moves its column once, at the place of its first occurrence', async () => {
+                const api = createAbcd('repeated');
+                const movedColumns: string[][] = [];
+                api.addEventListener('columnMoved', (e) => movedColumns.push(e.columns!.map((c) => c.getColId())));
+
+                api.moveColumns(['b', 'b'], 2);
+                expect(allColIds(api)).toEqual(['a', 'c', 'b', 'd']);
+                await waitFor(() => expect(movedColumns).toEqual([['b']]), { timeout: 500 });
+
+                const control = createAbcd('repeated-control');
+                control.moveColumns(['b'], 2);
+                expect(allColIds(control)).toEqual(['a', 'c', 'b', 'd']);
+
+                const first = createAbcd('repeated-first-occurrence');
+                first.moveColumns(['b', 'a', 'b'], 0);
+                expect(allColIds(first)).toEqual(['b', 'a', 'c', 'd']);
+            });
+
+            test('toIndex is valid up to the number of columns left after removing those moved', () => {
+                const repeated = createAbcd('range-repeated');
+                repeated.moveColumns(['b', 'b'], 3);
+                expect(allColIds(repeated)).toEqual(['a', 'c', 'd', 'b']);
+
+                const unknown = createAbcd('range-unknown');
+                unknown.moveColumns(['b', 'missing'], 3);
+                expect(allColIds(unknown)).toEqual(['a', 'c', 'd', 'b']);
+            });
+
+            test('a call where no key names a column moves nothing, warns nothing and raises no columnMoved', async () => {
+                const api = createAbcd('no-match');
+                const movedColumns: string[][] = [];
+                api.addEventListener('columnMoved', (e) => movedColumns.push(e.columns!.map((c) => c.getColId())));
+
+                api.moveColumns(['missing'], 0);
+                api.moveColumns(['missing'], 99);
+                expect(allColIds(api)).toEqual(['a', 'b', 'c', 'd']);
+
+                // A later real move is the positive signal: the events of both calls have been delivered.
+                api.moveColumns(['d'], 0);
+                await waitFor(() => expect(movedColumns).toEqual([['d']]), { timeout: 500 });
+                expect(allColIds(api)).toEqual(['d', 'a', 'b', 'c']);
+            });
         });
 
         describe('moveColumns toIndex bound: the columns left after removal', () => {
@@ -865,6 +970,24 @@ describe('Column API', () => {
 
                     expect(warnSpy.mock.calls).toEqual([]);
                     expect(allColIds(api)).toEqual(['a', 'd', 'b', 'c']);
+                } finally {
+                    warnSpy.mockRestore();
+                }
+            });
+
+            test('a fractional toIndex in the last slot moves to its whole part, as one in any other slot does', () => {
+                const api = createAbcd('last-slot-fractional');
+                const warnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
+                try {
+                    api.moveColumns(['b', 'c'], 2.5);
+                    const last = allColIds(api);
+                    api.moveColumns(['b', 'c'], 0.5);
+
+                    expect({ warnings: warnSpy.mock.calls, last, first: allColIds(api) }).toEqual({
+                        warnings: [],
+                        last: ['a', 'd', 'b', 'c'],
+                        first: ['b', 'c', 'a', 'd'],
+                    });
                 } finally {
                     warnSpy.mockRestore();
                 }

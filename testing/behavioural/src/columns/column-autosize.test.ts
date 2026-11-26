@@ -403,6 +403,51 @@ describe('Column Autosize', () => {
             }
         });
 
+        test('an auto-size tells each column its width once, with its final width, with and without scale-up', async () => {
+            const run = async (scaleUpToFitGridWidth: boolean) => {
+                const api = gridsManager.createGrid('myGrid', {
+                    columnDefs: [{ colId: 'a' }, { colId: 'b' }],
+                    rowData: [{ a: 'x', b: 'y' }],
+                });
+                api.getGridElement()!.querySelector<HTMLElement>('.ag-root')!.style.width = '600px';
+                const widthChanged: { col: string; width: number }[] = [];
+                for (const col of api.getAllDisplayedColumns()) {
+                    col.addEventListener('widthChanged', () => {
+                        widthChanged.push({ col: col.getColId(), width: col.getActualWidth() });
+                    });
+                }
+                const resized: { finished: boolean | undefined; source: string; cols: string[] }[] = [];
+                api.addEventListener('columnResized', (e) => {
+                    resized.push({
+                        finished: e.finished,
+                        source: e.source,
+                        cols: (e.columns ?? []).map((col) => col.getColId()),
+                    });
+                });
+
+                api.autoSizeColumns({ colIds: ['a', 'b'], scaleUpToFitGridWidth });
+                const resizedSorted = () => resized.map((e) => ({ ...e, cols: [...e.cols].sort() }));
+                const resizedOnce = [{ finished: true, source: 'autosizeColumns', cols: ['a', 'b'] }];
+                await waitFor(() => expect(resizedSorted()).toEqual(resizedOnce), { timeout: 1000 });
+                await asyncSetTimeout(0);
+
+                const finalWidths = api.getAllDisplayedColumns().map((col) => col.getActualWidth());
+                expect(resizedSorted()).toEqual(resizedOnce);
+                expect([...widthChanged].sort((x, y) => x.col.localeCompare(y.col))).toEqual([
+                    { col: 'a', width: finalWidths[0] },
+                    { col: 'b', width: finalWidths[1] },
+                ]);
+                gridsManager.reset();
+                return finalWidths;
+            };
+
+            const withScaleUp = await run(true);
+            const without = await run(false);
+            // premise: the scale-up happened
+            expect(withScaleUp[0]).toBeGreaterThan(without[0]);
+            expect(withScaleUp[1]).toBeGreaterThan(without[1]);
+        });
+
         test('a fit to a grid with no width retries until it has one, and warns once it gives up', async () => {
             // Asserts warning #29 (the grid has no width to fit to).
             enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [29] });
@@ -933,6 +978,100 @@ describe('Column Autosize', () => {
             } finally {
                 process.off('unhandledRejection', onRejection);
             }
+        });
+
+        test('animateColumnResizing: an autosize waiting for its data animates nothing while it waits', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ field: 'a', width: 300 }],
+                // a type override makes the autosize wait for the row data its types are inferred from
+                dataTypeDefinitions: {
+                    percentage: { baseDataType: 'number', extendsDataType: 'number', columnTypes: 'percentage' },
+                },
+                animateColumnResizing: true,
+            });
+            await asyncSetTimeout(0);
+            const animating = () => document.querySelector('.ag-animate-autosize') !== null;
+
+            api.autoSizeColumns(['a']);
+            await asyncSetTimeout(0);
+            expect(animating()).toBe(false);
+
+            // the data arrives: the autosize sizes the column, animating only that change
+            api.setGridOption('rowData', [{ a: 1 }]);
+            expect([api.getColumn('a')!.getActualWidth() < 300, animating()]).toEqual([true, true]);
+        });
+
+        test('animateColumnResizing switched off while an autosize animates makes a width set next apply at once', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    { colId: 'a', width: 300 },
+                    { colId: 'b', width: 300 },
+                ],
+                animateColumnResizing: true,
+            });
+            await asyncSetTimeout(0);
+            const animating = () => document.querySelector('.ag-animate-autosize') !== null;
+
+            api.autoSizeColumns(['a']);
+            expect(animating()).toBe(true);
+            api.setGridOption('animateColumnResizing', false);
+            api.applyColumnState({ state: [{ colId: 'b', width: 123 }] });
+
+            expect(animating()).toBe(false);
+        });
+
+        test('setColumnWidths ends a running autosize animation unless it refuses the widths', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    { colId: 'a', width: 300 },
+                    { colId: 'b', width: 300, maxWidth: 400 },
+                ],
+                animateColumnResizing: true,
+            });
+            await asyncSetTimeout(0);
+            const animating = () => document.querySelector('.ag-animate-autosize') !== null;
+
+            api.autoSizeColumns(['a']);
+            const started = animating();
+            api.setColumnWidths([{ key: 'b', newWidth: 500 }], false);
+            const refused = { animating: animating(), width: api.getColumn('b')!.getActualWidth() };
+            api.setColumnWidths([{ key: 'b', newWidth: 500 }]);
+            const refusedFinished = { animating: animating(), width: api.getColumn('b')!.getActualWidth() };
+            api.setColumnWidths([{ key: 'b', newWidth: 200 }]);
+
+            expect({
+                started,
+                refused,
+                refusedFinished,
+                applied: { animating: animating(), width: api.getColumn('b')!.getActualWidth() },
+            }).toEqual({
+                started: true,
+                refused: { animating: true, width: 300 },
+                refusedFinished: { animating: true, width: 300 },
+                applied: { animating: false, width: 200 },
+            });
+        });
+
+        test('animateColumnResizing switched on by the call that changes the widths animates them, whichever option comes first', async () => {
+            const defs = (width: number) => [
+                { colId: 'a', width },
+                { colId: 'b', width },
+            ];
+            const animatedBy = async (update: (width: number) => Record<string, unknown>) => {
+                gridsManager.reset();
+                const api = gridsManager.createGrid('myGrid', { columnDefs: defs(100), animateColumnResizing: false });
+                await asyncSetTimeout(0);
+                api.updateGridOptions(update(300));
+                return [api.getColumn('a')!.getActualWidth(), document.querySelector('.ag-animate-autosize') !== null];
+            };
+
+            expect({
+                optionFirst: await animatedBy((width) => ({ animateColumnResizing: true, columnDefs: defs(width) })),
+                columnDefsFirst: await animatedBy((width) => ({
+                    columnDefs: defs(width),
+                    animateColumnResizing: true,
+                })),
+            }).toEqual({ optionFirst: [300, true], columnDefsFirst: [300, true] });
         });
     });
 

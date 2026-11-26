@@ -495,7 +495,7 @@ describe('Grid body width push', () => {
     const PINNED = { left: '120px', right: '150px', hasLeftClass: true, hasRightClass: true };
     const NOT_PINNED = { left: '0px', right: '0px', hasLeftClass: false, hasRightClass: false };
 
-    test('restores the pinned lanes when the layout returns from print to normal', async () => {
+    test('lays out no pinned lane in print layout, and restores it when the layout returns to normal', async () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: [
                 { colId: 'left', width: 120, pinned: 'left' },
@@ -510,10 +510,26 @@ describe('Grid body width push', () => {
 
         api.setGridOption('domLayout', 'print');
         await asyncSetTimeout(0);
+        expect(pinnedLanes()).toEqual(NOT_PINNED);
 
         api.setGridOption('domLayout', 'normal');
         await asyncSetTimeout(0);
         expect(pinnedLanes()).toEqual(PINNED);
+    });
+
+    test('a grid created in print layout has no pinned lane', async () => {
+        gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { colId: 'left', width: 120, pinned: 'left' },
+                { colId: 'a', width: 100 },
+                { colId: 'b', width: 100 },
+                { colId: 'right', width: 150, pinned: 'right' },
+            ],
+            rowData: [{}],
+            domLayout: 'print',
+        });
+        await asyncSetTimeout(0);
+        expect(pinnedLanes()).toEqual(NOT_PINNED);
     });
 
     test('print layout sizes the scrollable area to the columns, not the container, with or without rows', async () => {

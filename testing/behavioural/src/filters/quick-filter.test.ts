@@ -296,7 +296,7 @@ describe('QuickFilterService', () => {
         await waitFor(() => expect(displayedCountries()).toEqual(['Ireland', 'Spain', 'Italy']));
     });
 
-    test('rows matching a column match again once it is shown, cached or not, and stay matched while it is hidden when hidden columns are included', async () => {
+    test('rows follow a column being hidden or shown without another filter change, cached or not, unless hidden columns are included', async () => {
         interface Result {
             country: string;
             year: number;
@@ -318,7 +318,7 @@ describe('QuickFilterService', () => {
             return countries;
         };
 
-        // default: the rows match the column once it is shown again
+        // default: hidden columns are not matched, and the rows follow the visibility change
         const api = await gridsManager.createGridAndWait<Result>('default', {
             columnDefs,
             rowData,
@@ -328,9 +328,16 @@ describe('QuickFilterService', () => {
 
         api.setColumnsVisible(['year'], false);
         expect(api.getColumn('year')!.isVisible()).toBe(false);
+        await waitFor(() => expect(displayedCountries(api)).toEqual([]));
 
         api.setColumnsVisible(['year'], true);
         expect(api.getColumn('year')!.isVisible()).toBe(true);
+        await waitFor(() => expect(displayedCountries(api)).toEqual(['Spain']));
+
+        // hidden or shown by a column state, the rows follow as well
+        api.applyColumnState({ state: [{ colId: 'year', hide: true }] });
+        await waitFor(() => expect(displayedCountries(api)).toEqual([]));
+        api.applyColumnState({ state: [{ colId: 'year', hide: false }] });
         await waitFor(() => expect(displayedCountries(api)).toEqual(['Spain']));
 
         // hidden columns included: hiding keeps the match
@@ -346,7 +353,7 @@ describe('QuickFilterService', () => {
         expect(includeApi.getColumn('year')!.isVisible()).toBe(false);
         await waitFor(() => expect(displayedCountries(includeApi)).toEqual(['Spain']));
 
-        // cached quick filter text matches the shown column too
+        // cached quick filter text follows the visibility change too
         const cachedApi = await gridsManager.createGridAndWait<Result>('cached', {
             columnDefs,
             rowData,
@@ -357,6 +364,7 @@ describe('QuickFilterService', () => {
 
         cachedApi.setColumnsVisible(['year'], false);
         expect(cachedApi.getColumn('year')!.isVisible()).toBe(false);
+        await waitFor(() => expect(displayedCountries(cachedApi)).toEqual([]));
 
         cachedApi.setColumnsVisible(['year'], true);
         expect(cachedApi.getColumn('year')!.isVisible()).toBe(true);
@@ -449,6 +457,28 @@ describe('QuickFilterService', () => {
 
             // control: the same listeners do see a filter change after the same wait
             expect(events).toEqual([]);
+            api.setGridOption('quickFilterText', 'Tiger');
+            await asyncSetTimeout(0);
+            await asyncSetTimeout(0);
+            expect(events).toEqual(['filterChanged', 'modelUpdated']);
+        });
+
+        test('a column width set through column state raises neither filterChanged nor modelUpdated', async () => {
+            const { api, events } = await createReadyGrid({
+                columnDefs: [{ field: 'name' }, { field: 'habitat' }],
+                rowData: ANIMALS,
+                quickFilterText: 'Ocean',
+            });
+
+            api.applyColumnState({ state: [{ colId: 'habitat', width: 300 }] });
+            await asyncSetTimeout(0);
+            await asyncSetTimeout(0);
+
+            expect(api.getColumn('habitat')!.getActualWidth()).toBe(300);
+            expect(displayedNames(api)).toEqual(['Shark']);
+            expect(events).toEqual([]);
+
+            // control: the same listeners do see a filter change after the same wait
             api.setGridOption('quickFilterText', 'Tiger');
             await asyncSetTimeout(0);
             await asyncSetTimeout(0);

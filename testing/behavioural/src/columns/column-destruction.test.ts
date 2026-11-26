@@ -1,7 +1,7 @@
 import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import type { Column, GridApi } from 'ag-grid-community';
-import { ClientSideRowModelModule, RowSelectionModule } from 'ag-grid-community';
+import { AgColumn, ClientSideRowModelModule, RowSelectionModule } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule, RowNumbersModule, TreeDataModule } from 'ag-grid-enterprise';
 
 interface DestroyTracker {
@@ -39,6 +39,14 @@ const collectAllColumns = (api: GridApi): Column[] => {
     api.getAllGridColumns()?.forEach(add);
     api.getPivotResultColumns()?.forEach(add);
     return result;
+};
+
+const getAgColumn = (api: GridApi, colId: string): AgColumn => {
+    const col = api.getColumn(colId);
+    if (!(col instanceof AgColumn)) {
+        throw new Error(`no column ${colId}`);
+    }
+    return col;
 };
 
 describe('Column destruction', () => {
@@ -470,7 +478,8 @@ describe('Column destruction', () => {
         expect(before.isAlive()).toBe(true);
 
         api.setGridOption('columnDefs', [
-            { groupId: 'g', headerName: 'G-B', children: [{ colId: 'a' }, { colId: 'b' }] },
+            // a rename alone keeps the group (refreshed in place): `headerClass` changes its definition
+            { groupId: 'g', headerName: 'G-B', headerClass: 'changed', children: [{ colId: 'a' }, { colId: 'b' }] },
         ]);
 
         const after = providedGroup();
@@ -492,26 +501,29 @@ describe('Column destruction', () => {
         const seen = [before, after];
         for (let i = 0; i < 3; ++i) {
             api.setGridOption('columnDefs', [
-                { groupId: 'g', headerName: `G-${i}`, children: [{ colId: 'a' }, { colId: 'b' }] },
+                {
+                    groupId: 'g',
+                    headerName: `G-${i}`,
+                    headerClass: `c-${i}`,
+                    children: [{ colId: 'a' }, { colId: 'b' }],
+                },
             ]);
             seen.push(providedGroup());
         }
         expect(seen.filter((g) => g.isAlive()).length).toBe(1);
     });
 
-    test('a removed hierarchy column is destroyed and the remaining one is alive', async () => {
+    test('a removed hierarchy column is destroyed and a kept one stays alive', async () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: [{ field: 'country' }, { field: 'date', rowGroup: true, groupHierarchy: ['year', 'month'] }],
             rowData: [{ country: 'USA', date: new Date(2020, 0, 1) }],
         });
         await asyncSetTimeout(0);
 
-        const yearBefore = api.getColumn('ag-Grid-HierarchyColumn-date-year')!;
-        const monthBefore = api.getColumn('ag-Grid-HierarchyColumn-date-month')!;
-        expect(yearBefore).not.toBeNull();
-        expect(monthBefore).not.toBeNull();
-        expect((yearBefore as any).isAlive()).toBe(true);
-        expect((monthBefore as any).isAlive()).toBe(true);
+        const yearBefore = getAgColumn(api, 'ag-Grid-HierarchyColumn-date-year');
+        const monthBefore = getAgColumn(api, 'ag-Grid-HierarchyColumn-date-month');
+        expect(yearBefore.isAlive()).toBe(true);
+        expect(monthBefore.isAlive()).toBe(true);
 
         // (1) Dropping 'month': year is kept, month destroyed.
         api.setGridOption('columnDefs', [
@@ -520,17 +532,18 @@ describe('Column destruction', () => {
         ]);
         await asyncSetTimeout(0);
 
-        const yearAfter = api.getColumn('ag-Grid-HierarchyColumn-date-year')!;
+        const yearAfter = getAgColumn(api, 'ag-Grid-HierarchyColumn-date-year');
         expect(api.getColumn('ag-Grid-HierarchyColumn-date-month')).toBeNull();
-        expect((monthBefore as any).isAlive()).toBe(false);
-        expect((yearAfter as any).isAlive()).toBe(true);
+        expect(yearAfter).toBe(yearBefore);
+        expect(monthBefore.isAlive()).toBe(false);
+        expect(yearAfter.isAlive()).toBe(true);
 
         // (2) clearColumns: removing groupHierarchy entirely drops the remaining hierarchy col.
         api.setGridOption('columnDefs', [{ field: 'country' }, { field: 'date', rowGroup: true }]);
         await asyncSetTimeout(0);
 
         expect(api.getColumn('ag-Grid-HierarchyColumn-date-year')).toBeNull();
-        expect((yearAfter as any).isAlive()).toBe(false);
+        expect(yearAfter.isAlive()).toBe(false);
     });
 
     test('a column replaced by new columnDefs has listeners removed and added without throwing', () => {

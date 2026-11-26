@@ -211,6 +211,55 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
         });
 
         test.each([
+            { order: 'calculatedColumns first', keys: ['calculatedColumns', 'columnTypes'] },
+            { order: 'columnTypes first', keys: ['columnTypes', 'calculatedColumns'] },
+        ])(
+            'sourceColumn of a second column added from the auto group column is null when turning calculated columns back on groups the first one by initialRowGroup in the update that ungroups g, and that column from the next build on ($order)',
+            async (row) => {
+                const r1Id = { value: '' };
+                const processColDef = vi.fn<ProcessColDef>((params) =>
+                    params.colDef.colId === r1Id.value ? { ...params.colDef, initialRowGroup: true } : undefined
+                );
+                const api = createGrid(`pcd-source-auto-second-on-${row.keys[0]}`, {
+                    ...GROUPED_BY_TYPE,
+                    calculatedColumns: { processColDef },
+                });
+                await waitForColumn(api, 'ag-Grid-AutoColumn');
+                const r1 = await addViaDialog(api, 'ag-Grid-AutoColumn', '[a] * 2');
+                const r2 = await addViaDialog(api, 'ag-Grid-AutoColumn', '[b] * 2');
+                r1Id.value = r1;
+                api.setGridOption('calculatedColumns', false);
+                const autoColumnBefore = api.getColumn('ag-Grid-AutoColumn');
+                expect(autoColumnBefore).not.toBeNull();
+                processColDef.mockClear();
+
+                const update: Partial<GridOptions> = {};
+                for (const key of row.keys) {
+                    if (key === 'calculatedColumns') {
+                        update.calculatedColumns = { processColDef };
+                    } else {
+                        update.columnTypes = { t: { rowGroup: false } };
+                    }
+                }
+                api.updateGridOptions(update);
+
+                const callsForR2 = processColDef.mock.calls.filter(([params]) => params.colDef.colId === r2);
+                expect(api.getColumn(r1)).not.toBeNull();
+                expect(api.getColumn(r2)).not.toBeNull();
+                expect(api.getColumn(r1)!.isRowGroupActive()).toBe(true);
+                expect(api.getColumn('ag-Grid-AutoColumn')).toBe(autoColumnBefore);
+                expect(callsForR2.map(([params]) => params.sourceColumn)).toEqual([null]);
+
+                processColDef.mockClear();
+                api.setGridOption('columnTypes', { t: { rowGroup: false, width: 90 } });
+
+                const nextCallsForR2 = processColDef.mock.calls.filter(([params]) => params.colDef.colId === r2);
+                expect(api.getColumn('ag-Grid-AutoColumn')).toBe(autoColumnBefore);
+                expect(nextCallsForR2.map(([params]) => params.sourceColumn === autoColumnBefore)).toEqual([true]);
+            }
+        );
+
+        test.each([
             {
                 outcome: 'an unknown reference in the build whose callback groups, then valid from the next build',
                 enabled: true,
@@ -384,6 +433,60 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
             expect(api.getColumn('ag-Grid-AutoColumn-a')).toBeNull();
             expect(callsForY.at(-1)?.sourceColumn).toBe(groupColumnB);
             expect(callsForY.at(-1)?.expressionValidation).toEqual({ valid: true });
+        });
+    });
+
+    describe('sourceColumn of a column added from a calculated column', () => {
+        const REBUILDS: {
+            rebuild: string;
+            run: (api: GridApi, ids: { r: string; x: string }, cb: ProcessColDef) => void;
+        }[] = [
+            {
+                rebuild: 'reset then apply R, X',
+                run: (api, ids) => {
+                    api.resetColumnState();
+                    api.applyColumnState({ state: [{ colId: ids.r }, { colId: ids.x }] });
+                },
+            },
+            {
+                rebuild: 'reset then apply X, R',
+                run: (api, ids) => {
+                    api.resetColumnState();
+                    api.applyColumnState({ state: [{ colId: ids.x }, { colId: ids.r }] });
+                },
+            },
+            {
+                rebuild: 'calculatedColumns off and on',
+                run: (api, _ids, processColDef) => {
+                    api.setGridOption('calculatedColumns', false);
+                    api.setGridOption('calculatedColumns', { processColDef });
+                },
+            },
+        ];
+
+        test.each(
+            REBUILDS.flatMap((row) => [
+                { ...row, source: 'ag-Grid-AutoColumn' },
+                { ...row, source: 'a' },
+            ])
+        )('is the source calculated column after $rebuild (from $source)', async (row) => {
+            const processColDef = vi.fn<ProcessColDef>(() => undefined);
+            const api = createGrid(`pcd-source-of-calc-${row.rebuild}-${row.source}`, {
+                rowData: ROW_DATA,
+                columnDefs: [{ field: 'g', rowGroup: true, hide: true }, { field: 'a' }, { field: 'b' }],
+                calculatedColumns: { processColDef },
+            });
+            await waitForColumn(api, 'ag-Grid-AutoColumn');
+            const r = await addViaDialog(api, row.source, '[a] * 2');
+            const x = await addViaDialog(api, r, '[b] * 2');
+            processColDef.mockClear();
+
+            row.run(api, { r, x }, processColDef);
+
+            const callsForX = processColDef.mock.calls.filter(([params]) => params.colDef.colId === x);
+            expect(api.getColumn(r)).not.toBeNull();
+            expect(api.getColumn(x)).not.toBeNull();
+            expect(callsForX.map(([params]) => params.sourceColumn === api.getColumn(r))).toEqual([true]);
         });
     });
 });

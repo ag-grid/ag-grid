@@ -951,7 +951,7 @@ describe('ag-grid calculated columns', () => {
         );
     });
 
-    test('a columnDefs update in the same order re-renders the cells, and one in a new order reorders the columns', async () => {
+    test('reordering columns through a columnDefs update re-renders as many cells as applying the same columnDefs in the same order', async () => {
         let formatterCalls = 0;
         const valueFormatter = () => {
             ++formatterCalls;
@@ -986,9 +986,15 @@ describe('ag-grid calculated columns', () => {
         formatterCalls = 0;
         api.updateGridOptions({ columnDefs: makeDefs(['b', 'a', 'g', 'calc']) });
         await asyncSetTimeout(0);
+        const reorder = formatterCalls;
         expect(columnIds()).toEqual(['b', 'a', 'g', 'calc']);
 
         // positive control: the same-order update does re-render the visible cells
         expect(sameOrder).toBeGreaterThan(0);
+        expect({ reorderEqualsSameOrder: reorder === sameOrder, sameOrder, reorder }).toEqual({
+            reorderEqualsSameOrder: true,
+            sameOrder,
+            reorder: sameOrder,
+        });
     });
 });

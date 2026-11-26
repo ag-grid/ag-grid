@@ -65,7 +65,7 @@ describe('Cols service events', () => {
             expect(api.getRowGroupColumns().map((c) => c.getColId())).toEqual(['a', 'b']);
         });
 
-        test('a columnDefs update keeping the grouping raises no columnRowGroupChanged', async () => {
+        test('a columnDefs update keeping the grouping keeps the row group columns list', async () => {
             const defs = () => [
                 { colId: 'a', field: 'a', rowGroup: true },
                 { colId: 'b', field: 'b', rowGroup: true },
@@ -78,6 +78,8 @@ describe('Cols service events', () => {
 
             api.setGridOption('columnDefs', defs());
             await asyncSetTimeout(0);
+
+            expect(api.getRowGroupColumns()).toBe(before);
             expect(ids(before)).toEqual(['a', 'b']);
             expect(events.length).toBe(0);
         });
@@ -418,8 +420,7 @@ describe('Cols service events', () => {
             expect(everything.length).toBe(1);
         });
 
-        // TODO: disabled due to AG-19381 - re-enable once fixed
-        test.skip('a defaultColDef change in a grid grouping by a column raises it once, and one resize and one pin event for the group column and the others together', async () => {
+        test('a defaultColDef change in a grid grouping by a column raises it once, and one resize and one pin event for the group column and the others together', async () => {
             const api = gridsManager.createGrid('g', {
                 ...baseOptions(),
                 columnDefs: [
@@ -484,7 +485,7 @@ describe('Cols service events', () => {
             });
         });
 
-        test('a dataTypeDefinitions change in a grid grouping by a column applies the width of the column type its new data type names', async () => {
+        test('a dataTypeDefinitions change in a grid grouping by a column raises it once, and one resize and one pin event', async () => {
             const api = gridsManager.createGrid('g', {
                 ...baseOptions(),
                 columnDefs: [
@@ -494,11 +495,22 @@ describe('Cols service events', () => {
                 columnTypes: { wide: { width: 150, pinned: 'left' } },
             });
             await asyncSetTimeout(0);
+            const everything = capture(api, 'columnEverythingChanged');
+            const resized = capture(api, 'columnResized');
+            const pinned = capture(api, 'columnPinned');
+            const ids = (events: { columns?: Column[] | null }[]) =>
+                events.map((event) => (event.columns ?? []).map((col) => col.getColId()).sort());
 
             api.setGridOption('dataTypeDefinitions', {
                 text: { baseDataType: 'text', extendsDataType: 'text', columnTypes: 'wide' },
             });
             await asyncSetTimeout(0);
+
+            expect({ everything: everything.length, resized: ids(resized), pinned: ids(pinned) }).toEqual({
+                everything: 1,
+                resized: [['a', 'b']],
+                pinned: [['a', 'b']],
+            });
             expect(api.getColumn('b')!.getActualWidth()).toBe(150);
         });
     });

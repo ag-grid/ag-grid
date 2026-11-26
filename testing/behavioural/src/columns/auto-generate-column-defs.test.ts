@@ -1,14 +1,25 @@
-import { GridColumns, GridRows, TestGridsManager, applyTransactionChecked } from 'ag-test-utils';
+import { waitFor } from '@testing-library/dom';
+import {
+    GridColumns,
+    GridRows,
+    TestGridsManager,
+    applyTransactionChecked,
+    asyncSetTimeout,
+    getGridHTMLElement,
+} from 'ag-test-utils';
+import { onTestFinished } from 'vitest';
 
-import type { ColDef, ColGroupDef, GridApi, GridOptions } from 'ag-grid-community';
+import type { ColDef, ColGroupDef, GridApi, GridOptions, IRowNode, ModelUpdatedEvent } from 'ag-grid-community';
 import {
     AutoGenerateColumnsModule,
     ClientSideRowModelModule,
+    GridStateModule,
     NumberFilterModule,
     TextEditorModule,
     TextFilterModule,
     forEachColDef,
 } from 'ag-grid-community';
+import { AdvancedFilterModule, RowGroupingModule } from 'ag-grid-enterprise';
 
 describe('Auto-Generate Column Defs', () => {
     const gridsManager = new TestGridsManager({
@@ -141,6 +152,305 @@ describe('Auto-Generate Column Defs', () => {
                 ├── name "Name" width:200
                 └── age "Age" width:200
             `);
+        });
+    });
+
+    describe('columns and rows of the rowData call that generates them', () => {
+        /** Reads the column ids, each row node's index in `known` (-1 if foreign) and the displayed count. */
+        function readGrid(api: GridApi, known: object[]) {
+            const rowIndexes: number[] = [];
+            api.forEachNode((node) => rowIndexes.push(known.indexOf(node.data)));
+            return {
+                columnIds: api.getAllGridColumns().map((col) => col.getColId()),
+                rowIndexes,
+                displayedRowCount: api.getDisplayedRowCount(),
+            };
+        }
+
+        test('setGridOption rowData on a grid created with empty rowData generates the columns and shows every row', async () => {
+            const rows = [
+                { id: '1', a: 1, b: 'x' },
+                { id: '2', a: 2, b: 'y' },
+            ];
+            const api = createGrid({ autoGenerateColumnDefs: true, rowData: [] });
+            await asyncSetTimeout(0);
+            expect(readGrid(api, rows)).toEqual({ columnIds: [], rowIndexes: [], displayedRowCount: 0 });
+
+            api.setGridOption('rowData', rows);
+
+            await waitFor(
+                () =>
+                    expect(readGrid(api, rows)).toEqual({
+                        columnIds: ['id', 'a', 'b'],
+                        rowIndexes: [0, 1],
+                        displayedRowCount: 2,
+                    }),
+                { timeout: 1000 }
+            );
+        });
+
+        test('updateGridOptions rowData with another option on a grid created with empty rowData generates the columns and shows every row', async () => {
+            const rows = [
+                { id: '1', a: 1, b: 'x' },
+                { id: '2', a: 2, b: 'y' },
+            ];
+            const api = createGrid({ autoGenerateColumnDefs: true, rowData: [] });
+            await asyncSetTimeout(0);
+            expect(readGrid(api, rows)).toEqual({ columnIds: [], rowIndexes: [], displayedRowCount: 0 });
+
+            api.updateGridOptions({ rowData: rows, suppressMovableColumns: true });
+
+            await waitFor(
+                () =>
+                    expect(readGrid(api, rows)).toEqual({
+                        columnIds: ['id', 'a', 'b'],
+                        rowIndexes: [0, 1],
+                        displayedRowCount: 2,
+                    }),
+                { timeout: 1000 }
+            );
+        });
+
+        test('turning autoGenerateColumnDefs on with new rowData shows only the new rows, with columns from their first row', async () => {
+            const rowsA = [
+                { id: '1', a: 1, b: 'x' },
+                { id: '2', a: 2, b: 'y' },
+            ];
+            const rowsB = [
+                { id: '5', c: 5, b: 'p' },
+                { id: '6', c: 6, b: 'q' },
+                { id: '7', c: 7, b: 'r' },
+            ];
+            const api = createGrid({ rowData: rowsA });
+            await asyncSetTimeout(0);
+            expect(api.getGridOption('rowData')).toBe(rowsA);
+            expect(readGrid(api, [...rowsA, ...rowsB]).columnIds).toEqual([]);
+
+            api.updateGridOptions({ autoGenerateColumnDefs: true, rowData: rowsB });
+
+            await waitFor(
+                () =>
+                    expect(readGrid(api, [...rowsA, ...rowsB])).toEqual({
+                        columnIds: ['id', 'c', 'b'],
+                        rowIndexes: [2, 3, 4],
+                        displayedRowCount: 3,
+                    }),
+                { timeout: 1000 }
+            );
+        });
+
+        test('rowData with a column default in one call builds the generated columns once and keeps the initial state, in either key order', async () => {
+            const stateGridsManager = new TestGridsManager({
+                modules: [ClientSideRowModelModule, AutoGenerateColumnsModule, GridStateModule],
+            });
+            onTestFinished(() => stateGridsManager.reset());
+            const rows = [
+                { id: '1', c: 1, b: 'x' },
+                { id: '2', c: 2, b: 'y' },
+                { id: '3', c: 3, b: 'z' },
+            ];
+            const defaultColDef = { width: 150 };
+
+            for (const options of [
+                { defaultColDef, rowData: rows },
+                { rowData: rows, defaultColDef },
+            ]) {
+                const api = stateGridsManager.createGrid('myGrid', {
+                    autoGenerateColumnDefs: true,
+                    rowData: [],
+                    initialState: { columnSizing: { columnSizingModel: [{ colId: 'c', width: 222 }] } },
+                });
+                await asyncSetTimeout(0);
+                expect(api.getColumnState()).toEqual([]);
+
+                let newColumnsLoaded = 0;
+                api.addEventListener('newColumnsLoaded', () => ++newColumnsLoaded);
+
+                api.updateGridOptions(options);
+
+                const read = () => ({
+                    widths: api.getColumnState().map((col) => ({ colId: col.colId, width: col.width })),
+                    displayedRowCount: api.getDisplayedRowCount(),
+                    newColumnsLoaded,
+                });
+                const expected = {
+                    widths: [
+                        { colId: 'id', width: 150 },
+                        { colId: 'c', width: 222 },
+                        { colId: 'b', width: 150 },
+                    ],
+                    displayedRowCount: 3,
+                    newColumnsLoaded: 1,
+                };
+                await waitFor(() => expect(read()).toEqual(expected), { timeout: 1000 });
+                await asyncSetTimeout(0);
+                expect(read()).toEqual(expected);
+
+                stateGridsManager.reset();
+            }
+        });
+
+        test('an option processAutoGeneratedColumnDefs sets is applied with the call that generates the columns', async () => {
+            const advancedFilterGridsManager = new TestGridsManager({
+                modules: [
+                    ClientSideRowModelModule,
+                    AutoGenerateColumnsModule,
+                    TextFilterModule,
+                    NumberFilterModule,
+                    AdvancedFilterModule,
+                ],
+            });
+            onTestFinished(() => advancedFilterGridsManager.reset());
+
+            const rows = [
+                { id: '7', a: 1, b: 'x' },
+                { id: '8', a: 2, b: 'y' },
+            ];
+            const initialRows = [{ id: '1', a: 0, b: 'w' }];
+
+            for (const initialOptions of [{ rowData: initialRows }, {}]) {
+                const api = advancedFilterGridsManager.createGrid('myGrid', {
+                    autoGenerateColumnDefs: true,
+                    ...initialOptions,
+                    processAutoGeneratedColumnDefs: (params) => {
+                        if (params.rowData.length === 2) {
+                            params.api.setGridOption('enableAdvancedFilter', true);
+                        }
+                        return params.columnDefs;
+                    },
+                });
+                await asyncSetTimeout(0);
+                expect(api.getGridOption('enableAdvancedFilter')).toBe(false);
+
+                api.setGridOption('rowData', rows);
+
+                const read = () => ({
+                    advancedFilterHeaders:
+                        getGridHTMLElement(api)?.querySelectorAll('.ag-advanced-filter-header').length,
+                    enableAdvancedFilter: api.getGridOption('enableAdvancedFilter'),
+                    columnIds: api.getColumnState().map((col) => col.colId),
+                });
+                await waitFor(
+                    () =>
+                        expect(read()).toEqual({
+                            advancedFilterHeaders: 1,
+                            enableAdvancedFilter: true,
+                            columnIds: ['id', 'a', 'b'],
+                        }),
+                    { timeout: 1000 }
+                );
+
+                advancedFilterGridsManager.reset();
+            }
+        });
+
+        test('a processAutoGeneratedColumnDefs returning the same definitions leaves a column option set with rowData reported as made by the api', async () => {
+            const cached: ColDef[] = [{ field: 'id' }, { field: 'a' }, { field: 'b' }];
+            const api = createGrid({
+                autoGenerateColumnDefs: true,
+                rowData: [{ id: '1', a: 0, b: 'w' }],
+                getRowId: (params) => params.data.id,
+                processAutoGeneratedColumnDefs: () => cached,
+            });
+            await asyncSetTimeout(0);
+
+            const events: string[] = [];
+            api.addEventListener('newColumnsLoaded', (event) => events.push(`${event.type}:${event.source}`));
+            api.addEventListener('columnResized', (event) => events.push(`${event.type}:${event.source}`));
+
+            api.updateGridOptions({
+                rowData: [
+                    { id: '7', a: 1, b: 'x' },
+                    { id: '8', a: 2, b: 'y' },
+                ],
+                defaultColDef: { width: 150 },
+            });
+
+            const read = () => {
+                const rowIds: (string | undefined)[] = [];
+                api.forEachNode((node) => rowIds.push(node.id));
+                return {
+                    events: [...events].sort(),
+                    widths: api.getColumnState().map((col) => ({ colId: col.colId, width: col.width })),
+                    rowIds,
+                };
+            };
+            await waitFor(
+                () =>
+                    expect(read()).toEqual({
+                        events: ['columnResized:api', 'newColumnsLoaded:api'],
+                        widths: [
+                            { colId: 'id', width: 150 },
+                            { colId: 'a', width: 150 },
+                            { colId: 'b', width: 150 },
+                        ],
+                        rowIds: ['7', '8'],
+                    }),
+                { timeout: 1000 }
+            );
+        });
+
+        test('rowData set on a grouped grid whose columns were generated updates the groups in place', async () => {
+            const groupingGridsManager = new TestGridsManager({
+                modules: [ClientSideRowModelModule, AutoGenerateColumnsModule, RowGroupingModule],
+            });
+            onTestFinished(() => groupingGridsManager.reset());
+
+            const api = groupingGridsManager.createGrid('myGrid', {
+                autoGenerateColumnDefs: true,
+                rowData: [
+                    { id: '5', g: 'x', a: 1 },
+                    { id: '4', g: 'z', a: 2 },
+                ],
+                getRowId: (params) => params.data.id,
+                groupDefaultExpanded: -1,
+                processAutoGeneratedColumnDefs: (params) =>
+                    params.columnDefs.map((def) =>
+                        'field' in def && def.field === 'g' ? { ...def, rowGroup: true } : def
+                    ),
+            });
+            await asyncSetTimeout(0);
+
+            const groupsBefore: IRowNode[] = [];
+            api.forEachNode((node) => node.group && groupsBefore.push(node));
+
+            api.setGridOption('rowData', [
+                { id: '4', g: 'z', a: 3 },
+                { id: '5', g: 'x', a: 4 },
+            ]);
+
+            const groupsAfter: IRowNode[] = [];
+            const rows: (string | undefined)[] = [];
+            api.forEachNode((node) => {
+                rows.push(node.group ? `G:${node.key}` : node.id);
+                if (node.group) {
+                    groupsAfter.push(node);
+                }
+            });
+            expect({
+                rows,
+                sameGroups: groupsAfter.map((node, i) => node === groupsBefore[i]),
+                data: { 5: api.getRowNode('5')?.data.a, 4: api.getRowNode('4')?.data.a },
+            }).toEqual({
+                rows: ['G:x', '5', 'G:z', '4'],
+                sameGroups: [true, true],
+                data: { 5: 4, 4: 3 },
+            });
+        });
+
+        test('getGridOption columnDefs returns the generated definitions after each rowData change', async () => {
+            const fieldsOf = (api: GridApi) =>
+                api.getGridOption('columnDefs')?.map((def) => ('field' in def ? def.field : undefined));
+
+            const api = createGrid({ autoGenerateColumnDefs: true });
+            await asyncSetTimeout(0);
+            expect(api.getGridOption('columnDefs')).toBeUndefined();
+
+            api.setGridOption('rowData', [{ id: '1', a: 1 }]);
+            await waitFor(() => expect(fieldsOf(api)).toEqual(['id', 'a']), { timeout: 1000 });
+
+            api.setGridOption('rowData', [{ x: 1, y: 2 }]);
+            await waitFor(() => expect(fieldsOf(api)).toEqual(['x', 'y']), { timeout: 1000 });
         });
     });
 
@@ -967,6 +1277,120 @@ describe('Auto-Generate Column Defs', () => {
                 ├── x "X" width:200
                 └── y "Y" width:200
             `);
+        });
+    });
+
+    describe('events raised by one rowData change', () => {
+        const groupingGridsManager = new TestGridsManager({
+            modules: [ClientSideRowModelModule, AutoGenerateColumnsModule, RowGroupingModule],
+        });
+
+        afterEach(() => {
+            groupingGridsManager.reset();
+        });
+
+        const rowsA = [
+            { id: '1', a: 1, b: 'x' },
+            { id: '2', a: 2, b: 'y' },
+        ];
+        const rowsB = [
+            { id: '1', c: 5, b: 'x' },
+            { id: '3', c: 6, b: 'z' },
+        ];
+
+        /** Runs `action`, then reads the events it raised, the column ids and the row data. */
+        async function recordCall(api: GridApi, action: () => void) {
+            // events of the grid's creation reach api listeners a turn late: flush them before listening
+            await asyncSetTimeout(0);
+
+            const events: string[] = [];
+            api.addEventListener('newColumnsLoaded', () => events.push('newColumnsLoaded'));
+            api.addEventListener('rowDataUpdated', () => events.push('rowDataUpdated'));
+            api.addEventListener('modelUpdated', (event: ModelUpdatedEvent) =>
+                events.push(`modelUpdated:newData=${event.newData},keep=${event.keepRenderedRows}`)
+            );
+
+            action();
+
+            await waitFor(() => expect(events.some((e) => e.startsWith('modelUpdated'))).toBe(true), {
+                timeout: 1000,
+            });
+            await asyncSetTimeout(0);
+
+            const rows: unknown[] = [];
+            api.forEachNode((node) => rows.push(node.data));
+            return { events, columnIds: api.getAllGridColumns().map((col) => col.getColId()), rows };
+        }
+
+        const loadedOnce = ['newColumnsLoaded', 'rowDataUpdated', 'modelUpdated:newData=true,keep=false'];
+
+        test('a grid created with rowData loads its generated columns and rows once', async () => {
+            const events: string[] = [];
+            const api = groupingGridsManager.createGrid('myGrid', {
+                autoGenerateColumnDefs: true,
+                rowData: rowsA,
+                onNewColumnsLoaded: (event) => events.push(`newColumnsLoaded:${event.source}`),
+                onRowDataUpdated: () => events.push('rowDataUpdated'),
+                onModelUpdated: (event) => events.push(`modelUpdated:newData=${event.newData}`),
+            });
+            await waitFor(() => expect(events.some((e) => e.startsWith('modelUpdated'))).toBe(true), {
+                timeout: 1000,
+            });
+            await asyncSetTimeout(0);
+
+            expect({ events, columnIds: api.getAllGridColumns().map((col) => col.getColId()) }).toEqual({
+                events: ['newColumnsLoaded:gridInitializing', 'rowDataUpdated', 'modelUpdated:newData=true'],
+                columnIds: ['id', 'a', 'b'],
+            });
+        });
+
+        test('setting rowData on a grid created without rowData, then again with other keys, loads columns and rows once each time', async () => {
+            const api = groupingGridsManager.createGrid('myGrid', { autoGenerateColumnDefs: true });
+
+            const first = await recordCall(api, () => api.setGridOption('rowData', rowsA));
+            expect(first).toEqual({ events: loadedOnce, columnIds: ['id', 'a', 'b'], rows: rowsA });
+
+            const second = await recordCall(api, () => api.setGridOption('rowData', rowsB));
+            expect(second).toEqual({ events: loadedOnce, columnIds: ['id', 'c', 'b'], rows: rowsB });
+        });
+
+        test.each([
+            ['groupDisplayType', { groupDisplayType: 'groupRows' }],
+            ['groupTotalRow', { groupTotalRow: 'bottom' }],
+        ] as const)(
+            'updateGridOptions changing rowData together with %s gives one load whatever the key order',
+            async (_name, other) => {
+                const results: Awaited<ReturnType<typeof recordCall>>[] = [];
+                for (const options of [
+                    { rowData: rowsB, ...other },
+                    { ...other, rowData: rowsB },
+                ]) {
+                    const api = groupingGridsManager.createGrid('myGrid', {
+                        autoGenerateColumnDefs: true,
+                        rowData: rowsA,
+                    });
+                    results.push(await recordCall(api, () => api.updateGridOptions(options)));
+                    groupingGridsManager.reset();
+                }
+
+                const expected = { events: loadedOnce, columnIds: ['id', 'c', 'b'], rows: rowsB };
+                expect(results).toEqual([expected, expected]);
+            }
+        );
+
+        test('with getRowId set, changing rowData keeps the rendered rows', async () => {
+            const api = groupingGridsManager.createGrid('myGrid', {
+                autoGenerateColumnDefs: true,
+                rowData: rowsA,
+                getRowId: (params) => params.data.id,
+            });
+
+            const result = await recordCall(api, () => api.setGridOption('rowData', rowsB));
+            expect(result).toEqual({
+                events: ['newColumnsLoaded', 'rowDataUpdated', 'modelUpdated:newData=false,keep=true'],
+                columnIds: ['id', 'c', 'b'],
+                rows: rowsB,
+            });
         });
     });
 

@@ -1,4 +1,7 @@
-import { act, cleanup, render, waitFor } from '@testing-library/react';
+import { act, cleanup, findByText, render, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { asyncSetTimeout } from 'ag-test-utils';
+import { mockGridLayout } from 'ag-test-utils/polyfills/mockGridLayout';
 import React from 'react';
 
 import type { ColDef, ColGroupDef, GridApi, GridReadyEvent, HeaderValueGetterParams } from 'ag-grid-community';
@@ -18,6 +21,7 @@ describe('editable column header name (react)', () => {
 
     beforeAll(() => {
         ModuleRegistry.registerModules([AllEnterpriseModule]);
+        mockGridLayout.init();
     });
 
     beforeEach(() => {
@@ -95,5 +99,126 @@ describe('editable column header name (react)', () => {
         });
 
         await waitFor(() => expect(groupHeaderText()).toBe('Competitor Group'));
+    });
+
+    test('the group header edited from the tool panel or its own menu is the only one highlighted, through a rerender', async () => {
+        const groupDefs: ColGroupDef[] = [
+            {
+                groupId: 'athleteGroup',
+                headerName: 'Athlete Group',
+                headerNameEditable: true,
+                children: [{ field: 'athlete' }],
+            },
+            {
+                groupId: 'ageGroup',
+                headerName: 'Age Group',
+                headerNameEditable: true,
+                children: [{ field: 'age' }],
+            },
+        ];
+        const sideBar = {
+            toolPanels: [
+                {
+                    id: 'columns',
+                    labelDefault: 'Columns',
+                    labelKey: 'columns',
+                    iconKey: 'columns',
+                    toolPanel: 'agColumnsToolPanel',
+                },
+            ],
+            defaultToolPanel: 'columns',
+        };
+        const grid = () => (
+            <React.StrictMode>
+                <AgGridReact
+                    columnDefs={groupDefs}
+                    rowData={[{ athlete: 'Michael Phelps', age: 23 }]}
+                    defaultColDef={{ flex: 1, minWidth: 100 }}
+                    sideBar={sideBar}
+                />
+            </React.StrictMode>
+        );
+
+        const groupHeaderCells = () => [...document.querySelectorAll('.ag-header-group-cell')];
+        const groupName = (cell: Element) => cell.querySelector('.ag-header-group-text')?.textContent ?? '';
+        const highlightedGroupNames = () =>
+            groupHeaderCells()
+                .filter((cell) => cell.classList.contains('ag-column-header-edit-highlighted'))
+                .map(groupName)
+                .sort();
+        const waitForInput = () =>
+            waitFor(() => {
+                const input = document.querySelector<HTMLInputElement>('.ag-column-header-edit-popup-editor input');
+                if (!input) {
+                    throw new Error('Header name editor input not found');
+                }
+                return input;
+            });
+        const closeWithEscape = async (input: HTMLInputElement) => {
+            act(() => {
+                input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }));
+            });
+            await waitFor(() => expect(document.querySelector('.ag-column-header-edit-popup-editor')).toBeNull());
+        };
+        const contextMenu = (el: Element) =>
+            act(() => {
+                el.dispatchEvent(
+                    new MouseEvent('contextmenu', { bubbles: true, cancelable: true, clientX: 10, clientY: 10 })
+                );
+            });
+        const clickEditColumnName = async () => {
+            await userEvent.click(await findByText(document.body, 'Edit Column Name'));
+        };
+
+        const view = render(grid());
+        await waitFor(() => expect(groupHeaderCells().map(groupName).sort()).toEqual(['Age Group', 'Athlete Group']));
+        const highlightedByStep: Record<string, string[]> = { before: highlightedGroupNames() };
+
+        // (a) the columns tool panel entry's context menu, on the row the list rendered
+        const entry = await waitFor(() => {
+            const label = Array.from(
+                document.querySelectorAll('.ag-column-select-list .ag-column-select-column-label')
+            ).find((el) => el.textContent === 'Athlete Group');
+            const row = label?.closest('.ag-virtual-list-item');
+            if (!row) {
+                throw new Error('Tool panel entry "Athlete Group" not rendered');
+            }
+            return row;
+        });
+        contextMenu(entry);
+        await clickEditColumnName();
+        const athleteInput = await waitForInput();
+        await waitFor(() => expect(highlightedGroupNames()).toEqual(['Athlete Group']));
+        highlightedByStep.toolPanelOpen = highlightedGroupNames();
+        await closeWithEscape(athleteInput);
+        await waitFor(() => expect(highlightedGroupNames()).toEqual([]));
+        highlightedByStep.toolPanelClosed = highlightedGroupNames();
+
+        // a rerender with the same props leaves nothing highlighted
+        view.rerender(grid());
+        await act(async () => {
+            await asyncSetTimeout(0);
+        });
+        highlightedByStep.afterRerender = highlightedGroupNames();
+
+        // (b) the group header cell's own context menu
+        const ageCell = groupHeaderCells().find((el) => groupName(el) === 'Age Group')!;
+        contextMenu(ageCell);
+        await clickEditColumnName();
+        const ageInput = await waitForInput();
+        await waitFor(() => expect(highlightedGroupNames()).toEqual(['Age Group']));
+        highlightedByStep.headerOpen = highlightedGroupNames();
+        await closeWithEscape(ageInput);
+        await waitFor(() => expect(highlightedGroupNames()).toEqual([]));
+        highlightedByStep.headerClosed = highlightedGroupNames();
+
+        expect(highlightedByStep).toEqual({
+            before: [],
+            toolPanelOpen: ['Athlete Group'],
+            toolPanelClosed: [],
+            afterRerender: [],
+            headerOpen: ['Age Group'],
+            headerClosed: [],
+        });
     });
 });

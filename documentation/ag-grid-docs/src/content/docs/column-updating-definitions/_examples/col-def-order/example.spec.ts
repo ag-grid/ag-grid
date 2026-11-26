@@ -28,6 +28,6 @@ test.agExample(import.meta, () => {
         // Applying a set restores the columns with that set's header names.
         await page.getByRole('button', { name: 'Column Set B' }).click();
         await expect(agIdFor.headerCell('gold')).toContainText('B Gold');
-        await expect(agIdFor.headerCell('athlete')).toContainText('B Athlete');
+        await expect(firstHeader(page)).toContainText('B Athlete');
     });
 });

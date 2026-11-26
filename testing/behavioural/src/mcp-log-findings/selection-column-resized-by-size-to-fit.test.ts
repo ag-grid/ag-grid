@@ -1,5 +1,5 @@
 /*
- * Issue: size-to-fit resizes the selection (checkbox) column along with the other columns, although the docs say
+ * Issue: size-to-fit resized the selection (checkbox) column along with the other columns, although the docs say
  * the checkbox column is sized statically.
  *
  * Setup: ClientSideRowModelModule, RowSelectionModule and ColumnAutoSizeModule registered, three 200px columns and
@@ -10,22 +10,21 @@
  * statically, and is therefore not affected by Auto-Sizing", linking to the Column Sizing section that covers
  * size-to-fit, so the selection column stays 50px wide.
  *
- * Actual: the selection column is scaled with the other columns, to 76px here.
+ * Reported: the selection column was scaled with the other columns, to 76px here.
  *
  * Reported on: Angular 34.3.1.
  *
  * Source: AG Grid docs MCP search log analysis (AG-18665). A coding agent using the Angular docs (34.3.1, Apr 2026)
  * searched for "selectionColumnDef suppressSizeToFit prevent checkbox column resize sizeColumnsToFit".
  */
-import { TestGridsManager } from 'ag-test-utils';
+import { TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import { ClientSideRowModelModule, ColumnAutoSizeModule, RowSelectionModule } from 'ag-grid-community';
-import type { GridApi, GridOptions } from 'ag-grid-community';
+import type { ColumnResizedEvent, GridApi, GridOptions } from 'ag-grid-community';
 
 const SELECTION_COLUMN_ID = 'ag-Grid-SelectionColumn';
 
-// TODO: disabled due to AG-19388 - re-enable once fixed
-describe.skip('selection column and size-to-fit', () => {
+describe('selection column and size-to-fit', () => {
     const gridMgr = new TestGridsManager({
         modules: [ClientSideRowModelModule, RowSelectionModule, ColumnAutoSizeModule],
     });
@@ -64,5 +63,33 @@ describe.skip('selection column and size-to-fit', () => {
 
         await vi.waitFor(() => expect(api.getColumn('make')!.getActualWidth()).toBeGreaterThan(200));
         expect(selectionWidth(api)).toBe(50);
+    });
+
+    test('size-to-fit with columns already filling the grid changes no width and raises no columnResized', async () => {
+        const api = gridMgr.createGrid('size-to-fit-exact', {
+            ...baseOptions,
+            columnDefs: [
+                { field: 'make', width: 300 },
+                { field: 'model', width: 300 },
+                { field: 'price', width: 350 },
+            ],
+        });
+        const widths = () => api.getAllDisplayedColumns().map((col) => [col.getColId(), col.getActualWidth()]);
+        const filling = [
+            [SELECTION_COLUMN_ID, 50],
+            ['make', 300],
+            ['model', 300],
+            ['price', 350],
+        ];
+        expect(widths()).toEqual(filling);
+
+        const resized: ColumnResizedEvent[] = [];
+        api.addEventListener('columnResized', (event) => resized.push(event));
+
+        api.sizeColumnsToFit({ defaultMinWidth: 100 });
+        await asyncSetTimeout(0);
+
+        expect(widths()).toEqual(filling);
+        expect(resized).toEqual([]);
     });
 });

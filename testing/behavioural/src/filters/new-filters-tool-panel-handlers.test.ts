@@ -427,4 +427,63 @@ describe('new filters tool panel filter types', () => {
         api.setState({ filter: { selectableFilters: { age: 1, score: 1 } } });
         await waitFor(() => expect(floatingInput('age')?.type).toBe('number'));
     });
+
+    test('removing the card of a column switched to another filter type clears its floating filter and filter model', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                {
+                    field: 'age',
+                    filter: 'agSelectableColumnFilter',
+                    filterParams: {
+                        filters: [
+                            { filter: 'agTextColumnFilter', name: 'Text' },
+                            { filter: 'agNumberColumnFilter', name: 'Number' },
+                        ],
+                    },
+                },
+            ],
+            defaultColDef: { floatingFilter: true },
+            rowData: [{ age: 30 }, { age: 25 }, { age: 3 }],
+            sideBar: 'filters-new',
+            enableFilterHandlers: true,
+            initialState: {
+                sideBar: {
+                    visible: true,
+                    position: 'right',
+                    openToolPanel: 'filters-new',
+                    toolPanels: { 'filters-new': { filters: [{ colId: 'age', expanded: true }] } },
+                },
+            },
+        });
+        const gridElement = getGridElement(api)!;
+        const observe = () => {
+            const input = gridElement.querySelector<HTMLInputElement>('.ag-floating-filter-body input');
+            return { type: input?.type, value: input?.value, model: api.getColumnFilterModel('age') };
+        };
+        const select = () => gridElement.querySelector<HTMLElement>('.ag-filter-type-select');
+        await waitFor(() => expect(select()).not.toBeNull());
+        await waitFor(() => expect(observe()).toEqual({ type: 'text', value: '', model: null }));
+
+        await openPicker(select()!);
+        await clickSelectOption('Number');
+        await waitFor(() => expect(observe()).toEqual({ type: 'number', value: '', model: null }));
+
+        await api.setColumnFilterModel('age', { filterType: 'number', type: 'lessThan', filter: 10 });
+        api.onFilterChanged();
+        await waitFor(() =>
+            expect(observe()).toEqual({
+                type: 'number',
+                value: '10',
+                model: { filterType: 'number', type: 'lessThan', filter: 10 },
+            })
+        );
+
+        gridElement.querySelector<HTMLElement>('.ag-filter-card-delete')!.click();
+        await waitFor(() => expect(gridElement.querySelector('.ag-filter-card:not(.ag-filter-card-add)')).toBeNull());
+        // the docs leave the type open: the floating filter follows the choice the state reports
+        const choice = () => api.getState().filter?.selectableFilters?.age;
+        await waitFor(() =>
+            expect(observe()).toEqual({ type: choice() === 1 ? 'number' : 'text', value: '', model: null })
+        );
+    });
 });

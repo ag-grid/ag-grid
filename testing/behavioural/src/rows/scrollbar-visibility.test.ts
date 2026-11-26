@@ -1,12 +1,16 @@
 import { waitFor } from '@testing-library/dom';
-import { TestGridsManager, mockGridLayout } from 'ag-test-utils';
-import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from 'vitest';
+import { TestGridsManager, mockGridLayout, triggerResizeObservers } from 'ag-test-utils';
+import { afterAll, afterEach, beforeAll, describe, expect, onTestFinished, test, vi } from 'vitest';
 
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
 const scrollbarWidth = 15;
 const initialRowCount = 11;
+// Past the scrollbar's 100ms debounce and its 500ms re-check.
+const SCROLLBARS_SETTLED_MS = 600;
+// Past the resize report's frame and the scrollbar's 100ms debounce, before its 500ms re-check.
+const RESIZE_REPORTED_MS = 300;
 const rowData = Array.from({ length: initialRowCount + 1 }, (_, index) => ({
     athlete: `Athlete ${index}`,
     country: `Country ${index}`,
@@ -95,6 +99,100 @@ describe('Scrollbar visibility', () => {
         await expectScrollbarSizes('0px', '0px', 'restored row data');
     });
 
+    test('shows both scrollbars when a column widened through the API overflows the columns, and removes both when it narrows back', async () => {
+        vi.useFakeTimers();
+        onTestFinished(() => {
+            vi.useRealTimers();
+        });
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { field: 'athlete', width: 200 },
+                { field: 'country', width: 200 },
+                { field: 'sport', width: 200 },
+            ],
+            headerHeight: mockGridLayout.headerHeight,
+            rowHeight: mockGridLayout.rowHeight,
+            rowData: rowData.slice(0, initialRowCount),
+            scrollbarWidth,
+        });
+        const viewport = query<HTMLElement>('.ag-grid-viewport');
+        const horizontalScrollbar = query<HTMLElement>('.ag-body-horizontal-scroll');
+        Object.defineProperty(viewport, 'clientHeight', {
+            configurable: true,
+            get: () =>
+                mockGridLayout.gridHeight -
+                mockGridLayout.headerHeight -
+                (Number.parseFloat(horizontalScrollbar.style.height) || 0),
+        });
+        const scrollbars = () => ({
+            horizontal: horizontalScrollbar.style.height,
+            vertical: query<HTMLElement>('.ag-body-vertical-scroll').style.width,
+        });
+        await vi.advanceTimersByTimeAsync(SCROLLBARS_SETTLED_MS);
+        const initial = scrollbars();
+
+        // 800px of columns in a 655px viewport
+        api.setColumnWidths([{ key: 'athlete', newWidth: 400 }]);
+        await vi.advanceTimersByTimeAsync(SCROLLBARS_SETTLED_MS);
+        const widened = { width: api.getColumn('athlete')!.getActualWidth(), ...scrollbars() };
+
+        api.setColumnWidths([{ key: 'athlete', newWidth: 200 }]);
+        await vi.advanceTimersByTimeAsync(SCROLLBARS_SETTLED_MS);
+        const narrowed = { width: api.getColumn('athlete')!.getActualWidth(), ...scrollbars() };
+
+        expect({ initial, widened, narrowed }).toEqual({
+            initial: { horizontal: '0px', vertical: '0px' },
+            widened: { width: 400, horizontal: `${scrollbarWidth}px`, vertical: `${scrollbarWidth}px` },
+            narrowed: { width: 200, horizontal: '0px', vertical: '0px' },
+        });
+    });
+
+    test('shows the vertical scrollbar when the grid shrinks below its rows after a column change, and removes it when the height returns', async () => {
+        vi.useFakeTimers();
+        const heightBefore = mockGridLayout.gridHeight;
+        onTestFinished(() => {
+            mockGridLayout.gridHeight = heightBefore;
+            vi.useRealTimers();
+        });
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { field: 'athlete', width: 200 },
+                { field: 'country', width: 200 },
+                { field: 'sport', width: 200 },
+            ],
+            headerHeight: mockGridLayout.headerHeight,
+            rowHeight: mockGridLayout.rowHeight,
+            rowData: rowData.slice(0, initialRowCount),
+            scrollbarWidth,
+        });
+        const verticalWidth = () => query<HTMLElement>('.ag-body-vertical-scroll').style.width;
+        await vi.advanceTimersByTimeAsync(SCROLLBARS_SETTLED_MS);
+
+        api.moveColumnByIndex(0, 2);
+        await vi.advanceTimersByTimeAsync(SCROLLBARS_SETTLED_MS);
+        const afterMove = {
+            order: api.getAllDisplayedColumns().map((col) => col.getColId()),
+            vertical: verticalWidth(),
+        };
+
+        // read before the 500ms re-check, which measures whatever was reported
+        mockGridLayout.gridHeight = heightBefore - mockGridLayout.rowHeight * 3;
+        triggerResizeObservers();
+        await vi.advanceTimersByTimeAsync(RESIZE_REPORTED_MS);
+        const shrunk = verticalWidth();
+
+        mockGridLayout.gridHeight = heightBefore;
+        triggerResizeObservers();
+        await vi.advanceTimersByTimeAsync(RESIZE_REPORTED_MS);
+        const restored = verticalWidth();
+
+        expect({ afterMove, shrunk, restored }).toEqual({
+            afterMove: { order: ['country', 'sport', 'athlete'], vertical: '0px' },
+            shrunk: `${scrollbarWidth}px`,
+            restored: '0px',
+        });
+    });
+
     // Overlay scrollbars take no layout space, which is when the fake scrollbars listen for touch.
     describe('touch listeners with overlay scrollbars', () => {
         beforeAll(() => {
@@ -163,6 +261,40 @@ describe('Horizontal scrollbar while columns slide', () => {
 
     const horizontalScrollbarHeight = () => query<HTMLElement>('.ag-body-horizontal-scroll').style.height;
 
+    test('shows when the new column layout overflows, before the slide ends', async () => {
+        vi.useFakeTimers();
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { field: 'a', rowGroup: true, hide: true },
+                { field: 'b', rowGroup: true, hide: true },
+                { field: 'c', width: 150 },
+            ],
+            rowData: [
+                { a: 'x', b: 'p', c: 1 },
+                { a: 'y', b: 'q', c: 2 },
+            ],
+            scrollbarWidth,
+        });
+        await vi.advanceTimersByTimeAsync(SETTLED_MS);
+        // The one default auto group column and the value column fit the 600px viewport.
+        expect({ columns: api.getAllDisplayedColumns().length, height: horizontalScrollbarHeight() }).toEqual({
+            columns: 2,
+            height: '0px',
+        });
+
+        api.updateGridOptions({
+            autoGroupColumnDef: { headerName: 'X', width: 300 },
+            groupDisplayType: 'multipleColumns',
+        });
+        await vi.advanceTimersByTimeAsync(MID_SLIDE_MS);
+
+        // Two auto group columns of 300px and the value column overflow the viewport.
+        expect({ columns: api.getAllDisplayedColumns().length, height: horizontalScrollbarHeight() }).toEqual({
+            columns: 3,
+            height: `${scrollbarWidth}px`,
+        });
+    });
+
     const createOverflowingGrid = (suppressColumnMoveAnimation: boolean) =>
         gridsManager.createGrid('myGrid', {
             columnDefs: [
@@ -209,6 +341,126 @@ describe('Horizontal scrollbar while columns slide', () => {
         await vi.advanceTimersByTimeAsync(AFTER_SLIDE_MS - MID_SLIDE_MS);
         expect(horizontalScrollbarHeight()).toBe('0px');
     });
+
+    test('a row group panel shown above the viewport counts in the scrollbar check of the column change after it', async () => {
+        vi.useFakeTimers();
+        const rowCount = 5;
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { field: 'a', width: 100 },
+                { field: 'b', width: 100 },
+            ],
+            rowData: Array.from({ length: rowCount }, (_, index) => ({ a: index, b: index })),
+            headerHeight: mockGridLayout.headerHeight,
+            rowHeight: mockGridLayout.rowHeight,
+            scrollbarWidth,
+        });
+        // the rows fit the viewport with 10px to spare, until the panel above it takes its height
+        let panelHeight = 0;
+        Object.defineProperty(query<HTMLElement>('.ag-grid-viewport'), 'clientHeight', {
+            configurable: true,
+            get: () => mockGridLayout.headerHeight + mockGridLayout.rowHeight * rowCount + 10 - panelHeight,
+        });
+        const verticalScrollbarWidth = () => query<HTMLElement>('.ag-body-vertical-scroll').style.width;
+        // past the 500ms re-check, which measures the height above
+        await vi.advanceTimersByTimeAsync(SETTLED_MS + AFTER_SLIDE_MS);
+        const before = verticalScrollbarWidth();
+
+        panelHeight = 40;
+        api.setGridOption('rowGroupPanelShow', 'always');
+        api.moveColumnByIndex(0, 1);
+        await vi.advanceTimersByTimeAsync(AFTER_SLIDE_MS);
+
+        expect({
+            before,
+            panelShown: query<HTMLElement>('.ag-column-drop-wrapper .ag-column-drop').classList.contains('ag-hidden'),
+            order: api.getAllDisplayedColumns().map((column) => column.getColId()),
+            after: verticalScrollbarWidth(),
+        }).toEqual({ before: '0px', panelShown: false, order: ['b', 'a'], after: `${scrollbarWidth}px` });
+    });
+});
+
+describe('Vertical scrollbar when a column update changes the header height', () => {
+    const gridsManager = new TestGridsManager({ modules: [ClientSideRowModelModule] });
+    const rowCount = 5;
+    let originalGridWidth: number;
+    let originalGridHeight: number;
+    let originalNativeScrollbarWidth: number;
+
+    beforeAll(() => {
+        originalGridWidth = mockGridLayout.gridWidth;
+        originalGridHeight = mockGridLayout.gridHeight;
+        originalNativeScrollbarWidth = mockGridLayout.nativeScrollbarWidth;
+        mockGridLayout.gridWidth = 600;
+        // The rows fit under one header row with 10px to spare, and overflow under two (the mock viewport and the
+        // grid's body height each remove the header section).
+        mockGridLayout.gridHeight = mockGridLayout.headerHeight * 2 + mockGridLayout.rowHeight * rowCount + 10;
+        mockGridLayout.useRealOffsetDimensions = true;
+        mockGridLayout.nativeScrollbarWidth = scrollbarWidth;
+    });
+
+    afterAll(() => {
+        mockGridLayout.gridWidth = originalGridWidth;
+        mockGridLayout.gridHeight = originalGridHeight;
+        mockGridLayout.useRealOffsetDimensions = false;
+        mockGridLayout.nativeScrollbarWidth = originalNativeScrollbarWidth;
+    });
+
+    afterEach(() => {
+        gridsManager.reset();
+        vi.useRealTimers();
+    });
+
+    test('settles within the call when a column group row is added and when it is removed again', async () => {
+        vi.useFakeTimers();
+        const headerHeight = mockGridLayout.headerHeight;
+        const columns = [
+            { field: 'a', width: 200 },
+            { field: 'b', width: 200 },
+        ];
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: columns,
+            rowData: Array.from({ length: rowCount }, (_, index) => ({ a: index, b: index })),
+            headerHeight,
+            groupHeaderHeight: headerHeight,
+            rowHeight: mockGridLayout.rowHeight,
+            scrollbarWidth,
+        });
+        let visibilityChanges = 0;
+        api.addGlobalListener((type: string) => {
+            if (type === 'scrollVisibilityChanged') {
+                ++visibilityChanges;
+            }
+        });
+        const verticalScrollbarWidth = () => query<HTMLElement>('.ag-body-vertical-scroll').style.width;
+        const headerRows = () => document.querySelectorAll('.ag-header-row').length;
+        // past the 500ms re-check, which measures whatever the layout is by then
+        await vi.advanceTimersByTimeAsync(SCROLLBARS_SETTLED_MS);
+        const initial = { headerRows: headerRows(), vertical: verticalScrollbarWidth() };
+        visibilityChanges = 0;
+
+        api.setGridOption('columnDefs', [{ headerName: 'Group', children: columns }]);
+        // the event queue is flushed, no frame has run
+        await vi.advanceTimersByTimeAsync(0);
+        const groupAdded = { headerRows: headerRows(), visibilityChanges };
+        await vi.advanceTimersByTimeAsync(SCROLLBARS_SETTLED_MS);
+        const groupAddedSettled = { vertical: verticalScrollbarWidth() };
+        visibilityChanges = 0;
+
+        api.setGridOption('columnDefs', columns);
+        await vi.advanceTimersByTimeAsync(0);
+        const groupRemoved = { headerRows: headerRows(), visibilityChanges };
+        await vi.advanceTimersByTimeAsync(SCROLLBARS_SETTLED_MS);
+        const groupRemovedSettled = { vertical: verticalScrollbarWidth() };
+
+        expect({ initial, groupAdded, groupAddedSettled, groupRemoved, groupRemovedSettled }).toEqual({
+            initial: { headerRows: 1, vertical: '0px' },
+            groupAdded: { headerRows: 2, visibilityChanges: 1 },
+            groupAddedSettled: { vertical: `${scrollbarWidth}px` },
+            groupRemoved: { headerRows: 1, visibilityChanges: 1 },
+            groupRemovedSettled: { vertical: '0px' },
+        });
+    });
 });
 
 describe('Vertical scrollbar and scroll gap while columns slide', () => {
@@ -252,7 +504,7 @@ describe('Vertical scrollbar and scroll gap while columns slide', () => {
     const gridBody = () => query<HTMLElement>('.ag-grid-viewport').parentElement!;
     const hasHorizontalGap = () => !gridBody().classList.contains('ag-body-horizontal-content-no-gap');
 
-    test('keeps both scrollbars while columns slide out, and hides them when the slide ends', async () => {
+    test('shows the vertical scrollbar the new layout needs before the slide ends, and keeps it while columns slide out', async () => {
         vi.useFakeTimers();
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: [
@@ -286,7 +538,21 @@ describe('Vertical scrollbar and scroll gap while columns slide', () => {
 
         api.setColumnsVisible(['x', 'y', 'z'], true);
         await vi.advanceTimersByTimeAsync(VERTICAL_APPLIED_MS);
+
+        // The rows overflow once the horizontal scrollbar, not yet applied, takes its height.
+        expect(verticalScrollbarWidth()).toBe(`${scrollbarWidth}px`);
         await vi.advanceTimersByTimeAsync(SCROLLBAR_APPLIED_MS);
+
+        // Five columns (1000px) overflow the viewport, the horizontal scrollbar takes height and the rows overflow.
+        expect({
+            displayed: api.getAllDisplayedColumns().map((column) => column.getColId()),
+            horizontal: horizontalScrollbar.style.height,
+            vertical: verticalScrollbarWidth(),
+        }).toEqual({
+            displayed: ['x', 'y', 'z', 'a', 'b'],
+            horizontal: `${scrollbarWidth}px`,
+            vertical: `${scrollbarWidth}px`,
+        });
 
         await vi.advanceTimersByTimeAsync(SLIDE_ENDED_MS);
         api.setColumnsVisible(['x', 'y', 'z'], false);
@@ -304,7 +570,7 @@ describe('Vertical scrollbar and scroll gap while columns slide', () => {
         });
     });
 
-    test('keeps the gap right of the columns closed while columns slide out, and opens it when the slide ends', async () => {
+    test('closes the gap right of the columns before the slide ends when columns fill the width, and opens it after the slide when columns leave', async () => {
         vi.useFakeTimers();
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: [
@@ -325,6 +591,12 @@ describe('Vertical scrollbar and scroll gap while columns slide', () => {
 
         api.setColumnsVisible(['x', 'y'], true);
         await vi.advanceTimersByTimeAsync(SCROLLBAR_APPLIED_MS);
+
+        // Four columns (800px) fill the viewport: the gap is gone while the columns still slide.
+        expect({ displayed: api.getAllDisplayedColumns().length, gap: hasHorizontalGap() }).toEqual({
+            displayed: 4,
+            gap: false,
+        });
         await vi.advanceTimersByTimeAsync(SLIDE_ENDED_MS);
 
         api.setColumnsVisible(['x', 'y'], false);

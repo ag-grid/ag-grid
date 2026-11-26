@@ -1,10 +1,11 @@
 import { waitFor } from '@testing-library/dom';
-import { TestGridsManager, asyncSetTimeout, waitForNoLoadingRows } from 'ag-test-utils';
+import { TestGridsManager, asyncSetTimeout, runToIdle, waitForNoLoadingRows } from 'ag-test-utils';
 
-import type { ColDef, GridApi, GridOptions, IServerSideDatasource } from 'ag-grid-community';
+import type { ColDef, ColGroupDef, GridApi, GridOptions, IServerSideDatasource } from 'ag-grid-community';
 import { getGridElement } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
+import type { IOlympicData } from '../columnToolPanel/deferredPivotModeFakeServer';
 import { createFakeServer, createServerSideDatasource } from '../columnToolPanel/deferredPivotModeFakeServer';
 import { getColumnOrder } from '../columns/column-test-utils';
 
@@ -14,10 +15,43 @@ describe('SSRM: interactive pivot column sorting (pivotSort)', () => {
     beforeEach(() => gridsManager.reset());
     afterEach(() => gridsManager.reset());
 
-    const rowData = [
-        { athlete: 'a', country: 'USA', year: 2000, sport: 'Swimming', gold: 1, silver: 0, bronze: 0, total: 1 },
-        { athlete: 'b', country: 'USA', year: 2004, sport: 'Swimming', gold: 1, silver: 0, bronze: 0, total: 1 },
-        { athlete: 'c', country: 'USA', year: 2008, sport: 'Swimming', gold: 1, silver: 0, bronze: 0, total: 1 },
+    const rowData: IOlympicData[] = [
+        {
+            athlete: 'a',
+            age: 20,
+            country: 'USA',
+            year: 2000,
+            date: '01/08/2000',
+            sport: 'Swimming',
+            gold: 1,
+            silver: 0,
+            bronze: 0,
+            total: 1,
+        },
+        {
+            athlete: 'b',
+            age: 20,
+            country: 'USA',
+            year: 2004,
+            date: '01/08/2004',
+            sport: 'Swimming',
+            gold: 1,
+            silver: 0,
+            bronze: 0,
+            total: 1,
+        },
+        {
+            athlete: 'c',
+            age: 20,
+            country: 'USA',
+            year: 2008,
+            date: '01/08/2008',
+            sport: 'Swimming',
+            gold: 1,
+            silver: 0,
+            bronze: 0,
+            total: 1,
+        },
     ];
 
     /** Wraps the fake datasource so tests can assert how many blocks were requested from the server. */
@@ -222,6 +256,28 @@ describe('SSRM: interactive pivot column sorting (pivotSort)', () => {
         await waitFor(() => expect(pivots()).toEqual(['2008_gold', '2004_gold', '2000_gold']));
         api.applyColumnState({ state: [{ colId: 'year', pivotSort: null }] });
         await waitFor(() => expect(pivots()).toEqual(supplied));
+    });
+
+    test('a pivotSort keeps the width the user gave a supplied pivot result column, and setting the columns again applies theirs', async () => {
+        const datasource: IServerSideDatasource = {
+            getRows: (params) => setTimeout(() => params.success({ rowData, rowCount: 3 }), 0),
+        };
+        const api = await createPivotGrid(datasource);
+        const supplied = (): ColGroupDef[] => [
+            { groupId: '2004', headerName: '2004', children: [{ colId: '2004_gold', field: '2004_gold', width: 120 }] },
+            { groupId: '2000', headerName: '2000', children: [{ colId: '2000_gold', field: '2000_gold', width: 120 }] },
+        ];
+        api.setPivotResultColumns(supplied());
+        await waitFor(() => expect(pivotsOf(api)).toEqual(['2004_gold', '2000_gold']));
+        const width = () => api.getColumn('2004_gold')!.getActualWidth();
+        api.setColumnWidths([{ key: '2004_gold', newWidth: 300 }]);
+
+        api.applyColumnState({ state: [{ colId: 'year', pivotSort: 'asc' }] });
+        await waitFor(() => expect(pivotsOf(api)).toEqual(['2000_gold', '2004_gold']));
+        const afterSort = width();
+        api.setPivotResultColumns(supplied());
+
+        expect({ afterSort, afterSetAgain: width() }).toEqual({ afterSort: 300, afterSetAgain: 120 });
     });
 
     test('supplied pivot result columns start unsorted and the first pill click sorts them ascending', async () => {
@@ -529,6 +585,98 @@ describe('SSRM: interactive pivot column sorting (pivotSort)', () => {
         await waitFor(() => expect(pivots()).toEqual(['total_gold', '2000_gold', '2004_gold']));
     });
 
+    test('a pivotSort call raises its cause events, then gridColumnsChanged, then the layout events, last columnEverythingChanged', async () => {
+        const api = await gridsManager.createGridAndWait('ssrmEventOrder', {
+            columnDefs: [
+                { field: 'a', rowGroup: true, hide: true },
+                { field: 'b', pivot: true, hide: true },
+                { field: 'v', aggFunc: 'sum', hide: true },
+            ],
+            pivotMode: true,
+            rowModelType: 'serverSide',
+            serverSideDatasource: {
+                getRows: (params) =>
+                    params.success({
+                        rowData: [{ a: 'x', p1_v: 1, p2_v: 2 }],
+                        rowCount: 1,
+                        pivotResultFields: ['p1_v', 'p2_v'],
+                    }),
+            },
+        });
+        await waitForNoLoadingRows(api);
+        const lastTwoDisplayed = () => getColumnOrder(api, 'all').slice(-2);
+        await waitFor(() => expect(lastTwoDisplayed()).toEqual(['p1_v', 'p2_v']), { timeout: 1000 });
+
+        const recorded: string[] = [];
+        const names = [
+            'gridColumnsChanged',
+            'modelUpdated',
+            'columnEverythingChanged',
+            'virtualColumnsChanged',
+            'displayedColumnsChanged',
+            'columnPivotChanged',
+            'columnMoved',
+        ] as const;
+        for (const name of names) {
+            api.addEventListener(name, () => recorded.push(name));
+        }
+
+        api.applyColumnState({ state: [{ colId: 'b', pivotSort: 'desc' }] });
+        await waitFor(() => expect(recorded).toContain('displayedColumnsChanged'), { timeout: 1000 });
+        // events after the last one the call raises would still be queued: let them arrive
+        await asyncSetTimeout(0);
+        await asyncSetTimeout(0);
+
+        expect({ lastTwoDisplayed: lastTwoDisplayed(), events: recorded }).toEqual({
+            lastTwoDisplayed: ['p2_v', 'p1_v'],
+            events: [
+                'columnPivotChanged',
+                'columnMoved',
+                'gridColumnsChanged',
+                'virtualColumnsChanged',
+                'displayedColumnsChanged',
+                'columnEverythingChanged',
+            ],
+        });
+    });
+
+    test('turning pivot mode on with new columnDefs in one call tells the columns change before the rows refresh', async () => {
+        const columnDefs: ColDef[] = [
+            { colId: 'a', field: 'a', rowGroup: true },
+            { colId: 'b', field: 'b', pivot: true },
+            { colId: 'v', field: 'v', aggFunc: 'sum' },
+        ];
+        const api = await gridsManager.createGridAndWait('ssrmPivotModeOn', {
+            columnDefs,
+            rowModelType: 'serverSide',
+            serverSideDatasource: {
+                getRows: (params) => params.success({ rowData: [{ a: 'x', v: 1 }], rowCount: 1 }),
+            },
+        });
+        await waitForNoLoadingRows(api);
+
+        const recorded: string[] = [];
+        for (const name of ['gridColumnsChanged', 'newColumnsLoaded', 'modelUpdated'] as const) {
+            api.addEventListener(name, () => recorded.push(name));
+        }
+
+        api.updateGridOptions({ pivotMode: true, columnDefs: [...columnDefs, { colId: 'e', field: 'e' }] });
+        await waitFor(() => expect(recorded).toContain('modelUpdated'), { timeout: 1000 });
+        // events after the first modelUpdated would still be queued: let them arrive
+        await asyncSetTimeout(0);
+        await asyncSetTimeout(0);
+
+        expect({
+            pivotMode: api.isPivotMode(),
+            eExists: api.getColumn('e') != null,
+            recorded,
+        }).toEqual({
+            pivotMode: true,
+            eExists: true,
+            recorded: ['gridColumnsChanged', 'newColumnsLoaded', 'modelUpdated', 'modelUpdated'],
+        });
+    });
+
     test('changing the pivot columns still refetches from the server', async () => {
         const { datasource, getRowsCount } = countingDatasource();
         const api = await createPivotGrid(datasource);
@@ -539,5 +687,79 @@ describe('SSRM: interactive pivot column sorting (pivotSort)', () => {
         await asyncSetTimeout(0);
         await asyncSetTimeout(0);
         expect(getRowsCount()).toBe(countBeforeChange + 1);
+    });
+
+    test.each([{ serverSideSortAllLevels: false }, { serverSideSortAllLevels: true }])(
+        'a new autoGroupColumnDef comparator on a sorted grouped grid makes no request, serverSideSortAllLevels $serverSideSortAllLevels',
+        async (row) => {
+            const routes: (string[] | undefined)[] = [];
+            const delegate = createServerSideDatasource(createFakeServer(rowData));
+            const api = await gridsManager.createGridAndWait('ssrm', {
+                columnDefs: [
+                    { field: 'country', rowGroup: true, hide: true },
+                    { field: 'gold', aggFunc: 'sum' },
+                ],
+                rowModelType: 'serverSide',
+                serverSideSortAllLevels: row.serverSideSortAllLevels,
+                serverSideDatasource: {
+                    getRows: (params) => {
+                        routes.push(params.request.groupKeys);
+                        delegate.getRows(params);
+                    },
+                },
+                getRowId: ({ data, level }) => (level === 0 ? data.country : data.athlete),
+            });
+            await waitForNoLoadingRows(api);
+            api.applyColumnState({ state: [{ colId: 'ag-Grid-AutoColumn', sort: 'asc' }] });
+            await waitForNoLoadingRows(api);
+            api.getRowNode('USA')!.setExpanded(true);
+            await waitForNoLoadingRows(api);
+            expect(api.getRowNode('a')?.data.athlete).toBe('a');
+            expect(api.getColumnState().find((s) => s.colId === 'ag-Grid-AutoColumn')!.sort).toBe('asc');
+
+            routes.length = 0;
+            await runToIdle(() => api.setGridOption('autoGroupColumnDef', { comparator: () => 0 }));
+            expect(routes).toEqual([]);
+
+            // the same observer sees a request once the sort model changes
+            await runToIdle(() => api.applyColumnState({ state: [{ colId: 'ag-Grid-AutoColumn', sort: 'desc' }] }));
+            expect(routes).toContainEqual(['USA']);
+        }
+    );
+
+    test('adding or removing an autoGroupColumnDef comparator while the row group column is sorted makes no request', async () => {
+        const routes: (string[] | undefined)[] = [];
+        const delegate = createServerSideDatasource(createFakeServer(rowData));
+        const api = await gridsManager.createGridAndWait('ssrm', {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'gold', aggFunc: 'sum' },
+            ],
+            rowModelType: 'serverSide',
+            serverSideDatasource: {
+                getRows: (params) => {
+                    routes.push(params.request.groupKeys);
+                    delegate.getRows(params);
+                },
+            },
+            getRowId: ({ data, level }) => (level === 0 ? data.country : data.athlete),
+        });
+        await waitForNoLoadingRows(api);
+        api.applyColumnState({ state: [{ colId: 'country', sort: 'asc' }] });
+        await waitForNoLoadingRows(api);
+        api.getRowNode('USA')!.setExpanded(true);
+        await waitForNoLoadingRows(api);
+        expect(api.getRowNode('a')?.data.athlete).toBe('a');
+        const countrySort = () => api.getColumnState().find((s) => s.colId === 'country')!.sort;
+        expect(countrySort()).toBe('asc');
+
+        routes.length = 0;
+        await runToIdle(() => api.setGridOption('autoGroupColumnDef', { comparator: () => 0 }));
+        await runToIdle(() => api.setGridOption('autoGroupColumnDef', {}));
+        expect({ routes, sort: countrySort() }).toEqual({ routes: [], sort: 'asc' });
+
+        // the same observer sees a request once the sort model changes
+        await runToIdle(() => api.applyColumnState({ state: [{ colId: 'country', sort: 'desc' }] }));
+        expect(routes).toContainEqual(['USA']);
     });
 });

@@ -1,5 +1,5 @@
 import { waitFor } from '@testing-library/dom';
-import { DragEventDispatcher, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
+import { DragEventDispatcher, TestGridsManager } from 'ag-test-utils';
 
 import type { ColDef, ColGroupDef, GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, ColumnHoverModule, getGridElement } from 'ag-grid-community';
@@ -76,16 +76,23 @@ describe('column header drag reorder', () => {
         const ownerDocument = source.ownerDocument;
         const dispatcher = new DragEventDispatcher('mouse', null, false);
         const y = 100;
+        vi.useFakeTimers({ toFake: ['setInterval', 'clearInterval'] });
+        onTestFinished(() => {
+            vi.useRealTimers();
+        });
         try {
             await dispatcher.startDrag(source, 200, y);
             await dispatcher.movePointer(viewport, 200, y);
             await dispatcher.movePointer(viewport, 5, y);
 
+            const scrollArrow = () => ownerDocument.querySelector('.ag-dnd-ghost-icon .ag-icon-left');
+            // The scroll arrow first: it proves the hold-to-pin interval actually started.
+            expect(scrollArrow()).not.toBeNull();
+            for (let attempts = 0; attempts < 20 && scrollArrow(); ++attempts) {
+                await vi.advanceTimersToNextTimerAsync();
+            }
+            expect(scrollArrow()).toBeNull();
             const ghostIcon = () => ownerDocument.querySelector('.ag-dnd-ghost-icon');
-            // The scroll arrow first: it proves the hold-to-pin interval actually started, which out-waiting
-            // it never did.
-            await waitFor(() => expect(ghostIcon()?.querySelector('.ag-icon-left')).toBeTruthy());
-            await waitFor(() => expect(ghostIcon()!.querySelector('.ag-icon-left')).toBeFalsy(), { timeout: 3000 });
 
             return ghostIcon()!.querySelector('.ag-icon-pin') != null;
         } finally {
@@ -223,6 +230,125 @@ describe('column header drag reorder', () => {
         expect(seen).toEqual(['g1:ag-header-highlight-before', 'g2:ag-header-cell-moving', 'g1:', 'g2:']);
     });
 
+    test('with live moves, a group header is moving while its whole group is dragged by a header, and not after the drop; dragging one of several leaves leaves it idle', async () => {
+        const api = await gridsManager.createGridAndWait('myGrid', {
+            columnDefs: [
+                {
+                    groupId: 'g1',
+                    children: [
+                        { field: 'a', width: 100 },
+                        { field: 'b', width: 100 },
+                    ],
+                },
+                {
+                    groupId: 'g2',
+                    children: [
+                        { field: 'c', width: 100 },
+                        { field: 'd', width: 100 },
+                    ],
+                },
+            ],
+            rowData: [{ a: 1, b: 2, c: 3, d: 4 }],
+        });
+        const groups = () =>
+            Array.from(el(api, '.ag-header').querySelectorAll('.ag-header-group-cell'))
+                .map(
+                    (cell) =>
+                        `${cell.getAttribute('col-id')!.replace(/_\d+$/, '')}:${cell.classList.contains('ag-header-cell-moving') ? 'moving' : 'idle'}`
+                )
+                .sort();
+        const viewport = el(api, '.ag-grid-viewport');
+        const seen: Record<string, string[]> = {};
+
+        const groupDispatcher = new DragEventDispatcher('mouse', null, false);
+        try {
+            await groupDispatcher.startDrag(el(api, '.ag-header-group-cell[col-id^="g2_"]'), 350, 100);
+            await groupDispatcher.movePointer(viewport, 350, 100);
+            await groupDispatcher.movePointer(viewport, 5, 100);
+            await waitFor(() => expect(groups()).toEqual(['g1:idle', 'g2:moving']));
+            seen.groupDraggedMidDrag = groups();
+            await groupDispatcher.finishDrag(viewport);
+        } finally {
+            groupDispatcher.reset();
+        }
+        await waitFor(() => expect(colOrder(api)).toEqual(['c', 'd', 'a', 'b']));
+        await waitFor(() => expect(groups()).toEqual(['g1:idle', 'g2:idle']));
+        seen.groupDraggedAfterDrop = groups();
+
+        // 'a' now sits at 200-300; dragging it past 'b' keeps it inside g1, which has two leaves
+        const leafDispatcher = new DragEventDispatcher('mouse', null, false);
+        try {
+            await leafDispatcher.startDrag(el(api, '.ag-header-cell[col-id="a"]'), 250, 100);
+            await leafDispatcher.movePointer(viewport, 250, 100);
+            await leafDispatcher.movePointer(viewport, 390, 100);
+            await waitFor(() => expect(colOrder(api)).toEqual(['c', 'd', 'b', 'a']));
+            seen.leafDraggedMidDrag = groups();
+            await leafDispatcher.finishDrag(viewport);
+        } finally {
+            leafDispatcher.reset();
+        }
+        await waitFor(() => expect(groups()).toEqual(['g1:idle', 'g2:idle']));
+        seen.leafDraggedAfterDrop = groups();
+
+        expect(seen).toEqual({
+            groupDraggedMidDrag: ['g1:idle', 'g2:moving'],
+            groupDraggedAfterDrop: ['g1:idle', 'g2:idle'],
+            leafDraggedMidDrag: ['g1:idle', 'g2:idle'],
+            leafDraggedAfterDrop: ['g1:idle', 'g2:idle'],
+        });
+    });
+
+    test('with live moves, the header cell a dragged group gets when it is dragged out of the grid and back is moving at once, and none is after the drop', async () => {
+        const api = await gridsManager.createGridAndWait('myGrid', {
+            columnDefs: [
+                {
+                    groupId: 'g',
+                    children: [
+                        { field: 'a', width: 100 },
+                        { field: 'b', width: 100 },
+                    ],
+                },
+                { field: 'd', width: 100 },
+            ],
+            rowData: [{ a: 1, b: 2, d: 4 }],
+        });
+        const groupCells = () =>
+            Array.from(el(api, '.ag-header').querySelectorAll<HTMLElement>('.ag-header-group-cell'));
+        const states = () =>
+            groupCells().map(
+                (cell) =>
+                    `${cell.getAttribute('col-id')!.replace(/_\d+$/, '')}:${cell.classList.contains('ag-header-cell-moving') ? 'moving' : 'idle'}`
+            );
+        const cellBefore = el(api, '.ag-header-group-cell[col-id^="g_"]');
+        expect(states()).toEqual(['g:idle']);
+
+        const viewport = el(api, '.ag-grid-viewport');
+        const body = viewport.ownerDocument.body;
+        const dispatcher = new DragEventDispatcher('mouse', null, false);
+        let whileOut: { visible: boolean[]; cells: string[] } | undefined;
+        let backIn: { states: string[]; sameCellAsBefore: boolean } | undefined;
+        try {
+            await dispatcher.startDrag(cellBefore, 100, 100);
+            await dispatcher.movePointer(viewport, 100, 100);
+            await dispatcher.movePointer(body, 5000, 5000);
+            await waitFor(() => expect(states()).toEqual([]));
+            whileOut = { visible: ['a', 'b'].map((colId) => api.getColumn(colId)!.isVisible()), cells: states() };
+            await dispatcher.movePointer(viewport, 100, 100);
+            await waitFor(() => expect(states()).toEqual(['g:moving']));
+            backIn = { states: states(), sameCellAsBefore: groupCells().includes(cellBefore) };
+            await dispatcher.finishDrag(viewport);
+        } finally {
+            dispatcher.reset();
+        }
+
+        await waitFor(() => expect(states()).toEqual(['g:idle']));
+        expect({ whileOut, backIn, afterDrop: states() }).toEqual({
+            whileOut: { visible: [false, false], cells: [] },
+            backIn: { states: ['g:moving'], sameCellAsBefore: false },
+            afterDrop: ['g:idle'],
+        });
+    });
+
     test('a drag whose column is removed mid-drag moves nothing, leaving the removed column out', async () => {
         const api = await gridsManager.createGridAndWait('myGrid', {
             columnDefs: ['a', 'b', 'c', 'd'].map((field) => ({ field, width: 100 })),
@@ -282,27 +408,33 @@ describe('column header drag reorder', () => {
         expect(api.getColumn('d')!.getPinned()).toBe('left');
     });
 
-    test('a suppressMovable column cannot be dragged (move is blocked)', async () => {
-        const api = await gridsManager.createGridAndWait('myGrid', {
-            columnDefs: [
-                { field: 'a', width: 100, suppressMovable: true },
-                { field: 'b', width: 100 },
-                { field: 'd', width: 100 },
-            ],
-            rowData: [{ a: 1, b: 2, d: 4 }],
-            suppressDragLeaveHidesColumns: true,
-        });
-        expect(colOrder(api)).toEqual(['a', 'b', 'd']);
-
-        // nothing to poll for a move that must not happen: every timer the drag queues runs out first
-        vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
+    test('a suppressMovable column cannot be dragged, where the same column without it moves', async () => {
+        const runs: { suppressMovable: boolean; dragStarted: boolean; order: string[] }[] = [];
         onTestFinished(() => {
             vi.useRealTimers();
         });
-        // calculateValidMoves short-circuits to [] for a non-movable col, so no valid move exists.
-        await dragHeader(api, 'a', 5, 400);
-        await vi.runAllTimersAsync();
-        expect(colOrder(api)).toEqual(['a', 'b', 'd']);
+        for (const suppressMovable of [false, true]) {
+            gridsManager.reset();
+            const api = await gridsManager.createGridAndWait('myGrid', {
+                columnDefs: [
+                    { field: 'a', width: 100, suppressMovable },
+                    { field: 'b', width: 100 },
+                    { field: 'd', width: 100 },
+                ],
+                rowData: [{ a: 1, b: 2, d: 4 }],
+                suppressDragLeaveHidesColumns: true,
+            });
+            // nothing to poll for a move that must not happen: every timer the drag queues runs out first
+            vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
+            const dragStarted = (await dragSelector(api, '.ag-header-cell[col-id="a"]', 5, 250)).dragStarted;
+            await vi.runAllTimersAsync();
+            vi.useRealTimers();
+            runs.push({ suppressMovable, dragStarted, order: colOrder(api) });
+        }
+        expect(runs).toEqual([
+            { suppressMovable: false, dragStarted: true, order: ['b', 'd', 'a'] },
+            { suppressMovable: true, dragStarted: false, order: ['a', 'b', 'd'] },
+        ]);
     });
 
     // Regression: holding a lockPinned column at the grid edge (the "hold to pin" affordance) must not
@@ -402,6 +534,105 @@ describe('column header drag reorder', () => {
         await waitFor(() => expect(colOrder(api)).toEqual(['a', 'b', 'x', 'd']));
     });
 
+    test('dragging a header out of the grid shows the hide icon only when the drop would hide a dragged column, and hides only those', async () => {
+        const hides = { hideIcon: true, notAllowed: false };
+        const notAllowed = { hideIcon: false, notAllowed: true };
+
+        const autoApi = await gridsManager.createGridAndWait('autoGrid', {
+            columnDefs: [
+                { field: 'a', width: 100, rowGroup: true },
+                { field: 'b', width: 100 },
+            ],
+            rowData: [{ a: 1, b: 2 }],
+        });
+        expect(autoApi.getColumn('ag-Grid-AutoColumn')!.isVisible()).toBe(true);
+        const autoColumn = await dragOutOfGrid(autoApi, '.ag-header-cell[col-id="ag-Grid-AutoColumn"]', [
+            'ag-Grid-AutoColumn',
+        ]);
+        gridsManager.reset();
+
+        const api = await gridsManager.createGridAndWait('myGrid', {
+            columnDefs: [
+                { field: 'a', width: 100, lockVisible: true },
+                { field: 'b', width: 100 },
+                {
+                    headerName: 'G',
+                    children: [
+                        { field: 'c', width: 100, lockVisible: true },
+                        { field: 'd', width: 100 },
+                    ],
+                },
+            ],
+            rowData: [{ a: 1, b: 2, c: 3, d: 4 }],
+        });
+        const lockVisible = await dragOutOfGrid(api, '.ag-header-cell[col-id="a"]', ['a']);
+        const plain = await dragOutOfGrid(api, '.ag-header-cell[col-id="b"]', ['b']);
+        const group = await dragOutOfGrid(api, '.ag-header-group-cell-with-group', ['c', 'd']);
+
+        expect({ autoColumn, lockVisible, plain, group }).toEqual({
+            autoColumn: {
+                ghostIcon: notAllowed,
+                whileOut: { 'ag-Grid-AutoColumn': true },
+                released: { 'ag-Grid-AutoColumn': true },
+            },
+            lockVisible: { ghostIcon: notAllowed, whileOut: { a: true }, released: { a: true } },
+            plain: { ghostIcon: hides, whileOut: { b: false }, released: { b: false } },
+            group: { ghostIcon: hides, whileOut: { c: true, d: false }, released: { c: true, d: false } },
+        });
+    });
+
+    test("dragging a group header out after columnDefs changed the group's children judges the columns it holds now: hide icon only when one can be hidden", async () => {
+        const hides = { hideIcon: true, notAllowed: false };
+        const notAllowed = { hideIcon: false, notAllowed: true };
+        const rowData = [{ c: 3, d: 4, e: 5 }];
+        const group = (children: { field: string; lockVisible?: boolean }[]) => ({
+            headerName: 'G',
+            groupId: 'G',
+            children: children.map((child) => ({ ...child, width: 100 })),
+        });
+        const groupHeader = '.ag-header-group-cell-with-group';
+
+        const unlockedGainedApi = await gridsManager.createGridAndWait('unlockedGained', {
+            columnDefs: [
+                group([
+                    { field: 'c', lockVisible: true },
+                    { field: 'd', lockVisible: true },
+                ]),
+            ],
+            rowData,
+        });
+        unlockedGainedApi.setGridOption('columnDefs', [group([{ field: 'c', lockVisible: true }, { field: 'e' }])]);
+        await waitFor(() => expect(unlockedGainedApi.getAllGridColumns().map((c) => c.getColId())).toEqual(['c', 'e']));
+        const unlockedGained = await dragOutOfGrid(unlockedGainedApi, groupHeader, ['c', 'e']);
+        gridsManager.reset();
+
+        const lockedGainedApi = await gridsManager.createGridAndWait('lockedGained', {
+            columnDefs: [group([{ field: 'c', lockVisible: true }, { field: 'd' }])],
+            rowData,
+        });
+        lockedGainedApi.setGridOption('columnDefs', [
+            group([
+                { field: 'c', lockVisible: true },
+                { field: 'e', lockVisible: true },
+            ]),
+        ]);
+        await waitFor(() => expect(lockedGainedApi.getAllGridColumns().map((c) => c.getColId())).toEqual(['c', 'e']));
+        const lockedGained = await dragOutOfGrid(lockedGainedApi, groupHeader, ['c', 'e']);
+
+        expect({ unlockedGained, lockedGained }).toEqual({
+            unlockedGained: {
+                ghostIcon: hides,
+                whileOut: { c: true, e: false },
+                released: { c: true, e: false },
+            },
+            lockedGained: {
+                ghostIcon: notAllowed,
+                whileOut: { c: true, e: true },
+                released: { c: true, e: true },
+            },
+        });
+    });
+
     test("dragging out the part of a split group that holds only a locked column hides the group's other column, and shows the hide icon", async () => {
         const api = await gridsManager.createGridAndWait('myGrid', {
             columnDefs: [
@@ -446,6 +677,59 @@ describe('column header drag reorder', () => {
 
         const groupHeader = '.ag-header-group-cell[col-id^="g_"]';
 
+        test('the header highlights beside the last displayed leaf it now has while a group is dragged, as a fresh one does', async () => {
+            const highlights = (api: GridApi) =>
+                Array.from(el(api, '.ag-header').querySelectorAll('.ag-header-cell, .ag-header-group-cell')).flatMap(
+                    (header) =>
+                        ['before', 'after']
+                            .filter((side) => header.classList.contains(`ag-header-highlight-${side}`))
+                            .map((side) => `${header.getAttribute('col-id')!.replace(/^([gh])_.*/, '$1')}:${side}`)
+                );
+            const other: ColGroupDef = { groupId: 'h', children: [leaf('a')] };
+
+            const { kept, fresh } = await onKeptAndFresh(
+                { suppressMoveWhenColumnDragging: true },
+                [other, group(leaf('c'), leaf('d'))],
+                [other, group(leaf('c'), leaf('e'))],
+                (api) => readWhileDragging(api, '.ag-header-group-cell[col-id^="h_"]', 50, 305, () => highlights(api))
+            );
+
+            expect(kept).toEqual(fresh);
+            expect(fresh).toContain('g:after');
+        });
+
+        test('the header is moving while dragged when every leaf was replaced, as a fresh one is', async () => {
+            const { kept, fresh } = await onKeptAndFresh(
+                { suppressMoveWhenColumnDragging: true },
+                [group(leaf('a'), leaf('b')), leaf('z')],
+                [group(leaf('e'), leaf('f')), leaf('z')],
+                (api) =>
+                    readWhileDragging(api, groupHeader, 100, 350, () =>
+                        el(api, groupHeader).classList.contains('ag-header-cell-moving')
+                    )
+            );
+
+            expect({ kept, fresh }).toEqual({ kept: true, fresh: true });
+        });
+
+        test('hovering the header highlights the body cells of the leaves it now has, as a fresh one does', async () => {
+            const { kept, fresh } = await onKeptAndFresh(
+                { columnHoverHighlight: true },
+                [leaf('a'), group(leaf('c'), leaf('d')), leaf('z')],
+                [leaf('a'), group(leaf('c'), leaf('e')), leaf('z')],
+                async (api) => {
+                    el(api, groupHeader).dispatchEvent(new MouseEvent('mouseover', { bubbles: true }));
+                    return Array.from(
+                        el(api, '.ag-root-wrapper').querySelectorAll('.ag-cell.ag-column-hover'),
+                        (cell) => cell.getAttribute('col-id')
+                    ).sort();
+                }
+            );
+
+            expect(kept).toEqual(['c', 'e']);
+            expect(fresh).toEqual(['c', 'e']);
+        });
+
         // Runs `act` on a grid whose definitions changed in place (same groupId), then on a fresh grid made with them.
         async function onKeptAndFresh<T>(
             options: GridOptions,
@@ -472,33 +756,39 @@ describe('column header drag reorder', () => {
             return { kept, fresh };
         }
 
+        async function readWhileDragging<T>(
+            api: GridApi,
+            sourceSelector: string,
+            fromClientX: number,
+            toClientX: number,
+            read: () => T
+        ): Promise<T> {
+            const viewport = el(api, '.ag-grid-viewport');
+            const dispatcher = new DragEventDispatcher('mouse', null, false);
+            try {
+                await dispatcher.startDrag(el(api, sourceSelector), fromClientX, 100);
+                await dispatcher.movePointer(viewport, fromClientX, 100);
+                await dispatcher.movePointer(viewport, toClientX, 100);
+                const seen = read();
+                await dispatcher.finishDrag(viewport);
+                return seen;
+            } finally {
+                dispatcher.reset();
+            }
+        }
+
         const dragGroup = (fromClientX: number, toClientX: number) => async (api: GridApi) => {
             const before = colOrder(api);
-            const dragStarted = (await dragSelector(api, groupHeader, fromClientX, toClientX)).dragStarted;
-            // A drop that must move nothing has no signal to poll for: hold open the window a move would land in.
-            // eslint-disable-next-line no-restricted-syntax -- waits out the post-drop settle window in which an (incorrect) column move would be applied
-            await asyncSetTimeout(50);
-            return { before, after: colOrder(api), dragStarted };
+            // nothing to poll for a move that must not happen: every timer the drag queues runs out first
+            vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
+            try {
+                const dragStarted = (await dragSelector(api, groupHeader, fromClientX, toClientX)).dragStarted;
+                await vi.runAllTimersAsync();
+                return { before, after: colOrder(api), dragStarted };
+            } finally {
+                vi.useRealTimers();
+            }
         };
-
-        // TODO: disabled due to AG-19353 - re-enable once fixed
-        test.skip('hovering the header highlights the body cells of the leaves it now has, as a fresh one does', async () => {
-            const { kept, fresh } = await onKeptAndFresh(
-                { columnHoverHighlight: true },
-                [leaf('a'), group(leaf('c'), leaf('d')), leaf('z')],
-                [leaf('a'), group(leaf('c'), leaf('e')), leaf('z')],
-                async (api) => {
-                    el(api, groupHeader).dispatchEvent(new MouseEvent('mouseover', { bubbles: true }));
-                    return Array.from(
-                        el(api, '.ag-root-wrapper').querySelectorAll('.ag-cell.ag-column-hover'),
-                        (cell) => cell.getAttribute('col-id')
-                    ).sort();
-                }
-            );
-
-            expect(kept).toEqual(['c', 'e']);
-            expect(fresh).toEqual(['c', 'e']);
-        });
 
         test('the header cannot be moved once a leaf it now has is position-locked, as a fresh one cannot', async () => {
             const { kept, fresh } = await onKeptAndFresh(
@@ -523,14 +813,44 @@ describe('column header drag reorder', () => {
             expect(fresh.dragStarted).toBe(false);
         });
 
-        test('a fresh header with no position-locked leaf moves when dragged to the start', async () => {
-            const { fresh } = await onKeptAndFresh(
+        test('the header cannot be moved once a leaf it keeps becomes position-locked, as a fresh one cannot', async () => {
+            const { kept, fresh } = await onKeptAndFresh(
+                {},
+                [group(leaf('c'), leaf('d')), leaf('a'), leaf('z')],
+                [group(leaf('c'), leaf('d', { lockPosition: true })), leaf('a'), leaf('z')],
+                async (api) => ({
+                    pickedUp: await readWhileDragging(api, groupHeader, 100, 350, () =>
+                        el(api, groupHeader).classList.contains('ag-header-cell-moving')
+                    ),
+                    ...(await dragGroup(100, 350)(api)),
+                })
+            );
+
+            expect(kept).toEqual(fresh);
+            expect(fresh.pickedUp).toBe(false);
+        });
+
+        test('the header moves once no leaf it now has is position-locked, as a fresh one does', async () => {
+            const { kept, fresh } = await onKeptAndFresh(
                 {},
                 [leaf('a'), group(leaf('c'), leaf('d', { lockPosition: true })), leaf('z')],
                 [leaf('a'), group(leaf('c'), leaf('e')), leaf('z')],
                 dragGroup(200, 5)
             );
+
+            expect(kept).toEqual(fresh);
             expect(fresh.after).toEqual(['c', 'e', 'a', 'z']);
+        });
+
+        test('the header starts no drag once a leaf it now has is position-locked, as a fresh one starts none', async () => {
+            const { kept, fresh } = await onKeptAndFresh(
+                {},
+                [group(leaf('c'), leaf('d')), leaf('a'), leaf('z')],
+                [group(leaf('c'), leaf('e', { lockPosition: true })), leaf('a'), leaf('z')],
+                dragGroup(100, 350)
+            );
+
+            expect({ kept: kept.dragStarted, fresh: fresh.dragStarted }).toEqual({ kept: false, fresh: false });
         });
     });
 });

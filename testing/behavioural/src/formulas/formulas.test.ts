@@ -950,7 +950,7 @@ describe('ag-grid formulas general behaviour', () => {
         expect(letters()).toEqual(['ag-Grid-RowNumbersColumn ', 'b A', 'a B', 'out C']);
     });
 
-    test('after columnDefs updates reorder the columns and change a column a formula reads, the formula cells show the new results before the changed column raises colDefChanged', async () => {
+    test('columnDefs updates reordering the columns and changing a formula column, then changing what a formula reads, refresh each formula cell once, showing the new results before the changed column reports it', async () => {
         const counts = { inits: 0, refreshes: 0 };
         class CountingRenderer implements ICellRendererComp {
             private readonly eGui = document.createElement('span');
@@ -1006,6 +1006,8 @@ describe('ag-grid formulas general behaviour', () => {
             renderedOut: ['11', '22', '33'],
             inits: 3,
         });
+        let refreshesBefore = counts.refreshes;
+        let initsBefore = counts.inits;
 
         api.setGridOption('columnDefs', [
             { field: 'out', headerName: 'Total', allowFormula: true, cellRenderer: CountingRenderer },
@@ -1013,6 +1015,24 @@ describe('ag-grid formulas general behaviour', () => {
             { field: 'a' },
         ]);
         await asyncSetTimeout(rowNumberRefreshBufferMs);
+
+        expect({
+            columnIds: columnIds(),
+            outHeader: outHeader(),
+            outValues: outValues(),
+            renderedOut: renderedOut(),
+            newInits: counts.inits - initsBefore,
+            newRefreshes: counts.refreshes - refreshesBefore,
+        }).toEqual({
+            columnIds: ['ag-Grid-RowNumbersColumn', 'out', 'b', 'a'],
+            outHeader: 'Total',
+            outValues: [11, 22, 33],
+            renderedOut: ['11', '22', '33'],
+            newInits: 0,
+            newRefreshes: 3,
+        });
+        refreshesBefore = counts.refreshes;
+        initsBefore = counts.inits;
         let renderedOutAtColDefChanged: (string | null)[] | undefined;
         api.getColumn('a')!.addEventListener('colDefChanged', () => {
             renderedOutAtColDefChanged = renderedOut();
@@ -1026,6 +1046,17 @@ describe('ag-grid formulas general behaviour', () => {
         await asyncSetTimeout(rowNumberRefreshBufferMs);
 
         expect(renderedOutAtColDefChanged).toEqual(['20', '40', '60']);
+        expect({
+            outValues: outValues(),
+            renderedOut: renderedOut(),
+            newInits: counts.inits - initsBefore,
+            newRefreshes: counts.refreshes - refreshesBefore,
+        }).toEqual({
+            outValues: [20, 40, 60],
+            renderedOut: ['20', '40', '60'],
+            newInits: 0,
+            newRefreshes: 3,
+        });
     });
 
     test('a column listener resetting the sort during a column update leaves the formula cells reading the new first row when the API call returns', () => {

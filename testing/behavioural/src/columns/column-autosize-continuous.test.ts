@@ -21,6 +21,7 @@ import {
     ClientSideRowModelModule,
     ColumnAutoSizeModule,
     PaginationModule,
+    QuickFilterModule,
 } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
@@ -29,36 +30,6 @@ const MEASURED_WIDTH = 120;
 const START_WIDTH = 300;
 
 describe('Continuous Column Autosize', () => {
-    test('a data change after a column state reset raises columnResized with source autosizeColumns for the re-sized column', async () => {
-        /** The columnResized events of a data change re-sizing a column back at its initial width. */
-        const resizeAfterReset = async (throwing: boolean) => {
-            const api = createGrid();
-            await settleOnFakeClock();
-            api.resetColumnState();
-            const resized: string[] = [];
-            api.addEventListener('columnResized', (event) =>
-                resized.push(`${(event.columns ?? []).map((column) => column.getColId())}:${event.source}`)
-            );
-            let thrown = 0;
-            api.getColumn('eligible')!.addEventListener('widthChanged', () => {
-                if (throwing) {
-                    ++thrown;
-                    throw new Error('listener boom');
-                }
-            });
-            api.setGridOption('rowData', LONGER_DATA);
-            await settleOnFakeClock();
-            const width = widthOf(api, 'eligible');
-            gridsManager.reset();
-            return { thrown, width, resized };
-        };
-
-        vi.useFakeTimers();
-        const quiet = await resizeAfterReset(false);
-        await resizeAfterReset(true);
-
-        expect(quiet.resized).toContain('eligible:autosizeColumns');
-    });
     const gridsManager = new TestGridsManager({
         modules: [ClientSideRowModelModule, ColumnAutoSizeModule, AlignedGridsModule, PaginationModule],
     });
@@ -805,6 +776,110 @@ describe('Continuous Column Autosize', () => {
             // only `eligible` is a candidate — `pinned` sets `suppressAutoSize`
             expect(last.columns.map((col) => col.getColId())).toEqual(['eligible']);
             expect(['dataChanged', 'columnsChanged', 'viewportChanged', 'gridSizeChanged']).toContain(last.reason);
+        });
+
+        test.each(['fitCellContents', 'fitGridWidth'] as const)(
+            'a %s grid created with rowData asks once for its first data, and once more for the next',
+            async (type) => {
+                vi.useFakeTimers();
+                const reasons: string[] = [];
+                const api = createGrid({
+                    columnDefs: [
+                        { colId: 'a', field: 'pinned' },
+                        { colId: 'b', field: 'eligible' },
+                    ],
+                    autoSizeStrategy: {
+                        type,
+                        continuous: true,
+                        shouldAutoSizeColumns: (params) => {
+                            reasons.push(params.reason);
+                            return true;
+                        },
+                    },
+                });
+                await settleOnFakeClock();
+                const atStartup = [...reasons];
+
+                api.setGridOption('rowData', LONGER_DATA);
+                await settleOnFakeClock();
+
+                expect({ atStartup, afterNewData: reasons }).toEqual({
+                    atStartup: ['dataChanged'],
+                    afterNewData: ['dataChanged', 'dataChanged'],
+                });
+            }
+        );
+
+        test('a fitCellContents grid created without rowData asks once for the first rows set later, and once more for the next', async () => {
+            vi.useFakeTimers();
+            const reasons: string[] = [];
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    { colId: 'a', field: 'pinned' },
+                    { colId: 'b', field: 'eligible' },
+                ],
+                autoSizeStrategy: {
+                    type: 'fitCellContents',
+                    continuous: true,
+                    shouldAutoSizeColumns: (params) => {
+                        reasons.push(params.reason);
+                        return true;
+                    },
+                },
+            });
+            await settleOnFakeClock();
+            const beforeRows = reasons.splice(0);
+
+            api.setGridOption('rowData', [{ pinned: 'a', eligible: 'b' }]);
+            await settleOnFakeClock();
+            const firstRows = reasons.splice(0);
+
+            api.setGridOption('rowData', LONGER_DATA);
+            await settleOnFakeClock();
+
+            // the first rows are sized once; a scrollbar appearing after them is a trigger of its own
+            expect({ beforeRows, firstRows, nextRows: reasons }).toEqual({
+                beforeRows: ['columnsChanged'],
+                firstRows: ['dataChanged', 'gridSizeChanged'],
+                nextRows: ['dataChanged'],
+            });
+        });
+
+        test('a fitCellContents grid whose rows are all filtered out from the start is still asked on a column change', async () => {
+            vi.useFakeTimers();
+            const reasons: string[] = [];
+            const api = gridsManager.createGrid(
+                'myGrid',
+                {
+                    columnDefs: [
+                        { colId: 'a', field: 'pinned' },
+                        { colId: 'b', field: 'eligible' },
+                    ],
+                    rowData: [{ pinned: 'a', eligible: 'b' }],
+                    quickFilterText: 'matches no row',
+                    autoSizeStrategy: {
+                        type: 'fitCellContents',
+                        continuous: true,
+                        shouldAutoSizeColumns: (params) => {
+                            reasons.push(params.reason);
+                            return true;
+                        },
+                    },
+                },
+                { modules: [QuickFilterModule] }
+            );
+            await settleOnFakeClock();
+            const displayedRowsBefore = api.getDisplayedRowCount();
+            reasons.length = 0;
+
+            api.setColumnsVisible(['a'], false);
+            await settleOnFakeClock();
+
+            // hiding a column re-runs the quick filter, so the rows' refresh is the reason reported
+            expect({ displayedRowsBefore, afterColumnChange: reasons }).toEqual({
+                displayedRowsBefore: 0,
+                afterColumnChange: ['dataChanged'],
+            });
         });
 
         test('returning false suppresses the resize', async () => {

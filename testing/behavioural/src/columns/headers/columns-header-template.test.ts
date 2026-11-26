@@ -1,7 +1,9 @@
+import { waitFor } from '@testing-library/dom';
 import { GridColumns, TestGridsManager } from 'ag-test-utils';
 
 import type { ColDef, ColGroupDef, GridApi, GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule, ColumnApiModule, createGrid } from 'ag-grid-community';
+import { ClientSideRowModelModule, ColumnApiModule, createGrid, getGridElement } from 'ag-grid-community';
+import { PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
 
 const data = [{ a: 1, b: 10, c: 100 }];
 const columns: ColDef[] = [
@@ -202,5 +204,33 @@ describe('header visibility toggle', () => {
             ├── c2 "C2" width:200
             └── c3 "C3" width:200
         `);
+    });
+});
+
+describe('value column header names', () => {
+    const gridsManager = new TestGridsManager({ modules: [ClientSideRowModelModule, RowGroupingModule, PivotModule] });
+    afterEach(() => gridsManager.reset());
+
+    test("a value column's header names its aggregation function, and follows a change of it", async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'gold', headerName: 'Gold', aggFunc: 'sum' },
+            ],
+            rowData: [{ country: 'IE', gold: 1 }],
+        });
+        const headerText = () =>
+            getGridElement(api)!.querySelector('.ag-header-cell[col-id="gold"] .ag-header-cell-text')?.textContent;
+
+        await waitFor(() => expect(headerText()).toBe('sum(Gold)'));
+
+        api.setColumnAggFunc('gold', 'avg');
+        await waitFor(() => expect(headerText()).toBe('avg(Gold)'));
+
+        api.removeValueColumns(['gold']);
+        await waitFor(() => expect(headerText()).toBe('Gold'));
+
+        api.addValueColumns(['gold']);
+        await waitFor(() => expect(headerText()).toBe('avg(Gold)'));
     });
 });

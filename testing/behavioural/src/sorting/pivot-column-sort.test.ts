@@ -243,7 +243,7 @@ describe('pivot: interactive pivot column sorting (pivotSort)', () => {
         { dir: 'asc', expected: [2019, 2020, 2021, 2022] },
         { dir: 'desc', expected: [2022, 2021, 2020, 2019] },
     ] as const)(
-        'explicit pivotSort $dir sorts the pivot columns after a user move, and keeps a resized width when a pivot column is added',
+        'explicit pivotSort $dir keeps a new pivot column in sorted position after a user move, and keeps a resized width',
         async ({ dir, expected }) => {
             const api = createPivotGrid();
             const pivots = () => getColumnOrder(api, 'all').filter((id) => id.startsWith('pivot_'));
@@ -261,6 +261,8 @@ describe('pivot: interactive pivot column sorting (pivotSort)', () => {
             await waitFor(() => expect(pivots()).toEqual(sorted.map((year) => `pivot_year_${year}_sales`)));
 
             applyTransactionChecked(api, { add: [{ id: 'd', country: 'USA', year: 2019, sales: 1 }] });
+
+            await waitFor(() => expect(pivots()).toEqual(expected.map((year) => `pivot_year_${year}_sales`)));
             expect(api.getColumn('pivot_year_2021_sales')?.getActualWidth()).toBe(321);
         }
     );
@@ -497,8 +499,10 @@ describe('pivot: interactive pivot column sorting (pivotSort)', () => {
             // the user's own column order is kept unless strict pivot column order re-sorts the result columns
             api.moveColumns(['pivot_year_2022_sales'], 1);
             await waitFor(() => expect(pivotIds(api)[0]).toBe('pivot_year_2022_sales'));
-            let pivotChanged = 0;
-            api.addEventListener('columnPivotChanged', () => ++pivotChanged);
+            const pivotChanged: string[][] = [];
+            api.addEventListener('columnPivotChanged', (event) =>
+                pivotChanged.push((event.columns ?? []).map((col) => col.getColId()))
+            );
 
             apply(api);
             await asyncSetTimeout(0);
@@ -514,13 +518,36 @@ describe('pivot: interactive pivot column sorting (pivotSort)', () => {
         );
 
         expect(untouched).toEqual({
-            pivotChanged: 0,
+            pivotChanged: [],
             order: ['pivot_year_2022_sales', 'pivot_year_2020_sales', 'pivot_year_2021_sales'],
         });
+        // the state names a pivot sort for every column: only the pivot column's is a change to tell
         expect(explicitAsc).toEqual({
-            pivotChanged: 1,
+            pivotChanged: [['year']],
             order: ['pivot_year_2020_sales', 'pivot_year_2021_sales', 'pivot_year_2022_sales'],
         });
         expect(roundTripped).toEqual(explicitAsc);
+    });
+
+    test('a pivot sort given to columns that are not pivot columns raises no columnPivotChanged and refreshes no rows', async () => {
+        const api = gridsManager.createGrid('noPivotColumns', {
+            columnDefs: [{ field: 'country' }, { field: 'year' }, { field: 'sales' }],
+            rowData: [{ country: 'USA', year: 2020, sales: 1 }],
+        });
+        await asyncSetTimeout(0);
+        const events: string[] = [];
+        api.addEventListener('columnPivotChanged', () => events.push('columnPivotChanged'));
+        api.addEventListener('modelUpdated', () => events.push('modelUpdated'));
+        api.addEventListener('columnResized', () => events.push('columnResized'));
+
+        // getColumnState reports every column's default pivot sort, so applying it back names one for each
+        api.applyColumnState({ state: api.getColumnState() });
+        api.applyColumnState({ state: [{ colId: 'year', pivotSort: 'desc', width: 123 }] });
+        await waitFor(() => expect(events).toContain('columnResized'));
+
+        expect({ events, pivotSort: api.getColumnState().map((state) => state.pivotSort) }).toEqual({
+            events: ['columnResized'],
+            pivotSort: ['asc', 'desc', 'asc'],
+        });
     });
 });

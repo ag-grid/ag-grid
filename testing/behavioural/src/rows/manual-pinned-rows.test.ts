@@ -1507,6 +1507,64 @@ describe('Manual pinned rows', () => {
         await waitFor(() => expect(getPinnedRows(api, 'top').length).toBe(initialCount));
     });
 
+    test('a pivotMode toggle raises one pinnedRowsChanged after its modelUpdated, once the pinned top row count is final', async () => {
+        const api = await gridsManager.createGridAndWait('myGrid', {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'year', pivot: true, hide: true },
+                { field: 'sport' },
+                { field: 'value', aggFunc: 'sum' },
+            ],
+            rowData: [
+                { country: 'A', year: 2024, sport: 'rugby', value: 1 },
+                { country: 'A', year: 2024, sport: 'tennis', value: 2 },
+                { country: 'B', year: 2024, sport: 'rugby', value: 3 },
+            ],
+            enableRowPinning: true,
+            isRowPinned: (node) => (node.id === 'leaf-A-rugby' ? 'top' : null),
+            getRowId: (params) => (params.data?.sport ? `leaf-${params.data.country}-${params.data.sport}` : ''),
+        });
+        expect(api.getPinnedTopRowCount()).toBe(1);
+        expect(api.getPinnedTopRow(0)?.id).toBe('t-top-leaf-A-rugby');
+
+        const events: string[] = [];
+        const countReadInListener: number[] = [];
+        api.addGlobalListener((type) => {
+            if (type === 'pinnedRowsChanged') {
+                events.push(type);
+                countReadInListener.push(api.getPinnedTopRowCount());
+            } else if (type === 'modelUpdated') {
+                events.push(type);
+            }
+        });
+        const toggle = async (pivotMode: boolean) => {
+            events.length = 0;
+            countReadInListener.length = 0;
+            api.setGridOption('pivotMode', pivotMode);
+            await waitFor(() => expect(events).toContain('pinnedRowsChanged'), { timeout: 500 });
+            // one more tick, so a second pinnedRowsChanged would land in the record
+            await asyncSetTimeout(0);
+            return {
+                events: [...events],
+                countReadInListener: [...countReadInListener],
+                finalCount: api.getPinnedTopRowCount(),
+            };
+        };
+
+        expect(await toggle(true)).toEqual({
+            events: ['modelUpdated', 'pinnedRowsChanged'],
+            countReadInListener: [0],
+            finalCount: 0,
+        });
+
+        expect(await toggle(false)).toEqual({
+            events: ['modelUpdated', 'pinnedRowsChanged'],
+            countReadInListener: [1],
+            finalCount: 1,
+        });
+        expect(api.getPinnedTopRow(0)?.id).toBe('t-top-leaf-A-rugby');
+    });
+
     test('pinned rows survive data updates to other rows', async () => {
         const api = await gridsManager.createGridAndWait('myGrid', {
             columnDefs,

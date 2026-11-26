@@ -3,11 +3,13 @@ import { userEvent } from '@testing-library/user-event';
 import { ALL_SEVERITIES, LEGACY_FILTER_WARNING_IDS, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import type {
+    AgEventType,
     ColDef,
     Column,
     ColumnGroup,
     ColumnStateUpdatedEvent,
     GridApi,
+    GridOptions,
     ICellRendererComp,
     ICellRendererParams,
     IFilterComp,
@@ -15,16 +17,30 @@ import type {
     IHeaderParams,
 } from 'ag-grid-community';
 import {
+    AlignedGridsModule,
     ClientSideRowModelModule,
     ColumnApiModule,
     ColumnAutoSizeModule,
     CustomFilterModule,
+    DateFilterModule,
     RowSelectionModule,
     ScrollApiModule,
+    TextFilterModule,
     enableDevValidations,
     getGridElement,
 } from 'ag-grid-community';
-import { PivotModule, RowGroupingModule, RowNumbersModule, ShowValuesAsModule } from 'ag-grid-enterprise';
+import {
+    PivotModule,
+    RowGroupingModule,
+    RowNumbersModule,
+    SetFilterModule,
+    ShowValuesAsModule,
+} from 'ag-grid-enterprise';
+
+/** The grid API's listener registration, typed for the internal events too, which the grid raises the same way. */
+interface AnyEventApi {
+    addEventListener(eventType: AgEventType, listener: () => void): void;
+}
 
 /** Each displayed column as `colId@left`, failing where a column does not start where the one before it ends. */
 const contiguousLefts = (api: GridApi): string[] => {
@@ -375,6 +391,34 @@ describe('column layout events', () => {
         expect(heard).toEqual(['displayedColumnsChanged']);
     });
 
+    test('a sort or an equal columnDefs update leaves the rendered columns alone and reports no virtual columns change', async () => {
+        const columnDefs = (): ColDef[] => Array.from({ length: 30 }, (_, i) => ({ colId: `c${i}`, width: 100 }));
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: columnDefs(),
+            rowData: [{}],
+            suppressColumnVirtualisation: false,
+        });
+        await asyncSetTimeout(0);
+        const heard: string[] = [];
+        api.addEventListener('virtualColumnsChanged', () => heard.push('virtualColumnsChanged'));
+        api.addEventListener('displayedColumnsChanged', () => heard.push('displayedColumnsChanged'));
+
+        api.applyColumnState({ state: [{ colId: 'c0', sort: 'asc' }] });
+        await asyncSetTimeout(0);
+        api.setGridOption('columnDefs', columnDefs());
+        await asyncSetTimeout(0);
+        expect(heard).toEqual(['displayedColumnsChanged', 'displayedColumnsChanged']);
+
+        api.setColumnsVisible(['c0'], false);
+        await asyncSetTimeout(0);
+        expect(heard).toEqual([
+            'displayedColumnsChanged',
+            'displayedColumnsChanged',
+            'virtualColumnsChanged',
+            'displayedColumnsChanged',
+        ]);
+    });
+
     test('a horizontal scroll bringing new columns into view reports its virtual columns change as after a scroll', async () => {
         const api = gridsManager.createGrid(
             'myGrid',
@@ -395,22 +439,6 @@ describe('column layout events', () => {
         expect(told).toEqual([true]);
     });
 
-    test('a grid created without columns reports no virtual columns change until columns arrive', async () => {
-        let told = 0;
-        const api = gridsManager.createGrid('myGrid', {
-            columnDefs: [],
-            rowData: [{}],
-            onVirtualColumnsChanged: () => ++told,
-        });
-        await asyncSetTimeout(0);
-        const atCreation = told;
-
-        api.setGridOption('columnDefs', [{ colId: 'a' }]);
-        await asyncSetTimeout(0);
-
-        expect({ atCreation, told }).toEqual({ atCreation: 0, told: 1 });
-    });
-
     test('a refresh raises the grid events reporting it in a fixed order', async () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: Array.from({ length: 30 }, (_, i) => ({ colId: `c${i}`, width: 100 })),
@@ -427,9 +455,9 @@ describe('column layout events', () => {
             'columnMoved',
             'displayedColumnsChanged',
         ] as const;
+        const anyEvents: AnyEventApi = api;
         for (const type of types) {
-            // some of these are not public grid events, which the API types its listener with
-            api.addEventListener(type as 'columnVisible', () => heard.push(type));
+            anyEvents.addEventListener(type, () => heard.push(type));
         }
 
         api.setColumnsVisible(['c1'], false);
@@ -441,14 +469,194 @@ describe('column layout events', () => {
 
         expect({ onHide, onMove }).toEqual({
             onHide: [
+                'columnVisible',
                 'columnContainerWidthChanged',
                 'displayedColumnsWidthChanged',
                 'virtualColumnsChanged',
                 'displayedColumnsChanged',
-                'columnVisible',
             ],
-            onMove: ['virtualColumnsChanged', 'displayedColumnsChanged', 'columnMoved'],
+            onMove: ['columnMoved', 'virtualColumnsChanged', 'displayedColumnsChanged'],
         });
+    });
+
+    test('pinned section width events come with the other width events, after the call column events and before the displayed columns change, and a print layout changes both pinned widths alone', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { field: 'a', pinned: 'left' },
+                { field: 'b' },
+                { field: 'c' },
+                { field: 'd', pinned: 'right' },
+                { field: 'e', pinned: 'right' },
+            ],
+            defaultColDef: { width: 100 },
+            rowData: [{ a: 1, b: 2, c: 3, d: 4, e: 5 }],
+        });
+        await asyncSetTimeout(0);
+        const heard: string[] = [];
+        const types = [
+            'leftPinnedWidthChanged',
+            'rightPinnedWidthChanged',
+            'displayedColumnsChanged',
+            'displayedColumnsWidthChanged',
+            'columnContainerWidthChanged',
+            'columnPinned',
+            'columnResized',
+            'columnVisible',
+            'virtualColumnsChanged',
+        ] as const;
+        const anyEvents: AnyEventApi = api;
+        for (const type of types) {
+            anyEvents.addEventListener(type, () => heard.push(type));
+        }
+        const step = async (run: () => void) => {
+            run();
+            await asyncSetTimeout(0);
+            return heard.splice(0);
+        };
+
+        const onPin = await step(() => api.setColumnsPinned(['b'], 'left'));
+        const onUnpin = await step(() => api.setColumnsPinned(['b'], null));
+        const onHideRightPinned = await step(() => api.setColumnsVisible(['d'], false));
+        const onResizeLeftPinned = await step(() => api.setColumnWidths([{ key: 'a', newWidth: 150 }]));
+        const onPinAndWidth = await step(() =>
+            api.applyColumnState({ state: [{ colId: 'b', pinned: 'left', width: 120 }] })
+        );
+        const onPrint = await step(() => api.setGridOption('domLayout', 'print'));
+        const onNormal = await step(() => api.setGridOption('domLayout', 'normal'));
+
+        const layoutAfter = (cause: string[], pinnedWidths: string[]) => [
+            ...cause,
+            'columnContainerWidthChanged',
+            'displayedColumnsWidthChanged',
+            ...pinnedWidths,
+            'virtualColumnsChanged',
+            'displayedColumnsChanged',
+        ];
+        expect({
+            onPin,
+            onUnpin,
+            onHideRightPinned,
+            onResizeLeftPinned,
+            onPinAndWidth,
+            onPrint,
+            onNormal,
+        }).toEqual({
+            onPin: layoutAfter(['columnPinned'], ['leftPinnedWidthChanged']),
+            onUnpin: layoutAfter(['columnPinned'], ['leftPinnedWidthChanged']),
+            onHideRightPinned: layoutAfter(['columnVisible'], ['rightPinnedWidthChanged']),
+            onResizeLeftPinned: [
+                'columnContainerWidthChanged',
+                'displayedColumnsWidthChanged',
+                'leftPinnedWidthChanged',
+                'columnResized',
+            ],
+            onPinAndWidth: layoutAfter(['columnResized', 'columnPinned'], ['leftPinnedWidthChanged']),
+            onPrint: ['leftPinnedWidthChanged', 'rightPinnedWidthChanged'],
+            onNormal: ['leftPinnedWidthChanged', 'rightPinnedWidthChanged'],
+        });
+    });
+
+    test('a columnDefs update raises the displayed and virtual columns changes, with columnEverythingChanged, after the events loading the new columns', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ colId: 'a' }, { colId: 'b' }],
+            rowData: [{}],
+        });
+        await asyncSetTimeout(0);
+        const heard: string[] = [];
+        for (const type of [
+            'columnEverythingChanged',
+            'newColumnsLoaded',
+            'modelUpdated',
+            'virtualColumnsChanged',
+            'displayedColumnsChanged',
+        ] as const) {
+            api.addEventListener(type, () => heard.push(type));
+        }
+
+        api.setGridOption('columnDefs', [{ colId: 'a' }, { colId: 'c' }, { colId: 'b' }]);
+        await asyncSetTimeout(0);
+
+        expect(heard).toEqual([
+            'newColumnsLoaded',
+            'modelUpdated',
+            'virtualColumnsChanged',
+            'displayedColumnsChanged',
+            'columnEverythingChanged',
+        ]);
+    });
+
+    test('setColumnsVisible changing columns raises columnEverythingChanged once, after columnVisible and the displayed columns change, and one changing none raises nothing', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: Array.from({ length: 30 }, (_, i) => ({ colId: `c${i}`, width: 100 })),
+            rowData: [{}],
+            suppressColumnVirtualisation: false,
+        });
+        await asyncSetTimeout(0);
+        const heard: string[] = [];
+        for (const type of [
+            'columnVisible',
+            'columnEverythingChanged',
+            'virtualColumnsChanged',
+            'displayedColumnsChanged',
+        ] as const) {
+            api.addEventListener(type, () => heard.push(type));
+        }
+        const sequence = [
+            'columnVisible',
+            'virtualColumnsChanged',
+            'displayedColumnsChanged',
+            'columnEverythingChanged',
+        ];
+
+        api.setColumnsVisible(['c1', 'c2'], false);
+        await asyncSetTimeout(0);
+        const onHide = heard.splice(0);
+        api.setColumnsVisible(['c1', 'c2'], false);
+        await asyncSetTimeout(0);
+        const onHideAgain = heard.splice(0);
+        api.setColumnsVisible(['c1', 'c2'], true);
+        await asyncSetTimeout(0);
+        const onShow = heard.splice(0);
+
+        expect({ onHide, onHideAgain, onShow }).toEqual({ onHide: sequence, onHideAgain: [], onShow: sequence });
+    });
+
+    test('a grid created without columns reports no virtual columns change until columns arrive', async () => {
+        let told = 0;
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [],
+            rowData: [{}],
+            onVirtualColumnsChanged: () => ++told,
+        });
+        await asyncSetTimeout(0);
+        const atCreation = told;
+
+        api.setGridOption('columnDefs', [{ colId: 'a' }]);
+        await asyncSetTimeout(0);
+
+        expect({ atCreation, told }).toEqual({ atCreation: 0, told: 1 });
+    });
+
+    test("a column's own listener told it was pinned finds its header in the left pinned section at left 0", async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ colId: 'a' }, { colId: 'b' }, { colId: 'c' }],
+            defaultColDef: { width: 100 },
+            rowData: [{}],
+        });
+        const root = getGridElement(api)!;
+        const header = () => root.querySelector<HTMLElement>('.ag-header-cell[col-id="b"]');
+        await waitFor(() => expect(header()).not.toBeNull());
+        const seen: { inPinnedSection: boolean | undefined; left: string | undefined }[] = [];
+        api.getColumn('b')!.addEventListener('columnStateUpdated', () =>
+            seen.push({
+                inPinnedSection: header()?.closest('.ag-header .ag-grid-pinned-left-cells') != null,
+                left: header()?.style.left,
+            })
+        );
+
+        api.setColumnsPinned(['b'], 'left');
+
+        expect(seen).toEqual([{ inPinnedSection: true, left: '0px' }]);
     });
 });
 
@@ -605,8 +813,7 @@ describe('the rows drawn for the columns', () => {
         expect(seen).toEqual(['a:100px b:100px c:100px', 'a:100px c:100px']);
     });
 
-    // TODO: disabled due to AG-18901 - re-enable once fixed
-    test.skip('a column listener told of a move reads the row as moved', async () => {
+    test('a column listener told of a move reads the row as moved', async () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: [{ field: 'a' }, { field: 'b' }, { field: 'c' }],
             defaultColDef: { width: 100 },
@@ -932,16 +1139,6 @@ describe('a column update made from a layout event', () => {
         expect(api.getColumn('c')!.getActualWidth()).toBe(222);
     });
 
-    test('a columnStateUpdated listener throwing during setColumnsPinned throws out of the call and still pins the column', async () => {
-        const api = createGrid();
-        api.getColumn('a')!.addEventListener('columnStateUpdated', () => {
-            throw new Error('listener boom');
-        });
-
-        expect(() => api.setColumnsPinned(['a'], 'left')).toThrow('listener boom');
-        expect(api.getDisplayedLeftColumns().map((column) => column.getColId())).toEqual(['p', 'a']);
-    });
-
     /** The grid events of the operations on `api`, each with the columns it names. */
     const listenToGridEvents = (api: GridApi): string[] => {
         const seen: string[] = [];
@@ -956,6 +1153,20 @@ describe('a column update made from a layout event', () => {
         api.addEventListener('displayedColumnsChanged', () => seen.push('displayedColumnsChanged'));
         return seen;
     };
+
+    test('a columnStateUpdated listener throwing during setColumnsPinned does not stop the columnPinned of the pin', async () => {
+        const api = createGrid();
+        const seen = listenToGridEvents(api);
+        api.getColumn('a')!.addEventListener('columnStateUpdated', () => {
+            throw new Error('listener boom');
+        });
+
+        expect(() => api.setColumnsPinned(['a'], 'left')).toThrow('listener boom');
+
+        await waitFor(() => expect(seen).toContain('displayedColumnsChanged'), { timeout: 500 });
+        expect(seen).toEqual(['columnPinned:a:left', 'virtualColumnsChanged', 'displayedColumnsChanged']);
+        expect(api.getDisplayedLeftColumns().map((column) => column.getColId())).toEqual(['p', 'a']);
+    });
 
     test.each([
         ['autoSizeColumns', (grid: GridApi) => grid.autoSizeColumns(['a', 'b']), 'a,b'],
@@ -1103,6 +1314,82 @@ describe('the layout events of a primary column while pivoting', () => {
         gridsManager.reset();
     });
 
+    /** One update changing a column rebuild option and pivotMode, its keys in `order`; the grid events it raised in order. */
+    const pivotUpdateEvents = async (
+        order: 'rebuild first' | 'pivotMode first',
+        rebuild: Pick<GridOptions, 'columnTypes' | 'defaultColDef'>,
+        intoPivotMode: boolean,
+        extraOptions: Partial<GridOptions> = {}
+    ): Promise<string[]> => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { field: 'a', rowGroup: true },
+                { field: 'b', pivot: true },
+                { field: 'c', aggFunc: 'sum', type: 't' },
+                { field: 'd' },
+            ],
+            columnTypes: { t: {} },
+            pivotMode: !intoPivotMode,
+            rowData: [
+                { a: 1, b: 'x', c: 3, d: 4 },
+                { a: 1, b: 'y', c: 5, d: 6 },
+            ],
+            ...extraOptions,
+        });
+        await asyncSetTimeout(0);
+        const heard: string[] = [];
+        for (const type of ['columnPivotModeChanged', 'newColumnsLoaded', 'displayedColumnsChanged'] as const) {
+            api.addEventListener(type, () => heard.push(type));
+        }
+        const pivotMode = { pivotMode: intoPivotMode };
+
+        api.updateGridOptions(order === 'rebuild first' ? { ...rebuild, ...pivotMode } : { ...pivotMode, ...rebuild });
+        await asyncSetTimeout(0);
+
+        expect(api.isPivotMode()).toBe(intoPivotMode);
+        gridsManager.reset();
+        return heard;
+    };
+
+    const expectPivotModeBeforeNewColumns = (heard: string[]) => {
+        const newColumns = heard.indexOf('newColumnsLoaded');
+        expect(newColumns).toBeGreaterThanOrEqual(0);
+        expect(heard.indexOf('columnPivotModeChanged')).toBeGreaterThanOrEqual(0);
+        expect(heard.indexOf('columnPivotModeChanged')).toBeLessThan(newColumns);
+    };
+
+    test.each([
+        { direction: 'on', into: true, option: 'columnTypes' as const, rebuild: { columnTypes: { t: { width: 90 } } } },
+        {
+            direction: 'off',
+            into: false,
+            option: 'columnTypes' as const,
+            rebuild: { columnTypes: { t: { width: 90 } } },
+        },
+        { direction: 'on', into: true, option: 'defaultColDef' as const, rebuild: { defaultColDef: { width: 90 } } },
+        { direction: 'off', into: false, option: 'defaultColDef' as const, rebuild: { defaultColDef: { width: 90 } } },
+    ])(
+        'one update changing $option and switching pivot mode $direction raises the same grid events in either key order, the pivot mode change first',
+        async (row) => {
+            const rebuildFirst = await pivotUpdateEvents('rebuild first', row.rebuild, row.into);
+            const pivotModeFirst = await pivotUpdateEvents('pivotMode first', row.rebuild, row.into);
+
+            expect(rebuildFirst).toEqual(pivotModeFirst);
+            expectPivotModeBeforeNewColumns(rebuildFirst);
+        }
+    );
+
+    test('one update changing columnTypes and switching pivot mode on raises the same grid events in either key order with row numbers', async () => {
+        const rebuild = { columnTypes: { t: { width: 90 } } };
+        const rowNumbers = { rowNumbers: true };
+
+        const rebuildFirst = await pivotUpdateEvents('rebuild first', rebuild, true, rowNumbers);
+        const pivotModeFirst = await pivotUpdateEvents('pivotMode first', rebuild, true, rowNumbers);
+
+        expect(rebuildFirst).toEqual(pivotModeFirst);
+        expectPivotModeBeforeNewColumns(rebuildFirst);
+    });
+
     test('a listener throwing while pivot mode is switched on leaves the grid told of the switch', async () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: [
@@ -1182,6 +1469,36 @@ describe('the layout events of a primary column while pivoting', () => {
         ]);
 
         expect(seen).toEqual(['x,y,z']);
+    });
+
+    test('a pivot mode columnDefs update adding a value column raises one virtual and one displayed columns change', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'k', pivot: true }, { field: 'v', aggFunc: 'sum' }, { field: 'w' }],
+            pivotMode: true,
+            rowData: [
+                { k: 'A', v: 1, w: 2 },
+                { k: 'B', v: 3, w: 4 },
+            ],
+        });
+        await asyncSetTimeout(0);
+        const heard: string[] = [];
+        api.addEventListener('virtualColumnsChanged', () => heard.push('virtualColumnsChanged'));
+        api.addEventListener('displayedColumnsChanged', () =>
+            heard.push(
+                api
+                    .getAllDisplayedColumns()
+                    .map((c) => c.getColId())
+                    .join()
+            )
+        );
+
+        api.setGridOption('columnDefs', [
+            { field: 'k', pivot: true },
+            { field: 'v', aggFunc: 'sum' },
+            { field: 'w', aggFunc: 'sum' },
+        ]);
+        await asyncSetTimeout(0);
+        expect(heard).toEqual(['virtualColumnsChanged', 'pivot_k_A_v,pivot_k_A_w,pivot_k_B_v,pivot_k_B_w']);
     });
 });
 
@@ -1280,6 +1597,32 @@ describe('the column events of one call', () => {
         api.resetColumnState();
 
         expect(seen).toEqual(['a,b,c,d']);
+    });
+
+    test('hiding every column, then showing them again, raises one virtual and one displayed columns change each time', async () => {
+        const api = createGrid();
+        await asyncSetTimeout(0);
+        const colIds = api.getColumns()!.map((column) => column.getColId());
+        expect(colIds).toEqual(['a', 'b', 'c', 'd']);
+        const heard = { virtual: 0, displayed: 0 };
+        api.addEventListener('virtualColumnsChanged', () => ++heard.virtual);
+        api.addEventListener('displayedColumnsChanged', () => ++heard.displayed);
+        const perCall: { virtual: number; displayed: number }[] = [];
+
+        for (const visible of [false, true]) {
+            heard.virtual = 0;
+            heard.displayed = 0;
+            api.setColumnsVisible(colIds, visible);
+            await waitFor(() => expect(heard.displayed).toBeGreaterThan(0), { timeout: 300 });
+            await asyncSetTimeout(0);
+            perCall.push({ virtual: heard.virtual, displayed: heard.displayed });
+        }
+
+        expect(perCall).toEqual([
+            { virtual: 1, displayed: 1 },
+            { virtual: 1, displayed: 1 },
+        ]);
+        expect(ids(api.getAllDisplayedColumns())).toBe('a,b,c,d');
     });
 
     test('a column a listener destroys is told nothing of the change queued for it', () => {
@@ -2047,6 +2390,31 @@ describe('the column events of one call', () => {
         expect(seen).toEqual(['number']);
     });
 
+    test('an auto group column waiting for row data gets its inferred cell data type at the next column state apply', () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'date' }, { field: 'x' }],
+            autoGroupColumnDef: { field: 'date' },
+        });
+        api.setGridOption('rowData', [
+            { country: 'a', date: new Date(2024, 0, 1), x: 1 },
+            { country: 'b', date: new Date(2024, 0, 2), x: 2 },
+        ]);
+        const readAutoColumn = () => api.getColumn('ag-Grid-AutoColumn')!.getColDef().cellDataType;
+        const beforeStateApply = readAutoColumn();
+
+        // premise: the data column was inferred from the rows, the auto group column not yet
+        expect(api.getColumn('date')!.getColDef().cellDataType).toBe('date');
+        expect(beforeStateApply).not.toBe('date');
+
+        api.applyColumnState({ state: [{ colId: 'x', width: 120 }] });
+
+        // beforeStateApply is recorded, not decided by the contract
+        expect({ beforeStateApply, afterStateApply: readAutoColumn() }).toEqual({
+            beforeStateApply,
+            afterStateApply: 'date',
+        });
+    });
+
     test('a row group column a column listener adds while it is told is grouped by once the call returns', () => {
         const api = createGrid();
         const grouped: boolean[] = [];
@@ -2140,7 +2508,7 @@ describe('the column events of one call', () => {
         expect(values).toEqual([1, 2]);
     });
 
-    test('a columnDefs update redefining two columns raises colDefChanged on them, in a call adding a column too', async () => {
+    test('a column redefined with others is told once every one is redrawn with its new definition, in a call adding a column too', async () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: [{ field: 'a' }, { field: 'b' }, { field: 'c' }],
             rowData: [{ a: 1, b: 2, c: 3 }],
@@ -2164,40 +2532,248 @@ describe('the column events of one call', () => {
 
         redefine('x', []);
         await waitFor(() => expect(heard.length).toBeGreaterThanOrEqual(2), { timeout: 300 });
+        expect(heard).toEqual([
+            { on: 'a', a: 'x1', b: 'x2' },
+            { on: 'b', a: 'x1', b: 'x2' },
+        ]);
 
         redefine('y', [{ field: 'd' }]);
         await waitFor(() => expect(heard.length).toBeGreaterThanOrEqual(4), { timeout: 300 });
+        expect(heard).toEqual([
+            { on: 'a', a: 'x1', b: 'x2' },
+            { on: 'b', a: 'x1', b: 'x2' },
+            { on: 'a', a: 'y1', b: 'y2' },
+            { on: 'b', a: 'y1', b: 'y2' },
+        ]);
     });
 
-    test('columns redefined with others are told of their new definitions, in a call adding a column too', async () => {
-        const api = gridsManager.createGrid('myGrid', {
-            columnDefs: [{ field: 'a' }, { field: 'b' }, { field: 'c' }],
-            rowData: [{ a: 1, b: 2, c: 3 }],
-        });
-        const cellText = (colId: string) =>
-            api.getGridElement()?.querySelector(`.ag-row[row-index="0"] [col-id="${colId}"]`)?.textContent;
-        const heard: { on: string; a: string | null | undefined; b: string | null | undefined }[] = [];
-        for (const on of ['a', 'b']) {
-            api.getColumn(on)!.addEventListener('colDefChanged', () =>
-                heard.push({ on, a: cellText('a'), b: cellText('b') })
-            );
+    test('equal column definitions redraw no cell of a date, dateString, object or boolean column, with a Set Filter, a simple filter or none, and a new valueFormatter redraws each once', async () => {
+        const redraws = new Map<string, number>();
+        const countRedraw = (params: ICellRendererParams) => {
+            const colId = params.column!.getColId();
+            redraws.set(colId, (redraws.get(colId) ?? 0) + 1);
+        };
+        class CountingRenderer {
+            private readonly gui = document.createElement('span');
+            public init(params: ICellRendererParams) {
+                countRedraw(params);
+            }
+            public getGui() {
+                return this.gui;
+            }
+            public refresh(params: ICellRendererParams) {
+                countRedraw(params);
+                return true;
+            }
         }
-        expect({ a: cellText('a'), b: cellText('b') }).toEqual({ a: '1', b: '2' });
+        const formatObject = (params: { value: unknown }) => JSON.stringify(params.value);
+        const formatAlt = (params: { value: unknown }) => `alt:${String(params.value)}`;
+        const types = [
+            { type: 'date', simpleFilter: 'agDateColumnFilter' },
+            { type: 'dateString', simpleFilter: 'agDateColumnFilter' },
+            { type: 'object', simpleFilter: 'agTextColumnFilter' },
+            { type: 'boolean', simpleFilter: 'agTextColumnFilter' },
+        ];
+        const colIds = types.flatMap((t) => [`${t.type}-none`, `${t.type}-set`, `${t.type}-simple`]);
+        const defs = (altFormatter: boolean): ColDef[] =>
+            types.flatMap((t) =>
+                [
+                    { colId: `${t.type}-none`, field: t.type, cellDataType: t.type },
+                    { colId: `${t.type}-set`, field: t.type, cellDataType: t.type, filter: true },
+                    { colId: `${t.type}-simple`, field: t.type, cellDataType: t.type, filter: t.simpleFilter },
+                ].map((def): ColDef => {
+                    const colDef: ColDef = { ...def, cellRenderer: CountingRenderer };
+                    if (altFormatter) {
+                        colDef.valueFormatter = formatAlt;
+                    } else if (t.type === 'object') {
+                        colDef.valueFormatter = formatObject;
+                    }
+                    return colDef;
+                })
+            );
+        const api = gridsManager.createGrid(
+            'myGrid',
+            {
+                columnDefs: defs(false),
+                rowData: [
+                    { date: new Date(2024, 0, 1), dateString: '2024-01-01', object: { n: 1 }, boolean: true },
+                    { date: new Date(2024, 1, 2), dateString: '2024-02-02', object: { n: 2 }, boolean: false },
+                ],
+            },
+            { modules: [SetFilterModule, DateFilterModule, TextFilterModule] }
+        );
+        const readCells = () => {
+            const cells = new Map<string, Element>();
+            for (const cell of getGridElement(api)!.querySelectorAll('.ag-row[row-index] .ag-cell[col-id]')) {
+                const rowIndex = cell.closest('.ag-row')!.getAttribute('row-index');
+                cells.set(`${rowIndex}:${cell.getAttribute('col-id')}`, cell);
+            }
+            return cells;
+        };
+        // the cell renderers are made in frame tasks after the cells: every one made before anything is counted
+        const rendererCount = () => [...redraws.values()].reduce((sum, count) => sum + count, 0);
+        await waitFor(() =>
+            expect({ cells: readCells().size, renderers: rendererCount() }).toEqual({
+                cells: colIds.length * 2,
+                renderers: colIds.length * 2,
+            })
+        );
 
-        api.setGridOption('columnDefs', [
-            { field: 'a', valueFormatter: (p) => 'x' + p.value },
-            { field: 'b', valueFormatter: (p) => 'x' + p.value },
-            { field: 'c' },
-        ]);
-        await waitFor(() => expect(heard.length).toBeGreaterThanOrEqual(2), { timeout: 300 });
+        /** Runs `update` and reports, per column, the redraws it made and the cells it replaced. */
+        const redrawsOf = async (update: () => void) => {
+            const cellsBefore = readCells();
+            const redrawsBefore = new Map(redraws);
+            update();
+            await asyncSetTimeout(0);
+            await asyncSetTimeout(0);
+            const cellsAfter = readCells();
+            const redrawn = new Map<string, number>();
+            for (const colId of colIds) {
+                redrawn.set(colId, (redraws.get(colId) ?? 0) - (redrawsBefore.get(colId) ?? 0));
+            }
+            const replaced = [...cellsAfter.keys()].filter((key) => cellsAfter.get(key) !== cellsBefore.get(key));
+            return { redrawn, replaced, cells: cellsAfter.size };
+        };
+        const everyColumn = (redrawsEach: number) => new Map(colIds.map((colId) => [colId, redrawsEach]));
 
-        heard.length = 0;
-        api.setGridOption('columnDefs', [
-            { field: 'a', valueFormatter: (p) => 'y' + p.value },
-            { field: 'b', valueFormatter: (p) => 'y' + p.value },
-            { field: 'c' },
-            { field: 'd' },
-        ]);
-        await waitFor(() => expect(heard.length).toBeGreaterThanOrEqual(2), { timeout: 300 });
+        expect(await redrawsOf(() => api.setGridOption('columnDefs', defs(false)))).toEqual({
+            redrawn: everyColumn(0),
+            replaced: [],
+            cells: colIds.length * 2,
+        });
+
+        // the filters of the columns exist now, as when a user has opened them
+        const filterColIds = colIds.filter((colId) => !colId.endsWith('-none'));
+        const filters = await Promise.all(filterColIds.map((colId) => api.getColumnFilterInstance(colId)));
+        expect(filters.map((filter) => filter !== null)).toEqual(filterColIds.map(() => true));
+        expect(await redrawsOf(() => api.setGridOption('columnDefs', defs(false)))).toEqual({
+            redrawn: everyColumn(0),
+            replaced: [],
+            cells: colIds.length * 2,
+        });
+
+        // positive control: the same observer sees a real change of each column, once per cell
+        const control = await redrawsOf(() => api.setGridOption('columnDefs', defs(true)));
+        expect(control.redrawn).toEqual(everyColumn(2));
+    });
+
+    test('a sorted group column keeps its cells when another column is resized, and a new valueFormatter redraws them', async () => {
+        const redraws = new Map<string, number>();
+        const countRedraw = (params: ICellRendererParams) => {
+            const rowId = params.node.id!;
+            redraws.set(rowId, (redraws.get(rowId) ?? 0) + 1);
+        };
+        class CountingRenderer {
+            private readonly gui = document.createElement('span');
+            public init(params: ICellRendererParams) {
+                countRedraw(params);
+            }
+            public getGui() {
+                return this.gui;
+            }
+            public refresh(params: ICellRendererParams) {
+                countRedraw(params);
+                return true;
+            }
+        }
+        const formatObject = (params: { value: unknown }) => JSON.stringify(params.value);
+        const formatAlt = (params: { value: unknown }) => `alt:${JSON.stringify(params.value)}`;
+        const autoGroupColumnDef = (valueFormatter: ColDef['valueFormatter']): ColDef => ({
+            field: 'o',
+            valueFormatter,
+            cellRendererParams: { innerRenderer: CountingRenderer },
+        });
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'w' }],
+            autoGroupColumnDef: autoGroupColumnDef(formatObject),
+            groupDefaultExpanded: -1,
+            rowData: [
+                { country: 'B', o: { n: 1 }, w: 1 },
+                { country: 'A', o: { n: 2 }, w: 2 },
+            ],
+        });
+        api.applyColumnState({ state: [{ colId: 'ag-Grid-AutoColumn', sort: 'asc' }] });
+        const readCells = () => [
+            ...getGridElement(api)!.querySelectorAll('.ag-row[row-index] .ag-cell[col-id="ag-Grid-AutoColumn"]'),
+        ];
+        const rowIds: string[] = [];
+        api.forEachNode((node) => rowIds.push(node.id!));
+        await waitFor(() => expect(readCells()).toHaveLength(rowIds.length), { timeout: 1000 });
+        await asyncSetTimeout(0);
+        expect(api.getColumnState().find((s) => s.colId === 'ag-Grid-AutoColumn')?.sort).toBe('asc');
+        expect([...redraws.keys()].sort()).toEqual([...rowIds].sort());
+
+        const redrawsOf = async (update: () => void) => {
+            const cellsBefore = readCells();
+            const redrawsBefore = new Map(redraws);
+            update();
+            await asyncSetTimeout(0);
+            await asyncSetTimeout(0);
+            const cellsAfter = readCells();
+            const delta = new Map<string, number>();
+            for (const rowId of rowIds) {
+                delta.set(rowId, (redraws.get(rowId) ?? 0) - (redrawsBefore.get(rowId) ?? 0));
+            }
+            return { delta, kept: cellsAfter.map((cell, i) => cell === cellsBefore[i]) };
+        };
+        const everyRow = (redrawsEach: number) => new Map(rowIds.map((rowId) => [rowId, redrawsEach]));
+
+        const resized = await redrawsOf(() => api.applyColumnState({ state: [{ colId: 'w', width: 150 }] }));
+        expect(api.getColumnState().find((s) => s.colId === 'w')?.width).toBe(150);
+        expect(resized).toEqual({ delta: everyRow(0), kept: rowIds.map(() => true) });
+
+        // positive control: the same observer sees a new valueFormatter of the group column
+        const redefined = await redrawsOf(() => api.setGridOption('autoGroupColumnDef', autoGroupColumnDef(formatAlt)));
+        expect(redefined.delta).toEqual(everyRow(1));
+    });
+});
+
+describe('the width events of a column resized from an aligned grid', () => {
+    const gridsManager = new TestGridsManager({
+        modules: [ClientSideRowModelModule, ColumnApiModule, AlignedGridsModule],
+    });
+
+    afterEach(() => {
+        gridsManager.reset();
+    });
+
+    test('a resize made in the other aligned grid raises the width events before columnResized, as a resize made in the grid itself', async () => {
+        const columnDefs: ColDef[] = [
+            { colId: 'a', width: 100 },
+            { colId: 'b', width: 100 },
+        ];
+        const api1 = gridsManager.createGrid('grid1', { columnDefs, rowData: [{}] });
+        const api2 = gridsManager.createGrid('grid2', { columnDefs, rowData: [{}] });
+        api1.setGridOption('alignedGrids', [{ api: api2 }]);
+        await asyncSetTimeout(0);
+
+        const heard: string[] = [];
+        const anyEvents: AnyEventApi = api2;
+        const widthEvents: AgEventType[] = [
+            'columnContainerWidthChanged',
+            'displayedColumnsWidthChanged',
+            'columnResized',
+        ];
+        for (const type of widthEvents) {
+            anyEvents.addEventListener(type, () => heard.push(type));
+        }
+        api2.getColumn('a')!.addEventListener('widthChanged', () => heard.push('widthChanged'));
+
+        api1.setColumnWidths([{ key: 'a', newWidth: 150 }], true);
+        await waitFor(() => expect(heard).toContain('columnResized'), { timeout: 300 });
+        await asyncSetTimeout(0);
+        const fromOtherGrid = heard.splice(0);
+        expect(api2.getColumn('a')!.getActualWidth()).toBe(150);
+
+        api2.setColumnWidths([{ key: 'a', newWidth: 170 }], true);
+        await waitFor(() => expect(heard).toContain('columnResized'), { timeout: 300 });
+        await asyncSetTimeout(0);
+        const fromOwnGrid = heard.splice(0);
+        expect(api2.getColumn('a')!.getActualWidth()).toBe(170);
+
+        expect(fromOtherGrid).toEqual(fromOwnGrid);
+        // the three width events and the column's own come before columnResized, each once
+        expect(fromOtherGrid).toHaveLength(4);
+        expect(fromOtherGrid[3]).toBe('columnResized');
     });
 });

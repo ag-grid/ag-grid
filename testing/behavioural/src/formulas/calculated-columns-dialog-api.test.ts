@@ -79,6 +79,23 @@ describe('calculated column dialog APIs', () => {
         expect(added.getColDef().columnGroupShow).toBe('open');
     });
 
+    test('Add gives the new column an id no group holds', () => {
+        const api = createGrid('calculated-api-group-id', {
+            columnDefs: [
+                { groupId: 'calculated_1', headerName: 'G', children: [{ field: 'revenue' }] },
+                { field: 'cost' },
+            ],
+            rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
+        });
+        api.openAddCalculatedColumnDialog();
+        setExpression('[Revenue] - [Cost]');
+        clickDialogButton('Apply');
+
+        const groupIds = api.getColumnGroupState().map((state) => state.groupId);
+        const added = api.getAllGridColumns().at(-1)!.getColId();
+        expect({ added, taken: groupIds.includes(added) }).toEqual({ added: 'calculated_2', taken: false });
+    });
+
     test('Add accepts an auto group column as its source', () => {
         const api = createGrid('calculated-api-auto-source', {
             columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'revenue' }],

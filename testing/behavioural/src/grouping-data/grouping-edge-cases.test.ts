@@ -390,6 +390,7 @@ describe('ag-grid grouping edge cases', () => {
                         ],
                     }),
             ],
+            ['columnDefs', (api: GridApi) => api.setGridOption('columnDefs', columnDefs('sport'))],
         ])(
             'leaf rows show their new opened group after the row group columns change (%s)',
             async (_path, changeRowGroups) => {

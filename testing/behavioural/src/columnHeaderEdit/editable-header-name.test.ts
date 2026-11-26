@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 import { onTestFinished } from 'vitest';
 
-import type { AgColumn, ColDef, GridApi, HeaderValueGetterParams } from 'ag-grid-community';
+import type { AgColumn, ColDef, ColGroupDef, GridApi, HeaderValueGetterParams } from 'ag-grid-community';
 import { getGridElement } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
@@ -27,7 +27,7 @@ describe('Editable header name', () => {
     const rowData = [{ athlete: 'Michael Phelps', age: 23 }];
 
     async function createGrid(
-        columnDefs: ColDef[],
+        columnDefs: (ColDef | ColGroupDef)[],
         extraOptions?: Record<string, any>
     ): Promise<{ api: GridApi; gridDiv: HTMLElement; toolPanel: any }> {
         const api = await gridMgr.createGridAndWait('myGrid', {
@@ -352,6 +352,24 @@ describe('Editable header name', () => {
         api.resetColumnState();
 
         await waitFor(() => expect(input.value).toBe('Layout Only'));
+    });
+
+    test('renaming a row group column while the editor is open on its group column refreshes the input', async () => {
+        const { api, gridDiv } = await createGrid([{ field: 'athlete', rowGroup: true }, { field: 'age' }], {
+            groupDisplayType: 'multipleColumns',
+            autoGroupColumnDef: { headerNameEditable: true },
+        });
+        api.showColumnMenu('ag-Grid-AutoColumn-athlete');
+        await userEvent.click(await findByText(gridDiv, 'Edit Column Name'));
+        const input = await waitFor(() => {
+            const el = document.querySelector<HTMLInputElement>('.ag-column-header-edit-popup-editor input');
+            expect(el?.value).toBe('Athlete');
+            return el!;
+        });
+
+        api.applyColumnState({ state: [{ colId: 'athlete', headerName: 'Competitor' }] });
+
+        await waitFor(() => expect(input.value).toBe('Competitor'));
     });
 
     test('renaming a row group column from the editor renames its group column', async () => {
@@ -793,6 +811,108 @@ describe('Editable header name', () => {
         // The highlight is toggled synchronously as the editor opens, so no further wait is needed.
         await openEditor(toolPanel, gridDiv, 'Athlete');
         expect(isHighlighted()).toBe(false);
+    });
+
+    const twoEditableGroups = (): ColGroupDef[] => [
+        {
+            groupId: 'athleteGroup',
+            headerName: 'Athlete Group',
+            headerNameEditable: true,
+            children: [{ field: 'athlete' }],
+        },
+        {
+            groupId: 'ageGroup',
+            headerName: 'Age Group',
+            headerNameEditable: true,
+            children: [{ field: 'age' }],
+        },
+    ];
+    const groupHeaderCells = () => [...document.querySelectorAll('.ag-header-group-cell')];
+    const groupName = (cell: Element) => cell.querySelector('.ag-header-group-text')?.textContent;
+    const groupHeaderNames = () => groupHeaderCells().map(groupName).sort();
+    const highlightedGroupNames = () =>
+        groupHeaderCells()
+            .filter((cell) => cell.classList.contains('ag-column-header-edit-highlighted'))
+            .map(groupName)
+            .sort();
+
+    /** Open the "Edit Column Name" editor from the context menu of a group's own header cell. */
+    async function openGroupEditorFromHeader(name: string): Promise<HTMLInputElement> {
+        const cell = groupHeaderCells().find((el) => groupName(el) === name);
+        if (!cell) {
+            throw new Error(`Group header cell not found for "${name}"`);
+        }
+        cell.dispatchEvent(
+            new MouseEvent('contextmenu', { bubbles: true, cancelable: true, clientX: 10, clientY: 10 })
+        );
+        await userEvent.click(await findByText(document.body, 'Edit Column Name'));
+        return waitFor(() => {
+            const input = document.querySelector<HTMLInputElement>('.ag-column-header-edit-popup-editor input');
+            if (!input) {
+                throw new Error('Header name editor input not found');
+            }
+            return input;
+        });
+    }
+
+    test('editing a group name from the columns tool panel highlights only that group header and clears it on close', async () => {
+        const { gridDiv, toolPanel } = await createGrid(twoEditableGroups());
+        expect({ cells: groupHeaderNames(), highlighted: highlightedGroupNames() }).toEqual({
+            cells: ['Age Group', 'Athlete Group'],
+            highlighted: [],
+        });
+
+        const athleteInput = await openEditor(toolPanel, gridDiv, 'Athlete Group');
+        await waitFor(() => expect(highlightedGroupNames()).toEqual(['Athlete Group']));
+        pressEscape(athleteInput);
+        await waitForEditorClosed();
+        await waitFor(() => expect(highlightedGroupNames()).toEqual([]));
+
+        const ageInput = await openEditor(toolPanel, gridDiv, 'Age Group');
+        await waitFor(() => expect(highlightedGroupNames()).toEqual(['Age Group']));
+        pressEscape(ageInput);
+        await waitForEditorClosed();
+        await waitFor(() => expect(highlightedGroupNames()).toEqual([]));
+    });
+
+    test('editing a group name from its header menu highlights only that group header and clears it on close', async () => {
+        await createGrid(twoEditableGroups());
+        expect({ cells: groupHeaderNames(), highlighted: highlightedGroupNames() }).toEqual({
+            cells: ['Age Group', 'Athlete Group'],
+            highlighted: [],
+        });
+
+        const athleteInput = await openGroupEditorFromHeader('Athlete Group');
+        await waitFor(() => expect(highlightedGroupNames()).toEqual(['Athlete Group']));
+        pressEscape(athleteInput);
+        await waitForEditorClosed();
+        await waitFor(() => expect(highlightedGroupNames()).toEqual([]));
+
+        const ageInput = await openGroupEditorFromHeader('Age Group');
+        await waitFor(() => expect(highlightedGroupNames()).toEqual(['Age Group']));
+        pressEscape(ageInput);
+        await waitForEditorClosed();
+        await waitFor(() => expect(highlightedGroupNames()).toEqual([]));
+    });
+
+    test('suppressColumnHighlighting leaves every group header unhighlighted whichever way the group editor opens', async () => {
+        const { gridDiv, toolPanel } = await createGrid(twoEditableGroups(), {
+            columnHeaderEdit: { suppressColumnHighlighting: true },
+        });
+
+        const fromPanel = await openEditor(toolPanel, gridDiv, 'Athlete Group');
+        expect({ cells: groupHeaderNames(), highlighted: highlightedGroupNames() }).toEqual({
+            cells: ['Age Group', 'Athlete Group'],
+            highlighted: [],
+        });
+        pressEscape(fromPanel);
+        await waitForEditorClosed();
+
+        await openGroupEditorFromHeader('Age Group');
+        expect({ cells: groupHeaderNames(), highlighted: highlightedGroupNames() }).toEqual({
+            cells: ['Age Group', 'Athlete Group'],
+            highlighted: [],
+        });
     });
 
     test('closing the header name editor with focus on a container around the grid gives focus back to the element that opened it', async () => {

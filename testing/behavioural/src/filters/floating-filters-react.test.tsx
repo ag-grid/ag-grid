@@ -12,11 +12,14 @@ import type {
 import {
     AgPromise,
     ClientSideRowModelModule,
+    ColumnApiModule,
     CustomFilterModule,
+    NumberFilterModule,
     RowApiModule,
     TextFilterModule,
     enableDevValidations,
 } from 'ag-grid-community';
+import { AggregationModule, PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
 import type { CustomFilterProps, CustomFloatingFilterProps } from 'ag-grid-react';
 import { AgGridReact } from 'ag-grid-react';
 
@@ -164,6 +167,63 @@ describe('Floating Filters (React)', () => {
         await act(() => api!.setColumnFilterModel('athlete', THORPE));
         act(() => api!.setGridOption('columnDefs', withFloating(true)));
         await waitFor(() => expect(floatingInput()?.value).toBe('Thorpe'));
+    });
+
+    test('pivot result floating filters name their column with the new aggregation function', async () => {
+        let api: GridApi | undefined;
+        const container = render(
+            <React.StrictMode>
+                <AgGridReact
+                    columnDefs={[
+                        { field: 'a', rowGroup: true },
+                        { field: 'b', pivot: true },
+                        { field: 'n', aggFunc: 'max', filter: true, floatingFilter: true },
+                    ]}
+                    rowData={[
+                        { a: 'p', b: 'x', n: 1 },
+                        { a: 'p', b: 'y', n: 2 },
+                        { a: 'q', b: 'x', n: 3 },
+                        { a: 'q', b: 'y', n: 4 },
+                    ]}
+                    pivotMode
+                    modules={[
+                        ClientSideRowModelModule,
+                        ColumnApiModule,
+                        NumberFilterModule,
+                        AggregationModule,
+                        PivotModule,
+                        RowGroupingModule,
+                    ]}
+                    onGridReady={(e) => (api = e.api)}
+                />
+            </React.StrictMode>
+        ).container;
+        const labels = (colIds: string[]) =>
+            colIds.map((colId) => {
+                const cell = container.querySelector(`.ag-floating-filter[col-id="${colId}"]`);
+                return {
+                    colId,
+                    button:
+                        cell?.querySelector('.ag-floating-filter-button button')?.getAttribute('aria-label') ?? null,
+                    input: cell?.querySelector('input')?.getAttribute('aria-label') ?? null,
+                };
+            });
+        const expected = (colIds: string[], name: string) =>
+            colIds.map((colId) => ({
+                colId,
+                button: `Open ${name} Filter Menu`,
+                input: `${name} Filter Input`,
+            }));
+        await waitFor(() => expect(api?.getPivotResultColumns()?.length).toBe(2));
+        const colIds = api!.getPivotResultColumns()!.map((col) => col.getColId());
+
+        await waitFor(() => expect(labels(colIds)).toEqual(expected(colIds, 'max(N)')));
+
+        act(() => {
+            api!.applyColumnState({ state: [{ colId: 'n', aggFunc: 'avg' }] });
+        });
+
+        await waitFor(() => expect(labels(colIds)).toEqual(expected(colIds, 'avg(N)')));
     });
 
     test.each([

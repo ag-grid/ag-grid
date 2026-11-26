@@ -1,12 +1,12 @@
-import { ALL_SEVERITIES, GridRows, TestGridsManager } from 'ag-test-utils';
+import { ALL_SEVERITIES, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import type { AccentedSortOptions, ColDef, GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, enableDevValidations } from 'ag-grid-community';
-import { RowGroupingModule } from 'ag-grid-enterprise';
+import { RowGroupingModule, TreeDataModule } from 'ag-grid-enterprise';
 
 describe('accentedSort locale and collator options', () => {
     const gridMgr = new TestGridsManager({
-        modules: [ClientSideRowModelModule, RowGroupingModule],
+        modules: [ClientSideRowModelModule, RowGroupingModule, TreeDataModule],
     });
 
     afterEach(() => {
@@ -200,6 +200,123 @@ describe('accentedSort locale and collator options', () => {
 
         api.setGridOption('accentedSort', false);
         expect(displayed()).toEqual(['Anna', 'Ola', 'Zoe', 'Åsa', 'Örjan']);
+    });
+
+    test('a new autoGroupColumnDef accentedSort re-sorts tree data once and animated like a sort change and the grid option re-sorts once', async () => {
+        let sorts = 0;
+        const animated: boolean[] = [];
+        const api = createGrid('accented-tree-auto-col', {
+            columnDefs: [{ field: 'v' }],
+            treeData: true,
+            getDataPath: (data) => data.path,
+            autoGroupColumnDef: { sort: 'asc' },
+            rowData: ['z', 'é', 'f', 'e'].map((key) => ({ path: [key], v: 1 })),
+            animateRows: true,
+            ensureDomOrder: false,
+            postSortRows: () => {
+                sorts++;
+            },
+            onModelUpdated: (event) => {
+                animated.push(!!event.animate);
+            },
+        });
+        const displayedAfter = async (action: () => void) => {
+            await asyncSetTimeout(0);
+            sorts = 0;
+            animated.length = 0;
+            action();
+            const keys: string[] = [];
+            api.forEachNodeAfterFilterAndSort((node) => keys.push(String(node.key)));
+            await asyncSetTimeout(0);
+            return { keys, sorts, animated: [...animated] };
+        };
+
+        // Without accentedSort, strings are in Unicode order.
+        expect(
+            await displayedAfter(() => api.setGridOption('autoGroupColumnDef', { sort: 'asc', accentedSort: true }))
+        ).toEqual({
+            keys: ['e', 'é', 'f', 'z'],
+            sorts: 1,
+            animated: [true],
+        });
+        expect(await displayedAfter(() => api.setGridOption('autoGroupColumnDef', { sort: 'asc' }))).toEqual({
+            keys: ['e', 'f', 'z', 'é'],
+            sorts: 1,
+            animated: [true],
+        });
+        expect(
+            await displayedAfter(() => api.applyColumnState({ state: [{ colId: 'ag-Grid-AutoColumn', sort: 'desc' }] }))
+        ).toEqual({
+            keys: ['é', 'z', 'f', 'e'],
+            sorts: 1,
+            animated: [true],
+        });
+        expect(await displayedAfter(() => api.setGridOption('accentedSort', true))).toEqual({
+            keys: ['z', 'f', 'é', 'e'],
+            sorts: 1,
+            animated: [false],
+        });
+    });
+
+    test('a new autoGroupColumnDef accentedSort refreshes no rows while nothing is sorted', async () => {
+        let sorts = 0;
+        let modelUpdates = 0;
+        const api = createGrid('accented-tree-unsorted', {
+            columnDefs: [{ field: 'v' }],
+            treeData: true,
+            getDataPath: (data) => data.path,
+            rowData: ['z', 'é', 'f', 'e'].map((key) => ({ path: [key], v: 1 })),
+            postSortRows: () => {
+                sorts++;
+            },
+            onModelUpdated: () => {
+                modelUpdates++;
+            },
+        });
+        const displayedAfter = async (action: () => void) => {
+            await asyncSetTimeout(0);
+            sorts = 0;
+            modelUpdates = 0;
+            action();
+            const keys: string[] = [];
+            api.forEachNodeAfterFilterAndSort((node) => keys.push(String(node.key)));
+            await asyncSetTimeout(0);
+            return { keys, sorts, modelUpdates };
+        };
+
+        expect(await displayedAfter(() => api.setGridOption('autoGroupColumnDef', { accentedSort: true }))).toEqual({
+            keys: ['z', 'é', 'f', 'e'],
+            sorts: 0,
+            modelUpdates: 0,
+        });
+        // the comparator just set sorts the rows once the group column is sorted
+        expect(
+            await displayedAfter(() => api.applyColumnState({ state: [{ colId: 'ag-Grid-AutoColumn', sort: 'asc' }] }))
+        ).toEqual({ keys: ['e', 'é', 'f', 'z'], sorts: 1, modelUpdates: 1 });
+    });
+
+    test.each([
+        ['accentedSort first', (columnDefs: ColDef[]): GridOptions => ({ accentedSort: true, columnDefs })],
+        ['columnDefs first', (columnDefs: ColDef[]): GridOptions => ({ columnDefs, accentedSort: true })],
+    ])('one updateGridOptions changing accentedSort and columnDefs sorts as a new grid would, %s', (_label, update) => {
+        const accentedA = String.fromCharCode(225);
+        const rowData = ['b', accentedA, 'a'].map((name) => ({ name }));
+        const api = createGrid('accented-update-with-coldefs', {
+            columnDefs: [{ field: 'name', sort: 'asc' }],
+            rowData,
+        });
+        const displayed = () => {
+            const values: string[] = [];
+            api.forEachNodeAfterFilterAndSort((node) => values.push(node.data.name));
+            return values;
+        };
+
+        // Without accentedSort, strings are in Unicode order.
+        expect(displayed()).toEqual(['a', 'b', accentedA]);
+
+        api.updateGridOptions(update([{ field: 'name', sort: 'asc' }, { field: 'other' }]));
+
+        expect(displayed()).toEqual(['a', accentedA, 'b']);
     });
 
     test('an equal options object, as from a framework re-render, reuses the collator', () => {

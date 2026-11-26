@@ -1,6 +1,6 @@
 import { GridColumns, GridRows, TestGridsManager } from 'ag-test-utils';
 
-import { ClientSideRowModelModule, PaginationModule, PinnedRowModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, PaginationModule, PinnedRowModule, QuickFilterModule } from 'ag-grid-community';
 import type { GridApi, RowNode, RowPinnedType } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
@@ -16,7 +16,7 @@ function assertPinnedRows(api: GridApi, floating: NonNullable<RowPinnedType>, id
 
 describe('ag-grid grouping pinned rows', () => {
     const gridsManager = new TestGridsManager({
-        modules: [PinnedRowModule, ClientSideRowModelModule, RowGroupingModule, PaginationModule],
+        modules: [PinnedRowModule, ClientSideRowModelModule, RowGroupingModule, PaginationModule, QuickFilterModule],
     });
 
     const columnDefs = [
@@ -350,6 +350,37 @@ describe('ag-grid grouping pinned rows', () => {
 
         // Verify the Germany group no longer exists
         expect(api.getRowNode('row-group-country-Germany')).toBeUndefined();
+    });
+
+    test('a filter hides the pinned rows it filters out, in a collapsed group as in an expanded one', async () => {
+        const api = await gridsManager.createGridAndWait('myGrid', {
+            columnDefs,
+            rowData,
+            enableRowPinning: true,
+            isRowPinned: (node) => (node.data?.sport === 'rugby' || node.data?.sport === 'tennis' ? 'top' : null),
+            getRowId: (params) => params.data.id,
+        });
+        const pinned = (): string[] => {
+            const ids: string[] = [];
+            api.forEachPinnedRow('top', (node) => ids.push(node.data.id));
+            return ids;
+        };
+        const collapsed = pinned();
+        api.setGridOption('quickFilterText', 'rugby');
+        const collapsedFiltered = pinned();
+        api.expandAll();
+        const expandedFiltered = pinned();
+        api.setGridOption('quickFilterText', 'tennis');
+        const expandedOtherFilter = pinned();
+        api.setGridOption('quickFilterText', '');
+
+        expect({ collapsed, collapsedFiltered, expandedFiltered, expandedOtherFilter, cleared: pinned() }).toEqual({
+            collapsed: ['fr-lyon', 'de-berlin'],
+            collapsedFiltered: ['fr-lyon'],
+            expandedFiltered: ['fr-lyon'],
+            expandedOtherFilter: ['de-berlin'],
+            cleared: ['fr-lyon', 'de-berlin'],
+        });
     });
 
     test('unpinning a group row keeps its group total row', async () => {

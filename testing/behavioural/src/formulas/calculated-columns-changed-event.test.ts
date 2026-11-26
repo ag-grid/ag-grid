@@ -452,6 +452,94 @@ describe('calculatedColumnChanged', () => {
         const abc = [{ field: 'a' }, { field: 'b' }];
         const data = [{ id: 'r1', a: 5, b: 2 }];
 
+        test('a state restore that leaves a column invalid raises no validation event at the next column rebuild', async () => {
+            const api = createGrid('validation-restore-invalid', { columnDefs: abc, rowData: data });
+            const flush = recordCalculatedColumnEvents(api);
+            expect(await flush()).toEqual([]);
+
+            api.setState({
+                userColumns: [
+                    {
+                        colId: 'bad',
+                        created: true,
+                        properties: [{ property: 'calculatedExpression', value: '[missing] + 1' }],
+                    },
+                ],
+            });
+            expect(api.getColumn('bad')!.getColDef().calculatedExpression).toBe('[missing] + 1');
+            expect(await flush()).toEqual([]);
+
+            api.setGridOption('columnTypes', { foo: {} });
+            expect(await flush()).toEqual([]);
+
+            api.setGridOption('defaultColDef', { width: 150 });
+            expect(await flush()).toEqual([]);
+        });
+
+        test('a state restore that turns a valid created column invalid raises no validation event at the next column rebuild', async () => {
+            const api = createGrid('validation-restore-valid-to-invalid', {
+                columnDefs: abc,
+                rowData: data,
+                initialState: {
+                    userColumns: [
+                        {
+                            colId: 'c',
+                            created: true,
+                            properties: [{ property: 'calculatedExpression', value: '[b] * 2' }],
+                        },
+                    ],
+                },
+            });
+            const flush = recordCalculatedColumnEvents(api);
+            expect(api.getColumn('c')!.getColDef().calculatedExpression).toBe('[b] * 2');
+            expect(await flush()).toEqual([]);
+
+            api.setState({
+                userColumns: [
+                    {
+                        colId: 'c',
+                        created: true,
+                        properties: [{ property: 'calculatedExpression', value: '[missing] * 2' }],
+                    },
+                ],
+            });
+            expect(api.getColumn('c')!.getColDef().calculatedExpression).toBe('[missing] * 2');
+            expect(await flush()).toEqual([]);
+
+            api.setGridOption('columnTypes', { foo: {} });
+            expect(await flush()).toEqual([]);
+
+            api.setGridOption('defaultColDef', { width: 150 });
+            expect(await flush()).toEqual([]);
+        });
+
+        test('a state restore that makes a declared invalid column valid raises no validation event at the next column rebuild', async () => {
+            const api = createGrid('validation-restore-invalid-to-valid', {
+                columnDefs: [...abc, { colId: 'declared', calculatedExpression: '[missing] + 1' }],
+                rowData: data,
+            });
+            const flush = recordCalculatedColumnEvents(api);
+            expect(await flush()).toEqual([]);
+
+            api.setState({
+                userColumns: [
+                    {
+                        colId: 'declared',
+                        type: 'calculated',
+                        properties: [{ property: 'calculatedExpression', value: '[a] * 2' }],
+                    },
+                ],
+            });
+            expect(api.getColumn('declared')!.getColDef().calculatedExpression).toBe('[a] * 2');
+            expect(await flush()).toEqual([]);
+
+            api.setGridOption('columnTypes', { foo: {} });
+            expect(await flush()).toEqual([]);
+
+            api.setGridOption('defaultColDef', { width: 150 });
+            expect(await flush()).toEqual([]);
+        });
+
         test('a column turned invalid by a columnDefs update after a state restore raises its validation event once, and the next column rebuild none', async () => {
             const declared = { colId: 'c', calculatedExpression: '[b] * 2' };
             const api = createGrid('validation-columnDefs-flip', { columnDefs: [...abc, declared], rowData: data });
@@ -475,6 +563,36 @@ describe('calculatedColumnChanged', () => {
 
             api.setGridOption('defaultColDef', { width: 150 });
             expect(await flush()).toEqual([]);
+        });
+
+        test('the first column build raises no event even when calculated columns were switched on after creation, and a later change still raises its events', async () => {
+            const invalid = [{ field: 'a' }, { colId: 'bad', calculatedExpression: '[missing] + 1' }];
+
+            const onFromStart = createGrid('first-build-on-from-start', { calculatedColumns: true, rowData: data });
+            const flushOnFromStart = recordCalculatedColumnEvents(onFromStart);
+            expect(await flushOnFromStart()).toEqual([]);
+            onFromStart.setGridOption('columnDefs', invalid);
+            expect(onFromStart.getColumn('bad')!.getColDef().calculatedExpression).toBe('[missing] + 1');
+            expect(await flushOnFromStart()).toEqual([]);
+
+            const api = createGrid('first-build-switched-on', { calculatedColumns: false, rowData: data });
+            const flush = recordCalculatedColumnEvents(api);
+            expect(await flush()).toEqual([]);
+
+            api.setGridOption('calculatedColumns', true);
+            expect(await flush()).toEqual([]);
+
+            api.setGridOption('columnDefs', invalid);
+            expect(api.getColumn('bad')!.getColDef().calculatedExpression).toBe('[missing] + 1');
+            expect(await flush()).toEqual([]);
+
+            api.setGridOption('columnDefs', [{ field: 'a' }, { colId: 'bad', calculatedExpression: '[a] + 1' }]);
+            expect(api.getColumn('bad')!.getColDef().calculatedExpression).toBe('[a] + 1');
+            expect(await flush()).toEqual([
+                { type: 'calculatedColumnChanged', colId: 'bad', source: 'api' },
+                { type: 'calculatedColumnExpressionChanged', colId: 'bad', source: 'api' },
+                { type: 'calculatedColumnValidationStateChanged', colId: 'bad', source: 'api', valid: true },
+            ]);
         });
     });
 

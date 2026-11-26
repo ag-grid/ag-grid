@@ -5,6 +5,7 @@ import { triggerResizeObservers } from 'ag-test-utils/polyfills/mockResizeObserv
 
 import type { GridApi, GridOptions, IViewportDatasourceParams } from 'ag-grid-community';
 import {
+    ClientSideRowModelModule,
     InfiniteRowModelModule,
     PinnedRowModule,
     RowApiModule,
@@ -130,5 +131,50 @@ describe('Auto height of pinned rows in the infinite and viewport row models', (
         });
 
         await expectPinnedRowsRestackWhenOneGrows(api);
+    });
+});
+
+describe('Auto height of pinned rows after the grid is destroyed', () => {
+    const gridsManager = new TestGridsManager({
+        modules: [ClientSideRowModelModule, PinnedRowModule, RowApiModule, RowAutoHeightModule],
+    });
+
+    afterEach(() => {
+        gridsManager.reset();
+    });
+
+    const flushMacrotasks = async (count: number): Promise<void> => {
+        for (let i = 0; i < count; ++i) {
+            await asyncSetTimeout(0);
+        }
+    };
+
+    test('pinned top and bottom auto height cells stop measuring once the grid is destroyed', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'a' }, { field: 'b', autoHeight: true }],
+            rowData: [{ a: 'x', b: 'y' }],
+            pinnedTopRowData: [{ a: 'p0', b: 'p0' }],
+            pinnedBottomRowData: [{ a: 'q0', b: 'q0' }],
+        });
+        await asyncSetTimeout(0);
+        await nextAnimationFrame();
+        await asyncSetTimeout(0);
+        expect(api.getPinnedTopRow(0)!.data).toEqual({ a: 'p0', b: 'p0' });
+        expect(api.getPinnedBottomRow(0)!.data).toEqual({ a: 'q0', b: 'q0' });
+
+        // Positive control: the same observer sees the grid measuring while it is alive.
+        const liveSpy = vi.spyOn(window, 'getComputedStyle');
+        api.setGridOption('pinnedTopRowData', [{ a: 'n0', b: 'n0' }]);
+        await flushMacrotasks(10);
+        const measuredWhileAlive = liveSpy.mock.calls.length;
+        liveSpy.mockRestore();
+        expect(measuredWhileAlive).toBeGreaterThan(0);
+
+        const spy = vi.spyOn(window, 'getComputedStyle');
+        onTestFinished(() => spy.mockRestore());
+        api.destroy();
+        await flushMacrotasks(10);
+
+        expect(spy).toHaveBeenCalledTimes(0);
     });
 });

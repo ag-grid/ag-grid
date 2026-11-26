@@ -1,4 +1,4 @@
-import { _defaultComparator, _getOwn, _hasOwn, _makeNull } from './generic';
+import { _defaultComparator, _getOwn, _hasOwn, _jsonEquals, _makeNull } from './generic';
 
 describe('own-property lookup', () => {
     it('resolves a table entry and not an inherited one', () => {
@@ -37,6 +37,23 @@ describe('_makeNull', () => {
 
     it('converts empty string to null', () => {
         expect(_makeNull('')).toBeNull();
+    });
+});
+
+describe('_jsonEquals', () => {
+    it.each<[unknown, unknown, boolean]>([
+        [null, undefined, true],
+        [{ a: [1] }, { a: [1] }, true],
+        [{ a: 1 }, { a: 2 }, false],
+        [{}, undefined, false],
+        [0, null, false],
+        [false, undefined, false],
+        ['', null, false],
+        [0, false, false],
+        [0, '', false],
+    ])('%j vs %j is %s', (left, right, expected) => {
+        expect(_jsonEquals(left, right)).toBe(expected);
+        expect(_jsonEquals(right, left)).toBe(expected);
     });
 });
 

@@ -1,5 +1,5 @@
 import { act, cleanup, render, waitFor } from '@testing-library/react';
-import { asyncSetTimeout } from 'ag-test-utils';
+import { asyncSetTimeout, nextAnimationFrame } from 'ag-test-utils';
 import { mockGridLayout } from 'ag-test-utils/polyfills/mockGridLayout';
 import React from 'react';
 import { afterEach, beforeAll, describe, expect, test } from 'vitest';
@@ -247,5 +247,49 @@ describe('Grid body width push (React)', () => {
 
         act(() => api.setColumnWidths([{ key: 'right', newWidth: 210 }]));
         await waitFor(() => expect(pinnedWidths()).toEqual(['120px', '210px']));
+    });
+
+    test('keeps the pinned lane classes through a layout change that keeps the pinned lane', async () => {
+        const api = await renderGrid({
+            columnDefs: [{ colId: 'left', width: 120, pinned: 'left' }, { colId: 'a' }],
+            rowData: [{}],
+        });
+        const rootClasses = () => {
+            const classList = document.querySelector('.ag-root')!.classList;
+            return {
+                hasLeftClass: classList.contains('ag-has-left-pinned-cols'),
+                autoHeight: classList.contains('ag-layout-auto-height'),
+            };
+        };
+        await waitFor(() => expect(rootClasses()).toEqual({ hasLeftClass: true, autoHeight: false }));
+
+        act(() => api.setGridOption('domLayout', 'autoHeight'));
+
+        await waitFor(() => expect(rootClasses().autoHeight).toBe(true));
+        await act(async () => {
+            await nextAnimationFrame();
+            await asyncSetTimeout(0);
+        });
+        expect(rootClasses()).toEqual({ hasLeftClass: true, autoHeight: true });
+    });
+
+    test('lays out no pinned lane in print layout, and restores it when the layout returns to normal', async () => {
+        const api = await renderGrid({
+            columnDefs: [{ colId: 'left', width: 120, pinned: 'left' }, { colId: 'a' }],
+            rowData: [{}],
+        });
+        const pinnedLane = () => ({
+            left: document
+                .querySelector<HTMLElement>('.ag-grid-viewport')!
+                .style.getPropertyValue('--ag-internal-pinned-left-width'),
+            hasLeftClass: document.querySelector('.ag-root')!.classList.contains('ag-has-left-pinned-cols'),
+        });
+        await waitFor(() => expect(pinnedLane()).toEqual({ left: '120px', hasLeftClass: true }));
+
+        act(() => api.setGridOption('domLayout', 'print'));
+        await waitFor(() => expect(pinnedLane()).toEqual({ left: '0px', hasLeftClass: false }));
+
+        act(() => api.setGridOption('domLayout', 'normal'));
+        await waitFor(() => expect(pinnedLane()).toEqual({ left: '120px', hasLeftClass: true }));
     });
 });

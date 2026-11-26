@@ -1231,6 +1231,42 @@ describe('Column Flex', () => {
             mockGridLayout.gridWidth = originalGridWidth;
         }
     });
+
+    test('initialState sizing one column keeps the flexed widths of the others, created with the columns or given them later', async () => {
+        const stateGridsManager = new TestGridsManager({
+            modules: [ClientSideRowModelModule, ColumnApiModule, GridStateModule],
+        });
+        onTestFinished(() => stateGridsManager.reset());
+        const columnDefs: ColDef[] = [{ field: 'id' }, { field: 'c' }, { field: 'b' }];
+        const rowData = [
+            { id: '7', c: 5, b: 'q' },
+            { id: '8', c: 6, b: 'r' },
+        ];
+        const initialState = { columnSizing: { columnSizingModel: [{ colId: 'c', width: 222 }] } };
+        const expected = [
+            { colId: 'id', width: 333, flex: null },
+            { colId: 'c', width: 222, flex: null },
+            { colId: 'b', width: 333, flex: null },
+        ];
+        const read = (api: GridApi) => api.getColumnState().map(({ colId, width, flex }) => ({ colId, width, flex }));
+
+        const created = stateGridsManager.createGrid('created', {
+            columnDefs,
+            defaultColDef: { flex: 1 },
+            initialState,
+            rowData,
+        });
+        await waitFor(() => expect(read(created)).toEqual(expected), { timeout: 1000 });
+        await asyncSetTimeout(0);
+        expect(read(created)).toEqual(expected);
+
+        const updated = stateGridsManager.createGrid('updated', { rowData: [], initialState });
+        await asyncSetTimeout(0);
+        updated.updateGridOptions({ defaultColDef: { flex: 1 }, columnDefs, rowData });
+        await waitFor(() => expect(read(updated)).toEqual(expected), { timeout: 1000 });
+        await asyncSetTimeout(0);
+        expect(read(updated)).toEqual(expected);
+    });
 });
 
 describe('Column Flex with animateColumnResizing', () => {
@@ -1334,6 +1370,27 @@ describe('Column Flex with animateColumnResizing', () => {
         }
     });
 
+    test('a viewport resize with no flex column to re-flex keeps a running width animation', async () => {
+        const originalGridWidth = mockGridLayout.gridWidth;
+        try {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ colId: 'a', width: 100 }, { colId: 'b' }],
+                animateColumnResizing: true,
+            });
+
+            api.applyColumnState({ state: [{ colId: 'a', width: 300 }] });
+            expect(isAnimating(api)).toBe(true);
+
+            mockGridLayout.gridWidth = 1200;
+            triggerResizeObservers();
+            await nextAnimationFrame();
+
+            expect(isAnimating(api)).toBe(true);
+        } finally {
+            mockGridLayout.gridWidth = originalGridWidth;
+        }
+    });
+
     test('a viewport resize that unpins the pinned columns it has no room for applies at once, ending a running width animation', async () => {
         const originalGridWidth = mockGridLayout.gridWidth;
         try {
@@ -1374,7 +1431,7 @@ describe('Column Flex with animateColumnResizing', () => {
         expect(isAnimating(api)).toBe(false);
     });
 
-    test('a resize by the keyboard on a column header or on a group header straight after an animated change applies', () => {
+    test('a resize by hand straight after an animated change applies at once, through the API, the keyboard on a column header or on a group header', () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: [
                 { colId: 'a' },
@@ -1389,6 +1446,7 @@ describe('Column Flex with animateColumnResizing', () => {
         api.setColumnsVisible(['c'], false);
         expect(isAnimating(api)).toBe(true);
         api.setColumnWidths([{ key: 'a', newWidth: 250 }]);
+        expect(isAnimating(api)).toBe(false);
 
         api.setColumnsVisible(['c'], true);
         expect(isAnimating(api)).toBe(true);
@@ -1396,6 +1454,7 @@ describe('Column Flex with animateColumnResizing', () => {
         header.focus();
         header.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', altKey: true, bubbles: true }));
         expect(api.getColumn('b')!.getActualWidth()).toBeGreaterThan(200);
+        expect(isAnimating(api)).toBe(false);
 
         const groupWidth = () => api.getColumn('d')!.getActualWidth() + api.getColumn('e')!.getActualWidth();
         api.setColumnsVisible(['c'], false);
@@ -1405,6 +1464,7 @@ describe('Column Flex with animateColumnResizing', () => {
         groupHeader.focus();
         groupHeader.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', altKey: true, bubbles: true }));
         expect(groupWidth()).toBeGreaterThan(groupWidthBefore);
+        expect(isAnimating(api)).toBe(false);
     });
 
     describe('restoring a state', () => {
@@ -1413,7 +1473,7 @@ describe('Column Flex with animateColumnResizing', () => {
         });
         afterEach(() => stateGridsManager.reset());
 
-        test('sets its widths and column order while earlier changes still animate', async () => {
+        test('neither animates the widths it sets nor slides the columns it moves', async () => {
             const api = stateGridsManager.createGrid('myGrid', {
                 columnDefs: [{ colId: 'a' }, { colId: 'b' }],
                 defaultColDef: { width: 200 },
@@ -1421,7 +1481,7 @@ describe('Column Flex with animateColumnResizing', () => {
             });
             // past the restore of the initial state, which suppresses animation until its own timer
             await asyncSetTimeout(0);
-            // while earlier changes still animate
+            // nor in the windows earlier changes still animate
             api.applyColumnState({ state: [{ colId: 'b', width: 250 }] });
             api.moveColumns(['a'], 1);
             expect([isAnimating(api), api.getGridElement()!.querySelector('.ag-column-moving') !== null]).toEqual([
@@ -1438,7 +1498,59 @@ describe('Column Flex with animateColumnResizing', () => {
                 'a:300',
                 'b:250',
             ]);
+            expect(isAnimating(api)).toBe(false);
+            expect(api.getGridElement()!.querySelector('.ag-column-moving')).toBeNull();
         });
+
+        test.each<[string, (api: GridApi) => void, string[]]>([
+            [
+                'a state restore',
+                (api) => api.setState({ columnOrder: { orderedColIds: ['b', 'a', 'd', 'c'] } }),
+                ['b', 'd', 'c', 'a'],
+            ],
+            [
+                'suppressColumnMoveAnimation set then unset',
+                (api) => {
+                    api.setGridOption('suppressColumnMoveAnimation', true);
+                    api.setGridOption('suppressColumnMoveAnimation', false);
+                },
+                ['b', 'c', 'd', 'a'],
+            ],
+        ])(
+            'a move slides for its own 200 ms after %s ended the slide of an earlier move',
+            async (_, interruption, finalOrder) => {
+                const api = stateGridsManager.createGrid('myGrid', {
+                    columnDefs: [{ colId: 'a' }, { colId: 'b' }, { colId: 'c' }, { colId: 'd' }],
+                    defaultColDef: { width: 100 },
+                });
+                const moving = () => api.getGridElement()!.querySelector('.ag-column-moving') !== null;
+                // past the restore of the initial state, which suppresses animation until its own timer
+                await asyncSetTimeout(0);
+                vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
+                onTestFinished(() => {
+                    vi.useRealTimers();
+                });
+
+                api.moveColumns(['a'], 1);
+                expect(moving()).toBe(true);
+                await vi.advanceTimersByTimeAsync(50);
+                interruption(api);
+                await vi.advanceTimersByTimeAsync(50);
+                api.moveColumns(['a'], 3);
+                const afterSecondMove = moving();
+                // the second move began at 100 ms and slides until 300 ms
+                await vi.advanceTimersByTimeAsync(150);
+                const at250 = moving();
+                await vi.advanceTimersByTimeAsync(70);
+
+                expect({
+                    order: api.getAllDisplayedColumns().map((col) => col.getColId()),
+                    afterSecondMove,
+                    at250,
+                    at320: moving(),
+                }).toEqual({ order: finalOrder, afterSecondMove: true, at250: true, at320: false });
+            }
+        );
 
         test('the first row data, which restores the initial state, leaves a running width animation', async () => {
             const api = stateGridsManager.createGrid('myGrid', {

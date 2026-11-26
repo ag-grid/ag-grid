@@ -70,7 +70,7 @@ describe('column width animation (React)', () => {
         await waitFor(() => expect(animating()).toBe(false));
     });
 
-    test('a fit to the width the columns already fill leaves the column widths unchanged', async () => {
+    test('a fit to the width the columns already fill leaves column width changes unanimated', async () => {
         const api = await renderGrid({
             columnDefs: [
                 { colId: 'a', width: 300 },
@@ -85,6 +85,7 @@ describe('column width animation (React)', () => {
         });
 
         expect(api.getAllDisplayedColumns().map((col) => col.getActualWidth())).toEqual([300, 300]);
+        expect(animating()).toBe(false);
         await act(async () => {
             await asyncSetTimeout(0);
         });

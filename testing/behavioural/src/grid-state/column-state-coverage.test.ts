@@ -69,8 +69,7 @@ describe('grid state carries every column state field', () => {
             expect(read(converted)).toEqual(expected);
         });
 
-        // TODO: disabled due to AG-18635 - re-enable once fixed
-        test.skip('a zero width is sized, as column state has no column without a width', () => {
+        test('a zero width is sized, as column state has no column without a width', () => {
             expect(convertColumnState([{ colId: 'a', width: 0 }]).columnSizing).toEqual({
                 columnSizingModel: [{ colId: 'a', flex: undefined, width: 0 }],
             });

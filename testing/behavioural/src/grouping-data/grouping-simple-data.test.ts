@@ -12,12 +12,12 @@ import {
 } from 'ag-test-utils';
 
 import type { ColDef, GridOptions, IRowNode } from 'ag-grid-community';
-import { ClientSideRowModelModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, RowSelectionModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
 describe('ag-grid grouping simple data', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, RowGroupingModule],
+        modules: [ClientSideRowModelModule, RowGroupingModule, RowSelectionModule],
     });
 
     beforeEach(() => {
@@ -26,6 +26,255 @@ describe('ag-grid grouping simple data', () => {
 
     afterEach(() => {
         gridsManager.reset();
+    });
+
+    test('rowData updated by row id together with a column default keeps the groups and their order, in either key order', async () => {
+        const rowData = [
+            { id: '4', g: 'z', a: 3 },
+            { id: '5', g: 'x', a: 4 },
+        ];
+        const defaultColDef = { width: 150 };
+
+        for (const options of [
+            { rowData, defaultColDef },
+            { defaultColDef, rowData },
+        ]) {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ field: 'id' }, { field: 'g', rowGroup: true }, { field: 'a' }],
+                rowData: [
+                    { id: '5', g: 'x', a: 1 },
+                    { id: '4', g: 'z', a: 2 },
+                ],
+                getRowId: (params) => params.data.id,
+                groupDefaultExpanded: -1,
+            });
+            await asyncSetTimeout(0);
+
+            const groupsBefore: IRowNode[] = [];
+            api.forEachNode((node) => node.group && groupsBefore.push(node));
+
+            api.updateGridOptions(options);
+
+            const groupsAfter: IRowNode[] = [];
+            const rows: (string | undefined)[] = [];
+            api.forEachNode((node) => {
+                rows.push(node.group ? `G:${node.key}` : node.id);
+                if (node.group) {
+                    groupsAfter.push(node);
+                }
+            });
+            expect({
+                rows,
+                sameGroups: groupsAfter.map((node, i) => node === groupsBefore[i]),
+                data: { 5: api.getRowNode('5')?.data.a, 4: api.getRowNode('4')?.data.a },
+                widths: api.getAllGridColumns().map((col) => col.getActualWidth()),
+            }).toEqual({
+                rows: ['G:x', '5', 'G:z', '4'],
+                sameGroups: [true, true],
+                data: { 5: 4, 4: 3 },
+                widths: [150, 150, 150, 150],
+            });
+
+            gridsManager.reset();
+        }
+    });
+
+    test('rowData updated by row id tells its selection changes once, alone or together with a column default, in either key order', async () => {
+        const results: { keyOrder: string; sources: string[]; selected: (string | undefined)[] }[] = [];
+        const newRows = () => [
+            { id: '2', a: 'y', b: 'q', d: 30 },
+            { id: '0', a: 'x', b: 'p', d: 100 },
+            { id: '7', a: 'z', b: 'p', d: 70 },
+        ];
+        const defaultColDef = { width: 99 };
+
+        for (const [keyOrder, update] of [
+            ['rowData alone', { rowData: newRows() }],
+            ['rowData first', { rowData: newRows(), defaultColDef }],
+            ['defaultColDef first', { defaultColDef, rowData: newRows() }],
+        ] as const) {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    { colId: 'a', field: 'a', rowGroup: true },
+                    { colId: 'b', field: 'b' },
+                    { colId: 'd', field: 'd', aggFunc: 'sum' },
+                ],
+                rowData: [
+                    { id: '0', a: 'x', b: 'p', d: 1 },
+                    { id: '1', a: 'x', b: 'q', d: 2 },
+                    { id: '2', a: 'y', b: 'q', d: 30 },
+                ],
+                getRowId: (params) => params.data.id,
+                groupDefaultExpanded: -1,
+                rowSelection: { mode: 'multiRow', isRowSelectable: (node) => (node.data?.d ?? 0) < 50 },
+            });
+            await asyncSetTimeout(0);
+
+            api.setNodesSelected({ nodes: [api.getRowNode('1')!, api.getRowNode('0')!], newValue: true });
+            await asyncSetTimeout(0);
+
+            const sources: string[] = [];
+            api.addEventListener('selectionChanged', (event) => sources.push(event.source));
+
+            api.updateGridOptions(update);
+            await asyncSetTimeout(0);
+
+            results.push({ keyOrder, sources, selected: api.getSelectedNodes().map((node) => node.id) });
+
+            gridsManager.reset();
+        }
+
+        expect(results).toEqual([
+            { keyOrder: 'rowData alone', sources: ['rowDataChanged'], selected: [] },
+            { keyOrder: 'rowData first', sources: ['rowDataChanged'], selected: [] },
+            { keyOrder: 'defaultColDef first', sources: ['rowDataChanged'], selected: [] },
+        ]);
+    });
+
+    test('rowData updated by row id together with a new group key regroups every row, in either key order', async () => {
+        const columnDefs: ColDef[] = [{ field: 'id' }, { field: 'g', rowGroup: true }, { field: 'a', aggFunc: 'sum' }];
+        const newColumnDefs: ColDef[] = [
+            { field: 'id' },
+            { field: 'g', rowGroup: true, keyCreator: (params) => String(params.value).toUpperCase() },
+            { field: 'a', aggFunc: 'sum' },
+        ];
+
+        for (const keyOrder of ['rowData first', 'columnDefs first']) {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs,
+                rowData: [
+                    { id: '5', g: 'x', a: 1 },
+                    { id: '4', g: 'z', a: 2 },
+                    { id: '3', g: 'x', a: 10 },
+                ],
+                getRowId: (params) => params.data.id,
+                groupDefaultExpanded: -1,
+            });
+            await asyncSetTimeout(0);
+
+            const row4 = api.getRowNode('4')?.data;
+            const row3 = api.getRowNode('3')?.data;
+            const newRows = [row4, { id: '5', g: 'x', a: 4 }, row3];
+
+            api.updateGridOptions(
+                keyOrder === 'rowData first'
+                    ? { rowData: newRows, columnDefs: newColumnDefs }
+                    : { columnDefs: newColumnDefs, rowData: newRows }
+            );
+
+            const rows: (string | undefined)[] = [];
+            api.forEachNode((node) => {
+                rows.push(node.group ? `G:${node.key}=${node.aggData?.a}` : node.id);
+            });
+            expect({ keyOrder, rows }).toEqual({
+                keyOrder,
+                rows: ['G:Z=2', '4', 'G:X=14', '5', '3'],
+            });
+
+            gridsManager.reset();
+        }
+    });
+
+    test('a new valueFormatter on an object or date group column regroups the rows under the keys it formats', async () => {
+        const groupKeys = (api: ReturnType<typeof gridsManager.createGrid>) => {
+            const keys: (string | null)[] = [];
+            api.forEachNode((node) => {
+                if (node.group) {
+                    keys.push(node.key);
+                }
+            });
+            return keys;
+        };
+        const objectDefs = (prefix: string): ColDef[] => [
+            { field: 'id' },
+            { field: 'g', rowGroup: true, cellDataType: 'object', valueFormatter: (p) => prefix + p.value?.n },
+        ];
+        const objects = gridsManager.createGrid('objects', {
+            columnDefs: objectDefs(''),
+            rowData: [
+                { id: 1, g: { n: 'x' } },
+                { id: 2, g: { n: 'z' } },
+                { id: 3, g: { n: 'x' } },
+            ],
+        });
+        await asyncSetTimeout(0);
+        objects.setGridOption('columnDefs', objectDefs('V'));
+        await asyncSetTimeout(0);
+        const objectKeys = groupKeys(objects);
+
+        const dateDefs = (formatted: boolean): ColDef[] => [
+            { field: 'id' },
+            {
+                field: 'g',
+                rowGroup: true,
+                cellDataType: 'date',
+                ...(formatted ? { valueFormatter: (p) => 'Y' + p.value?.getFullYear() } : {}),
+            },
+        ];
+        const dates = gridsManager.createGrid('dates', {
+            columnDefs: dateDefs(false),
+            rowData: [
+                { id: 1, g: new Date(2020, 0, 1) },
+                { id: 2, g: new Date(2021, 0, 1) },
+            ],
+        });
+        await asyncSetTimeout(0);
+        dates.setGridOption('columnDefs', dateDefs(true));
+        await asyncSetTimeout(0);
+
+        expect({ objectKeys, dateKeys: groupKeys(dates) }).toEqual({
+            objectKeys: ['Vx', 'Vz'],
+            dateKeys: ['Y2020', 'Y2021'],
+        });
+    });
+
+    test('with groupAllowUnbalanced, rowData updated by row id together with a new group key keeps a group own rows before its child groups', async () => {
+        const columnDefs: ColDef[] = [
+            { field: 'id' },
+            { field: 'g', rowGroup: true },
+            { field: 'h', rowGroup: true },
+            { field: 'a', aggFunc: 'sum' },
+        ];
+        const newColumnDefs: ColDef[] = [
+            { field: 'id' },
+            { field: 'g', rowGroup: true, keyCreator: (params) => String(params.value) },
+            { field: 'h', rowGroup: true },
+            { field: 'a', aggFunc: 'sum' },
+        ];
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs,
+            rowData: [
+                { id: 1, g: 'x', h: 'p', a: 1 },
+                { id: 2, g: 'x', h: null, a: 2 },
+                { id: 3, g: 'x', h: 'q', a: 3 },
+                { id: 4, g: 'z', h: null, a: 4 },
+            ],
+            getRowId: (params) => String(params.data.id),
+            groupAllowUnbalanced: true,
+            groupDefaultExpanded: -1,
+        });
+        await asyncSetTimeout(0);
+
+        const readOrder = () => {
+            const order: string[] = [];
+            api.forEachNodeAfterFilterAndSort((node) => {
+                order.push(node.group ? `G${node.level}:${node.key}` : `${node.level}:${node.id}`);
+            });
+            return order;
+        };
+        expect(readOrder()).toEqual(['G0:x', '1:2', 'G1:p', '2:1', 'G1:q', '2:3', 'G0:z', '1:4']);
+
+        api.updateGridOptions({
+            rowData: [
+                { id: 3, g: 'x', h: 'q', a: 30 },
+                { id: 2, g: 'x', h: null, a: 20 },
+                { id: 1, g: 'x', h: 'p', a: 10 },
+                { id: 4, g: 'z', h: null, a: 40 },
+            ],
+            columnDefs: newColumnDefs,
+        });
+
+        expect(readOrder()).toEqual(['G0:x', '1:2', 'G1:q', '2:3', 'G1:p', '2:1', 'G0:z', '1:4']);
     });
 
     test('simple grouping rows snapshot', async () => {

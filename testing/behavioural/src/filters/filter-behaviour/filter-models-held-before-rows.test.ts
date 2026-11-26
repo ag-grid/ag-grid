@@ -467,6 +467,27 @@ describe('filter models set before rows load are not lost before they apply', ()
         expect(api.isAnyFilterPresent()).toBe(true);
     });
 
+    test('a model held until the rows load tells filterChanged before rowDataUpdated', async () => {
+        const events: string[] = [];
+        const api: GridApi = gridsManager.createGrid('grid1', {
+            columnDefs: [
+                { field: 'country', cellDataType: 'text', filter: 'agTextColumnFilter' },
+                { field: 'notes', filter: 'agTextColumnFilter' },
+            ],
+            onFilterChanged: () => events.push('filterChanged'),
+            onRowDataUpdated: () => events.push('rowDataUpdated'),
+        });
+        await asyncSetTimeout(0);
+        api.setFilterModel({ country: { filterType: 'text', type: 'equals', filter: 'Ireland' } });
+        await asyncSetTimeout(0);
+        events.length = 0;
+
+        api.setGridOption('rowData', [{ country: 'Ireland' }, { country: 'Spain' }]);
+        await asyncSetTimeout(0);
+
+        expect(events).toEqual(['filterChanged', 'rowDataUpdated']);
+    });
+
     test('with filter handlers, a model set before rows load on a handler refusing the definition its inferred type gives applies once they load', async () => {
         const events: string[] = [];
         const api: GridApi = gridsManager.createGrid('grid1', {

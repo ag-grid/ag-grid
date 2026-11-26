@@ -1387,6 +1387,20 @@ describe('ag-grid grouping expanded state', () => {
     });
 
     describe('bulk expansion changes refresh the rows once', () => {
+        const ALL_COLLAPSED = ['row-group-country-A', 'row-group-country-B'];
+        const ALL_EXPANDED = [
+            'row-group-country-A',
+            'row-group-country-A-year-1',
+            '1',
+            'row-group-country-A-year-2',
+            '2',
+            'row-group-country-B',
+            'row-group-country-B-year-1',
+            '3',
+            'row-group-country-B-year-2',
+            '4',
+        ];
+
         async function createTwoLevelGrid(): Promise<GridApi> {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [
@@ -1438,6 +1452,112 @@ describe('ag-grid grouping expanded state', () => {
             api.removeEventListener('modelUpdated', listener);
             return { count: heard.length, ...heard[0] };
         }
+
+        test('expandAll, then collapseAll, each refresh once with the final rows displayed', async () => {
+            const api = await createTwoLevelGrid();
+            expect(displayedIds(api)).toEqual(ALL_COLLAPSED);
+
+            const expandRecord = await observeModelUpdated(api, () => api.expandAll());
+
+            expect(expandRecord).toEqual({
+                count: 1,
+                keepRenderedRows: false,
+                animate: false,
+                displayedCount: ALL_EXPANDED.length,
+                displayedIds: ALL_EXPANDED,
+            });
+            expect(displayedIds(api)).toEqual(ALL_EXPANDED);
+
+            const collapseRecord = await observeModelUpdated(api, () => api.collapseAll());
+
+            expect(collapseRecord).toEqual({
+                count: 1,
+                keepRenderedRows: false,
+                animate: false,
+                displayedCount: ALL_COLLAPSED.length,
+                displayedIds: ALL_COLLAPSED,
+            });
+        });
+
+        test('resetRowGroupExpansion after expanding groups refreshes once with the default rows displayed', async () => {
+            const api = await createTwoLevelGrid();
+            api.getRowNode('row-group-country-A')!.setExpanded(true, undefined, true);
+            api.getRowNode('row-group-country-A-year-1')!.setExpanded(true, undefined, true);
+            await asyncSetTimeout(0);
+            expect(displayedIds(api)).toEqual([
+                'row-group-country-A',
+                'row-group-country-A-year-1',
+                '1',
+                'row-group-country-A-year-2',
+                'row-group-country-B',
+            ]);
+
+            const record = await observeModelUpdated(api, () => api.resetRowGroupExpansion());
+
+            expect(record).toEqual({
+                count: 1,
+                keepRenderedRows: false,
+                animate: false,
+                displayedCount: ALL_COLLAPSED.length,
+                displayedIds: ALL_COLLAPSED,
+            });
+        });
+
+        test('setState rowGroupExpansion on a grid showing its rows refreshes once with the final rows displayed', async () => {
+            const api = await createTwoLevelGrid();
+            expect(displayedIds(api)).toEqual(ALL_COLLAPSED);
+            const expected = [
+                'row-group-country-A',
+                'row-group-country-A-year-1',
+                '1',
+                'row-group-country-A-year-2',
+                'row-group-country-B',
+            ];
+
+            const record = await observeModelUpdated(api, () =>
+                // the whole current state, so only the expansion changes: an omitted section resets its part
+                api.setState({
+                    ...api.getState(),
+                    rowGroupExpansion: {
+                        expandedRowGroupIds: ['row-group-country-A', 'row-group-country-A-year-1'],
+                    },
+                })
+            );
+
+            expect(record).toEqual({
+                count: 1,
+                keepRenderedRows: false,
+                animate: false,
+                displayedCount: expected.length,
+                displayedIds: expected,
+            });
+        });
+
+        test('onGroupExpandedOrCollapsed after setting expanded flags refreshes once with the final rows displayed', async () => {
+            const api = await createTwoLevelGrid();
+            expect(displayedIds(api)).toEqual(ALL_COLLAPSED);
+            const expected = [
+                'row-group-country-A',
+                'row-group-country-B',
+                'row-group-country-B-year-1',
+                '3',
+                'row-group-country-B-year-2',
+            ];
+
+            const record = await observeModelUpdated(api, () => {
+                api.getRowNode('row-group-country-B')!.expanded = true;
+                api.getRowNode('row-group-country-B-year-1')!.expanded = true;
+                api.onGroupExpandedOrCollapsed();
+            });
+
+            expect(record).toEqual({
+                count: 1,
+                keepRenderedRows: false,
+                animate: false,
+                displayedCount: expected.length,
+                displayedIds: expected,
+            });
+        });
 
         test('control: setExpanded on one group refreshes once keeping the rendered rows and their elements', async () => {
             const api = await createTwoLevelGrid();

@@ -5,7 +5,7 @@
 import { ALL_SEVERITIES, GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import type { ColDef, Column, GridApi } from 'ag-grid-community';
-import { ClientSideRowModelModule, RowSelectionModule, enableDevValidations } from 'ag-grid-community';
+import { ClientSideRowModelModule, GridStateModule, RowSelectionModule, enableDevValidations } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule, RowNumbersModule, TreeDataModule } from 'ag-grid-enterprise';
 
 describe('Column Mutations - applyColumnState', () => {
@@ -1203,6 +1203,110 @@ describe('Column Mutations - applyColumnState', () => {
             expect(api.getColumnState().map((s) => `${s.colId}:${s.width}`)).toEqual(['a:200', 'b:80']);
         });
 
+        test('a multi-column sort set before inference, clearing a sort its column definition gives, is kept whole', async () => {
+            const api = gridsManager.createGrid('multiSortKeptOverInference', {
+                columnTypes: { wide: { width: 222 } },
+                dataTypeDefinitions: {
+                    wideNumber: {
+                        baseDataType: 'number',
+                        extendsDataType: 'number',
+                        columnTypes: ['wide'],
+                        dataTypeMatcher: (value) => typeof value === 'number',
+                    },
+                },
+                columnDefs: [{ field: 'a', sort: 'asc' }, { field: 'b' }, { field: 'c', sort: 'asc' }],
+            });
+            await asyncSetTimeout(0);
+            const sorts = () =>
+                api
+                    .getColumnState()
+                    .filter((s) => s.sort)
+                    .sort((x, y) => (x.sortIndex ?? 0) - (y.sortIndex ?? 0))
+                    .map((s) => `${s.colId}:${s.sort}`);
+
+            api.applyColumnState({
+                state: [
+                    { colId: 'a', sort: null },
+                    { colId: 'b', sort: 'desc', sortIndex: 0 },
+                    { colId: 'c', sort: 'asc', sortIndex: 1 },
+                ],
+            });
+            expect(sorts()).toEqual(['b:desc', 'c:asc']);
+            api.setGridOption('rowData', [{ a: 1, b: 2, c: 3 }]);
+            await asyncSetTimeout(0);
+
+            expect({ sorts: sorts(), widths: api.getColumnState().map((s) => s.width) }).toEqual({
+                sorts: ['b:desc', 'c:asc'],
+                widths: [222, 222, 222],
+            });
+        });
+
+        test('a flex pass before inference does not keep a col from the width of its inferred column type', async () => {
+            const api = gridsManager.createGrid('flexBeforeInference', {
+                columnTypes: { narrow: { width: 80 } },
+                dataTypeDefinitions: {
+                    narrowNumber: {
+                        baseDataType: 'number',
+                        extendsDataType: 'number',
+                        columnTypes: ['narrow'],
+                        dataTypeMatcher: (value) => typeof value === 'number',
+                    },
+                },
+                columnDefs: [{ field: 'a' }, { field: 'f', flex: 1 }],
+            });
+            await asyncSetTimeout(0);
+            expect(api.getColumnState().map((s) => `${s.colId}:${s.width}`)).toEqual(['a:200', 'f:800']);
+
+            api.setGridOption('rowData', [{ a: 1, f: 'x' }]);
+            await asyncSetTimeout(0);
+
+            expect(api.getColumnState().map((s) => `${s.colId}:${s.width}`)).toEqual(['a:80', 'f:920']);
+        });
+
+        test('showing a flex col before inference does not keep a col from the width of its inferred column type', async () => {
+            const api = gridsManager.createGrid('showFlexBeforeInference', {
+                columnTypes: { narrow: { width: 80 } },
+                dataTypeDefinitions: {
+                    narrowNumber: {
+                        baseDataType: 'number',
+                        extendsDataType: 'number',
+                        columnTypes: ['narrow'],
+                        dataTypeMatcher: (value) => typeof value === 'number',
+                    },
+                },
+                columnDefs: [{ field: 'a' }, { field: 'f', flex: 1, hide: true }],
+            });
+            await asyncSetTimeout(0);
+
+            api.setColumnsVisible(['f'], true);
+            api.setGridOption('rowData', [{ a: 1, f: 'x' }]);
+            await asyncSetTimeout(0);
+
+            expect(api.getColumnState().map((s) => `${s.colId}:${s.width}`)).toEqual(['a:80', 'f:920']);
+        });
+
+        test('a columnDefs update before inference does not keep a col from the width of its inferred column type', async () => {
+            const api = gridsManager.createGrid('colDefsBeforeInference', {
+                columnTypes: { narrow: { width: 80 } },
+                dataTypeDefinitions: {
+                    narrowNumber: {
+                        baseDataType: 'number',
+                        extendsDataType: 'number',
+                        columnTypes: ['narrow'],
+                        dataTypeMatcher: (value) => typeof value === 'number',
+                    },
+                },
+                columnDefs: [{ field: 'a' }, { field: 'b' }],
+            });
+            await asyncSetTimeout(0);
+
+            api.setGridOption('columnDefs', [{ field: 'a' }, { field: 'b' }]);
+            api.setGridOption('rowData', [{ a: 1, b: 'x' }]);
+            await asyncSetTimeout(0);
+
+            expect(api.getColumnState().map((s) => `${s.colId}:${s.width}`)).toEqual(['a:80', 'b:200']);
+        });
+
         test('a width applied before a columnDefs update is still kept over the width of the inferred column type', async () => {
             const api = gridsManager.createGrid('appliedThenColDefs', {
                 columnTypes: { narrow: { width: 80 } },
@@ -1224,6 +1328,119 @@ describe('Column Mutations - applyColumnState', () => {
             await asyncSetTimeout(0);
 
             expect(api.getColumnState().map((s) => `${s.colId}:${s.width}`)).toEqual(['a:150', 'b:200']);
+        });
+
+        test('a width applied before a columnDefs update that keeps the col stays over the inferred width, the other col takes it', async () => {
+            const api = gridsManager.createGrid('appliedThenKeepingColDefs', {
+                columnTypes: { narrow: { width: 80 } },
+                dataTypeDefinitions: {
+                    narrowNumber: {
+                        baseDataType: 'number',
+                        extendsDataType: 'number',
+                        columnTypes: ['narrow'],
+                        dataTypeMatcher: (value) => typeof value === 'number',
+                    },
+                },
+                columnDefs: [{ field: 'a' }, { field: 'b' }],
+            });
+            await asyncSetTimeout(0);
+
+            api.applyColumnState({ state: [{ colId: 'a', width: 150 }] });
+            await asyncSetTimeout(0);
+            api.setGridOption('columnDefs', [{ field: 'a' }, { field: 'b' }]);
+            await asyncSetTimeout(0);
+            api.setGridOption('rowData', [{ a: 1, b: 2 }]);
+            await asyncSetTimeout(0);
+
+            expect(api.getColumnState().map((s) => `${s.colId}:${s.width}`)).toEqual(['a:150', 'b:80']);
+        });
+
+        test('a col removed by a columnDefs update and added again is new: it takes the inferred width, not the width applied before', async () => {
+            const api = gridsManager.createGrid('removedThenReadded', {
+                columnTypes: { narrow: { width: 80 } },
+                dataTypeDefinitions: {
+                    narrowNumber: {
+                        baseDataType: 'number',
+                        extendsDataType: 'number',
+                        columnTypes: ['narrow'],
+                        dataTypeMatcher: (value) => typeof value === 'number',
+                    },
+                },
+                columnDefs: [{ field: 'a' }, { field: 'b' }],
+            });
+            await asyncSetTimeout(0);
+
+            api.applyColumnState({ state: [{ colId: 'a', width: 150 }] });
+            await asyncSetTimeout(0);
+            api.setGridOption('columnDefs', [{ field: 'b' }]);
+            await asyncSetTimeout(0);
+            api.setGridOption('columnDefs', [{ field: 'a' }, { field: 'b' }]);
+            await asyncSetTimeout(0);
+            api.setGridOption('rowData', [{ a: 1, b: 2 }]);
+            await asyncSetTimeout(0);
+
+            expect(api.getColumnState().map((s) => `${s.colId}:${s.width}`)).toEqual(['a:80', 'b:80']);
+        });
+
+        test('a width applied before the first inference wins over it only: a later inference after rowData cleared and columnDefs updated applies its own column type', async () => {
+            const api = gridsManager.createGrid('appliedThenReinferred', {
+                columnTypes: { narrow: { width: 80 }, wide: { width: 300 } },
+                dataTypeDefinitions: {
+                    narrowNumber: {
+                        baseDataType: 'number',
+                        extendsDataType: 'number',
+                        columnTypes: ['narrow'],
+                        dataTypeMatcher: (value) => typeof value === 'number',
+                    },
+                    wideText: {
+                        baseDataType: 'text',
+                        extendsDataType: 'text',
+                        columnTypes: ['wide'],
+                        dataTypeMatcher: (value) => typeof value === 'string',
+                    },
+                },
+                columnDefs: [{ field: 'a' }],
+            });
+            await asyncSetTimeout(0);
+            const widths = () => api.getColumnState().map((s) => `${s.colId}:${s.width}`);
+
+            api.applyColumnState({ state: [{ colId: 'a', width: 150 }] });
+            await asyncSetTimeout(0);
+            api.setGridOption('rowData', [{ a: 1 }]);
+            await asyncSetTimeout(0);
+            expect(widths()).toEqual(['a:150']);
+
+            api.setGridOption('rowData', []);
+            await asyncSetTimeout(0);
+            api.setGridOption('columnDefs', [{ field: 'a' }]);
+            await asyncSetTimeout(0);
+            api.setGridOption('rowData', [{ a: 'x' }]);
+            await asyncSetTimeout(0);
+            expect(widths()).toEqual(['a:300']);
+        });
+
+        test('a col removed and added again by columnDefs updates in the same turn as the width applied is new: it takes the inferred width', async () => {
+            const api = gridsManager.createGrid('removedThenReaddedSync', {
+                columnTypes: { narrow: { width: 80 } },
+                dataTypeDefinitions: {
+                    narrowNumber: {
+                        baseDataType: 'number',
+                        extendsDataType: 'number',
+                        columnTypes: ['narrow'],
+                        dataTypeMatcher: (value) => typeof value === 'number',
+                    },
+                },
+                columnDefs: [{ field: 'a' }, { field: 'b' }],
+            });
+            await asyncSetTimeout(0);
+
+            api.applyColumnState({ state: [{ colId: 'a', width: 150 }] });
+            api.setGridOption('columnDefs', [{ field: 'b' }]);
+            api.setGridOption('columnDefs', [{ field: 'a' }, { field: 'b' }]);
+            api.setGridOption('rowData', [{ a: 1, b: 2 }]);
+            await asyncSetTimeout(0);
+
+            expect(api.getColumnState().map((s) => `${s.colId}:${s.width}`)).toEqual(['a:80', 'b:80']);
         });
 
         test('a width set through setColumnWidths before inference is kept, even back at its start, and the cols the resize re-flexes take theirs', async () => {
@@ -1982,6 +2199,152 @@ describe('Column Mutations - applyColumnState', () => {
                 ├── b width:333
                 └── c width:500
             `);
+        });
+    });
+
+    describe('saved state with flex and width restores a resized column', () => {
+        const rowData = [
+            { country: 'Ireland', sport: 'Swimming', gold: 1 },
+            { country: 'Spain', sport: 'Tennis', gold: 2 },
+        ];
+
+        test('a pinned column with flex and width gets its saved width back and keeps its flex, through applyColumnState', async () => {
+            const api = gridsManager.createGrid('pinnedFlexWidthRestore', {
+                columnDefs: [
+                    { field: 'country', flex: 1, width: 500, pinned: 'left' },
+                    { field: 'sport' },
+                    { field: 'gold' },
+                ],
+                rowData,
+            });
+            await asyncSetTimeout(0);
+
+            const saved = api.getColumnState();
+            const savedCountry = saved.find((s) => s.colId === 'country')!;
+            expect(savedCountry).toMatchObject({ flex: 1, width: 500, pinned: 'left' });
+
+            api.setColumnWidths([{ key: 'country', newWidth: 120 }]);
+            expect(api.getColumn('country')!.getActualWidth()).toBe(120);
+
+            // the width is the state's, not a flex pass's: a pinned column never flexes
+            const widthSources: (string | undefined)[] = [];
+            const stateSources: (string | undefined)[] = [];
+            const country = api.getColumn('country')!;
+            country.addEventListener('widthChanged', (event) => widthSources.push(event.source));
+            country.addEventListener('columnStateUpdated', (event) => stateSources.push(event.source));
+            api.applyColumnState({ state: saved, applyOrder: true });
+            await asyncSetTimeout(0);
+
+            expect(country.getActualWidth()).toBe(500);
+            expect(api.getColumnState().find((s) => s.colId === 'country')).toEqual(savedCountry);
+            expect(widthSources).toEqual(['api']);
+
+            // the same width again changes nothing, and is still told as no flex pass's
+            stateSources.length = 0;
+            api.applyColumnState({ state: saved });
+            await asyncSetTimeout(0);
+            expect({ widthSources, told: stateSources.length > 0, byFlex: stateSources.includes('flex') }).toEqual({
+                widthSources: ['api'],
+                told: true,
+                byFlex: false,
+            });
+        });
+
+        test('a centre column with flex gets its flex and the width of the flex pass back, through applyColumnState', async () => {
+            const api = gridsManager.createGrid('centreFlexRestore', {
+                columnDefs: [{ field: 'country', flex: 1, width: 500 }, { field: 'sport' }, { field: 'gold' }],
+                rowData,
+            });
+            await asyncSetTimeout(0);
+
+            const flexedWidth = api.getColumn('country')!.getActualWidth();
+            const saved = api.getColumnState();
+            expect(api.getColumn('country')!.getFlex()).toBe(1);
+
+            api.setColumnWidths([{ key: 'country', newWidth: 120 }]);
+            expect(api.getColumn('country')!.getActualWidth()).toBe(120);
+
+            api.applyColumnState({ state: saved, applyOrder: true });
+            await asyncSetTimeout(0);
+
+            expect(api.getColumn('country')!.getFlex()).toBe(1);
+            expect(api.getColumn('country')!.getActualWidth()).toBe(flexedWidth);
+        });
+
+        test('a pinned column with flex and width gets its saved width back and stays pinned, through setState with the pinning and sizing sections', async () => {
+            const api = gridsManager.createGrid(
+                'pinnedFlexWidthSetState',
+                {
+                    columnDefs: [
+                        { field: 'country', flex: 1, width: 500, pinned: 'left' },
+                        { field: 'sport' },
+                        { field: 'gold' },
+                    ],
+                    rowData,
+                },
+                { modules: [GridStateModule] }
+            );
+            await asyncSetTimeout(0);
+
+            const state = api.getState();
+            expect(api.getColumn('country')!.getActualWidth()).toBe(500);
+
+            api.setColumnWidths([{ key: 'country', newWidth: 120 }]);
+            expect(api.getColumn('country')!.getActualWidth()).toBe(120);
+
+            api.setState({ columnPinning: state.columnPinning, columnSizing: state.columnSizing });
+            await asyncSetTimeout(0);
+
+            expect(api.getColumn('country')!.getActualWidth()).toBe(500);
+            expect(api.getColumn('country')!.getPinned()).toBe('left');
+        });
+
+        test('a pinned column with flex and width gets its column definition width back and keeps its flex, through resetColumnState', async () => {
+            const api = gridsManager.createGrid('pinnedFlexWidthReset', {
+                columnDefs: [
+                    { field: 'country', flex: 1, width: 500, pinned: 'left' },
+                    { field: 'sport' },
+                    { field: 'gold' },
+                ],
+                rowData,
+            });
+            await asyncSetTimeout(0);
+
+            api.setColumnWidths([{ key: 'country', newWidth: 120 }]);
+            expect(api.getColumn('country')!.getActualWidth()).toBe(120);
+
+            api.resetColumnState();
+            await asyncSetTimeout(0);
+
+            const country = api.getColumn('country')!;
+            expect({ width: country.getActualWidth(), flex: country.getFlex(), pinned: country.getPinned() }).toEqual({
+                width: 500,
+                flex: 1,
+                pinned: 'left',
+            });
+        });
+
+        test('a pinned auto group column with flex and width takes the width of an updated autoGroupColumnDef and keeps its flex', async () => {
+            const api = gridsManager.createGrid('pinnedFlexWidthAutoGroup', {
+                columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'sport' }, { field: 'gold' }],
+                autoGroupColumnDef: { flex: 1, width: 300, pinned: 'left' },
+                rowData,
+            });
+            await asyncSetTimeout(0);
+
+            const autoColumn = api
+                .getAllDisplayedColumns()
+                .find((col) => col.getColId().startsWith('ag-Grid-AutoColumn'))!;
+            expect(autoColumn.getPinned()).toBe('left');
+
+            api.setColumnWidths([{ key: autoColumn.getColId(), newWidth: 120 }]);
+            expect(api.getColumn(autoColumn.getColId())!.getActualWidth()).toBe(120);
+
+            api.setGridOption('autoGroupColumnDef', { flex: 1, width: 450, pinned: 'left' });
+            await asyncSetTimeout(0);
+
+            const updated = api.getColumn(autoColumn.getColId())!;
+            expect({ width: updated.getActualWidth(), flex: updated.getFlex() }).toEqual({ width: 450, flex: 1 });
         });
     });
 

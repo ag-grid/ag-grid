@@ -64,7 +64,7 @@ describe('setState with sections omitted', () => {
         test.each<[string, GridState]>([
             ['an empty state', {}],
             ['a state with other sections but no columnSizing', { sort: { sortModel: [{ colId: 'n', sort: 'asc' }] } }],
-        ])('%s leaves a resized column at its width', async (_name, state) => {
+        ])('%s leaves a flex column flex and a resized column at its width', async (_name, state) => {
             const api = gridsManager.createGrid('myGrid', sizingOptions);
             await asyncSetTimeout(0);
             api.setColumnWidths([{ key: 'widthCol', newWidth: 321 }]);
@@ -72,7 +72,19 @@ describe('setState with sections omitted', () => {
             expect(colState(api, 'widthCol')?.width).toBe(321);
 
             await setStateSettled(api, state);
+
+            expect(colState(api, 'flexCol')?.flex).toBe(1);
             expect(colState(api, 'widthCol')?.width).toBe(321);
+        });
+
+        test('a grid created with initialState holding sort but no columnSizing keeps colDef flex columns flex', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                ...sizingOptions,
+                initialState: { sort: { sortModel: [{ colId: 'n', sort: 'desc' }] } },
+            });
+            await waitFor(() => expect(colState(api, 'n')?.sort).toBe('desc'));
+
+            expect(colState(api, 'flexCol')?.flex).toBe(1);
         });
     });
 
@@ -84,6 +96,23 @@ describe('setState with sections omitted', () => {
             ],
             rowData,
         };
+
+        test('restoring a snapshot taken with pivot mode off turns pivot mode off and raises columnPivotModeChanged', async () => {
+            const api = gridsManager.createGrid('myGrid', pivotOptions);
+            await asyncSetTimeout(0);
+            const snapshot = api.getState();
+            expect(api.isPivotMode()).toBe(false);
+
+            api.setGridOption('pivotMode', true);
+            await waitFor(() => expect(api.isPivotMode()).toBe(true));
+            const changed = vi.fn();
+            api.addEventListener('columnPivotModeChanged', changed);
+
+            api.setState(snapshot);
+
+            await waitFor(() => expect(changed).toHaveBeenCalled());
+            expect(api.isPivotMode()).toBe(false);
+        });
 
         test('restoring the same snapshot with pivot in propertiesToIgnore keeps pivot mode on', async () => {
             const api = gridsManager.createGrid('myGrid', pivotOptions);
@@ -148,8 +177,7 @@ describe('setState with sections omitted', () => {
             expect(colState(api, 'a')?.pivotSort).toBe(pivotSort);
         }
 
-        // TODO: disabled due to AG-18635 - re-enable once fixed
-        test.skip.each<
+        test.each<
             [string, { pivotSort?: 'asc' | 'desc'; initialPivotSort?: 'asc' | 'desc' }, 'asc' | 'desc', 'asc' | 'desc']
         >([
             ['colDef pivotSort', { pivotSort: 'desc' }, 'asc', 'desc'],
@@ -163,6 +191,16 @@ describe('setState with sections omitted', () => {
             await setStateSettled(api, {});
 
             expect(colState(api, 'a')?.pivotSort).toBe(expected);
+        });
+
+        test('a pivot section without pivotSortModel returns a column to its colDef pivotSort', async () => {
+            const api = createPivotGrid({ pivotSort: 'desc' });
+            await asyncSetTimeout(0);
+            await applyUserPivotSort(api, 'asc');
+
+            await setStateSettled(api, pivotState);
+
+            expect(colState(api, 'a')?.pivotSort).toBe('desc');
         });
 
         test('pivot in propertiesToIgnore keeps the pivotSort the user applied', async () => {
@@ -193,6 +231,7 @@ describe('setState with sections omitted', () => {
         };
 
         test.each<[string, GridState]>([
+            ['cellSelection', { cellSelection: { cellRanges: [range] } }],
             ['the deprecated rangeSelection', { rangeSelection: { cellRanges: [range] } }],
         ])('setState applies a state without a version holding only %s', async (_name, state) => {
             const api = gridsManager.createGrid('myGrid', options);
@@ -206,6 +245,7 @@ describe('setState with sections omitted', () => {
         });
 
         test.each<[string, GridState]>([
+            ['cellSelection', { cellSelection: { cellRanges: [range] } }],
             ['the deprecated rangeSelection', { rangeSelection: { cellRanges: [range] } }],
         ])('initialState without a version holding only %s selects the range', async (_name, state) => {
             const api = gridsManager.createGrid('myGrid', { ...options, initialState: state });
@@ -245,8 +285,7 @@ describe('setState with sections omitted', () => {
             return api;
         }
 
-        // TODO: disabled due to AG-18635 - re-enable once fixed
-        test.skip.each<[string, GridState]>([
+        test.each<[string, GridState]>([
             ['omits rowGroupExpansion', sameGrouping],
             [
                 'carries a different rowGroupExpansion',
@@ -274,6 +313,21 @@ describe('setState with sections omitted', () => {
             expect(expandedGroupIds(api)).toEqual([]);
         });
 
+        test('ssrmRowGroupExpansion in propertiesToIgnore on a client-side grid applies none of it and collapses the expanded groups', async () => {
+            const api = await createWithA0Expanded();
+
+            await setStateSettled(
+                api,
+                {
+                    ...sameGrouping,
+                    ssrmRowGroupExpansion: { expandedRowGroupIds: ['row-group-a-a1'], collapsedRowGroupIds: [] },
+                },
+                ['ssrmRowGroupExpansion']
+            );
+
+            expect(expandedGroupIds(api)).toEqual([]);
+        });
+
         test('a grid with groupDefaultExpanded -1 and an initialState without rowGroupExpansion shows its groups expanded, as without initialState', async () => {
             const options: GridOptions<Row> = { ...groupOptions, groupDefaultExpanded: -1 };
 
@@ -294,5 +348,48 @@ describe('setState with sections omitted', () => {
 
             expect(expandedGroupIds(api).sort()).toEqual(expectedIds);
         });
+    });
+
+    test('setState with every section ignored leaves the grid as it is, and getState still reports its columns', () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { colId: 'a', field: 'a', width: 150 },
+                { colId: 'b', field: 'b', hide: true },
+            ],
+            rowData,
+        });
+        const everySection: GridStateKey[] = [
+            'sort',
+            'aggregation',
+            'columnGroup',
+            'columnOrder',
+            'columnPinning',
+            'columnSizing',
+            'columnVisibility',
+            'columnHeaderName',
+            'filter',
+            'find',
+            'quickFilter',
+            'focusedCell',
+            'pagination',
+            'pivot',
+            'cellSelection',
+            'rowGroup',
+            'rowGroupExpansion',
+            'ssrmRowGroupExpansion',
+            'rowSelection',
+            'rowPinning',
+            'scroll',
+            'sideBar',
+            'showValuesAs',
+            'userColumns',
+        ];
+
+        api.setState({}, everySection);
+
+        const state = api.getState();
+        expect(state.columnOrder).toEqual({ orderedColIds: ['a', 'b'] });
+        expect(state.columnVisibility).toEqual({ hiddenColIds: ['b'] });
+        expect(state.columnSizing?.columnSizingModel).toContainEqual({ colId: 'a', width: 150 });
     });
 });

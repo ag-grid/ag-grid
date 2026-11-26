@@ -12,7 +12,7 @@ import {
     waitForTooltips,
 } from 'ag-test-utils';
 
-import type { AgColumn, ColDef, GridApi } from 'ag-grid-community';
+import type { AgColumn, ColDef, ColGroupDef, GridApi, HeaderValueGetterParams } from 'ag-grid-community';
 import { enableDevValidations, getGridElement } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
@@ -336,6 +336,99 @@ describe('Editable header name — row grouping', () => {
             ])
         );
     });
+
+    describe('a column group named from its child column', () => {
+        const medalRows = [
+            { athlete: 'Michael Phelps', total: 8, country: 'United States' },
+            { athlete: 'Ian Thorpe', total: 3, country: 'Australia' },
+        ];
+
+        /** The group 'medals' over athlete, total and country, named `<athlete's display name> Group`. */
+        const medalDefs = (
+            groupHeaderValueGetter: (params: HeaderValueGetterParams) => string,
+            countryHeaderName?: string
+        ): ColGroupDef[] => [
+            {
+                groupId: 'medals',
+                headerValueGetter: groupHeaderValueGetter,
+                children: [
+                    { field: 'athlete', headerNameEditable: true },
+                    { field: 'total' },
+                    { field: 'country', headerName: countryHeaderName },
+                ],
+            },
+        ];
+
+        const groupNameFromAthlete = (params: HeaderValueGetterParams): string =>
+            `${params.api.getDisplayNameForColumn(params.api.getColumn('athlete')!, 'header')} Group`;
+
+        const groupLabel = (api: GridApi): string | undefined =>
+            getGridElement(api)!.querySelector('.ag-header-group-cell-label')?.textContent?.trim();
+
+        /** Creates the grid with a postSortRows that renames athlete to 'Inside' once armed, then sorts by country. */
+        async function renameAthleteInsideSort(headerValueGetter: (params: HeaderValueGetterParams) => string) {
+            let armed = false;
+            let renamedInside = false;
+            const api = await gridMgr.createGridAndWait('myGrid', {
+                columnDefs: medalDefs(headerValueGetter),
+                rowData: medalRows,
+                postSortRows: (params) => {
+                    if (!armed) {
+                        return;
+                    }
+                    armed = false;
+                    renamedInside = true;
+                    params.api.applyColumnState({ state: [{ colId: 'athlete', headerName: 'Inside' }] });
+                },
+            });
+            await waitFor(() => expect(groupLabel(api)).toBe('Athlete Group'));
+
+            armed = true;
+            api.applyColumnState({ state: [{ colId: 'country', sort: 'asc' }] });
+            await asyncSetTimeout(0);
+
+            expect(renamedInside).toBe(true);
+            return api;
+        }
+
+        test('shows the name of a child renamed from inside a sort refresh', async () => {
+            const api = await renameAthleteInsideSort(groupNameFromAthlete);
+
+            expect(api.getDisplayNameForColumn(api.getColumn('athlete')!, 'header')).toBe('Inside');
+            expect(groupLabel(api)).toBe('Inside Group');
+        });
+
+        test('after a rename inside a sort refresh, new columnDefs renaming no override do not call its headerValueGetter, a later rename does', async () => {
+            let getterCalls = 0;
+            const countingGetter = (params: HeaderValueGetterParams): string => {
+                getterCalls++;
+                return groupNameFromAthlete(params);
+            };
+            const api = await renameAthleteInsideSort(countingGetter);
+            const athlete = api.getColumn('athlete')!;
+            expect(api.getDisplayNameForColumn(athlete, 'header')).toBe('Inside');
+            expect(groupLabel(api)).toBe('Inside Group');
+
+            const callsBeforeColumnDefs = getterCalls;
+            api.setGridOption('columnDefs', medalDefs(countingGetter, 'Nation'));
+            await waitFor(() =>
+                expect(
+                    getGridElement(api)!.querySelector('.ag-header-cell[col-id="country"] .ag-header-cell-text')
+                        ?.textContent
+                ).toBe('Nation')
+            );
+            await asyncSetTimeout(0);
+
+            expect(getterCalls - callsBeforeColumnDefs).toBe(0);
+            expect(api.getDisplayNameForColumn(athlete, 'header')).toBe('Inside');
+            expect(groupLabel(api)).toBe('Inside Group');
+
+            const callsBeforeRename = getterCalls;
+            api.applyColumnState({ state: [{ colId: 'athlete', headerName: 'Later' }] });
+            await waitFor(() => expect(groupLabel(api)).toBe('Later Group'));
+            expect(getterCalls).toBeGreaterThan(callsBeforeRename);
+        });
+    });
 });
 
 /**
@@ -455,7 +548,7 @@ describe('Editable header name — labels follow a rename made in the UI', () =>
             .map((el) => el.getAttribute('aria-label') ?? '')
             .join(' | ');
 
-    async function commitEditor(name: string): Promise<void> {
+    async function commitEditor(name: string, beforeCommit?: () => void): Promise<void> {
         const input = await waitFor(() => {
             const el = document.querySelector<HTMLInputElement>('.ag-column-header-edit-popup-editor input');
             expect(el).toBeTruthy();
@@ -463,15 +556,21 @@ describe('Editable header name — labels follow a rename made in the UI', () =>
         });
         await userEvent.clear(input);
         await userEvent.type(input, name);
+        beforeCommit?.();
         input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true }));
         await waitFor(() => expect(document.querySelector('.ag-column-header-edit-popup-editor')).toBeNull());
     }
 
     /** Header menu → "Edit Column Name" → type → Enter. */
-    async function renameFromHeaderMenu(api: GridApi, colId: string, name: string): Promise<void> {
+    async function renameFromHeaderMenu(
+        api: GridApi,
+        colId: string,
+        name: string,
+        beforeCommit?: () => void
+    ): Promise<void> {
         api.showColumnMenu(colId);
         await userEvent.click(await findByText(document.body, 'Edit Column Name'));
-        await commitEditor(name);
+        await commitEditor(name, beforeCommit);
         await waitFor(() => expect(texts(`.ag-header-cell[col-id="${colId}"] .ag-header-cell-text`)).toBe(name));
     }
 
@@ -479,7 +578,12 @@ describe('Editable header name — labels follow a rename made in the UI', () =>
      * Columns tool panel entry → right-click → "Edit Column Name", the route for column groups. jsdom gives
      * the virtual list no height, so the entry is built from its model item as the list itself would.
      */
-    async function renameFromColumnsToolPanel(api: GridApi, label: string, name: string): Promise<void> {
+    async function renameFromColumnsToolPanel(
+        api: GridApi,
+        label: string,
+        name: string,
+        beforeCommit?: () => void
+    ): Promise<void> {
         const gridDiv = getGridElement(api)! as HTMLElement;
         const { listPanel, item } = await waitFor(() => {
             const panel = (api.getToolPanelInstance('columns') as any)?.primaryColsPanel?.primaryColsListPanel;
@@ -496,10 +600,69 @@ describe('Editable header name — labels follow a rename made in the UI', () =>
             new MouseEvent('contextmenu', { bubbles: true, cancelable: true, clientX: 10, clientY: 10 })
         );
         await userEvent.click(await findByText(gridDiv, 'Edit Column Name'));
-        await commitEditor(name);
+        await commitEditor(name, beforeCommit);
         listPanel.destroyBean(comp);
         wrapper.remove();
     }
+
+    test('renaming a column group raises the same events in the same order as renaming a column, ending with stateUpdated', async () => {
+        const api = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs: [
+                {
+                    groupId: 'medals',
+                    headerName: 'Medals',
+                    headerNameEditable: true,
+                    children: [{ field: 'athlete', headerNameEditable: true }, { field: 'total' }],
+                },
+                { field: 'country' },
+            ],
+            rowData,
+            columnHeaderEdit: { applyMode: 'deferred' },
+            sideBar: { toolPanels: ['columns'], defaultToolPanel: 'columns' },
+        });
+        await waitFor(() => expect(api.getToolPanelInstance('columns')).not.toBeUndefined());
+
+        /** The ordered types of the column and state events raised from the edit's commit until the grid is idle. */
+        async function eventsOfRename(rename: (beforeCommit: () => void) => Promise<void>): Promise<string[]> {
+            const raised: string[] = [];
+            const record = (type: string) => {
+                if (type.startsWith('column') || type === 'stateUpdated') {
+                    raised.push(type);
+                }
+            };
+            await rename(() => api.addGlobalListener(record));
+            await waitFor(() => expect(raised).toContain('stateUpdated'), { timeout: 1000 });
+            await asyncSetTimeout(0);
+            api.removeGlobalListener(record);
+            return raised;
+        }
+
+        const columnEvents = await eventsOfRename((beforeCommit) =>
+            renameFromHeaderMenu(api, 'athlete', 'Competitor', beforeCommit)
+        );
+        const groupEvents = await eventsOfRename((beforeCommit) =>
+            renameFromColumnsToolPanel(api, 'Medals', 'Awards', beforeCommit)
+        );
+
+        const endsWithStateUpdatedAfterNameChanged = (events: string[]) => {
+            const nameChanged = events.indexOf('columnHeaderNameChanged');
+            return events.at(-1) === 'stateUpdated' && nameChanged !== -1 && nameChanged < events.length - 1;
+        };
+
+        expect({
+            columnEndsRight: endsWithStateUpdatedAfterNameChanged(columnEvents),
+            groupEndsRight: endsWithStateUpdatedAfterNameChanged(groupEvents),
+            groupEvents,
+            columnName: api.getDisplayNameForColumn(api.getColumn('athlete')!, 'header'),
+            groupName: api.getDisplayNameForColumnGroup(api.getColumnGroup('medals')!, 'header'),
+        }).toEqual({
+            columnEndsRight: true,
+            groupEndsRight: true,
+            groupEvents: columnEvents,
+            columnName: 'Competitor',
+            groupName: 'Awards',
+        });
+    });
 
     describe('filters tool panel', () => {
         const createGrid = () =>
@@ -632,6 +795,23 @@ describe('Editable header name — labels follow a rename made in the UI', () =>
         await waitFor(() => expect(autoHeaders()).toBe('Competitor | Country'));
         expect(namesWhenTold.at(-1)).toBe('Competitor');
         expect(namesWhenTold.filter((entry) => entry.includes(' vs '))).toEqual([]);
+    });
+
+    test('auto group column: each multipleColumns group column follows its own row-group column when autoGroupColumnDef sets showRowGroup', async () => {
+        const api = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs: [
+                { field: 'athlete', rowGroup: true, headerNameEditable: true },
+                { field: 'country', rowGroup: true },
+            ],
+            rowData,
+            groupDisplayType: 'multipleColumns',
+            autoGroupColumnDef: { showRowGroup: 'athlete' },
+        });
+        const autoHeaders = () => texts('.ag-header-cell[col-id^="ag-Grid-AutoColumn"] .ag-header-cell-text');
+        await waitFor(() => expect(autoHeaders()).toBe('Athlete | Country'));
+
+        await renameFromHeaderMenu(api, 'athlete', 'Competitor');
+        await waitFor(() => expect(autoHeaders()).toBe('Competitor | Country'));
     });
 
     describe('floating filter aria-labels', () => {
