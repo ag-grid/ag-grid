@@ -206,9 +206,9 @@ The interface for this parameter object is `SetFilterValuesFuncParams`:
 {% interfaceDocumentation interfaceName="SetFilterValuesFuncParams" config={"description":""} /%}
 
 {% note %}
-If you are providing values to the Set Filter asynchronously, when setting the model using `setModel` you need to wait for changes to be applied before performing any further actions by waiting on the returned grid promise, e.g.
+If you are providing values to the Set Filter asynchronously, when setting the model using `api.setColumnFilterModel()` you need to wait for changes to be applied before performing any further actions by waiting on the returned promise, e.g.
 
-`filter.setModel({ values: ['a', 'b'] }).then(() => gridApi.onFilterChanged(); );`
+`gridApi.setColumnFilterModel('country', { values: ['a', 'b'] }).then(() => gridApi.onFilterChanged());`
 {% /note %}
 
 The following example demonstrates loading set filter values asynchronously. Note the following:
