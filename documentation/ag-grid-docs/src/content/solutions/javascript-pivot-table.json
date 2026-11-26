@@ -74,7 +74,7 @@
                 "title": "Pivot result columns",
                 "docsUrl": "./pivoting-result-columns/",
                 "plan": "Enterprise",
-                "body": "The grid generates a column for each unique combination of pivot values. They inherit the value column's definition, can be changed with `processPivotResultColDef` and capped with `pivotMaxGeneratedColumns`."
+                "body": "The grid generates a column for each unique combination of pivot values, per value column. They inherit the value column's definition and can be changed with `processPivotResultColDef`. `pivotMaxGeneratedColumns` sets a limit; past it the grid stops generating columns and fires `onPivotMaxColumnsExceeded`."
             },
             {
                 "title": "Pivot totals",
@@ -98,13 +98,13 @@
                 "title": "Pivot Chart",
                 "docsUrl": "./integrated-charts-pivot-chart/",
                 "plan": "Enterprise",
-                "body": "In pivot mode the context menu gains a Pivot Chart item that charts all grouped and pivoted data with AG Charts. `gridApi.createPivotChart()` does the same from code. Enterprise chart types need the Enterprise Bundle."
+                "body": "In pivot mode the context menu gains a Pivot Chart item that charts all grouped and pivoted data with AG Charts. [`gridApi.createPivotChart()`](./integrated-charts-api-pivot-chart/) does the same from code. Enterprise chart types need AG Charts Enterprise, included in the Enterprise Bundle licence."
             },
             {
                 "title": "Excel export",
                 "docsUrl": "./excel-export/",
                 "plan": "Enterprise",
-                "body": "Exports the grid as rendered to .xlsx, including grouping and column header groups. Collapsed pivot result columns are not exported, even with `allColumns: true`."
+                "body": "Exports the grid as rendered to .xlsx, including grouping and column header groups. [Collapsed pivot result columns](./excel-export-columns/#collapsible-columns) are not exported, even with `allColumns: true`."
             }
         ]
     },

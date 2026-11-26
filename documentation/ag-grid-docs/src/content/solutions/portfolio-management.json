@@ -100,7 +100,7 @@
                 "title": "Integrated Charts",
                 "docsUrl": "./integrated-charts/",
                 "plan": "Enterprise",
-                "body": "`enableCharts` lets users chart a selected cell range from inside the grid, with AG Charts. Charts follow sorting and filtering. Enterprise chart types need the Enterprise Bundle."
+                "body": "`enableCharts` with `cellSelection` lets users chart a selected cell range from inside the grid, with AG Charts. Charts follow sorting and filtering. Enterprise chart types need AG Charts Enterprise, included in the Enterprise Bundle licence."
             },
             {
                 "title": "Excel export",

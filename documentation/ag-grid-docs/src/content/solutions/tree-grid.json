@@ -81,9 +81,9 @@
             },
             {
                 "title": "Aggregation in trees",
-                "docsUrl": "./aggregation/",
+                "docsUrl": "./tree-data-paths/#supplied-vs-aggregated",
                 "plan": "Enterprise",
-                "body": "`aggFunc` on a column fills parent rows with totals of their children, replacing any supplied parent value. Totals use only rows that pass the filter unless `suppressAggFilteredOnly` is set."
+                "body": "`aggFunc` on a column fills parent rows with aggregates of their children, replacing any supplied parent value. Aggregates use only rows that pass the filter unless `suppressAggFilteredOnly` is set."
             },
             {
                 "title": "Row dragging in trees",
@@ -95,7 +95,7 @@
                 "title": "Tree selection",
                 "docsUrl": "./tree-data-selection/",
                 "plan": "Enterprise",
-                "body": "`rowSelection.groupSelects: 'descendants'` selects a row's children with it and shows parents as indeterminate. `checkboxLocation: 'autoGroupColumn'` puts checkboxes in the tree column."
+                "body": "With multi-row selection, `rowSelection.groupSelects: 'descendants'` selects all of a row's descendants with it and shows parents as indeterminate. `rowSelection.checkboxLocation: 'autoGroupColumn'` puts checkboxes in the tree column."
             },
             {
                 "title": "Expanding groups",

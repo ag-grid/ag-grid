@@ -74,7 +74,7 @@
                 "title": "Server-Side Row Model",
                 "docsUrl": "./server-side-model/",
                 "plan": "Enterprise",
-                "body": "Lazy-loads rows in blocks and loads group children only when a group is expanded, with sorting, filtering, grouping, pivoting and aggregation handed to your server. The docs say Enterprise users should prefer it over the Infinite Row Model."
+                "body": "Lazy-loads rows in blocks and loads group children only when a group is expanded, with sorting, filtering, grouping, pivoting and aggregation handed to your server. [The docs](./row-models/#when-to-use) say Enterprise users should prefer it over the Infinite Row Model."
             },
             {
                 "title": "Viewport Row Model",
@@ -98,7 +98,7 @@
                 "title": "Transaction updates",
                 "docsUrl": "./data-update-transactions/",
                 "plan": "Free",
-                "body": "`applyTransaction()` adds, removes and updates specific rows instead of replacing all row data; with `getRowId` rows are matched by ID, which the docs describe as faster than object references for large data sets. `applyTransactionAsync()` batches updates, applied after 50ms by default. Available on the Client-Side and Server-Side Row Models (SSRM transactions are Enterprise)."
+                "body": "`applyTransaction()` adds, removes and updates specific rows instead of replacing all row data; with `getRowId` rows are matched by ID, which the docs describe as faster than object references for large data sets. `applyTransactionAsync()` batches updates, applied after 50ms by default. These are Client-Side Row Model APIs; the Server-Side Row Model has `applyServerSideTransaction()` and `applyServerSideTransactionAsync()` (Enterprise)."
             },
             {
                 "title": "Scrolling performance options",

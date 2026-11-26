@@ -51,7 +51,7 @@
                 "title": "Cell editing and provided editors",
                 "docsUrl": "./cell-editing/",
                 "plan": "Free",
-                "body": "editable: true on a column turns on editing; the grid picks a text, number, date or checkbox editor from the column's data type. Text, large text and select editors are also provided, and you can supply your own editor component."
+                "body": "`editable: true` on a column turns on editing; the grid picks a text, number, date or checkbox editor from the column's data type. Large text and select editors are also provided, and you can supply your own editor component."
             },
             {
                 "title": "Full-row editing",
@@ -63,7 +63,7 @@
                 "title": "Undo and redo",
                 "docsUrl": "./undo-redo-edits/",
                 "plan": "Free",
-                "body": "`undoRedoCellEditing` records changes from cell editing, paste and the fill handle. Ctrl+Z undoes and Ctrl+Y redoes (Cmd+Z and Cmd+Shift+Z on Mac); the API offers `undoCellEditing()` and `redoCellEditing()`."
+                "body": "`undoRedoCellEditing` records changes from cell editing and, with Enterprise, from paste and the fill handle. Ctrl+Z undoes and Ctrl+Y redoes (Cmd+Z and Cmd+Shift+Z on Mac); the API offers `undoCellEditing()` and `redoCellEditing()`."
             },
             {
                 "title": "Keyboard navigation",
@@ -81,7 +81,7 @@
                 "title": "Fill handle",
                 "docsUrl": "./cell-selection-fill-handle/",
                 "plan": "Enterprise",
-                "body": "`cellSelection.handle: { mode: 'fill' }` adds a drag handle to the range. It copies a single value, continues a linear number series, and Alt increments numbers by one."
+                "body": "`cellSelection.handle: { mode: 'fill' }` adds a drag handle to the range. It copies a single value, continues a linear number series, and Alt increments a single number by one."
             },
             {
                 "title": "Clipboard copy, cut and paste",

@@ -63,19 +63,19 @@
                 "title": "Quick Filter",
                 "docsUrl": "./filter-quick/",
                 "plan": "Free",
-                "body": "The `quickFilterText` grid option matches every word of a search string against all column values, case-insensitive. Set `cacheQuickFilter` for large data sets."
+                "body": "The `quickFilterText` grid option matches every word of a search string against visible column values, case-insensitive. Set `cacheQuickFilter` for large data sets."
             },
             {
                 "title": "Cell class rules",
                 "docsUrl": "./cell-styles/",
                 "plan": "Free",
-                "body": "`cellClassRules` applies a CSS class when a rule returns true, for example to mark rows where available stock falls below a reorder level."
+                "body": "`cellClassRules` applies a CSS class to a cell when a rule returns true, for example to highlight stock below a reorder level; `rowClassRules` does the same for whole rows."
             },
             {
                 "title": "Value formatters",
                 "docsUrl": "./value-formatters/",
                 "plan": "Free",
-                "body": "`valueFormatter` turns a raw number into display text such as a currency amount. Formatted values are also used for copy and CSV export by default; Excel export keeps numbers as numbers."
+                "body": "`valueFormatter` turns a raw number into display text such as a currency amount. Formatted values are also used for CSV export and, with Enterprise, clipboard copy; Excel export keeps numbers as numbers."
             },
             {
                 "title": "Custom cell components",

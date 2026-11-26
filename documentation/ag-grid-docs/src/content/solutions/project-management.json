@@ -52,7 +52,7 @@
                 "title": "Tree Data for tasks and subtasks",
                 "docsUrl": "./tree-data/",
                 "plan": "Enterprise",
-                "body": "Set `treeData` and point `treeDataParentIdField` at a `parentId` field, or use `getDataPath` or `treeDataChildrenField`, to nest subtasks under their parent task in an expandable group column."
+                "body": "Set `treeData` and point `treeDataParentIdField` at a `parentId` field (with `getRowId`), or use `getDataPath` or `treeDataChildrenField`, to nest subtasks under their parent task in an expandable group column."
             },
             {
                 "title": "Row Grouping",
@@ -82,7 +82,7 @@
                 "title": "Row dragging",
                 "docsUrl": "./row-dragging/",
                 "plan": "Free",
-                "body": "`rowDrag` on a column adds a drag handle. With `rowDragManaged` the grid moves rows itself; with Tree Data, managed dragging can also move a task under a new parent."
+                "body": "`rowDrag` on a column adds a drag handle. With `rowDragManaged` the grid moves rows itself; with Tree Data (Enterprise), managed dragging can also move a task under a new parent."
             },
             {
                 "title": "Status cell renderers",

@@ -92,13 +92,13 @@
                 "title": "Value formatters in export",
                 "docsUrl": "./value-formatters/",
                 "plan": "Free",
-                "body": "Formatted values are used for CSV and Excel export, clipboard copy and fill handle by default. Set `useValueFormatterForExport=false` on a column to export raw values; providing `processCellCallback` or Excel data types also bypasses the formatter, and Excel export writes number values unformatted."
+                "body": "Formatted values are used for CSV export, and for Excel export, clipboard copy and the fill handle (Enterprise), by default. Set `useValueFormatterForExport=false` on a column to export raw values; providing `processCellCallback` or Excel data types also bypasses the formatter, and Excel export writes number values unformatted."
             },
             {
                 "title": "CSV Export",
                 "docsUrl": "./csv-export/",
                 "plan": "Free",
-                "body": "`api.exportDataAsCsv()` exports the grid's data with value getters and formatters; the context menu item is Enterprise only. When rows are grouped, all data is exported whether or not groups are open. The docs warn that spreadsheet apps run cells starting with +, -, =, @, tab, carriage return or line feed as formulas, and recommend cleaning those values."
+                "body": "`api.exportDataAsCsv()` exports the grid's data with value getters and formatters; the context menu item is Enterprise only. When rows are grouped, all data is exported whether or not groups are open. Spreadsheet apps run cells starting with +, -, =, @, tab, carriage return or line feed as formulas; set `sanitizeFormulas: true` to prefix those values with a single quote."
             },
             {
                 "title": "Integrated Charts",

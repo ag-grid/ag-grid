@@ -55,7 +55,7 @@
                 "title": "Row IDs",
                 "docsUrl": "./row-ids/",
                 "plan": "Free",
-                "body": "The `getRowId` grid option returns a unique, stable string ID per row. Transactions use it to match update and remove items by key; without it the grid compares object references, which the docs describe as slower for large data sets."
+                "body": "The `getRowId` grid option returns a unique, stable string ID per row. Transactions use it to match update and remove items by key; without it the grid compares object references, which [the docs describe as slower](./data-update-transactions/#identifying-rows-for-update-and-remove) for large data sets."
             },
             {
                 "title": "Cell change flashing",
