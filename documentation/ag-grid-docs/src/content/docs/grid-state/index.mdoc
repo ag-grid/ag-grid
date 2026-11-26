@@ -73,7 +73,7 @@ const gridOptions = {
 };
 ```
 
-Column state properties are the exception. When `initialState` contains any of them, an omitted one is reset, overriding the matching value in the column definitions. See [Column State and Column Definitions](#column-state-and-column-definitions).
+Column state properties are the exception. When `initialState` contains any of them, an omitted one is reset, overriding the matching value in the column definitions, except `columnSizing`: without it, columns keep the widths and flex of their column definitions. See [Column State and Column Definitions](#column-state-and-column-definitions).
 
 ### Restore via API
 
@@ -97,7 +97,9 @@ To exclude properties from being restored, pass their names as the second argume
 api.setState(savedState, ['filter']);
 ```
 
-Every property the provided state omits is reset because of the [sparse nature](#sparse-state-object) of the state object. So a hand-built state containing only `columnOrder` will clear the sort, filters, row groups, pinning and every other property.
+Every property the provided state omits is reset because of the [sparse nature](#sparse-state-object) of the state object. So a hand-built state containing only `columnOrder` clears the sort, filters, row groups and pinning.
+
+Column order and sizes are the exception: a state without `columnOrder` or `columnSizing` keeps the current column order and sizes. A state without `pivot` turns pivot mode off.
 
 The example below switches between full states captured with `api.getState()`.
 
@@ -112,7 +114,7 @@ The example below switches between full states captured with `api.getState()`.
 
 Column state properties such as `sort`, `hide`, `pinned` and `aggFunc` have two possible sources: the grid state and the column definitions. When `initialState` includes some but not all of the [column state properties](#gridstate-column-properties), the grid must decide what to do with the missing ones.
 
-By default the missing properties are reset, overriding the column definition values. This follows from the [sparse nature](#sparse-state-object) of the state object: a saved state with no `sort` property came from an unsorted grid, and restoring it must produce an unsorted grid even if a column definition sets a sort.
+By default the missing properties are reset, overriding the column definition values; column sizes are the exception, as a state without `columnSizing` keeps the column definition widths and flex. This follows from the [sparse nature](#sparse-state-object) of the state object: a saved state with no `sort` property came from an unsorted grid, and restoring it must produce an unsorted grid even if a column definition sets a sort.
 
 In the snippet below only `columnOrder` is provided, so the `sort: 'asc'` on Country is overridden and the grid is created unsorted.
 
@@ -123,7 +125,7 @@ columnDefs: [
 ],
 
 initialState: {
-    // Only the column order is provided, so every other column state property is reset.
+    // Only the column order is provided, so the sort is reset.
     columnOrder: {
         orderedColIds: ['country', 'athlete'],
     },
@@ -144,7 +146,7 @@ In the example below the column definitions pin Country, hide Year and sum Gold 
 
 ### Column and Group Ids
 
-Columns are identified in the state by their [Column ID](./column-updating-definitions/#matching-columns), and [Column Groups](./column-groups/) by their `groupId`. A column that provides neither `colId` nor `field` is given a positional ID. If the column definitions are reordered between saving and restoring, column state could be restored to the wrong column.
+Columns are identified in the state by their [Column ID](./column-updating-definitions/#matching-columns), and [Column Groups](./column-groups/) by their `groupId`. A column that provides neither `colId` nor `field`, and a group without `groupId`, is given a generated ID. That ID can change when such columns or groups are added, removed or reordered, or when the grid is recreated, so saved state can be restored to another column.
 
 {%note %}
 For best results ensure columns and groups have unique `field` or explicit `colId` and groups have an explicit `groupId`.
@@ -184,6 +186,6 @@ The grid state is designed to be serialisable, so any functions will be stripped
 
 ### GridState (column properties)
 
-The following properties hold column state and are affected by `partialColumnState`.
+The following properties hold column state. All but `columnSizing` and `columnOrder` are affected by `partialColumnState`.
 
 {% interfaceDocumentation interfaceName="GridState" overrideSrc="grid-state/grid-state.json" names=["sort", "rowGroup", "aggregation", "showValuesAs", "pivot", "columnPinning", "columnVisibility", "columnSizing", "columnOrder", "columnHeaderName", "partialColumnState"] config={ "description": "" } /%}
