@@ -539,12 +539,13 @@
     }
 
     // Cells clip below the text, so the lines sit high and thin; the padding extends the highlight under them.
+    // The offset is in px because WebKit at 1x pixel density draws no underline for an offset below 1px.
     .ag-find-match {
         color: var(--ag-find-match-color);
         background-color: var(--ag-find-match-background-color);
         text-decoration: underline;
         text-decoration-thickness: 0.0625em;
-        text-underline-offset: 0.05em;
+        text-underline-offset: 1px;
         padding-bottom: 0.2em;
     }
 
