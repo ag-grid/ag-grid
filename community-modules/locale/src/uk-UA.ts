@@ -876,6 +876,15 @@ export const AG_GRID_LOCALE_UK_UA = {
     ariaLabelClose: 'Закрити',
     ariaLabelMaximize: 'Розгорнути',
     ariaLabelRestore: 'Відновити',
+    ariaLabelMoveAndResize: 'Перемістити та змінити розмір',
+    ariaLabelNarrower: 'Вужчий',
+    ariaLabelWider: 'Ширший',
+    ariaLabelShorter: 'Нижчий',
+    ariaLabelTaller: 'Вищий',
+    ariaDialogMoveInstructions:
+        'Клавіші зі стрілками переміщують діалогове вікно. Натисніть Enter, щоб завершити, або Esc, щоб скасувати.',
+    ariaDialogMoveResizeInstructions:
+        'Клавіші зі стрілками переміщують діалогове вікно, а разом із Shift змінюють його розмір. Натисніть Enter, щоб завершити, або Esc, щоб скасувати.',
     ariaLabelColorPickerSpectrum: 'Насиченість і яскравість',
     ariaValueColorPickerSpectrum: 'Насиченість ${variable}%, яскравість ${variable}%',
     ariaLabelColorPickerHue: 'Відтінок',

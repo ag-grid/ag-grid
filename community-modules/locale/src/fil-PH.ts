@@ -902,6 +902,15 @@ export const AG_GRID_LOCALE_FIL_PH = {
     ariaLabelMaximize: 'I-maximize',
 
     ariaLabelRestore: 'Ibalik',
+    ariaLabelMoveAndResize: 'Ilipat at baguhin ang laki',
+    ariaLabelNarrower: 'Mas makitid',
+    ariaLabelWider: 'Mas malapad',
+    ariaLabelShorter: 'Mas mababa',
+    ariaLabelTaller: 'Mas mataas',
+    ariaDialogMoveInstructions:
+        'Inililipat ng mga arrow key ang dialog. Pindutin ang Enter para tapusin o ang Esc para kanselahin.',
+    ariaDialogMoveResizeInstructions:
+        'Inililipat ng mga arrow key ang dialog, at binabago ng Shift kasama ang mga arrow key ang laki nito. Pindutin ang Enter para tapusin o ang Esc para kanselahin.',
     ariaLabelColorPickerSpectrum: 'Saturation at Liwanag',
     ariaValueColorPickerSpectrum: 'Saturation ${variable}%, Liwanag ${variable}%',
     ariaLabelColorPickerHue: 'Hue',

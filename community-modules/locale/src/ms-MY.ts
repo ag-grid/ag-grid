@@ -896,6 +896,15 @@ export const AG_GRID_LOCALE_MS_MY = {
     ariaLabelMaximize: 'Maksimumkan',
 
     ariaLabelRestore: 'Pulihkan',
+    ariaLabelMoveAndResize: 'Alih dan Ubah Saiz',
+    ariaLabelNarrower: 'Lebih Sempit',
+    ariaLabelWider: 'Lebih Lebar',
+    ariaLabelShorter: 'Lebih Pendek',
+    ariaLabelTaller: 'Lebih Tinggi',
+    ariaDialogMoveInstructions:
+        'Kekunci anak panah mengalihkan dialog. Tekan Enter untuk selesai atau Esc untuk membatalkan.',
+    ariaDialogMoveResizeInstructions:
+        'Kekunci anak panah mengalihkan dialog, dan Shift bersama kekunci anak panah mengubah saiznya. Tekan Enter untuk selesai atau Esc untuk membatalkan.',
     ariaLabelColorPickerSpectrum: 'Ketepuan dan Kecerahan',
     ariaValueColorPickerSpectrum: 'Ketepuan ${variable}%, Kecerahan ${variable}%',
     ariaLabelColorPickerHue: 'Rona',

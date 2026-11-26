@@ -882,6 +882,15 @@ export const AG_GRID_LOCALE_IT_IT = {
     ariaLabelClose: 'Chiudi',
     ariaLabelMaximize: 'Ingrandisci',
     ariaLabelRestore: 'Ripristina',
+    ariaLabelMoveAndResize: 'Sposta e ridimensiona',
+    ariaLabelNarrower: 'Più stretto',
+    ariaLabelWider: 'Più largo',
+    ariaLabelShorter: 'Più basso',
+    ariaLabelTaller: 'Più alto',
+    ariaDialogMoveInstructions:
+        'I tasti freccia spostano la finestra di dialogo. Premi Invio per terminare o Esc per annullare.',
+    ariaDialogMoveResizeInstructions:
+        'I tasti freccia spostano la finestra di dialogo e, con Maiusc, la ridimensionano. Premi Invio per terminare o Esc per annullare.',
     ariaLabelColorPickerSpectrum: 'Saturazione e luminosità',
     ariaValueColorPickerSpectrum: 'Saturazione ${variable}%, luminosità ${variable}%',
     ariaLabelColorPickerHue: 'Tonalità',

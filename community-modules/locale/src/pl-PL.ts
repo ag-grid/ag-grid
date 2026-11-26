@@ -878,6 +878,15 @@ export const AG_GRID_LOCALE_PL_PL = {
     ariaLabelClose: 'Zamknij',
     ariaLabelMaximize: 'Maksymalizuj',
     ariaLabelRestore: 'Przywróć',
+    ariaLabelMoveAndResize: 'Przenieś i zmień rozmiar',
+    ariaLabelNarrower: 'Węższy',
+    ariaLabelWider: 'Szerszy',
+    ariaLabelShorter: 'Niższy',
+    ariaLabelTaller: 'Wyższy',
+    ariaDialogMoveInstructions:
+        'Klawisze strzałek przesuwają okno dialogowe. Naciśnij Enter, aby zakończyć, lub Esc, aby anulować.',
+    ariaDialogMoveResizeInstructions:
+        'Klawisze strzałek przesuwają okno dialogowe, a z klawiszem Shift zmieniają jego rozmiar. Naciśnij Enter, aby zakończyć, lub Esc, aby anulować.',
     ariaLabelColorPickerSpectrum: 'Nasycenie i jasność',
     ariaValueColorPickerSpectrum: 'Nasycenie ${variable}%, jasność ${variable}%',
     ariaLabelColorPickerHue: 'Odcień',

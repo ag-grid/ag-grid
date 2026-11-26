@@ -892,6 +892,15 @@ export const AG_GRID_LOCALE_SL_SI = {
     ariaLabelMaximize: 'Povečaj',
 
     ariaLabelRestore: 'Obnovi',
+    ariaLabelMoveAndResize: 'Premakni in spremeni velikost',
+    ariaLabelNarrower: 'Ožje',
+    ariaLabelWider: 'Širše',
+    ariaLabelShorter: 'Nižje',
+    ariaLabelTaller: 'Višje',
+    ariaDialogMoveInstructions:
+        'S puščičnimi tipkami premaknete pogovorno okno. Pritisnite Enter za dokončanje ali Esc za preklic.',
+    ariaDialogMoveResizeInstructions:
+        'S puščičnimi tipkami premaknete pogovorno okno, s tipko Shift in puščičnimi tipkami pa spremenite njegovo velikost. Pritisnite Enter za dokončanje ali Esc za preklic.',
     ariaLabelColorPickerSpectrum: 'Nasičenost in svetlost',
     ariaValueColorPickerSpectrum: 'Nasičenost ${variable} %, svetlost ${variable} %',
     ariaLabelColorPickerHue: 'Odtenek',

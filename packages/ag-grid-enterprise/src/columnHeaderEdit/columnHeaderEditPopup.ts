@@ -149,6 +149,10 @@ export class ColumnHeaderEditPopup extends BeanStub {
 
         _addManagedElementListeners(this, dialog.getGui(), {
             keydown: (event: KeyboardEvent) => {
+                // already handled, as by Escape cancelling a move or resize of the dialog
+                if (event.defaultPrevented) {
+                    return;
+                }
                 if (event.key === KeyCode.ENTER) {
                     // Enter on a button (Close, Apply, Cancel) activates that button rather than committing.
                     if (!contentComp.isEditorElement(event.target)) {
