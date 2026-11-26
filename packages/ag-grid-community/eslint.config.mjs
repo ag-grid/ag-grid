@@ -103,6 +103,7 @@ export default [
             'e2e/',
             'playwright.config.ts',
             'esbuildBuild.cjs',
+            'scripts/',
             'vitest.umd.config.ts',
         ],
     },

@@ -4,7 +4,7 @@ import { AgAbstractBean } from 'ag-stack';
 import type { AgEventTypeParams } from '../events';
 import type { GridOptionsWithDefaults } from '../gridOptionsDefault';
 import type { GridOptionsService } from '../gridOptionsService';
-import type { ErrorId, LogArgs } from '../validation/errorMessages/errorText';
+import type { ErrorId, ErrorMap, LogArgs } from '../validation/errorMessages/errorText';
 import type { BeanCollection } from './context';
 
 /**
@@ -20,15 +20,27 @@ export abstract class BeanStub<TEventType extends string = AgBeanStubEvent> exte
     GridOptionsService,
     TEventType
 > {
-    public warn<TId extends ErrorId>(...args: LogArgs<TId>): void {
+    public warn<
+        TId extends ErrorId,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        TShowMessageAtCallLocation = ErrorMap[TId],
+    >(...args: LogArgs<TId>): void {
         this.beans.log.warn<TId>(...args);
     }
 
-    public error<TId extends ErrorId>(...args: LogArgs<TId>): void {
+    public error<
+        TId extends ErrorId,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        TShowMessageAtCallLocation = ErrorMap[TId],
+    >(...args: LogArgs<TId>): void {
         this.beans.log.error<TId>(...args);
     }
 
-    public deprecated<TId extends ErrorId>(...args: LogArgs<TId>): void {
+    public deprecated<
+        TId extends ErrorId,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        TShowMessageAtCallLocation = ErrorMap[TId],
+    >(...args: LogArgs<TId>): void {
         this.beans.log.deprecated<TId>(...args);
     }
 }

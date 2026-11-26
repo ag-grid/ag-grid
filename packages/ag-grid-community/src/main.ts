@@ -1218,7 +1218,7 @@ export * from './events';
 export type { AgEventType, AgPublicEventType } from './eventTypes';
 
 // AG Stack Theming
-export { createPart } from 'ag-stack';
+export { createPart, staticCssTheme } from 'ag-stack';
 export type {
     BorderStyleValue,
     BorderValue,
@@ -1234,6 +1234,9 @@ export type {
     ScrollbarWidthValue,
     ShadowValue,
     ShadowValueParams,
+    StaticCssTheme,
+    StaticCssThemeName,
+    StaticCssThemeOptions,
     Theme,
     WithParamTypes,
 } from 'ag-stack';

@@ -1,4 +1,15 @@
-export type Feature = 'colorScheme' | 'iconSet' | 'checkboxStyle' | 'inputStyle' | 'tabStyle';
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export const _themePartFeatures = [
+    'buttonStyle',
+    'checkboxStyle',
+    'colorScheme',
+    'columnDropStyle',
+    'iconSet',
+    'inputStyle',
+    'tabStyle',
+] as const;
+
+export type Feature = (typeof _themePartFeatures)[number];
 
 export type WithParamTypes<T> = {
     [K in keyof T]: K extends string ? ParamTypeForLowercaseKey<Lowercase<K>> : LengthValue;
