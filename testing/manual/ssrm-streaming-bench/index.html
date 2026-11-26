@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <link rel="icon" href="data:," />
+        <title>SSRM streaming benchmark</title>
+        <style>
+            html,
+            body {
+                margin: 0;
+                height: 100%;
+                font: 12px sans-serif;
+            }
+            body {
+                display: flex;
+                flex-direction: column;
+            }
+            #bar {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 4px 12px;
+                padding: 4px;
+                border-bottom: 1px solid #ccc;
+            }
+            #controls {
+                display: contents;
+            }
+            #controls label {
+                display: flex;
+                gap: 4px;
+                align-items: center;
+            }
+            #controls input[type='number'] {
+                width: 70px;
+            }
+            #grids {
+                flex: 1;
+                display: grid;
+                gap: 2px;
+                min-height: 0;
+            }
+            .grid {
+                min-width: 0;
+                min-height: 0;
+            }
+            #overlay {
+                position: fixed;
+                right: 8px;
+                bottom: 8px;
+                padding: 6px 8px;
+                background: rgba(0, 0, 0, 0.75);
+                color: #fff;
+                font: 11px monospace;
+                white-space: pre;
+                pointer-events: none;
+                z-index: 10;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="bar">
+            <form id="controls"><button type="submit">Apply (reloads)</button></form>
+            <button id="select" type="button">Select rows 5-9 + cell range</button>
+            <button id="pause" type="button">Pause updates</button>
+            <button id="resume" type="button">Resume updates</button>
+            <span id="version"></span>
+        </div>
+        <div id="grids"></div>
+        <div id="overlay"></div>
+        <script src="/dist/ag-grid-enterprise.min.js"></script>
+        <script type="module" src="./src/main.js"></script>
+    </body>
+</html>
