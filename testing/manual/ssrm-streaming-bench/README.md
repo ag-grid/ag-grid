@@ -20,17 +20,17 @@ node testing/manual/ssrm-streaming-bench/serve.mjs   # optional port, default 46
 
 Open the printed `http://localhost:4620/` URL. Use `localhost`, not `file://`: the licence watermark is hidden only there.
 
-The top bar has every control (insert interval, per-cell update rate, column count, sync or async transactions, `asyncTransactionWaitMillis`, `cacheBlockSize`, `maxBlocksInCache`, number of grids, backend latency, grouping, trimming fields to the visible columns, `animateRows`, row height, `viewSubscription.debounceMs`). **Apply** reloads the page with the settings in the URL query, so any configuration can be bookmarked, for example `?cols=2000&trim=1` or `?grids=100`. Sort by clicking the `arrival` or `qty` header and filter `qty` or `sym` from their header filter buttons; group with the **Group by sym** checkbox (`?group=1`).
+The top bar has every control (insert interval, per-cell update rate, value columns changed per update, column count, sync or async transactions, `asyncTransactionWaitMillis`, `cacheBlockSize`, `maxBlocksInCache`, number of grids, how many grids keep `viewSubscriptionActive`, grid height, backend latency, grouping, trimming fields to the visible columns, `animateRows`, row height, `viewSubscription.debounceMs` and `pauseWhenHidden`). A grid height above 0 makes the page taller than the window, so the grids below the fold are out of view, for example `?grids=100&gridHeight=700`. **Apply** reloads the page with the settings in the URL query, so any configuration can be bookmarked, for example `?cols=2000&trim=1` or `?grids=100`. Sort by clicking the `arrival` or `qty` header and filter `qty` or `sym` from their header filter buttons; group with the **Group by sym** checkbox (`?group=1`). Under any order but arrival newest-first, new rows are not sent as transactions: the demo re-reads the store from the backend at most once a second.
 
 **Select rows 5-9 + cell range**, **Pause updates** and **Resume updates** drive the selection check. Pause is done by the demo app, not the grid: the feed keeps running and transactions are buffered, then applied in order on resume.
 
-The overlay in the bottom right shows, once a second: frames per second, the longest frame and the frames over 50 ms; inserts applied per second and cell updates sent per second; content refreshes per second (frames where a sampled visible cell changed) and the rendered per-cell update rate; transaction timing; DOM row elements added and removed per second and row elements re-keyed to another row; loaded row nodes, subscribed rows and the visible rows x columns; the selection check result.
+The overlay in the bottom right shows, once a second: frames per second, the longest frame and the frames over 50 ms; inserts applied per second and cell updates sent per second; content refreshes per second (frames where a sampled visible cell changed, or a row entered, left or moved within the view) and the rendered per-cell update rate; transaction timing; DOM row elements added and removed per second and row elements re-keyed to another row; loaded row nodes, subscribed rows and the visible rows x columns; the selection check result.
 
 ### Harness
 
 ```bash
-node testing/manual/ssrm-streaming-bench/run-bench.mjs                  # every scenario, about 10 minutes
-node testing/manual/ssrm-streaming-bench/run-bench.mjs --only S1,S4     # some scenarios, merged into results.json
+node testing/manual/ssrm-streaming-bench/run-bench.mjs                  # every scenario, about 11 minutes
+node testing/manual/ssrm-streaming-bench/run-bench.mjs --only S1,S4     # some scenarios, merged into results.json with their own provenance
 node testing/manual/ssrm-streaming-bench/run-bench.mjs --report-only    # rebuild the tables from results.json
 ```
 
