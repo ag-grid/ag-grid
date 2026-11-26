@@ -1,4 +1,7 @@
 import { defineComponent, nextTick } from 'vue';
+import type { PropType } from 'vue';
+
+import type { ICellEditorParams } from 'ag-grid-community';
 
 // backspace starts the editor on Windows
 const KEY_BACKSPACE = 'Backspace';
@@ -6,6 +9,12 @@ const KEY_ENTER = 'Enter';
 const KEY_TAB = 'Tab';
 
 export default defineComponent({
+    props: {
+        params: {
+            type: Object as PropType<ICellEditorParams>,
+            required: true,
+        },
+    },
     template: `<input :ref="'input'" class="simple-input-editor" @keydown="onKeyDown($event)" v-model="value"/>`,
     data() {
         return {
@@ -14,15 +23,15 @@ export default defineComponent({
         };
     },
     methods: {
-        getValue() {
+        getValue(): string {
             return this.value;
         },
 
-        isCancelBeforeStart() {
+        isCancelBeforeStart(): boolean {
             return this.cancelBeforeStart;
         },
 
-        setInitialState(params) {
+        setInitialState(params: ICellEditorParams) {
             let startValue;
 
             const eventKey = params.eventKey;
@@ -42,11 +51,11 @@ export default defineComponent({
 
         // will reject the number if it greater than 1,000,000
         // not very practical, but demonstrates the method.
-        isCancelAfterEnd() {
-            return this.value > 1000000;
+        isCancelAfterEnd(): boolean {
+            return Number(this.value) > 1000000;
         },
 
-        onKeyDown(event) {
+        onKeyDown(event: KeyboardEvent) {
             if (event.key === 'Escape') {
                 return;
             }
@@ -60,25 +69,25 @@ export default defineComponent({
             }
         },
 
-        isCharNumeric(charStr) {
+        isCharNumeric(charStr: string): boolean {
             return /^\d+$/.test(charStr);
         },
 
-        isNumericKey(event) {
+        isNumericKey(event: KeyboardEvent): boolean {
             const charStr = event.key;
             return this.isCharNumeric(charStr);
         },
 
-        finishedEditingPressed(event) {
+        finishedEditingPressed(event: KeyboardEvent): boolean {
             const key = event.key;
             return key === KEY_ENTER || key === KEY_TAB;
         },
 
-        isBackspace(event) {
+        isBackspace(event: KeyboardEvent): boolean {
             return event.key === KEY_BACKSPACE;
         },
 
-        isLeftOrRight(event) {
+        isLeftOrRight(event: KeyboardEvent): boolean {
             return ['ArrowLeft', 'ArrowRight'].indexOf(event.key) > -1;
         },
     },
@@ -88,14 +97,15 @@ export default defineComponent({
         const eventKey = this.params.eventKey;
 
         // only start edit if key pressed is a number, not a letter
-        this.cancelBeforeStart = eventKey && eventKey.length === 1 && '1234567890'.indexOf(eventKey) < 0;
+        this.cancelBeforeStart = !!eventKey && eventKey.length === 1 && '1234567890'.indexOf(eventKey) < 0;
     },
     mounted() {
         nextTick(() => {
             // need to check if the input reference is still valid - if the edit was cancelled before it started there
             // wont be an editor component anymore
-            if (this.$refs.input) {
-                this.$refs.input.focus();
+            const input = this.$refs.input as HTMLInputElement | undefined;
+            if (input) {
+                input.focus();
             }
         });
     },

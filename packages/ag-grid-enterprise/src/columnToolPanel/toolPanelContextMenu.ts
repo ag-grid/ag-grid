@@ -21,6 +21,7 @@ import { MENU_ITEM_SEPARATOR, _normaliseSeparators } from '../menu/menuSeparator
 import { getGroupingLocaleText, isRowGroupColLocked } from '../rowGrouping/rowGroupingUtils';
 import { _showMenuListPopup } from '../widgets/menuPopupUtils';
 import type { ToolPanelColumnMove } from './columnMoveUtils';
+import { isMoveBlocked } from './columnMoveUtils';
 import { isDeferredMode, refreshDeferredToolPanelUi } from './toolPanelDeferredUiUtils';
 import type { ColumnStateUpdateParams } from './updates/columnStateUpdateTypes';
 
@@ -49,12 +50,13 @@ export class ToolPanelContextMenu extends Component {
 
     constructor(
         private readonly column: AgColumn | AgProvidedColumnGroup,
-        private readonly mouseEventOrTouch: MouseEvent | Touch,
+        private readonly trigger: MouseEvent | Touch | KeyboardEvent,
         private readonly parentEl: HTMLElement,
         private readonly params: ColumnStateUpdateParams,
         private readonly eventType: ColumnEventType,
         private readonly source: ColumnMenuItemsSource,
-        private readonly columnMove?: ToolPanelColumnMove
+        private readonly columnMove?: ToolPanelColumnMove,
+        private readonly refocusIfLost?: (eOldRow: HTMLElement) => void
     ) {
         super({ tag: 'div', cls: 'ag-menu' });
     }
@@ -89,7 +91,7 @@ export class ToolPanelContextMenu extends Component {
             colOrGroupDef = column.colDef;
         }
 
-        // Read-only functions retain navigation but omit movement and grouping actions.
+        // Read-only functions omit grouping, aggregation and pivot actions.
         const functionsReadOnly = gos.get('functionsReadOnly');
         let defaultItems: (DefaultToolPanelItem | 'separator')[];
         if (!this.isActive()) {
@@ -119,9 +121,9 @@ export class ToolPanelContextMenu extends Component {
         // column does not suppress it, matching how the grid only blocks the browser menu when it has items.
         const handled = menuItemsMapped.length > 0 || colOrGroupDef?.columnMenuItems != null;
         if (handled) {
-            const mouseEventOrTouch = this.mouseEventOrTouch;
-            if ('preventDefault' in mouseEventOrTouch) {
-                mouseEventOrTouch.preventDefault();
+            const trigger = this.trigger;
+            if ('preventDefault' in trigger) {
+                trigger.preventDefault();
             }
         }
 
@@ -145,7 +147,7 @@ export class ToolPanelContextMenu extends Component {
             if (item === 'moveUp' || item === 'moveDown') {
                 const isUp = item === 'moveUp';
                 if (!this.isMoveSuppressed()) {
-                    const isDisabled = () => this.gos.get('functionsReadOnly') || !this.columnMove?.canMove(isUp);
+                    const isDisabled = () => !this.columnMove?.canMove(isUp);
                     expanded.push({
                         name: this.getLocaleTextFunc()(item, isUp ? 'Move Up' : 'Move Down'),
                         icon: _createIconNoSpan(isUp ? 'menuMoveUp' : 'menuMoveDown', this.beans, column),
@@ -250,7 +252,7 @@ export class ToolPanelContextMenu extends Component {
             activateFunction: () => {
                 const columns = this.addColumnsToList(updateStrategy.getRowGroupColumns(deferMode), rowGroupAllowed);
                 updateStrategy.setRowGroupColumns(deferMode, columns, this.eventType);
-                refreshDeferredToolPanelUi(this.beans, this.params);
+                this.refreshDeferredUi();
             },
             deActivateFunction: () => {
                 const columns = this.removeColumnsFromList(
@@ -258,7 +260,7 @@ export class ToolPanelContextMenu extends Component {
                     rowGroupAllowed
                 );
                 updateStrategy.setRowGroupColumns(deferMode, columns, this.eventType);
-                refreshDeferredToolPanelUi(this.beans, this.params);
+                this.refreshDeferredUi();
             },
             addIcon: 'menuAddRowGroup',
             removeIcon: 'menuRemoveRowGroup',
@@ -276,12 +278,12 @@ export class ToolPanelContextMenu extends Component {
             activateFunction: () => {
                 const columns = this.addColumnsToList(updateStrategy.getValueColumns(deferMode), valueAllowed);
                 updateStrategy.setValueColumns(deferMode, columns, this.eventType);
-                refreshDeferredToolPanelUi(this.beans, this.params);
+                this.refreshDeferredUi();
             },
             deActivateFunction: () => {
                 const columns = this.removeColumnsFromList(updateStrategy.getValueColumns(deferMode), valueAllowed);
                 updateStrategy.setValueColumns(deferMode, columns, this.eventType);
-                refreshDeferredToolPanelUi(this.beans, this.params);
+                this.refreshDeferredUi();
             },
             addIcon: VALUE_TOKEN.icon,
             removeIcon: VALUE_TOKEN.icon,
@@ -299,17 +301,25 @@ export class ToolPanelContextMenu extends Component {
             activateFunction: () => {
                 const columns = this.addColumnsToList(updateStrategy.getPivotColumns(deferMode), pivotAllowed);
                 updateStrategy.setPivotColumns(deferMode, columns, this.eventType);
-                refreshDeferredToolPanelUi(this.beans, this.params);
+                this.refreshDeferredUi();
             },
             deActivateFunction: () => {
                 const columns = this.removeColumnsFromList(updateStrategy.getPivotColumns(deferMode), pivotAllowed);
                 updateStrategy.setPivotColumns(deferMode, columns, this.eventType);
-                refreshDeferredToolPanelUi(this.beans, this.params);
+                this.refreshDeferredUi();
             },
             addIcon: PIVOT_TOKEN.icon,
             removeIcon: PIVOT_TOKEN.icon,
             mutatesState: true,
         });
+    }
+
+    /** Deferred updates rebuild the list rows, destroying the row this menu restores focus to. */
+    private refreshDeferredUi(): void {
+        refreshDeferredToolPanelUi(this.beans, this.params);
+        if (isDeferredMode(this.params)) {
+            this.refocusIfLost?.(this.parentEl);
+        }
     }
 
     private isColumnValidForScrollIntoView(col: AgColumn): boolean {
@@ -353,7 +363,7 @@ export class ToolPanelContextMenu extends Component {
             menuItems: menuItemsMapped,
             menuContext: { column, columnGroup, node: null, value: null },
             ePopup: this.getGui(),
-            positionBy: this.mouseEventOrTouch,
+            positionBy: this.trigger instanceof KeyboardEvent ? this.parentEl : this.trigger,
             restoreFocus: () => this.parentEl.focus(),
         });
     }
@@ -370,13 +380,7 @@ export class ToolPanelContextMenu extends Component {
     }
 
     private isMoveSuppressed(): boolean {
-        const colMoves = this.beans.colMoves;
-        return (
-            this.gos.get('functionsReadOnly') ||
-            !this.columnMove ||
-            !colMoves ||
-            colMoves.isMovingSuppressed(this.columns)
-        );
+        return !this.columnMove || isMoveBlocked(this.beans, this.columns, this.params);
     }
 
     private getDefaultTokens(): (DefaultToolPanelItem | 'separator')[] {

@@ -1,7 +1,7 @@
 import type { ExcelOOXMLTemplate, ExcelProtection } from 'ag-grid-community';
 
 const protectionFactory: ExcelOOXMLTemplate = {
-    getTemplate(protection: ExcelProtection) {
+    getTemplate(protection: Partial<ExcelProtection>) {
         const locked = protection.protected === false ? 0 : 1;
         const hidden = protection.hideFormula === true ? 1 : 0;
         return {

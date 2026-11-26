@@ -49,9 +49,24 @@ export const ALIAS_HOSTS = [
     'angular-grid.ag-grid.com',
     'javascript-grid.ag-grid.com',
     'react-grid.ag-grid.com',
-    'angulargrid.com',
-    'www.angulargrid.com',
 ];
+
+// Hosts the generators listed before their own CloudFront distribution took them over (it redirects
+// them before they reach the origin). Deployed files still name them, so their rules are recognised
+// as alias-host rules, but the block no longer covers them.
+const RETIRED_ALIAS_HOSTS = ['angulargrid.com', 'www.angulargrid.com'];
+
+// A generated alias-host list: today's, or today's plus every retired host, in any order.
+function isAliasHostList(hosts) {
+    const current = hosts.filter((host) => !RETIRED_ALIAS_HOSTS.includes(host));
+    const retired = hosts.length - current.length;
+    return (
+        (retired === 0 || retired === RETIRED_ALIAS_HOSTS.length) &&
+        new Set(hosts).size === hosts.length &&
+        current.length === ALIAS_HOSTS.length &&
+        ALIAS_HOSTS.every((host) => current.includes(host))
+    );
+}
 
 const CANONICAL_ORIGIN = 'https://www.ag-grid.com';
 
@@ -170,7 +185,7 @@ function aliasHostsOf(group) {
             return null;
         }
         const host = m[1].replace(/\\\./g, '.');
-        if (!ALIAS_HOSTS.includes(host)) {
+        if (!ALIAS_HOSTS.includes(host) && !RETIRED_ALIAS_HOSTS.includes(host)) {
             return null;
         }
         hosts.push(host);
@@ -432,7 +447,7 @@ function rewriteRecognisers(base) {
                     return null;
                 }
                 const hosts = m[1].split('|').map((host) => host.replace(/\\\./g, '.'));
-                return hosts.length === ALIAS_HOSTS.length && ALIAS_HOSTS.every((host) => hosts.includes(host))
+                return isAliasHostList(hosts)
                     ? { action: 'keep', reason: 'canonicalising trailing-slash redirect' }
                     : null;
             },
@@ -518,8 +533,6 @@ const CANONICAL_SLASH_HOSTS = [
     'angular-grid.ag-grid.com',
     'javascript-grid.ag-grid.com',
     'react-grid.ag-grid.com',
-    'angulargrid.com',
-    'www.angulargrid.com',
     'blog.ag-grid.com',
 ];
 

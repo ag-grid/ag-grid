@@ -217,17 +217,24 @@ export interface ISetFilterParams<TData = any, V = string> extends IProvidedFilt
      */
     keyCreator?: (params: KeyCreatorParams<TData>) => string;
     /**
-     * If `true`, hovering over a value in the Set Filter will show a tooltip containing the full,
-     * untruncated value.
-     *
-     * @default false
+     * When unset, automatically shows truncated grid-rendered values only in `tooltipShowMode: 'auto'`.
+     * Set to `true` to configure value tooltips explicitly, including a column's `tooltipComponent`.
+     * Set to `false` to disable default item tooltips. Renderer-supplied tooltips are unaffected.
      */
     showTooltips?: boolean;
     /**
-     * If `true`, enables case-sensitivity in the SetFilter Mini-Filter and Filter List.
+     * If `true`, enables case-sensitivity of the values in the Filter List, so values that differ only by case
+     * are listed and filtered separately. With `treeList`, values that differ only by case share one entry in the list.
+     * The Mini Filter search still ignores case unless `miniFilterCaseSensitive` is also `true`.
      * @default false
      */
     caseSensitive?: boolean;
+    /**
+     * If `true`, the Mini Filter search is case-sensitive.
+     * Only has an effect when `caseSensitive` is also `true`.
+     * @default false
+     */
+    miniFilterCaseSensitive?: boolean;
     /**
      * Changes the behaviour of the Set Filter to match that of Excel's AutoFilter.
      */
@@ -273,13 +280,15 @@ export interface ISetFilterParams<TData = any, V = string> extends IProvidedFilt
     /**
      * Requires `preservePreviousValues = true`. The most values not in the filter model to keep once they are no
      * longer in the data; the first to leave is discarded first. Values in the filter model, or named by an applied
-     * Advanced Filter expression, are always kept and not counted. Set to `0` to keep only those, or `-1` for no limit.
-     * @default 100
+     * Advanced Filter expression, are always kept and not counted. Set to `0` to keep only those, or `-1` for no limit,
+     * so memory use is unbounded.
+     * @default 1000
      */
     preservePreviousValuesLimit?: number;
     /**
      * Requires `preservePreviousValues = true`. Text shown as given after each value in the Filter List that is no
-     * longer in the data, for example `'(not in rows)'`.
+     * longer in the data, for example `'(not in rows)'`. Screen readers announce it after the value in place of the
+     * `ariaNotInCurrentData` locale text.
      */
     preservePreviousValuesLabel?: string;
 }

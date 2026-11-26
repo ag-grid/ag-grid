@@ -1,5 +1,6 @@
 import {
     Direction,
+    _addManagedElementListeners,
     _debounce,
     _getInnerHeight,
     _getInnerWidth,
@@ -39,7 +40,7 @@ export interface ScrollPartner {
 
 interface VerticalScrollComp extends ScrollPartner {
     getScrollPosition(): number;
-    setScrollPosition(value: number, force?: boolean): void;
+    setScrollPosition(value: number): void;
 }
 
 interface HorizontalScrollComp extends ScrollPartner {
@@ -68,6 +69,7 @@ export class GridBodyScrollFeature extends BeanStub {
     private scrollLeft = 0;
     private nextScrollTop = 0;
     private scrollTop = 0;
+    private pendingFakeVScrollTop: number | null = null;
 
     // Used to provide approximate values of scrollTop and offsetHeight
     // without forcing the browser to recalculate styles.
@@ -125,7 +127,7 @@ export class GridBodyScrollFeature extends BeanStub {
             scrollGapChanged: invalidateHorizontalScroll,
         });
 
-        this.addManagedElementListeners(this.eGridViewport, {
+        _addManagedElementListeners(this, this.eGridViewport, {
             scroll: () => {
                 invalidateVerticalScroll();
                 invalidateHorizontalScroll();
@@ -154,7 +156,7 @@ export class GridBodyScrollFeature extends BeanStub {
     }
 
     private addHorizontalScrollListeners(): void {
-        this.addManagedElementListeners(this.eGridViewport, {
+        _addManagedElementListeners(this, this.eGridViewport, {
             scroll: this.onHScroll.bind(this, VIEWPORT),
         });
 
@@ -169,12 +171,37 @@ export class GridBodyScrollFeature extends BeanStub {
         const onVScroll = isDebounce
             ? _debounce(this, this.onVScroll.bind(this, VIEWPORT), SCROLL_DEBOUNCE_TIMEOUT)
             : this.onVScroll.bind(this, VIEWPORT);
-        const onFakeVScroll = isDebounce
-            ? _debounce(this, this.onVScroll.bind(this, FAKE_V_SCROLLBAR), SCROLL_DEBOUNCE_TIMEOUT)
-            : this.onVScroll.bind(this, FAKE_V_SCROLLBAR);
+        const onFakeVScroll = isDebounce ? this.debounceFakeVScroll() : this.onVScroll.bind(this, FAKE_V_SCROLLBAR);
 
-        this.addManagedElementListeners(this.eGridViewport, { scroll: onVScroll });
+        _addManagedElementListeners(this, this.eGridViewport, { scroll: onVScroll });
         this.fakeVScrollComp.onScrollCallback(onFakeVScroll);
+    }
+
+    private debounceFakeVScroll(): () => void {
+        const onScroll = _debounce(
+            this,
+            () => {
+                if (
+                    this.pendingFakeVScrollTop == null &&
+                    this.fakeVScrollComp.getScrollPosition() !== this.eGridViewport.scrollTop
+                ) {
+                    return;
+                }
+                this.pendingFakeVScrollTop = null;
+                this.onVScroll(FAKE_V_SCROLLBAR);
+            },
+            SCROLL_DEBOUNCE_TIMEOUT
+        );
+        return () => {
+            const scrollTop = this.fakeVScrollComp.getScrollPosition();
+            // Matching positions may still need processing, but do not need protection from a height sync.
+            this.pendingFakeVScrollTop = scrollTop === this.eGridViewport.scrollTop ? null : scrollTop;
+            onScroll();
+        };
+    }
+
+    public getVerticalScrollPositionForSync(): number {
+        return this.pendingFakeVScrollTop ?? this.eGridViewport.scrollTop;
     }
 
     private onDisplayedColumnsWidthChanged(): void {
@@ -195,9 +222,7 @@ export class GridBodyScrollFeature extends BeanStub {
             return;
         }
 
-        if (scrollLeft === undefined) {
-            scrollLeft = _getScrollLeft(this.eGridViewport, this.enableRtl);
-        }
+        scrollLeft ??= _getScrollLeft(this.eGridViewport, this.enableRtl);
 
         this.setScrollLeftForAllContainersExceptCurrent(Math.abs(scrollLeft));
     }
@@ -308,7 +333,7 @@ export class GridBodyScrollFeature extends BeanStub {
             this.invalidateVerticalScroll();
 
             if (scrollTop !== requestedScrollTop) {
-                this.fakeVScrollComp.setScrollPosition(scrollTop, true);
+                this.fakeVScrollComp.setScrollPosition(scrollTop);
             }
         }
 
@@ -533,10 +558,10 @@ export class GridBodyScrollFeature extends BeanStub {
         this.setVerticalScrollPosition(0);
     }
 
-    // Valid values for position are bottom, middle and top
+    // Valid values for position are auto (or null), top, middle and bottom
     public ensureNodeVisible<TData = any>(
         comparator: TData | IRowNode<TData> | ((row: IRowNode<TData>) => boolean),
-        position: 'top' | 'bottom' | 'middle' | null = null
+        position: 'auto' | 'top' | 'bottom' | 'middle' | null = null
     ) {
         const { rowModel } = this.beans;
         // look for the node index we want to display
@@ -564,13 +589,13 @@ export class GridBodyScrollFeature extends BeanStub {
         }
     }
 
-    // Valid values for position are bottom, middle and top
+    // Valid values for position are auto (or null), top, middle and bottom
     // position should be {'top','middle','bottom', or undefined/null}.
     // if undefined/null, then the grid will to the minimal amount of scrolling,
     // eg if grid needs to scroll up, it scrolls until row is on top,
     //    if grid needs to scroll down, it scrolls until row is on bottom,
     //    if row is already in view, grid does not scroll
-    public ensureIndexVisible(index: number, position?: 'top' | 'bottom' | 'middle' | null, retry = 0) {
+    public ensureIndexVisible(index: number, position?: 'auto' | 'top' | 'bottom' | 'middle' | null, retry = 0) {
         // if for print or auto height, everything is always visible
         if (_isDomLayout(this.gos, 'print')) {
             return;

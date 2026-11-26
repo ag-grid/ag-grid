@@ -1,4 +1,6 @@
-import { ensureGridReady, expect, repeat, scrollGridRelative, test } from '@utils/grid/test-utils';
+import { ensureGridReady, expect, gridApiHandle, repeat, scrollGridRelative, test } from '@utils/grid/test-utils';
+
+import type { GridOptions } from 'ag-grid-community';
 
 test.agExample(import.meta, () => {
     if (process.env.PRE_34_VERSION) {
@@ -11,15 +13,17 @@ test.agExample(import.meta, () => {
     });
 
     // AG-15758
-    [
-        { editType: 'fullRow', tabCount: 8 },
-        { editType: 'singleCell', tabCount: 4 },
-    ].forEach(({ editType, tabCount }) =>
+    (
+        [
+            { editType: 'fullRow', tabCount: 8 },
+            { editType: 'singleCell', tabCount: 4 },
+        ] satisfies Array<{ editType: GridOptions['editType']; tabCount: number }>
+    ).forEach(({ editType, tabCount }) =>
         test.eachFramework(
             `[${editType}] should edit then tab to next row without error`,
-            async ({ page, agIdFor, remoteGrid }) => {
-                const remoteApi = remoteGrid(page);
-                await remoteApi.setGridOption('editType', editType);
+            async ({ page, agIdFor }) => {
+                const api = await gridApiHandle(page);
+                await api.evaluate((api, editType) => api.setGridOption('editType', editType), editType);
 
                 const modelCellRow1 = agIdFor.cell('1', 'model-1-1');
                 await modelCellRow1.dblclick();
@@ -43,33 +47,29 @@ test.agExample(import.meta, () => {
     );
 
     // AG-15796
-    test.eachFramework(
-        'should edit then tab to next row and commit the edit',
-        async ({ page, agIdFor, remoteGrid }) => {
-            const remoteApi = remoteGrid(page);
-            await remoteApi.setGridOption('editType', 'fullRow');
-            const colDefs = (await remoteApi.getColumnDefs()) as any[];
-            await remoteApi.setGridOption('columnDefs', colDefs.slice(0, 3));
+    test.eachFramework('should edit then tab to next row and commit the edit', async ({ page, agIdFor }) => {
+        const api = await gridApiHandle(page);
+        await api.evaluate((api) => api.setGridOption('editType', 'fullRow'));
+        await api.evaluate((api) => api.setGridOption('columnDefs', (api.getColumnDefs() ?? []).slice(0, 3)));
 
-            const modelCellRow1 = agIdFor.cell('1', 'model-1-1');
-            await modelCellRow1.dblclick();
+        const modelCellRow1 = agIdFor.cell('1', 'model-1-1');
+        await modelCellRow1.dblclick();
 
-            const modelEditor1 = modelCellRow1.locator('input');
-            await expect(modelEditor1).toBeVisible();
-            await expect(modelEditor1).toBeFocused();
-            await page.waitForTimeout(10);
+        const modelEditor1 = modelCellRow1.locator('input');
+        await expect(modelEditor1).toBeVisible();
+        await expect(modelEditor1).toBeFocused();
+        await page.waitForTimeout(10);
 
-            await page.keyboard.type('XYZ');
+        await page.keyboard.type('XYZ');
 
-            const tabAction = async () => await page.keyboard.press('Tab');
+        const tabAction = async () => await page.keyboard.press('Tab');
 
-            await repeat(page, 'tab to new row', tabAction, { count: 2, eachWait: 10 });
+        await repeat(page, 'tab to new row', tabAction, { count: 2, eachWait: 10 });
 
-            // here the 2nd, 2nd cell row should be editing
-            const modelCellRow2 = agIdFor.cell('1', 'model-1-1');
-            await expect(modelCellRow2).toHaveText('XYZ');
-        }
-    );
+        // here the 2nd, 2nd cell row should be editing
+        const modelCellRow2 = agIdFor.cell('1', 'model-1-1');
+        await expect(modelCellRow2).toHaveText('XYZ');
+    });
 
     // AG-15758
     test.eachFramework('should edit then scroll around without error', async ({ page, agIdFor }) => {
@@ -115,43 +115,40 @@ test.agExample(import.meta, () => {
     });
 
     // AG-15797
-    test.eachFramework(
-        'should edit then scroll back and forth without losing editors',
-        async ({ page, agIdFor, remoteGrid }) => {
-            const remoteApi = remoteGrid(page);
-            await remoteApi.setGridOption('editType', 'fullRow');
+    test.eachFramework('should edit then scroll back and forth without losing editors', async ({ page, agIdFor }) => {
+        const api = await gridApiHandle(page);
+        await api.evaluate((api) => api.setGridOption('editType', 'fullRow'));
 
-            const verticalView = page.locator('.ag-grid-scrolling-container.ag-row-animation');
-            await expect(verticalView).toBeVisible();
-            const horizontalView = page.locator('.ag-grid-viewport.ag-layout-normal');
-            await expect(horizontalView).toBeVisible();
+        const verticalView = page.locator('.ag-grid-scrolling-container.ag-row-animation');
+        await expect(verticalView).toBeVisible();
+        const horizontalView = page.locator('.ag-grid-viewport.ag-layout-normal');
+        await expect(horizontalView).toBeVisible();
 
-            const cell = agIdFor.cell('1', 'model-1-1');
-            await cell.dblclick();
-            const cellEditor = cell.locator('input');
-            await expect(cellEditor).toBeVisible();
+        const cell = agIdFor.cell('1', 'model-1-1');
+        await cell.dblclick();
+        const cellEditor = cell.locator('input');
+        await expect(cellEditor).toBeVisible();
 
-            const cell1 = agIdFor.cell('1', 'make-0-0');
-            await expect(cell1).toBeVisible();
-            const cellEditor1 = cell1.getByRole('combobox');
-            await expect(cellEditor1).toBeVisible();
+        const cell1 = agIdFor.cell('1', 'make-0-0');
+        await expect(cell1).toBeVisible();
+        const cellEditor1 = cell1.getByRole('combobox');
+        await expect(cellEditor1).toBeVisible();
 
-            const maxX = 1200;
+        const maxX = 1200;
 
-            await scrollGridRelative('wheel', page, { x: maxX, xStep: 400 });
-            await page.waitForTimeout(10);
-            await scrollGridRelative('wheel', page, { x: -maxX, xStep: -400 });
+        await scrollGridRelative('wheel', page, { x: maxX, xStep: 400 });
+        await page.waitForTimeout(10);
+        await scrollGridRelative('wheel', page, { x: -maxX, xStep: -400 });
 
-            await page.waitForTimeout(10);
+        await page.waitForTimeout(10);
 
-            const cell2 = agIdFor.cell('1', 'model-1-1');
-            await expect(cell2).toBeVisible();
-            const cellEditor2 = cell2.locator('input');
-            await expect(cellEditor2).toBeVisible();
-            const cell3 = agIdFor.cell('1', 'make-0-0');
-            await expect(cell3).toBeVisible();
-            const cellEditor3 = cell3.getByRole('combobox');
-            await expect(cellEditor3).toBeVisible();
-        }
-    );
+        const cell2 = agIdFor.cell('1', 'model-1-1');
+        await expect(cell2).toBeVisible();
+        const cellEditor2 = cell2.locator('input');
+        await expect(cellEditor2).toBeVisible();
+        const cell3 = agIdFor.cell('1', 'make-0-0');
+        await expect(cell3).toBeVisible();
+        const cellEditor3 = cell3.getByRole('combobox');
+        await expect(cellEditor3).toBeVisible();
+    });
 });

@@ -1,4 +1,4 @@
-import { getByTestId, waitFor } from '@testing-library/dom';
+import { fireEvent, getByTestId, waitFor } from '@testing-library/dom';
 import '@testing-library/jest-dom/vitest';
 import { act, cleanup, render } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
@@ -15,7 +15,7 @@ import {
 import type { CellRendererSelectorResult, ColDef, GridApi } from 'ag-grid-community';
 import { FormulaModule, RowGroupingModule } from 'ag-grid-enterprise';
 import { AgGridReact } from 'ag-grid-react';
-import type { CustomCellRendererProps } from 'ag-grid-react';
+import type { CustomCellRendererProps, CustomTooltipProps } from 'ag-grid-react';
 
 import { allowLegacyTooltipProperties, resetLegacyTooltipProperties } from './legacyTooltipTestUtils';
 
@@ -28,6 +28,7 @@ describe('Tooltips (React)', () => {
     afterEach(() => {
         cleanup();
         resetLegacyTooltipProperties();
+        vi.restoreAllMocks();
     });
 
     const hasTooltipText = (text: string) => getTooltips().some((tooltip) => tooltip.textContent?.includes(text));
@@ -39,6 +40,97 @@ describe('Tooltips (React)', () => {
         return <span>{String(props.value)}</span>;
     };
     const PlainRenderer = (props: CustomCellRendererProps) => <span>{String(props.value)}</span>;
+
+    test.each([false, true])('refreshes hovered native titles after React renders (group=%s)', async (group) => {
+        let api: GridApi;
+        const columnDefs: ColDef[] = [{ field: 'value', cellRenderer: group ? 'agGroupCellRenderer' : undefined }];
+        const createGrid = () =>
+            render(
+                <React.StrictMode>
+                    <AgGridReact
+                        columnDefs={columnDefs}
+                        rowData={[{ value: 'Short' }]}
+                        enableBrowserTooltips
+                        onGridReady={(event) => (api = event.api)}
+                    />
+                </React.StrictMode>
+            );
+
+        for (let mount = 0; mount < 2; mount++) {
+            const rendered = createGrid();
+            const cell = await waitFor(() => getByTestId(rendered.container, agTestIdFor.cell('0', 'value')));
+            // Group renderers replace their text element when refreshed.
+            const measure = vi.spyOn(HTMLElement.prototype, 'scrollWidth', 'get').mockImplementation(function (
+                this: HTMLElement
+            ) {
+                return this.textContent!.length * 10;
+            });
+            vi.spyOn(HTMLElement.prototype, 'clientWidth', 'get').mockReturnValue(100);
+            vi.spyOn(HTMLElement.prototype, 'scrollHeight', 'get').mockReturnValue(20);
+            vi.spyOn(HTMLElement.prototype, 'clientHeight', 'get').mockReturnValue(20);
+            fireEvent.mouseEnter(cell);
+            expect(cell).toHaveAttribute('title', '');
+
+            for (const value of ['Long displayed value which does not fit', 'Short']) {
+                await act(async () => {
+                    api.getDisplayedRowAtIndex(0)!.setDataValue('value', value);
+                });
+                await waitFor(() => {
+                    expect(cell).toHaveTextContent(value);
+                    expect(cell).toHaveAttribute('title', value === 'Short' ? '' : value);
+                });
+            }
+            fireEvent.mouseLeave(cell);
+            measure.mockClear();
+            await act(async () => {
+                api.getDisplayedRowAtIndex(0)!.setDataValue('value', 'Another long displayed value');
+            });
+            await waitFor(() => expect(cell).toHaveTextContent('Another long displayed value'));
+            expect(measure).not.toHaveBeenCalled();
+            expect(cell).toHaveAttribute('title', '');
+            fireEvent.mouseEnter(cell);
+            expect(cell).toHaveAttribute('title', 'Another long displayed value');
+            await act(async () => rendered.unmount());
+            expect(cell).not.toHaveAttribute('title');
+            vi.restoreAllMocks();
+        }
+    });
+
+    test('renders a structured tooltip payload for a numeric column', async () => {
+        type RowData = { amount: number };
+        type Context = { prefix: string };
+        type Payload = { label: string };
+        const Tooltip = (props: CustomTooltipProps<RowData, number, Context, Payload>) => {
+            expectTypeOf(props.value).toEqualTypeOf<Payload | null | undefined>();
+            expectTypeOf<CustomTooltipProps<RowData, number, Context>['value']>().toEqualTypeOf<
+                number | null | undefined
+            >();
+            return (
+                <span>
+                    {props.context.prefix}
+                    {props.value?.label}
+                </span>
+            );
+        };
+        const columnDefs: ColDef<RowData, number>[] = [
+            {
+                field: 'amount',
+                tooltip: ({ value }) => ({ label: `$${value}.00` }),
+                tooltipComponent: Tooltip,
+            },
+        ];
+        const rendered = render(
+            <AgGridReact<RowData>
+                columnDefs={columnDefs}
+                rowData={[{ amount: 7 }]}
+                context={{ prefix: 'Amount: ' }}
+                tooltipShowDelay={0}
+            />
+        );
+        const cell = await waitFor(() => getByTestId(rendered.container, agTestIdFor.cell('0', 'amount')));
+        await userEvent.hover(cell);
+        await waitFor(() => expect(hasTooltipText('Amount: $7.00')).toBe(true));
+    });
 
     test('AG-17663 destroys cell renderer tooltip when cellRendererSelector swaps the renderer (React)', async () => {
         let api: GridApi | undefined;
@@ -348,7 +440,7 @@ describe('Tooltips (React)', () => {
                 {
                     field: 'A',
                     width: 200,
-                    tooltip: 'Should not show',
+                    tooltip: true,
                     cellRendererSelector: (): CellRendererSelectorResult | undefined => undefined,
                 },
             ];

@@ -1,7 +1,7 @@
 import { Direction } from '../constants/direction';
 import { KeyCode } from '../constants/keyCode';
-import { AgBeanStub } from '../core/agBeanStub';
-import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
+import { AgAbstractBean } from '../core/agAbstractBean';
+import type { AgBeanCollection } from '../interfaces/agBeanCollection';
 import type { BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
 import type {
@@ -17,7 +17,7 @@ import type { IPopupService } from '../interfaces/iPopupService';
 import type { IPropertiesService } from '../interfaces/iProperties';
 import { _initStyledRoot } from '../theming/styledRoot';
 import { _setAriaLabel, _setAriaOwns, _setAriaRole } from '../utils/aria';
-import { _getActiveDomElement, _getDocument } from '../utils/document';
+import { _getActiveDomElement, _getDocument, _getRootNode } from '../utils/document';
 import {
     _createAgElement,
     _getAbsoluteHeight,
@@ -25,7 +25,7 @@ import {
     _getElementRectWithOffset,
     _observeResize,
 } from '../utils/dom';
-import { _isElementInEventPath } from '../utils/event';
+import { _getEventPath, _isElementInEventPath } from '../utils/event';
 import { _exists } from '../utils/generic';
 import { AgPromise, _wrapInterval } from '../utils/promise';
 import { computeAlignedPosition, toRelativeRect } from './popupPositionUtils';
@@ -52,19 +52,26 @@ interface Position {
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export abstract class BasePopupService<
-    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TBeanCollection extends AgBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
-    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
+    TPropertiesService extends IPropertiesService<TProperties>,
     TPopupPositionParams,
 >
-    extends AgBeanStub<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService>
+    extends AgAbstractBean<TBeanCollection, TProperties, TGlobalEvents, TPropertiesService>
     implements IPopupService<TPopupPositionParams>
 {
     beanName = 'popupSvc' as const;
 
     protected popupList: AgPopup[] = [];
+
+    public override destroy(): void {
+        for (const popup of this.popupList.slice()) {
+            popup.hideFunc({ forceHide: true });
+        }
+        super.destroy();
+    }
 
     public getPopupParent(): HTMLElement {
         const ePopupParent = this.gos.get('popupParent');
@@ -227,8 +234,14 @@ export abstract class BasePopupService<
         parentRect: DOMRect,
         nudgeY: number
     ): 'under' | 'above' {
-        const spaceAvailableUnder = parentRect.bottom - targetCompRect.bottom;
-        const spaceAvailableAbove = targetCompRect.top - parentRect.top;
+        const popupParent = this.getPopupParent();
+        const { documentElement, body } = popupParent.ownerDocument;
+        // <html> can end above the page content (html { height: 100% }), so a body parent is bounded by the viewport
+        const isBody = popupParent === body;
+        const bottom = isBody ? documentElement.clientHeight : parentRect.bottom;
+        const top = isBody ? 0 : parentRect.top;
+        const spaceAvailableUnder = bottom - targetCompRect.bottom;
+        const spaceAvailableAbove = targetCompRect.top - top;
         const spaceRequired = ePopup.offsetHeight + nudgeY;
 
         if (spaceAvailableUnder > spaceRequired) {
@@ -294,8 +307,9 @@ export abstract class BasePopupService<
         const lastSize = { width: 0, height: 0 };
 
         const updatePopupPosition = (fromResizeObserver: boolean = false) => {
-            let { x, y } = updatePosition!();
-
+            if (fromResizeObserver && !ePopup.isConnected) {
+                return;
+            }
             if (
                 fromResizeObserver &&
                 ePopup.clientWidth === lastSize.width &&
@@ -304,8 +318,11 @@ export abstract class BasePopupService<
                 return;
             }
 
-            lastSize.width = ePopup.clientWidth;
-            lastSize.height = ePopup.clientHeight;
+            let { x, y } = updatePosition!();
+            if (!skipObserver) {
+                lastSize.width = ePopup.clientWidth;
+                lastSize.height = ePopup.clientHeight;
+            }
 
             if (nudgeX) {
                 x += nudgeX;
@@ -419,6 +436,7 @@ export abstract class BasePopupService<
         }
 
         const wrapperEl = _createAgElement({ tag: 'div', cls: 'ag-popup' });
+        this.beans.environment.setInstanceDomData(wrapperEl);
         wrapperEl.appendChild(eChild);
         const disconnect = _initStyledRoot(this.beans.environment, this.getPopupParent(), wrapperEl);
 
@@ -481,6 +499,10 @@ export abstract class BasePopupService<
         const hidePopupOnTouchEvent = (event: TouchEvent) => removeListeners({ touchEvent: event });
 
         const removeListeners = (popupParams: PopupEventParams = {}) => {
+            // Once only, forced or not: the client can have different paths, each one wanting to close.
+            if (popupHidden) {
+                return;
+            }
             const eventSourceToIgnore =
                 typeof params.eventSourceToIgnore === 'function'
                     ? params.eventSourceToIgnore()
@@ -497,10 +519,7 @@ export abstract class BasePopupService<
                     (!!eventSourceToIgnore &&
                         isSourceDismissalEvent &&
                         !!pointerEvent &&
-                        _isElementInEventPath(eventSourceToIgnore, pointerEvent)) ||
-                    // this method should only be called once. the client can have different
-                    // paths, each one wanting to close, so this method may be called multiple times.
-                    popupHidden)
+                        _isElementInEventPath(eventSourceToIgnore, pointerEvent)))
             ) {
                 return;
             }
@@ -530,6 +549,9 @@ export abstract class BasePopupService<
         // if we add these listeners now, then the current mouse
         // click will be included, which we don't want
         window.setTimeout(() => {
+            if (popupHidden) {
+                return;
+            }
             if (closeOnEsc) {
                 eDocument.addEventListener('keydown', hidePopupOnKeyboardEvent);
             }
@@ -717,23 +739,36 @@ export abstract class BasePopupService<
         // if the user did not write their own Custom Element to be rendered as popup
         // and this component has an additional popup element, they should have the
         // `ag-custom-component-popup` class to be detected as part of the Custom Component
-        return this.isElementWithinCustomPopup(event.target as HTMLElement);
+        return this.isElementWithinCustomPopup(_getEventPath(event)[0] as HTMLElement);
     }
 
     public isElementWithinCustomPopup(el: HTMLElement): boolean {
         const eDocument = _getDocument(this.beans);
         const eRootDiv = this.beans.eRootDiv;
-        while (el && el !== eDocument.body) {
+        const rootNode = _getRootNode(this.beans);
+        // `contains` does not see into a shadow root, so a popup around a grid in one contains its host instead.
+        const eGridHost = rootNode instanceof ShadowRoot ? rootNode.host : eRootDiv;
+        let current: Element | undefined = el;
+        while (current && current !== eDocument.body) {
             // Don't flag an element as being inside a custom pop-up if said popup contains this whole grid.
             // Otherwise, if one grid opens a custom popup containing a second grid, then every cell in the
             // second grid would count as being inside a custom popup
             if (
-                el.parentElement === null ||
-                (el.classList.contains('ag-custom-component-popup') && !el.contains(eRootDiv))
+                current.classList.contains('ag-custom-component-popup') &&
+                !current.contains(eRootDiv) &&
+                !current.contains(eGridHost)
             ) {
                 return true;
             }
-            el = el.parentElement;
+            const parentElement: HTMLElement | null = current.parentElement;
+            const parentNode: ParentNode | null = current.parentNode;
+            if (parentElement) {
+                current = parentElement;
+            } else if (parentNode instanceof ShadowRoot) {
+                current = parentNode.host;
+            } else {
+                return true;
+            }
         }
 
         return false;

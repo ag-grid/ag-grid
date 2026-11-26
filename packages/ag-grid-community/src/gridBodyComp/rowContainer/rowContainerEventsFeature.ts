@@ -1,5 +1,6 @@
 import {
     KeyCode,
+    _addManagedElementListeners,
     _isEventFromPrintableCharacter,
     _isEventFromThisInstance,
     _isEventSupported,
@@ -13,6 +14,7 @@ import { _getCtrlASelectsRows, _getSelectAll, _isCellSelectionEnabled, _isRowSel
 import type { IClipboardService } from '../../interfaces/iClipboardService';
 import type { GetNoteParams } from '../../interfaces/notes';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
+import { _onSuppressedCellKeyDown } from '../../rendering/cell/cellKeyboardListenerFeature';
 import { _getCellCtrlForEventTarget, _getRowCtrlForEventTarget } from '../../rendering/renderUtils';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
 import type { UndoRedoService } from '../../undoRedo/undoRedoService';
@@ -22,6 +24,8 @@ import { _selectAllCells } from '../../utils/selection';
 
 export class RowContainerEventsFeature extends BeanStub {
     private editSvc?: EditService;
+    private mouseDownEvent = 'mousedown';
+    private pendingTouchDown: MouseEvent | null = null;
 
     constructor(public readonly element: HTMLElement) {
         super();
@@ -37,29 +41,56 @@ export class RowContainerEventsFeature extends BeanStub {
     private addKeyboardListeners(): void {
         const eventName = 'keydown';
         const listener = this.processKeyboardEvent.bind(this, eventName);
-        this.addManagedElementListeners(this.element, { [eventName]: listener });
+        _addManagedElementListeners(this, this.element, { [eventName]: listener });
     }
 
     private addMouseListeners(): void {
-        let mouseDownEvent = 'mousedown';
         if (_isEventSupported('pointerdown')) {
-            mouseDownEvent = 'pointerdown';
+            this.mouseDownEvent = 'pointerdown';
         } else if (_isEventSupported('touchstart')) {
-            mouseDownEvent = 'touchstart';
+            this.mouseDownEvent = 'touchstart';
         }
-        const eventNames = ['dblclick', 'contextmenu', 'mouseover', 'mouseout', 'click', mouseDownEvent];
+        const eventNames = ['dblclick', 'contextmenu', 'mouseover', 'mouseout', 'click', this.mouseDownEvent];
 
         for (const eventName of eventNames) {
             const listener = this.processMouseEvent.bind(this, eventName);
-            this.addManagedElementListeners(this.element, { [eventName]: listener });
+            _addManagedElementListeners(this, this.element, { [eventName]: listener });
         }
     }
 
     private processMouseEvent(eventName: string, mouseEvent: MouseEvent): void {
-        if (!_isEventFromThisInstance(this.beans, mouseEvent) || _isStopPropagationForAgGrid(mouseEvent)) {
+        if (!_isEventFromThisInstance(this.beans, mouseEvent)) {
             return;
         }
 
+        const stoppedForGrid = _isStopPropagationForAgGrid(mouseEvent);
+        if (eventName === this.mouseDownEvent) {
+            this.pendingTouchDown = !stoppedForGrid && isTouchPress(mouseEvent) ? mouseEvent : null;
+            if (this.pendingTouchDown) {
+                // a touch may turn into a scroll, so the press is only handled once a tap or long press confirms it
+                return;
+            }
+        } else if (eventName === 'click' || eventName === 'contextmenu') {
+            // a click or contextmenu proves the deferred touch press was a tap or long press, so replay it first;
+            // this runs even when a control (checkbox, group chevron) stopped the click reaching the grid
+            this.confirmPendingTouchDown(mouseEvent.target);
+        }
+
+        if (!stoppedForGrid) {
+            this.dispatchMouseEvent(eventName, mouseEvent);
+        }
+    }
+
+    /** Replays a deferred touch press once a tap or long press confirms it on the same target; a scroll never does. */
+    public confirmPendingTouchDown(target: EventTarget | null): void {
+        const touchDown = this.pendingTouchDown;
+        this.pendingTouchDown = null;
+        if (touchDown?.target === target) {
+            this.dispatchMouseEvent(this.mouseDownEvent, touchDown);
+        }
+    }
+
+    private dispatchMouseEvent(eventName: string, mouseEvent: MouseEvent): void {
         const { cellCtrl, rowCtrl } = this.getControlsForEventTarget(mouseEvent.target);
 
         if (eventName === 'contextmenu') {
@@ -132,6 +163,8 @@ export class RowContainerEventsFeature extends BeanStub {
                     cellCtrl.processCharacter(keyboardEvent);
                 }
             }
+        } else if (eventName === 'keydown' && !editing) {
+            _onSuppressedCellKeyDown(this.beans, cellCtrl, keyboardEvent);
         }
 
         if (eventName === 'keydown') {
@@ -369,4 +402,12 @@ export class RowContainerEventsFeature extends BeanStub {
     private onCtrlAndY(undoRedo: UndoRedoService | undefined): void {
         undoRedo?.redo('ui');
     }
+}
+
+function isTouchPress(event: Event): boolean {
+    if (event.type === 'touchstart') {
+        return true;
+    }
+    // assistive tech (e.g. Android Voice Access) injects touches with an empty pointerType
+    return 'pointerType' in event && event.pointerType !== 'mouse' && event.pointerType !== 'pen';
 }

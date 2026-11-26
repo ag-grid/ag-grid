@@ -22,4 +22,23 @@ test.agExample(import.meta, () => {
 
         await expect(agIdFor.cell('0', 'age')).toContainText('23');
     });
+
+    test.eachFramework('Group tooltip shows only while the group is collapsed', async ({ page }) => {
+        await ensureGridReady(page);
+        await waitForGridContent(page);
+
+        const athleteGroup = page.locator('.ag-header-group-cell').filter({ hasText: 'Athlete Details' }).first();
+        const tooltip = page.locator('.ag-tooltip:not(.ag-tooltip-hiding)');
+
+        await athleteGroup.locator('.customHeaderLabel').hover();
+        await expect(tooltip).toHaveText('Expand the group to show more columns');
+
+        await athleteGroup.locator('.customExpandButton').click();
+        await page.mouse.move(0, 0);
+        await expect(tooltip).toHaveCount(0);
+        await athleteGroup.locator('.customHeaderLabel').hover();
+        // The default show delay is 2000ms; wait past it before concluding nothing appeared.
+        await page.waitForTimeout(2500);
+        await expect(tooltip).toHaveCount(0);
+    });
 });

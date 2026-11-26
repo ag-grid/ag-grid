@@ -1,7 +1,7 @@
 import React, { StrictMode, useCallback, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import type { ColDef } from 'ag-grid-community';
+import type { AutoGroupColumnDef, ColDef } from 'ag-grid-community';
 import { ClientSideRowModelModule, enableDevValidations } from 'ag-grid-community';
 import {
     ColumnMenuModule,
@@ -11,8 +11,6 @@ import {
     PivotModule,
 } from 'ag-grid-enterprise';
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
-
-import './styles.css';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
@@ -58,7 +56,7 @@ const GridExample = () => {
             minWidth: 130,
         };
     }, []);
-    const autoGroupColumnDef = useMemo<ColDef>(() => {
+    const autoGroupColumnDef = useMemo<AutoGroupColumnDef<IOlympicData>>(() => {
         return {
             minWidth: 200,
         };
@@ -75,16 +73,18 @@ const GridExample = () => {
         <AgGridProvider modules={modules}>
             <div style={containerStyle}>
                 <div className="example-wrapper">
-                    <div className="example-header">
-                        <label>
-                            <span>removePivotHeaderRowWhenSingleValueColumn:</span>
-                            <input
-                                type="checkbox"
-                                id="removePivotHeaderRowWhenSingleValueColumn"
-                                onChange={togglePivotHeader}
-                                defaultChecked
-                            />
-                        </label>
+                    <div className="example-header example-controls">
+                        <div className="controls-row">
+                            <label>
+                                <span>removePivotHeaderRowWhenSingleValueColumn:</span>
+                                <input
+                                    type="checkbox"
+                                    id="removePivotHeaderRowWhenSingleValueColumn"
+                                    onChange={togglePivotHeader}
+                                    defaultChecked
+                                />
+                            </label>
+                        </div>
                     </div>
 
                     <div style={gridStyle}>

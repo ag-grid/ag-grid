@@ -415,6 +415,21 @@ export function buildBreadcrumbList({ pageUrl, items }: BreadcrumbListInput): Js
 }
 
 /**
+ * Reduce inline markdown to plain text for structured data, so a `FAQPage` answer matches the
+ * visible answer and stays valid for rich results. Covers the inline markdown used in FAQ
+ * answers: images, links, bold/italic emphasis, inline code, and line-leading heading, quote and
+ * list markers.
+ */
+export const markdownToPlainText = (markdown: string): string =>
+    markdown
+        .replace(/!\[([^\]]*)\]\([^)]*\)/g, '$1') // images -> alt text
+        .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1') // links -> link text
+        .replace(/(\*\*|__)(.*?)\1/g, '$2') // bold
+        .replace(/(\*|_)(.*?)\1/g, '$2') // italic
+        .replace(/`([^`]+)`/g, '$1') // inline code
+        .replace(/^\s{0,3}(?:#{1,6}|>|[-*+]|\d+\.)\s+/gm, ''); // heading / quote / list markers
+
+/**
  * Build a `FAQPage` node from question/answer pairs. Answers should be plain
  * text (strip any markdown before passing them in) — schema.org allows limited
  * HTML, but the surrounding `serializeJsonLd` does not expect markdown markup.

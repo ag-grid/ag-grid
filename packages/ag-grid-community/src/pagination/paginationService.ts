@@ -48,15 +48,7 @@ export class PaginationService extends BeanStub implements NamedBean {
 
     private isPaginateChildRows(): boolean {
         const gos = this.gos;
-        const shouldPaginate =
-            gos.get('groupHideParentOfSingleChild') ||
-            // following two properties deprecated v32.3.0
-            gos.get('groupRemoveSingleChildren') ||
-            gos.get('groupRemoveLowestSingleChildren');
-        if (shouldPaginate) {
-            return true;
-        }
-        return gos.get('paginateChildRows');
+        return gos.get('groupHideParentOfSingleChild') ? true : gos.get('paginateChildRows');
     }
 
     private onPaginationGridOptionChanged(): void {

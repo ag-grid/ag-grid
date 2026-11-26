@@ -1,69 +1,103 @@
-// happy-dom's `ResizeObserver` drops the callback and never delivers, so every container-resize path in
-// the grid is observed and then never runs. This records the registrations and lets a test fire them.
+// happy-dom's `ResizeObserver` never delivers: this one reports the sizes `mockGridLayout` gives, as a browser would.
 
-type Registration = {
-    readonly callback: ResizeObserverCallback;
-    readonly observer: ResizeObserver;
-    readonly elements: Set<Element>;
-};
+/** "w,h" before an element's first report: as a browser, an element first measuring 0 by 0 is not reported. */
+const UNREPORTED_SIZE = '0,0';
 
-const registrations: Registration[] = [];
+const layoutObservers = new Set<LayoutResizeObserver>();
+/** The `requestAnimationFrame` the pending check is scheduled with: a fake clock swapped out drops its frames. */
+let layoutCheckScheduledWith: typeof window.requestAnimationFrame | null = null;
 
-let originalImpl: typeof ResizeObserver | undefined;
-let installed = false;
+/** happy-dom's observer never delivers; this one reports as a browser does: each observed element's size once it
+ *  is rendered, then each change, checked a frame after a DOM change. An element not rendered measures 0 by 0. */
+class LayoutResizeObserver implements ResizeObserver {
+    private readonly reported = new Map<Element, string>();
 
-class MockResizeObserver implements ResizeObserver {
-    private readonly registration: Registration;
+    constructor(private readonly callback: ResizeObserverCallback) {}
 
-    constructor(callback: ResizeObserverCallback) {
-        this.registration = { callback, observer: this, elements: new Set() };
-        registrations.push(this.registration);
+    public observe(target: Element): void {
+        if (this.reported.has(target)) {
+            return;
+        }
+        this.reported.set(target, UNREPORTED_SIZE);
+        layoutObservers.add(this);
+        scheduleLayoutCheck();
     }
 
-    public observe(element: Element): void {
-        this.registration.elements.add(element);
-    }
-
-    public unobserve(element: Element): void {
-        this.registration.elements.delete(element);
+    public unobserve(target: Element): void {
+        this.reported.delete(target);
+        if (this.reported.size === 0) {
+            layoutObservers.delete(this);
+        }
     }
 
     public disconnect(): void {
-        this.registration.elements.clear();
+        this.reported.clear();
+        layoutObservers.delete(this);
     }
-}
 
-/**
- * Install before creating the grid, which observes during construction, and call the returned uninstaller
- * in `finally`. Deliberately silent on `observe`, unlike a real observer: delivering there would start the
- * container-resize paths in every suite that has never run them.
- */
-export function installMockResizeObserver(): () => void {
-    if (installed) {
-        throw new Error('mock ResizeObserver already installed: the first uninstall would undo both');
-    }
-    originalImpl = window.ResizeObserver;
-    window.ResizeObserver = MockResizeObserver;
-    registrations.length = 0;
-    installed = true;
-
-    return () => {
-        window.ResizeObserver = originalImpl!;
-        originalImpl = undefined;
-        registrations.length = 0;
-        installed = false;
-    };
-}
-
-/** The grid throttles these callbacks to an animation frame, so poll the assertion rather than reading it
- *  straight back. Entries are empty because no `_observeResize` callback reads them. A `target` fires only
- *  the observers watching it, as a real resize of that element would. */
-export function triggerResizeObservers(target?: Element): void {
-    // Copied: a callback may observe or disconnect, which would otherwise mutate the list mid-iteration.
-    for (const registration of registrations.slice()) {
-        const { elements, observer } = registration;
-        if (target ? elements.has(target) : elements.size) {
-            registration.callback([], observer);
+    /** `forced`: those targets (`true`: every one) are reported whether or not their size changed. */
+    public deliver(forced: Element | boolean): void {
+        let entries: ResizeObserverEntry[] | null = null;
+        for (const [target, last] of this.reported) {
+            const rendered = target instanceof HTMLElement && target.offsetParent != null;
+            const rect = rendered ? target.getBoundingClientRect() : new DOMRect(0, 0, 0, 0);
+            const size = `${rect.width},${rect.height}`;
+            if (size !== last || forced === true || forced === target) {
+                this.reported.set(target, size);
+                const boxSize = [{ inlineSize: rect.width, blockSize: rect.height }];
+                entries ??= [];
+                entries.push({
+                    target,
+                    contentRect: rect,
+                    borderBoxSize: boxSize,
+                    contentBoxSize: boxSize,
+                    devicePixelContentBoxSize: boxSize,
+                });
+            }
         }
+        if (entries !== null) {
+            this.callback(entries, this);
+        }
+    }
+}
+
+function scheduleLayoutCheck(): void {
+    const requestFrame = window.requestAnimationFrame;
+    if (layoutCheckScheduledWith === requestFrame || layoutObservers.size === 0) {
+        return;
+    }
+    layoutCheckScheduledWith = requestFrame;
+    requestFrame(() => {
+        layoutCheckScheduledWith = null;
+        // copied: a callback may observe or disconnect
+        for (const observer of Array.from(layoutObservers)) {
+            observer.deliver(false);
+        }
+    });
+}
+
+let layoutObserverInstalled = false;
+
+/** Installed once per window by `mockGridLayout.init`, whose mocked sizes it reports. */
+export function installLayoutResizeObserver(): void {
+    if (layoutObserverInstalled) {
+        return;
+    }
+    layoutObserverInstalled = true;
+    window.ResizeObserver = LayoutResizeObserver;
+    new MutationObserver(scheduleLayoutCheck).observe(document, { subtree: true, childList: true, attributes: true });
+}
+
+/** Drops every observer: one a grid left alive (its creation threw) must not see a later file's resizes. */
+export function resetLayoutObservers(): void {
+    layoutObservers.clear();
+}
+
+/** Reports `target` (every observed element, without one) resized now, whatever its size, with any other pending
+ *  size change: one the mock cannot see, such as a `mockGridLayout` size set by a test. */
+export function triggerResizeObservers(target?: Element): void {
+    // copied: a callback may observe or disconnect
+    for (const observer of Array.from(layoutObservers)) {
+        observer.deliver(target ?? true);
     }
 }

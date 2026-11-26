@@ -368,7 +368,7 @@ describe('Column destruction', () => {
         expect(aLastLeftEvents.length).toBeGreaterThan(0);
     });
 
-    // _destroyColumnTreeUnused: nodes from the previous build that did NOT end up in the new tree
+    // A rebuild destroys the nodes from the previous build that did NOT end up in the new tree
     // are destroyed; survivors carry the new buildToken and stay alive.
     test('reused cols stay alive, dropped cols get destroyed exactly once', async () => {
         const api = gridsManager.createGrid('myGrid', {
@@ -499,7 +499,7 @@ describe('Column destruction', () => {
         expect(seen.filter((g) => g.isAlive()).length).toBe(1);
     });
 
-    test('hierarchy columns are destroyed when rebuilt or removed', async () => {
+    test('a removed hierarchy column is destroyed and the remaining one is alive', async () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: [{ field: 'country' }, { field: 'date', rowGroup: true, groupHierarchy: ['year', 'month'] }],
             rowData: [{ country: 'USA', date: new Date(2020, 0, 1) }],
@@ -513,7 +513,7 @@ describe('Column destruction', () => {
         expect((yearBefore as any).isAlive()).toBe(true);
         expect((monthBefore as any).isAlive()).toBe(true);
 
-        // (1) rebuildColumns: dropping 'month' changes the plan length → all hierarchy cols rebuilt.
+        // (1) Dropping 'month': year is kept, month destroyed.
         api.setGridOption('columnDefs', [
             { field: 'country' },
             { field: 'date', rowGroup: true, groupHierarchy: ['year'] },
@@ -522,8 +522,6 @@ describe('Column destruction', () => {
 
         const yearAfter = api.getColumn('ag-Grid-HierarchyColumn-date-year')!;
         expect(api.getColumn('ag-Grid-HierarchyColumn-date-month')).toBeNull();
-        expect(yearAfter).not.toBe(yearBefore);
-        expect((yearBefore as any).isAlive()).toBe(false);
         expect((monthBefore as any).isAlive()).toBe(false);
         expect((yearAfter as any).isAlive()).toBe(true);
 
@@ -533,6 +531,20 @@ describe('Column destruction', () => {
 
         expect(api.getColumn('ag-Grid-HierarchyColumn-date-year')).toBeNull();
         expect((yearAfter as any).isAlive()).toBe(false);
+    });
+
+    test('a column replaced by new columnDefs has listeners removed and added without throwing', () => {
+        const api = gridsManager.createGrid('myGrid', { columnDefs: [{ colId: 'a' }] });
+        const column = api.getColumn('a')!;
+        api.setGridOption('columnDefs', [{ colId: 'b' }]);
+        expect(api.getColumn('a')).toBeNull();
+
+        const listener = () => {};
+        expect(() => {
+            column.removeEventListener('visibleChanged', listener);
+            column.addEventListener('visibleChanged', listener);
+            column.removeEventListener('visibleChanged', listener);
+        }).not.toThrow();
     });
 });
 

@@ -13,6 +13,7 @@ import { FullWidthRowTooltips } from './fullWidthRowTooltips';
 import type { ComponentTooltip } from './headerTooltipSource';
 import { _setupHeaderGroupTooltip, _setupHeaderTooltip } from './headerTooltipSource';
 import type { TooltipFeature, TooltipSource } from './tooltipFeature';
+import { shouldDisplayTextTooltip } from './tooltipFeature';
 import { _initColTooltip } from './tooltipValueUtils';
 
 /**
@@ -21,11 +22,38 @@ import { _initColTooltip } from './tooltipValueUtils';
  */
 export class TooltipService extends BeanStub implements NamedBean {
     beanName = 'tooltipSvc' as const;
+    public isContextMenuOpen = false;
+
+    public postConstruct(): void {
+        this.addManagedEventListeners({
+            contextMenuVisibleChanged: ({ visible }) => {
+                this.isContextMenuOpen = visible;
+                if (!visible) {
+                    return;
+                }
+                // Fading tooltips have already released their state-manager listeners.
+                for (const popup of this.beans.popupSvc?.getActivePopups() ?? []) {
+                    if (popup.classList.contains('ag-tooltip-hiding')) {
+                        popup.style.display = 'none';
+                    }
+                }
+            },
+        });
+    }
 
     /** Creates an uninitialised feature for hosts whose element is attached later (ordinary cells). */
     public createTooltip(source: TooltipSource): TooltipFeature | undefined {
         const { beans } = this;
+        this.configureTextTooltip(source);
         return beans.registry.createDynamicBean<TooltipFeature>('tooltipFeature', false, source, beans);
+    }
+
+    private configureTextTooltip(source: TooltipSource): void {
+        const { getTextElement, shouldDisplayTooltip } = source;
+        if (getTextElement) {
+            source.shouldDisplayTooltip = (tooltip) =>
+                shouldDisplayTooltip?.(tooltip) !== false && shouldDisplayTextTooltip(tooltip, getTextElement);
+        }
     }
 
     /** Creates a feature which can also be shown when its owner reports keyboard highlight changes. */
@@ -34,6 +62,7 @@ export class TooltipService extends BeanStub implements NamedBean {
         highlightTracker: IEventEmitter<HighlightTooltipEventType>
     ): TooltipFeature | undefined {
         const { beans } = this;
+        this.configureTextTooltip(source);
         return beans.registry.createDynamicBean<TooltipFeature>(
             'highlightTooltipFeature',
             false,

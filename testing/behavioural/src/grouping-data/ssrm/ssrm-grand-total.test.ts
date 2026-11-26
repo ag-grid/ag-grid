@@ -7,7 +7,6 @@ import {
     TestGridsManager,
     asyncSetTimeout,
     clickMenuOption,
-    polyfillOffsetParent,
     unindentText,
     waitForEvent,
     waitForNoLoadingRows,
@@ -814,6 +813,39 @@ describe('SSRM grand total row', () => {
         `);
     });
 
+    test('a pinned grand total takes no row of a page', async () => {
+        const api = gridManager.createGrid(null, {
+            columnDefs: [{ field: 'id' }, { field: 'value' }],
+            rowModelType: 'serverSide',
+            getRowId: (params: GetRowIdParams<RowData>) => params.data.id,
+            grandTotalRow: 'pinnedBottom',
+            pagination: true,
+            paginationPageSize: 3,
+            paginationPageSizeSelector: false,
+            serverSideDatasource: createFlatDatasource(),
+        });
+        await waitForEvent('firstDataRendered', api);
+        await waitForNoLoadingRows(api);
+
+        expect(api.getPinnedBottomRowCount()).toBe(1);
+        expect(api.paginationGetTotalPages()).toBe(1);
+        expect(api.getServerSideGroupLevelState()[0].rowCount).toBe(3);
+    });
+
+    test('a row a transaction adds lands after the last row with a pinned grand total', async () => {
+        const api = gridManager.createGrid(null, createFlatGridOptions({ grandTotalRow: 'pinnedBottom' }));
+        await waitForEvent('firstDataRendered', api);
+        await waitForNoLoadingRows(api);
+
+        api.applyServerSideTransaction({ add: [{ id: '4', value: 40 }] });
+
+        const ids: (string | undefined)[] = [];
+        for (let i = 0, count = api.getDisplayedRowCount(); i < count; ++i) {
+            ids.push(api.getDisplayedRowAtIndex(i)?.id);
+        }
+        expect(ids).toEqual(['1', '2', '3', '4']);
+    });
+
     test('grand total at pinnedBottom renders in pinned area, not inline', async () => {
         const api = gridManager.createGrid(
             null,
@@ -903,27 +935,22 @@ describe('SSRM grand total row', () => {
         };
 
         test('when a context menu item pins it to the other side or unpins it', async () => {
-            const restoreOffsetParent = polyfillOffsetParent();
-            try {
-                const api = await createPinnedBottomGrid({ getContextMenuItems: () => ['pinTop', 'unpinRow'] });
-                const openMenuOnGrandTotal = () =>
-                    userEvent.pointer({
-                        keys: '[MouseRight]',
-                        target: pinnedRowElements(api, 'bottom')[0].querySelector<HTMLElement>('.ag-cell')!,
-                    });
+            const api = await createPinnedBottomGrid({ getContextMenuItems: () => ['pinTop', 'unpinRow'] });
+            const openMenuOnGrandTotal = () =>
+                userEvent.pointer({
+                    keys: '[MouseRight]',
+                    target: pinnedRowElements(api, 'bottom')[0].querySelector<HTMLElement>('.ag-cell')!,
+                });
 
-                await openMenuOnGrandTotal();
-                await clickMenuOption('Pin to Top');
-                await asyncSetTimeout(0);
-                expectPinnedBottomOnly(api);
+            await openMenuOnGrandTotal();
+            await clickMenuOption('Pin to Top');
+            await asyncSetTimeout(0);
+            expectPinnedBottomOnly(api);
 
-                await openMenuOnGrandTotal();
-                await clickMenuOption('Unpin Row');
-                await asyncSetTimeout(0);
-                expectPinnedBottomOnly(api);
-            } finally {
-                restoreOffsetParent();
-            }
+            await openMenuOnGrandTotal();
+            await clickMenuOption('Unpin Row');
+            await asyncSetTimeout(0);
+            expectPinnedBottomOnly(api);
         });
 
         test('when the row pinning state names it', async () => {
@@ -935,6 +962,48 @@ describe('SSRM grand total row', () => {
             expectPinnedBottomOnly(api);
             expect(api.getState().rowPinning).toEqual({ top: [], bottom: [] });
         });
+    });
+
+    test('a row pinning state naming the grand total pins nothing and is not saved, with or without rows', async () => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [309] }); // `enableRowPinning` is client-side only
+        const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        let rows: RowData[] = flatRows;
+        const api = gridManager.createGrid(
+            null,
+            createFlatGridOptions({
+                grandTotalRow: 'bottom',
+                enableRowPinning: true,
+                serverSideDatasource: {
+                    getRows: (params) =>
+                        setTimeout(() =>
+                            params.success({ rowData: rows, rowCount: rows.length, grandTotalData: { value: 60 } })
+                        ),
+                },
+            })
+        );
+        await waitForEvent('firstDataRendered', api);
+        await waitForNoLoadingRows(api);
+        expect(warnSpy).toHaveBeenCalledWith('AG Grid: warning #309', expect.anything(), expect.anything());
+
+        api.setState({ rowPinning: { top: [], bottom: [GRAND_TOTAL_ROW_ID] } });
+        await asyncSetTimeout(0);
+        expect(api.getPinnedBottomRowCount()).toBe(0);
+        expect(api.getState().rowPinning).toEqual({ top: [], bottom: [] });
+
+        rows = [];
+        api.refreshServerSide({ purge: true });
+        await waitForNoLoadingRows(api);
+        await waitFor(() => expect(api.getRowNode(GRAND_TOTAL_ROW_ID)).toBeUndefined());
+        api.setState({ rowPinning: { top: [GRAND_TOTAL_ROW_ID], bottom: [] } });
+        await asyncSetTimeout(0);
+        expect(api.getState().rowPinning).toEqual({ top: [], bottom: [] });
+
+        rows = flatRows;
+        api.refreshServerSide({ purge: true });
+        await waitForNoLoadingRows(api);
+        await waitFor(() => expect(api.getRowNode(GRAND_TOTAL_ROW_ID)).toBeDefined());
+        expect(api.getPinnedTopRowCount()).toBe(0);
+        expect(api.getPinnedBottomRowCount()).toBe(0);
     });
 
     test('cycle through grandTotalRow positions including pinned', async () => {
@@ -2670,6 +2739,145 @@ describe('SSRM grand total row', () => {
             └─ footer id:rowGroupFooter_ROOT_NODE_ID id:"rowGroupFooter_ROOT_NODE_ID" value:50
         `);
     });
+
+    test.each(['top', 'bottom', 'pinnedTop', 'pinnedBottom'] as const)(
+        'a `%s` grand total is hidden while the server returns no rows, and returns with them',
+        async (grandTotalRow) => {
+            const api: GridApi<RowData> = gridManager.createGrid(null, {
+                columnDefs: [{ field: 'id' }, { field: 'value', filter: 'agNumberColumnFilter' }],
+                rowModelType: 'serverSide',
+                getRowId: (params: GetRowIdParams<RowData>) => params.data.id,
+                grandTotalRow,
+                serverSideDatasource: {
+                    getRows(params: IServerSideGetRowsParams) {
+                        const filter = params.request.filterModel as { value?: { filter?: number } } | null;
+                        const threshold = filter?.value?.filter;
+                        const filtered = threshold != null ? flatRows.filter((r) => r.value > threshold) : flatRows;
+                        const value = filtered.reduce((s, r) => s + r.value, 0);
+                        const grandTotalData = { id: GRAND_TOTAL_ID, value };
+                        setTimeout(() =>
+                            params.success({ rowData: filtered, rowCount: filtered.length, grandTotalData })
+                        );
+                    },
+                },
+            });
+            const pinned = grandTotalRow === 'pinnedTop' || grandTotalRow === 'pinnedBottom';
+            const displayedIds = () => {
+                const ids: (string | undefined)[] = [];
+                for (let i = 0, count = api.getDisplayedRowCount(); i < count; ++i) {
+                    ids.push(api.getDisplayedRowAtIndex(i)?.id);
+                }
+                return ids;
+            };
+            const expectGrandTotal = async (rowIds: string[], value: number | undefined) => {
+                const shown = value === undefined ? 0 : 1;
+                await waitForNoLoadingRows(api);
+                expect(api.getRowNode(GRAND_TOTAL_ID)?.data?.value).toBe(value);
+                const inlineTotal = pinned || !shown ? [] : [GRAND_TOTAL_ID];
+                expect(displayedIds()).toEqual(
+                    grandTotalRow === 'top' ? [...inlineTotal, ...rowIds] : [...rowIds, ...inlineTotal]
+                );
+                expect(api.getPinnedTopRowCount() + api.getPinnedBottomRowCount()).toBe(pinned ? shown : 0);
+                const noMatchingRows = () =>
+                    !!getGridElement(api)!.querySelector('.ag-overlay-no-matching-rows-center');
+                await waitFor(() => expect(noMatchingRows()).toBe(rowIds.length === 0));
+            };
+            await waitForEvent('firstDataRendered', api);
+            await expectGrandTotal(['1', '2', '3'], 60);
+            const pinnedRowsChanged = vi.fn();
+            api.addEventListener('pinnedRowsChanged', pinnedRowsChanged);
+
+            api.setFilterModel({ value: { type: 'greaterThan', filter: 100 } });
+            await expectGrandTotal([], undefined);
+            expect(pinnedRowsChanged).toHaveBeenCalledTimes(pinned ? 1 : 0);
+            expect(api.applyServerSideTransaction({ update: [{ id: GRAND_TOTAL_ID, value: 7 }] })?.update).toEqual([]);
+            expect(api.getRowNode(GRAND_TOTAL_ID)).toBeUndefined();
+
+            api.setFilterModel(null);
+            await expectGrandTotal(['1', '2', '3'], 60);
+        }
+    );
+
+    test.each(['top', 'bottom', 'pinnedTop', 'pinnedBottom'] as const)(
+        'with alwaysShowGrandTotalRow a `%s` grand total stays while the server returns no rows',
+        async (grandTotalRow) => {
+            let rows: typeof flatRows = [];
+            let sendGrandTotal = true;
+            const api: GridApi<RowData> = gridManager.createGrid(null, {
+                columnDefs: [{ field: 'id' }, { field: 'value', filter: 'agNumberColumnFilter' }],
+                rowModelType: 'serverSide',
+                getRowId: (params: GetRowIdParams<RowData>) => params.data.id,
+                grandTotalRow,
+                alwaysShowGrandTotalRow: true,
+                serverSideDatasource: {
+                    getRows(params: IServerSideGetRowsParams) {
+                        const filter = params.request.filterModel as { value?: { filter?: number } } | null;
+                        const threshold = filter?.value?.filter;
+                        const filtered = threshold != null ? rows.filter((r) => r.value > threshold) : rows;
+                        const value = filtered.reduce((s, r) => s + r.value, 0);
+                        const grandTotalData = sendGrandTotal ? { id: GRAND_TOTAL_ID, value } : undefined;
+                        setTimeout(() =>
+                            params.success({ rowData: filtered, rowCount: filtered.length, grandTotalData })
+                        );
+                    },
+                },
+            });
+            const pinned = grandTotalRow === 'pinnedTop' || grandTotalRow === 'pinnedBottom';
+            const overlay = () => {
+                const eGrid = getGridElement(api)!;
+                if (eGrid.querySelector('.ag-overlay-no-matching-rows-center')) {
+                    return 'noMatchingRows';
+                }
+                return eGrid.querySelector('.ag-overlay-no-rows-center') ? 'noRows' : null;
+            };
+            const expectGrandTotal = async (
+                rowIds: string[],
+                value: number | undefined,
+                expectedOverlay: 'noRows' | 'noMatchingRows' | null
+            ) => {
+                await waitForNoLoadingRows(api);
+                await waitFor(() => expect(api.getRowNode(GRAND_TOTAL_ID)?.data?.value).toBe(value));
+                const shown = value === undefined ? 0 : 1;
+                const inlineTotal = pinned || !shown ? [] : [GRAND_TOTAL_ID];
+                const ids: (string | undefined)[] = [];
+                for (let i = 0, count = api.getDisplayedRowCount(); i < count; ++i) {
+                    ids.push(api.getDisplayedRowAtIndex(i)?.id);
+                }
+                expect(ids).toEqual(
+                    grandTotalRow === 'top' ? [...inlineTotal, ...rowIds] : [...rowIds, ...inlineTotal]
+                );
+                expect(api.getPinnedTopRowCount() + api.getPinnedBottomRowCount()).toBe(pinned ? shown : 0);
+                await waitFor(() => expect(overlay()).toBe(expectedOverlay));
+                const renderedGrandTotal = () =>
+                    getGridElement(api)!.querySelectorAll('.ag-row[row-id$="rowGroupFooter_ROOT_NODE_ID"]').length;
+                await waitFor(() => expect(renderedGrandTotal() > 0).toBe(shown === 1));
+            };
+            await expectGrandTotal([], 0, 'noRows');
+
+            rows = flatRows;
+            api.refreshServerSide({ purge: true });
+            await expectGrandTotal(['1', '2', '3'], 60, null);
+
+            api.setFilterModel({ value: { type: 'greaterThan', filter: 100 } });
+            await expectGrandTotal([], 0, 'noMatchingRows');
+
+            api.setGridOption('alwaysShowGrandTotalRow', false);
+            await expectGrandTotal([], undefined, 'noMatchingRows');
+            api.setGridOption('alwaysShowGrandTotalRow', true);
+            await expectGrandTotal([], 0, 'noMatchingRows');
+
+            api.setFilterModel(null);
+            await expectGrandTotal(['1', '2', '3'], 60, null);
+
+            rows = [];
+            api.refreshServerSide({ purge: true });
+            await expectGrandTotal([], 0, 'noRows');
+
+            sendGrandTotal = false;
+            api.refreshServerSide({ purge: true });
+            await expectGrandTotal([], undefined, 'noRows');
+        }
+    );
 
     test('async grand total via transaction: filter change hides then restores grand total', async () => {
         const computeTotal = (threshold?: number) =>

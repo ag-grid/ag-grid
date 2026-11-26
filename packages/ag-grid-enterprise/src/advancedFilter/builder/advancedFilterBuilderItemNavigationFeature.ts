@@ -1,4 +1,4 @@
-import { _getActiveDomElement } from 'ag-stack';
+import { _addManagedElementListeners, _getActiveDomElement } from 'ag-stack';
 
 import type { Component } from 'ag-grid-community';
 import { BeanStub, KeyCode, _isStopPropagationForAgGrid, _stopPropagationForAgGrid } from 'ag-grid-community';
@@ -13,7 +13,7 @@ export class AdvancedFilterBuilderItemNavigationFeature extends BeanStub {
     }
 
     public postConstruct(): void {
-        this.addManagedElementListeners(this.eGui, {
+        _addManagedElementListeners(this, this.eGui, {
             keydown: (event: KeyboardEvent) => {
                 switch (event.key) {
                     case KeyCode.TAB:

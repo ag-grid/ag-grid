@@ -47,7 +47,7 @@ const gridOptions: GridOptions = {
     },
     groupDisplayType: 'multipleColumns',
     initialGroupOrderComparator: (params: InitialGroupOrderComparatorParams) =>
-        params.nodeA.allLeafChildren.length - params.nodeB.allLeafChildren.length,
+        (params.nodeA.allLeafChildren?.length ?? 0) - (params.nodeB.allLeafChildren?.length ?? 0),
 };
 
 // setup the grid after the page has finished loading

@@ -18,6 +18,7 @@ import type {
     IMultiFilterModel,
     IMultiFilterParams,
     IRowNode,
+    LegacyFilterMethods,
     MultiFilterParams,
     ProvidedFilterModel,
     ResolvedFilter,
@@ -28,10 +29,13 @@ import {
     FilterWrapperComp,
     ProvidedFilter,
     _getFilterModel,
+    _isFilterCompActive,
+    _legacyFilterMethods,
     _refreshFilterUi,
     _refreshHandlerAndUi,
     _resolveFilter,
     _updateFilterModel,
+    _warnLegacyFilterMode,
 } from 'ag-grid-community';
 
 import type { BaseFilterComponent } from './baseMultiFilter';
@@ -71,11 +75,22 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
 
     private readonly afterFiltersReadyFuncs: (() => void)[] = [];
 
+    /** The grid calls these, so that the public methods report only the application's calls. */
+    public readonly gridMethods: LegacyFilterMethods<MultiFilter> = {
+        isFilterActive: () => this.isFilterActiveInternal(),
+        doesFilterPass: (params, indexToSkip) => this.doesFilterPassInternal(params, indexToSkip),
+        getModelFromUi: () => this.getModelFromUiInternal(),
+        getModel: () => this.getModelInternal(),
+        setModel: (model) => this.setModelInternal(model),
+        applyModel: (source) => this.applyModelInternal(source),
+    };
+
     public init(params: MultiFilterParams): AgPromise<void> {
         this.params = params;
         this.filterDefs = getMultiFilterDefs(params);
 
         const beans = this.beans;
+        this.warnIfButtons(params);
         const column = params.column as AgColumn;
         const initialModel = _getFilterModel(beans.colFilter!.model, column.getColId());
 
@@ -113,6 +128,7 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
         // `filterDefs` is deliberately not updated: the gui is built from it once, so fresh defs beside a
         // stale gui would misreport each child's `display` to `afterGuiAttached`.
         this.params = params;
+        this.warnIfButtons(params);
         const { beans, wrappers } = this;
         const colFilter = beans.colFilter!;
         const column = params.column as AgColumn;
@@ -145,6 +161,7 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
                 true,
                 'colDef'
             )!.compDetails.params;
+            this.warnIfButtons(filterParams);
             // stored first, as reconciling the model inside `refresh` refreshes the child from the wrapper
             wrapper.handlerParams = handlerParams;
             wrapper.filterParams = filterParams;
@@ -212,6 +229,11 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
     }
 
     public isFilterActive(): boolean {
+        _warnLegacyFilterMode(this.beans, 347);
+        return this.isFilterActiveInternal();
+    }
+
+    private isFilterActiveInternal(): boolean {
         return this.wrappers.some((wrapper) => {
             if (!wrapper) {
                 return false;
@@ -220,7 +242,7 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
             if (handler) {
                 return model != null;
             }
-            return filter.isFilterActive();
+            return _isFilterCompActive(this.beans, filter);
         });
     }
 
@@ -230,6 +252,11 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
     }
 
     public doesFilterPass(params: IDoesFilterPassParams, indexToSkip?: number): boolean {
+        _warnLegacyFilterMode(this.beans, 347);
+        return this.doesFilterPassInternal(params, indexToSkip);
+    }
+
+    private doesFilterPassInternal(params: IDoesFilterPassParams, indexToSkip?: number): boolean {
         return this.wrappers.every((wrapper, index) => {
             if (!wrapper || (indexToSkip != null && index === indexToSkip)) {
                 return true;
@@ -245,11 +272,18 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
                     })
                 );
             }
-            return !filter.isFilterActive() || filter.doesFilterPass(params);
+            // Runs per row, so it skips the #67 warning `_isFilterCompActive` gives a child without isFilterActive.
+            const childMethods = _legacyFilterMethods(filter);
+            return !childMethods.isFilterActive?.() || childMethods.doesFilterPass(params);
         });
     }
 
     public getModelFromUi(): IMultiFilterModel | null {
+        _warnLegacyFilterMode(this.beans, 347);
+        return this.getModelFromUiInternal();
+    }
+
+    private getModelFromUiInternal(): IMultiFilterModel | null {
         const model: IMultiFilterModel = {
             filterType: this.filterType,
             filterModels: this.wrappers.map((wrapper) => {
@@ -263,7 +297,7 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
                 >;
 
                 if (typeof providedFilter.getModelFromUi === 'function') {
-                    return providedFilter.getModelFromUi();
+                    return _legacyFilterMethods(providedFilter).getModelFromUi();
                 }
 
                 return null;
@@ -274,7 +308,12 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
     }
 
     public getModel(): ProvidedFilterModel | null {
-        if (!this.isFilterActive()) {
+        _warnLegacyFilterMode(this.beans, 347);
+        return this.getModelInternal();
+    }
+
+    private getModelInternal(): ProvidedFilterModel | null {
+        if (!this.isFilterActiveInternal()) {
             return null;
         }
 
@@ -288,7 +327,7 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
                 if (handler) {
                     return model;
                 }
-                return filter.isFilterActive() ? filter.getModel() : null;
+                return _isFilterCompActive(this.beans, filter) ? _legacyFilterMethods(filter).getModel() : null;
             }),
         };
 
@@ -296,9 +335,14 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
     }
 
     public setModel(model: IMultiFilterModel | null): AgPromise<void> {
+        _warnLegacyFilterMode(this.beans, 347);
+        return this.setModelInternal(model);
+    }
+
+    private setModelInternal(model: IMultiFilterModel | null): AgPromise<void> {
         const setFilterModel = (filter: IFilterComp, filterModel: any) => {
             return new AgPromise<void>((resolve) => {
-                const promise = filter.setModel(filterModel);
+                const promise = _legacyFilterMethods(filter).setModel(filterModel);
                 if (promise) {
                     promise.then(resolve);
                 } else {
@@ -324,7 +368,13 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
                 wrapper.model = modelForFilter;
                 promises.push(
                     _refreshHandlerAndUi(
-                        () => AgPromise.resolve({ filter: filter as any, filterParams: filterParams as any }),
+                        // a child refusing the model has refreshed its ui with the one it stored instead
+                        () =>
+                            AgPromise.resolve(
+                                wrapper.state === newState
+                                    ? { filter: filter as any, filterParams: filterParams as any }
+                                    : undefined
+                            ),
                         handler,
                         handlerParams!,
                         modelForFilter,
@@ -345,14 +395,19 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
         return AgPromise.all(promises).then(() => {});
     }
 
-    public applyModel(source: 'api' | 'ui' | 'rowDataUpdated' = 'api'): boolean {
+    public applyModel(source?: 'api' | 'ui' | 'rowDataUpdated'): boolean {
+        _warnLegacyFilterMode(this.beans, 347);
+        return this.applyModelInternal(source);
+    }
+
+    private applyModelInternal(source: 'api' | 'ui' | 'rowDataUpdated' = 'api'): boolean {
         let result = false;
 
         for (const wrapper of this.wrappers) {
             if (wrapper) {
                 const filter = wrapper.filter;
                 if (filter instanceof ProvidedFilter) {
-                    result = filter.applyModel(source) || result;
+                    result = _legacyFilterMethods(filter).applyModel(source) || result;
                 }
             }
         }
@@ -396,6 +451,13 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
         name: 'onAnyFilterChanged' | 'onNewRowsLoaded'
     ): void {
         wrapper.handler?.[name]?.();
+    }
+
+    /** Buttons behave differently once `enableFilterHandlers` is set, so a legacy Multi Filter or child using them warns. */
+    private warnIfButtons(params: Partial<FilterWrapperParams> | undefined): void {
+        if (params?.buttons?.length || params?.closeOnApply) {
+            _warnLegacyFilterMode(this.beans, 346);
+        }
     }
 
     private createFilter(
@@ -462,6 +524,8 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
             return updatedParams;
         });
 
+        this.warnIfButtons(compDetails?.params);
+
         if (!createFilterUi) {
             return AgPromise.resolve(null);
         }
@@ -517,7 +581,7 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
     /** The siblings count as other filters, through the tree as the other columns do. */
     private createDoesRowPassOtherFilter(index: number): (node: IRowNode) => boolean {
         return this.beans.colFilter!.createDoesRowPassOtherFilter(this.params.column as AgColumn, (node) =>
-            this.doesFilterPass({ node, data: node.data }, index)
+            this.doesFilterPassInternal({ node, data: node.data }, index)
         );
     }
 
@@ -616,18 +680,18 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
     }
 
     private updateActiveListForFilter(index: number, filter?: IFilterComp): void {
-        this.updateActiveList(index, () => filter?.isFilterActive());
+        this.updateActiveList(index, _isFilterCompActive(this.beans, filter));
     }
 
     private updateActiveListForHandler(index: number, model?: any): void {
-        this.updateActiveList(index, () => model != null);
+        this.updateActiveList(index, model != null);
     }
 
-    private updateActiveList(index: number, isActive: () => boolean | undefined): void {
+    private updateActiveList(index: number, isActive: boolean): void {
         const activeFilterIndices = this.activeFilterIndices;
         _removeFromArray(this.activeFilterIndices, index);
 
-        if (isActive()) {
+        if (isActive) {
             activeFilterIndices.push(index);
         }
     }

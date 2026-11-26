@@ -1,0 +1,62 @@
+name: pr-head-guard
+description: >-
+    Say whether a run may still publish to its PR. A `pull_request` run always may. A
+    `workflow_dispatch` (see pr-context) may only while the PR head is still the commit it is
+    building and the PR is still open, so a slow manual run can neither overwrite a newer run's preview
+    or comment sections nor re-create what the close-time cleanup removed. Call it
+    just before the publish steps and gate them on `current`. With no PR number, or if the head can't
+    be read, the answer is `false`.
+
+inputs:
+    pr-number:
+        description: 'PR number from pr-context. Ignored on a `pull_request` event.'
+        required: false
+        default: ''
+    github-token:
+        description: 'Token with pull-requests: read.'
+        required: true
+
+outputs:
+    current:
+        description: '`true` when the run may publish to the PR, otherwise `false`.'
+        value: ${{ steps.check.outputs.current }}
+
+runs:
+    using: composite
+    steps:
+        - name: Check the PR head
+          id: check
+          shell: bash
+          env:
+              GH_TOKEN: ${{ inputs.github-token }}
+              PR_NUMBER: ${{ inputs.pr-number }}
+              EVENT_NAME: ${{ github.event_name }}
+              REPO: ${{ github.repository }}
+              RUN_SHA: ${{ github.sha }}
+          run: |
+              set -uo pipefail
+              if [[ "${EVENT_NAME}" != "workflow_dispatch" ]]; then
+                  echo "current=true" >> "$GITHUB_OUTPUT"
+                  exit 0
+              fi
+              if [[ -z "${PR_NUMBER}" ]]; then
+                  echo "current=false" >> "$GITHUB_OUTPUT"
+                  exit 0
+              fi
+              if [[ ! "${PR_NUMBER}" =~ ^[1-9][0-9]{0,8}$ ]] || ! pull=$(gh api "repos/${REPO}/pulls/${PR_NUMBER}" --jq '[.state, .head.sha] | @tsv'); then
+                  echo "::warning title=PR head::Could not read the head of PR #${PR_NUMBER}; not publishing to it."
+                  echo "current=false" >> "$GITHUB_OUTPUT"
+                  exit 0
+              fi
+              IFS=$'\t' read -r state head <<< "${pull}"
+              if [[ "${state}" != "open" ]]; then
+                  echo "::notice title=PR head::PR #${PR_NUMBER} is ${state}, so this run does not publish."
+                  echo "current=false" >> "$GITHUB_OUTPUT"
+                  exit 0
+              fi
+              if [[ "${head}" != "${RUN_SHA}" ]]; then
+                  echo "::notice title=PR head::PR #${PR_NUMBER} has moved to ${head}; this run is on ${RUN_SHA}, so it does not publish."
+                  echo "current=false" >> "$GITHUB_OUTPUT"
+                  exit 0
+              fi
+              echo "current=true" >> "$GITHUB_OUTPUT"

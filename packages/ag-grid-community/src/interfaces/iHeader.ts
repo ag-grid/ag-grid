@@ -62,7 +62,7 @@ export interface IHeaderParams<TData = any, TContext = any> extends AgGridCommon
      */
     setSort: (sort: SortDirection | SortDef, multiSort?: boolean) => void;
 
-    /** Custom header template if provided to `headerComponentParams`, otherwise will be `undefined`. See [Header Templates](https://www.ag-grid.com/javascript-data-grid/column-headers/#header-templates) */
+    /** Custom header template if provided to `headerComponentParams`, otherwise will be `undefined`. See [Custom Template](https://www.ag-grid.com/javascript-data-grid/column-headers-components/#custom-template) */
     template?: string;
     /** The component to use for inside the header (replaces the text value and leaves the remainder of the Grid's original component). */
     innerHeaderComponent?: any;
@@ -80,21 +80,22 @@ export interface IHeaderParams<TData = any, TContext = any> extends AgGridCommon
     /**
      * Sets a tooltip to the main element of this component.
      * @param value The value to be displayed by the tooltip
-     * @param shouldDisplayTooltip A function returning a boolean that allows the tooltip to be displayed conditionally. This option does not work when `enableBrowserTooltips={true}`.
+     * @param shouldDisplayTooltip A function returning a boolean that allows the tooltip to be displayed conditionally.
      */
     setTooltip: (value: string, shouldDisplayTooltip?: () => boolean) => void;
 }
 
-export interface IHeader {
+export interface IHeader<TData = any, TContext = any> {
     /** Get the header to refresh. Gets called whenever Column Defs are updated. */
-    refresh(params: IHeaderParams): boolean;
+    refresh(params: IHeaderParams<TData, TContext>): boolean;
 }
 
-export interface IHeaderComp extends IHeader, IComponent<IHeaderParams> {}
+export interface IHeaderComp<TData = any, TContext = any>
+    extends IHeader<TData, TContext>, IComponent<IHeaderParams<TData, TContext>> {}
 
 export interface IInnerHeaderComponent<
     TData = any,
     TContext = any,
     TParams extends Readonly<IHeaderParams<TData, TContext>> = IHeaderParams<TData, TContext>,
 >
-    extends IComponent<TParams>, IHeader {}
+    extends IComponent<TParams>, IHeader<TData, TContext> {}

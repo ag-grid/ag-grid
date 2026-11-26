@@ -78,7 +78,7 @@ export class GridCtrl extends BeanStub {
         // enableContentVisibilityAuto takes precedence; the deprecated suppressContentVisibilityAuto
         // is only consulted when the former is unset (suppress=false is equivalent to enable=true).
         const contentVisibilityAutoEnabled =
-            this.gos.get('enableContentVisibilityAuto') ?? this.gos.get('suppressContentVisibilityAuto') === false;
+            this.gos.get('enableContentVisibilityAuto') ?? !this.gos.get('suppressContentVisibilityAuto');
         if (contentVisibilityAutoEnabled) {
             const [removeListener] = this.addManagedEventListeners({
                 firstDataRendered: () => {
@@ -164,7 +164,8 @@ export class GridCtrl extends BeanStub {
     public focusNextInnerContainer(backwards: boolean): boolean | undefined {
         const focusableContainers = this.getFocusableContainers();
         const { indexWithFocus, nextIndex } = this.getNextFocusableIndex(focusableContainers, backwards);
-        const resolvedNextIndex = indexWithFocus === -1 ? (backwards ? focusableContainers.length - 1 : 0) : nextIndex;
+        const startIndex = backwards ? focusableContainers.length - 1 : 0;
+        const resolvedNextIndex = indexWithFocus === -1 ? startIndex : nextIndex;
         const {
             gos,
             beans: { focusSvc, navigation },

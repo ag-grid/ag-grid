@@ -6,6 +6,7 @@ const DEFAULT_LOCALE_TEXT = {
     ariaLabelAddFilterField: 'Add Filter Field',
     ariaLabelFilterCardDelete: 'Delete Filter',
     ariaLabelFilterCardHasEdits: 'Has Edits',
+    ariaLabelFilterCardType: 'Filter Type',
     agTextColumnFilterDisplayName: 'Simple Filter',
     agNumberColumnFilterDisplayName: 'Simple Filter',
     agBigIntColumnFilterDisplayName: 'Simple Filter',

@@ -58,6 +58,7 @@ import {
     _isUsingNewCellSelectionAPI,
 } from 'ag-grid-community';
 
+import type { AgFillHandle } from './agFillHandle';
 import { CellRangeFeature } from './cellRangeFeature';
 import { DragListenerFeature } from './dragListenerFeature';
 import { HeaderGroupCellMouseListenerFeature } from './headerGroupCellMouseListenerFeature';
@@ -115,6 +116,8 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
     private intersectionRange = false;
 
     public autoScrollService: AutoScrollService;
+    /** The fill handle being dragged, so cells mounting mid-drag can take their part of its outline. */
+    public activeFillHandle: AgFillHandle | undefined;
 
     private readonly columnRangeSelectionCtx: ColumnRangeSelectionContext = {};
 
@@ -908,9 +911,22 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
             dispatchWrapperEvents,
             wrapperEventSource = 'deleteKey',
             restoreSourceInBatch,
+            isCellSuppressed,
         } = params;
 
-        let { cellRanges } = params;
+        const rowNodes: IRowNode[] = [];
+        const columns: AgColumn[] = [];
+        this.forEachEditableCellInRanges(params.cellRanges ?? this.cellRanges, (rowNode, column) => {
+            if (!isCellSuppressed?.(rowNode, column)) {
+                rowNodes.push(rowNode);
+                columns.push(column);
+            }
+        });
+
+        const cellCount = rowNodes.length;
+        if (cellCount === 0) {
+            return;
+        }
 
         if (dispatchWrapperEvents) {
             eventSvc.dispatchEvent({
@@ -923,10 +939,6 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
             });
         }
 
-        if (!cellRanges) {
-            cellRanges = this.cellRanges;
-        }
-
         const { valueSvc, editSvc } = beans;
         const batch = !!editSvc?.isBatchEditing();
 
@@ -934,14 +946,15 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
         editSvc?.beginBulkWrite();
         try {
             changeDetectionSvc?.beginDeferred();
-            this.forEachEditableCellInRanges(cellRanges, (rowNode, column) => {
+            for (let i = 0; i < cellCount; ++i) {
+                const rowNode = rowNodes[i];
+                const column = columns[i];
                 if (restoreSourceInBatch && batch) {
                     editSvc?.batchResetToSourceValue({ rowNode, column });
-                    return;
+                } else {
+                    rowNode.setDataValue(column, valueSvc.getDeleteValue(column, rowNode), cellEventSource);
                 }
-                const deleteValue = valueSvc.getDeleteValue(column, rowNode);
-                rowNode.setDataValue(column, deleteValue, cellEventSource);
-            });
+            }
         } finally {
             changeDetectionSvc?.endDeferred();
             editSvc?.endBulkWrite();
@@ -1381,17 +1394,25 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
         callback: (rowNode: IRowNode, column: AgColumn) => void
     ): void {
         const { beans } = this;
+        // OPTIMIZATION: a single range cannot overlap itself, so only track visited cells across several.
+        const visited = cellRanges.length > 1 ? new Map<IRowNode, Set<AgColumn>>() : null;
         for (const cellRange of cellRanges) {
             this.forEachRowInRange(cellRange, (rowPosition) => {
                 const rowNode = _getRowNode(beans, rowPosition);
                 if (!rowNode) {
                     return;
                 }
+                let visitedColumns = visited?.get(rowNode);
+                if (visited && !visitedColumns) {
+                    visitedColumns = new Set();
+                    visited.set(rowNode, visitedColumns);
+                }
                 for (let i = 0; i < cellRange.columns.length; i++) {
                     const column = this.getColumnFromModel(cellRange.columns[i] as AgColumn);
-                    if (!column?.isCellEditable(rowNode)) {
+                    if (!column?.isCellEditable(rowNode) || visitedColumns?.has(column)) {
                         continue;
                     }
+                    visitedColumns?.add(column);
                     callback(rowNode, column);
                 }
             });
@@ -1581,7 +1602,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
     }
 
     public createCellRangeFeature(ctrl: CellCtrl): ICellRangeFeature {
-        return new CellRangeFeature(this.beans, ctrl);
+        return new CellRangeFeature(this.beans, ctrl, this);
     }
 
     public createHeaderGroupCellMouseListenerFeature(column: AgColumnGroup, eGui: HTMLElement): BeanStub {

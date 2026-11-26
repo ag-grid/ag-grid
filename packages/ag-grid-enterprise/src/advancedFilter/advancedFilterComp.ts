@@ -1,4 +1,4 @@
-import { RefPlaceholder, _makeNull, _setDisabled, _setDisplayed } from 'ag-stack';
+import { RefPlaceholder, _addManagedElementListeners, _makeNull, _setDisabled, _setDisplayed } from 'ag-stack';
 
 import type {
     BeanCollection,
@@ -93,7 +93,6 @@ export class AdvancedFilterComp extends Component {
         this.tooltipFeature = this.createOptionalManagedBean(
             this.beans.tooltipSvc?.createTooltip({
                 getGui: () => this.getGui(),
-                getTooltipComponentDefinition: () => undefined,
                 getTooltipShowDelayOverride: () => 1000,
                 getLocation: () => 'advancedFilter',
             })
@@ -104,6 +103,7 @@ export class AdvancedFilterComp extends Component {
             .setForceLastSelection((lastSelection, searchString) =>
                 this.forceLastSelection(lastSelection, searchString)
             )
+            .setInputPlaceholder(this.advFilterExpSvc.translate('advancedFilterPlaceholder'))
             .setInputAriaLabel(this.advFilterExpSvc.translate('ariaAdvancedFilterInput'))
             .setListAriaLabel(this.advFilterExpSvc.translate('ariaLabelAdvancedFilterAutocomplete'));
 
@@ -115,7 +115,7 @@ export class AdvancedFilterComp extends Component {
             this.addManagedListeners(advFilterSetSvc, {
                 valuesChanged: () => this.eAutocomplete.refresh(!this.advancedFilter.isCurrentExpressionApplied()),
             });
-            this.addManagedElementListeners(this.eAutocomplete.getGui(), {
+            _addManagedElementListeners(this, this.eAutocomplete.getGui(), {
                 // Enables support for filterParams.refreshValuesOnOpen
                 focusin: () => advFilterSetSvc.refreshValuesOnFocus(),
             });
@@ -138,7 +138,7 @@ export class AdvancedFilterComp extends Component {
         this.setupButtons(buttons);
         this.setupBuilderButton(suppressBuilderButton);
 
-        this.beans.gos.addManagedPropertyListener('advancedFilterParams', (event) => {
+        this.addManagedPropertyListener('advancedFilterParams', (event) => {
             const currentValue = { ...DEFAULT_ADVANCED_FILTER_PARAMS, ...event.currentValue };
             const previousValue = { ...DEFAULT_ADVANCED_FILTER_PARAMS, ...event.previousValue };
 
@@ -204,7 +204,7 @@ export class AdvancedFilterComp extends Component {
                 this.filterManager?.onFilterChanged({ source: 'advancedFilter' });
                 break;
             case 'cancel':
-                this.advancedFilter.setModel(this.advancedFilter.getModel());
+                this.advancedFilter.restoreAppliedExpression();
                 this.filterManager?.onFilterChanged({ source: 'advancedFilter' });
                 break;
             case 'clear':
@@ -220,7 +220,7 @@ export class AdvancedFilterComp extends Component {
         this.eBuilderFilterButtonIcon.appendChild(_createIconNoSpan('advancedFilterBuilder', this.beans)!);
         this.eBuilderFilterButtonLabel.textContent = this.advFilterExpSvc.translate('advancedFilterBuilder');
         this.activateTabIndex([this.eBuilderFilterButton]);
-        this.addManagedElementListeners(this.eBuilderFilterButton, { click: () => this.openBuilder() });
+        _addManagedElementListeners(this, this.eBuilderFilterButton, { click: () => this.openBuilder() });
         this.addManagedListeners(this.advancedFilter.getCtrl(), {
             advancedFilterBuilderClosed: () => this.closeBuilder(),
         });

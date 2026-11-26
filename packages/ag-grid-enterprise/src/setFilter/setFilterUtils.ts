@@ -1,4 +1,4 @@
-import type { LocaleTextFunc } from 'ag-stack';
+import type { LocaleTextFunc, StringComparator } from 'ag-stack';
 import { _defaultComparator, _last, _toStringOrNull, _translate } from 'ag-stack';
 
 import type {
@@ -120,25 +120,15 @@ export function translateForSetFilter(
 export function applyExcelModeOptions<V>(params: ISetFilterParams<any, V>, beans: BeanCollection): void {
     // apply default options to match Excel behaviour, unless they have already been specified
     if (params.excelMode === 'windows') {
-        if (!params.buttons) {
-            params.buttons = ['apply', 'cancel'];
-        }
+        params.buttons ??= ['apply', 'cancel'];
 
-        if (params.closeOnApply == null) {
-            params.closeOnApply = true;
-        }
+        params.closeOnApply ??= true;
     } else if (params.excelMode === 'mac') {
-        if (!params.buttons) {
-            params.buttons = ['reset'];
-        }
+        params.buttons ??= ['reset'];
 
-        if (params.applyMiniFilterWhileTyping == null) {
-            params.applyMiniFilterWhileTyping = true;
-        }
+        params.applyMiniFilterWhileTyping ??= true;
 
-        if (params.debounceMs == null) {
-            params.debounceMs = 500;
-        }
+        params.debounceMs ??= 500;
     }
     if (params.excelMode && params.defaultToNothingSelected) {
         params.defaultToNothingSelected = false;
@@ -146,7 +136,11 @@ export function applyExcelModeOptions<V>(params: ISetFilterParams<any, V>, beans
     }
 }
 
-export function treeDataOrGroupingComparator(aValue: string[] | null, bValue: string[] | null): number {
+export function treeDataOrGroupingComparator(
+    aValue: string[] | null,
+    bValue: string[] | null,
+    stringComparator?: StringComparator
+): number {
     if (aValue == null) {
         return bValue == null ? 0 : -1;
     } else if (bValue == null) {
@@ -156,7 +150,7 @@ export function treeDataOrGroupingComparator(aValue: string[] | null, bValue: st
         if (i >= bValue.length) {
             return 1;
         }
-        const diff = _defaultComparator(aValue[i], bValue[i]);
+        const diff = _defaultComparator(aValue[i], bValue[i], stringComparator);
         if (diff !== 0) {
             return diff;
         }

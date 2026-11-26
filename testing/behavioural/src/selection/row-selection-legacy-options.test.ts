@@ -10,7 +10,12 @@ import {
     RowSelectionModule,
     enableDevValidations,
 } from 'ag-grid-community';
-import { RowGroupingModule, ServerSideRowModelModule, ViewportRowModelModule } from 'ag-grid-enterprise';
+import {
+    RowGroupingModule,
+    ServerSideRowModelApiModule,
+    ServerSideRowModelModule,
+    ViewportRowModelModule,
+} from 'ag-grid-enterprise';
 
 import { GROUP_ROW_DATA } from './group-data';
 import { GridActions } from './utils';
@@ -49,6 +54,7 @@ describe('Row Selection Legacy Grid Options', () => {
             RowSelectionModule,
             ClientSideRowModelModule,
             ServerSideRowModelModule,
+            ServerSideRowModelApiModule,
             ViewportRowModelModule,
             InfiniteRowModelModule,
             RowGroupingModule,
@@ -1708,6 +1714,32 @@ describe('Row Selection Legacy Grid Options', () => {
                     ├── LEAF id:5 sport:"swimming"
                     └── LEAF id:6 sport:"rowing"
                 `);
+            });
+
+            test('with the Server-Side Row Model, a new isRowSelectable rejecting rows after select all in single selection mode clears the selection', async () => {
+                const [api] = await createGridAndWait({
+                    columnDefs,
+                    rowSelection: 'single',
+                    rowModelType: 'serverSide',
+                    serverSideDatasource: {
+                        getRows(params) {
+                            return params.success({ rowData, rowCount: rowData.length });
+                        },
+                    },
+                });
+                api.selectAll();
+
+                api.setGridOption(
+                    'isRowSelectable',
+                    (node) => node.data.sport !== 'football' && node.data.sport !== 'rugby'
+                );
+
+                const rejected = [0, 1].map((index) => api.getDisplayedRowAtIndex(index)!);
+                expect(rejected.map((node) => [node.data.sport, node.isSelected()])).toEqual([
+                    ['football', false],
+                    ['rugby', false],
+                ]);
+                expect(api.getServerSideSelectionState()).toEqual({ selectAll: false, toggledNodes: [] });
             });
 
             test('Can select all rows in multiple selection mode', async () => {

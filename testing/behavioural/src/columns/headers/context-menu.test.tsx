@@ -5,13 +5,6 @@ import React from 'react';
 import { ClientSideRowModelModule, ColumnMenuModule, ContextMenuModule, ValidationModule } from 'ag-grid-enterprise';
 import { AgGridReact } from 'ag-grid-react';
 
-// Enables testing the context menu with async data
-Object.defineProperty(HTMLElement.prototype, 'offsetParent', {
-    get() {
-        return this.parentNode;
-    },
-});
-
 const dispatchTouchStart = (target: HTMLElement) => {
     const touch = { identifier: 1, target, clientX: 5, clientY: 5 };
     const touchStartEvent = new Event('touchstart', { bubbles: true, cancelable: true }) as TouchEvent;

@@ -15,3 +15,13 @@
 .select {
     width: 160px;
 }
+
+// Visually hidden, but still in the DOM for crawlers and screen readers.
+.frameworkVersionLinks {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+}

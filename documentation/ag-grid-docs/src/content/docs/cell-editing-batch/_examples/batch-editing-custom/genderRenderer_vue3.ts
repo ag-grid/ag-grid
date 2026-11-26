@@ -1,4 +1,15 @@
-export default {
+import { defineComponent } from 'vue';
+import type { PropType } from 'vue';
+
+import type { ICellRendererParams } from 'ag-grid-community';
+
+export default defineComponent({
+    props: {
+        params: {
+            type: Object as PropType<ICellRendererParams>,
+            required: true,
+        },
+    },
     template: `
         <span v-if="value">
         <i :class="iconClass"> </i> {{ value }}
@@ -6,7 +17,7 @@ export default {
     `,
     data: function () {
         return {
-            iconClass: null,
+            iconClass: null as string | null,
             value: '',
         };
     },
@@ -15,9 +26,9 @@ export default {
         this.value = this.params.value;
     },
     methods: {
-        refresh(params) {
+        refresh(params: ICellRendererParams) {
             this.iconClass = params.value === 'Male' ? 'fa fa-male' : 'fa fa-female';
             this.value = params.value;
         },
     },
-};
+});

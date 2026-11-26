@@ -12,7 +12,7 @@ import { DragSourceType, _createIconNoSpan, _shouldUpdateColVisibilityAfterGroup
 import type { ColumnToolPanelChildParams } from '../../columnToolPanel/columnToolPanel';
 import { isDeferredMode } from '../../columnToolPanel/toolPanelDeferredUiUtils';
 import { MENU_ITEM_SEPARATOR, _normaliseSeparators } from '../../menu/menuSeparators';
-import { _showMenuListPopup } from '../../widgets/menuPopupUtils';
+import { _isContextMenuKey, _showMenuListPopup } from '../../widgets/menuPopupUtils';
 import type { PillDropZonePanelParams } from '../../widgets/pillDropZonePanel';
 import { PillDropZonePanel } from '../../widgets/pillDropZonePanel';
 import { DropZoneColumnComp } from './dropZoneColumnComp';
@@ -92,20 +92,12 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
             }
             comp.addGuiEventListener('contextmenu', (event: MouseEvent) => this.showMoveMenu(comp, event));
             comp.addGuiEventListener('keydown', (event: KeyboardEvent) => {
-                if (event.key === 'ContextMenu' || (event.shiftKey && event.key === 'F10')) {
+                if (_isContextMenuKey(event)) {
                     this.showMoveMenu(comp, event);
                 }
             });
         }
         return comp;
-    }
-
-    private isMoveSuppressed(comp: DropZoneColumnComp): boolean {
-        return !!(
-            this.updateParams?.suppressSyncLayoutWithGrid ||
-            comp.getItem().colDef.suppressMovable ||
-            !comp.isMovable()
-        );
     }
 
     private getMenuConfig(comp: DropZoneColumnComp) {
@@ -117,8 +109,8 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
             DefaultColumnDropZoneMenuItem,
             { direction: (typeof directions)[number]; isPrevious: boolean }
         >();
-        const suppressMove = this.isMoveSuppressed(comp);
-        for (let index = 0; !suppressMove && index < directions.length; ++index) {
+        const canMove = comp.isMovable();
+        for (let index = 0; canMove && index < directions.length; ++index) {
             const direction = directions[index];
             const isTowardStart = index === 0;
             const isPrevious = isTowardStart !== isRtlHorizontal;
@@ -160,9 +152,7 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
                     disabled: this.getItemMoveIndex(comp, isPrevious) === null,
                     action: () => {
                         this.hideMoveMenu?.();
-                        if (!this.isMoveSuppressed(comp)) {
-                            this.moveItem(comp, isPrevious);
-                        }
+                        this.moveItem(comp, isPrevious);
                     },
                 };
             }),

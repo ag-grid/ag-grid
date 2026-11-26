@@ -8,7 +8,7 @@ import { Component } from '../widgets/component';
 import { _getPageNumberItems } from './pageNumberItems';
 import pageNumbersCompCSS from './pageNumbersComp.css';
 import type { PaginationService } from './paginationService';
-import { _formatPaginationNumber } from './paginationUtils';
+import { _formatPaginationNumber, _getPageAriaStatus } from './paginationUtils';
 
 const PAGE_ATTR = 'data-page';
 
@@ -73,10 +73,16 @@ export class PageNumbersComp extends Component {
         this.btNext.insertAdjacentElement('afterbegin', _createIconNoSpan(isRtl ? 'previous' : 'next', this.beans)!);
         this.btLast.insertAdjacentElement('afterbegin', _createIconNoSpan(isRtl ? 'first' : 'last', this.beans)!);
 
-        this.initNavButton(this.btFirst, () => this.onBtFirst());
-        this.initNavButton(this.btPrevious, () => this.onBtPrevious());
-        this.initNavButton(this.btNext, () => this.onBtNext());
-        this.initNavButton(this.btLast, () => this.onBtLast());
+        this.initNavButton(this.btFirst, () => this.onBtFirst(), 'firstPage', 'tooltipFirstPage', 'Go to first page');
+        this.initNavButton(
+            this.btPrevious,
+            () => this.onBtPrevious(),
+            'previousPage',
+            'tooltipPreviousPage',
+            'Go to previous page'
+        );
+        this.initNavButton(this.btNext, () => this.onBtNext(), 'nextPage', 'tooltipNextPage', 'Go to next page');
+        this.initNavButton(this.btLast, () => this.onBtLast(), 'lastPage', 'tooltipLastPage', 'Go to last page');
 
         this.addManagedListeners(this.eNumbers, {
             click: (e: MouseEvent) => this.onPageActivated(e.target as HTMLElement | null),
@@ -91,7 +97,19 @@ export class PageNumbersComp extends Component {
         this.refresh();
     }
 
-    private initNavButton(button: HTMLElement, action: () => void): void {
+    private initNavButton(
+        button: HTMLElement,
+        action: () => void,
+        control: string,
+        tooltipKey: string,
+        defaultValue: string
+    ): void {
+        this.addTooltip({
+            control,
+            getGui: () => button,
+            getLocation: () => 'pagination',
+            getTooltip: () => ({ value: this.getLocaleTextFunc()(tooltipKey, defaultValue) }),
+        });
         this.activateTabIndex([button]);
         this.addManagedListeners(button, {
             click: action,
@@ -144,7 +162,8 @@ export class PageNumbersComp extends Component {
         const currentPage = pagination.getCurrentPage();
         const totalPages = pagination.getTotalPages();
         const localeTextFunc = this.getLocaleTextFunc();
-        const items = _getPageNumberItems(currentPage, totalPages, this.rowModel.isLastRowIndexKnown());
+        const lastPageFound = this.rowModel.isLastRowIndexKnown();
+        const items = _getPageNumberItems(currentPage, totalPages, lastPageFound);
         const { eNumbers } = this;
 
         // Rebuilding the numbers drops the focused button; move focus to the rebuilt current page so it isn't lost.
@@ -172,10 +191,9 @@ export class PageNumbersComp extends Component {
 
         this.updateArrows(currentPage, totalPages);
 
-        const ofLabel = localeTextFunc('of', 'of');
         const currentLabel = this.formatNumber(totalPages > 0 ? currentPage + 1 : 1);
-        const totalLabel = this.formatNumber(Math.max(totalPages, 1));
-        this.ariaStatus = `${pageLabel} ${currentLabel} ${ofLabel} ${totalLabel}`;
+        const totalLabel = lastPageFound ? this.formatNumber(Math.max(totalPages, 1)) : null;
+        this.ariaStatus = _getPageAriaStatus(localeTextFunc, currentLabel, totalLabel);
     }
 
     private updateArrows(currentPage: number, totalPages: number): void {

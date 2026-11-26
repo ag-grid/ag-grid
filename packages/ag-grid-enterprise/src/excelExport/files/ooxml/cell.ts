@@ -14,7 +14,7 @@ const convertLegacyType = (type: string): string => {
 const cellFactory: ExcelOOXMLTemplate = {
     getTemplate(config: ExcelCell, idx: number, currentSheet: number) {
         const { ref, data, styleId } = config;
-        const { type, value } = data || { type: 'empty', value: null };
+        const { type, value } = data ?? { type: 'empty', value: null };
         let convertedType: string = type;
 
         if (type === 'f') {

@@ -1,6 +1,10 @@
 import { exampleRunnerAsset } from '@ag-website-shared/components/example-runner/utils/exampleRunnerAsset';
 
-export const EXAMPLE_RUNNER_SCRIPT_FILE_NAME = 'example-runner.js';
+/**
+ * `.mjs`, as Plunker runs `.js` files through TypeScript when a plunk has a `tsconfig.json`, which breaks the
+ * runner. It is still loaded as a classic script.
+ */
+export const EXAMPLE_RUNNER_SCRIPT_FILE_NAME = 'example-runner.mjs';
 
 const NAMESPACE = 'agExampleRunner';
 

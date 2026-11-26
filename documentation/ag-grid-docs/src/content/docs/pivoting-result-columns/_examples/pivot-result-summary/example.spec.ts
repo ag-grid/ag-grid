@@ -1,4 +1,4 @@
-import { ensureGridReady, expect, test } from '@utils/grid/test-utils';
+import { ensureGridReady, expect, gridEventLog, recreateGrid, test } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
     // Values captured versus 33.3.0 but with updated valueChange for bug fix
@@ -72,7 +72,7 @@ test.agExample(import.meta, () => {
     ].forEach(({ editFinishKey, expected }) => {
         test.vanilla(
             `Keyboard-started Edit on cell with [${editFinishKey}] when enableGroupEdits=true`,
-            async ({ page, agIdFor, remoteGrid, request }) => {
+            async ({ page, agIdFor, request }) => {
                 // Relative, so it resolves against the whole base URL: a branch build is served under a
                 // path prefix, where a leading slash would resolve against the origin alone and 404.
                 const response = await request.get('example-assets/small-olympic-winners.json', {
@@ -80,40 +80,45 @@ test.agExample(import.meta, () => {
                 });
                 const data = await response.json();
 
-                const remoteApi = remoteGrid(page, '1');
+                await ensureGridReady(page);
 
                 // Integration Testing with initial options
-                await remoteApi.recreateGrid({
-                    columnDefs: [
-                        { field: 'country', rowGroup: true },
-                        { field: 'year', pivot: true },
-                        {
-                            field: 'gold',
-                            aggFunc: 'sum',
+                await recreateGrid(
+                    page,
+                    {
+                        columnDefs: [
+                            { field: 'country', rowGroup: true },
+                            { field: 'year', pivot: true },
+                            {
+                                field: 'gold',
+                                aggFunc: 'sum',
+                            },
+                            { field: 'silver', aggFunc: 'sum' },
+                            { field: 'bronze', aggFunc: 'sum' },
+                        ],
+                        defaultColDef: {
+                            flex: 1,
+                            minWidth: 130,
+                            editable: true,
                         },
-                        { field: 'silver', aggFunc: 'sum' },
-                        { field: 'bronze', aggFunc: 'sum' },
-                    ],
-                    defaultColDef: {
-                        flex: 1,
-                        minWidth: 130,
-                        editable: true,
+                        autoGroupColumnDef: {
+                            minWidth: 200,
+                            editable: true,
+                        },
+                        // singleClickEdit: true,
+                        enableGroupEdit: true,
+                        pivotMode: true,
+                        rowData: data,
                     },
-                    autoGroupColumnDef: {
-                        minWidth: 200,
-                        editable: true,
-                    },
-                    // singleClickEdit: true,
-                    enableGroupEdit: true,
-                    pivotMode: true,
-                    rowData: data,
-                });
+                    '1'
+                );
 
                 await ensureGridReady(page);
 
-                await remoteApi.logEvent('cellEditingStarted', ['value']);
-                await remoteApi.logEvent('cellValueChanged', ['newValue', 'oldValue', 'source']);
-                await remoteApi.logEvent('cellEditingStopped', ['newValue', 'oldValue', 'value', 'valueChanged']);
+                const log = await gridEventLog(page, '1');
+                await log.record('cellEditingStarted', ['value']);
+                await log.record('cellValueChanged', ['newValue', 'oldValue', 'source']);
+                await log.record('cellEditingStopped', ['newValue', 'oldValue', 'value', 'valueChanged']);
 
                 const cell = agIdFor.cell('row-group-country-United States', 'pivot_year_2000_gold');
                 await expect(cell).toBeVisible();
@@ -123,9 +128,7 @@ test.agExample(import.meta, () => {
                 await page.keyboard.type('234');
                 await page.keyboard.press(editFinishKey);
 
-                const eventLog = await remoteGrid.waitForEventlog(250);
-
-                expect(eventLog).toMatchObject(expected);
+                await expect.poll(() => log.entries()).toMatchObject(expected);
             }
         );
     });
@@ -202,53 +205,56 @@ test.agExample(import.meta, () => {
     ].forEach(({ editFinishKey, expected }) => {
         test.vanilla(
             `DblClick-started Edit on cell with [${editFinishKey}] when enableGroupEdits=true`,
-            async ({ page, agIdFor, remoteGrid, request }) => {
+            async ({ page, agIdFor, request }) => {
                 const response = await request.get('example-assets/small-olympic-winners.json', {
                     ignoreHTTPSErrors: true,
                 });
                 const data = await response.json();
 
-                const remoteApi = remoteGrid(page, '1');
+                await ensureGridReady(page);
 
                 // Integration Testing with initial options
-                await remoteApi.recreateGrid({
-                    columnDefs: [
-                        { field: 'country', rowGroup: true },
-                        { field: 'year', pivot: true },
-                        {
-                            field: 'gold',
-                            aggFunc: 'sum',
+                await recreateGrid(
+                    page,
+                    {
+                        columnDefs: [
+                            { field: 'country', rowGroup: true },
+                            { field: 'year', pivot: true },
+                            {
+                                field: 'gold',
+                                aggFunc: 'sum',
+                            },
+                            { field: 'silver', aggFunc: 'sum' },
+                            { field: 'bronze', aggFunc: 'sum' },
+                        ],
+                        defaultColDef: {
+                            flex: 1,
+                            minWidth: 130,
+                            editable: true,
                         },
-                        { field: 'silver', aggFunc: 'sum' },
-                        { field: 'bronze', aggFunc: 'sum' },
-                    ],
-                    defaultColDef: {
-                        flex: 1,
-                        minWidth: 130,
-                        editable: true,
+                        autoGroupColumnDef: {
+                            minWidth: 200,
+                            editable: true,
+                        },
+                        // singleClickEdit: true,
+                        enableGroupEdit: true,
+                        pivotMode: true,
+                        rowData: data,
                     },
-                    autoGroupColumnDef: {
-                        minWidth: 200,
-                        editable: true,
-                    },
-                    // singleClickEdit: true,
-                    enableGroupEdit: true,
-                    pivotMode: true,
-                    rowData: data,
-                });
+                    '1'
+                );
 
-                await remoteApi.logEvent('cellEditingStarted', ['value']);
-                await remoteApi.logEvent('cellValueChanged', ['newValue', 'oldValue', 'source']);
-                await remoteApi.logEvent('cellEditingStopped', ['newValue', 'oldValue', 'value', 'valueChanged']);
+                const log = await gridEventLog(page, '1');
+                await log.record('cellEditingStarted', ['value']);
+                await log.record('cellValueChanged', ['newValue', 'oldValue', 'source']);
+                await log.record('cellEditingStopped', ['newValue', 'oldValue', 'value', 'valueChanged']);
 
                 const cell = agIdFor.cell('row-group-country-United States', 'pivot_year_2000_gold');
                 await cell.dblclick();
                 await page.keyboard.type('1234');
                 await page.keyboard.press(editFinishKey);
 
-                const eventLog = await remoteGrid.waitForEventlog(250);
-
-                expect(eventLog).toMatchObject(expected);
+                await expect.poll(() => log.entries()).toMatchObject(expected);
             }
         );
     });

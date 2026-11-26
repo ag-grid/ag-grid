@@ -1,4 +1,4 @@
-import { buildAgentsMd, buildLlmsTxt } from './agentReadinessFiles';
+import { archiveRoot, buildAgentsMd, buildLlmsTxt } from './agentReadinessFiles';
 import { getHtaccessContent } from './htaccess/htaccessRules';
 import { compileHtaccess, route } from './htaccess/htaccessSimulator';
 import { resolveRoute } from './pageRoutes.test-utils';
@@ -7,7 +7,8 @@ import { getSitemapConfig } from './sitemap';
 const INPUT = {
     siteRoot: 'https://www.ag-grid.com/',
     majorVersion: 34,
-    gridDocsPrefix: 'javascript-data-grid',
+    gridDocsPrefix: 'react-data-grid',
+    chartsDocsPrefix: 'react',
 };
 
 describe('buildLlmsTxt', () => {
@@ -22,17 +23,27 @@ describe('buildLlmsTxt', () => {
     });
 
     test('links the products, docs, MCP server and sitemap (acceptance criteria)', () => {
-        expect(txt).toContain('- [Data Grid](https://www.ag-grid.com/javascript-data-grid/getting-started/):');
+        expect(txt).toContain('- [Data Grid](https://www.ag-grid.com/react-data-grid/getting-started/):');
         expect(txt).toContain('(https://www.ag-grid.com/charts/)');
         expect(txt).toContain('(https://www.ag-grid.com/studio/)');
-        expect(txt).toContain('(https://www.ag-grid.com/javascript-data-grid/getting-started/)');
-        expect(txt).toContain('(https://www.ag-grid.com/javascript-data-grid/mcp-server/)');
+        expect(txt).toContain('(https://www.ag-grid.com/react-data-grid/getting-started/)');
+        expect(txt).toContain('(https://www.ag-grid.com/react-data-grid/mcp-server/)');
         expect(txt).toContain('(https://www.ag-grid.com/sitemap-index.xml)');
+    });
+
+    // SE-206: agents are sent to the same framework as the header's Docs and API links.
+    test('links the docs for the given framework and states how to reach the others', () => {
+        expect(txt).toContain('- [Data Grid API reference](https://www.ag-grid.com/react-data-grid/reference/):');
+        expect(txt).toContain('- [Charts docs](https://www.ag-grid.com/charts/react/quick-start/):');
+        expect(txt).toContain(
+            'replace `react-data-grid` with `<framework>-data-grid` (`javascript`, `angular` or `vue`) for another framework'
+        );
+        expect(txt).not.toContain('javascript-data-grid/');
     });
 
     test('advertises the markdown (.md) convention as a site-wide rule, not a page list', () => {
         expect(txt).toContain('.md');
-        expect(txt).toContain('https://www.ag-grid.com/javascript-data-grid/getting-started.md');
+        expect(txt).toContain('https://www.ag-grid.com/react-data-grid/getting-started.md');
         // Every page in the sitemap has a twin, so llms.txt states the rule. Enumerating
         // pages here would drift the moment one is added (see markdownPages.test.ts).
         expect(txt).toContain('append `.md` to any page URL listed in the sitemap');
@@ -70,7 +81,12 @@ describe('buildLlmsTxt', () => {
             },
         ];
         const SITE_INDEX = [{ title: 'General', links: [{ title: 'About', url: 'https://www.ag-grid.com/about/' }] }];
-        const indexed = buildLlmsTxt({ ...INPUT, docsIndex: DOCS_INDEX, siteIndex: SITE_INDEX });
+        const indexed = buildLlmsTxt({
+            ...INPUT,
+            docsIndex: DOCS_INDEX,
+            siteIndex: SITE_INDEX,
+            indexDocsPrefix: 'javascript-data-grid',
+        });
 
         test('publishes the docs under their navigation groups, in the order given', () => {
             expect(indexed).toContain('## Documentation');
@@ -84,7 +100,9 @@ describe('buildLlmsTxt', () => {
         });
 
         test('states the framework substitution instead of repeating the docs four times', () => {
-            expect(indexed).toContain('replace `javascript-data-grid` with `<framework>-data-grid`');
+            expect(indexed).toContain(
+                'replace `javascript-data-grid` with `<framework>-data-grid` (`react`, `angular` or `vue`) for the framework-specific page'
+            );
             expect(indexed).not.toContain('react-data-grid/cell-editing');
         });
 
@@ -117,17 +135,26 @@ describe('buildAgentsMd', () => {
     test('states the major version and points at the MCP server and llms.txt', () => {
         expect(md).toContain('v34');
         expect(md).toContain('npx ag-mcp');
-        expect(md).toContain('https://www.ag-grid.com/javascript-data-grid/mcp-server/');
+        expect(md).toContain('https://www.ag-grid.com/react-data-grid/mcp-server/');
         expect(md).toContain('https://www.ag-grid.com/llms.txt');
     });
 
     test('advertises the markdown (.md) versions as a site-wide rule', () => {
         expect(md).toContain('Markdown for LLMs');
-        expect(md).toContain('https://www.ag-grid.com/javascript-data-grid/getting-started.md');
+        expect(md).toContain('https://www.ag-grid.com/react-data-grid/getting-started.md');
         // Every page in the sitemap has a twin, so point at the sitemap rather than
         // listing pages that would drift (see markdownPages.test.ts for the guarantee).
         expect(md).toContain('append `.md` to any page URL listed in the');
         expect(md).toContain('[sitemap](https://www.ag-grid.com/sitemap-index.xml)');
+    });
+
+    test('links the docs for the given framework and states how to reach the others', () => {
+        expect(md).toContain('[Data Grid docs](https://www.ag-grid.com/react-data-grid/getting-started/)');
+        expect(md).toContain('[API reference](https://www.ag-grid.com/react-data-grid/reference/)');
+        expect(md).toContain(
+            'replace `react-data-grid` with `<framework>-data-grid` (`javascript`, `angular` or `vue`) for another framework'
+        );
+        expect(md).not.toContain('javascript-data-grid/');
     });
 
     test('points at index.md for the homepage, whose twin is not a `.md` suffix', () => {
@@ -143,6 +170,64 @@ describe('buildAgentsMd', () => {
 
 // SE-77 / SE-80: an agent follows these links verbatim, so each one must be a URL the grid build
 // emits (waf-finding.md §16 T8). Resolved against the route files and docs content, not a dist.
+// waf-finding.md §13: an archive's llms.txt sent agents to the current docs, not the archived version.
+describe('archive builds', () => {
+    const ARCHIVE_ROOT = 'https://www.ag-grid.com/archive/36.3.0/';
+    const ARCHIVE_INPUT = { ...INPUT, archive: { root: ARCHIVE_ROOT, version: '36.3.0' } };
+    const txt = buildLlmsTxt(ARCHIVE_INPUT);
+    const md = buildAgentsMd(ARCHIVE_INPUT);
+
+    test('archiveRoot joins the site root and the build base URL, with or without slashes', () => {
+        expect(archiveRoot('https://www.ag-grid.com/', '/archive/36.3.0/')).toBe(ARCHIVE_ROOT);
+        expect(archiveRoot('https://www.ag-grid.com/', 'archive/36.3.0')).toBe(ARCHIVE_ROOT);
+    });
+
+    test.each([
+        ['llms.txt', txt],
+        ['AGENTS.md', md],
+    ])('%s sends the version-specific links into the archive', (_name, body) => {
+        for (const page of [
+            'react-data-grid/getting-started/',
+            'react-data-grid/reference/',
+            'react-data-grid/mcp-server/',
+        ]) {
+            expect(body, page).toContain(`(${ARCHIVE_ROOT}${page})`);
+        }
+        expect(body).toContain(`${ARCHIVE_ROOT}react-data-grid/getting-started.md`);
+        expect(body).toContain(`${ARCHIVE_ROOT}index.md`);
+    });
+
+    test.each([
+        ['llms.txt', txt],
+        ['AGENTS.md', md],
+    ])('%s keeps the site-wide links on the current site, which has the only copy', (_name, body) => {
+        for (const page of ['charts/', 'studio/', 'example/', 'changelog/']) {
+            expect(body, page).toContain(`(https://www.ag-grid.com/${page})`);
+        }
+        expect(body).not.toContain(`${ARCHIVE_ROOT}charts/`);
+    });
+
+    test('llms.txt names the archived version and links the current docs instead of claiming to be current', () => {
+        expect(txt).toContain('Archived documentation for AG Grid 36.3.0');
+        expect(txt).toContain('the current docs are at https://www.ag-grid.com/react-data-grid/getting-started/.');
+        expect(txt).not.toContain('Current major version');
+    });
+
+    test('AGENTS.md names the archived version and links llms.txt in the archive', () => {
+        expect(md).toContain('these are the archived docs for v36.3.0');
+        expect(md).not.toContain('**Current version:**');
+        expect(md).toContain(`[llms.txt](${ARCHIVE_ROOT}llms.txt)`);
+    });
+
+    test.each([
+        ['llms.txt', buildLlmsTxt, txt],
+        ['AGENTS.md', buildAgentsMd, md],
+    ])('%s is unchanged outside an archive', (_name, build) => {
+        expect(build(INPUT)).not.toContain('/archive/');
+        expect(build({ ...INPUT, archive: undefined })).toBe(build(INPUT));
+    });
+});
+
 describe('curated links in llms.txt and AGENTS.md', () => {
     const SITE_ROOT = 'https://www.ag-grid.com';
     // Written by @astrojs/sitemap rather than a route file.
@@ -179,8 +264,6 @@ describe('curated links in llms.txt and AGENTS.md', () => {
         expect(resolveRoute('/react-data-grid/react-hooks.md')).toBeDefined();
         expect(resolveRoute('/angular-data-grid/react-hooks/')).toBeUndefined();
         expect(resolveRoute('/angular-data-grid/react-hooks.md')).toBeUndefined();
-        expect(resolveRoute('/vue-data-grid/vue3-script-setup/')).toBeDefined();
-        expect(resolveRoute('/react-data-grid/vue3-script-setup/')).toBeUndefined();
     });
 
     describe.each([

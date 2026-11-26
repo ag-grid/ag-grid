@@ -1,10 +1,11 @@
+import { waitFor } from '@testing-library/dom';
 import { _doOnce } from 'ag-stack';
 import { ALL_SEVERITIES, GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 import type { MockInstance } from 'vitest';
 import { vi } from 'vitest';
 
-import type { GridOptions, Module } from 'ag-grid-community';
-import { ClientSideRowModelModule, enableDevValidations } from 'ag-grid-community';
+import type { GetDetailRowDataParams, GridOptions, Module } from 'ag-grid-community';
+import { ClientSideRowModelModule, enableDevValidations, getGridElement } from 'ag-grid-community';
 import {
     CalculatedColumnsModule,
     FormulaModule,
@@ -88,6 +89,75 @@ describe('ag-grid formulas module interop', () => {
         await asyncSetTimeout(rowNumberRefreshBufferMs);
 
         expectBlockedWith('Master Detail');
+    });
+
+    test('toggling masterDetail at runtime switches formulas off and on, with the same columns and events each way', async () => {
+        // Asserts the blocker warning (#295) fires; suppress only that id so any other still throws.
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [295] });
+        const api = gridsManager.createGrid('formulas-interop-master-toggle', {
+            masterDetail: false,
+            detailCellRendererParams: {
+                detailGridOptions: { columnDefs: [{ field: 'a' }] },
+                getDetailRowData: (params: GetDetailRowDataParams) => params.successCallback([]),
+            },
+            columnDefs: [{ field: 'a', allowFormula: true }, { field: 'b' }],
+            rowData: [
+                { a: '=1+2', b: 1 },
+                { a: 5, b: 2 },
+            ],
+        });
+        await asyncSetTimeout(rowNumberRefreshBufferMs);
+
+        const events: string[] = [];
+        api.addEventListener('gridColumnsChanged', () => events.push('gridColumnsChanged'));
+        api.addEventListener('virtualColumnsChanged', () => events.push('virtualColumnsChanged'));
+        api.addEventListener('displayedColumnsChanged', () => events.push('displayedColumnsChanged'));
+        api.addEventListener('modelUpdated', () => events.push('modelUpdated'));
+
+        const blockerWarnings = () =>
+            warnSpy!.mock.calls.filter((args) =>
+                args.some(
+                    (arg) =>
+                        typeof arg === 'string' &&
+                        (arg.includes('Master Detail') || arg.includes(encodeURIComponent('Master Detail')))
+                )
+            ).length;
+
+        const read = () => ({
+            value: api.getCellValue({ rowNode: api.getDisplayedRowAtIndex(0)!, colKey: 'a' }),
+            text: getGridElement(api)!.querySelector('.ag-row[row-index="0"] [col-id="a"]')!.textContent,
+            columns: api.getAllDisplayedColumns().map((col) => col.getColId()),
+            blockerWarnings: blockerWarnings(),
+        });
+
+        const toggle = async (masterDetail: boolean) => {
+            events.length = 0;
+            api.setGridOption('masterDetail', masterDetail);
+            await waitFor(() => expect(events.length).toBeGreaterThanOrEqual(4), { timeout: 500 });
+            await asyncSetTimeout(0);
+            return { ...read(), events: [...events] };
+        };
+
+        const withRowNumbers = ['ag-Grid-RowNumbersColumn', 'a', 'b'];
+        const sameEvents = ['gridColumnsChanged', 'virtualColumnsChanged', 'displayedColumnsChanged', 'modelUpdated'];
+
+        expect(read()).toEqual({ value: 3, text: '3', columns: withRowNumbers, blockerWarnings: 0 });
+
+        expect(await toggle(true)).toEqual({
+            value: '=1+2',
+            text: '=1+2',
+            columns: ['a', 'b'],
+            blockerWarnings: 1,
+            events: sameEvents,
+        });
+
+        expect(await toggle(false)).toEqual({
+            value: 3,
+            text: '3',
+            columns: withRowNumbers,
+            blockerWarnings: 1,
+            events: sameEvents,
+        });
     });
 
     test('masterDetail supports calculated columns', async () => {

@@ -66,7 +66,7 @@ export interface AgBaseCellEditor<TValue = any> extends ICellEditor<TValue> {
     agFlushInput?(): void;
 }
 
-export interface ICellEditor<TValue = any> extends BaseCellEditor {
+export interface ICellEditor<TValue = any, TData = any, TContext = any> extends BaseCellEditor {
     /**
      * Mandatory - Return the final value. Called by the grid once after editing is complete.
      */
@@ -75,7 +75,7 @@ export interface ICellEditor<TValue = any> extends BaseCellEditor {
     /**
      * Optional: Gets called with the latest cell editor params every time they update
      */
-    refresh?(params: ICellEditorParams<any, TValue>): void;
+    refresh?(params: ICellEditorParams<TData, TValue, TContext>): void;
 
     /**
      * Optional: A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.
@@ -167,7 +167,7 @@ export interface ICellEditorParams<TData = any, TValue = any, TContext = any> ex
 }
 
 export interface ICellEditorComp<TData = any, TValue = any, TContext = any>
-    extends ICellEditor<TValue>, IPopupComponent<ICellEditorParams<TData, TValue, TContext>> {}
+    extends ICellEditor<TValue, TData, TContext>, IPopupComponent<ICellEditorParams<TData, TValue, TContext>> {}
 
 /** This is only used internally within the grid */
 export interface DefaultProvidedCellEditorParams {
@@ -179,18 +179,6 @@ export interface GetCellEditorInstancesParams<TData = any> extends GetCellsParam
 export interface EditingCellPosition extends RowPosition {
     /** Column id */
     colId: string;
-
-    /**
-     * Column instance.
-     * @deprecated Use `colId` instead.
-     */
-    column?: Column;
-
-    /**
-     * Column instance.
-     * @deprecated Use `colId` instead.
-     */
-    colKey?: string | Column;
 
     /** New pending value, use `null` to delete cell content */
     newValue?: any;

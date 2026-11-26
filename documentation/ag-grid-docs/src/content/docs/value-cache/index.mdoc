@@ -30,7 +30,7 @@ that has a `console.log()` statement. This will allow us to see exactly when the
     - The DOM requires each value that is displayed (because of scrolling, not all are displayed)
 - As you **scroll up and down** the grid, the value getters are executed, as the DOM needs values for rendering.
 - As you **open and close groups**, the value getters are executed, as the DOM needs values for rendering.
-- Now turn the value cache **on** by selecting the radio button at the top. The grid gets reset and then works with the value cache on. Notice in the console that the value getter gets executed exactly 100 times, once for each row. Even through the value getter result is used in two places (aggregation and rendering the row), the value getter is only called once. Even scrolling and opening / closing the groups does not result in the value getter getting executed again.
+- Now turn the value cache **on** by selecting **On** at the top. The grid gets reset and then works with the value cache on. Notice in the console that the value getter gets executed exactly 100 times, once for each row. Even through the value getter result is used in two places (aggregation and rendering the row), the value getter is only called once. Even scrolling and opening / closing the groups does not result in the value getter getting executed again.
 
 {% gridExampleRunner title="Value Cache" name="value-cache" /%}
 

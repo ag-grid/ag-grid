@@ -43,20 +43,24 @@ ModuleRegistry.registerModules([
 const VueExample = defineComponent({
     template: `
         <div style="height: 100%">
-            <div class="test-container">
-                <div class="test-header">
-                    <input type="text" id="filter-text-box" style="width: 100px;" v-on:input="onQuickFilterChanged()" placeholder="Filter...">
-                    <span style="padding-left: 20px;">
-                        <b>Period:</b>
+            <div class="example-wrapper">
+                <div class="example-controls">
+                    <div class="controls-row">
+                        <input type="text" id="filter-text-box" style="width: 100px;" v-on:input="onQuickFilterChanged()" placeholder="Filter...">
+                        <span class="gap-left">Period:</span>
                         <button v-on:click="onChangeMonth(-1)"><i class="fa fa-chevron-left"></i></button>
                         <button v-on:click="onChangeMonth(1)"><i class="fa fa-chevron-right"></i></button>
                         <span id="monthName" style="width: 100px; display: inline-block;">Year to Jan</span>
-                    </span>
-                    <span style="padding-left: 20px;">
-                        <b>Legend:</b>&nbsp;&nbsp;
-                        <div class="cell-bud legend-box"></div> Actual&nbsp;&nbsp;
-                        <div class="cell-act legend-box"></div> Budget
-                    </span>
+                        <span class="gap-left">Legend:</span>
+                        <span class="legend-item">
+                            <span class="legend-swatch cell-bud"></span>
+                            Actual
+                        </span>
+                        <span class="legend-item">
+                            <span class="legend-swatch cell-act"></span>
+                            Budget
+                        </span>
+                    </div>
                 </div>
                 <ag-grid-vue
                 
@@ -143,10 +147,10 @@ const VueExample = defineComponent({
             flex: 1,
             minWidth: 120,
         });
-        const context = ref(null);
-        const autoGroupColumnDef = ref<ColDef>(null);
-        const rowData = ref<any[]>(null);
-        const rowSelection = ref<RowSelectionOptions>(null);
+        const context = ref<{ month: number; months: string[] } | null>(null);
+        const autoGroupColumnDef = ref<ColDef | null>(null);
+        const rowData = ref<any[] | null>(null);
+        const rowSelection = ref<RowSelectionOptions | null>(null);
 
         onBeforeMount(() => {
             context.value = {
@@ -166,8 +170,8 @@ const VueExample = defineComponent({
             };
         });
 
-        const onChangeMonth = (i) => {
-            var newMonth = (context.value.month += i);
+        const onChangeMonth = (i: number) => {
+            var newMonth = (context.value!.month += i);
             if (newMonth < -1) {
                 newMonth = -1;
             }
@@ -175,18 +179,21 @@ const VueExample = defineComponent({
                 newMonth = 5;
             }
             // Mutate the context object in place
-            context.value.month = newMonth;
-            document.querySelector('#monthName').textContent = monthNames[newMonth + 1];
-            gridApi.value.refreshClientSideRowModel('aggregate');
-            gridApi.value.refreshCells();
+            context.value!.month = newMonth;
+            document.querySelector('#monthName')!.textContent = monthNames[newMonth + 1];
+            gridApi.value!.refreshClientSideRowModel('aggregate');
+            gridApi.value!.refreshCells();
         };
         const onQuickFilterChanged = () => {
-            gridApi.value.setGridOption('quickFilterText', document.getElementById('filter-text-box').value);
+            gridApi.value!.setGridOption(
+                'quickFilterText',
+                (document.getElementById('filter-text-box') as HTMLInputElement).value
+            );
         };
         const onGridReady = (params: GridReadyEvent) => {
             gridApi.value = params.api;
 
-            const updateData = (data) => {
+            const updateData = (data: any[]) => {
                 rowData.value = data;
             };
 

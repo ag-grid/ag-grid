@@ -9,7 +9,7 @@ import type { AgComponentSelectorType } from '../widgets/component';
 import { Component } from '../widgets/component';
 import type { GridInputNumberField } from '../widgets/gridWidgetTypes';
 import type { PaginationService } from './paginationService';
-import { _formatPaginationNumber } from './paginationUtils';
+import { _formatPaginationNumber, _getPageAriaStatus } from './paginationUtils';
 
 export class PageSummaryComp extends Component {
     private rowModel: IRowModel;
@@ -59,12 +59,42 @@ export class PageSummaryComp extends Component {
     private initNavButtons(): void {
         const { btFirst, btPrevious, btNext, btLast } = this;
         this.activateTabIndex([btFirst, btPrevious, btNext, btLast]);
-        for (const { el, fn } of [
-            { el: btFirst, fn: this.onBtFirst.bind(this) },
-            { el: btPrevious, fn: this.onBtPrevious.bind(this) },
-            { el: btNext, fn: this.onBtNext.bind(this) },
-            { el: btLast, fn: this.onBtLast.bind(this) },
+        for (const { el, fn, control, key, defaultValue } of [
+            {
+                el: btFirst,
+                fn: this.onBtFirst.bind(this),
+                control: 'firstPage',
+                key: 'tooltipFirstPage',
+                defaultValue: 'Go to first page',
+            },
+            {
+                el: btPrevious,
+                fn: this.onBtPrevious.bind(this),
+                control: 'previousPage',
+                key: 'tooltipPreviousPage',
+                defaultValue: 'Go to previous page',
+            },
+            {
+                el: btNext,
+                fn: this.onBtNext.bind(this),
+                control: 'nextPage',
+                key: 'tooltipNextPage',
+                defaultValue: 'Go to next page',
+            },
+            {
+                el: btLast,
+                fn: this.onBtLast.bind(this),
+                control: 'lastPage',
+                key: 'tooltipLastPage',
+                defaultValue: 'Go to last page',
+            },
         ]) {
+            this.addTooltip({
+                control,
+                getGui: () => el,
+                getLocation: () => 'pagination',
+                getTooltip: () => ({ value: this.getLocaleTextFunc()(key, defaultValue) }),
+            });
             this.addManagedListeners(el, {
                 click: fn,
                 keydown: (e: KeyboardEvent) => {
@@ -219,6 +249,9 @@ export class PageSummaryComp extends Component {
 
         const lbCurrentValue = this.getDisplayPageNumber();
         const lbCurrent = this.formatNumber(lbCurrentValue);
+        const strPage = localeTextFunc('page', 'Page');
+        // An unknown total is left out rather than read as "of more".
+        const strOfTotal = lastPageFound ? ` ${localeTextFunc('of', 'of')} ${lbTotalStr}` : '';
         if (this.suppressPageInput) {
             lbCurrentStatic.textContent = lbCurrent;
         } else {
@@ -231,18 +264,13 @@ export class PageSummaryComp extends Component {
             lbCurrentInput.getInputElement().style.width = `${Math.floor(Math.log10(Math.max(1, maxPage))) + 3.5}ch`;
             lbCurrentInput.setValue(lbCurrentValue.toString());
             const eInput = lbCurrentInput.getInputElement();
-            _setAriaLabel(
-                eInput,
-                `${localeTextFunc('page', 'Page')} ${localeTextFunc('number', 'number')}, ${lbCurrentValue} ${localeTextFunc('of', 'of')} ${lbTotalStr}`
-            );
+            _setAriaLabel(eInput, `${strPage} ${localeTextFunc('number', 'number')}, ${lbCurrentValue}${strOfTotal}`);
             eInput.setAttribute('aria-valuenow', String(lbCurrentValue));
             eInput.setAttribute('aria-valuemin', String(Math.min(1, lbCurrentValue)));
             eInput.setAttribute('aria-valuemax', String(maxPage));
         }
 
-        const strPage = localeTextFunc('page', 'Page');
-        const strOf = localeTextFunc('of', 'of');
-        this.ariaStatus = `${strPage} ${lbCurrent} ${strOf} ${lbTotalStr}`;
+        this.ariaStatus = _getPageAriaStatus(localeTextFunc, lbCurrent, lastPageFound ? lbTotalStr : null);
     }
 
     private formatNumber(value: number): string {

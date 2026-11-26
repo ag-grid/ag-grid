@@ -2,7 +2,6 @@ import { waitFor } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
 import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 import { mockGridLayout } from 'ag-test-utils/polyfills/mockGridLayout';
-import { installMockResizeObserver } from 'ag-test-utils/polyfills/mockResizeObserver';
 
 import type { ColDef, GridApi } from 'ag-grid-community';
 import {
@@ -67,6 +66,30 @@ describe('Legacy colSpan rendering', () => {
             ├── LEAF id:0 a:"a0" b:"b0" c:"c0"
             └── LEAF id:1 a:"a1" b:"b1" c:"c1"
         `);
+    });
+
+    test('a spanning cell sets aria-colspan to the columns it covers, hidden columns included', () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [columnDefs[0], { colId: 'x', width: 100, hide: true }, columnDefs[1], columnDefs[2]],
+            rowData,
+        });
+        const ariaRow = (rowIndex: number) =>
+            Array.from(
+                getGridElement(api)!.querySelectorAll<HTMLElement>(`.ag-row[row-index="${rowIndex}"] .ag-cell`),
+                (cell) =>
+                    `${cell.getAttribute('col-id')}:${cell.getAttribute('aria-colindex')}/${cell.getAttribute('aria-colspan') ?? '-'}`
+            ).join(' ');
+        expect([ariaRow(0), ariaRow(1)]).toEqual(['a:1/- b:3/- c:4/-', 'a:1/3 c:4/-']);
+
+        api.setColumnsVisible(['x'], true);
+        expect(ariaRow(1)).toBe('a:1/2 b:3/- c:4/-');
+
+        api.setColumnsVisible(['x'], false);
+        api.moveColumns(['x'], 3);
+        expect(ariaRow(1)).toBe('a:1/2 c:3/-');
+
+        api.setGridOption('columnDefs', [{ ...columnDefs[0], colSpan: () => 1 }, columnDefs[1], columnDefs[2]]);
+        expect(ariaRow(1)).toBe('a:1/- b:2/- c:3/-');
     });
 
     test('print layout drops the covered cell, and stops a span at the pinned lane edge', async () => {
@@ -1314,7 +1337,6 @@ describe('colSpan follows row data updates', () => {
     describe('with an auto-height column', () => {
         const SYMBOL_HEIGHT = 120;
         const ROW_HEIGHT = 30;
-        let uninstallResizeObserver: () => void;
 
         beforeAll(() => {
             mockGridLayout.useRealOffsetDimensions = true;
@@ -1327,14 +1349,6 @@ describe('colSpan follows row data updates', () => {
         afterAll(() => {
             mockGridLayout.useRealOffsetDimensions = false;
             mockGridLayout.elementHeightOverride = undefined;
-        });
-
-        beforeEach(() => {
-            uninstallResizeObserver = installMockResizeObserver();
-        });
-
-        afterEach(() => {
-            uninstallResizeObserver();
         });
 
         test('a re-measure asks getRowHeight only for the rows whose auto-height cells are all measured', async () => {

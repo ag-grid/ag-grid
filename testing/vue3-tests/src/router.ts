@@ -86,6 +86,11 @@ const routes = [
         component: () => import('./test-cases/zd36616-reactive-rowdata-editable/Page.vue'),
     },
     {
+        path: '/ag-18989',
+        name: 'AG-18989 Event Handler Props',
+        component: () => import('./test-cases/AG-18989-event-handler-props/Page.vue'),
+    },
+    {
         path: '/zd40289',
         name: 'ZD40289 Immediate Watch',
         component: () => import('./test-cases/zd40289-immediate-watch/Page.vue'),

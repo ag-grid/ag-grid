@@ -4,7 +4,17 @@ import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
 export default [
-    { languageOptions: { globals: { ...globals.browser, ...globals.node } } },
+    {
+        // An `eslint-disable` whose rule no longer reports is a false claim about the code it
+        // sits above, so it fails the build rather than warning. Restated here because this
+        // config is standalone: it does not compose `@ag-studio/eslint`'s base.
+        linterOptions: { reportUnusedDisableDirectives: 'error' },
+        languageOptions: {
+            globals: { ...globals.browser, ...globals.node },
+            // Without it typescript-eslint infers the root, which fails once an editor loads several configs.
+            parserOptions: { tsconfigRootDir: import.meta.dirname },
+        },
+    },
     pluginJs.configs.recommended,
     ...tseslint.configs.recommended,
     // { plugins: { 'import-x': eslintImportX } },

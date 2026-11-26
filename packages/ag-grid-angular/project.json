@@ -8,7 +8,8 @@
       "executor": "nx:run-commands",
       "dependsOn": ["ag-grid-community:build:package"],
       "inputs": [
-        "{projectRoot}/node updateGridAndColumnProperties.js",
+        "{projectRoot}/updateGridAndColumnProperties.js",
+        "{projectRoot}/projects/ag-grid-angular/src/lib/ag-grid-angular.component.ts",
         "{workspaceRoot}/packages/ag-grid-community/src/entities/gridOptions.ts"
       ],
       "outputs": ["{projectRoot}/projects/ag-grid-angular/src/lib/ag-grid-angular.component.ts"],
@@ -42,7 +43,7 @@
     "test:e2e": {
       "executor": "nx:run-script",
       "dependsOn": ["^build"],
-      "inputs": ["allOutputs"],
+      "inputs": ["default", "buildOutputExcludes", "allTransitiveOutputs"],
       "options": {
         "script": "test:e2e"
       }
@@ -74,7 +75,7 @@
     "pack:verify": {
       "executor": "nx:run-commands",
       "dependsOn": ["pack:extract"],
-      "inputs": ["allOutputs"],
+      "inputs": ["allOutputs", "{workspaceRoot}/scripts/package/sanity-check-package.js"],
       "options": {
         "commands": [
           "node scripts/package/sanity-check-package.js --allowed-ext map -- dist/artifacts/contents/{projectRoot}/package"
@@ -86,6 +87,7 @@
       }
     },
     "lint": {
+      "inputs": ["default", "^default", "eslintConfig"],
       "command": "eslint",
       "options": {
         "cwd": "{projectRoot}"

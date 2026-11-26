@@ -5,7 +5,6 @@ import { ClientSideRowModelModule, ColumnApiModule, ModuleRegistry, enableDevVal
 import { AgGridVue } from 'ag-grid-vue3';
 
 import { getData } from './data';
-import './styles.css';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
@@ -17,13 +16,10 @@ ModuleRegistry.registerModules([ColumnApiModule, ClientSideRowModelModule]);
 const VueExample = defineComponent({
     template: `
         <div style="height: 100%">
-            <div class="test-container">
-                <div class="test-header">
-                    <div style="margin-bottom: 1rem;">
-                        <input type="checkbox" id="pinFirstColumnOnLoad">
-                        <label for="pinFirstColumnOnLoad">Pin first column on load</label>
-                    </div>
-                    <div style="margin-bottom: 1rem;">
+            <div class="example-wrapper">
+                <div class="example-controls">
+                    <div class="controls-row">
+                        <label for="pinFirstColumnOnLoad"><input type="checkbox" id="pinFirstColumnOnLoad">Pin first column on load</label>
                         <button id="reloadGridButton" v-on:click="reloadGrid()">Reload Grid</button>
                     </div>
                 </div>
@@ -70,7 +66,7 @@ const VueExample = defineComponent({
 
         const gridApi = shallowRef<GridApi | null>(null);
 
-        const rowData = ref<any[]>(null);
+        const rowData = ref<any[] | null>(null);
         const isVisible = ref(true);
 
         onBeforeMount(() => {
@@ -84,7 +80,7 @@ const VueExample = defineComponent({
         const onGridReady = (params: GridReadyEvent) => {
             gridApi.value = params.api;
 
-            const checkbox = document.querySelector('#pinFirstColumnOnLoad');
+            const checkbox = document.querySelector<HTMLInputElement>('#pinFirstColumnOnLoad');
             const shouldPinFirstColumn = checkbox && checkbox.checked;
 
             if (shouldPinFirstColumn) {

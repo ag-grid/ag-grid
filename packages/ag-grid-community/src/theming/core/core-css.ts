@@ -184,9 +184,14 @@ export interface CoreParams extends SharedThemeParams {
     columnDropCellBorder: BorderValue;
 
     /**
-     * Background color when hovering over columns in the grid. This is not visible unless enabled in the grid options.
+     * Background color of the cells in a column when hovering over that column in the grid. This is not visible unless enabled with the `columnHoverHighlight` grid option. Inside a cell selection it is overlaid on top of `rangeSelectionBackgroundColor`, so use a semi-transparent colour to keep the selection visible. See also `columnHeaderHoverColor`.
      */
     columnHoverColor: ColorValue;
+
+    /**
+     * Background color of the column header when hovering over that column in the grid. This is not visible unless enabled with the `columnHoverHighlight` grid option. Set to `transparent` to disable the hover effect. This differs from `headerCellHoverBackgroundColor` which applies when the header cell itself is hovered.
+     */
+    columnHeaderHoverColor: ColorValue;
 
     /**
      * Amount of indentation for each level of children when selecting grouped columns in the column select widget.
@@ -347,6 +352,11 @@ export interface CoreParams extends SharedThemeParams {
      * Width of the drag handle on resizable header columns.
      */
     headerColumnResizeHandleWidth: LengthValue;
+
+    /**
+     * Colour of the sort index number shown beside the sort icon when more than one column is sorted.
+     */
+    headerSortIndexTextColor: ColorValue;
 
     /**
      * Font family of text in grid cells
@@ -609,6 +619,11 @@ export interface CoreParams extends SharedThemeParams {
     rowNumbersSelectedColor: ColorValue;
 
     /**
+     * Background color of the Row Numbers cell when hovering over its row in the grid. Set to `transparent` to disable the hover effect.
+     */
+    rowHeaderHoverColor: ColorValue;
+
+    /**
      * Horizontal borders between rows.
      */
     rowBorder: BorderValue;
@@ -654,7 +669,7 @@ export interface CoreParams extends SharedThemeParams {
     selectedRowBackgroundColor: ColorValue;
 
     /**
-     * Text color of selected rows in the grid
+     * Text color of selected rows in the grid. Icons in selected rows also use this color unless `iconColor` is set. When not set, selected rows keep their normal text color.
      */
     selectedRowTextColor: ColorValue;
 
@@ -677,6 +692,21 @@ export interface CoreParams extends SharedThemeParams {
      * Color of the drag handle on draggable rows within selected rows. Change this if `selectedRowBackgroundColor` is too close to `dragHandleColor` for the handle to be visible.
      */
     selectedRowDragHandleColor: ColorValue;
+
+    /**
+     * Color of the indicator on cells with notes within selected rows. Change this if `selectedRowBackgroundColor` is too close to `noteIndicatorColor` for the indicator to be visible.
+     */
+    selectedRowNoteIndicatorColor: ColorValue;
+
+    /**
+     * Color to temporarily apply to cell data within selected rows when its value increases in an agAnimateShowChangeCellRenderer cell
+     */
+    selectedRowValueChangeDeltaUpColor: ColorValue;
+
+    /**
+     * Color to temporarily apply to cell data within selected rows when its value decreases in an agAnimateShowChangeCellRenderer cell
+     */
+    selectedRowValueChangeDeltaDownColor: ColorValue;
 
     /**
      * Border around cells being edited within selected rows. Change this if `selectedRowBackgroundColor` is too close to the color of `cellEditingBorder` for the border to be visible.
@@ -819,16 +849,6 @@ export interface CoreParams extends SharedThemeParams {
      * Color to temporarily apply to cell data when its value increases in an agAnimateShowChangeCellRenderer cell
      */
     valueChangeDeltaUpColor: ColorValue;
-
-    /**
-     * Color to temporarily apply to cell data within selected rows when its value decreases in an agAnimateShowChangeCellRenderer cell
-     */
-    valueChangeDeltaDownSelectedColor: ColorValue;
-
-    /**
-     * Color to temporarily apply to cell data within selected rows when its value increases in an agAnimateShowChangeCellRenderer cell
-     */
-    valueChangeDeltaUpSelectedColor: ColorValue;
 
     /**
      * Background color to apply when a cell value changes and enableCellChangeFlash is enabled
@@ -1100,13 +1120,16 @@ export const coreDefaults: Readonly<Omit<CoreParams, keyof SharedThemeParams>> =
     calculatedColumnOperatorColor: { ref: 'foregroundColor' },
     calculatedColumnErrorUnderlineColor: { ref: 'invalidColor' },
     rowNumbersSelectedColor: accentMix(0.5),
+    rowHeaderHoverColor: { ref: 'rowHoverColor' },
     columnHoverColor: accentMix(0.05),
+    columnHeaderHoverColor: { ref: 'columnHoverColor' },
     selectedRowBackgroundColor: accentMix(0.12),
-    selectedRowTextColor: { ref: 'cellTextColor' },
+    selectedRowTextColor: 'initial',
     selectedRowBorder: false,
     selectedRowRangeSelectionBorderColor: { ref: 'rangeSelectionBorderColor' },
     selectedRowDragIndicatorColor: { ref: 'rowDragIndicatorColor' },
     selectedRowDragHandleColor: { ref: 'dragHandleColor' },
+    selectedRowNoteIndicatorColor: { ref: 'noteIndicatorColor' },
     selectedRowCellEditingBorder: { ref: 'cellEditingBorder' },
     listItemHighlightBackgroundColor: { ref: 'rowHoverColor' },
     listItemHighlightTextColor: 'inherit',
@@ -1136,8 +1159,8 @@ export const coreDefaults: Readonly<Omit<CoreParams, keyof SharedThemeParams>> =
     },
     valueChangeDeltaUpColor: '#43a047',
     valueChangeDeltaDownColor: '#e53935',
-    valueChangeDeltaUpSelectedColor: { ref: 'valueChangeDeltaUpColor' },
-    valueChangeDeltaDownSelectedColor: { ref: 'valueChangeDeltaDownColor' },
+    selectedRowValueChangeDeltaUpColor: { ref: 'valueChangeDeltaUpColor' },
+    selectedRowValueChangeDeltaDownColor: { ref: 'valueChangeDeltaDownColor' },
     valueChangeValueHighlightBackgroundColor: '#16a08580',
     rowHeight: {
         calc: 'max(iconSize, cellFontSize) + spacing * 3.25 * rowVerticalPaddingScale',
@@ -1151,6 +1174,11 @@ export const coreDefaults: Readonly<Omit<CoreParams, keyof SharedThemeParams>> =
     headerColumnResizeHandleWidth: 2,
     headerColumnResizeHandleColor: {
         ref: 'borderColor',
+    },
+    headerSortIndexTextColor: {
+        ref: 'headerTextColor',
+        mix: 0.7,
+        onto: 'headerBackgroundColor',
     },
     iconButtonColor: { ref: 'iconColor' },
     iconButtonBackgroundColor: 'transparent',

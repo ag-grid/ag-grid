@@ -58,7 +58,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
 
     public getIconName(): DragAndDropIcon {
         const { pinned, lastDraggingEvent } = this;
-        const { dragItem } = lastDraggingEvent || {};
+        const { dragItem } = lastDraggingEvent ?? {};
         const columns = dragItem?.columns ?? [];
 
         for (const col of columns) {
@@ -103,7 +103,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
             // will be visible again. otherwise a group with three columns (but only two visible) could
             // be dragged out, then when it's dragged in again, all three are visible. this stops that.
             const visibleState = dragItem.visibleState;
-            const visibleColumns: AgColumn[] = (columns || []).filter(
+            const visibleColumns: AgColumn[] = (columns ?? []).filter(
                 (column) => visibleState![column.getId()] && !column.isVisible()
             );
             this.setColumnsVisible(visibleColumns, true, 'uiColumnDragged');
@@ -217,7 +217,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
                 this.attemptToPinColumns(allMovingColumns, undefined, true);
             }
 
-            const { fromLeft, xPosition } = this.getNormalisedXPositionInfo(allMovingColumns, isAttemptingToPin) || {};
+            const { fromLeft, xPosition } = this.getNormalisedXPositionInfo(allMovingColumns, isAttemptingToPin) ?? {};
 
             if (fromLeft == null || xPosition == null) {
                 this.finishColumnMoving();
@@ -247,8 +247,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
         finished: boolean
     ): void {
         const allMovingColumns = this.getAllMovingColumns(draggingEvent);
-        const fromLeft =
-            normaliseDirection(draggingEvent.hDirection!, this.gos.get('enableRtl'), this.pinned) === 'right';
+        const fromLeft = normaliseDirection(draggingEvent.hDirection!, this.gos.get('enableRtl')) === 'right';
         const isFromHeader = draggingEvent.dragSource.type === DragSourceType.HeaderCell;
 
         const params = this.getMoveColumnParams({
@@ -461,7 +460,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
         const lastHighlightedColumn: {
             column?: AgColumn;
             position?: ColumnHighlightPosition;
-        } = this.lastHighlightedColumn || {};
+        } = this.lastHighlightedColumn ?? {};
         const { firstMovingCol, lastMovingCol } = findFirstAndLastMovingColumns(allMovingColumns);
 
         if (!firstMovingCol || !lastMovingCol || lastHighlightedColumn.column || !isAttemptingToPin) {
@@ -482,20 +481,13 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
     }
 
     private getNormalisedColumnLeft(col: AgColumn, padding: number): number | null {
-        const { gos } = this.beans;
         const left = col.getLeft();
 
         if (left == null) {
             return null;
         }
 
-        let diff = padding;
-
-        if (gos.get('enableRtl') && col.pinnedLane === 0) {
-            diff = col.getActualWidth() - padding;
-        }
-
-        return left + diff;
+        return left + padding;
     }
 
     private isAttemptingToPin(columns: AgColumn[]) {
@@ -524,7 +516,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
             fromEnter,
             fakeEvent,
         });
-        const { columns, toIndex } = getBestColumnMoveIndexFromXPosition(columnMoveParams) || {};
+        const { columns, toIndex } = getBestColumnMoveIndexFromXPosition(columnMoveParams) ?? {};
 
         if (columns && toIndex != null) {
             this.lastMovedInfo = {
@@ -656,7 +648,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
         pinned?: ColumnPinnedType,
         fromMoving: boolean = false
     ): number {
-        const allowedCols = (columns || []).filter((c) => !c.colDef.lockPinned);
+        const allowedCols = (columns ?? []).filter((c) => !c.colDef.lockPinned);
 
         if (!allowedCols.length) {
             return 0;

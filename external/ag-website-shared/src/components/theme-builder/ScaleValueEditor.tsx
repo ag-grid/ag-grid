@@ -9,10 +9,11 @@ export const ScaleValueEditor = ({
     onChange,
     icon,
     swipeAdjustmentDivisor = 175,
+    label,
 }: ValueEditorProps<ScaleValue>) => {
     return (
         <FormattedInput
-            value={String(value)}
+            value={value == null ? '' : String(value)}
             onChange={(newValue) => {
                 const parsed = parseFloat(newValue);
                 if (!isNaN(parsed)) {
@@ -20,6 +21,7 @@ export const ScaleValueEditor = ({
                 }
             }}
             onClear={() => onChange(null)}
+            ariaLabel={label}
             valueToDisplayString={formatPercentWithUnits}
             valueToEditingString={formatPercentNumber}
             validateEditingString={(editingString) => {

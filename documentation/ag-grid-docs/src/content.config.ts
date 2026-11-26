@@ -1,5 +1,9 @@
+import { createAlternativePageSchema } from '@ag-website-shared/components/decision-pages/alternativePageSchema';
+import { createComparisonPageSchema } from '@ag-website-shared/components/decision-pages/comparisonPageSchema';
+import { createProductAlternativePageSchema } from '@ag-website-shared/components/decision-pages/productAlternativePageSchema';
 import type { IconName } from '@ag-website-shared/components/icon/Icon';
 import { ALL_INTERNAL_FRAMEWORKS, FRAMEWORKS } from '@constants';
+import { TECHNICAL_REVIEWER_KEYS } from '@utils/technicalReviewers';
 // NOTE: Use glob, instead of file for single object files unless the file is an
 // array of objects
 import { glob } from 'astro/loaders';
@@ -46,6 +50,21 @@ const docs = defineCollection({
          * name, titled from the nav, or an explicit `{ title, url }` for anything else.
          */
         related: z.array(z.union([z.string(), z.object({ title: z.string(), url: z.string() })])).optional(),
+
+        /**
+         * Credit a named engineer as the page's technical reviewer, shown under the title and
+         * emitted as the page's `reviewedBy` in JSON-LD. See `TECHNICAL_REVIEWERS`.
+         */
+        technicalReviewer: z.enum(TECHNICAL_REVIEWER_KEYS).optional(),
+
+        /**
+         * Sections moved off this page to another one, keyed by the old heading id. Each value is the
+         * new location as `<pageName>/#<headingId>`. A visit to an old anchor is sent on to the new
+         * location, so external links and bookmarks keep working (see `redirect-moved-anchors.js`).
+         */
+        movedAnchors: z
+            .record(z.string().regex(/^[a-z0-9-]+$/), z.string().regex(/^[a-z0-9-]+\/#[a-z0-9-]+$/))
+            .optional(),
     }),
 });
 
@@ -411,6 +430,8 @@ const landingPages = defineCollection({
         packageName: z.string().optional(),
         docsPath: z.string(),
         analyticsPrefix: z.string(),
+        /** Named engineer credited as the page's technical reviewer. See `TECHNICAL_REVIEWERS`. */
+        technicalReviewer: z.enum(TECHNICAL_REVIEWER_KEYS).optional(),
 
         sections: z.array(
             z.discriminatedUnion('type', [
@@ -581,6 +602,34 @@ const homepage = defineCollection({
     }),
 });
 
+/**
+ * Comparison pages at /compare/ag-grid-vs-{competitor}/. Every competitor claim carries its source
+ * and the date it was checked. The build fails on an unsourced claim and warns on one not checked in
+ * the last 90 days (SE-148).
+ */
+const comparePages = defineCollection({
+    loader: glob({ base: './src/content/compare', pattern: '*.json' }),
+    schema: createComparisonPageSchema({ reviewerKeys: TECHNICAL_REVIEWER_KEYS }),
+});
+
+/**
+ * Alternative pages at /alternatives/{competitor}-alternative/, sourced the same way as the
+ * comparison pages.
+ */
+const alternativePages = defineCollection({
+    loader: glob({ base: './src/content/alternatives', pattern: '*.json' }),
+    schema: createAlternativePageSchema({ reviewerKeys: TECHNICAL_REVIEWER_KEYS }),
+});
+
+/**
+ * AG Grid's own alternative page at /alternatives/ag-grid-alternative/. It names no competitor, so
+ * it has no claims to source.
+ */
+const productAlternativePages = defineCollection({
+    loader: glob({ base: './src/content/product-alternatives', pattern: '*.json' }),
+    schema: createProductAlternativePageSchema({ reviewerKeys: TECHNICAL_REVIEWER_KEYS }),
+});
+
 export const collections = {
     docs,
     homepage,
@@ -602,4 +651,7 @@ export const collections = {
     aboutPage,
     contactResults,
     landingPages,
+    comparePages,
+    alternativePages,
+    productAlternativePages,
 };

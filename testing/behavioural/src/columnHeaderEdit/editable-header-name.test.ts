@@ -1,6 +1,7 @@
-import { findByText, waitFor } from '@testing-library/dom';
+import { findByText, getByRole, waitFor } from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
 import { TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
+import { onTestFinished } from 'vitest';
 
 import type { AgColumn, ColDef, GridApi, HeaderValueGetterParams } from 'ag-grid-community';
 import { getGridElement } from 'ag-grid-community';
@@ -280,6 +281,28 @@ describe('Editable header name', () => {
         expect(api.getDisplayNameForColumn(column, 'header')).toBe('Athlete');
     });
 
+    test('deferred mode: Enter on the keyboard-focused Close button cancels the edit', async () => {
+        const { api, gridDiv, toolPanel } = await createGrid([{ field: 'athlete', headerNameEditable: true }], {
+            columnHeaderEdit: { applyMode: 'deferred' },
+        });
+        const column = api.getColumn('athlete') as unknown as AgColumn;
+        const events = captureColumnHeaderNameChanged(column);
+
+        const input = await openEditor(toolPanel, gridDiv, 'Athlete');
+        await userEvent.clear(input);
+        await userEvent.type(input, 'Competitor');
+
+        const closeButton = getByRole(input.closest<HTMLElement>('.ag-dialog')!, 'button', { name: 'Close' });
+        await userEvent.tab({ shift: true });
+        expect(document.activeElement).toBe(closeButton);
+
+        await userEvent.keyboard('{Enter}');
+        await waitForEditorClosed();
+
+        expect(events.length).toBe(0);
+        expect(api.getDisplayNameForColumn(column, 'header')).toBe('Athlete');
+    });
+
     test('a colDef change while the editor is open refreshes the input', async () => {
         const { api, gridDiv, toolPanel } = await createGrid([{ field: 'athlete', headerNameEditable: true }]);
         const input = await openEditor(toolPanel, gridDiv, 'Athlete');
@@ -329,6 +352,26 @@ describe('Editable header name', () => {
         api.resetColumnState();
 
         await waitFor(() => expect(input.value).toBe('Layout Only'));
+    });
+
+    test('renaming a row group column from the editor renames its group column', async () => {
+        const { api, gridDiv, toolPanel } = await createGrid(
+            [{ field: 'athlete', rowGroup: true, headerNameEditable: true }, { field: 'age' }],
+            { groupDisplayType: 'multipleColumns', columnHeaderEdit: { applyMode: 'deferred' } }
+        );
+        const groupCol = api.getColumn('ag-Grid-AutoColumn-athlete')!;
+        const names = () => ({
+            displayed: api.getDisplayNameForColumn(groupCol, 'header'),
+            colDef: groupCol.getColDef().headerName,
+        });
+        expect(names()).toEqual({ displayed: 'Athlete', colDef: 'Athlete' });
+
+        const input = await openEditor(toolPanel, gridDiv, 'Athlete');
+        await userEvent.clear(input);
+        await userEvent.type(input, 'Competitor');
+        pressEnter(input);
+
+        await waitFor(() => expect(names()).toEqual({ displayed: 'Competitor', colDef: 'Competitor' }));
     });
 
     test('a column header name edit is saved to grid state', async () => {
@@ -751,6 +794,31 @@ describe('Editable header name', () => {
         await openEditor(toolPanel, gridDiv, 'Athlete');
         expect(isHighlighted()).toBe(false);
     });
+
+    test('closing the header name editor with focus on a container around the grid gives focus back to the element that opened it', async () => {
+        const container = document.createElement('div');
+        container.tabIndex = -1;
+        const gridHost = document.createElement('div');
+        gridHost.id = 'myGrid';
+        container.appendChild(gridHost);
+        document.body.appendChild(container);
+        onTestFinished(() => container.remove());
+
+        const { gridDiv, toolPanel } = await createGrid([{ field: 'athlete', headerNameEditable: true }]);
+        const input = await openEditor(toolPanel, gridDiv, 'Athlete');
+        await waitFor(() => expect(document.activeElement).toBe(input));
+        const launcher = [...gridDiv.querySelectorAll<HTMLElement>('.ag-virtual-list-item')].find((item) =>
+            item.textContent?.includes('Athlete')
+        );
+        expect(launcher).toBeInstanceOf(HTMLElement);
+
+        container.focus();
+        expect(document.activeElement).toBe(container);
+        pressEscape(input);
+        await waitForEditorClosed();
+
+        await waitFor(() => expect(document.activeElement).toBe(launcher));
+    });
 });
 
 describe('Editable group header name', () => {
@@ -1034,6 +1102,32 @@ describe('Editable group header name', () => {
         await waitFor(() =>
             expect(api.getDisplayNameForColumnGroup(api.getColumnGroup('athleteGroup')!, 'header')).toBe('Group')
         );
+    });
+
+    test('a group name cleared through state leaves no override, so a later reset tells no header name change', async () => {
+        const api = await gridMgr.createGridAndWait('myGrid', { columnDefs: groupDefs(), rowData });
+        const changed: (string | null)[] = [];
+        api.addEventListener('columnHeaderNameChanged', (e) => changed.push(e.columnGroup?.getGroupId() ?? null));
+        const groupName = () => api.getDisplayNameForColumnGroup(api.getColumnGroup('athleteGroup')!, 'header');
+        const renamed = (headerName: string) => ({
+            columnGroup: { openColumnGroupIds: [], headerNames: [{ groupId: 'athleteGroup', headerName }] },
+        });
+
+        api.setState(renamed('Renamed'));
+        await waitFor(() => expect(changed).toEqual(['athleteGroup']));
+        expect(groupName()).toBe('Renamed');
+
+        api.setState({ columnGroup: { openColumnGroupIds: [] } });
+        await waitFor(() => expect(changed).toEqual(['athleteGroup', 'athleteGroup']));
+        expect(groupName()).toBe('Group');
+        expect(api.getState().columnGroup?.headerNames ?? []).toEqual([]);
+
+        // nothing is renamed any more: the reset has no name to revert; the rename after it is the positive control
+        api.resetColumnState();
+        api.setState(renamed('Again'));
+        await waitFor(() => expect(groupName()).toBe('Again'));
+        await asyncSetTimeout(0);
+        expect(changed).toEqual(['athleteGroup', 'athleteGroup', 'athleteGroup']);
     });
 
     test('an edited group name wins over the group headerValueGetter', async () => {

@@ -23,7 +23,11 @@ export class SortService extends BeanStub implements NamedBean {
     private cols: AgColumn[] | null = null;
     private map: Map<AgColumn, number> | null = null;
     private opts: SortOption[] | null = null;
-    private multi = false;
+    /** The `colModel.accentedSortVersion` `opts` was resolved with, as its string comparators depend on it. */
+    private optsAccentedSortVersion = 0;
+    /** The `colModel.colDefsVersion` `opts` was resolved with, as its comparators are read from the colDefs. */
+    private optsColDefsVersion = 0;
+    private displaySortCount = 0;
 
     public override destroy(): void {
         super.destroy();
@@ -114,7 +118,7 @@ export class SortService extends BeanStub implements NamedBean {
     private updateSortIndex(lastColToChange: AgColumn, source: ColumnEventType) {
         const { gos, colModel } = this.beans;
         const isCoupled = _isColumnsSortingCoupledToGroup(gos);
-        const lastSortIndexCol = isCoupled ? lastColToChange.showRowGroupCol || lastColToChange : lastColToChange;
+        const lastSortIndexCol = isCoupled ? (lastColToChange.showRowGroupCol ?? lastColToChange) : lastColToChange;
 
         // Read the old-order list before mutating sortIndex below.
         const sorted = this.getSortedCols();
@@ -189,7 +193,7 @@ export class SortService extends BeanStub implements NamedBean {
         currentSortDef: SortDef | null,
         cachedIndex = 0
     ): { sortDef: SortDef; index: number } {
-        const sortingOrder = getSortingOrder(this.gos, column);
+        const sortingOrder = getSortingOrder(column);
         const len = sortingOrder.length;
         if (len === 0) {
             return { sortDef: getSortDefFromInput(), index: 0 };
@@ -246,7 +250,7 @@ export class SortService extends BeanStub implements NamedBean {
     }
 
     /** Col -> display index. Coupled mode: source row-group cols share their display col's index (which
-     *  counts display cols only). Sets `multi`. */
+     *  counts display cols only). */
     private loadIndexMap(sortedCols: AgColumn[]): Map<AgColumn, number> {
         const map = new Map<AgColumn, number>();
         const len = sortedCols.length;
@@ -261,14 +265,20 @@ export class SortService extends BeanStub implements NamedBean {
             }
             idx = len - 1;
         }
-        this.multi = idx >= 1;
+        this.displaySortCount = idx + 1;
         this.map = map;
         return map;
     }
 
     public getSortOptions(): SortOption[] {
         let opts = this.opts;
-        if (opts === null) {
+        const { colModel } = this.beans;
+        const { accentedSortVersion, colDefsVersion } = colModel;
+        if (
+            opts === null ||
+            accentedSortVersion !== this.optsAccentedSortVersion ||
+            colDefsVersion !== this.optsColDefsVersion
+        ) {
             opts = [];
             const cols = this.getSortedCols();
             for (let i = 0, len = cols.length; i < len; ++i) {
@@ -284,11 +294,14 @@ export class SortService extends BeanStub implements NamedBean {
                         leafComparator: undefined,
                         descending: false,
                         absolute: false,
+                        stringComparator: undefined,
                     });
                 }
             }
-            _resolveSortOptions(opts, this.beans.colModel);
+            _resolveSortOptions(opts, colModel, this.gos);
             this.opts = opts;
+            this.optsAccentedSortVersion = accentedSortVersion;
+            this.optsColDefsVersion = colDefsVersion;
         }
         return opts;
     }
@@ -319,8 +332,12 @@ export class SortService extends BeanStub implements NamedBean {
 
     /** `true` when the indicator should show ordinal numbers (2+ distinct display indices). */
     public isMultiSort(): boolean {
+        return this.getDisplaySortCount() > 1;
+    }
+
+    public getDisplaySortCount(): number {
         this.getIndexMap();
-        return this.multi;
+        return this.displaySortCount;
     }
 
     public setupHeader(comp: Component, column: AgColumn): void {

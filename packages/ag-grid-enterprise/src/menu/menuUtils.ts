@@ -133,7 +133,7 @@ export class MenuUtils extends BeanStub implements NamedBean {
                 if (column?.isAlive() && isColumnStillVisible) {
                     headerNavigation?.scrollToColumn(column);
                 }
-                focusableEl.focus();
+                focusSvc.focusGridElement(focusableEl);
                 return;
             }
         }

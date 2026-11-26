@@ -1,5 +1,5 @@
 import { findByTestId, waitFor } from '@testing-library/dom';
-import { GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
+import { ALL_SEVERITIES, GridRows, LEGACY_FILTER_WARNING_IDS, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import type { ColDef, GridApi, GridOptions, IMultiFilterDef } from 'ag-grid-community';
 import {
@@ -8,6 +8,7 @@ import {
     NumberFilterModule,
     TextFilterModule,
     agTestIdFor,
+    enableDevValidations,
     getGridElement,
     setupAgTestIds,
 } from 'ag-grid-community';
@@ -82,6 +83,10 @@ describe('Multi Filter floating filter keystroke race', () => {
     }
 
     describe.each([false, true])('enableFilterHandlers: %s', (enableFilterHandlers) => {
+        beforeEach(() => {
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [348] });
+        });
+
         test('typed character is not clobbered by an interleaving non-floating filter-changed cycle', async () => {
             const api = await createGrid({ enableFilterHandlers });
             const input = await getFloatingFilterInput(api);
@@ -243,6 +248,62 @@ describe('Multi Filter floating filter keystroke race', () => {
                 └── LEAF id:3 name:"alice"
             `);
         });
+    });
+
+    test('before rows load, an input in a floating filter showing none of a held model keeps all of it', async () => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: LEGACY_FILTER_WARNING_IDS });
+        const onFilterModified = vi.fn();
+        const api = gridsManager.createGrid('grid1', {
+            columnDefs: [
+                {
+                    field: 'name',
+                    filter: 'agMultiColumnFilter',
+                    floatingFilter: true,
+                    filterParams: {
+                        filters: [
+                            { filter: 'agTextColumnFilter', filterParams: { debounceMs: 0 } },
+                            { filter: 'agSetColumnFilter' },
+                        ],
+                    },
+                },
+            ],
+            rowData: [],
+            onFilterModified,
+        });
+        const held = {
+            filterType: 'multi',
+            filterModels: [
+                { filterType: 'text', type: 'contains', filter: 'mic' },
+                { filterType: 'set', values: ['michael'] },
+            ],
+        };
+        api.setFilterModel({ name: held });
+        const input = await getFloatingFilterInput(api);
+        expect(input.value).toBe('');
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+        await waitFor(() => expect(onFilterModified).toHaveBeenCalled());
+        expect(api.getFilterModel()).toEqual({ name: held });
+    });
+
+    test('a floating filter input that leaves the text unchanged applies nothing', async () => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: LEGACY_FILTER_WARNING_IDS });
+        const onFilterChanged = vi.fn();
+        const onFilterModified = vi.fn();
+        const api = await createGrid({ onFilterChanged, onFilterModified });
+        const input = await getFloatingFilterInput(api);
+        const type = async (value: string) => {
+            const modified = onFilterModified.mock.calls.length;
+            input.value = value;
+            input.dispatchEvent(new Event('input', { bubbles: true }));
+            await waitFor(() => expect(onFilterModified.mock.calls.length).toBeGreaterThan(modified));
+        };
+
+        await type('mic');
+        await type('mic');
+        await type('mich');
+
+        await waitFor(() => expect(api.getDisplayedRowCount()).toBe(2));
+        expect(onFilterChanged).toHaveBeenCalledTimes(2);
     });
 });
 

@@ -85,6 +85,7 @@ setNonAdvancedParams([
     'foregroundColor',
     'accentColor',
     'borderColor',
+    'borderWidth',
     'wrapperBorder',
     'rowBorder',
     'columnBorder',

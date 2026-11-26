@@ -1,14 +1,25 @@
-import { RefPlaceholder, _debounce, _setDisplayed } from 'ag-stack';
+import {
+    FAST_TEST_TIMINGS,
+    RefPlaceholder,
+    _addManagedElementListeners,
+    _debounce,
+    _setAriaExpanded,
+    _setAriaLabel,
+    _setDisplayed,
+} from 'ag-stack';
 
-import type { AgColumn, AgEvent, ComponentSelector, ElementParams, GridInputTextField } from 'ag-grid-community';
+import type { AgEvent, ComponentSelector, ElementParams, GridInputTextField } from 'ag-grid-community';
 import { AgInputTextFieldSelector, Component, _createIconNoSpan } from 'ag-grid-community';
 
 import type { ToolPanelFiltersCompParams } from './filtersToolPanel';
+
+const SEARCH_DEBOUNCE_DELAY = FAST_TEST_TIMINGS ? 0 : 300;
 
 export enum EXPAND_STATE {
     EXPANDED,
     COLLAPSED,
     INDETERMINATE,
+    NO_GROUPS,
 }
 type AgFiltersToolPanelHeaderEvent = 'collapseAll' | 'expandAll' | 'searchChanged';
 
@@ -18,9 +29,10 @@ const AgFiltersToolPanelHeaderElement: ElementParams = {
     role: 'presentation',
     children: [
         {
-            tag: 'div',
+            tag: 'button',
             ref: 'eExpand',
-            cls: 'ag-filter-toolpanel-expand',
+            cls: 'ag-button ag-filter-toolpanel-expand',
+            attrs: { type: 'button' },
         },
         {
             tag: 'ag-input-text-field',
@@ -37,8 +49,8 @@ export class AgFiltersToolPanelHeader extends Component<AgFiltersToolPanelHeader
     private eExpandUnchecked: Element;
     private eExpandIndeterminate: Element;
 
-    private onSearchTextChangedDebounced: () => number;
-    private searchTextChangedTimeout: number | undefined;
+    private onSearchTextChangedDebounced: () => ReturnType<typeof setTimeout>;
+    private searchTextChangedTimeout: ReturnType<typeof setTimeout> | undefined;
 
     private currentExpandState: EXPAND_STATE;
 
@@ -56,9 +68,10 @@ export class AgFiltersToolPanelHeader extends Component<AgFiltersToolPanelHeader
             .onValueChange(this.onSearchTextChanged.bind(this))
             .onValueClear(() => this.onSearchTextCleared());
 
+        this.activateTabIndex([this.eExpand]);
         this.createExpandIcons();
-        this.setExpandState(EXPAND_STATE.EXPANDED);
-        this.addManagedElementListeners(this.eExpand, { click: this.onExpandClicked.bind(this) });
+        _setDisplayed(this.eExpand, false);
+        _addManagedElementListeners(this, this.eExpand, { click: this.onExpandClicked.bind(this) });
         this.addManagedEventListeners({ newColumnsLoaded: this.showOrHideOptions.bind(this) });
     }
 
@@ -78,20 +91,13 @@ export class AgFiltersToolPanelHeader extends Component<AgFiltersToolPanelHeader
         eExpand.appendChild((this.eExpandIndeterminate = _createIconNoSpan('accordionIndeterminate', beans)!));
     }
 
-    // we only show expand / collapse if we are showing filters
     private showOrHideOptions(): void {
         const { params, eFilterTextField } = this;
-        const showFilterSearch = !params.suppressFilterSearch;
-        const showExpand = !params.suppressExpandAll;
         const translate = this.getLocaleTextFunc();
 
         eFilterTextField.setInputPlaceholder(translate('searchOoo', 'Search...'));
 
-        const isFilterGroupPresent = (col: AgColumn) => col.getOriginalParent() && col.isFilterAllowed();
-        const filterGroupsPresent = this.beans.colModel.getCols().some(isFilterGroupPresent);
-
-        _setDisplayed(eFilterTextField.getGui(), showFilterSearch);
-        _setDisplayed(this.eExpand, showExpand && filterGroupsPresent);
+        _setDisplayed(eFilterTextField.getGui(), !params.suppressFilterSearch);
     }
 
     private onSearchTextChanged(): void {
@@ -99,7 +105,7 @@ export class AgFiltersToolPanelHeader extends Component<AgFiltersToolPanelHeader
             this.onSearchTextChangedDebounced = _debounce(
                 this,
                 () => this.dispatchLocalEvent({ type: 'searchChanged', searchText: this.eFilterTextField.getValue() }),
-                300
+                SEARCH_DEBOUNCE_DELAY
             );
         }
 
@@ -119,8 +125,19 @@ export class AgFiltersToolPanelHeader extends Component<AgFiltersToolPanelHeader
 
     public setExpandState(state: EXPAND_STATE): void {
         this.currentExpandState = state;
+        const expanded = state === EXPAND_STATE.EXPANDED;
+        const translate = this.getLocaleTextFunc();
 
-        _setDisplayed(this.eExpandChecked, state === EXPAND_STATE.EXPANDED);
+        _setDisplayed(this.eExpand, !this.params.suppressExpandAll && state !== EXPAND_STATE.NO_GROUPS);
+        // The name says what activating does, so it names the collapse only once every group is expanded.
+        _setAriaLabel(
+            this.eExpand,
+            expanded
+                ? translate('ariaFilterPanelCollapseAll', 'Collapse All Filter Groups')
+                : translate('ariaFilterPanelExpandAll', 'Expand All Filter Groups')
+        );
+        _setAriaExpanded(this.eExpand, expanded);
+        _setDisplayed(this.eExpandChecked, expanded);
         _setDisplayed(this.eExpandUnchecked, state === EXPAND_STATE.COLLAPSED);
         _setDisplayed(this.eExpandIndeterminate, state === EXPAND_STATE.INDETERMINATE);
     }

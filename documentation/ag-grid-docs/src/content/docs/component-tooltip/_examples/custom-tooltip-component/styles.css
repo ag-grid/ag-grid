@@ -1,0 +1,62 @@
+.custom-tooltip {
+    padding: 5px;
+    color: var(--ag-foreground-color);
+    background-color: #5577cc;
+}
+
+.custom-tooltip p {
+    margin: 5px;
+    white-space: nowrap;
+}
+
+.custom-tooltip p:first-of-type {
+    font-weight: bold;
+}
+
+.custom-tooltip::after {
+    /* Leave room at each corner for this example's rotated 8px square. */
+    --custom-tooltip-arrow-offset: clamp(8px, var(--ag-tooltip-arrow-offset), calc(100% - 8px));
+
+    content: '';
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background-color: inherit;
+    pointer-events: none;
+}
+
+:is(.ag-tooltip-position-top, .ag-tooltip-position-top-start, .ag-tooltip-position-top-end) {
+    &.custom-tooltip::after,
+    & .custom-tooltip::after {
+        top: 100%;
+        left: var(--custom-tooltip-arrow-offset);
+        transform: translate(-50%, -50%) rotate(45deg);
+    }
+}
+
+:is(.ag-tooltip-position-bottom, .ag-tooltip-position-bottom-start, .ag-tooltip-position-bottom-end) {
+    &.custom-tooltip::after,
+    & .custom-tooltip::after {
+        bottom: 100%;
+        left: var(--custom-tooltip-arrow-offset);
+        transform: translate(-50%, 50%) rotate(45deg);
+    }
+}
+
+:is(.ag-tooltip-position-left, .ag-tooltip-position-left-start, .ag-tooltip-position-left-end) {
+    &.custom-tooltip::after,
+    & .custom-tooltip::after {
+        top: var(--custom-tooltip-arrow-offset);
+        left: 100%;
+        transform: translate(-50%, -50%) rotate(45deg);
+    }
+}
+
+:is(.ag-tooltip-position-right, .ag-tooltip-position-right-start, .ag-tooltip-position-right-end) {
+    &.custom-tooltip::after,
+    & .custom-tooltip::after {
+        top: var(--custom-tooltip-arrow-offset);
+        right: 100%;
+        transform: translate(50%, -50%) rotate(45deg);
+    }
+}

@@ -1,7 +1,8 @@
 import { waitFor } from '@testing-library/dom';
-import { TestGridsManager } from 'ag-test-utils';
+import { TestGridsManager, getRevealedElements, installFocusScroll } from 'ag-test-utils';
 import { mockGridLayout } from 'ag-test-utils/polyfills/mockGridLayout';
-import { installMockResizeObserver, triggerResizeObservers } from 'ag-test-utils/polyfills/mockResizeObserver';
+import { triggerResizeObservers } from 'ag-test-utils/polyfills/mockResizeObserver';
+import { onTestFinished } from 'vitest';
 
 import type { GridApi } from 'ag-grid-community';
 import {
@@ -11,6 +12,7 @@ import {
     TextFilterModule,
     getGridElement,
 } from 'ag-grid-community';
+import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
 /** The `left` and `width` of every header cell of `colId`, one per header row it is drawn in. */
 const headerPositions = (api: GridApi, colId: string) => {
@@ -24,6 +26,17 @@ const headerPositions = (api: GridApi, colId: string) => {
         column: position(header.querySelector(`.ag-header-row-column .ag-header-cell[col-id="${colId}"]`)),
         filter: position(header.querySelector(`.ag-header-row-filter .ag-header-cell[col-id="${colId}"]`)),
     };
+};
+
+/** How long a column move slides. */
+const COLUMN_SLIDE_MS = 200;
+
+/** Runs the column slide on a fake clock for the rest of the test. */
+const useFakeClock = () => {
+    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
+    onTestFinished(() => {
+        vi.useRealTimers();
+    });
 };
 
 describe('header cell positions', () => {
@@ -154,6 +167,117 @@ describe('header cell positions', () => {
         await waitFor(() => expect(headerPositions(api, 'c1').column).toBe('2500px/100px'));
     });
 
+    test('a focused header is scrolled into view at once, or once the columns settle while they animate', async () => {
+        onTestFinished(installFocusScroll());
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ colId: 'make' }, { colId: 'model' }],
+            rowData: [{}],
+        });
+        const grid = getGridElement(api)!;
+        const header = (colId: string) => grid.querySelector(`.ag-header-cell[col-id="${colId}"]`);
+        await waitFor(() => expect(header('model')).not.toBeNull());
+
+        api.setFocusedHeader('make');
+        expect(getRevealedElements()).toEqual([header('make')]);
+
+        useFakeClock();
+        api.applyColumnState({ state: [{ colId: 'model' }, { colId: 'make' }], applyOrder: true });
+        api.setFocusedHeader('model');
+        expect(document.activeElement).toBe(header('model'));
+        expect(grid.querySelector('.ag-column-moving')).not.toBeNull();
+        expect(getRevealedElements()).toEqual([header('make')]);
+        await vi.advanceTimersByTimeAsync(COLUMN_SLIDE_MS);
+        expect(getRevealedElements()).toEqual([header('make'), header('model')]);
+    });
+
+    test('of headers focused one after another as columns animate, only the last is scrolled into view', async () => {
+        onTestFinished(installFocusScroll());
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ colId: 'make' }, { colId: 'model' }],
+            rowData: [{}],
+        });
+        const grid = getGridElement(api)!;
+        await waitFor(() => expect(grid.querySelector('.ag-header-cell[col-id="model"]')).not.toBeNull());
+
+        useFakeClock();
+        api.applyColumnState({ state: [{ colId: 'model' }, { colId: 'make' }], applyOrder: true });
+        api.setFocusedHeader('make');
+        api.setFocusedHeader('model');
+        expect(grid.querySelector('.ag-column-moving')).not.toBeNull();
+        await vi.advanceTimersByTimeAsync(COLUMN_SLIDE_MS);
+        expect(grid.querySelector('.ag-column-moving')).toBeNull();
+        expect(getRevealedElements().map((element) => element.getAttribute('col-id'))).toEqual(['model']);
+    });
+
+    test('a header that loses focus before the columns settle is not scrolled into view', async () => {
+        onTestFinished(installFocusScroll());
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ colId: 'make' }, { colId: 'model' }],
+            rowData: [{}],
+        });
+        const grid = getGridElement(api)!;
+        const cell = () => grid.querySelector('.ag-cell[col-id="model"]');
+        await waitFor(() => expect(cell()).not.toBeNull());
+
+        useFakeClock();
+        api.applyColumnState({ state: [{ colId: 'model' }, { colId: 'make' }], applyOrder: true });
+        api.setFocusedHeader('make');
+        api.setFocusedCell(0, 'model');
+        expect(document.activeElement).toBe(cell());
+        await vi.advanceTimersByTimeAsync(COLUMN_SLIDE_MS);
+        expect(grid.querySelector('.ag-column-moving')).toBeNull();
+        expect(getRevealedElements()).toEqual([cell()]);
+    });
+
+    test('a header whose focus moves into its own content as columns animate is still scrolled into view', async () => {
+        onTestFinished(installFocusScroll());
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ colId: 'make', filter: true, floatingFilter: true }, { colId: 'model' }],
+            rowData: [{}],
+        });
+        const grid = getGridElement(api)!;
+        const filterHeader = () => grid.querySelector('.ag-header-row-filter .ag-header-cell[col-id="make"]');
+        await waitFor(() => expect(filterHeader()?.querySelector('input')).toBeTruthy());
+
+        useFakeClock();
+        api.applyColumnState({ state: [{ colId: 'model' }, { colId: 'make' }], applyOrder: true });
+        api.setFocusedHeader('make', true);
+        filterHeader()!.querySelector('input')!.focus();
+        await vi.advanceTimersByTimeAsync(COLUMN_SLIDE_MS);
+        expect(grid.querySelector('.ag-column-moving')).toBeNull();
+        expect(getRevealedElements().at(-1)).toBe(filterHeader());
+    });
+
+    test('a focused header still sliding once the columns settle is scrolled into view as its slide ends', async () => {
+        onTestFinished(installFocusScroll());
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ colId: 'make' }, { colId: 'model' }],
+            rowData: [{}],
+        });
+        const grid = getGridElement(api)!;
+        const header = () => grid.querySelector('.ag-header-cell[col-id="model"]');
+        await waitFor(() => expect(header()).not.toBeNull());
+        // happy-dom runs no transitions: the header reports its slide, and a fade the reveal does not wait for
+        let finishSlide!: () => void;
+        const slide = { transitionProperty: 'left', finished: new Promise<void>((resolve) => (finishSlide = resolve)) };
+        const fade = { transitionProperty: 'background-color', finished: new Promise<void>(() => {}) };
+        let running = [slide, fade];
+        Object.defineProperty(header(), 'getAnimations', { value: () => running });
+        const endSlide = () => {
+            running = [fade];
+            finishSlide();
+        };
+
+        useFakeClock();
+        api.applyColumnState({ state: [{ colId: 'model' }, { colId: 'make' }], applyOrder: true });
+        api.setFocusedHeader('model');
+        await vi.advanceTimersByTimeAsync(COLUMN_SLIDE_MS);
+        expect(grid.querySelector('.ag-column-moving')).toBeNull();
+        expect(getRevealedElements()).toEqual([]);
+        endSlide();
+        await vi.waitFor(() => expect(getRevealedElements()).toEqual([header()]), { interval: 5 });
+    });
+
     test('a header cell takes the pinned edge styles as the edges move', async () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: [
@@ -188,23 +312,18 @@ describe('header cell positions', () => {
             el.classList.contains('ag-header-cell-comp-wrapper')
                 ? 8000 / Number.parseFloat(el.closest<HTMLElement>('.ag-header-cell')!.style.width)
                 : undefined;
-        const uninstallResizeObserver = installMockResizeObserver();
-        try {
-            const api = gridsManager.createGrid('myGrid', {
-                columnDefs: [{ colId: 'a', width: 100, autoHeaderHeight: true }],
-                rowData: [{}],
-            });
-            const a = api.getColumn('a')!;
-            await waitFor(() => expect(a.getAutoHeaderHeight()).toBe(80));
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ colId: 'a', width: 100, autoHeaderHeight: true }],
+            rowData: [{}],
+        });
+        const a = api.getColumn('a')!;
+        await waitFor(() => expect(a.getAutoHeaderHeight()).toBe(80));
 
-            api.setColumnWidths([{ key: 'a', newWidth: 200 }]);
-            // the wrapper fills its cell, so only the observer watching it hears the new width
-            triggerResizeObservers(getGridElement(api)!.querySelector('.ag-header-cell-comp-wrapper')!);
+        api.setColumnWidths([{ key: 'a', newWidth: 200 }]);
+        // the wrapper fills its cell, so only the observer watching it hears the new width
+        triggerResizeObservers(getGridElement(api)!.querySelector('.ag-header-cell-comp-wrapper')!);
 
-            await waitFor(() => expect(a.getAutoHeaderHeight()).toBe(40));
-        } finally {
-            uninstallResizeObserver();
-        }
+        await waitFor(() => expect(a.getAutoHeaderHeight()).toBe(40));
     });
 
     test('an auto-height header still waiting for its content is not measured once auto header height is off', async () => {
@@ -233,5 +352,86 @@ describe('header cell positions', () => {
         // b retries on the same frames as a would
         await waitFor(() => expect(api.getColumn('b')!.getAutoHeaderHeight()).toBe(80));
         expect(api.getColumn('a')!.getAutoHeaderHeight()).toBeNull();
+    });
+});
+
+// TODO: disabled due to AG-19318 - re-enable once fixed
+describe.skip('header height of a server-side grid', () => {
+    const gridsManager = new TestGridsManager({ modules: [AllEnterpriseModule] });
+
+    afterEach(() => gridsManager.reset());
+
+    test('pivoting an SSRM grid with floating filters through column state keeps the header sized for its two rows', async () => {
+        const years = [2020, 2024];
+        const countries = ['Ireland', 'France', 'Germany'];
+        const api = gridsManager.createGrid('myGrid', {
+            rowModelType: 'serverSide',
+            columnDefs: [
+                {
+                    field: 'country',
+                    enableRowGroup: true,
+                    filter: 'agTextColumnFilter',
+                    floatingFilter: true,
+                },
+                { field: 'year', enablePivot: true, filter: 'agNumberColumnFilter', floatingFilter: true },
+                {
+                    field: 'gold',
+                    enableValue: true,
+                    aggFunc: 'sum',
+                    filter: 'agNumberColumnFilter',
+                    floatingFilter: true,
+                },
+            ],
+            processPivotResultColDef: (colDef) => {
+                colDef.floatingFilter = false;
+            },
+            serverSideDatasource: {
+                getRows(params) {
+                    const { pivotMode, pivotCols, rowGroupCols, groupKeys } = params.request;
+                    if (pivotMode && pivotCols.length && rowGroupCols.length && groupKeys.length === 0) {
+                        const rowData = countries.map((country, i) => {
+                            const row: Record<string, unknown> = { country };
+                            years.forEach((year, j) => (row[`${year}_gold`] = (i + 1) * (j + 3)));
+                            return row;
+                        });
+                        params.success({
+                            rowData,
+                            rowCount: rowData.length,
+                            pivotResultFields: years.map((year) => `${year}_gold`),
+                        });
+                        return;
+                    }
+                    const rowData = countries.flatMap((country, i) =>
+                        years.map((year, j) => ({ country, year, gold: (i + 1) * (j + 3) }))
+                    );
+                    params.success({ rowData, rowCount: rowData.length });
+                },
+            },
+        });
+        const header = () => getGridElement(api)!.querySelector<HTMLElement>('.ag-header')!;
+        const headerRows = () =>
+            Array.from(header().querySelectorAll('.ag-header-row')).map((row) =>
+                (['group', 'column', 'filter'] as const).find((kind) => row.classList.contains(`ag-header-row-${kind}`))
+            );
+        await waitFor(() => expect(headerRows()).toEqual(['column', 'filter']));
+        const heightBefore = header().style.height;
+        expect(heightBefore).not.toBe('');
+
+        api.setGridOption('pivotMode', true);
+        api.applyColumnState({
+            state: [
+                { colId: 'country', rowGroup: true, rowGroupIndex: 0 },
+                { colId: 'year', pivot: true, pivotIndex: 0 },
+                { colId: 'gold', aggFunc: 'sum' },
+            ],
+            applyOrder: true,
+        });
+
+        await waitFor(() => expect(api.getPivotResultColumns()).toHaveLength(2));
+
+        // Pivot result columns have no floating filter: a group row above the column row.
+        await waitFor(() => expect(headerRows()).toEqual(['group', 'column']), { timeout: 1000 });
+        expect(header().querySelectorAll('.ag-header-row-group .ag-header-group-cell')).toHaveLength(2);
+        await waitFor(() => expect(header().style.height).toBe(heightBefore), { timeout: 1000 });
     });
 });

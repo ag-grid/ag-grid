@@ -3,28 +3,45 @@ import {
     _findNextFocusableElement,
     _focusInto,
     _getActiveDomElement,
+    _getAriaLabel,
     _isElementChildOfClass,
     _setAriaLabel,
 } from 'ag-stack';
 
+import { isRowNumberCol } from '../../../columns/columnUtils';
 import { setupCompBean } from '../../../components/emptyBean';
 import type { BeanStub } from '../../../context/beanStub';
 import type { AgColumn } from '../../../entities/agColumn';
 import type { HeaderClassParams } from '../../../entities/colDef';
 import type { ColumnEvent, FilterChangedEvent } from '../../../events';
 import { _getFilterModel } from '../../../filter/columnFilterUtils';
+import { translateColumnFilterLabel } from '../../../filter/filterAriaLabels';
 import { _addGridCommonParams, _isLegacyMenuEnabled } from '../../../gridOptionsUtils';
 import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
 import type { PopupToggleResult } from '../../../misc/menu/menuService';
-import { _getCalculatedColumnCssClasses } from '../../../styling/calculatedColumnCss';
+import type { TooltipSource } from '../../../tooltip/tooltipFeature';
 import { _stopPropagationForAgGrid } from '../../../utils/gridEvent';
 import { _createIconNoSpan } from '../../../utils/icon';
 import { ManagedFocusFeature } from '../../../widgets/managedFocusFeature';
 import { getFloatingFilterMenuAnchor } from '../../headerUtils';
 import { AbstractHeaderCellCtrl } from '../abstractCell/abstractHeaderCellCtrl';
-import { _refreshCssClasses } from '../cssClassApplier';
+import { _getHeaderClassesFromColDef, _refreshCssClasses } from '../cssClassApplier';
 import { _addPopupToggleButtonListeners } from '../popupToggleButton';
 import type { IHeaderFilterCellComp } from './iHeaderFilterCellComp';
+
+const NO_ARROW_KEY_INPUT_TYPES = new Set(['checkbox', 'button', 'submit', 'reset', 'image', 'color', 'file']);
+
+function consumesArrowKeys(element: HTMLElement): boolean {
+    switch (element.tagName) {
+        case 'INPUT':
+            return !NO_ARROW_KEY_INPUT_TYPES.has((element as HTMLInputElement).type);
+        case 'TEXTAREA':
+        case 'SELECT':
+            return true;
+        default:
+            return element.isContentEditable;
+    }
+}
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCellComp, AgColumn> {
@@ -56,11 +73,12 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
         this.setupActive();
 
         this.refreshHeaderStyles();
-        this.setupCalculatedColumnCssClasses();
+        this.refreshHeaderClasses();
+        comp.toggleCss('ag-row-number-floating-filter', isRowNumberCol(this.column));
         this.setupPosition();
         this.setupHover(compBean);
         this.setupFocus(compBean);
-        this.setupAria();
+        this.setupAria(compBean);
         this.setupFilterButton();
         this.setupUserComp();
         this.setupSyncWithFilter(compBean);
@@ -71,6 +89,12 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
         const colDefChanged = () => this.onColDefChanged(compBean);
         compBean.addManagedListeners(this.column, { colDefChanged });
         compBean.addManagedEventListeners({
+            columnPinned: ({ columns }) => {
+                if (columns?.includes(this.column)) {
+                    this.refreshHeaderStyles();
+                    this.refreshHeaderClasses();
+                }
+            },
             filterSwitched: ({ column }) => {
                 if (column === this.column) {
                     colDefChanged();
@@ -89,6 +113,20 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
 
     protected resizeHeader(): void {
         // empty abstract method
+    }
+
+    public getFilterButtonTooltip(): TooltipSource {
+        const eButton = this.eButtonShowMainFilter;
+        return {
+            control: 'filter',
+            getGui: () => eButton,
+            getTooltipAccessibleName: () => _getAriaLabel(eButton),
+            getLocation: () => 'floatingFilter',
+            getTooltip: () => ({
+                value: this.getLocaleTextFunc()('tooltipFilter', 'Open filter'),
+                params: { column: this.column },
+            }),
+        };
     }
 
     protected override moveHeader(): void {
@@ -141,9 +179,19 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
         );
     }
 
-    private setupAria(): void {
-        const localeTextFunc = this.getLocaleTextFunc();
-        _setAriaLabel(this.eButtonShowMainFilter, localeTextFunc('ariaFilterMenuOpen', 'Open Filter Menu'));
+    private setupAria(compBean: BeanStub): void {
+        const refreshButtonLabel = () => {
+            const { beans, column } = this;
+            _setAriaLabel(
+                this.eButtonShowMainFilter,
+                translateColumnFilterLabel(beans, column, this.getLocaleTextFunc(), 'filterMenuOpen')
+            );
+        };
+        refreshButtonLabel();
+        compBean.addManagedListeners(this.column, {
+            headerNameChanged: refreshButtonLabel,
+            colDefChanged: refreshButtonLabel,
+        });
     }
 
     private onTabKeyDown(e: KeyboardEvent) {
@@ -214,6 +262,10 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
                     return;
                 }
                 _stopPropagationForAgGrid(e);
+                if (!consumesArrowKeys(e.target as HTMLElement)) {
+                    // the header sits inside the scrolling viewport, which the browser would otherwise scroll
+                    e.preventDefault();
+                }
             // eslint-disable-next-line no-fallthrough
             case KeyCode.ENTER:
                 if (wrapperHasFocus) {
@@ -280,12 +332,9 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
         }
     }
 
-    private setupCalculatedColumnCssClasses(): void {
-        this.refreshCalculatedColumnCssClasses();
-    }
-
-    private refreshCalculatedColumnCssClasses(): void {
-        const classes = _getCalculatedColumnCssClasses(this.column, this.beans.calculatedColsSvc);
+    private refreshHeaderClasses(): void {
+        const { column, beans } = this;
+        const classes = _getHeaderClassesFromColDef(column.colDef, beans, column, null, true);
 
         this.userHeaderClasses = _refreshCssClasses(this.comp, this.userHeaderClasses, classes);
     }
@@ -327,56 +376,58 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
         if (!this.active) {
             return;
         }
+        const column = this.column;
+        [this.destroySyncListener] = compBean.addManagedListeners(column, {
+            filterChanged: (event: ColumnEvent) => this.syncWithFilter(event),
+        });
+
+        if (this.beans.colFilter?.isFilterActive(column)) {
+            this.syncWithFilter(null);
+        }
+    }
+
+    private syncWithFilter(event: ColumnEvent | null): void {
         const {
             beans: { colFilter },
             column,
             gos,
         } = this;
-
-        const syncWithFilter = (event: ColumnEvent | null) => {
-            if (event?.source === 'filterDestroyed' && (!this.isAlive() || !colFilter?.isAlive())) {
-                return;
-            }
-            const compPromise = this.comp.getFloatingFilterComp();
-
-            if (!compPromise) {
-                return;
-            }
-
-            compPromise.then((comp) => {
-                if (comp) {
-                    if (gos.get('enableFilterHandlers')) {
-                        const eventWithParams = event as FilterChangedEvent | null;
-                        let source = 'filter';
-                        if (eventWithParams?.afterFloatingFilter) {
-                            source = 'ui';
-                        } else if (eventWithParams?.afterDataChange) {
-                            source = 'dataChanged';
-                        } else if (event?.source === 'api') {
-                            source = 'api';
-                        }
-                        this.updateFloatingFilterParams(this.userCompDetails, source);
-                        return;
-                    }
-                    const parentModel = colFilter?.getCurrentFloatingFilterParentModel(column);
-                    const filterChangedEvent: FilterChangedEvent | null = event
-                        ? {
-                              // event can have additional params like `afterDataChange` which need to be passed through
-                              ...event,
-                              columns: event.columns ?? [],
-                              source: event.source === 'api' ? 'api' : 'columnFilter',
-                          }
-                        : null;
-                    comp.onParentModelChanged(parentModel, filterChangedEvent);
-                }
-            });
-        };
-
-        [this.destroySyncListener] = compBean.addManagedListeners(column, { filterChanged: syncWithFilter });
-
-        if (colFilter?.isFilterActive(column)) {
-            syncWithFilter(null);
+        if (event?.source === 'filterDestroyed' && (!this.isAlive() || !colFilter?.isAlive())) {
+            return;
         }
+        const compPromise = this.comp.getFloatingFilterComp();
+
+        if (!compPromise) {
+            return;
+        }
+
+        compPromise.then((comp) => {
+            if (comp) {
+                if (gos.get('enableFilterHandlers')) {
+                    const eventWithParams = event as FilterChangedEvent | null;
+                    let source = 'filter';
+                    if (eventWithParams?.afterFloatingFilter) {
+                        source = 'ui';
+                    } else if (eventWithParams?.afterDataChange) {
+                        source = 'dataChanged';
+                    } else if (event?.source === 'api') {
+                        source = 'api';
+                    }
+                    this.updateFloatingFilterParams(this.userCompDetails, source);
+                    return;
+                }
+                const parentModel = colFilter?.getCurrentFloatingFilterParentModel(column);
+                const filterChangedEvent: FilterChangedEvent | null = event
+                    ? {
+                          // event can have additional params like `afterDataChange` which need to be passed through
+                          ...event,
+                          columns: event.columns ?? [],
+                          source: event.source === 'api' ? 'api' : 'columnFilter',
+                      }
+                    : null;
+                comp.onParentModelChanged(parentModel, filterChangedEvent);
+            }
+        });
     }
 
     private setupFilterChangedListener(compBean: BeanStub): void {
@@ -401,7 +452,8 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
     private onColDefChanged(compBean: BeanStub): void {
         const wasActive = this.active;
         this.setupActive();
-        this.refreshCalculatedColumnCssClasses();
+        this.refreshHeaderStyles();
+        this.refreshHeaderClasses();
         const becomeActive = !wasActive && this.active;
         if (wasActive && !this.active) {
             this.destroySyncListener();
@@ -442,6 +494,9 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
         if (becomeActive) {
             this.setupSyncWithFilter(compBean);
             this.setupFilterChangedListener(compBean);
+        } else if (compDetails && this.beans.colFilter?.isFilterActive(this.column)) {
+            // a replacing comp syncs with the filter's current model, as a first one does at setup
+            this.syncWithFilter(null);
         }
     }
 

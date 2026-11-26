@@ -120,7 +120,7 @@
         "tooltipComponentSelector": {
             "more": {
                 "name": "Custom Tooltip Component",
-                "url": "./tooltips/#custom-component"
+                "url": "./component-tooltip/"
             }
         },
         "tooltipComponentParams": {}
@@ -375,6 +375,12 @@
         "initialSortIndex": {},
         "sortingOrder": {},
         "comparator": {},
+        "accentedSort": {
+            "more": {
+                "name": "Locale-specific Sort",
+                "url": "./row-sorting/#locale-specific-sort"
+            }
+        },
         "unSortIcon": {}
     },
     "filtering": {
@@ -538,6 +544,12 @@
             }
         },
         "initialAggFunc": {},
+        "aggValueGetter": {
+            "more": {
+                "name": "Transforming Aggregated Values",
+                "url": "./aggregation-columns/#transforming-aggregated-values"
+            }
+        },
         "valueIndex": {},
         "initialValueIndex": {},
         "enableValue": {

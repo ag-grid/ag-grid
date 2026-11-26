@@ -11,7 +11,7 @@ import {
     uninstallFilterLayoutMock,
 } from 'ag-test-utils';
 
-import type { GridApi, ISetFilterParams } from 'ag-grid-community';
+import type { GridApi, ISetFilterParams, SetFilterModel } from 'ag-grid-community';
 import { ClientSideRowModelModule, enableDevValidations, setupAgTestIds } from 'ag-grid-community';
 import { SetFilterModule } from 'ag-grid-enterprise';
 
@@ -101,6 +101,27 @@ describe('Set Filter — tree list with dates', () => {
             ☑ 2021
             model: null
         `);
+    });
+
+    test('ArrowRight on a focused group expands it and ArrowLeft collapses it', async () => {
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [{ field: 'when', filter: 'agSetColumnFilter', filterParams: { treeList: true } }],
+            rowData: DATE_ROWS,
+        });
+        await ColumnFilterHarness.open(api, 'when');
+        const pressOn = async (label: string, key: string) => {
+            const row = Array.from(
+                document.querySelectorAll<HTMLElement>(`${SET_LIST_SELECTOR} .ag-virtual-list-item`)
+            ).find((el) => el.querySelector('.ag-checkbox-label')?.textContent?.trim() === label)!;
+            row.focus();
+            row.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true }));
+            await asyncSetTimeout(0);
+        };
+
+        await pressOn('2020', 'ArrowRight');
+        expect(setItemLabels()).toEqual(['(Select All)', '2020', 'January', 'June', '2021']);
+        await pressOn('2020', 'ArrowLeft');
+        expect(setItemLabels()).toEqual(['(Select All)', '2020', '2021']);
     });
 
     test('deselecting a leaf makes its ancestor groups indeterminate and filters rows', async () => {
@@ -432,6 +453,47 @@ describe('Set Filter — treeListPathGetter and treeListFormatter', () => {
     });
 });
 
+describe('Set Filter — tree list with caseSensitive', () => {
+    const gridsManager = new TestGridsManager({
+        modules: [SetFilterModule, ClientSideRowModelModule],
+    });
+
+    beforeAll(() => {
+        setupAgTestIds();
+        installFilterLayoutMock();
+    });
+    afterAll(() => uninstallFilterLayoutMock());
+    afterEach(() => gridsManager.reset());
+
+    test('a lower-case search finds the leaf and selecting it puts every casing in the model', async () => {
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                {
+                    field: 'name',
+                    filter: 'agSetColumnFilter',
+                    filterParams: {
+                        treeList: true,
+                        caseSensitive: true,
+                        defaultToNothingSelected: true,
+                        treeListPathGetter: (value: string | null) => (value ? [value] : null),
+                    } as ISetFilterParams,
+                },
+            ],
+            rowData: [{ name: 'Michael' }, { name: 'michael' }, { name: 'MICHAEL' }, { name: 'Sarah' }],
+        });
+
+        const filter = await ColumnFilterHarness.open(api, 'name');
+        await filter.miniFilterSearch('mich');
+        await asyncSetTimeout(0);
+        expect(setItemLabels()).toHaveLength(2);
+
+        await filter.toggleSetItem('(Select All)');
+        await asyncSetTimeout(0);
+        expect((filter.getModel() as SetFilterModel).values.slice().sort()).toEqual(['MICHAEL', 'Michael', 'michael']);
+        expect(api.getDisplayedRowCount()).toBe(3);
+    });
+});
+
 describe('Set Filter — a tree path several values share', () => {
     const gridsManager = new TestGridsManager({
         modules: [SetFilterModule, ClientSideRowModelModule],
@@ -758,6 +820,60 @@ describe('Set Filter — excelMode', () => {
             ├── LEAF id:1 country:"Australia"
             └── LEAF id:2 country:"France"
         `);
+    });
+
+    test('windows mode: a lower-case search selects every casing, Select All Search Results re-selects them and Enter applies', async () => {
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                {
+                    field: 'name',
+                    filter: 'agSetColumnFilter',
+                    filterParams: { excelMode: 'windows', caseSensitive: true } as ISetFilterParams,
+                },
+            ],
+            rowData: [{ name: 'Michael' }, { name: 'michael' }, { name: 'MICHAEL' }, { name: null }, { name: 'Sarah' }],
+        });
+
+        const filter = await ColumnFilterHarness.open(api, 'name');
+        await filter.miniFilterSearch('mich');
+        await asyncSetTimeout(0);
+        const labels = setItemLabels();
+        expect(labels).not.toContain('(Blanks)');
+        expect(labels.filter((l) => l.toLowerCase() === 'michael')).toHaveLength(3);
+
+        await filter.toggleSetItem('(Select All Search Results)');
+        await new FilterDom(api, 'excel search results cleared', { colId: 'name' }).checkFilterDom(`
+            COLUMN FILTER (set)
+            mini-filter: "mich"
+            ☐ (Select All Search Results)
+            ☐ Add current selection to filter
+            ☐ MICHAEL
+            ☐ Michael
+            ☐ michael
+            buttons: Apply ⊘ | Cancel
+            model: null
+        `);
+
+        await filter.toggleSetItem('(Select All Search Results)');
+        await new FilterDom(api, 'excel search results re-selected', { colId: 'name' }).checkFilterDom(`
+            COLUMN FILTER (set)
+            mini-filter: "mich"
+            ☑ (Select All Search Results)
+            ☐ Add current selection to filter
+            ☑ MICHAEL
+            ☑ Michael
+            ☑ michael
+            buttons: Apply | Cancel
+            model: null
+        `);
+
+        document
+            .querySelector('.ag-filter-menu .ag-mini-filter input')!
+            .dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true }));
+        await asyncSetTimeout(0);
+
+        expect((filter.getModel() as SetFilterModel).values.slice().sort()).toEqual(['MICHAEL', 'Michael', 'michael']);
+        expect(api.getDisplayedRowCount()).toBe(3);
     });
 
     test('mac mode shows a single Reset button', async () => {

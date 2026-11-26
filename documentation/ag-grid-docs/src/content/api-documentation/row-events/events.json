@@ -152,7 +152,7 @@
             }
         },
         "rowPinned": {
-            "description": "Row has been pinned to the top or bottom by the user",
+            "description": "Row has been pinned to the top or bottom, moved between them or unpinned.",
             "type": {
                 "arguments": {
                     "event": "RowNodePinnedEvent"

@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 'rowData',
                 data.map((d) => ({
                     ...d,
-                    prevYearTotalDiff: Math.floor((2 * window.agRandom() - 1) * d.total),
+                    prevYearTotalDiff: Math.floor((2 * Math.random() - 1) * d.total),
                 }))
             )
         );

@@ -3,7 +3,6 @@ import type {
     BeanCollection,
     IColsService,
     IRowNode,
-    ISelectionService,
     IServerSideStore,
     IsApplyServerSideTransactionParams,
     LoadSuccessParams,
@@ -28,20 +27,21 @@ import {
 
 import { _createRowNodeFooter, _destroyRowNodeFooter } from '../../../aggregation/footerUtils';
 import type { BlockUtils } from '../../blocks/blockUtils';
-import type { SSRMParams } from '../../serverSideRowModel';
+import type { SSRMParams, ServerSideRowModel } from '../../serverSideRowModel';
+import type { ServerSideSelectionService } from '../../services/serverSideSelectionService';
 import type { StoreUtils } from '../storeUtils';
 import { LazyCache } from './lazyCache';
 
 export class LazyStore extends BeanStub implements IServerSideStore {
     private blockUtils: BlockUtils;
     private storeUtils: StoreUtils;
-    private selectionSvc?: ISelectionService;
+    private selectionSvc?: ServerSideSelectionService;
     private rowGroupColsSvc?: IColsService;
 
     public wireBeans(beans: BeanCollection) {
         this.blockUtils = beans.ssrmBlockUtils as BlockUtils;
         this.storeUtils = beans.ssrmStoreUtils as StoreUtils;
-        this.selectionSvc = beans.selectionSvc;
+        this.selectionSvc = beans.selectionSvc as ServerSideSelectionService | undefined;
         this.rowGroupColsSvc = beans.rowGroupColsSvc;
     }
 
@@ -69,6 +69,8 @@ export class LazyStore extends BeanStub implements IServerSideStore {
 
     /** Raw data for the grand total row, kept even when grandTotalRow option is not set. */
     public grandTotalData: any;
+    /** Whether the last display pass pinned the grand total, which then takes no row of this store. */
+    private grandTotalPinned = false;
 
     constructor(ssrmParams: SSRMParams, storeParams: ServerSideGroupLevelParams, parentRowNode: RowNode) {
         super();
@@ -85,10 +87,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         let numberOfRows = 1;
         if (this.level === 0) {
             numberOfRows = this.storeUtils.getServerSideInitialRowCount() ?? 1;
-
-            this.eventSvc.dispatchEventOnce({
-                type: 'rowCountReady',
-            });
+            (this.beans.rowModel as ServerSideRowModel).onRootStoreCreated();
         }
         this.cache = this.createManagedBean(new LazyCache(this, numberOfRows, false, this.storeParams));
 
@@ -173,71 +172,80 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         const allRowsLoaded = this.cache.isStoreFullyLoaded();
 
         let updatedNodes: RowNode[] | undefined = undefined;
-        if (transaction.update?.length) {
-            updatedNodes = this.cache.updateRowNodes(transaction.update);
-        }
-
         let insertedNodes: RowNode[] | undefined = undefined;
-        if (transaction.add?.length) {
-            let addIndex = transaction.addIndex;
-            if (addIndex != null && addIndex < 0) {
-                addIndex = undefined;
-            }
-            insertedNodes = this.cache.insertRowNodes(transaction.add, addIndex);
-        }
-
+        let unapplied: any[] | undefined = undefined;
         let removedNodes: RowNode[] | undefined = undefined;
-        if (transaction.remove?.length) {
-            const allIdsToRemove = transaction.remove.map((data) =>
-                idFunc({ level: this.level, parentKeys: this.parentRowNode.getRoute() ?? [], data })
-            );
-            const allUniqueIdsToRemove = [...new Set(allIdsToRemove)];
-            removedNodes = this.cache.removeRowNodes(allUniqueIdsToRemove, transaction.rowCount);
+        const selectionSvc = this.selectionSvc;
+        selectionSvc?.beginSelectionBatch(); // one selectionChanged for the rows the transaction deselects
+        try {
+            if (transaction.update?.length) {
+                updatedNodes = this.cache.updateRowNodes(transaction.update);
+            }
+
+            if (transaction.add?.length) {
+                let addIndex = transaction.addIndex;
+                if (addIndex != null && addIndex < 0) {
+                    addIndex = undefined;
+                }
+                const { inserted, skipped } = this.cache.insertRowNodes(transaction.add, addIndex);
+                insertedNodes = inserted;
+                unapplied = skipped.length ? skipped : undefined;
+            }
+
+            if (transaction.remove?.length) {
+                const allIdsToRemove = transaction.remove.map((data) =>
+                    idFunc({ level: this.level, parentKeys: this.parentRowNode.getRoute() ?? [], data })
+                );
+                const allUniqueIdsToRemove = [...new Set(allIdsToRemove)];
+                removedNodes = this.cache.removeRowNodes(allUniqueIdsToRemove, transaction.rowCount);
+            }
+
+            const isClientSideSortingEnabled = this.gos.get('serverSideEnableClientSideSort');
+
+            const isUpdateOrAdd = updatedNodes?.length || insertedNodes?.length;
+            const isClientSideSort = allRowsLoaded && isClientSideSortingEnabled;
+            if (isClientSideSort && isUpdateOrAdd) {
+                // if client side sorting, we need to sort the rows after the transaction
+                this.cache.clientSideSortRows();
+            }
+
+            this.deselectRemovedNodes(removedNodes);
+        } finally {
+            selectionSvc?.endSelectionBatch();
         }
-
-        const isClientSideSortingEnabled = this.gos.get('serverSideEnableClientSideSort');
-
-        const isUpdateOrAdd = updatedNodes?.length || insertedNodes?.length;
-        const isClientSideSort = allRowsLoaded && isClientSideSortingEnabled;
-        if (isClientSideSort && isUpdateOrAdd) {
-            // if client side sorting, we need to sort the rows after the transaction
-            this.cache.clientSideSortRows();
-        }
-
-        this.updateSelectionAfterTransaction(updatedNodes, removedNodes);
         return {
             status: ServerSideTransactionResultStatus.Applied,
             update: updatedNodes,
             add: insertedNodes,
             remove: removedNodes,
+            unapplied,
         };
     }
 
-    private updateSelectionAfterTransaction(updatedNodes?: RowNode[], removedNodes?: RowNode[]) {
-        if (!this.selectionSvc) {
+    /** Deselects the removed rows, then drops their ids from the selection state, inside the transaction's batch. */
+    private deselectRemovedNodes(removedNodes: RowNode[] | undefined) {
+        const selectionSvc = this.selectionSvc;
+        if (!selectionSvc || !removedNodes?.length) {
             return;
         }
         const nodesToDeselect: RowNode[] = [];
-        for (const node of updatedNodes ?? []) {
-            if (node.isSelected() && !node.selectable) {
-                nodesToDeselect.push(node);
-            }
-        }
-
-        for (const node of removedNodes ?? []) {
+        const removedIds: string[] = [];
+        for (const node of removedNodes) {
+            removedIds.push(node.id!);
             if (node.isSelected()) {
                 nodesToDeselect.push(node);
             }
         }
 
         if (nodesToDeselect.length) {
-            this.selectionSvc.setNodesSelected({
+            selectionSvc.setNodesSelected({
                 newValue: false,
                 clearSelection: false,
                 nodes: nodesToDeselect,
                 source: 'rowDataChanged',
             });
         }
+        selectionSvc.deleteSelectionStateFromParent(removedIds, this.parentRowNode);
     }
 
     /**
@@ -273,10 +281,12 @@ export class LazyStore extends BeanStub implements IServerSideStore {
      */
     getRowCount(): number {
         const rowCount = this.cache.getRowCount();
-        if (this.parentRowNode.sibling) {
-            return rowCount + 1;
-        }
-        return rowCount;
+        return this.parentRowNode.sibling && !this.grandTotalPinned ? rowCount + 1 : rowCount;
+    }
+
+    /** How many rows this store holds, without its total row. */
+    getChildRowCount(): number {
+        return this.cache.getRowCount();
     }
 
     /**
@@ -300,19 +310,15 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         return this.displayIndexStart! <= displayIndex && displayIndex < this.getDisplayIndexEnd()!;
     }
 
-    /**
-     * The position of this store's group total row, or `undefined` when no total row should be shown.
-     *
-     * A store whose rows have loaded and are empty shows no total row, so that setting `groupTotalRow`
-     * does not change the row set of a group which has no children (AG-17363). Emptiness is read off
-     * the cache rather than `getRowCount()`, which is total-row inclusive and so would be circular.
-     */
+    /** Whether this store's rows have loaded empty: read off the cache, as `getRowCount()` counts the total row. */
+    private areRowsLoadedEmpty(): boolean {
+        return this.cache.isLastRowIndexKnown() && this.cache.getRowCount() === 0;
+    }
+
+    /** The position of this store's group total row, or `undefined` when no total row should be shown. */
     private getGroupTotalRowPosition(): 'top' | 'bottom' | undefined {
         // the root store's total row is the grand total row, which is handled separately
-        if (this.parentRowNode.level === -1) {
-            return undefined;
-        }
-        if (this.cache.isLastRowIndexKnown() && this.cache.getRowCount() === 0) {
+        if (this.parentRowNode.level === -1 || this.areRowsLoadedEmpty()) {
             return undefined;
         }
         return _getGroupTotalRowCallback(this.gos)({ node: this.parentRowNode }) || undefined;
@@ -352,20 +358,29 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         if (this.parentRowNode.level === -1) {
             const grandTotalRow = _getGrandTotalRow(this.gos);
             let grandTotalNode = this.getGrandTotalNode();
-            if (grandTotalRow && this.grandTotalData) {
-                if (!grandTotalNode) {
-                    grandTotalNode = this.cache.createOrUpdateGrandTotalNode(this.grandTotalData);
+            if (
+                grandTotalRow &&
+                this.grandTotalData &&
+                (!this.areRowsLoadedEmpty() || this.gos.get('alwaysShowGrandTotalRow'))
+            ) {
+                grandTotalNode ??= this.cache.createOrUpdateGrandTotalNode(this.grandTotalData);
+            } else {
+                if (grandTotalNode) {
+                    this.destroyGrandTotalRow();
+                    grandTotalNode = undefined;
                 }
-            } else if (grandTotalNode) {
-                this.destroyGrandTotalRow();
-                grandTotalNode = undefined;
+                const rootNode = this.parentRowNode;
+                if (!rootNode.selectable) {
+                    this.selectionSvc?.updateRowSelectable(rootNode); // with grandTotalRow off, the root is selectable
+                }
             }
 
-            const pinnedFloat = _getGrandTotalPinnedFloat(grandTotalRow);
-            this.beans.pinnedRowModel?.setGrandTotalPinned(pinnedFloat);
+            this.beans.pinnedRowModel?.setGrandTotalNode(grandTotalNode);
 
+            const grandTotalPinned = !!_getGrandTotalPinnedFloat(grandTotalRow);
+            this.grandTotalPinned = grandTotalPinned;
             if (grandTotalNode) {
-                if (pinnedFloat) {
+                if (grandTotalPinned) {
                     // Pinned grand totals don't take part in the inline display index;
                     // clear any stale index left from a previous inline placement.
                     this.blockUtils.clearDisplayIndex(grandTotalNode);
@@ -492,7 +507,6 @@ export class LazyStore extends BeanStub implements IServerSideStore {
             }
         });
         this.forEachChildStoreShallow((store) => store.retryLoads());
-        this.fireStoreUpdatedEvent();
     }
 
     /**
@@ -665,6 +679,21 @@ export class LazyStore extends BeanStub implements IServerSideStore {
                 cb(node.childStore as LazyStore);
             }
         });
+    }
+
+    /**
+     * Re-sorts the loaded rows of this store and its children, for when the sort comparators change but the sort model
+     * does not. Returns whether any store sorted.
+     */
+    public clientSideResort(): boolean {
+        let sorted = false;
+        if (this.gos.get('serverSideEnableClientSideSort') && this.cache.isStoreFullyLoaded()) {
+            sorted = this.cache.clientSideResortRows();
+        }
+        this.forEachChildStoreShallow((store) => {
+            sorted = store.clientSideResort() || sorted;
+        });
+        return sorted;
     }
 
     /**

@@ -10,11 +10,12 @@ import {
 } from 'ag-test-utils';
 import type { MockInstance } from 'vitest';
 
-import type { GridApi, GridOptions } from 'ag-grid-community';
+import type { GridApi, GridOptions, ICellRendererComp, ICellRendererParams, IHeaderComp } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     KeyCode,
     ROW_NUMBERS_COLUMN_ID,
+    RenderApiModule,
     ScrollApiModule,
     TooltipModule,
     agTestIdFor,
@@ -90,6 +91,28 @@ describe('Row Numbers Cell Selection', () => {
             ├── LEAF id:1 row-number:"#2" sport:"rugby" year:2020 amount:102 day:"sunday"
             └── LEAF id:2 row-number:"#3" sport:"tennis" year:2018 amount:235 day:"thursday"
         `);
+    });
+
+    test('row number header keeps its classes and follows cellSelection', async () => {
+        const [api] = await createGrid({
+            columnDefs,
+            rowData,
+            cellSelection: true,
+            rowNumbers: true,
+        });
+        const header = () =>
+            getGridElement(api)!.querySelector<HTMLElement>(`.ag-header-cell[col-id="${ROW_NUMBERS_COLUMN_ID}"]`)!;
+
+        expect(header().classList.contains('ag-row-number-header')).toBe(true);
+        expect(header().classList.contains('ag-row-number-selection-enabled')).toBe(true);
+
+        api.setGridOption('cellSelection', false);
+        await waitFor(() => expect(header().classList.contains('ag-row-number-selection-enabled')).toBe(false));
+        expect(header().classList.contains('ag-row-number-header')).toBe(true);
+
+        api.setGridOption('cellSelection', true);
+        await waitFor(() => expect(header().classList.contains('ag-row-number-selection-enabled')).toBe(true));
+        expect(header().classList.contains('ag-row-number-header')).toBe(true);
     });
 
     test('click row number selects row cells, clears existing range', async () => {
@@ -433,6 +456,94 @@ describe('Row Numbers Cell Selection', () => {
         api.setGridOption('cellSelection', { enableHeaderHighlight: true });
         await waitFor(() => expect(highlighted()).toBe('1,2'));
     });
+
+    // A row number renderer recording, per row index, how often it was created and refreshed.
+    function countingRowNumberRenderer() {
+        const inits: number[] = [];
+        const refreshes: number[] = [];
+        class CountingRowNumberRenderer implements ICellRendererComp {
+            private readonly eGui = document.createElement('span');
+            public init(params: ICellRendererParams): void {
+                inits[params.node.rowIndex!] = (inits[params.node.rowIndex!] ?? 0) + 1;
+                this.eGui.textContent = params.valueFormatted ?? String(params.value);
+            }
+            public getGui(): HTMLElement {
+                return this.eGui;
+            }
+            public refresh(params: ICellRendererParams): boolean {
+                refreshes[params.node.rowIndex!] = (refreshes[params.node.rowIndex!] ?? 0) + 1;
+                this.eGui.textContent = params.valueFormatted ?? String(params.value);
+                return true;
+            }
+        }
+        return { CountingRowNumberRenderer, inits, refreshes };
+    }
+
+    const rowNumberCells = (api: GridApi) =>
+        Array.from(getGridElement(api)!.querySelectorAll<HTMLElement>(`.ag-cell[col-id="${ROW_NUMBERS_COLUMN_ID}"]`));
+
+    test('a rowNumbers update redefining the column keeps each custom renderer, whether it adds a valueFormatter or changes the width', async () => {
+        const { CountingRowNumberRenderer, inits, refreshes } = countingRowNumberRenderer();
+        const [api] = await createGrid({
+            columnDefs,
+            rowData: rowData.slice(0, 3),
+            cellSelection: true,
+            rowNumbers: { cellRenderer: CountingRowNumberRenderer },
+        });
+        const cellsBefore = rowNumberCells(api);
+        expect(cellsBefore.map((cell) => cell.textContent)).toEqual(['1', '2', '3']);
+        expect(inits).toEqual([1, 1, 1]);
+        expect(refreshes).toEqual([]);
+
+        api.setGridOption('rowNumbers', {
+            cellRenderer: CountingRowNumberRenderer,
+            valueFormatter: (params) => `#${params.value}`,
+        });
+        await waitFor(() => expect(rowNumberCells(api).map((cell) => cell.textContent)).toEqual(['#1', '#2', '#3']));
+        // keeping the renderer is a negative: nothing positive lands after a late re-creation to poll for
+        // eslint-disable-next-line no-restricted-syntax -- settling window to catch a late re-creation
+        await asyncSetTimeout(20);
+        expect(inits).toEqual([1, 1, 1]);
+        expect(rowNumberCells(api).map((cell, i) => cell === cellsBefore[i])).toEqual([true, true, true]);
+
+        api.setGridOption('rowNumbers', {
+            cellRenderer: CountingRowNumberRenderer,
+            valueFormatter: (params) => `#${params.value}`,
+            width: 90,
+        });
+        await waitFor(() => expect(api.getColumn(ROW_NUMBERS_COLUMN_ID)!.getActualWidth()).toBe(90));
+        // eslint-disable-next-line no-restricted-syntax -- settling window to catch a late re-creation
+        await asyncSetTimeout(20);
+        expect(inits).toEqual([1, 1, 1]);
+    });
+
+    test('cellSelection gaining enableHeaderHighlight highlights the row numbers of the ranged rows, refreshing their cells in place', async () => {
+        const { CountingRowNumberRenderer, inits, refreshes } = countingRowNumberRenderer();
+        const [api] = await createGrid({
+            columnDefs,
+            rowData: rowData.slice(0, 3),
+            cellSelection: true,
+            rowNumbers: { cellRenderer: CountingRowNumberRenderer },
+        });
+        api.addCellRange({ rowStartIndex: 0, rowEndIndex: 1, columns: ['sport', 'year', 'amount', 'day'] });
+        const cellsBefore = rowNumberCells(api);
+        const highlighted = () =>
+            rowNumberCells(api).map((cell) => cell.classList.contains('ag-row-number-range-highlight'));
+        expect(highlighted()).toEqual([false, false, false]);
+        // adding the range itself refreshes the row number cells; the option change is read as a delta on top
+        await waitFor(() => expect([refreshes[0], refreshes[1]]).toEqual([1, 1]));
+        // eslint-disable-next-line no-restricted-syntax -- settling window so the range's own refreshes are all in the baseline
+        await asyncSetTimeout(20);
+        const refreshesBefore = [...refreshes];
+
+        api.setGridOption('cellSelection', { enableHeaderHighlight: true });
+        await waitFor(() => expect(highlighted()).toEqual([true, true, false]));
+        // eslint-disable-next-line no-restricted-syntax -- settling window to catch a second (redundant) refresh
+        await asyncSetTimeout(20);
+        expect([0, 1].map((i) => refreshes[i] - refreshesBefore[i])).toEqual([1, 1]);
+        expect(inits).toEqual([1, 1, 1]);
+        expect(rowNumberCells(api).map((cell, i) => cell === cellsBefore[i])).toEqual([true, true, true]);
+    });
 });
 
 describe('Row Numbers Keyboard Navigation', () => {
@@ -440,7 +551,14 @@ describe('Row Numbers Keyboard Navigation', () => {
     let consoleWarnSpy: MockInstance;
 
     const gridMgr = new TestGridsManager({
-        modules: [ClientSideRowModelModule, CellSelectionModule, RowNumbersModule, ScrollApiModule, TooltipModule],
+        modules: [
+            ClientSideRowModelModule,
+            CellSelectionModule,
+            RowNumbersModule,
+            RenderApiModule,
+            ScrollApiModule,
+            TooltipModule,
+        ],
     });
 
     async function createGrid(go: GridOptions): Promise<GridApi> {
@@ -756,6 +874,44 @@ describe('Row Numbers Keyboard Navigation', () => {
         `);
     });
 
+    test('suppressHeaderKeyboardEvent on the row number header stops Space and Enter selecting all cells', async () => {
+        const api = await createGrid({
+            columnDefs,
+            rowData,
+            cellSelection: true,
+            rowNumbers: { suppressHeaderKeyboardEvent: () => true },
+        });
+
+        api.setFocusedHeader(ROW_NUMBERS_COLUMN_ID);
+        await asyncSetTimeout(0);
+
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        const rowNumberHeader = getByTestId(gridDiv, agTestIdFor.headerCell(ROW_NUMBERS_COLUMN_ID));
+        pressKey(rowNumberHeader, KeyCode.SPACE);
+        pressKey(rowNumberHeader, KeyCode.ENTER);
+        await asyncSetTimeout(0);
+
+        expect(api.getCellRanges() ?? []).toEqual([]);
+    });
+
+    test('a rebuilt row number header leaves its old element without listeners, so a click there selects nothing', async () => {
+        const api = await createGrid({ columnDefs, rowData, cellSelection: true, rowNumbers: true });
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        const oldHeader = getByTestId(gridDiv, agTestIdFor.headerCell(ROW_NUMBERS_COLUMN_ID));
+
+        api.refreshHeader();
+        await asyncSetTimeout(0);
+        oldHeader.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+        await asyncSetTimeout(0);
+        const afterOld = api.getCellRanges()?.length ?? 0;
+        getByTestId(gridDiv, agTestIdFor.headerCell(ROW_NUMBERS_COLUMN_ID)).dispatchEvent(
+            new MouseEvent('click', { bubbles: true })
+        );
+        await asyncSetTimeout(0);
+
+        expect([afterOld, api.getCellRanges()?.length ?? 0]).toEqual([0, 1]);
+    });
+
     test('Enter on row number header selects all cells', async () => {
         const api = await createGrid({
             columnDefs,
@@ -781,6 +937,125 @@ describe('Row Numbers Keyboard Navigation', () => {
             ├── LEAF id:2 row-number:"3" sport:"tennis" year:2018 amount:235 day:"thursday"
             └── LEAF id:3 row-number:"4" sport:"cricket" year:2003 amount:11 day:"friday"
         `);
+    });
+
+    test('Space and Enter on a custom row number header component select all cells, but not from an element inside it', async () => {
+        class CustomRowNumberHeader implements IHeaderComp {
+            private readonly eGui = document.createElement('span');
+            public init(): void {
+                this.eGui.appendChild(document.createElement('button'));
+            }
+            public getGui(): HTMLElement {
+                return this.eGui;
+            }
+            public refresh(): boolean {
+                return true;
+            }
+        }
+        const api = await createGrid({
+            columnDefs,
+            rowData,
+            cellSelection: true,
+            rowNumbers: { headerComponent: CustomRowNumberHeader },
+        });
+
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        const rowNumberHeader = getByTestId(gridDiv, agTestIdFor.headerCell(ROW_NUMBERS_COLUMN_ID));
+        const button = rowNumberHeader.querySelector('button')!;
+        button.focus();
+        pressKey(button, KeyCode.SPACE);
+        pressKey(button, KeyCode.ENTER);
+        await asyncSetTimeout(0);
+        expect(api.getCellRanges()).toEqual([]);
+
+        rowNumberHeader.focus();
+        const allCells = [{ rowStartIndex: 0, rowEndIndex: 3, columns: dataColumns }];
+        pressKey(rowNumberHeader, KeyCode.SPACE);
+        await asyncSetTimeout(0);
+        assertSelectedCellRanges(allCells, api);
+
+        api.clearCellSelection();
+        pressKey(rowNumberHeader, KeyCode.ENTER);
+        await asyncSetTimeout(0);
+        assertSelectedCellRanges(allCells, api);
+    });
+
+    test('Enter on row number header with column selection selects all cells in one selection change', async () => {
+        const api = await createGrid({
+            columnDefs,
+            rowData,
+            cellSelection: { enableColumnSelection: true },
+            rowNumbers: true,
+        });
+        const selections: string[][] = [];
+        api.addEventListener('cellSelectionChanged', () => {
+            const ranges = api.getCellRanges() ?? [];
+            selections.push(ranges.flatMap((range) => range.columns.map((col) => col.getColId())));
+        });
+
+        api.setFocusedHeader(ROW_NUMBERS_COLUMN_ID);
+        await asyncSetTimeout(0);
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        pressKey(getByTestId(gridDiv, agTestIdFor.headerCell(ROW_NUMBERS_COLUMN_ID)), KeyCode.ENTER);
+        await asyncSetTimeout(0);
+
+        expect(selections).toEqual([dataColumns]);
+        assertSelectedCellRanges([{ rowStartIndex: 0, rowEndIndex: 3, columns: dataColumns }], api);
+    });
+
+    test('Enter on row number header with column selection starts the column range Shift+Enter extends', async () => {
+        const api = await createGrid({
+            columnDefs,
+            rowData: rowData.slice(0, 2),
+            cellSelection: { enableColumnSelection: true },
+            rowNumbers: true,
+        });
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        const press = (colId: string, shiftKey: boolean) => {
+            api.setFocusedHeader(colId);
+            getByTestId(gridDiv, agTestIdFor.headerCell(colId)).dispatchEvent(
+                new KeyboardEvent('keydown', { key: KeyCode.ENTER, shiftKey, bubbles: true })
+            );
+        };
+
+        press(ROW_NUMBERS_COLUMN_ID, false);
+        await asyncSetTimeout(0);
+        press('year', true);
+        await asyncSetTimeout(0);
+
+        assertSelectedCellRanges(
+            [
+                { rowStartIndex: 0, rowEndIndex: 1, columns: dataColumns },
+                { rowStartIndex: 0, rowEndIndex: 1, columns: ['sport', 'year'] },
+            ],
+            api
+        );
+    });
+
+    test('a row number header click selects all cells after a keyboard resize whose header was rebuilt mid-press', async () => {
+        const api = await createGrid({
+            columnDefs,
+            rowData,
+            cellSelection: true,
+            rowNumbers: { resizable: true },
+        });
+
+        // held: no keyup reaches the header the refresh replaces
+        api.setFocusedHeader(ROW_NUMBERS_COLUMN_ID);
+        document.activeElement!.dispatchEvent(
+            new KeyboardEvent('keydown', { key: 'ArrowRight', altKey: true, bubbles: true })
+        );
+        api.refreshHeader();
+
+        // past the click guard that follows any resize
+        const now = Date.now() + 1000;
+        const clock = vitest.spyOn(Date, 'now').mockReturnValue(now);
+        getGridElement(api)!
+            .querySelector(`.ag-header-cell[col-id="${ROW_NUMBERS_COLUMN_ID}"]`)!
+            .dispatchEvent(new MouseEvent('click', { bubbles: true }));
+        clock.mockRestore();
+
+        assertSelectedCellRanges([{ rowStartIndex: 0, rowEndIndex: 3, columns: dataColumns }], api);
     });
 
     test('Space on row number cell does not select cells in that row', async () => {
@@ -1173,13 +1448,13 @@ describe('Row Numbers Keyboard Navigation', () => {
         `);
     });
 
-    test('rowNumbers options mutated at runtime propagate via updateColumns', async () => {
+    test('rowNumbers options mutated at runtime update the row numbers column', async () => {
         const api = await createGrid({
             columnDefs,
             rowData,
             rowNumbers: { width: 80 },
         });
-        await new GridColumns(api, `rowNumbers options mutated at runtime propagate via updateColumns setup`)
+        await new GridColumns(api, `rowNumbers options mutated at runtime update the row numbers column setup`)
             .checkColumns(`
                 LEFT
                 └── ag-Grid-RowNumbersColumn width:80 !resizable !sortable suppressMovable lockPosition:left
@@ -1196,7 +1471,7 @@ describe('Row Numbers Keyboard Navigation', () => {
         api.setGridOption('rowNumbers', { width: 120, headerTooltip: 'New' });
         await new GridColumns(
             api,
-            `rowNumbers options mutated at runtime propagate via updateColumns after setGridOption rowNumbers`
+            `rowNumbers options mutated at runtime update the row numbers column after setGridOption rowNumbers`
         ).checkColumns(`
             LEFT
             └── ag-Grid-RowNumbersColumn width:120 !resizable !sortable suppressMovable lockPosition:left
@@ -1208,7 +1483,7 @@ describe('Row Numbers Keyboard Navigation', () => {
         `);
         await new GridRows(
             api,
-            `rowNumbers options mutated at runtime propagate via updateColumns after setGridOption rowNumbers`
+            `rowNumbers options mutated at runtime update the row numbers column after setGridOption rowNumbers`
         ).check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:0 row-number:"1" sport:"football" year:2021 amount:43 day:"monday"

@@ -477,5 +477,11 @@
         "text": "Migrating to the Theming API",
         "url": "./theming-migration/",
         "description": "Moving from the v32 CSS themes to the Theming API."
+    },
+    {
+        "errorIds": [343, 344, 345, 346, 347, 348],
+        "text": "Migrating to Filter Handlers",
+        "url": "./enable-filter-handlers-migration/",
+        "description": "Moving from legacy filter mode to filter handlers, and opting out with `enableFilterHandlers: false`."
     }
 ]

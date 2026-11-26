@@ -30,15 +30,20 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
         menuItems: (DefaultColumnMenuItem | MenuItemDef)[],
         column: AgColumn | undefined,
         sourceElement: () => HTMLElement,
-        columnGroup?: AgProvidedColumnGroup
+        columnGroup?: AgProvidedColumnGroup,
+        role?: 'menu' | 'presentation'
     ): MenuList {
         const menuList = parent.createManagedBean(
-            new MenuList(0, {
-                column: column ?? null,
-                columnGroup: columnGroup ?? null,
-                node: null,
-                value: null,
-            })
+            new MenuList(
+                0,
+                {
+                    column: column ?? null,
+                    columnGroup: columnGroup ?? null,
+                    node: null,
+                    value: null,
+                },
+                role
+            )
         );
 
         const menuItemsMapped = (this.beans.menuItemMapper as MenuItemMapper).mapWithStockItems(
@@ -134,7 +139,7 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
                 column,
                 beans
             );
-            if (_isSortTypeAvailable(gos, column, 'default')) {
+            if (_isSortTypeAvailable(column, 'default')) {
                 if (!(isAscending && isDefaultSort)) {
                     result.push('sortAscending');
                 }
@@ -142,7 +147,7 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
                     result.push('sortDescending');
                 }
             }
-            if (_isSortTypeAvailable(gos, column, 'absolute')) {
+            if (_isSortTypeAvailable(column, 'absolute')) {
                 if (!(isAscending && isAbsoluteSort)) {
                     result.push('sortAbsoluteAscending');
                 }

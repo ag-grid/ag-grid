@@ -1,12 +1,38 @@
-import { GridColumns, GridRows, TestGridsManager, applyTransactionChecked, cachedJSONObjects } from 'ag-test-utils';
+import { waitFor } from '@testing-library/dom';
+import {
+    ALL_SEVERITIES,
+    GridColumns,
+    GridRows,
+    TestGridsManager,
+    applyTransactionChecked,
+    cachedJSONObjects,
+} from 'ag-test-utils';
 
 import type { IAggFuncParams } from 'ag-grid-community';
-import { ClientSideRowModelModule, RowSelectionModule } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    CsvExportModule,
+    GRAND_TOTAL_ROW_ID,
+    NumberFilterModule,
+    PinnedRowModule,
+    RowSelectionModule,
+    TextFilterModule,
+    enableDevValidations,
+    getGridElement,
+} from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
 describe('ag-grid grouping aggregation', () => {
     const gridsManager = new TestGridsManager({
-        modules: [RowSelectionModule, ClientSideRowModelModule, RowGroupingModule],
+        modules: [
+            RowSelectionModule,
+            ClientSideRowModelModule,
+            RowGroupingModule,
+            PinnedRowModule,
+            CsvExportModule,
+            NumberFilterModule,
+            TextFilterModule,
+        ],
     });
 
     beforeEach(() => {
@@ -412,6 +438,235 @@ describe('ag-grid grouping aggregation', () => {
         `);
     });
 
+    test('the grand total row leaves an emptied grid, unless alwaysShowGrandTotalRow keeps it, and returns with its totals, inline or pinned', async () => {
+        const rowData = [
+            { id: '1', category: 'A', amount: 100 },
+            { id: '2', category: 'B', amount: 50 },
+        ];
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { field: 'category', rowGroup: true, hide: true },
+                { field: 'amount', aggFunc: 'sum' },
+            ],
+            rowData,
+            grandTotalRow: 'bottom',
+            getRowId: (params) => params.data.id,
+        });
+        const exported = () => api.getDataAsCsv({ suppressQuotes: true });
+
+        api.setGridOption('rowData', []);
+        await new GridRows(api, 'bottom, emptied').check(`
+            ROOT id:ROOT_NODE_ID amount:null
+        `);
+        expect(exported()).toBe('Group,sum(Amount)');
+        expect(api.getRowNode(GRAND_TOTAL_ROW_ID)?.displayed).toBe(false);
+        api.setGridOption('alwaysShowGrandTotalRow', true);
+        await new GridRows(api, 'bottom, emptied, always').check(`
+            ROOT id:ROOT_NODE_ID amount:null
+            └─ footer id:rowGroupFooter_ROOT_NODE_ID ag-Grid-AutoColumn:"Total " amount:null
+        `);
+        expect(exported()).toBe(['Group,sum(Amount)', 'Total ,'].join('\r\n'));
+        api.setGridOption('alwaysShowGrandTotalRow', false);
+        api.setGridOption('rowData', rowData);
+        await new GridRows(api, 'bottom, rows back').check(`
+            ROOT id:ROOT_NODE_ID amount:150
+            ├─┬ LEAF_GROUP collapsed id:row-group-category-A ag-Grid-AutoColumn:"A" amount:100
+            │ └── LEAF hidden id:1 category:"A" amount:100
+            ├─┬ LEAF_GROUP collapsed id:row-group-category-B ag-Grid-AutoColumn:"B" amount:50
+            │ └── LEAF hidden id:2 category:"B" amount:50
+            └─ footer id:rowGroupFooter_ROOT_NODE_ID ag-Grid-AutoColumn:"Total " amount:150
+        `);
+
+        const bottomTotal = api.getRowNode(GRAND_TOTAL_ROW_ID);
+        api.setGridOption('grandTotalRow', undefined);
+        expect(api.getRowNode(GRAND_TOTAL_ROW_ID)).toBeUndefined();
+        api.setGridOption('grandTotalRow', 'top');
+        const topTotal = api.getRowNode(GRAND_TOTAL_ROW_ID);
+        expect(topTotal?.id).toBe(GRAND_TOTAL_ROW_ID);
+        expect(topTotal).not.toBe(bottomTotal);
+        api.setGridOption('rowData', []);
+        await new GridRows(api, 'top, emptied').check(`
+            ROOT id:ROOT_NODE_ID amount:null
+        `);
+        expect(exported()).toBe('Group,sum(Amount)');
+        api.setGridOption('rowData', rowData);
+        await new GridRows(api, 'top, rows back').check(`
+            ROOT id:ROOT_NODE_ID amount:150
+            ├─ footer id:rowGroupFooter_ROOT_NODE_ID ag-Grid-AutoColumn:"Total " amount:150
+            ├─┬ LEAF_GROUP collapsed id:row-group-category-A ag-Grid-AutoColumn:"A" amount:100
+            │ └── LEAF hidden id:1 category:"A" amount:100
+            └─┬ LEAF_GROUP collapsed id:row-group-category-B ag-Grid-AutoColumn:"B" amount:50
+            · └── LEAF hidden id:2 category:"B" amount:50
+        `);
+        // skeleton loading rows show no row, so not the grand total either
+        const shown = exported();
+        api.updateGridOptions({ loadingRows: { rowCount: 2 }, loading: true });
+        expect(exported()).toBe(['Group,sum(Amount)', ' -> A,100', ',100', ' -> B,50', ',50'].join('\r\n'));
+        api.setGridOption('loading', false);
+        expect(exported()).toBe(shown);
+
+        api.setGridOption('grandTotalRow', 'pinnedBottom');
+        api.setGridOption('rowData', []);
+        await new GridRows(api, 'pinnedBottom, emptied').check(`
+            ROOT id:ROOT_NODE_ID amount:null
+        `);
+        api.setGridOption('rowData', rowData);
+        await new GridRows(api, 'pinnedBottom, rows back').check(`
+            ROOT id:ROOT_NODE_ID amount:150
+            ├─┬ LEAF_GROUP collapsed id:row-group-category-A ag-Grid-AutoColumn:"A" amount:100
+            │ └── LEAF hidden id:1 category:"A" amount:100
+            └─┬ LEAF_GROUP collapsed id:row-group-category-B ag-Grid-AutoColumn:"B" amount:50
+            · └── LEAF hidden id:2 category:"B" amount:50
+            PINNED_BOTTOM id:b-bottom-rowGroupFooter_ROOT_NODE_ID ag-Grid-AutoColumn:"Total " amount:150
+        `);
+
+        const createdEmpty = gridsManager.createGrid('createdEmpty', {
+            columnDefs: [
+                { field: 'category', rowGroup: true, hide: true },
+                { field: 'amount', aggFunc: 'sum' },
+            ],
+            rowData: [],
+            grandTotalRow: 'bottom',
+            alwaysShowGrandTotalRow: true,
+        });
+        await new GridRows(createdEmpty, 'bottom, created empty, always').check(`
+            ROOT id:ROOT_NODE_ID amount:null
+            └─ footer id:rowGroupFooter_ROOT_NODE_ID ag-Grid-AutoColumn:"Total " amount:null
+        `);
+
+        const createdWithoutRowData = gridsManager.createGrid('createdWithoutRowData', {
+            columnDefs: [
+                { field: 'category', rowGroup: true, hide: true },
+                { field: 'amount', aggFunc: 'sum' },
+            ],
+            loading: false,
+            grandTotalRow: 'bottom',
+            alwaysShowGrandTotalRow: true,
+        });
+        // no row data yet, so nothing to total: a refresh such as a sort adds no grand total row either
+        createdWithoutRowData.applyColumnState({ state: [{ colId: 'amount', sort: 'asc' }] });
+        expect(createdWithoutRowData.getDisplayedRowCount()).toBe(0);
+        createdWithoutRowData.setGridOption('rowData', []);
+        expect(createdWithoutRowData.getDisplayedRowAtIndex(0)?.id).toBe(GRAND_TOTAL_ROW_ID);
+
+        const fedByTransactions = gridsManager.createGrid('fedByTransactions', {
+            columnDefs: [
+                { field: 'category', rowGroup: true, hide: true },
+                { field: 'amount', aggFunc: 'sum' },
+            ],
+            loading: false,
+            grandTotalRow: 'bottom',
+            alwaysShowGrandTotalRow: true,
+        });
+        // rows given by transactions are row data too, so the row stays once they are removed
+        const added = { category: 'A', amount: 1 };
+        applyTransactionChecked(fedByTransactions, { add: [added] });
+        applyTransactionChecked(fedByTransactions, { remove: [added] });
+        expect(fedByTransactions.getDisplayedRowAtIndex(0)?.id).toBe(GRAND_TOTAL_ROW_ID);
+    });
+
+    test.each(['top', 'bottom', 'pinnedTop', 'pinnedBottom'] as const)(
+        'with alwaysShowGrandTotalRow a `%s` grand total stays while no row is shown',
+        async (grandTotalRow) => {
+            const rowData = [
+                { id: '1', category: 'A', amount: 100 },
+                { id: '2', category: 'B', amount: 50 },
+            ];
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    { field: 'category', rowGroup: true, hide: true, filter: 'agTextColumnFilter' },
+                    { field: 'amount', aggFunc: 'sum', filter: 'agNumberColumnFilter' },
+                ],
+                rowData,
+                grandTotalRow,
+                alwaysShowGrandTotalRow: true,
+                getRowId: (params) => params.data.id,
+            });
+            const pinned = grandTotalRow === 'pinnedTop' || grandTotalRow === 'pinnedBottom';
+            const overlay = () => {
+                const eGrid = getGridElement(api)!;
+                if (eGrid.querySelector('.ag-overlay-no-matching-rows-center')) {
+                    return 'noMatchingRows';
+                }
+                return eGrid.querySelector('.ag-overlay-no-rows-center') ? 'noRows' : null;
+            };
+            const expectGrandTotal = async (
+                rowIds: string[],
+                amount: number | null | undefined,
+                expectedOverlay: 'noRows' | 'noMatchingRows' | null
+            ) => {
+                const shown = amount === undefined ? 0 : 1;
+                const pinnedTotal = grandTotalRow === 'pinnedTop' ? api.getPinnedTopRow(0) : api.getPinnedBottomRow(0);
+                const grandTotal = pinned ? pinnedTotal : api.getRowNode(GRAND_TOTAL_ROW_ID);
+                expect(grandTotal?.displayed ? grandTotal.aggData?.amount : undefined).toBe(amount);
+                const inlineTotal = pinned || !shown ? [] : [GRAND_TOTAL_ROW_ID];
+                const ids: (string | undefined)[] = [];
+                for (let i = 0, count = api.getDisplayedRowCount(); i < count; ++i) {
+                    ids.push(api.getDisplayedRowAtIndex(i)?.id);
+                }
+                expect(ids).toEqual(
+                    grandTotalRow === 'top' ? [...inlineTotal, ...rowIds] : [...rowIds, ...inlineTotal]
+                );
+                expect(api.getPinnedTopRowCount() + api.getPinnedBottomRowCount()).toBe(pinned ? shown : 0);
+                await waitFor(() => expect(overlay()).toBe(expectedOverlay));
+                const renderedGrandTotal = () =>
+                    getGridElement(api)!.querySelectorAll('.ag-row[row-id$="rowGroupFooter_ROOT_NODE_ID"]').length;
+                await waitFor(() => expect(renderedGrandTotal() > 0).toBe(shown === 1));
+            };
+            const groupIds = ['row-group-category-A', 'row-group-category-B'];
+            await expectGrandTotal(groupIds, 150, null);
+
+            api.setFilterModel({ amount: { type: 'greaterThan', filter: 60 } });
+            await expectGrandTotal(['row-group-category-A'], 100, null);
+
+            api.setFilterModel({ amount: { type: 'greaterThan', filter: 1000 } });
+            await expectGrandTotal([], null, 'noMatchingRows');
+
+            api.setGridOption('alwaysShowGrandTotalRow', false);
+            await expectGrandTotal([], undefined, 'noMatchingRows');
+            api.setGridOption('alwaysShowGrandTotalRow', true);
+            await expectGrandTotal([], null, 'noMatchingRows');
+            api.setGridOption('suppressAggFilteredOnly', true);
+            await expectGrandTotal([], 150, 'noMatchingRows');
+            api.setGridOption('suppressAggFilteredOnly', false);
+            // a group column filter removes leaf rows even under groupAggFiltering, which then totals them
+            api.setFilterModel({ category: { type: 'equals', filter: 'none' } });
+            await expectGrandTotal([], null, 'noMatchingRows');
+            api.setGridOption('groupAggFiltering', true);
+            await expectGrandTotal([], 150, 'noMatchingRows');
+            api.setGridOption('groupAggFiltering', false);
+
+            api.setFilterModel(null);
+            await expectGrandTotal(groupIds, 150, null);
+
+            // rows a callback hides, with no filter, are not "no matching rows"
+            api.setGridOption('postSortRows', (params) => {
+                params.nodes.length = 0;
+            });
+            await expectGrandTotal([], 150, null);
+            api.setGridOption('postSortRows', undefined);
+
+            api.setGridOption('rowData', []);
+            await expectGrandTotal([], null, 'noRows');
+        }
+    );
+
+    test('alwaysShowGrandTotalRow does not warn while grandTotalRow is unset or turned off', () => {
+        const warn = vitest.spyOn(console, 'warn').mockImplementation(() => {});
+        try {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ field: 'amount', aggFunc: 'sum' }],
+                rowData: [],
+                alwaysShowGrandTotalRow: true,
+            });
+            api.setGridOption('grandTotalRow', 'bottom');
+            api.setGridOption('grandTotalRow', undefined);
+            expect(warn).not.toHaveBeenCalled();
+        } finally {
+            warn.mockRestore();
+        }
+    });
+
     test('cross-column valueGetter dependencies during aggregation', async () => {
         // Column 'total' uses a valueGetter that reads 'price' and 'qty' via params.getValue().
         // This verifies that aggregation correctly handles valueGetters with cross-column
@@ -552,5 +807,32 @@ describe('ag-grid grouping aggregation', () => {
 
         expect(api.getDisplayedRowAtIndex(2)!.rowHeight).toBe(30);
         expect(callsBeforePositioned).toBe(0);
+    });
+});
+
+describe('alwaysShowGrandTotalRow without the row grouping modules', () => {
+    const gridsManager = new TestGridsManager({ modules: [ClientSideRowModelModule] });
+
+    afterEach(() => {
+        gridsManager.reset();
+    });
+
+    test('reports the missing module', async () => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [200] });
+        const error = vitest.spyOn(console, 'error').mockImplementation(() => {});
+        try {
+            gridsManager.createGrid('myGrid', {
+                columnDefs: [{ field: 'amount' }],
+                rowData: [],
+                alwaysShowGrandTotalRow: true,
+            });
+            await waitFor(() => {
+                const logged = error.mock.calls.flat().join(' ');
+                expect(logged).toContain('error #200');
+                expect(logged).toContain('`alwaysShowGrandTotalRow`');
+            });
+        } finally {
+            error.mockRestore();
+        }
     });
 });

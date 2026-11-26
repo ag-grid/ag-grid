@@ -1,14 +1,16 @@
 import { waitFor } from '@testing-library/dom';
-import { GridColumns, GridRows, asyncSetTimeout, clickMenuOption } from 'ag-test-utils';
+import { ALL_SEVERITIES, GridColumns, GridRows, asyncSetTimeout, clickMenuOption } from 'ag-test-utils';
 import { vi } from 'vitest';
 
-import type { AgColumn, ColDef, ICellRendererComp, ICellRendererParams } from 'ag-grid-community';
+import type { AgColumn, ColDef, GridApi, ICellRendererComp, ICellRendererParams } from 'ag-grid-community';
+import { enableDevValidations } from 'ag-grid-community';
 
 import {
     addCalculatedColumnDef,
     clickDialogButton,
     createGrid,
     getExpressionInput,
+    openEditDialogViaMenu,
     removeColumnDef,
     setExpression,
     setupCalculatedColumnsSuite,
@@ -18,6 +20,71 @@ import {
 
 describe('ag-grid calculated columns', () => {
     setupCalculatedColumnsSuite();
+
+    test('live dialog commits report validity changes after the column change event', async () => {
+        const changed = vi.fn();
+        const validity = vi.fn();
+        const api = createGrid('calculated-live-validity', {
+            columnDefs: [
+                { field: 'sales' },
+                { field: 'cost' },
+                { colId: 'profit', calculatedExpression: '[sales] - [cost]' },
+            ],
+            rowData: [{ id: 'r1', sales: 100, cost: 60 }],
+            onCalculatedColumnChanged: changed,
+            onCalculatedColumnValidationStateChanged: validity,
+        });
+        await openEditDialogViaMenu(api, 'profit');
+        setExpression('[Sales] - [Cots]');
+        await waitFor(() => expect(validity).toHaveBeenCalledTimes(1));
+        expect(validity.mock.lastCall![0]).toMatchObject({
+            column: api.getColumn('profit'),
+            expression: '[sales] - [Cots]',
+            source: 'calculatedColumn',
+            valid: false,
+            reason: 'unknownReference',
+        });
+        expect(changed.mock.invocationCallOrder[0]).toBeLessThan(validity.mock.invocationCallOrder[0]);
+
+        setExpression('[Sales] + [Cots]');
+        await waitFor(() => expect(changed).toHaveBeenCalledTimes(2));
+        await asyncSetTimeout(0);
+        expect(validity).toHaveBeenCalledTimes(1);
+
+        setExpression('[Sales] + [Cost]');
+        await waitFor(() => expect(validity).toHaveBeenCalledTimes(2));
+        expect(validity.mock.lastCall![0]).toMatchObject({ valid: true, reason: undefined });
+
+        setExpression('[Sales] - [Cost]');
+        await waitFor(() => expect(changed).toHaveBeenCalledTimes(4));
+        await asyncSetTimeout(0);
+        expect(validity).toHaveBeenCalledTimes(2);
+    });
+
+    test('deferred dialog correction reports validity only after Apply', async () => {
+        const validity = vi.fn();
+        const api = createGrid('calculated-deferred-validity', {
+            calculatedColumns: { applyMode: 'deferred' },
+            columnDefs: [{ field: 'sales' }, { colId: 'profit', calculatedExpression: '[missing]' }],
+            rowData: [{ id: 'r1', sales: 100 }],
+            onCalculatedColumnValidationStateChanged: validity,
+        });
+        await openEditDialogViaMenu(api, 'profit');
+        setExpression('[Sales]');
+        await asyncSetTimeout(0);
+        expect(validity).not.toHaveBeenCalled();
+        expect(api.getColumn('profit')!.getColDef().calculatedExpression).toBe('[missing]');
+
+        clickDialogButton('Apply');
+        await waitFor(() => expect(validity).toHaveBeenCalledTimes(1));
+        expect(validity.mock.lastCall![0]).toMatchObject({
+            column: api.getColumn('profit'),
+            expression: '[sales]',
+            source: 'calculatedColumn',
+            valid: true,
+            reason: undefined,
+        });
+    });
 
     test('pivot mode tracks lifecycle and validity of primary calculated columns', async () => {
         const changed = vi.fn();
@@ -185,66 +252,6 @@ describe('ag-grid calculated columns', () => {
         ]);
 
         expect(seen).toEqual(['profit,revenue,cost']);
-    });
-
-    test('a rendered cell is not refreshed again by newColumnsLoaded when the first calculated column turns formulas on', async () => {
-        let refreshes = 0;
-        class CountingRenderer implements ICellRendererComp {
-            private readonly eGui = document.createElement('span');
-            public init(params: ICellRendererParams): void {
-                this.eGui.textContent = String(params.value);
-            }
-            public getGui(): HTMLElement {
-                return this.eGui;
-            }
-            public refresh(): boolean {
-                ++refreshes;
-                return true;
-            }
-        }
-        const columnDefs: ColDef[] = [{ field: 'revenue', cellRenderer: CountingRenderer }, { field: 'cost' }];
-        const api = createGrid('calculated-formula-refresh-once', {
-            rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
-            columnDefs,
-        });
-        await asyncSetTimeout(0);
-
-        api.setGridOption('columnDefs', [
-            ...columnDefs,
-            { colId: 'profit', calculatedExpression: '[revenue] - [cost]' },
-        ]);
-
-        // not a third time by `newColumnsLoaded`
-        expect(refreshes).toBe(2);
-    });
-
-    test('the cells are refreshed once when the first calculated column turns formulas on', () => {
-        let refreshes = 0;
-        class CountingRenderer implements ICellRendererComp {
-            private readonly eGui = document.createElement('span');
-            public init(params: ICellRendererParams): void {
-                this.eGui.textContent = String(params.value);
-            }
-            public getGui(): HTMLElement {
-                return this.eGui;
-            }
-            public refresh(): boolean {
-                ++refreshes;
-                return true;
-            }
-        }
-        const columnDefs: ColDef[] = [{ field: 'revenue', cellRenderer: CountingRenderer }, { field: 'cost' }];
-        const api = createGrid('calculated-formula-refresh-once', {
-            rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
-            columnDefs,
-        });
-
-        api.setGridOption('columnDefs', [
-            ...columnDefs,
-            { colId: 'profit', calculatedExpression: '[revenue] - [cost]' },
-        ]);
-
-        expect(refreshes).toBe(1);
     });
 
     test('calculated column columnDefs mutations dispatch newColumnsLoaded', async () => {
@@ -582,5 +589,147 @@ describe('ag-grid calculated columns', () => {
         // Flush the batched public-event queue so a missed dispatch would have landed by now.
         await asyncSetTimeout(0);
         expect(validationStateChanged).not.toHaveBeenCalled();
+    });
+
+    describe('updateGridOptions changing calculatedColumns together with columnDefs', () => {
+        const columnDefs = (badExpression: string): ColDef[] => [
+            { field: 'a' },
+            { field: 'b' },
+            { colId: 'calc', calculatedExpression: '[a] + [b]' },
+            { colId: 'bad', calculatedExpression: badExpression },
+        ];
+
+        // Records the calculated column events as [type, colId, detail?] and the `newColumnsLoaded` count.
+        function recordEvents(api: GridApi) {
+            const events: unknown[][] = [];
+            const loaded = { count: 0 };
+            api.addGlobalListener((type: string, event: any) => {
+                if (type === 'newColumnsLoaded') {
+                    ++loaded.count;
+                } else if (type === 'calculatedColumnExpressionChanged') {
+                    events.push([type, event.column.getColId(), event.oldExpression, event.expression]);
+                } else if (type === 'calculatedColumnValidationStateChanged') {
+                    events.push([type, event.column.getColId(), event.valid]);
+                } else if (type.startsWith('calculatedColumn')) {
+                    events.push([type, event.column.getColId()]);
+                }
+            });
+            return { events, loaded };
+        }
+
+        test('turning calculatedColumns on with columnDefs compares them with the definitions before the call, and turning it off with columnDefs raises no calculated column event', async () => {
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [319] });
+            const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+            const api = createGrid('calculated-toggle-with-defs', {
+                calculatedColumns: false,
+                columnDefs: columnDefs('[a]'),
+                rowData: [{ id: 'r1', a: 1, b: 2 }],
+            });
+            const { events, loaded } = recordEvents(api);
+            await asyncSetTimeout(0);
+            events.length = 0;
+            let loadedBefore = loaded.count;
+
+            api.updateGridOptions({ calculatedColumns: true, columnDefs: columnDefs('[zz]') });
+
+            await waitFor(() => expect(loaded.count).toBeGreaterThan(loadedBefore));
+            await asyncSetTimeout(0);
+            expect(events).toEqual([
+                ['calculatedColumnChanged', 'bad'],
+                ['calculatedColumnExpressionChanged', 'bad', '[a]', '[zz]'],
+                ['calculatedColumnValidationStateChanged', 'bad', false],
+            ]);
+
+            events.length = 0;
+            loadedBefore = loaded.count;
+            api.updateGridOptions({ calculatedColumns: false, columnDefs: columnDefs('[a]') });
+
+            await waitFor(() => expect(loaded.count).toBeGreaterThan(loadedBefore));
+            await asyncSetTimeout(0);
+            expect(events).toEqual([]);
+            expect(warn.mock.calls.flat().join(' ')).toContain('warning #319');
+            warn.mockRestore();
+        });
+
+        test('turning calculatedColumns on alone raises only the validation state of an invalid column', async () => {
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [319] });
+            const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+            const api = createGrid('calculated-toggle-on-alone', {
+                calculatedColumns: false,
+                columnDefs: columnDefs('[zz]'),
+                rowData: [{ id: 'r1', a: 1, b: 2 }],
+            });
+            const events = recordEvents(api).events;
+            await asyncSetTimeout(0);
+            events.length = 0;
+
+            api.updateGridOptions({ calculatedColumns: true });
+
+            await waitFor(() => expect(events.length).toBeGreaterThan(0));
+            await asyncSetTimeout(0);
+            expect(events).toEqual([['calculatedColumnValidationStateChanged', 'bad', false]]);
+            expect(warn.mock.calls.flat().join(' ')).toContain('warning #319');
+            warn.mockRestore();
+        });
+    });
+
+    test('a rendered cell is not refreshed again by newColumnsLoaded when the first calculated column turns formulas on', async () => {
+        let refreshes = 0;
+        class CountingRenderer implements ICellRendererComp {
+            private readonly eGui = document.createElement('span');
+            public init(params: ICellRendererParams): void {
+                this.eGui.textContent = String(params.value);
+            }
+            public getGui(): HTMLElement {
+                return this.eGui;
+            }
+            public refresh(): boolean {
+                ++refreshes;
+                return true;
+            }
+        }
+        const columnDefs: ColDef[] = [{ field: 'revenue', cellRenderer: CountingRenderer }, { field: 'cost' }];
+        const api = createGrid('calculated-formula-refresh-once', {
+            rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
+            columnDefs,
+        });
+        await asyncSetTimeout(0);
+
+        api.setGridOption('columnDefs', [
+            ...columnDefs,
+            { colId: 'profit', calculatedExpression: '[revenue] - [cost]' },
+        ]);
+
+        // not a third time by `newColumnsLoaded`
+        expect(refreshes).toBe(2);
+    });
+
+    test('the cells are refreshed once when the first calculated column turns formulas on', () => {
+        let refreshes = 0;
+        class CountingRenderer implements ICellRendererComp {
+            private readonly eGui = document.createElement('span');
+            public init(params: ICellRendererParams): void {
+                this.eGui.textContent = String(params.value);
+            }
+            public getGui(): HTMLElement {
+                return this.eGui;
+            }
+            public refresh(): boolean {
+                ++refreshes;
+                return true;
+            }
+        }
+        const columnDefs: ColDef[] = [{ field: 'revenue', cellRenderer: CountingRenderer }, { field: 'cost' }];
+        const api = createGrid('calculated-formula-refresh-once', {
+            rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
+            columnDefs,
+        });
+
+        api.setGridOption('columnDefs', [
+            ...columnDefs,
+            { colId: 'profit', calculatedExpression: '[revenue] - [cost]' },
+        ]);
+
+        expect(refreshes).toBe(1);
     });
 });

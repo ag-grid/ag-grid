@@ -1,3 +1,4 @@
+import { groupRoadmapByQuarter } from '@ag-website-shared/components/roadmap/groupRoadmapByQuarter';
 import type { RoadmapItem } from '@ag-website-shared/components/roadmap/types';
 import { toAbsoluteUrl } from '@ag-website-shared/markdoc/toAbsoluteUrl';
 
@@ -78,15 +79,8 @@ export function buildRoadmapMarkdown({
         document.push(roadmapData.introText);
     }
 
-    // Same grouping as RoadmapBoard: one section per quarter, in the order the items appear.
-    const byQuarter = new Map<number, RoadmapMarkdownItem[]>();
-    for (const item of roadmapData.items) {
-        const quarterItems = byQuarter.get(item.q) ?? [];
-        quarterItems.push(item);
-        byQuarter.set(item.q, quarterItems);
-    }
-
-    for (const [quarter, items] of byQuarter) {
+    // Same grouping and ordering as RoadmapBoard.
+    for (const [quarter, items] of groupRoadmapByQuarter(roadmapData.items)) {
         document.push(`## Q${quarter} ${year}`);
         for (const item of items) {
             const title = item.link ? `[${item.title}](${toAbsoluteUrl(resolveUrl(item.link), siteRoot)})` : item.title;

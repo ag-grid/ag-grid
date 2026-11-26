@@ -1,7 +1,7 @@
 import { expect, test } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
-    test.eachFramework('Floating Filter reflects the applied child Text Filter', async ({ page, agIdFor }) => {
+    test.eachFramework('Floating Filter reflects the applied child Text Filter', async ({ agIdFor }) => {
         await expect(agIdFor.cell('0', 'athlete')).toContainText('Michael Phelps');
 
         // The Multi Filter floating filter is read-only; its button opens the full filter menu.

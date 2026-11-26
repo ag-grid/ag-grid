@@ -1,4 +1,12 @@
-import { _exists, _getActiveDomElement, _getDocument, _last, _removeFromArray } from 'ag-stack';
+import {
+    _exists,
+    _getActiveDomElement,
+    _getDeepActiveElement,
+    _getDocument,
+    _isNothingFocused,
+    _last,
+    _removeFromArray,
+} from 'ag-stack';
 
 import type {
     AgColumn,
@@ -50,16 +58,75 @@ const EXPORT_TYPE_CLIPBOARD = 'clipboard';
 
 // Skips a tag's attributes, including quoted values that contain `>`.
 const HTML_TAG_ATTRIBUTES = `(?:[^>"']|"[^"]*"|'[^']*')*`;
-const HTML_TAG_SOURCE = String.raw`<(\/?)([a-z][\w:-]*)${HTML_TAG_ATTRIBUTES}>`;
+const HTML_TAG_NAME_REGEX = /<(\/?)([a-z][\w:-]*)/iy;
+const HTML_BODY_OPEN_REGEX = /<body\b/gi;
+const HTML_BODY_CLOSE_REGEX = /<\/body\s*>/gi;
+const HTML_TABLE_OPEN_REGEX = /<table\b/gi;
+const HTML_TABLE_CLOSE_REGEX = /<\/table\s*>/gi;
 
-function htmlElementRegex(name: string): RegExp {
-    return new RegExp(String.raw`<${name}\b${HTML_TAG_ATTRIBUTES}>([\s\S]*?)<\/${name}\s*>`, 'i');
+/** Index just past the `>` ending a tag whose attributes start at `from`, skipping quoted values; -1 when unterminated. */
+function findHtmlTagEnd(html: string, from: number): number {
+    for (let i = from, len = html.length; i < len; ++i) {
+        const ch = html[i];
+        if (ch === '>') {
+            return i + 1;
+        }
+        if (ch === '"' || ch === "'") {
+            i = html.indexOf(ch, i + 1);
+            if (i < 0) {
+                return -1;
+            }
+        }
+    }
+    return -1;
 }
 
-const HTML_BODY_REGEX = htmlElementRegex('body');
-const HTML_TABLE_REGEX = htmlElementRegex('table');
+/**
+ * The first element opened by `openRegex` and closed by the nearest following `closeRegex` match, or null when that
+ * opening tag is malformed or never closed. Scans forward once, so it stays linear on malformed or hostile HTML.
+ */
+function findHtmlElement(
+    html: string,
+    openRegex: RegExp,
+    closeRegex: RegExp
+): { start: number; end: number; content: string } | null {
+    openRegex.lastIndex = 0;
+    const open = openRegex.exec(html);
+    if (!open) {
+        return null;
+    }
+    const contentStart = findHtmlTagEnd(html, openRegex.lastIndex);
+    if (contentStart < 0) {
+        return null;
+    }
+    closeRegex.lastIndex = contentStart;
+    const close = closeRegex.exec(html);
+    if (!close) {
+        return null;
+    }
+    return { start: open.index, end: closeRegex.lastIndex, content: html.slice(contentStart, close.index) };
+}
+
+/** `html` with every complete `<!-- … -->` comment removed; an unterminated comment is left in place. */
+function removeHtmlComments(html: string): string {
+    let result = '';
+    let from = 0;
+    for (let start = html.indexOf('<!--'); start >= 0; start = html.indexOf('<!--', from)) {
+        const end = html.indexOf('-->', start + 4);
+        if (end < 0) {
+            break;
+        }
+        result += html.slice(from, start);
+        from = end + 3;
+    }
+    return result + html.slice(from);
+}
+
 // An empty table cell may contain a paragraph with only a line break.
-const HTML_EMPTY_PARAGRAPH_REGEX = new RegExp(String.raw`^<p\b${HTML_TAG_ATTRIBUTES}>\s*<br\s*\/?>\s*<\/p\s*>$`, 'i');
+const HTML_EMPTY_PARAGRAPH_REGEX = /* #__PURE__ */ new RegExp(
+    String.raw`^<p\b${HTML_TAG_ATTRIBUTES}>\s*<br\s*\/?>\s*<\/p\s*>$`,
+    'i'
+);
 
 function isBlankLine(line: string[] | undefined): boolean {
     return line?.length === 1 && line[0] === '';
@@ -281,13 +348,9 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
                 textArea.focus({ preventScroll: true });
             },
             (element) => {
-                const data = element.value;
                 if (!defaultPrevented) {
-                    this.processClipboardData(data, html);
-                } else {
-                    this.refocusLastFocusedCell();
+                    this.processClipboardData(element.value, html);
                 }
-                element.removeEventListener('paste', handlePasteEvent);
             }
         );
     }
@@ -427,24 +490,23 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         rowCount: number;
         boundaryRows: { row: number; cellCount: number; hasNonEmptyMissingCell: boolean }[];
     } | null {
-        const body = HTML_BODY_REGEX.exec(html)?.[1] ?? html;
-        const uncommentedBody = body.replace(/<!--[\s\S]*?-->/g, '');
+        const body = findHtmlElement(html, HTML_BODY_OPEN_REGEX, HTML_BODY_CLOSE_REGEX)?.content ?? html;
+        const uncommentedBody = removeHtmlComments(body);
         if (uncommentedBody.includes('<!--')) {
             return null;
         }
-        const table = HTML_TABLE_REGEX.exec(uncommentedBody);
+        const table = findHtmlElement(uncommentedBody, HTML_TABLE_OPEN_REGEX, HTML_TABLE_CLOSE_REGEX);
         if (!table) {
             return null;
         }
 
         // Surrounding content may be an intended line rather than part of the table.
-        const outsideTable =
-            uncommentedBody.slice(0, table.index) + uncommentedBody.slice(table.index + table[0].length);
+        const outsideTable = uncommentedBody.slice(0, table.start) + uncommentedBody.slice(table.end);
         if (outsideTable.trim()) {
             return null;
         }
 
-        const tableContent = table[1];
+        const tableContent = table.content;
         const boundaryRows: { row: number; cellCount: number; hasNonEmptyMissingCell: boolean }[] = [];
         const firstBoundaryRow = parsedData.length - 2;
         let rowCount = 0;
@@ -454,19 +516,29 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         let cellCount = 0;
         let plainCellCount = 0;
         let hasNonEmptyMissingCell = false;
-        const tagPattern = new RegExp(HTML_TAG_SOURCE, 'gi');
         let endOfPreviousTag = 0;
-        for (let match = tagPattern.exec(tableContent); match; match = tagPattern.exec(tableContent)) {
-            const strayTag = tableContent.indexOf('<', endOfPreviousTag);
-            if (strayTag >= 0 && strayTag < match.index) {
+        for (
+            let tagStart = tableContent.indexOf('<');
+            tagStart >= 0;
+            tagStart = tableContent.indexOf('<', endOfPreviousTag)
+        ) {
+            // every `<` must open a well-formed tag; a stray one means the HTML isn't a plain table
+            HTML_TAG_NAME_REGEX.lastIndex = tagStart;
+            const nameMatch = HTML_TAG_NAME_REGEX.exec(tableContent);
+            if (!nameMatch) {
                 return null;
             }
-            if (!cellName && tableContent.slice(endOfPreviousTag, match.index).trim()) {
+            const tagEnd = findHtmlTagEnd(tableContent, HTML_TAG_NAME_REGEX.lastIndex);
+            if (tagEnd < 0) {
                 return null;
             }
-            endOfPreviousTag = tagPattern.lastIndex;
+            if (!cellName && tableContent.slice(endOfPreviousTag, tagStart).trim()) {
+                return null;
+            }
+            endOfPreviousTag = tagEnd;
 
-            const [tag, closingSlash, tagName] = match;
+            const tag = tableContent.slice(tagStart, tagEnd);
+            const [, closingSlash, tagName] = nameMatch;
             const isClosingTag = closingSlash === '/';
             const name = tagName.toLowerCase();
             if (
@@ -486,7 +558,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
                     if (
                         rowCount >= firstBoundaryRow &&
                         cellCount >= plainCellCount &&
-                        !this.isEmptyHtmlCell(tableContent.slice(cellContentStart, match.index))
+                        !this.isEmptyHtmlCell(tableContent.slice(cellContentStart, tagStart))
                     ) {
                         hasNonEmptyMissingCell = true;
                     }
@@ -497,7 +569,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
                         return null;
                     }
                     cellName = name;
-                    cellContentStart = tagPattern.lastIndex;
+                    cellContentStart = tagEnd;
                 }
                 continue;
             }
@@ -545,7 +617,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
     ): void {
         const source = 'clipboard';
 
-        const { eventSvc, focusSvc, rowRenderer, gos, editSvc } = this.beans;
+        const { eventSvc, focusSvc, rowRenderer, gos, editSvc, selectionSvc } = this.beans;
 
         eventSvc.dispatchEvent({
             type: 'pasteStart',
@@ -560,17 +632,23 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         const updatedRowNodes: RowNode[] = [];
         const focusedCell = focusSvc.getFocusedCell();
 
-        editSvc?.beginBulkWrite();
+        selectionSvc?.beginSelectionBatch(); // the pasted rows are asked once they are aggregated
         try {
-            pasteOperationFunc(cellsToFlash, updatedRowNodes, focusedCell, changedPath);
+            editSvc?.beginBulkWrite();
+            try {
+                pasteOperationFunc(cellsToFlash, updatedRowNodes, focusedCell, changedPath);
+            } finally {
+                editSvc?.endBulkWrite();
+            }
+            if (changedPath) {
+                clientSideRowModel.doAggregate(changedPath);
+            }
         } finally {
-            editSvc?.endBulkWrite();
+            selectionSvc?.endSelectionBatch();
         }
 
         const nodesToRefresh: RowNode[] = updatedRowNodes.slice();
         if (changedPath) {
-            clientSideRowModel.doAggregate(changedPath);
-
             // add all nodes impacted by aggregation, as they need refreshed also.
             _forEachChangedGroupDepthFirst(rootNode, clientSideRowModel.hierarchical, changedPath, (rowNode) => {
                 nodesToRefresh.push(rowNode);
@@ -584,10 +662,11 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         this.dispatchFlashCells(cellsToFlash);
         this.fireRowChanged(updatedRowNodes);
 
-        // if using the clipboard hack with a temp element, then the focus has been lost,
-        // so need to put it back. otherwise paste operation looses focus on cell and keyboard
-        // navigation stops.
-        this.refocusLastFocusedCell();
+        // refocuses the cell unless focus has left the grid
+        const focused = _getActiveDomElement(this.beans);
+        if (_isNothingFocused(this.beans, focused) || this.beans.eRootDiv.contains(focused)) {
+            this.refocusLastFocusedCell();
+        }
         eventSvc.dispatchEvent({
             type: 'pasteEnd',
             source,
@@ -1014,13 +1093,9 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         const { gos, focusSvc } = this.beans;
 
         // don't override 'includeHeaders' if it has been explicitly set to 'false'
-        if (includeHeaders == null) {
-            includeHeaders = gos.get('copyHeadersToClipboard');
-        }
+        includeHeaders ??= gos.get('copyHeadersToClipboard');
 
-        if (includeGroupHeaders == null) {
-            includeGroupHeaders = gos.get('copyGroupHeadersToClipboard');
-        }
+        includeGroupHeaders ??= gos.get('copyGroupHeadersToClipboard');
 
         const copyParams = { includeHeaders, includeGroupHeaders };
         const rowSelection = gos.get('rowSelection');
@@ -1342,7 +1417,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         });
 
         this.copyDataToClipboard(data);
-        const rowNodes = this.beans.selectionSvc?.getSelectedNodes() || [];
+        const rowNodes = this.beans.selectionSvc?.getSelectedNodes() ?? [];
         this.dispatchFlashCells(this.getCellsToFlashFromRowNodes(rowNodes));
     }
 
@@ -1478,7 +1553,6 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         // method 3 - if all else fails, the old school hack
         this.executeOnTempElement((element) => {
             const eDocument = _getDocument(this.beans);
-            const focusedElementBefore = _getActiveDomElement(this.beans) as HTMLElement;
 
             element.value = data || ' '; // has to be non-empty value or execCommand will not do anything
             element.select();
@@ -1488,10 +1562,6 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
 
             if (!result) {
                 this.warn(41);
-            }
-
-            if (focusedElementBefore?.focus != null) {
-                focusedElementBefore.focus({ preventScroll: true });
             }
         });
     }
@@ -1521,6 +1591,18 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         style.opacity = '0';
 
         const guiRoot = this.gridCtrl.getGui();
+        const focusedBefore = _getDeepActiveElement(this.beans) as HTMLElement | null;
+        const restoreFocus = () => {
+            if (focusedBefore == null || _getActiveDomElement(this.beans) !== eTempInput) {
+                return; // focus the user moved elsewhere meanwhile stays there
+            }
+            if (focusedBefore.isConnected) {
+                focusedBefore.focus({ preventScroll: true });
+            } else {
+                // detached meanwhile: a re-rendered cell, or an earlier paste's textarea
+                this.refocusLastFocusedCell();
+            }
+        };
 
         guiRoot.appendChild(eTempInput);
 
@@ -1533,10 +1615,19 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         //It needs 100 otherwise OS X seemed to not always be able to paste... Go figure...
         if (callbackAfter) {
             window.setTimeout(() => {
-                callbackAfter(eTempInput);
-                eTempInput.remove();
+                try {
+                    if (!this.isAlive()) {
+                        return;
+                    }
+                    // before the callback, so one that throws still gives the focus back
+                    restoreFocus();
+                    callbackAfter(eTempInput);
+                } finally {
+                    eTempInput.remove();
+                }
             }, 100);
         } else {
+            restoreFocus();
             eTempInput.remove();
         }
     }

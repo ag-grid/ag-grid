@@ -2,15 +2,21 @@ import { GridColumns, GridRows, TestGridsManager, applyTransactionChecked, async
 import { vi } from 'vitest';
 import type { MockInstance } from 'vitest';
 
-import type { GridOptions, Module } from 'ag-grid-community';
-import { ClientSideRowModelModule, TextEditorModule } from 'ag-grid-community';
+import type { GridOptions, ICellRendererComp, ICellRendererParams, Module } from 'ag-grid-community';
+import { ClientSideRowModelModule, TextEditorModule, _ColumnMoveModule, getGridElement } from 'ag-grid-community';
 import { CellSelectionModule, FormulaModule } from 'ag-grid-enterprise';
 
 const rowNumberRefreshBufferMs = 25;
 
 describe('ag-grid formulas general behaviour', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, CellSelectionModule, FormulaModule, TextEditorModule] as Module[],
+        modules: [
+            ClientSideRowModelModule,
+            CellSelectionModule,
+            FormulaModule,
+            TextEditorModule,
+            _ColumnMoveModule,
+        ] as Module[],
     });
 
     let randomSpy: MockInstance | undefined;
@@ -33,6 +39,31 @@ describe('ag-grid formulas general behaviour', () => {
             vi.useRealTimers();
             usingFakeTimers = false;
         }
+    });
+
+    test.each([false, true])('preserves formula errors with a custom formatter: %s', (customFormatter) => {
+        const api = gridsManager.createGrid('formula-error-formatting', {
+            columnDefs: [
+                {
+                    field: 'value',
+                    allowFormula: true,
+                    cellDataType: 'number',
+                    ...(customFormatter ? { valueFormatter: ({ value }) => `formatted ${value}` } : {}),
+                },
+                { field: 'ordinary', cellDataType: 'number' },
+            ],
+            rowData: [{ value: '=1 / 0', ordinary: '#DIV/0!' }],
+        });
+        const rowNode = api.getDisplayedRowAtIndex(0)!;
+        const formatted = () => api.getCellValue({ rowNode, colKey: 'value', useFormatter: true });
+        expect(formatted()).toBe('#DIV/0!');
+        expect(api.getCellValue({ rowNode, colKey: 'ordinary', useFormatter: true })).toBe('Invalid Number');
+
+        rowNode.setData({ value: '=2 * 3', ordinary: '#DIV/0!' });
+        expect(formatted()).toBe(customFormatter ? 'formatted 6' : '6');
+
+        rowNode.setData({ value: '="#DIV/0!"', ordinary: '#DIV/0!' });
+        expect(formatted()).toBe(customFormatter ? 'formatted #DIV/0!' : 'Invalid Number');
     });
 
     test('constants and cell references evaluate correctly', async () => {
@@ -878,5 +909,258 @@ describe('ag-grid formulas general behaviour', () => {
             ├── LEAF id:"absolute-col-self-$A13" row-number:"14" y:22 x:150 value:22
             └── LEAF id:"absolute-mixed-A$1+$B2" row-number:"15" value:-5
         `);
+    });
+
+    test('a formula follows the column definitions adding, then removing, a column without formulas it references', async () => {
+        const api = gridsManager.createGrid('formulas-reference-added-later', {
+            rowData: [{ id: 'r1', a: 5, b: 7, out: '=REF(COLUMN("a"),ROW("r1"))+REF(COLUMN("b"),ROW("r1"))' }],
+            getRowId: (params) => params.data.id,
+            columnDefs: [{ field: 'a' }, { field: 'out', allowFormula: true }],
+        });
+        await asyncSetTimeout(rowNumberRefreshBufferMs);
+        const out = () => api.getCellValue({ rowNode: api.getRowNode('r1')!, colKey: 'out' });
+        const withoutB = out();
+        expect(withoutB).toMatch(/^#/);
+
+        api.setGridOption('columnDefs', [{ field: 'a' }, { field: 'b' }, { field: 'out', allowFormula: true }]);
+        await asyncSetTimeout(rowNumberRefreshBufferMs);
+        expect(out()).toBe(12);
+
+        api.setGridOption('columnDefs', [{ field: 'a' }, { field: 'out', allowFormula: true }]);
+        await asyncSetTimeout(rowNumberRefreshBufferMs);
+        expect(out()).toEqual(withoutB);
+    });
+
+    test('the column letters in the headers follow a column the column definitions insert first', async () => {
+        const api = gridsManager.createGrid('formulas-letters-column-inserted', {
+            rowData: [{ id: 'r1', a: 5, b: 7, out: '=REF(COLUMN("a"),ROW("r1"))' }],
+            getRowId: (params) => params.data.id,
+            columnDefs: [{ field: 'a' }, { field: 'out', allowFormula: true }],
+        });
+        const letters = () =>
+            Array.from(getGridElement(api)!.querySelectorAll('.ag-header-cell[col-id] .ag-header-col-ref'), (ref) => {
+                return `${ref.closest('.ag-header-cell')!.getAttribute('col-id')} ${ref.textContent}`;
+            });
+        await asyncSetTimeout(rowNumberRefreshBufferMs);
+        expect(letters()).toEqual(['ag-Grid-RowNumbersColumn ', 'a A', 'out B']);
+
+        api.setGridOption('columnDefs', [{ field: 'b' }, { field: 'a' }, { field: 'out', allowFormula: true }]);
+        await asyncSetTimeout(rowNumberRefreshBufferMs);
+
+        expect(letters()).toEqual(['ag-Grid-RowNumbersColumn ', 'b A', 'a B', 'out C']);
+    });
+
+    test('after columnDefs updates reorder the columns and change a column a formula reads, the formula cells show the new results before the changed column raises colDefChanged', async () => {
+        const counts = { inits: 0, refreshes: 0 };
+        class CountingRenderer implements ICellRendererComp {
+            private readonly eGui = document.createElement('span');
+            public init(params: ICellRendererParams): void {
+                ++counts.inits;
+                this.eGui.textContent = String(params.value);
+            }
+            public getGui(): HTMLElement {
+                return this.eGui;
+            }
+            public refresh(params: ICellRendererParams): boolean {
+                ++counts.refreshes;
+                this.eGui.textContent = String(params.value);
+                return true;
+            }
+        }
+        const sum = (id: string) => `=REF(COLUMN("a"),ROW("${id}"))+REF(COLUMN("b"),ROW("${id}"))`;
+        const rowData = [
+            { id: 'r1', a: 1, b: 10, out: sum('r1') },
+            { id: 'r2', a: 2, b: 20, out: sum('r2') },
+            { id: 'r3', a: 3, b: 30, out: sum('r3') },
+        ];
+        const api = gridsManager.createGrid('formulas-columndefs-update-refresh-once', {
+            rowData,
+            getRowId: (params) => params.data.id,
+            columnDefs: [
+                { field: 'a' },
+                { field: 'b' },
+                { field: 'out', headerName: 'Out', allowFormula: true, cellRenderer: CountingRenderer },
+            ],
+        });
+        await asyncSetTimeout(rowNumberRefreshBufferMs);
+        const columnIds = () => api.getAllDisplayedColumns().map((col) => col.getColId());
+        const outHeader = () =>
+            getGridElement(api)!.querySelector('.ag-header-cell[col-id="out"] .ag-header-cell-text')!.textContent;
+        const outValues = () =>
+            rowData.map((row) => api.getCellValue({ rowNode: api.getRowNode(row.id)!, colKey: 'out' }));
+        const renderedOut = () =>
+            rowData.map(
+                (row) => getGridElement(api)!.querySelector(`.ag-row[row-id="${row.id}"] [col-id="out"]`)!.textContent
+            );
+
+        expect({
+            columnIds: columnIds(),
+            outHeader: outHeader(),
+            outValues: outValues(),
+            renderedOut: renderedOut(),
+            inits: counts.inits,
+        }).toEqual({
+            columnIds: ['ag-Grid-RowNumbersColumn', 'a', 'b', 'out'],
+            outHeader: 'Out',
+            outValues: [11, 22, 33],
+            renderedOut: ['11', '22', '33'],
+            inits: 3,
+        });
+
+        api.setGridOption('columnDefs', [
+            { field: 'out', headerName: 'Total', allowFormula: true, cellRenderer: CountingRenderer },
+            { field: 'b' },
+            { field: 'a' },
+        ]);
+        await asyncSetTimeout(rowNumberRefreshBufferMs);
+        let renderedOutAtColDefChanged: (string | null)[] | undefined;
+        api.getColumn('a')!.addEventListener('colDefChanged', () => {
+            renderedOutAtColDefChanged = renderedOut();
+        });
+
+        api.setGridOption('columnDefs', [
+            { field: 'out', headerName: 'Total', allowFormula: true, cellRenderer: CountingRenderer },
+            { field: 'b' },
+            { field: 'a', valueGetter: (params) => params.data.a * 10 },
+        ]);
+        await asyncSetTimeout(rowNumberRefreshBufferMs);
+
+        expect(renderedOutAtColDefChanged).toEqual(['20', '40', '60']);
+    });
+
+    test('a column listener resetting the sort during a column update leaves the formula cells reading the new first row when the API call returns', () => {
+        const first = '=REF(COLUMN("a"),ROW("1",true))';
+        const api = gridsManager.createGrid('formulas-listener-reset-during-column-update', {
+            rowData: [
+                { id: 'r1', a: 1, b: 10, out: first },
+                { id: 'r2', a: 2, b: 20, out: first },
+                { id: 'r3', a: 3, b: 30, out: first },
+            ],
+            getRowId: (params) => params.data.id,
+            columnDefs: [{ field: 'a' }, { field: 'b' }, { field: 'out', allowFormula: true }],
+        });
+        api.applyColumnState({ state: [{ colId: 'a', sort: 'desc' }] });
+        const read = () => ({
+            values: ['r1', 'r2', 'r3'].map((id) => api.getCellValue({ rowNode: api.getRowNode(id)!, colKey: 'out' })),
+            rendered: ['r1', 'r2', 'r3'].map(
+                (id) => getGridElement(api)!.querySelector(`.ag-row[row-id="${id}"] [col-id="out"]`)!.textContent
+            ),
+        });
+        expect(read()).toEqual({ values: [3, 3, 3], rendered: ['3', '3', '3'] });
+
+        let listenerRan = false;
+        api.getColumn('b')!.addEventListener('visibleChanged', () => {
+            if (listenerRan) {
+                return;
+            }
+            listenerRan = true;
+            api.resetColumnState();
+        });
+
+        api.setColumnsVisible(['b'], false);
+
+        expect({ listenerRan, ...read() }).toEqual({ listenerRan: true, values: [1, 1, 1], rendered: ['1', '1', '1'] });
+    });
+
+    test('a formula cell renderer throwing during a column update throws to the caller, and the next updates move the columns with their own events', async () => {
+        let armed = false;
+        let throwsRaised = 0;
+        class ThrowingRenderer implements ICellRendererComp {
+            private readonly eGui = document.createElement('span');
+            public init(params: ICellRendererParams): void {
+                this.eGui.textContent = String(params.value);
+            }
+            public getGui(): HTMLElement {
+                return this.eGui;
+            }
+            public refresh(params: ICellRendererParams): boolean {
+                if (armed) {
+                    ++throwsRaised;
+                    throw new Error('renderer refresh failed');
+                }
+                this.eGui.textContent = String(params.value);
+                return true;
+            }
+        }
+        const first = '=REF(COLUMN("a"),ROW("1",true))';
+        const createWithEvents = (id: string) => {
+            const api = gridsManager.createGrid(id, {
+                rowData: [
+                    { id: 'r1', a: 1, b: 10, c: 100, out: first },
+                    { id: 'r2', a: 2, b: 20, c: 200, out: first },
+                ],
+                getRowId: (params) => params.data.id,
+                columnDefs: [
+                    { field: 'a' },
+                    { field: 'b' },
+                    { field: 'c' },
+                    { field: 'out', allowFormula: true, cellRenderer: ThrowingRenderer },
+                ],
+            });
+            api.applyColumnState({ state: [{ colId: 'a', sort: 'desc' }] });
+            const events: string[] = [];
+            api.addGlobalListener((type: string) => {
+                events.push(type);
+            });
+            return { api, events };
+        };
+
+        const control = createWithEvents('formulas-renderer-throw-control');
+        await asyncSetTimeout(rowNumberRefreshBufferMs);
+        control.api.moveColumns(['c'], 1);
+        await asyncSetTimeout(0);
+        const controlOrder = control.api.getAllDisplayedColumns().map((column) => column.getColId());
+        control.events.length = 0;
+        control.api.moveColumns(['c'], 2);
+        await asyncSetTimeout(0);
+        const controlMoveEvents = [...control.events];
+        gridsManager.reset();
+
+        const { api, events } = createWithEvents('formulas-renderer-throw');
+        await asyncSetTimeout(rowNumberRefreshBufferMs);
+
+        let listenerRan = false;
+        api.getColumn('b')!.addEventListener('visibleChanged', () => {
+            if (!listenerRan) {
+                listenerRan = true;
+                api.resetColumnState();
+            }
+        });
+
+        events.length = 0;
+        armed = true;
+        let threw = false;
+        try {
+            api.setColumnsVisible(['b'], false);
+        } catch {
+            threw = true;
+        }
+        armed = false;
+        await asyncSetTimeout(0);
+
+        // the first update may also raise what the throwing call left staged
+        api.moveColumns(['c'], 1);
+        await asyncSetTimeout(0);
+        const order = api.getAllDisplayedColumns().map((column) => column.getColId());
+        events.length = 0;
+        api.moveColumns(['c'], 2);
+        await asyncSetTimeout(0);
+        const moveEvents = [...events];
+
+        expect({
+            premises: {
+                rendererThrew: throwsRaised > 0,
+                listenerRan,
+                controlRaisedEvents: controlMoveEvents.length > 0,
+            },
+            threw,
+            order,
+            moveEvents,
+        }).toEqual({
+            premises: { rendererThrew: true, listenerRan: true, controlRaisedEvents: true },
+            threw: true,
+            order: controlOrder,
+            moveEvents: controlMoveEvents,
+        });
     });
 });

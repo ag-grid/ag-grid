@@ -1,6 +1,7 @@
 import type {
     ClientSideRowModelStage,
     GridOptions,
+    IClientSideRowModel,
     NamedBean,
     RowNode,
     _IRowNodeFlattenStage,
@@ -21,9 +22,8 @@ export class FlattenStage extends BeanStub implements _IRowNodeFlattenStage, Nam
 
     public readonly step: ClientSideRowModelStage = 'map';
     public readonly refreshProps: (keyof GridOptions<any>)[] = [
+        'alwaysShowGrandTotalRow',
         'groupHideParentOfSingleChild',
-        'groupRemoveSingleChildren',
-        'groupRemoveLowestSingleChildren',
         'groupTotalRow',
         'masterDetail',
     ];
@@ -41,35 +41,37 @@ export class FlattenStage extends BeanStub implements _IRowNodeFlattenStage, Nam
         }
 
         const skipLeafNodes = beans.colModel.pivotMode;
-        // if we are reducing, and not grouping, then we want to show the root node, as that
-        // is where the pivot values are
+        // pivoting without grouping shows the root node, holding the pivot values, as its only total row
+        const pivotWithoutGroups = skipLeafNodes && rootNode.leafGroup;
 
-        const showRootNode = skipLeafNodes && rootNode.leafGroup && rootNode.aggData;
+        const showRootNode = pivotWithoutGroups && rootNode.aggData;
         const topList = showRootNode ? [rootNode] : rootNode.childrenAfterSort;
 
         const details = _getFlattenDetails(gos);
 
         this.recursivelyAddToRowsToDisplay(details, topList, result, skipLeafNodes, 0);
 
-        // we do not want the footer total if the grid is empty
-        const atLeastOneRowPresent = result.length > 0;
         const grandTotalRow = details.grandTotalRow;
 
         const includeGrandTotalRow =
+            grandTotalRow &&
             !showRootNode &&
-            // don't show total footer when showRootNode is true (i.e. in pivot mode and no groups)
-            atLeastOneRowPresent &&
-            grandTotalRow;
+            (result.length > 0 ||
+                (!pivotWithoutGroups &&
+                    gos.get('alwaysShowGrandTotalRow') &&
+                    (beans.rowModel as IClientSideRowModel).rowCountReady));
 
+        let footerNode: RowNode | undefined;
         if (includeGrandTotalRow) {
-            const footerNode = _createRowNodeFooter(rootNode, beans);
-            const pinnedFloat = _getGrandTotalPinnedFloat(grandTotalRow);
-            if (pinnedFloat) {
-                this.beans.pinnedRowModel?.setGrandTotalPinned(pinnedFloat);
-            } else {
+            footerNode = _createRowNodeFooter(rootNode, beans);
+            if (!_getGrandTotalPinnedFloat(grandTotalRow)) {
                 this.addRowNodeToRowsToDisplay(details, footerNode, result, 0, grandTotalRow === 'top');
             }
+        } else if (showRootNode || !grandTotalRow) {
+            // switched off, or replaced by the root row; an emptied grid keeps it, not displayed
+            _destroyRowNodeFooter(rootNode);
         }
+        beans.pinnedRowModel?.setGrandTotalNode(footerNode);
 
         return result;
     }

@@ -1,6 +1,15 @@
-import { nextTick } from 'vue';
+import { defineComponent, nextTick } from 'vue';
+import type { PropType } from 'vue';
 
-export default {
+import type { ICellEditorParams } from 'ag-grid-community';
+
+export default defineComponent({
+    props: {
+        params: {
+            type: Object as PropType<ICellEditorParams>,
+            required: true,
+        },
+    },
     template: `
       <div :ref="'container'" class="mood" tabindex="0" @keydown="onKeyDown">
       <img src="https://www.ag-grid.com/example-assets/smileys/happy.png" @click="onClick(true)" :class="{ selected: happy, default: !happy }">
@@ -14,11 +23,11 @@ export default {
         };
     },
     methods: {
-        getValue() {
+        getValue(): string {
             return this.happy ? 'Happy' : 'Sad';
         },
 
-        setHappy(happy) {
+        setHappy(happy: boolean) {
             this.happy = happy;
         },
 
@@ -26,12 +35,12 @@ export default {
             this.setHappy(!this.happy);
         },
 
-        onClick(happy) {
+        onClick(happy: boolean) {
             this.setHappy(happy);
             this.params.stopEditing();
         },
 
-        onKeyDown(event) {
+        onKeyDown(event: KeyboardEvent) {
             const key = event.key;
             if (
                 key == 'ArrowLeft' || // left
@@ -48,7 +57,7 @@ export default {
     },
     mounted() {
         nextTick(() => {
-            this.$refs.container.focus();
+            (this.$refs.container as HTMLElement).focus();
         });
     },
-};
+});

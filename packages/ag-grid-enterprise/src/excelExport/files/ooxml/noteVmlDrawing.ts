@@ -220,7 +220,7 @@ const getShape = (comment: ExcelComment, idx: number): XmlElement => ({
 
 const noteVmlDrawingFactory: ExcelOOXMLTemplate = {
     getTemplate(params: { sheetIndex: number }) {
-        const comments = XLSX_WORKSHEET_COMMENTS.get(params.sheetIndex) || [];
+        const comments = XLSX_WORKSHEET_COMMENTS.get(params.sheetIndex) ?? [];
 
         return {
             name: 'xml',

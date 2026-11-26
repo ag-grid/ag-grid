@@ -5,16 +5,15 @@ import { _errorToThrowWithoutAttribution } from 'ag-grid-community';
 
 import { VERSION } from '../version';
 import { ALL_AXIS_TYPES, getLegacyAxisType } from './chartComp/utils/axisTypeMapper';
-import { getCanonicalChartType, getSeriesType, isPieChartSeries } from './chartComp/utils/seriesTypeMapper';
+import { extractPaired } from './chartComp/utils/pairedUtils';
+import { getSeriesType, isPieChartSeries } from './chartComp/utils/seriesTypeMapper';
 
 const DEBUG = false;
 
 export function upgradeChartModel(model: ChartModel): ChartModel {
     const originalVersion = model.version;
-    if (model.version == null) {
-        // Try to guess the version so we can apply the right subset of migrations.
-        model.version = heuristicVersionDetection(model);
-    }
+    // Try to guess the version so we can apply the right subset of migrations.
+    model.version ??= heuristicVersionDetection(model);
 
     model = migrateIfBefore('23.0.0', model, migrateV23);
     model = migrateIfBefore('24.0.0', model, migrateV24);
@@ -34,6 +33,7 @@ export function upgradeChartModel(model: ChartModel): ChartModel {
     model = migrateIfBefore('33.0.0', model, migrateV33);
     model = migrateIfBefore('34.0.0', model, migrateV34);
     model = migrateIfBefore('36.0.0', model, migrateV36);
+    model = migrateIfBefore('37.0.0', model, migrateV37);
     model = cleanup(model);
 
     // Bump version to latest.
@@ -154,7 +154,7 @@ function migrateV26_2(model: ChartModel) {
     // We can't rely on the `series.type` field as it was incorrect (in v25.0.0 line chart has an
     // `area` series).
     // Note that in v31.1.0, the canonical name for the 'doughnut' chart type changed to 'donut'.
-    const chartType = getCanonicalChartType(providedChartType);
+    const chartType = providedChartType === 'doughnut' ? 'donut' : providedChartType;
     const seriesType = getSeriesType(chartType);
     const seriesTypes = [seriesType];
 
@@ -380,6 +380,25 @@ function migrateV36(model: ChartModel) {
     return model;
 }
 
+function migrateV37(model: ChartModel): ChartModel {
+    // Models saved from v26.2.0 may use the legacy 'doughnut' name, which migrateV26_2 does not reach.
+    if ((model.chartType as string) === 'doughnut') {
+        model = { ...model, chartType: 'donut' };
+    }
+
+    // AG Charts deprecated the shadow `color` for `fill`, which wins when both are set.
+    model = jsonMutateProperty('chartOptions.*.series.shadow.color', true, model, (parent, targetProp) => {
+        parent.fill ??= parent[targetProp];
+        delete parent[targetProp];
+    });
+
+    const { paired, overrides } = extractPaired(model.chartOptions, model.chartType);
+    if (overrides === model.chartOptions) {
+        return model;
+    }
+    return { ...model, chartOptions: overrides!, paired: model.paired ?? paired };
+}
+
 function cleanup(model: ChartModel) {
     // Remove fixed width/height - this has never been supported via UI configuration.
     model = jsonDelete('chartOptions.*.width', model);
@@ -491,9 +510,7 @@ function jsonDeleteDefault(path: string | string[], defaultValue: any, json: any
 
 function jsonBackfill(path: string | string[], defaultValue: any, json: any): any {
     return jsonMutateProperty(path, false, json, (parent, prop) => {
-        if (parent[prop] == null) {
-            parent[prop] = defaultValue;
-        }
+        parent[prop] ??= defaultValue;
     });
 }
 

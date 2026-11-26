@@ -3,6 +3,7 @@
  * Wraps the active `getBoundingClientRect` to force a tall height so tests can query/click rows.
  * Install in `beforeAll`, uninstall in `afterAll`.
  */
+import { onFileEnd } from '../fileScope';
 import { VIRTUAL_LIST_VIEWPORT_CLASSES } from './virtualListViewports';
 
 const DEFAULT_VIEWPORT_HEIGHT = 400;
@@ -42,6 +43,7 @@ export function installFilterLayoutMock(height: number = DEFAULT_VIEWPORT_HEIGHT
         writable: true,
         value: installed,
     });
+    onFileEnd(uninstallFilterLayoutMock);
 }
 
 export function uninstallFilterLayoutMock(): void {

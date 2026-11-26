@@ -1,4 +1,4 @@
-import type { AgCoreBeanCollection, BaseEvents, BaseProperties, IPropertiesService } from 'ag-stack';
+import type { AgBeanCollection, BaseEvents, BaseProperties, ICommonSource, IPropertiesService } from 'ag-stack';
 import { AgTabGuardComp } from 'ag-stack';
 
 import type { IComponent } from 'ag-grid-community';
@@ -7,11 +7,11 @@ import { KeyCode } from 'ag-grid-community';
 import type { AgMenuItemComponent } from './agMenuItemComponent';
 
 export class AgMenuPanel<
-    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TBeanCollection extends AgBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
-    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
+    TPropertiesService extends IPropertiesService<TProperties> & ICommonSource<TCommon>,
     TComponentSelectorType extends string,
 > extends AgTabGuardComp<
     TBeanCollection,

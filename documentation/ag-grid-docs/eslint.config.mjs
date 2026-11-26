@@ -16,6 +16,7 @@ export default [
             '.astro/',
             'packages/', // gitignored copy of built grid packages, served to local examples
             '**/_examples/',
+            'src/example-fake-servers/', // shared example sources, linted like _examples
             'scripts/showcase-github/tmp/',
             '**/.angular',
             '.playwright-network-cache/',

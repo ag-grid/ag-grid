@@ -30,16 +30,21 @@
     border-radius: 1px;
     padding-left: 1px;
     padding-right: 1px;
-    transition: background-color 1s;
+    transition: background-color 1s var(--ag-internal-accessible-color-transition-mode);
 }
 
 .ag-value-change-value-highlight {
     background-color: var(--ag-value-change-value-highlight-background-color);
-    transition: background-color 0.1s;
+    transition: background-color 0.1s var(--ag-internal-accessible-color-transition-mode);
+
+    @media (forced-colors: active) {
+        background-color: Mark;
+        color: MarkText;
+    }
 }
 
 .ag-cell-data-changed {
-    /* stylelint-disable-next-line declaration-no-important -- This !important was added before we banned them in the codebase. It is probably unnecessary. If you can, remove it (see guide in grid-styling.md). If it is genuinely required, edit this comment to explain. */
+    /* stylelint-disable-next-line declaration-no-important -- !important required to override inline styles and prevent them from breaking the value change highlight feature */
     background-color: var(--ag-value-change-value-highlight-background-color) !important;
 }
 
@@ -222,6 +227,10 @@
     /* forced colors paints transparent borders, doubling the column and row borders */
     @media (forced-colors: active) {
         border-color: Canvas;
+
+        /* no need for a corresponding color:MarkText, the browser draws a backplate behind the text to keep it readable */
+        --ag-value-change-value-highlight-background-color: Mark;
+        --ag-range-selection-highlight-color: Mark;
     }
 }
 
@@ -302,7 +311,7 @@
 
     /* every border collapses to CanvasText, so only an outline can mark the focused cell */
     @media (forced-colors: active) {
-        outline: 2px solid Highlight;
+        outline: 2px solid var(--ag-internal-forced-colors-cell-focus-outline-color, Highlight);
         outline-offset: -2px;
     }
 }
@@ -329,10 +338,11 @@
     margin-left: 3px;
 }
 
+/* NOTE: these selectors must not match row elements themselves (.ag-row) to avoid a Safari bug that double-animates transitions on elements whose ::after uses anchor positioning */
 .ag-grid-pinned-left-cells::after,
 .ag-grid-scrolling-cells::after,
 .ag-grid-pinned-right-cells::after,
-.ag-full-width-row:not(.ag-embedded-full-width-row)::after {
+.ag-full-width-anchor::after {
     content: var(--ag-internal-row-highlight-content, none);
     position: absolute;
     inset: var(--ag-internal-row-highlight-inset, auto);
@@ -410,10 +420,11 @@
 }
 
 .ag-row-highlight-inside {
+    /* NOTE: these selectors must not match row elements themselves (.ag-row) to avoid a Safari bug that double-animates transitions on elements whose ::after uses anchor positioning */
     > .ag-grid-pinned-left-cells::after,
     > .ag-grid-scrolling-cells::after,
     > .ag-grid-pinned-right-cells::after,
-    &.ag-full-width-row:not(.ag-embedded-full-width-row)::after {
+    > .ag-full-width-anchor::after {
         --ag-internal-row-highlight-content: '';
 
         inset: 0;
@@ -478,15 +489,19 @@
     border-bottom: var(--ag-selected-row-border);
 }
 
+:where(.ag-row).ag-row-selected {
+    color: var(--ag-selected-row-text-color, var(--ag-cell-text-color));
+}
+
 .ag-row.ag-row-selected {
     --ag-internal-row-overlay-color: var(--ag-selected-row-background-color);
-    --ag-cell-text-color: var(--ag-selected-row-text-color);
     --ag-range-selection-border-color: var(--ag-selected-row-range-selection-border-color);
     --ag-row-drag-indicator-color: var(--ag-selected-row-drag-indicator-color);
     --ag-drag-handle-color: var(--ag-selected-row-drag-handle-color);
+    --ag-note-indicator-color: var(--ag-selected-row-note-indicator-color);
     --ag-cell-editing-border: var(--ag-selected-row-cell-editing-border);
-    --ag-value-change-delta-up-color: var(--ag-value-change-delta-up-selected-color);
-    --ag-value-change-delta-down-color: var(--ag-value-change-delta-down-selected-color);
+    --ag-value-change-delta-up-color: var(--ag-selected-row-value-change-delta-up-color);
+    --ag-value-change-delta-down-color: var(--ag-selected-row-value-change-delta-down-color);
 }
 
 .ag-row-hover:not(.ag-full-width-row),
@@ -511,8 +526,15 @@
     }
 }
 
-.ag-column-hover {
+:where(.ag-cell).ag-column-hover {
     background-color: var(--ag-column-hover-color);
+
+    --ag-internal-column-hover-image: linear-gradient(var(--ag-column-hover-color), var(--ag-column-hover-color));
+}
+
+/* use a background image to overlay on top of the background-color set by range selections with `enableHeaderHighlight` */
+:where(.ag-header-cell).ag-column-hover {
+    background-image: linear-gradient(var(--ag-column-header-hover-color), var(--ag-column-header-hover-color));
 }
 
 .ag-header-range-highlight {
@@ -588,6 +610,10 @@
 .ag-skeleton-container {
     width: 100%;
     height: 100%;
+
+    /* a wrapped cell value (enableCellTextSelection, autoHeight) has no definite height for
+       height: 100% to resolve against, so fill the line as text does */
+    min-height: var(--ag-internal-content-line-height);
     align-content: center;
 }
 
@@ -596,7 +622,17 @@
     width: 100%;
     height: 1em;
     border-radius: 0.25rem;
-    animation: ag-skeleton-loading 1.5s ease-in-out 0.5s infinite;
+
+    @media (prefers-reduced-motion: no-preference) {
+        animation: ag-skeleton-loading 1.5s ease-in-out 0.5s infinite;
+    }
+
+    /* forced colors overrides non-system background colors, so dim a system color with opacity instead */
+    @media (forced-colors: active) {
+        background-color: CanvasText;
+        opacity: 0.3;
+        animation-name: ag-skeleton-loading-forced-colors;
+    }
 }
 
 .ag-right-aligned-cell .ag-skeleton-effect {
@@ -624,8 +660,26 @@
     }
 }
 
+@keyframes ag-skeleton-loading-forced-colors {
+    0% {
+        opacity: 0.3;
+    }
+
+    50% {
+        opacity: 0.12;
+    }
+
+    100% {
+        opacity: 0.3;
+    }
+}
+
 .ag-loading {
-    padding-left: var(--ag-cell-horizontal-padding);
+    /* full width loading rows set these to line the spinner up with the group hierarchy */
+    padding-left: calc(
+        var(--ag-cell-horizontal-padding) + var(--ag-internal-loading-row-offset, 0px) +
+            var(--ag-internal-loading-row-level, 0) * var(--ag-row-group-indent-size)
+    );
     display: flex;
     height: 100%;
     align-items: center;

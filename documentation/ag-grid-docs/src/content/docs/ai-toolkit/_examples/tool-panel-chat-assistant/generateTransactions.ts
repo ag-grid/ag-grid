@@ -115,7 +115,7 @@ export function generateTransactions({ count = 10000, seed = 1 } = {}): ITransac
         const txnDate = randomDate();
         const status = weightedPick(statuses);
         const country = pick(countries);
-        const currency = countryCurrencyMap[country] ?? defaultCurrency;
+        const currency = countryCurrencyMap[country];
         const magnitude = amountForCategory(category);
         const amount = rand() < 0.5 ? -magnitude : magnitude;
 

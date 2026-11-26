@@ -33,8 +33,8 @@ interface BaseAddPopupParams<TContainerType extends string> {
 }
 
 interface LabelAddPopupParams<TContainerType extends string> extends BaseAddPopupParams<TContainerType> {
-    // an aria label should be added to provided context to screen readers
-    ariaLabel: string;
+    // Use undefined when the popup's role does not need an explicit label, e.g. a tooltip.
+    ariaLabel: string | undefined;
     ariaOwns?: never;
 }
 

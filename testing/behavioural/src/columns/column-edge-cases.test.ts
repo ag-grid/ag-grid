@@ -11,13 +11,20 @@
  */
 import { ALL_SEVERITIES, GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
-import type { ColDef, Column, ColumnGroup } from 'ag-grid-community';
+import type { ColDef, Column, ColumnGroup, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, RowSelectionModule, enableDevValidations } from 'ag-grid-community';
-import { PivotModule, RowGroupingModule, RowNumbersModule } from 'ag-grid-enterprise';
+import { PivotModule, RowGroupingModule, RowNumbersModule, TreeDataModule } from 'ag-grid-enterprise';
 
 describe('Column Edge Cases', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, RowGroupingModule, PivotModule, RowNumbersModule, RowSelectionModule],
+        modules: [
+            ClientSideRowModelModule,
+            RowGroupingModule,
+            PivotModule,
+            RowNumbersModule,
+            RowSelectionModule,
+            TreeDataModule,
+        ],
     });
 
     afterEach(() => {
@@ -146,60 +153,51 @@ describe('Column Edge Cases', () => {
             `);
         });
 
-        test('grid constructed without columnDefs + rowSelection change — refreshAll() !ready guard short-circuits', async () => {
-            // selectionColService.onSelectionOptionsChanged calls `colModel.refreshAll(source)`
-            // when checkboxes/headerCheckbox/checkboxLocation change. On a !ready grid (no
-            // columnDefs yet), refreshAll must take its `!this.ready` early-return without throwing.
+        test('grid constructed without columnDefs + rowSelection change — creates no columns, and columnDefs then build from the changed rowSelection', async () => {
+            // Without columnDefs there are no columns to refresh, so the change must still apply once they arrive.
             const api = gridsManager.createGrid('uninitSel', {
                 rowSelection: { mode: 'multiRow', checkboxes: true },
                 // intentionally no columnDefs
             });
             await new GridColumns(
                 api,
-                `grid constructed without columnDefs + rowSelection change — refreshAll() !ready  setup`
+                `grid constructed without columnDefs + rowSelection change — setup`
             ).checkColumns(``);
-            await new GridRows(
-                api,
-                `grid constructed without columnDefs + rowSelection change — refreshAll() !ready  setup`
-            ).check(`
+            await new GridRows(api, `grid constructed without columnDefs + rowSelection change — setup`).check(`
                 ROOT id:ROOT_NODE_ID
             `);
 
-            // Change checkboxes setting — fires onSelectionOptionsChanged → colModel.refreshAll
-            api.setGridOption('rowSelection', { mode: 'multiRow', checkboxes: false });
+            // both checkboxes off: the changed rowSelection has no selection column
+            api.setGridOption('rowSelection', { mode: 'multiRow', checkboxes: false, headerCheckbox: false });
             await new GridColumns(
                 api,
-                `grid constructed without columnDefs + rowSelection change — refreshAll() !ready  after setGridOption rowSelection`
+                `grid constructed without columnDefs + rowSelection change — after setGridOption rowSelection`
             ).checkColumns(``);
             await new GridRows(
                 api,
-                `grid constructed without columnDefs + rowSelection change — refreshAll() !ready  after setGridOption rowSelection`
+                `grid constructed without columnDefs + rowSelection change — after setGridOption rowSelection`
             ).check(`
                 ROOT id:ROOT_NODE_ID
             `);
             expect(api.getAllGridColumns()).toEqual([]);
 
-            // Provide columnDefs → grid transitions to ready and rebuilds normally.
             api.setGridOption('columnDefs', [{ colId: 'a' }, { colId: 'b' }]);
             await new GridColumns(
                 api,
-                `grid constructed without columnDefs + rowSelection change — refreshAll() !ready  after setGridOption columnDefs`
+                `grid constructed without columnDefs + rowSelection change — after setGridOption columnDefs`
             ).checkColumns(`
                 CENTER
-                ├── ag-Grid-SelectionColumn width:50 !resizable !sortable suppressMovable lockPosition:left
                 ├── a width:200
                 └── b width:200
             `);
             await new GridRows(
                 api,
-                `grid constructed without columnDefs + rowSelection change — refreshAll() !ready  after setGridOption columnDefs`
+                `grid constructed without columnDefs + rowSelection change — after setGridOption columnDefs`
             ).check(`
                 ROOT id:ROOT_NODE_ID
             `);
             await asyncSetTimeout(0);
-            const ids = api.getAllGridColumns().map((c) => c.getColId());
-            expect(ids).toContain('a');
-            expect(ids).toContain('b');
+            expect(api.getAllGridColumns().map((c) => c.getColId())).toEqual(['a', 'b']);
         });
 
         test('grid constructed without columnDefs property — api methods safe on !ready grid; later setGridOption activates cols', async () => {
@@ -261,6 +259,62 @@ describe('Column Edge Cases', () => {
 
             expect(api.getAllGridColumns().map((c) => c.getColId())).toEqual(['a', 'b']);
             expect(api.getColumns()).not.toBeNull();
+        });
+
+        test('grid constructed without columnDefs + rowSelection change — refreshAll() !ready guard short-circuits', async () => {
+            // selectionColService.onSelectionOptionsChanged calls `colModel.refreshAll(source)`
+            // when checkboxes/headerCheckbox/checkboxLocation change. On a !ready grid (no
+            // columnDefs yet), refreshAll must take its `!this.ready` early-return without throwing.
+            const api = gridsManager.createGrid('uninitSel', {
+                rowSelection: { mode: 'multiRow', checkboxes: true },
+                // intentionally no columnDefs
+            });
+            await new GridColumns(
+                api,
+                `grid constructed without columnDefs + rowSelection change — refreshAll() !ready  setup`
+            ).checkColumns(``);
+            await new GridRows(
+                api,
+                `grid constructed without columnDefs + rowSelection change — refreshAll() !ready  setup`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
+
+            // Change checkboxes setting — fires onSelectionOptionsChanged → colModel.refreshAll
+            api.setGridOption('rowSelection', { mode: 'multiRow', checkboxes: false });
+            await new GridColumns(
+                api,
+                `grid constructed without columnDefs + rowSelection change — refreshAll() !ready  after setGridOption rowSelection`
+            ).checkColumns(``);
+            await new GridRows(
+                api,
+                `grid constructed without columnDefs + rowSelection change — refreshAll() !ready  after setGridOption rowSelection`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
+            expect(api.getAllGridColumns()).toEqual([]);
+
+            // Provide columnDefs → grid transitions to ready and rebuilds normally.
+            api.setGridOption('columnDefs', [{ colId: 'a' }, { colId: 'b' }]);
+            await new GridColumns(
+                api,
+                `grid constructed without columnDefs + rowSelection change — refreshAll() !ready  after setGridOption columnDefs`
+            ).checkColumns(`
+                CENTER
+                ├── ag-Grid-SelectionColumn width:50 !resizable !sortable suppressMovable lockPosition:left
+                ├── a width:200
+                └── b width:200
+            `);
+            await new GridRows(
+                api,
+                `grid constructed without columnDefs + rowSelection change — refreshAll() !ready  after setGridOption columnDefs`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
+            await asyncSetTimeout(0);
+            const ids = api.getAllGridColumns().map((c) => c.getColId());
+            expect(ids).toContain('a');
+            expect(ids).toContain('b');
         });
     });
 
@@ -1001,6 +1055,37 @@ describe('Column Edge Cases', () => {
                 ├── country width:200 rowGroup
                 └── gold width:200
             `);
+        });
+    });
+
+    describe('tree data with groupDisplayType=multipleColumns', () => {
+        test('warns #182 and shows the single auto group column', async () => {
+            // Asserts warning #182 (tree data cannot show groups in multiple columns).
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [182] });
+            const warnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
+            try {
+                const api = gridsManager.createGrid('myGrid', {
+                    columnDefs: [{ field: 'year' }],
+                    rowData: [{ path: ['Ireland'], year: 2000 }],
+                    treeData: true,
+                    getDataPath: (data) => data.path,
+                    groupDisplayType: 'multipleColumns',
+                });
+
+                const autoColumnIds = api
+                    .getAllGridColumns()
+                    .map((c: Column) => c.getColId())
+                    .filter((colId) => colId.startsWith('ag-Grid-AutoColumn'));
+                expect(autoColumnIds).toEqual(['ag-Grid-AutoColumn']);
+                expect(api.getAllDisplayedColumns().map((c: Column) => c.getColId())).toEqual([
+                    'ag-Grid-AutoColumn',
+                    'year',
+                ]);
+                const warnMsg = warnSpy.mock.calls.map((c) => String(c[0])).join(' ');
+                expect(warnMsg).toContain('#182');
+            } finally {
+                warnSpy.mockRestore();
+            }
         });
     });
 
@@ -2385,6 +2470,81 @@ describe('Column Edge Cases', () => {
             // Same column instance reused
             expect(instance2).toBe(instance1);
         });
+
+        const specialColumnCases: {
+            name: string;
+            colId: string;
+            option: 'autoGroupColumnDef' | 'selectionColumnDef';
+            gridOptions: GridOptions;
+        }[] = [
+            {
+                name: 'autoGroupColumnDef with row grouping',
+                colId: 'ag-Grid-AutoColumn',
+                option: 'autoGroupColumnDef',
+                gridOptions: {
+                    columnDefs: [{ field: 'country', rowGroup: true }, { field: 'year' }],
+                    rowData: [{ country: 'Ireland', year: 2000 }],
+                },
+            },
+            {
+                name: 'autoGroupColumnDef with tree data',
+                colId: 'ag-Grid-AutoColumn',
+                option: 'autoGroupColumnDef',
+                gridOptions: {
+                    columnDefs: [{ field: 'year' }],
+                    rowData: [{ path: ['Ireland'], year: 2000 }],
+                    treeData: true,
+                    getDataPath: (data) => data.path,
+                },
+            },
+            {
+                name: 'selectionColumnDef',
+                colId: 'ag-Grid-SelectionColumn',
+                option: 'selectionColumnDef',
+                gridOptions: {
+                    columnDefs: [{ field: 'year' }],
+                    rowData: [{ year: 2000 }],
+                    rowSelection: { mode: 'multiRow', headerCheckbox: false },
+                },
+            },
+        ];
+
+        // a fresh getter per definition, as an application recreating the definition would pass
+        const specialColDef = (): ColDef => ({ headerName: 'From headerName', headerValueGetter: () => 'From getter' });
+
+        test.each(specialColumnCases)(
+            'updating $name keeps the header from its headerValueGetter',
+            async ({ colId, option, gridOptions }) => {
+                const api = await gridsManager.createGridAndWait('myGrid', {
+                    ...gridOptions,
+                    [option]: specialColDef(),
+                });
+
+                api.setGridOption(option, specialColDef());
+
+                expect(api.getDisplayNameForColumn(api.getColumn(colId)!, 'header')).toBe('From getter');
+                expect(
+                    document.querySelector(`.ag-header-cell[col-id="${colId}"] .ag-header-cell-text`)?.textContent
+                ).toBe('From getter');
+                expect(api.getColumnState().find((state) => state.colId === colId)?.headerName).toBeNull();
+            }
+        );
+
+        test.each(specialColumnCases)(
+            'updating $name keeps a header name applied through column state',
+            async ({ colId, option, gridOptions }) => {
+                const api = await gridsManager.createGridAndWait('myGrid', {
+                    ...gridOptions,
+                    [option]: specialColDef(),
+                });
+                api.applyColumnState({ state: [{ colId, headerName: 'Renamed' }] });
+
+                api.setGridOption(option, specialColDef());
+
+                expect(api.getDisplayNameForColumn(api.getColumn(colId)!, 'header')).toBe('Renamed');
+                expect(api.getColumnState().find((state) => state.colId === colId)?.headerName).toBe('Renamed');
+            }
+        );
     });
 
     describe('method return type guarantees', () => {

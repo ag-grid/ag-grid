@@ -165,7 +165,7 @@ export class UndoRedoService extends BeanStub implements NamedBean {
         );
 
         if (undoRedoAction instanceof RangeUndoRedoAction) {
-            this.processRange(undoRedoAction.ranges || [undoRedoAction[rangeProperty]]);
+            this.processRange(undoRedoAction.ranges ?? [undoRedoAction[rangeProperty]]);
         } else {
             this.processCell(undoRedoAction.cellValueChanges);
         }
@@ -367,13 +367,13 @@ export class UndoRedoService extends BeanStub implements NamedBean {
 
         const action = new UndoRedoAction(changes ?? []);
         this.pushActionsToUndoStack(action);
-        this.cellValueChanges = [];
     }
 
     private pushActionsToUndoStack(action: UndoRedoAction) {
-        this.undoStack.push(action);
-
         this.cellValueChanges = [];
-        this.redoStack.clear();
+        // a no-change action keeps the redo stack; inside a batch a staged edit is empty too, so every action clears it
+        if (this.undoStack.push(action) || this.batchEditing) {
+            this.redoStack.clear();
+        }
     }
 }

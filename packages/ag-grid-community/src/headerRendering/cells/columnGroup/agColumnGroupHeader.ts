@@ -1,5 +1,5 @@
-import type { IComponent } from 'ag-stack';
-import { RefPlaceholder, _exists, _setDisplayed, _toString } from 'ag-stack';
+import type { IComponent, ITooltipFeature } from 'ag-stack';
+import { RefPlaceholder, _addManagedElementListeners, _exists, _setDisplayed, _toString } from 'ag-stack';
 
 import { _setColGroupOpen } from '../../../columns/columnGroups/columnGroupState';
 import { _getInnerHeaderGroupCompDetails } from '../../../components/framework/userCompUtils';
@@ -27,7 +27,7 @@ export interface IHeaderGroupParams<TData = any, TContext = any> extends AgGridC
     /**
      * Sets a tooltip to the main element of this component.
      * @param value The value to be displayed by the tooltip
-     * @param shouldDisplayTooltip A function returning a boolean that allows the tooltip to be displayed conditionally. This option does not work when `enableBrowserTooltips={true}`.
+     * @param shouldDisplayTooltip A function returning a boolean that allows the tooltip to be displayed conditionally.
      */
     setTooltip: (value: string, shouldDisplayTooltip?: () => boolean) => void;
     /**
@@ -60,22 +60,23 @@ export interface IHeaderGroupParams<TData = any, TContext = any> extends AgGridC
     eGridHeader: HTMLElement;
 }
 
-export interface IHeaderGroup {
+export interface IHeaderGroup<TData = any, TContext = any> {
     /**
      * Optional: update the component in place instead of recreating it (e.g. when the group header name
      * is edited). Return `true` if the update was handled, `false` to have the grid recreate the component.
      */
-    refresh?(params: IHeaderGroupParams): boolean;
+    refresh?(params: IHeaderGroupParams<TData, TContext>): boolean;
 }
 
-export interface IHeaderGroupComp extends IHeaderGroup, IComponent<IHeaderGroupParams> {}
+export interface IHeaderGroupComp<TData = any, TContext = any>
+    extends IHeaderGroup<TData, TContext>, IComponent<IHeaderGroupParams<TData, TContext>> {}
 
 export interface IInnerHeaderGroupComponent<
     TData = any,
     TContext = any,
     TParams extends Readonly<IHeaderGroupParams<TData, TContext>> = IHeaderGroupParams<TData, TContext>,
 >
-    extends IComponent<TParams>, IHeaderGroup {}
+    extends IComponent<TParams>, IHeaderGroup<TData, TContext> {}
 
 const HeaderGroupCompElement: ElementParams = {
     tag: 'div',
@@ -97,9 +98,15 @@ export class AgColumnGroupHeader extends Component implements IHeaderGroupComp {
 
     private innerHeaderGroupComponent: IInnerHeaderGroupComponent | undefined;
     private isLoadingInnerComponent: boolean = false;
+    private expandTooltips?: ITooltipFeature[];
+    private tooltipExpanded?: boolean;
 
     constructor() {
         super(HeaderGroupCompElement);
+    }
+
+    public getTooltipTextElement(): HTMLElement | undefined {
+        return this.innerHeaderGroupComponent || this.isLoadingInnerComponent ? undefined : this.agLabel;
     }
 
     public init(params: IHeaderGroupParams): void {
@@ -204,12 +211,30 @@ export class AgColumnGroupHeader extends Component implements IHeaderGroupComp {
         // then close again straight away. if we also listened to double click, then the group would open,
         // close, then open, which is not what we want. double click should only action if the user double
         // clicks outside of the icons.
-        this.addManagedElementListeners(agClosed, { dblclick: stopPropagationAction });
-        this.addManagedElementListeners(agOpened, { dblclick: stopPropagationAction });
+        _addManagedElementListeners(this, agClosed, { dblclick: stopPropagationAction });
+        _addManagedElementListeners(this, agOpened, { dblclick: stopPropagationAction });
 
-        this.addManagedElementListeners(this.getGui(), { dblclick: expandAction });
+        _addManagedElementListeners(this, this.getGui(), { dblclick: expandAction });
 
         this.updateIconVisibility();
+        for (const { element, expanded, key, defaultValue } of [
+            { element: agOpened, expanded: true, key: 'tooltipCollapseGroup', defaultValue: 'Collapse group' },
+            { element: agClosed, expanded: false, key: 'tooltipExpandGroup', defaultValue: 'Expand group' },
+        ]) {
+            const tooltip = this.addTooltip({
+                control: 'groupExpand',
+                getGui: () => element,
+                getLocation: () => 'headerGroup',
+                getTooltip: () => ({
+                    value: this.tooltipExpanded === expanded ? this.getLocaleTextFunc()(key, defaultValue) : undefined,
+                    params: { column: this.params.columnGroup },
+                }),
+            });
+            if (tooltip) {
+                this.expandTooltips ??= [];
+                this.expandTooltips.push(tooltip);
+            }
+        }
 
         const providedColumnGroup = columnGroup.getProvidedColumnGroup();
         const updateIcon = this.updateIconVisibility.bind(this);
@@ -221,7 +246,7 @@ export class AgColumnGroupHeader extends Component implements IHeaderGroupComp {
 
     private addTouchAndClickListeners(eElement: HTMLElement, action: (event: MouseEvent) => void): void {
         this.beans.touchSvc?.setupForHeaderGroupElement(this, eElement, action);
-        this.addManagedElementListeners(eElement, { click: action });
+        _addManagedElementListeners(this, eElement, { click: action });
     }
 
     private updateIconVisibility(): void {
@@ -230,13 +255,15 @@ export class AgColumnGroupHeader extends Component implements IHeaderGroupComp {
             agClosed,
             params: { columnGroup },
         } = this;
-        if (columnGroup.isExpandable()) {
-            const expanded = columnGroup.isExpanded();
-            _setDisplayed(agOpened, expanded);
-            _setDisplayed(agClosed, !expanded);
-        } else {
-            _setDisplayed(agOpened, false);
-            _setDisplayed(agClosed, false);
+        const expanded = columnGroup.isExpandable() ? columnGroup.isExpanded() : undefined;
+        _setDisplayed(agOpened, expanded === true);
+        _setDisplayed(agClosed, expanded === false);
+        if (this.tooltipExpanded !== expanded) {
+            this.tooltipExpanded = expanded;
+            for (const tooltip of this.expandTooltips ?? []) {
+                tooltip.attemptToHideTooltip();
+                tooltip.refreshTooltip();
+            }
         }
     }
 
@@ -260,7 +287,7 @@ export class AgColumnGroupHeader extends Component implements IHeaderGroupComp {
         const { displayName, columnGroup } = params;
         const { innerHeaderGroupComponent, isLoadingInnerComponent } = this;
 
-        const hasInnerComponent = innerHeaderGroupComponent || isLoadingInnerComponent;
+        const hasInnerComponent = innerHeaderGroupComponent ?? isLoadingInnerComponent;
 
         if (_exists(displayName) && !hasInnerComponent) {
             this.agLabel.textContent = _toString(displayName);

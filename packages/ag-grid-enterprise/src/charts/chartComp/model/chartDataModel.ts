@@ -52,6 +52,7 @@ export interface ChartModelParams {
     seriesChartTypes?: SeriesChartType[];
     seriesGroupType?: SeriesGroupType;
     useGroupColumnAsCategory?: boolean;
+    paired?: boolean;
 }
 
 export const DEFAULT_CHART_CATEGORY = 'AG-GRID-DEFAULT-CATEGORY';
@@ -102,6 +103,7 @@ export class ChartDataModel extends BeanStub {
 
     public seriesGroupType?: SeriesGroupType;
     public useGroupColumnAsCategory: boolean = false;
+    public paired: boolean = true;
 
     public constructor(params: ChartModelParams) {
         super();
@@ -125,6 +127,7 @@ export class ChartDataModel extends BeanStub {
             crossFilteringSort,
             seriesGroupType,
             useGroupColumnAsCategory,
+            paired,
         } = params;
         this.chartType = chartType;
         this.pivotChart = pivotChart ?? false;
@@ -139,6 +142,7 @@ export class ChartDataModel extends BeanStub {
         this.crossFilteringSort = crossFilteringSort ?? true;
         this.seriesGroupType = seriesGroupType;
         this.useGroupColumnAsCategory = !!useGroupColumnAsCategory;
+        this.paired = paired ?? true;
     }
 
     public postConstruct(): void {
@@ -369,7 +373,7 @@ export class ChartDataModel extends BeanStub {
 
         // Not all chart types require a value series (e.g. hierarchical charts),
         // so fall back to using the dimension cell range for inferring row indices
-        const cellRange = valueCellRange || dimensionCellRange;
+        const cellRange = valueCellRange ?? dimensionCellRange;
 
         if (rangeSvc && cellRange) {
             startRow = rangeSvc.getRangeStartRow(cellRange).rowIndex;
@@ -663,7 +667,7 @@ export class ChartDataModel extends BeanStub {
             // Determine which column should end up selected, if any
             // if no dimension found in supplied columns use the default category (always index = 0)
             const foundColState =
-                this.dimensionColState.find((colState) => colIdSet.has(colState.colId)) || this.dimensionColState[0];
+                this.dimensionColState.find((colState) => colIdSet.has(colState.colId)) ?? this.dimensionColState[0];
             const selectedColumnId = foundColState.colId;
             // Update the selection state of all dimension columns
             this.dimensionColState = this.dimensionColState.map((colState) => ({
@@ -715,10 +719,11 @@ export class ChartDataModel extends BeanStub {
                     leafComparator: undefined,
                     descending: false,
                     absolute: false,
+                    stringComparator: undefined,
                 });
             }
         });
-        _resolveSortOptions(sortOptions, this.beans.colModel);
+        _resolveSortOptions(sortOptions, this.beans.colModel, this.gos);
         return sortOptions;
     }
 }

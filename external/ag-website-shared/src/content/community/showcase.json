@@ -589,15 +589,6 @@
             "link": "https://statbotics.io/"
         },
         {
-            "title": "Code Companion AI",
-            "description": "AI coding assistant app",
-            "repo": "https://github.com/codecompanion-ai/code-companion",
-            "open_source": true,
-            "stars": 30,
-            "type": "Product",
-            "link": "https://codecompanion.ai/"
-        },
-        {
             "title": "Scaleph",
             "description": "Open data platform based on Kubernetes",
             "repo": "https://github.com/flowerfine/scaleph",
@@ -622,7 +613,7 @@
             "open_source": true,
             "stars": 50,
             "type": "Product",
-            "link": "https://solidspoon.xyz/app/dash-player/"
+            "link": "https://dash-player.solidspoon.xyz"
         },
         {
             "title": "Relation Graph (Chinese)",
@@ -649,7 +640,7 @@
             "open_source": true,
             "stars": 25,
             "type": "Product",
-            "link": "https://www.msaez.io/"
+            "link": "https://github.com/msa-ez/platform"
         },
         {
             "title": "Dominate AI",
@@ -704,15 +695,6 @@
             "stars": 30,
             "type": "Product",
             "link": "https://ciphyr.io"
-        },
-        {
-            "title": "L3AGI",
-            "description": "Open-source framework to make AI agents' team collaboration as effective as human collaboration.",
-            "repo": "https://github.com/l3vels/L3AGI",
-            "open_source": true,
-            "stars": 170,
-            "type": "Product",
-            "link": "https://github.com/l3vels/L3AGI"
         },
         {
             "title": "Orbital",
@@ -816,7 +798,7 @@
         {
             "title": "Buckroo",
             "description": "The data wrangling assistant for pandas. Quickly explore dataframes, and run pandas commands via a GUI.",
-            "repo": "https://github.com/paddymul/buckaroo",
+            "repo": "https://github.com/buckaroo-data/buckaroo",
             "open_source": true,
             "stars": 90,
             "type": "Product",
@@ -1124,11 +1106,11 @@
         {
             "title": "React Importer",
             "description": "A modern CSV import flow for React projects",
-            "repo": "https://github.com/czhu12/react-importer",
+            "repo": "https://github.com/HelloCSV/HelloCSV",
             "open_source": true,
             "stars": 80,
             "type": "Product",
-            "link": "https://czhu12.github.io/react-importer/"
+            "link": "https://hellocsv.github.io/HelloCSV/"
         },
         {
             "title": "Metriql",
@@ -1241,11 +1223,11 @@
         {
             "title": "Management Presence Server",
             "description": "The Management Presence Server (MPS) is a cloud-agnostic microservice that enables platforms featuring Intel® AMT to be managed over the internet.",
-            "repo": "https://github.com/open-amt-cloud-toolkit/mps",
+            "repo": "https://github.com/device-management-toolkit/mps",
             "open_source": true,
             "stars": 25,
             "type": "Product",
-            "link": "https://open-amt-cloud-toolkit.github.io/docs/"
+            "link": "https://device-management-toolkit.github.io/docs/"
         },
         {
             "title": "WizardMC",

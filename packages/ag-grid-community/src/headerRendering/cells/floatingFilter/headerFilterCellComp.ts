@@ -59,6 +59,7 @@ export class HeaderFilterCellComp extends AbstractHeaderCellComp<HeaderFilterCel
         };
 
         this.ctrl.setComp(compProxy, eGui, this.eButtonShowMainFilter, this.eFloatingFilterBody, undefined);
+        this.addTooltip(this.ctrl.getFilterButtonTooltip());
     }
 
     private setCompDetails(compDetails?: UserCompDetails | null): void {

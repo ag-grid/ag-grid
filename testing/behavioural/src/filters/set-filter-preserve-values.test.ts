@@ -1,5 +1,5 @@
 import { waitFor } from '@testing-library/dom';
-import { TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
+import { ALL_SEVERITIES, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import type {
     ColDef,
@@ -9,7 +9,7 @@ import type {
     SetFilterHandler,
     SetFilterValuesFuncParams,
 } from 'ag-grid-community';
-import { ClientSideRowModelModule, GridStateModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, GridStateModule, enableDevValidations } from 'ag-grid-community';
 import { SetFilterModule } from 'ag-grid-enterprise';
 
 interface Row {
@@ -71,6 +71,7 @@ describe('Set Filter preservePreviousValues', () => {
     };
 
     test('a checked value survives its rows leaving, and its rows pass again on return, with or without filter handlers', async () => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [348] });
         for (const enableFilterHandlers of [false, true]) {
             const api = createGrid(rows('A', 'B', 'C'), {}, {}, { enableFilterHandlers });
             await asyncSetTimeout(0);
@@ -569,17 +570,17 @@ describe('Set Filter preservePreviousValues', () => {
             expect(handlerOf(api).getFilterKeys().sort()).toEqual(['C1', 'K']);
         });
 
-        test('defaults to 100 unchecked retained values, and a new limit applies from the next reload', async () => {
+        test('defaults to 1000 unchecked retained values, and a new limit applies from the next reload', async () => {
             const api = createGrid(rows('K'));
             await asyncSetTimeout(0);
             await setModel(api, ['K']);
             const churnMany = async (prefix: string) => {
-                await setRowData(api, rows('K', ...Array.from({ length: 105 }, (_, i) => `${prefix}${i}`)));
+                await setRowData(api, rows('K', ...Array.from({ length: 1005 }, (_, i) => `${prefix}${i}`)));
                 await setRowData(api, rows('K'));
             };
 
             await churnMany('u');
-            expect(handlerOf(api).getFilterKeys()).toHaveLength(101);
+            expect(handlerOf(api).getFilterKeys()).toHaveLength(1001);
 
             api.setGridOption('columnDefs', [
                 {
@@ -590,7 +591,7 @@ describe('Set Filter preservePreviousValues', () => {
             ]);
             await asyncSetTimeout(0);
             await churnMany('v');
-            expect(handlerOf(api).getFilterKeys()).toHaveLength(206);
+            expect(handlerOf(api).getFilterKeys()).toHaveLength(2006);
 
             api.setGridOption('columnDefs', [
                 {
@@ -600,7 +601,7 @@ describe('Set Filter preservePreviousValues', () => {
                 },
             ]);
             await asyncSetTimeout(0);
-            expect(handlerOf(api).getFilterKeys()).toHaveLength(206);
+            expect(handlerOf(api).getFilterKeys()).toHaveLength(2006);
             await setRowData(api, rows('K'));
             expect(handlerOf(api).getFilterKeys()).toHaveLength(11);
         });

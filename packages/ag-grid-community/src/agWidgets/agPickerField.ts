@@ -1,7 +1,7 @@
 import type {
     AddPopupParams,
-    AgComponentStub,
-    AgCoreBeanCollection,
+    AgAbstractComponent,
+    AgBeanCollection,
     AgElementParams,
     BaseEvents,
     BaseProperties,
@@ -10,11 +10,13 @@ import type {
 import {
     KeyCode,
     RefPlaceholder,
+    _addManagedElementListeners,
     _formatSize,
     _getAbsoluteWidth,
     _getInnerHeight,
     _isNothingFocused,
     _setAriaControls,
+    _setAriaDisabled,
     _setAriaExpanded,
     _setAriaRole,
     _setElementWidth,
@@ -47,16 +49,16 @@ const AgPickerFieldElement: AgElementParams<any> = {
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export abstract class AgPickerField<
-    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TBeanCollection extends AgBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
-    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
+    TPropertiesService extends IPropertiesService<TProperties>,
     TComponentSelectorType extends string,
     TValue,
     TConfig extends AgPickerFieldParams<TComponentSelectorType> = AgPickerFieldParams<TComponentSelectorType>,
     TEventType extends string = AgPickerFieldEvent,
-    TComponent extends AgComponentStub<
+    TComponent extends AgAbstractComponent<
         TBeanCollection,
         TProperties,
         TGlobalEvents,
@@ -64,7 +66,7 @@ export abstract class AgPickerField<
         TPropertiesService,
         TComponentSelectorType,
         TEventType | AgPickerFieldEvent
-    > = AgComponentStub<
+    > = AgAbstractComponent<
         TBeanCollection,
         TProperties,
         TGlobalEvents,
@@ -111,7 +113,7 @@ export abstract class AgPickerField<
     private readonly eIcon: HTMLButtonElement = RefPlaceholder;
 
     constructor(config?: TConfig) {
-        super(config, config?.template || AgPickerFieldElement, config?.agComponents || [], config?.className);
+        super(config, config?.template ?? AgPickerFieldElement, config?.agComponents ?? [], config?.className);
         this.registerCSS(agPickerFieldCSS);
 
         this.ariaRole = config?.ariaRole;
@@ -152,10 +154,10 @@ export abstract class AgPickerField<
         this.eDisplayField.setAttribute('id', displayId);
 
         const ariaEl = this.getAriaElement();
-        this.addManagedElementListeners(ariaEl, { keydown: this.onKeyDown.bind(this) });
+        _addManagedElementListeners(this, ariaEl, { keydown: this.onKeyDown.bind(this) });
 
-        this.addManagedElementListeners(this.eLabel, { mousedown: this.onLabelOrWrapperMouseDown.bind(this) });
-        this.addManagedElementListeners(this.eWrapper, { mousedown: this.onLabelOrWrapperMouseDown.bind(this) });
+        _addManagedElementListeners(this, this.eLabel, { mousedown: this.onLabelOrWrapperMouseDown.bind(this) });
+        _addManagedElementListeners(this, this.eWrapper, { mousedown: this.onLabelOrWrapperMouseDown.bind(this) });
 
         const { pickerIcon, inputWidth } = this.config;
 
@@ -174,12 +176,36 @@ export abstract class AgPickerField<
     protected setupAria(): void {
         const ariaEl = this.getAriaElement();
 
-        ariaEl.setAttribute('tabindex', this.gos.get('tabIndex')!.toString());
+        this.refreshFocusability();
 
         _setAriaExpanded(ariaEl, false);
 
         if (this.ariaRole) {
             _setAriaRole(ariaEl, this.ariaRole);
+        }
+    }
+
+    public override setDisabled(disabled: boolean): this {
+        super.setDisabled(disabled);
+        this.refreshFocusability();
+        return this;
+    }
+
+    private refreshFocusability(): void {
+        const disabled = this.isDisabled();
+        const tabIndex = disabled ? '-1' : this.gos.get('tabIndex')!.toString();
+        const { eWrapper } = this;
+        const ariaEl = this.getAriaElement();
+
+        ariaEl.setAttribute('tabindex', tabIndex);
+        if (eWrapper !== ariaEl) {
+            eWrapper.setAttribute('tabindex', tabIndex);
+        }
+
+        if (disabled) {
+            _setAriaDisabled(ariaEl, true);
+        } else {
+            ariaEl.removeAttribute('aria-disabled');
         }
     }
 
@@ -239,9 +265,7 @@ export abstract class AgPickerField<
     public showPicker() {
         this.isPickerDisplayed = true;
 
-        if (!this.pickerComponent) {
-            this.pickerComponent = this.createPickerComponent();
-        }
+        this.pickerComponent ??= this.createPickerComponent();
 
         const pickerGui = this.pickerComponent.getGui();
         pickerGui.addEventListener('focusin', this.onPickerFocusIn);
@@ -429,7 +453,7 @@ export abstract class AgPickerField<
         if (typeof width === 'number') {
             width = `${width}px`;
         }
-        this.minPickerWidth = width == null ? undefined : width;
+        this.minPickerWidth = width ?? undefined;
         return this;
     }
 
@@ -437,7 +461,7 @@ export abstract class AgPickerField<
         if (typeof width === 'number') {
             width = `${width}px`;
         }
-        this.maxPickerWidth = width == null ? undefined : width;
+        this.maxPickerWidth = width ?? undefined;
         return this;
     }
 
@@ -446,7 +470,7 @@ export abstract class AgPickerField<
             height = `${height}px`;
         }
 
-        this.maxPickerHeight = height == null ? undefined : height;
+        this.maxPickerHeight = height ?? undefined;
         return this;
     }
 

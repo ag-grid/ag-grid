@@ -591,17 +591,6 @@
                 },
                 {
                     "type": "group",
-                    "title": "Scheduler Pro",
-                    "children": [
-                        {
-                            "type": "item",
-                            "title": "See Bryntum Scheduler Pro",
-                            "url": "https://www.ag-grid.com/campaigns/bryntum-scheduler-pro/"
-                        }
-                    ]
-                },
-                {
-                    "type": "group",
                     "title": "Task Board",
                     "children": [
                         {
@@ -693,7 +682,27 @@
                             "type": "item",
                             "title": "Calculated Columns",
                             "path": "calculated-columns",
-                            "isEnterprise": true
+                            "isEnterprise": true,
+                            "children": [
+                                {
+                                    "type": "item",
+                                    "title": "Dialog & Customisation",
+                                    "path": "calculated-columns-dialog",
+                                    "isEnterprise": true
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "Restrictions & Validation",
+                                    "path": "calculated-columns-validation",
+                                    "isEnterprise": true
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "API, Events & State",
+                                    "path": "calculated-columns-api",
+                                    "isEnterprise": true
+                                }
+                            ]
                         }
                     ]
                 },
@@ -838,11 +847,6 @@
                             "type": "item",
                             "title": "Highlighting Changes",
                             "path": "change-cell-renderers"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Tooltips",
-                            "path": "tooltips"
                         },
                         {
                             "type": "item",
@@ -1253,8 +1257,45 @@
                         },
                         {
                             "type": "item",
+                            "title": "Scrolling",
+                            "path": "scrolling"
+                        },
+                        {
+                            "type": "item",
                             "title": "Touch",
                             "path": "touch"
+                        },
+                        {
+                            "type": "item",
+                            "title": "Tooltips",
+                            "path": "tooltips",
+                            "children": [
+                                {
+                                    "type": "item",
+                                    "title": "Column Tooltips",
+                                    "path": "tooltips-columns"
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "Showing & Hiding",
+                                    "path": "tooltips-show-hide"
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "Positioning",
+                                    "path": "tooltips-positioning"
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "Custom Tooltip Component",
+                                    "path": "component-tooltip"
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "Built-in Control Tooltips",
+                                    "path": "tooltips-built-in"
+                                }
+                            ]
                         },
                         {
                             "type": "item",
@@ -1795,6 +1836,12 @@
                                             "type": "item",
                                             "title": "Transactions",
                                             "path": "server-side-model-updating-transactions",
+                                            "isEnterprise": true
+                                        },
+                                        {
+                                            "type": "item",
+                                            "title": "View Subscription",
+                                            "path": "server-side-model-updating-view-subscription",
                                             "isEnterprise": true
                                         }
                                     ]

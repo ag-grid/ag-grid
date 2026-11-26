@@ -13,13 +13,12 @@ import { CustomContext } from '../../shared/customComp/customContext';
 import { FloatingFilterComponentProxy } from '../../shared/customComp/floatingFilterComponentProxy';
 import { FloatingFilterDisplayComponentProxy } from '../../shared/customComp/floatingFilterDisplayComponentProxy';
 import type { CustomFloatingFilterCallbacks } from '../../shared/customComp/interfaces';
-import { warnReactiveCustomComponents } from '../../shared/customComp/util';
 import { BeansContext } from '../beansContext';
 import { showJsComp } from '../jsComp';
-import { CssClasses, isComponentStateless } from '../utils';
+import { CssClasses } from '../utils';
 
 const HeaderFilterCellComp = ({ ctrl }: { ctrl: HeaderFilterCellCtrl }) => {
-    const { context, gos } = useContext(BeansContext);
+    const { context, gos, tooltipSvc } = useContext(BeansContext);
 
     const [userStyles, setUserStyles] = useState<HeaderStyle>();
 
@@ -61,10 +60,6 @@ const HeaderFilterCellComp = ({ ctrl }: { ctrl: HeaderFilterCellCtrl }) => {
         }
         compBean.current = context.createBean(new _EmptyBean());
 
-        userCompPromise.current = new AgPromise<IFloatingFilter>((resolve) => {
-            userCompResolve.current = resolve;
-        });
-
         const compProxy: IHeaderFilterCellComp = {
             toggleCss: (name, on) => setCssClasses((prev) => prev.setClass(name, on)),
             setUserStyles: (styles: HeaderStyle) => setUserStyles(styles),
@@ -78,12 +73,21 @@ const HeaderFilterCellComp = ({ ctrl }: { ctrl: HeaderFilterCellCtrl }) => {
                     eGui.current.style.width = width;
                 }
             },
-            setCompDetails: (compDetails) => setUserCompDetails(compDetails),
+            setCompDetails: (compDetails) => {
+                // getFloatingFilterComp resolves to the comp these details build, not the one they replace
+                userCompPromise.current = compDetails
+                    ? new AgPromise<IFloatingFilter>((resolve) => {
+                          userCompResolve.current = resolve;
+                      })
+                    : undefined;
+                setUserCompDetails(compDetails);
+            },
             getFloatingFilterComp: () => (userCompPromise.current ? userCompPromise.current : null),
             setMenuIcon: (eIcon) => eButtonShowMainFilter.current?.appendChild(eIcon),
         };
 
         ctrl.setComp(compProxy, eRef, eButtonShowMainFilter.current!, eFloatingFilterBody.current!, compBean.current);
+        compBean.current.createOptionalManagedBean(tooltipSvc?.createTooltip(ctrl.getFilterButtonTooltip()));
     }, []);
 
     // js comps
@@ -96,31 +100,18 @@ const HeaderFilterCellComp = ({ ctrl }: { ctrl: HeaderFilterCellCtrl }) => {
     const bodyClassName = useMemo(() => cssBodyClasses.toString(), [cssBodyClasses]);
     const buttonWrapperClassName = useMemo(() => cssButtonWrapperClasses.toString(), [cssButtonWrapperClasses]);
 
-    const userCompStateless = useMemo(() => {
-        const res =
-            userCompDetails &&
-            userCompDetails.componentFromFramework &&
-            isComponentStateless(userCompDetails.componentClass);
-        return !!res;
-    }, [userCompDetails]);
-
-    const reactiveCustomComponents = useMemo(() => gos.get('reactiveCustomComponents'), []);
     const enableFilterHandlers = useMemo(() => gos.get('enableFilterHandlers'), []);
     const [floatingFilterCompProxy, setFloatingFilterCompProxy] = useState<
         FloatingFilterComponentProxy | FloatingFilterDisplayComponentProxy
     >();
     useEffect(() => {
         if (userCompDetails?.componentFromFramework) {
-            if (reactiveCustomComponents) {
-                const ProxyClass = enableFilterHandlers
-                    ? FloatingFilterDisplayComponentProxy
-                    : FloatingFilterComponentProxy;
-                const compProxy = new ProxyClass(userCompDetails!.params, () => setRenderKey((prev) => prev + 1));
-                userCompRef(compProxy as IFloatingFilter);
-                setFloatingFilterCompProxy(compProxy);
-            } else {
-                warnReactiveCustomComponents(context.getId());
-            }
+            const ProxyClass = enableFilterHandlers
+                ? FloatingFilterDisplayComponentProxy
+                : FloatingFilterComponentProxy;
+            const compProxy = new ProxyClass(userCompDetails!.params, () => setRenderKey((prev) => prev + 1));
+            userCompRef(compProxy as IFloatingFilter);
+            setFloatingFilterCompProxy(compProxy);
         }
     }, [userCompDetails]);
     const floatingFilterProps = floatingFilterCompProxy?.getProps();
@@ -131,21 +122,15 @@ const HeaderFilterCellComp = ({ ctrl }: { ctrl: HeaderFilterCellCtrl }) => {
     return (
         <div ref={setRef} style={userStyles} className={className} role="gridcell">
             <div ref={eFloatingFilterBody} className={bodyClassName} role="presentation">
-                {reactUserComp ? (
-                    reactiveCustomComponents ? (
-                        floatingFilterProps && (
-                            <CustomContext.Provider
-                                value={{
-                                    setMethods: (methods: CustomFloatingFilterCallbacks) =>
-                                        floatingFilterCompProxy!.setMethods(methods),
-                                }}
-                            >
-                                <UserCompClass {...floatingFilterProps} />
-                            </CustomContext.Provider>
-                        )
-                    ) : (
-                        <UserCompClass {...userCompDetails!.params} ref={userCompStateless ? () => {} : userCompRef} />
-                    )
+                {reactUserComp && floatingFilterProps ? (
+                    <CustomContext.Provider
+                        value={{
+                            setMethods: (methods: CustomFloatingFilterCallbacks) =>
+                                floatingFilterCompProxy!.setMethods(methods),
+                        }}
+                    >
+                        <UserCompClass {...floatingFilterProps} />
+                    </CustomContext.Provider>
                 ) : null}
             </div>
             <div

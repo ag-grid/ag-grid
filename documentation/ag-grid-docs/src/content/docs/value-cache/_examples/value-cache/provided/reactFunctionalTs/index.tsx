@@ -95,24 +95,28 @@ const GridExample = () => {
         <AgGridProvider modules={modules}>
             <div style={containerStyle}>
                 <div className="example-wrapper">
-                    <div className="example-header">
-                        Value Cache:
-                        <input
-                            type="radio"
-                            id="valueCacheOn"
-                            name="valueCache"
-                            checked={valueCacheOn}
-                            onChange={() => onValueCache(true)}
-                        />
-                        <label htmlFor="valueCacheOn">On</label>
-                        <input
-                            type="radio"
-                            id="valueCacheOff"
-                            name="valueCache"
-                            checked={!valueCacheOn}
-                            onChange={() => onValueCache(false)}
-                        />
-                        <label htmlFor="valueCacheOff">Off</label>
+                    <div className="example-header example-controls">
+                        <div className="controls-row">
+                            <span>Value Cache:</span>
+                            <div className="button-group" role="group" aria-label="Value Cache">
+                                <input
+                                    type="radio"
+                                    id="valueCacheOn"
+                                    name="valueCache"
+                                    checked={valueCacheOn}
+                                    onChange={() => onValueCache(true)}
+                                />
+                                <label htmlFor="valueCacheOn">On</label>
+                                <input
+                                    type="radio"
+                                    id="valueCacheOff"
+                                    name="valueCache"
+                                    checked={!valueCacheOn}
+                                    onChange={() => onValueCache(false)}
+                                />
+                                <label htmlFor="valueCacheOff">Off</label>
+                            </div>
+                        </div>
                     </div>
                     <div style={gridStyle}>
                         <AgGridReact

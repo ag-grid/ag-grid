@@ -217,9 +217,9 @@ const GridComp = ({ context }: GridCompProps) => {
 
     const topStyle: React.CSSProperties = useMemo(
         () => ({
-            userSelect: userSelect != null ? (userSelect as any) : '',
-            WebkitUserSelect: userSelect != null ? (userSelect as any) : '',
-            cursor: cursor != null ? cursor : '',
+            userSelect: (userSelect ?? '') as any,
+            WebkitUserSelect: (userSelect ?? '') as any,
+            cursor: cursor ?? '',
         }),
         [userSelect, cursor]
     );

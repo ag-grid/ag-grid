@@ -24,7 +24,7 @@ documentation/ag-grid-docs/src/content/docs/feature-name/
         ├── main.ts          # Main example code
         ├── index.html       # HTML template
         ├── example.spec.ts  # Playwright test (required — see below)
-        ├── styles.css       # Optional — required when using a wrapper div
+        ├── styles.css       # Optional — example-specific styles
         └── data.ts          # Optional data file
 ```
 
@@ -44,6 +44,7 @@ All public documentation examples MUST work across all frameworks:
 - Keep event handlers as simple function calls
 - Avoid complex DOM manipulation
 - No external library dependencies
+- Use `Math.random()` for random data. The generator replaces it with the seeded `window.agRandom()` so tests see stable data; don't call `window.agRandom()` yourself
 
 ### Hand-authored `provided/` framework variants
 
@@ -77,16 +78,20 @@ shape differences:
   options are JSX props; modules are passed via `AgGridProvider modules={...}` (no
   `ModuleRegistry`). Do not add a `useFetchJson.tsx`: the generator writes its own for any React
   variant that uses the hook, replacing a local copy, and adds the import if it is missing.
+- **All frameworks** — use the shared row types (`IOlympicData` and the others in
+  `src/types/index.d.ts`) and `useFetchJson` as globals, as `main.ts` does. Don't import them from
+  `./interfaces` or `./useFetchJson`: those files only exist in the generated output, where the
+  generator adds the imports.
 - **Angular** — `columnDefs` is a typed class field; grid options are template bindings
   (`[option]="..."`); modules via `ModuleRegistry.registerModules`.
 - **Vue** — `columnDefs` is a typed `ref`; grid options are template bindings (`:option="..."`);
   modules via `ModuleRegistry.registerModules`. Note comments inside the `template:` string are
   in a template literal, but `setup()` body comments are ordinary code — don't escape backticks
-  there.
+  there. Wrap options-API components in `defineComponent` and declare `params` as a typed prop:
+  `params: { type: Object as PropType<ICellRendererParams<IOlympicData>>, required: true }`.
 
-After editing, run `yarn nx generate-examples ag-grid-docs` and
-`yarn nx format --sort-root-tsconfig-paths=false` to confirm every variant still typechecks and is
-formatted.
+After editing, type-check the example (see [Validation](#validation)) and run
+`yarn nx format --sort-root-tsconfig-paths=false`.
 
 ## Deleting or renaming an example
 
@@ -100,21 +105,39 @@ Examples are referenced through the `{% gridExampleRunner %}` tag, so its `name`
 
 ## Validation
 
+Examples are type-checked with `strict`, at two levels. Run both after adding or changing an
+example:
+
+- `validate-examples` checks every example source file and `provided/` variant. `./checks.sh` and
+  CI run it.
+- `test:validate-generated-examples` regenerates the examples and checks the TypeScript, React,
+  Angular and Vue variants users get in the code viewer, Plunker and CodeSandbox. CI runs it as part
+  of the docs `test` target. Pass example paths, a page path or example names to check only those.
+
+Neither checks Angular or Vue templates, which are strings to TypeScript: run the example in those
+frameworks (its `example.spec.ts` does) to catch a broken binding or handler call.
+
+Fix a type error at its source, with the grid's types, rather than with `as any` or `@ts-ignore`.
+An error that appears only in a generated variant usually needs a generator fix.
+
 ```bash
-# Validate all examples typecheck
+# Type-check example sources and provided variants
 yarn nx validate-examples ag-grid-docs
+
+# Type-check the generated framework variants of one example (omit the path to check all)
+yarn nx run ag-grid-docs:test:validate-generated-examples docs/<page>/_examples/<example>
 
 # Generate framework variants
 yarn nx generate-examples ag-grid-docs
 
-# Run Playwright E2E tests for a specific example
-./docs-e2e.sh "example-name"
+# Run Playwright E2E tests for one example (a bare name also runs same-named examples on other pages)
+./docs-e2e.sh "docs/<page>/_examples/<example>/"
 
 # Run a specific test by name
-./docs-e2e.sh "example-name" --grep "test name"
+./docs-e2e.sh "docs/<page>/_examples/<example>/" --grep "test name"
 
-# Run against a specific framework
-./docs-e2e.sh "example-name" --framework reactFunctionalTs
+# Run one CI shard's framework
+./docs-e2e.sh "docs/<page>/_examples/<example>/" --framework reactFunctionalTs
 ```
 
 ## HTML Container Patterns
@@ -131,33 +154,29 @@ Use a single div with `height: 100%`:
 
 ### Grid with buttons or controls
 
-Wrap everything in an `example-wrapper` div and add a `styles.css`:
+Put the controls in `.example-controls`, one `.controls-row` per line of controls, and wrap them and the grid in `.example-wrapper`:
 
-**index.html:**
 ```html
 <div class="example-wrapper">
-    <div style="margin-bottom: 1rem">
-        <button onclick="onDoSomething()">Do Something</button>
+    <div class="example-controls">
+        <div class="controls-row">
+            <button onclick="onDoSomething()">Do Something</button>
+        </div>
     </div>
+
     <div id="myGrid"></div>
 </div>
 ```
 
-**styles.css:**
-```css
-.example-wrapper {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-}
+The shared example stylesheet, linked into every example, styles these classes. The controls sit at the top, the grid fills the remaining height, and the gap between them is standard. Don't add layout CSS or inline spacing for them.
 
-#myGrid {
-    flex: 1 1 0px;
-    width: 100%;
+When the grid sizes itself to its rows (`domLayout: 'autoHeight'` or `'print'`), leave out `.example-wrapper`: it would hold the grid at a fixed height. Give the controls their gap in `styles.css` instead:
+
+```css
+.example-controls {
+    margin-bottom: var(--controls-gap);
 }
 ```
-
-The flexbox layout makes the controls sit at the top and the grid fills the remaining vertical space.
 
 ## Example Spec File (Required)
 

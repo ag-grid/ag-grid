@@ -1,7 +1,7 @@
 [
     {
         "question": "What is the difference between AG Grid Community and Enterprise?",
-        "answer": "[AG Grid Community](./getting-started/) is the free version with basic features, while [AG Grid Enterprise](/license-pricing/) offers additional advanced features and support."
+        "answer": "[AG Grid Community](./getting-started/) is the free version with basic features, while [AG Grid Enterprise](./community-vs-enterprise/) offers additional advanced features and support."
     },
     {
         "question": "Can I create a JavaScript Data Grid for free?",
@@ -29,7 +29,7 @@
     },
     {
         "question": "What is AG Grid Enterprise?",
-        "answer": "[AG Grid Community](./getting-started/) is the free version with basic features, while [AG Grid Enterprise](/license-pricing/) offers additional advanced features and support."
+        "answer": "[AG Grid Community](./getting-started/) is the free version with basic features, while [AG Grid Enterprise](./community-vs-enterprise/) offers additional advanced features and support."
     },
     {
         "question": "What is an AG Grid licence?",

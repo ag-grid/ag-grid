@@ -1,4 +1,4 @@
-import { _getDocument } from 'ag-stack';
+import { _addManagedElementListeners, _getActiveDomElement, _getDocument } from 'ag-stack';
 
 import type {
     AgComponentSelectorType,
@@ -77,7 +77,7 @@ export class AgFormulaInputField extends AgAbstractInputField<
         this.rangeSyncFeature = this.createManagedBean(new FormulaInputRangeSyncFeature(this));
         this.autocompleteFeature = this.createManagedBean(new FormulaInputAutocompleteFeature(this));
 
-        this.addManagedElementListeners(this.getContentElement(), {
+        _addManagedElementListeners(this, this.getContentElement(), {
             focus: this.onContentFocus.bind(this),
             blur: this.onContentBlur.bind(this),
             mousedown: this.onContentMouseDown.bind(this),
@@ -85,7 +85,7 @@ export class AgFormulaInputField extends AgAbstractInputField<
     }
 
     protected override addInputListeners(): void {
-        this.addManagedElementListeners(this.getInputElement(), {
+        _addManagedElementListeners(this, this.getInputElement(), {
             beforeinput: (event: InputEvent) => {
                 // enter commits the cell; a blocked commit must not insert a newline.
                 if (event.inputType === 'insertLineBreak' || event.inputType === 'insertParagraph') {
@@ -138,7 +138,7 @@ export class AgFormulaInputField extends AgAbstractInputField<
             colRef && rowIndex != null && rowIndex !== undefined ? `${colRef}${rowIndex + 1}` : undefined;
 
         if (!editingCellRef) {
-            this.rangeSyncFeature?.setEditingCellRef(undefined, undefined, undefined);
+            this.rangeSyncFeature?.setEditingCellRef(undefined, undefined);
             return;
         }
 
@@ -340,9 +340,7 @@ export class AgFormulaInputField extends AgAbstractInputField<
             }
         }
 
-        if (!token) {
-            token = matches.find((match) => match.ref === ref);
-        }
+        token ??= matches.find((match) => match.ref === ref);
 
         if (!token) {
             return false;
@@ -417,7 +415,7 @@ export class AgFormulaInputField extends AgAbstractInputField<
                 return;
             }
             this.getContentElement().focus({ preventScroll: true });
-            if (_getDocument(this.beans).activeElement === this.getContentElement()) {
+            if (_getActiveDomElement(this.beans) === this.getContentElement()) {
                 this.suppressNextFocusCaretPlacement = false;
             }
             this.getInputElement().setSelectionRange(caret, caret);
@@ -546,9 +544,7 @@ export class AgFormulaInputField extends AgAbstractInputField<
             token = matches.find((match) => match.index === tokenIndex && match.ref === previousRef);
         }
 
-        if (!token) {
-            token = matches.find((match) => match.ref === previousRef);
-        }
+        token ??= matches.find((match) => match.ref === previousRef);
 
         if (!token) {
             return null;

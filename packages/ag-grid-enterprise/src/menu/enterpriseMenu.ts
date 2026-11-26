@@ -385,6 +385,11 @@ export class EnterpriseMenuFactory extends BeanStub implements NamedBean, IMenuF
             },
         });
     }
+
+    public override destroy(): void {
+        this.hideActiveMenu();
+        super.destroy();
+    }
 }
 
 type TabbedColumnMenuEvent = 'tabSelected' | 'and';
@@ -629,7 +634,7 @@ class ColumnContextMenu extends Component implements EnterpriseColumnMenu {
         private readonly columnGroup: AgProvidedColumnGroup | undefined,
         private readonly restoreFocusParams: MenuRestoreFocusParams
     ) {
-        super({ tag: 'div', ref: 'eColumnMenu', cls: 'ag-menu ag-column-menu', role: 'presentation' });
+        super({ tag: 'div', ref: 'eColumnMenu', cls: 'ag-menu ag-column-menu', role: 'menu' });
     }
 
     public postConstruct(): void {
@@ -638,7 +643,8 @@ class ColumnContextMenu extends Component implements EnterpriseColumnMenu {
             this.menuItems,
             this.column,
             () => this.restoreFocusParams.getEventSource?.() ?? this.getGui(),
-            this.columnGroup
+            this.columnGroup,
+            'presentation'
         );
         this.mainMenuList = mainMenuList;
         mainMenuList.addEventListener('closeMenu', this.onHidePopup.bind(this));

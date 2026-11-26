@@ -227,7 +227,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 delete row.country;
             });
             // setup the fake server with entire dataset
-            fakeServer = new FakeServer(data);
+            fakeServer = FakeServer(data);
 
             // create datasource with a reference to the fake server
             const datasource = getServerSideDatasource(fakeServer);

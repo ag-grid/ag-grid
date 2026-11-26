@@ -1,0 +1,25 @@
+---
+import styles from '../DecisionPage.module.scss';
+import type { KeyFigure } from '../types';
+
+interface Props {
+    figures: KeyFigure[];
+}
+
+const { figures } = Astro.props;
+---
+
+<ul class={styles.keyFigures}>
+    {figures.map(({ value, valueSuffix, label, detail }) => (
+        <li class={styles.keyFigure}>
+            <span class={styles.keyFigureValue}>
+                {value}
+                {valueSuffix && <span class={styles.keyFigureSuffix}> {valueSuffix}</span>}
+            </span>
+            <span class={styles.keyFigureText}>
+                <span class={styles.keyFigureLabel}>{label}</span>
+                <span class={styles.keyFigureDetail}>{detail}</span>
+            </span>
+        </li>
+    ))}
+</ul>

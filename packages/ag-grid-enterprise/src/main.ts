@@ -19,6 +19,7 @@ export { AgSlider as _AgSlider, AgSliderSelector as _AgSliderSelector } from './
 export type { AgSliderParams as _AgSliderParams } from './agStack/agSlider';
 export { AgInputRange as _AgInputRange, AgInputRangeSelector as _AgInputRangeSelector } from './agStack/agInputRange';
 export type { AgInputRangeParams as _AgInputRangeParams } from './agStack/agInputRange';
+export { AgColor as _AgColor } from './agStack/agColor';
 export {
     AgColorPicker as _AgColorPicker,
     AgColorPickerSelector as _AgColorPickerSelector,
@@ -69,6 +70,7 @@ export { MultiFilterModule } from './multiFilter/multiFilterModule';
 export { GroupFilterModule, RowGroupingPanelModule, RowGroupingModule } from './rowGrouping/rowGroupingModule';
 export { SideBarModule } from './sideBar/sideBarModule';
 export { ViewportRowModelModule } from './viewportRowModel/viewportRowModelModule';
+export { ViewSubscriptionModule } from './viewSubscription/viewSubscriptionModule';
 export { ClipboardModule } from './clipboard/clipboardModule';
 export { RowNumbersModule } from './rowNumbers/rowNumbersModule';
 export { FiltersToolPanelModule, NewFiltersToolPanelModule } from './filterToolPanel/filtersToolPanelModule';
@@ -89,7 +91,7 @@ export { CalculatedColumnsModule } from './calculatedColumns/calculatedColumnsMo
 export { RowGroupingEditModule } from './rowGrouping/rowGroupingEditModule';
 export { distributeGroupValue } from './rowGrouping/distributeGroupValue/distributeGroupValue';
 
-export { GridChartsModule, IntegratedChartsModule } from './charts/integratedChartsModule';
+export { IntegratedChartsModule } from './charts/integratedChartsModule';
 
 export { AllEnterpriseModule } from './allEnterpriseModule';
 

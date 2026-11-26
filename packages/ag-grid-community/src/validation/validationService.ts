@@ -8,15 +8,16 @@ import type { BeanCollection, DynamicBeanName, UserComponentName } from '../cont
 import type { ColDef, ColGroupDef } from '../entities/colDef';
 import type { GridOptions } from '../entities/gridOptions';
 import { INITIAL_GRID_OPTION_KEYS } from '../gridOptionsInitial';
-import type { RowNodeEventType } from '../interfaces/iRowNode';
+import type { AdvancedFilterModel } from '../interfaces/advancedFilterModel';
 import type { IconName } from '../utils/icon';
+import { ICON_NAME_TO_VALUE } from '../utils/iconNameToValue';
 import { validateApiFunction } from './apiFunctionValidator';
 import { getError } from './errorMessages/errorText';
-import { _reportMissingModule, provideValidationServiceLogger } from './logging';
+import { provideValidationServiceLogger } from './logging';
 import { COL_DEF_VALIDATORS } from './rules/colDefValidations';
 import { DYNAMIC_BEAN_MODULES } from './rules/dynamicBeanValidations';
 import { GRID_OPTIONS_VALIDATORS } from './rules/gridOptionsValidations';
-import { DEPRECATED_ICONS_V33, ICON_MODULES, ICON_VALUES } from './rules/iconValidations';
+import { ICON_VALUES } from './rules/iconValidations';
 import { _findLegacyOnlyVariables } from './rules/themeValidations';
 import { USER_COMP_MODULES } from './rules/userCompValidations';
 import type { DependentValues, OptionsValidator, RequiredOptions, ValidationWarning } from './validationTypes';
@@ -47,6 +48,10 @@ export class ValidationService extends BeanStub implements NamedBean {
 
     public processGridOptions(options: GridOptions): void {
         this.processOptions(options, GRID_OPTIONS_VALIDATORS());
+        if (options.enableFilterHandlers !== false) {
+            return;
+        }
+        this.beans.log.deprecated(348);
     }
 
     public validateApiFunction<TFunctionName extends ApiFunctionName>(
@@ -119,9 +124,31 @@ export class ValidationService extends BeanStub implements NamedBean {
         }
     }
 
-    public checkRowEvents(eventType: RowNodeEventType): void {
-        if (DEPRECATED_ROW_NODE_EVENTS.has(eventType)) {
-            this.warn(10, { eventType });
+    /** Warns once per colId in an applied Advanced Filter model that the filter cannot apply. */
+    public checkAdvancedFilterModel(
+        model: AdvancedFilterModel | null,
+        isColumnOffered: (colId: string) => boolean
+    ): void {
+        if (!model) {
+            return;
+        }
+        const colIds = new Set<string>();
+        this.collectAdvancedFilterColIds(model, colIds);
+        colIds.forEach((colId) => {
+            if (!isColumnOffered(colId)) {
+                this.warn(this.beans.colModel.getNonPivotColById(colId) ? 342 : 341, { colId });
+            }
+        });
+    }
+
+    private collectAdvancedFilterColIds(model: AdvancedFilterModel, colIds: Set<string>): void {
+        if (model.filterType !== 'join') {
+            colIds.add(model.colId);
+            return;
+        }
+        const conditions = model.conditions;
+        for (let i = 0, len = conditions.length; i < len; ++i) {
+            this.collectAdvancedFilterColIds(conditions[i], colIds);
         }
     }
 
@@ -130,26 +157,11 @@ export class ValidationService extends BeanStub implements NamedBean {
     }
 
     private checkIcon(iconName: IconName): void {
-        if (DEPRECATED_ICONS_V33.has(iconName)) {
-            this.warn(43, { iconName });
-        }
         if (ICON_VALUES[iconName as IconValue]) {
             // directly referencing icon
             return;
         }
-        const moduleName = ICON_MODULES[iconName];
-        if (moduleName) {
-            _reportMissingModule({
-                // Same context source as GridOptionsService so a batch's combined message keeps the right
-                // registration form (AgGridProvider / UMD) regardless of which report leads the batch.
-                ...this.gos.getModuleErrorParams(),
-                reasonOrId: `icon \`${iconName}\``,
-                moduleName,
-                additionalText: 'Alternatively, use the CSS icon name directly.',
-            });
-            return;
-        }
-        this.warn(134, { iconName });
+        this.warn(134, { iconName, suggestions: suggestIconNames(iconName) });
     }
 
     public isProvidedUserComp(compName: string): boolean {
@@ -173,7 +185,6 @@ export class ValidationService extends BeanStub implements NamedBean {
         }
 
         // Check uncached property names: emit one-time warnings and record validity
-        const checkPropertyNames = this.gridOptions.suppressPropertyNamesCheck !== true;
         let hasInvalidName = false;
         for (const name of optionKeys) {
             if (isValidMap.has(name)) {
@@ -202,13 +213,11 @@ export class ValidationService extends BeanStub implements NamedBean {
             }
 
             if (!allValidNames.has(name)) {
-                if (checkPropertyNames) {
-                    const suggestions = _fuzzySuggestions({
-                        inputValue: name,
-                        allSuggestions: allProperties,
-                    }).values.slice(0, 8);
-                    log.warn(307, { objectName, name, suggestions, hasContext: allValidNames.has('context') });
-                }
+                const suggestions = _fuzzySuggestions({
+                    inputValue: name,
+                    allSuggestions: allProperties,
+                }).values.slice(0, 8);
+                log.warn(307, { objectName, name, suggestions, hasContext: allValidNames.has('context') });
                 hasInvalidName = true;
                 isValidMap.set(name, false);
                 continue;
@@ -217,7 +226,7 @@ export class ValidationService extends BeanStub implements NamedBean {
             isValidMap.set(name, true);
         }
 
-        if (hasInvalidName && docsUrl && checkPropertyNames) {
+        if (hasInvalidName && docsUrl) {
             const url = this.beans.frameworkOverrides.getDocLink(docsUrl);
             log.warn(310, { objectName, url });
         }
@@ -315,8 +324,22 @@ export class ValidationService extends BeanStub implements NamedBean {
     }
 }
 
-const DEPRECATED_ROW_NODE_EVENTS: Set<RowNodeEventType> = new Set([
-    'firstChildChanged',
-    'lastChildChanged',
-    'childIndexChanged',
-]);
+function suggestIconNames(iconName: string): string[] {
+    const hyphenatedName = iconName.replace(/[A-Z]/g, (char) => `-${char.toLowerCase()}`);
+    if (ICON_VALUES[hyphenatedName as IconValue]) {
+        return [hyphenatedName];
+    }
+    const cssSuggestions = _fuzzySuggestions({
+        inputValue: hyphenatedName,
+        allSuggestions: Object.keys(ICON_VALUES),
+        hideIrrelevant: true,
+        maxSuggestions: 3,
+    }).values;
+    const gridSuggestions = _fuzzySuggestions({
+        inputValue: iconName,
+        allSuggestions: Object.keys(ICON_NAME_TO_VALUE),
+        hideIrrelevant: true,
+        maxSuggestions: 3,
+    }).values;
+    return [...gridSuggestions, ...cssSuggestions].slice(0, 3);
+}

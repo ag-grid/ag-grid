@@ -1,5 +1,6 @@
 import type { AgPromise } from 'ag-stack';
 
+import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type {
     AgFilterHandlerBaseParams,
@@ -13,10 +14,12 @@ import type {
     FilterHandlerParams,
     FilterModel,
     FilterWrapperParams,
+    IFilter,
     IFilterComp,
     IFilterParams,
 } from '../interfaces/iFilter';
 import type { UserCompDetails } from '../interfaces/iUserCompDetails';
+import { _legacyFilterMethods } from './legacyFilterMode';
 
 export const FILTER_HANDLER_MAP = {
     agSetColumnFilter: 'agSetColumnFilterHandler',
@@ -102,6 +105,18 @@ export function getFilterUiFromWrapper<TComp extends IFilterComp | FilterDisplay
     createdFilterUi.created = true;
     createdFilterUi.promise = promise;
     return promise;
+}
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export function _isFilterCompActive(beans: BeanCollection, filter: IFilter | null | undefined): boolean {
+    if (!filter) {
+        return false;
+    }
+    if (!filter.isFilterActive) {
+        beans.log.warn(67);
+        return false;
+    }
+    return _legacyFilterMethods(filter).isFilterActive();
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */

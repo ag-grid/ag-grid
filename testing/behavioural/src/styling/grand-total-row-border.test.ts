@@ -108,5 +108,18 @@ describe('grand total row border classes', () => {
             api.ensureIndexVisible(100, 'bottom');
             await waitFor(() => expect(borders(api)).toEqual({ scrolling: ['TOTAL border-top'] }));
         });
+
+        test('a grand total the user pinned does not also stick', async () => {
+            const api = await createGrid(
+                {
+                    enableRowPinning: true,
+                    grandTotalRow: 'bottom',
+                    isRowPinned: (node) => (isGrandTotal(node) ? 'top' : null),
+                },
+                100
+            );
+            const expected = { pinnedTop: ['TOTAL border-bottom'], scrolling: ['TOTAL border-top'] };
+            await waitFor(() => expect(borders(api)).toEqual(expected));
+        });
     });
 });

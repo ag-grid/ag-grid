@@ -9,7 +9,7 @@ import type {
     ValidationModuleName,
 } from '../../interfaces/iModule';
 import type { RowModelType } from '../../interfaces/iRowModel';
-import type { RowNodeEventType, RowPinnedType } from '../../interfaces/iRowNode';
+import type { RowPinnedType } from '../../interfaces/iRowNode';
 import { ENTERPRISE_MODULE_NAMES } from '../enterpriseModuleNames';
 import { getErrorLink, getValidationDocLink, toStringWithNullUndefined } from '../logging';
 import { resolveModuleNames } from '../resolvableModuleNames';
@@ -74,6 +74,11 @@ const moduleImportMsg = (moduleNames: ModuleName[], usesAgGridProvider?: boolean
 
 For more info see: ${getValidationDocLink()}/modules/`;
 };
+
+const legacyFilterMigrationLink = () => `${getValidationDocLink()}/enable-filter-handlers-migration/`;
+
+const legacyFilterModeAdvice = () =>
+    `Legacy filter mode stops being the default in v38, when \`enableFilterHandlers\` defaults to \`true\`. Migrate to filter handlers: ${legacyFilterMigrationLink()} . Or, to keep legacy filter mode for now, set \`enableFilterHandlers: false\`.`;
 
 function convertToUserModuleName(moduleName: ModuleName, inModuleRegistration = false) {
     if (inModuleRegistration && (moduleName === 'IntegratedCharts' || moduleName === 'Sparklines')) {
@@ -242,7 +247,6 @@ export const AG_GRID_ERRORS = {
     1: () => '`rowData` must be an array' as const,
     2: ({ nodeId }: { nodeId: string | undefined }) =>
         `Duplicate node id \`${nodeId}\` detected from \`getRowId\` callback, this could cause issues in your grid.` as const,
-    3: () => 'Calling `gridApi.resetRowHeights()` makes no sense when using Auto Row Height.' as const,
     4: ({ id }: { id: string }) => `Could not find row \`id=${id}\`, data item was not found for this id` as const,
     5: ({ data }: { data: any }) =>
         [
@@ -256,8 +260,7 @@ export const AG_GRID_ERRORS = {
     8: ({ key }: { key: string }) => `Unknown key for navigation \`${key}\`` as const,
     9: ({ variable }: { variable: { cssName: string; defaultValue: number } }) =>
         `No value for \`${variable?.cssName}\`. This usually means that the grid has been initialised before styles have been loaded. The default value of \`${variable?.defaultValue}\` will be used and updated when styles load.` as const,
-    10: ({ eventType }: { eventType: RowNodeEventType }) =>
-        `As of v33, the \`${eventType}\` event is deprecated. Use the global \`modelUpdated\` event to determine when row children have changed.`,
+    // 10: retired (deprecated row node event warning)
     11: () => 'No gridOptions provided to `createGrid`' as const,
     12: ({ colKey }: { colKey: string | Column }) => ['column ', colKey, ' not found'] as const,
     13: () =>
@@ -303,7 +306,6 @@ export const AG_GRID_ERRORS = {
             toIndex,
             'remember that you should not count the moving columns when calculating the new index',
         ] as const,
-    31: () => 'infinite loop in `resizeColumnSets`' as const,
     32: () =>
         '`applyColumnState()` - the state attribute should be an array, however an array was not found. Please provide an array of items (one for each col you want to change) for state.' as const,
     33: () =>
@@ -324,8 +326,7 @@ export const AG_GRID_ERRORS = {
     41: () =>
         "Browser did not allow `document.execCommand('copy')`. Ensure `api.copySelectedRowsToClipboard()` is invoked via a user event, i.e. button click, otherwise the browser will prevent it for security reasons." as const,
     42: () => "Browser does not support `document.execCommand('copy')` for clipboard operations" as const,
-    43: ({ iconName }: { iconName: string }) =>
-        `As of v33, icon \`${iconName}\` is deprecated. Use the icon CSS name instead.` as const,
+    // 43: retired (deprecated icon name warning)
     44: () =>
         'Data type definition hierarchies (via the `extendsDataType` property) cannot contain circular references.' as const,
     45: ({ parentCellDataType }: { parentCellDataType: string }) =>
@@ -353,8 +354,7 @@ export const AG_GRID_ERRORS = {
     58: () => 'no values found for select cellEditor' as const,
     59: () => 'cannot select pinned rows' as const,
     60: () => 'cannot select node until it has finished loading' as const,
-    61: () =>
-        'since version v32.2.0, `rowNode.isFullWidthCell()` has been deprecated. Instead check `rowNode.detail` followed by the user provided `isFullWidthRow` grid option.' as const,
+    // 61: retired (deprecated rowNode.isFullWidthCell warning)
     62: ({ colId }: { colId: string }) => `\`setFilterModel()\` - no column found for colId: ${colId}` as const,
     63: ({ colId }: { colId: string }) =>
         `\`setFilterModel()\` - unable to fully apply model, filtering disabled for colId: ${colId}` as const,
@@ -506,7 +506,13 @@ export const AG_GRID_ERRORS = {
     132: () => 'Row selection features are not available unless `rowSelection` is enabled.' as const,
     133: ({ iconName }: { iconName: string }) =>
         `icon \`${iconName}\` function should return back a string or a dom object` as const,
-    134: ({ iconName }: { iconName: string }) => `Did not find icon \`${iconName}\`` as const,
+    134: ({ iconName, suggestions }: { iconName: string; suggestions?: string[] }) =>
+        [
+            `Did not find icon \`${iconName}\``,
+            suggestions?.length ? `Did you mean \`${suggestions.join('`, `')}\`?` : '',
+        ]
+            .filter(Boolean)
+            .join('. '),
     135: () => `Data type of the new value does not match the cell data type of the column` as const,
     136: () =>
         `Unable to update chart as the \`type\` is missing. It must be either \`rangeChartUpdate\`, \`pivotChartUpdate\`, or \`crossFilterChartUpdate\`.` as const,
@@ -611,8 +617,8 @@ export const AG_GRID_ERRORS = {
             'second instance',
             secondData,
         ] as const,
-    188: (props?: { feature?: string }) =>
-        `\`getRowId\` callback must be provided for Server Side Row Model ${props?.feature || 'selection'} to work correctly.` as const,
+    188: ({ feature }: { feature: string }) =>
+        `\`getRowId\` callback must be provided for ${feature} to work correctly.` as const,
     189: ({ startRow }: { startRow: number }) =>
         `invalid value ${startRow} for startRow, the value should be >= 0` as const,
     190: ({ rowGroupId, data }: { rowGroupId: string | undefined; data: any }) =>
@@ -681,8 +687,7 @@ export const AG_GRID_ERRORS = {
     // 229: ({ index }: { index: number }) => ['invalid row index for ensureIndexVisible: ', index] as const,
     230: () =>
         '`detailCellRendererParams.template` is not supported by AG Grid React. To change the template, provide a Custom Detail Cell Renderer. See https://www.ag-grid.com/react-data-grid/master-detail-custom-detail/' as const,
-    // @deprecated v32 mark for removal as part of v32 deprecated features
-    231: () => 'As of v32, using custom components with `reactiveCustomComponents = false` is deprecated.' as const,
+    // 231: retired (`reactiveCustomComponents` deprecation warning)
     233: ({ methodName }: { methodName: string }) =>
         `Framework component is missing the method \`${methodName}()\`` as const,
     234: () =>
@@ -747,16 +752,10 @@ export const AG_GRID_ERRORS = {
             usesAgGridProvider,
         }),
     261: () => 'As of v33, `column.isHovered()` is deprecated. Use `api.isColumnHovered(column)` instead.' as const,
-    262: () =>
-        'As of v33, icon key `smallDown` is deprecated. Use `advancedFilterBuilderSelect` for Advanced Filter Builder dropdown, `selectOpen` for Select cell editor and dropdowns (e.g. Integrated Charts menu), `richSelectOpen` for Rich Select cell editor.' as const,
-    263: () =>
-        'As of v33, icon key `smallLeft` is deprecated. Use `panelDelimiterRtl` for Row Group Panel / Pivot Panel, `subMenuOpenRtl` for sub-menus.' as const,
-    264: () =>
-        'As of v33, icon key `smallRight` is deprecated. Use `panelDelimiter` for Row Group Panel / Pivot Panel, `subMenuOpen` for sub-menus.' as const,
+    // 262-264: retired (deprecated icon key warnings)
     265: ({ colId }: { colId: string }) =>
         `Unable to infer chart data type for column \`${colId}\` if first data entry is null. Please specify \`chartDataType\`, or a \`cellDataType\` in the column definition. For more information, see ${getValidationDocLink()}/integrated-charts-range-chart#coldefchartdatatype .` as const,
-    266: () =>
-        'As of v33.1, using `keyCreator` with the Rich Select Editor has been deprecated. It now requires the `formatValue` callback to convert complex data to strings.' as const,
+    // 266: retired (Rich Select `keyCreator` warning)
     267: () =>
         'Detail grids can not use a different theme to the master grid, the `theme` detail grid option will be ignored.' as const,
     268: () => "Transactions aren't supported with tree data when using `treeDataChildrenField`" as const,
@@ -768,21 +767,7 @@ export const AG_GRID_ERRORS = {
     // 272: () => NoModulesRegisteredError(),
     273: ({ providedId, usedId }: { providedId: string; usedId: string }) =>
         `Provided column id \`${providedId}\` was already in use, ensure all column and group ids are unique. Using \`${usedId}\` instead.` as const,
-    274: ({ prop }: { prop: string }) => {
-        let msg = `Since v33, \`${prop}\` has been deprecated.`;
-        switch (prop) {
-            case 'maxComponentCreationTimeMs':
-                msg += ' This property is no longer required and so will be removed in a future version.';
-                break;
-            case 'setGridApi':
-                msg += ` This method is not called by AG Grid. To access the GridApi see: https://ag-grid.com/react-data-grid/grid-interface/#grid-api `;
-                break;
-            case 'children':
-                msg += ` For multiple versions AgGridReact does not support children.`;
-                break;
-        }
-        return msg;
-    },
+    // 274: retired (deprecated `AgGridReact` props warning)
     // 275: missingRowModelTypeError,
     276: () => 'Row Numbers Row Resizer cannot be used when Grid Columns have `autoHeight` enabled.' as const,
     277: ({ colId }: { colId: string }) =>
@@ -892,8 +877,7 @@ export const AG_GRID_ERRORS = {
         `One or more \`${objectName}\` properties are not recognised. For more info see: ${url}`,
     311: ({ functionName, rowModels }: { functionName: string; rowModels?: string[] }) =>
         `\`api.${functionName}\` can only be called when \`gridOptions.rowModelType\` is ${(rowModels ?? []).join(' or ')}.`,
-    312: ({ chartType, renamedChartType }: { chartType: string; renamedChartType: string }) =>
-        `The chart type \`${chartType}\` has been deprecated. Please use \`${renamedChartType}\` instead.`,
+    // 312: retired (deprecated chart type warning)
     313: ({ paramsType, property }: { paramsType?: string; property: string }) =>
         `Unexpected property supplied. \`${paramsType}\` does not contain: \`${property}\`.`,
     314: ({
@@ -959,13 +943,36 @@ export const AG_GRID_ERRORS = {
         `Row ID \`${rowId}\` is reserved by AG Grid and should not be returned from \`getRowId\`.` as const,
     332: ({ replacements }: { replacements: string[] }) =>
         `Legacy theme CSS variables are set on the grid, but the Theming API is in use and ignores them, so they have no effect: ${(replacements ?? []).join(', ')}. Either set the equivalent Theming API variable, or pass the string \`legacy\` to the \`theme\` grid option to keep using v32 style themes. See the migration guide: ${getValidationDocLink()}/theming-migration/` as const,
-    333: ({ error }: { error: unknown }) => ['`onIssueRaised` threw:', error],
-    334: () =>
-        `\`GridChartsModule\` was deprecated in v33 — use \`IntegratedChartsModule\` instead.\n\n${missingChartsWithModule('IntegratedChartsModule')}` as const,
+    333: ({ callback, error }: { callback: string; error: unknown }) => [`\`${callback}\` threw:`, error],
+    // 334: retired (`GridChartsModule` warning)
     335: ({ colId }: { colId: string }) =>
         `Column \`${colId}\` sets \`filter.handler\` or \`filter.doesFilterPass\`, which need \`enableFilterHandlers\`, so the default filter is used, as \`filter: true\` does.` as const,
     336: ({ colId, properties }: { colId: string; properties: string[] }) =>
         `\`calculatedColumns.processColDef\` returned \`${(properties ?? []).join('`, `')}\` for calculated column \`${colId}\`. These properties are always overridden for calculated columns and have been ignored.` as const,
+    337: ({ colId }: { colId: string }) =>
+        `\`setFilterCards\` on the New Filters Tool Panel was passed \`${colId}\`, which is not a column in the grid, so no card is shown for it.` as const,
+    338: () =>
+        '`success()` or `fail()` was called more than once for the same Server-Side Row Model request, so the later call was ignored.' as const,
+    339: ({ field, key }: { field: string; key: string }) =>
+        `The value for field \`${field}\` was not set, as \`${key}\` on that path is not an object. Use a \`valueSetter\` to set this value.` as const,
+    340: ({ field }: { field: string }) =>
+        `Field \`${field}\` contains \`__proto__\`, which field paths do not support, so the column shows no value and its edits are refused. Use a \`valueGetter\` and \`valueSetter\` instead.` as const,
+    341: ({ colId }: { colId: string }) =>
+        `Advanced Filter model names colId \`${colId}\`, but no column has this id, so that condition cannot be applied.` as const,
+    342: ({ colId }: { colId: string }) =>
+        `Advanced Filter model names column \`${colId}\`, which is not available in the Advanced Filter, so that condition cannot be applied. A column is available when filtering is enabled on it and it is visible, grouped, or \`includeHiddenColumnsInAdvancedFilter\` is set.` as const,
+    343: () =>
+        `A custom filter component is used without \`enableFilterHandlers\` set, so it runs in legacy filter mode. ${legacyFilterModeAdvice()}` as const,
+    344: () =>
+        `A custom floating filter component is used without \`enableFilterHandlers\` set, so it runs in legacy filter mode. ${legacyFilterModeAdvice()}` as const,
+    345: () =>
+        `The \`filterModified\` event is listened to without \`enableFilterHandlers\` set. It is deprecated and does not fire with filter handlers; use \`filterUiChanged\` or \`floatingFilterUiChanged\` instead. ${legacyFilterModeAdvice()}` as const,
+    346: () =>
+        `A Multi Filter sets \`buttons\` or \`closeOnApply\` without \`enableFilterHandlers\` set. With filter handlers, buttons on the child filters are ignored and buttons on the Multi Filter apply to all of its children. ${legacyFilterModeAdvice()}` as const,
+    347: () =>
+        `A legacy Multi Filter method (\`getModel\`, \`setModel\`, \`isFilterActive\`, \`doesFilterPass\`, \`applyModel\` or \`getModelFromUi\`) was called without \`enableFilterHandlers\` set. With filter handlers, the Multi Filter instance does not have these methods; use the grid's filter model API instead. ${legacyFilterModeAdvice()}` as const,
+    348: () =>
+        `\`enableFilterHandlers: false\` is deprecated. Legacy filter mode will be removed in a major version after v38. See ${legacyFilterMigrationLink()}` as const,
     // When adding a code above this line, raise `MAX_ERROR_ID` below to match.
 };
 
@@ -981,7 +988,7 @@ export type ErrorId = keyof ErrorMap;
  *
  * @knipIgnore Read by the docs site's error-page route
  */
-export const MAX_ERROR_ID = 336;
+export const MAX_ERROR_ID = 348;
 
 type ErrorValue<TId extends ErrorId | null> = TId extends ErrorId ? ErrorMap[TId] : never;
 export type GetErrorParams<TId extends ErrorId> =

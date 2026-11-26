@@ -7,7 +7,7 @@ export interface ServerSideTransaction<TData = any> {
      * Passing in blank to empty applies the transaction to the top level.
      */
     route?: string[];
-    /** Index position to add at. If missing, rows will be added to the end. */
+    /** Index position to add at. If missing, rows are added to the end when the row count is known. */
     addIndex?: number;
     /** Rows to add */
     add?: TData[];
@@ -28,6 +28,13 @@ export interface ServerSideTransactionResult<TData = any> {
     remove?: IRowNode<TData>[];
     /** If rows were updated, the updated Row Nodes. */
     update?: IRowNode<TData>[];
+    /**
+     * If any rows to add were not added, the row data for those rows. This happens when no `addIndex`
+     * is provided while the store's row count is unknown, when `addIndex` is past the end of the store,
+     * when a row with the same ID is already loaded, or when an earlier row in `add` shares its ID with a later one.
+     * The status is still `Applied`, as the rest of the transaction was applied.
+     */
+    unapplied?: TData[];
 }
 
 export enum ServerSideTransactionResultStatus {
@@ -35,7 +42,7 @@ export enum ServerSideTransactionResultStatus {
     Applied = 'Applied',
     /**
      * Store was not found, transaction not applied.
-     * Either invalid route, or the parent row has not yet been expanded.
+     * Either the route is invalid, or a group in the route is not loaded.
      */
     StoreNotFound = 'StoreNotFound',
     /**

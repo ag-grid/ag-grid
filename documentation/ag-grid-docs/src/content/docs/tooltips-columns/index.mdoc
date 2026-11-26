@@ -1,0 +1,151 @@
+---
+title: "Column Tooltips"
+---
+
+Cells and column headers automatically show tooltips when their grid-rendered text is truncated. Column definitions can override or disable that content.
+
+## Cell Tooltips
+
+Set `tooltip: true` to have a tooltip match the value displayed in the cell whatever its source: a [Value Getter](./value-getters/), [Aggregation](./aggregation/) or a [Calculated Column](./calculated-columns/). A string value shows fixed text, and a callback enables generating the content dynamically from the cell value, `valueFormatted` or row data.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        { field: 'athlete', tooltip: true },
+        { field: 'country', tooltip: 'The country the athlete represents' },
+        { field: 'year', tooltip: ({ value }) => `Games held in ${value}` },
+    ],
+};
+```
+
+{% gridExampleRunner title="Cell Tooltips" name="cell-tooltips" /%}
+
+{% apiDocumentation source="column-properties/properties.json" section="tooltips" names=["tooltip"] /%}
+
+{% expandingSection headerText="TooltipCallbackParams" %}
+{% interfaceDocumentation interfaceName="TooltipCallbackParams" /%}
+{% /expandingSection %}
+
+`tooltip: false` does not remove tooltips registered at runtime with [`setTooltip`](#tooltips-for-custom-components), or grid-owned validation and formula error tooltips.
+
+## Header Tooltips
+
+Use `headerTooltip: true` to show the displayed header name as the tooltip. A string shows fixed text instead, and a callback generates the content dynamically, receiving the header name as `value`. Column groups accept `headerTooltip` too.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        { field: 'athlete', headerTooltip: "The athlete's full name" },
+        { field: 'country', headerTooltip: true },
+        { field: 'sport', headerTooltip: ({ value }) => `Column: ${value}` },
+    ],
+};
+```
+
+{% gridExampleRunner title="Header Tooltips" name="header-tooltips" /%}
+
+{% apiDocumentation source="column-properties/properties.json" section="header" names=["headerTooltip"] /%}
+
+{% expandingSection headerText="HeaderTooltipCallbackParams" %}
+{% interfaceDocumentation interfaceName="HeaderTooltipCallbackParams" /%}
+{% /expandingSection %}
+
+## Blank Values
+
+Tooltips are not shown for the missing values `undefined`, `null` and `''` (empty string). To display a tooltip for a missing value, use a callback that returns non-empty content.
+
+{% gridExampleRunner title="Blank Values" name="blank-values" /%}
+
+## Tooltips for Truncated Text
+
+`tooltipShowMode` controls when text tooltips appear, including [Browser Tooltips](./tooltips/#browser-tooltip):
+
+| Mode               | Behaviour                                                                                                                                                                 |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `'auto'` (default) | Automatically previews truncated text without tooltip configuration. Configured tooltips appear when the text is truncated or the tooltip differs from the default value. |
+| `'standard'`       | Shows configured tooltips without requiring truncation.                                                                                                                   |
+| `'whenTruncated'`  | Shows configured tooltips only when the text is truncated.                                                                                                                |
+| `'whenDifferent'`  | Shows configured tooltips only when their content differs from the default value, regardless of truncation.                                                               |
+
+For cells, the default value is `valueFormatted` when available, otherwise `value`. For example, a cell with raw value `10` and formatted value `£10.00` treats a configured tooltip of `10` as different. Headers compare against the displayed header name. Structured content for a custom tooltip component is treated as different.
+
+Only `'auto'` supplies tooltips without explicit configuration. This applies to grid-rendered cells, headers, Set Filter items, tool panel labels and drop-zone pills. Other modes require configured content, such as `tooltip`, `headerTooltip`, Set Filter `showTooltips: true`, or a custom component's `setTooltip`. Legacy tooltip fields and getters also count as explicit configuration.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    tooltipShowMode: 'auto',
+    columnDefs: [
+        { field: 'athlete', tooltip: true },
+        { field: 'country' },
+        { field: 'sport', tooltip: ({ value }) => `Sport: ${value}` },
+    ],
+};
+```
+
+The example uses the default mode, `'auto'`. **Athlete** has a configured tooltip matching its displayed value, **Country** uses automatic previews, and **Sport** has different configured content that appears even when its text fits.
+
+{% gridExampleRunner title="Tooltip Show Modes" name="tooltip-show-mode" /%}
+
+Use `tooltip: false`, `headerTooltip: false` or Set Filter `filterParams.showTooltips: false` to disable individual sources. Configured callbacks returning no content suppress the tooltip in every mode.
+
+Automatic and configured tooltips use the same component selection: the column/group's custom component where supported, otherwise the default tooltip. `builtInTooltipComponent` and `suppressBuiltInTooltips` only apply to control hints. Existing control hints and floating-filter previews retain their own display rules.
+
+## Tooltips for Custom Components
+
+Custom cell renderers and header components can register tooltip content at runtime with the `setTooltip` method on their params. `tooltip: false` and `headerTooltip: false` do not disable these. See [Cell Components](./component-cell-renderer/#tooltips), [Header Components](./column-headers-components/#tooltips) and [Column Groups](./column-groups/#tooltips).
+
+Custom renderers receive no automatic text tooltip. In `'auto'` mode, configured content matching the default value needs a truncation check; supply `setTooltip(value, shouldDisplay)` with a callback that measures the relevant text element. The callback overrides the mode's display check. For compatibility, `'whenTruncated'` continues to show configured tooltips when a custom renderer prevents the grid from measuring truncation and no callback is supplied.
+
+## Row Groups
+
+When a column is grouped, the generated group column inherits its tooltip configuration from the underlying column. Cell tooltip properties set on `autoGroupColumnDef` apply to leaf rows only; `headerTooltip` still applies to the group column header.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        {
+            field: 'country',
+            rowGroup: true,
+            // inherited by group rows in the group column
+            tooltip: ({ value }) => `Country: ${value}`,
+        },
+        { field: 'athlete' },
+    ],
+    autoGroupColumnDef: {
+        // applies to leaf rows only; group rows inherit from their colDef
+        tooltip: ({ data }) => `Athlete: ${data?.athlete}`,
+    },
+};
+```
+
+{% gridExampleRunner title="Row Group Tooltip" name="rowgroups-tooltip" /%}
+
+### Grouped Column Headers
+
+With `groupDisplayType: 'multipleColumns'`, each generated group column header inherits the `headerTooltip` from its underlying column `colDef`.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    groupDisplayType: 'multipleColumns',
+    columnDefs: [
+        {
+            field: 'country',
+            rowGroup: true,
+            // inherited by the generated group column header
+            headerTooltip: 'Group by Country',
+        },
+    ],
+};
+```
+
+{% gridExampleRunner title="Grouped Column Header Tooltip" name="rowgroups-header-tooltip" /%}
+
+### Full Width Group Rows
+
+With `groupDisplayType: 'groupRows'`, full-width group rows inherit their tooltips from the underlying column `colDef`.
+
+{% gridExampleRunner title="Full Width Group Row Tooltip" name="rowgroups-fullwidth-tooltip" /%}
+
+### Aggregated Cells
+
+When a group row displays an aggregated value in a data column, hovering that cell shows a tooltip for the aggregated value, not the underlying row data.

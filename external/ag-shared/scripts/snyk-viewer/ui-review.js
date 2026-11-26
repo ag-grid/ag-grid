@@ -36,7 +36,7 @@
 
     window.initReviewQueue = function (projects, ignorePatternsByFileInit, reviewState, sharedExpiry, _rootPackageName) {
         let ignorePatternsByFile = ignorePatternsByFileInit;
-        const { esc, sevClass, stripVer, getSnykFilePath, getNearIgnoredPath,
+        const { esc, apiHeaders, sevClass, stripVer, getSnykFilePath, getNearIgnoredPath,
                 sameMajorFixVersion, npmLink } = window.SnykUtils;
 
         // ── Collect vuln entries ──
@@ -1061,7 +1061,7 @@
                     const { snykFile, depPath } = toAdd[i];
                     const r = await fetch('/add-snyk-ignore', {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
+                        headers: apiHeaders(),
                         body: JSON.stringify({ snykFile, vulnId, path: depPath, reason, expires }),
                     });
                     const data = await r.json();
@@ -1121,7 +1121,7 @@
                     const { depPath } = toAdd[i];
                     const r = await fetch('/add-snyk-ignore', {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
+                        headers: apiHeaders(),
                         body: JSON.stringify({ snykFile, vulnId, path: depPath, reason, expires }),
                     });
                     const data = await r.json();
@@ -1183,7 +1183,7 @@
                     const { snykFile, depPath } = toAdd[i];
                     const r = await fetch('/add-snyk-ignore', {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
+                        headers: apiHeaders(),
                         body: JSON.stringify({ snykFile, vulnId, path: depPath, reason, expires }),
                     });
                     const data = await r.json();
@@ -1423,7 +1423,7 @@
             try {
                 const r = await fetch('/add-snyk-ignore', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: apiHeaders(),
                     body: JSON.stringify({ snykFile, vulnId, path: depPath, reason, expires }),
                 });
                 const data = await r.json();
@@ -1450,7 +1450,7 @@
             btn.textContent = 'Updating\u2026';
             fetch('/update-dep-version', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: apiHeaders(),
                 body: JSON.stringify({ packageJsonPath: pkgPath, dep, version }),
             }).then(r => r.json()).then(data => {
                 if (data.ok) { btn.textContent = '\u2713 Updated'; btn.classList.add('btn-primary'); }
@@ -1465,7 +1465,7 @@
             btn.textContent = 'Removing\u2026';
             fetch('/remove-dep', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: apiHeaders(),
                 body: JSON.stringify({ packageJsonPath: pkgPath, dep }),
             }).then(r => r.json()).then(data => {
                 if (data.ok) { btn.textContent = '\u2713 Removed'; btn.classList.add('btn-primary'); }
@@ -1479,7 +1479,7 @@
             btn.textContent = 'Applying\u2026';
             fetch('/apply-resolution', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: apiHeaders(),
                 body: JSON.stringify({ key, version }),
             }).then(r => r.json()).then(data => {
                 if (data.ok) { btn.textContent = '\u2713 Applied'; btn.classList.add('btn-primary'); }
@@ -1500,7 +1500,7 @@
             btn.textContent = 'Adding\u2026';
             fetch('/add-snyk-ignore', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: apiHeaders(),
                 body: JSON.stringify({ snykFile, vulnId, path: depPath, reason, expires }),
             }).then(r => r.json()).then(data => {
                 if (data.ok) { btn.textContent = '\u2713 Added to ' + snykFile; btn.classList.add('btn-primary'); }
@@ -1543,7 +1543,7 @@
             btn.textContent = 'Updating\u2026';
             fetch('/update-snyk', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: apiHeaders(),
                 body: JSON.stringify({ updates: [{ snykFile, vulnId, oldPath, newPath }] }),
             }).then(r => r.json()).then(data => {
                 if (data.ok) {
@@ -1563,7 +1563,7 @@
             btn.textContent = 'Updating\u2026';
             fetch('/update-snyk', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: apiHeaders(),
                 body: JSON.stringify({ updates }),
             }).then(r => r.json()).then(data => {
                 if (data.ok) {
@@ -1600,7 +1600,7 @@
             btn.textContent = 'Adding…';
             fetch('/add-snyk-ignores', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: apiHeaders(),
                 body: JSON.stringify({ entries }),
             }).then(r => r.json()).then(data => {
                 if (data.ok) refreshIgnorePatterns();
@@ -1613,7 +1613,7 @@
             for (const id of ids) { updates[id] = { status, ...extra }; }
             fetch('/review-state', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: apiHeaders(),
                 body: JSON.stringify(updates),
             }).then(r => r.json()).then(data => {
                 if (data.ok) {
@@ -1633,7 +1633,7 @@
         if (resetBtn) {
             resetBtn.addEventListener('click', () => {
                 if (!confirm('Reset review state? All decisions will be cleared and all vulnerabilities will return to the queue.')) return;
-                fetch('/reset-review-state', { method: 'POST' })
+                fetch('/reset-review-state', { method: 'POST', headers: apiHeaders() })
                     .then(r => r.json())
                     .then(data => {
                         if (data.ok) location.reload();

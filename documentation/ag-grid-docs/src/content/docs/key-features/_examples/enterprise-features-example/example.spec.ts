@@ -1,7 +1,7 @@
 import { expect, test } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
-    test.eachFramework('Shows row grouping, a side bar and an integrated chart', async ({ agIdFor, page }) => {
+    test.eachFramework('Shows row grouping, a side bar and an integrated chart', async ({ page }) => {
         // rowGroup on make produces group rows in the auto (single) group column
         const groupRows = page.locator('.ag-row-group');
         await expect(groupRows.first()).toBeVisible();

@@ -1,4 +1,4 @@
-import { ensureGridReady, expect, test, waitForGridContent } from '@utils/grid/test-utils';
+import { ensureGridReady, expect, gridApiHandle, test, waitForGridContent } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
     // The chart is created on first data rendered and the Chart Tool Panels are shown by default,
@@ -36,7 +36,7 @@ test.agExample(import.meta, () => {
         test.describe('dark', () => {
             test.use({ loadPageOptions: { agThemeMode: 'dark-blue' } });
 
-            test.eachFramework('chart themes are dark, matching the grid', async ({ page, remoteGrid }) => {
+            test.eachFramework('chart themes are dark, matching the grid', async ({ page }) => {
                 await ensureGridReady(page);
                 await waitForGridContent(page);
                 await expect(page.locator('.ag-chart-tabbed-menu')).toBeVisible();
@@ -44,7 +44,8 @@ test.agExample(import.meta, () => {
                 expect(await page.evaluate(() => document.documentElement.dataset.agThemeMode)).toBe('dark-blue');
                 expect(await page.evaluate(() => document.documentElement.dataset.colorScheme)).toBe('dark');
 
-                const themes = await remoteGrid(page).getGridOption('chartThemes');
+                const api = await gridApiHandle(page);
+                const themes = await api.evaluate((api) => api.getGridOption('chartThemes'));
 
                 expect(themes).toBeTruthy();
                 expect(themes).not.toHaveLength(0);
@@ -55,14 +56,15 @@ test.agExample(import.meta, () => {
         test.describe('light', () => {
             test.use({ loadPageOptions: { agThemeMode: 'light' } });
 
-            test.eachFramework('chart themes stay light', async ({ page, remoteGrid }) => {
+            test.eachFramework('chart themes stay light', async ({ page }) => {
                 await ensureGridReady(page);
                 await waitForGridContent(page);
                 await expect(page.locator('.ag-chart-tabbed-menu')).toBeVisible();
 
                 expect(await page.evaluate(() => document.documentElement.dataset.agThemeMode)).toBe('light');
 
-                const themes = await remoteGrid(page).getGridOption('chartThemes');
+                const api = await gridApiHandle(page);
+                const themes = await api.evaluate((api) => api.getGridOption('chartThemes'));
 
                 expect(themes).toBeTruthy();
                 expect(themes!.filter((theme) => theme.endsWith('-dark'))).toEqual([]);

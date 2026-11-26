@@ -1,4 +1,4 @@
-import { createApp } from 'vue';
+import { createApp, defineComponent } from 'vue';
 
 import type { ColDef, GridReadyEvent } from 'ag-grid-community';
 import { ClientSideRowModelModule, ModuleRegistry, enableDevValidations } from 'ag-grid-community';
@@ -11,13 +11,15 @@ if (process.env.NODE_ENV !== 'production') {
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
-const VueExample = {
+const VueExample = defineComponent({
     template: `
-        <div style="display: flex; flex-direction: column; height: 100%">
-            <div style="margin-bottom: 5px;">
-                <button @click="fillLarge">Fill 100%</button>
-                <button @click="fillMedium">Fill 60%</button>
-                <button @click="fillExact">Exactly 400 x 400 pixels</button>
+        <div class="example-wrapper">
+            <div class="example-controls">
+                <div class="controls-row">
+                    <button @click="fillLarge">Fill 100%</button>
+                    <button @click="fillMedium">Fill 60%</button>
+                    <button @click="fillExact">Exactly 400 x 400 pixels</button>
+                </div>
             </div>
             <div style="width: 100%; flex: 1 1 auto;">
                 <ag-grid-vue :style="{width, height}"
@@ -33,8 +35,8 @@ const VueExample = {
     },
     data: function () {
         return {
-            columnDefs: null,
-            rowData: null,
+            columnDefs: null as ColDef[] | null,
+            rowData: null as any[] | null,
             height: '100%',
             width: '100%',
         };
@@ -63,18 +65,18 @@ const VueExample = {
         fillExact() {
             this.setWidthAndHeight('400px', '400px');
         },
-        setWidthAndHeight(width, height) {
+        setWidthAndHeight(width: string, height: string) {
             this.width = width;
             this.height = height;
         },
         onGridReady(params: GridReadyEvent) {
-            const updateData = (data) => (this.rowData = data);
+            const updateData = (data: any[]) => (this.rowData = data);
 
             fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
                 .then((resp) => resp.json())
                 .then((data) => updateData(data));
         },
     },
-};
+});
 
 createApp(VueExample).mount('#app');

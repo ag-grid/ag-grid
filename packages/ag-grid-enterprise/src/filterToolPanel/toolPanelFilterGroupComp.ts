@@ -4,18 +4,16 @@ import type {
     AgColumn,
     AgProvidedColumnGroup,
     FilterOpenedEvent,
+    HeaderTooltipCallbackParams,
     IconName,
-    TooltipCallbackParams,
     TooltipFeature,
 } from 'ag-grid-community';
 import {
     Component,
     _addGridCommonParams,
     _createIconNoSpan,
-    _getHeaderTooltipComponentDefinition,
-    _getShouldDisplayTooltip,
     _isHeaderNameChangeForGroup,
-    _resolveHeaderTooltipValue,
+    _resolveHeaderTooltip,
     isProvidedColumnGroup,
 } from 'ag-grid-community';
 
@@ -86,36 +84,52 @@ export class ToolPanelFilterGroupComp extends Component {
         this.tooltipFeature = this.createOptionalManagedBean(
             this.beans.tooltipSvc?.createTooltip({
                 getGui: () => filterGroupComp.getTitleBarGui(),
-                getTooltipComponentDefinition: () => _getHeaderTooltipComponentDefinition(getColDef()),
                 getLocation: () => 'filterToolPanelColumnGroup',
-                getTooltipValue: () => {
+                getTooltip: () => {
                     const colDef = getColDef();
                     const displayName = this.filterGroupName;
-                    return _resolveHeaderTooltipValue(
-                        colDef,
-                        _addGridCommonParams<TooltipCallbackParams>(gos, {
+                    const params = {
+                        ...(colDef ? { colDef } : {}),
+                        column: this.callbackColumn,
+                        value: displayName,
+                        valueFormatted: displayName,
+                    };
+                    return _resolveHeaderTooltip(
+                        gos,
+                        _addGridCommonParams<HeaderTooltipCallbackParams>(gos, {
                             location: 'filterToolPanelColumnGroup',
-                            colDef,
-                            column: this.callbackColumn,
-                            value: displayName,
-                            valueFormatted: displayName,
+                            ...params,
                         })
                     );
                 },
-                shouldDisplayTooltip: _getShouldDisplayTooltip(
-                    gos,
-                    () => filterGroupComp.getGui().querySelector('.ag-group-title') as HTMLElement | undefined
-                ),
-                getAdditionalParams: () => {
-                    const colDef = getColDef();
-                    return {
-                        ...(colDef ? { colDef } : {}),
-                        column: this.callbackColumn,
-                        valueFormatted: this.filterGroupName,
-                    };
-                },
+                getTextElement: () =>
+                    filterGroupComp.getGui().querySelector<HTMLElement>('.ag-group-title') ?? undefined,
             })
         );
+
+        for (const icon of filterGroupComp.getTitleBarGui().querySelectorAll<HTMLElement>('.ag-group-title-bar-icon')) {
+            const tooltip = this.addTooltip({
+                control: this.isColumnGroup() ? 'groupExpand' : 'filterExpand',
+                getGui: () => icon,
+                getLocation: () => 'filterToolPanelColumnGroup',
+                getTooltip: () => {
+                    const expanded = filterGroupComp.isExpanded();
+                    const action = expanded ? 'Collapse' : 'Expand';
+                    const target = this.isColumnGroup() ? 'Group' : 'Filter';
+                    return {
+                        value: this.getLocaleTextFunc()(
+                            `tooltip${action}${target}`,
+                            `${action} ${target.toLowerCase()}`
+                        ),
+                        params: { column: this.callbackColumn },
+                    };
+                },
+            });
+            this.addManagedListeners(filterGroupComp, {
+                expanded: () => tooltip?.refreshTooltip(),
+                collapsed: () => tooltip?.refreshTooltip(),
+            });
+        }
 
         this.refreshFilterClass();
         this.addExpandCollapseListeners();

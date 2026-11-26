@@ -1,4 +1,15 @@
-export default {
+import { defineComponent } from 'vue';
+import type { PropType } from 'vue';
+
+import type { IStatusPanelParams } from 'ag-grid-community';
+
+export default defineComponent({
+    props: {
+        params: {
+            type: Object as PropType<IStatusPanelParams>,
+            required: true,
+        },
+    },
     template: `
       <div class="container" v-if="visible">
       <div>
@@ -17,11 +28,11 @@ export default {
         onClick() {
             console.log('Selected Row Count: ' + this.params.api.getSelectedRows().length);
         },
-        setVisible(visible) {
+        setVisible(visible: boolean) {
             this.visible = visible;
         },
-        isVisible() {
+        isVisible(): boolean {
             return this.visible;
         },
     },
-};
+});

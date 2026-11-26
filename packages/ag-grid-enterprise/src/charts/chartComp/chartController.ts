@@ -107,6 +107,7 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
             cellRange: this.model.suppliedCellRange,
             switchCategorySeries: this.model.switchCategorySeries,
             aggFunc: this.model.aggFunc,
+            paired: this.model.paired,
             seriesChartTypes: undefined,
             suppressChartRanges: false,
             crossFiltering: false,
@@ -125,6 +126,7 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
                 chartModelParams.seriesGroupType = params.seriesGroupType ?? this.model.seriesGroupType;
                 chartModelParams.useGroupColumnAsCategory =
                     (params as UpdateRangeChartParams).useGroupColumnAsCategory ?? this.model.useGroupColumnAsCategory;
+                chartModelParams.paired = params.paired ?? this.model.paired;
                 break;
             case 'crossFilterChartUpdate':
                 chartModelParams.cellRange = this.createCellRange(params) ?? this.model.suppliedCellRange;
@@ -224,6 +226,7 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
             seriesChartTypes: this.getSeriesChartTypes(),
             updatedOverrides: updatedOverrides,
             seriesGroupType: model.seriesGroupType,
+            paired: model.paired,
         };
 
         return this.isCategorySeriesSwitched() ? this.invertCategorySeriesParams(params) : params;
@@ -282,7 +285,16 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
             seriesChartTypes,
             seriesGroupType: this.model.seriesGroupType,
             useGroupColumnAsCategory: this.model.useGroupColumnAsCategory,
+            paired: this.model.paired,
         };
+    }
+
+    public isPaired(): boolean {
+        return this.model.paired;
+    }
+
+    public setPaired(paired: boolean): void {
+        this.model.paired = paired;
     }
 
     public getChartId(): string {
@@ -408,7 +420,7 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
     }
 
     public getThemeNames(): string[] {
-        return this.gos.get('chartThemes') || DEFAULT_THEMES;
+        return this.gos.get('chartThemes') ?? DEFAULT_THEMES;
     }
 
     public getPalettes(): AgChartThemePalette[] {
@@ -598,8 +610,8 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
     private getCellRangeParams(): CellRangeParams {
         const cellRanges = this.getCellRanges();
         const firstCellRange = cellRanges[0];
-        const startRow = firstCellRange?.startRow || null;
-        const endRow = firstCellRange?.endRow || null;
+        const startRow = firstCellRange?.startRow ?? null;
+        const endRow = firstCellRange?.endRow ?? null;
 
         return {
             rowStartIndex: startRow?.rowIndex ?? null,

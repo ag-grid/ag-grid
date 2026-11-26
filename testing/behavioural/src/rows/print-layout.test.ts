@@ -1,6 +1,6 @@
 import { TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
-import { ClientSideRowModelModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, PinnedRowModule } from 'ag-grid-community';
 
 interface Row {
     id: string;
@@ -24,7 +24,7 @@ const centreHeaderColIds = (root: HTMLElement): (string | null)[] =>
  */
 describe('print layout', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule],
+        modules: [ClientSideRowModelModule, PinnedRowModule],
     });
 
     afterEach(() => {
@@ -78,5 +78,22 @@ describe('print layout', () => {
         // The header rows skip a rebuild when the rendered set has not moved, and a layout switch moves
         // the pinned headers without moving it.
         expect(centreHeaderColIds(root)).toEqual(['l', 'c', 'r']);
+    });
+
+    test('a rowHeight change reaches the rows, pinned rows included', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'a' }],
+            rowData: ROW_DATA,
+            pinnedTopRowData: [{ a: 'p' }],
+            domLayout: 'print',
+        });
+        await asyncSetTimeout(0);
+
+        api.setGridOption('rowHeight', 60);
+        await asyncSetTimeout(0);
+
+        expect(ROW_DATA.map((_, i) => api.getDisplayedRowAtIndex(i)!.rowHeight)).toEqual([60, 60]);
+        expect(api.getDisplayedRowAtIndex(1)!.rowTop).toBe(60);
+        expect(api.getPinnedTopRow(0)!.rowHeight).toBe(60);
     });
 });

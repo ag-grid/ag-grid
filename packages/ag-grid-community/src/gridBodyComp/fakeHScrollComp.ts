@@ -1,4 +1,4 @@
-import { RefPlaceholder, _getScrollLeft, _isVisible, _setFixedHeight, _setFixedWidth, _setScrollLeft } from 'ag-stack';
+import { RefPlaceholder, _getScrollLeft, _setFixedHeight, _setFixedWidth, _setScrollLeft } from 'ag-stack';
 
 import type { BeanCollection } from '../context/context';
 import type { ElementParams } from '../utils/element';
@@ -119,6 +119,7 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
                 this.eContainer.style.setProperty('min-height', '1px');
             }
             this.setVisible(hScrollShowing, { skipAriaHidden: true });
+            this.syncScrollPosition();
         };
         window.clearTimeout(this.setScrollVisibleDebounce);
         if (!hScrollShowing) {
@@ -150,10 +151,14 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
         return _getScrollLeft(this.eViewport, this.enableRtl);
     }
 
-    public setScrollPosition(value: number): void {
-        if (!_isVisible(this.eViewport)) {
-            this.attemptSettingScrollPosition(value);
+    private syncScrollPosition(): void {
+        const gridBodyCtrl = this.beans.ctrlsSvc.getGridBodyCtrl();
+        if (gridBodyCtrl) {
+            this.setScrollPosition(_getScrollLeft(gridBodyCtrl.eGridViewport, this.enableRtl));
         }
+    }
+
+    public setScrollPosition(value: number): void {
         _setScrollLeft(this.eViewport, value, this.enableRtl);
     }
 }

@@ -1,0 +1,45 @@
+import type { ColDef, GridApi, GridOptions, TooltipCallbackParams } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    ModuleRegistry,
+    TooltipModule,
+    createGrid,
+    enableDevValidations,
+} from 'ag-grid-community';
+
+if (process.env.NODE_ENV !== 'production') {
+    // Enable extended validations only for development
+    enableDevValidations();
+}
+
+ModuleRegistry.registerModules([TooltipModule, ClientSideRowModelModule]);
+
+const columnDefs: ColDef[] = [
+    { field: 'athlete', tooltip: true },
+    { field: 'country', tooltip: 'The country the athlete represents' },
+    { field: 'year', tooltip: ({ value }: TooltipCallbackParams) => `Games held in ${value}` },
+];
+
+let gridApi: GridApi<IOlympicData>;
+
+const gridOptions: GridOptions<IOlympicData> = {
+    defaultColDef: {
+        flex: 1,
+        minWidth: 100,
+    },
+    columnDefs: columnDefs,
+    tooltipShowMode: 'standard',
+    tooltipShowDelay: 500,
+};
+
+// setup the grid after the page has finished loading
+document.addEventListener('DOMContentLoaded', () => {
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    gridApi = createGrid(gridDiv, gridOptions);
+
+    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+        .then((response) => response.json())
+        .then((data) => {
+            gridApi!.setGridOption('rowData', data);
+        });
+});

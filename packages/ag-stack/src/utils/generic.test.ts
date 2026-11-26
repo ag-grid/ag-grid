@@ -84,10 +84,21 @@ describe('_defaultComparator', () => {
             expect(_defaultComparator('a', 'a')).toBe(0);
         });
 
-        it('uses localeCompare when accentedCompare is enabled for strings', () => {
-            // accentedCompare delegates to localeCompare which handles collation (e.g. "é" vs "e")
-            expect(sign(_defaultComparator('a', 'b', true))).toBe(-1);
-            expect(_defaultComparator('é', 'é', true)).toBe(0);
+        it('uses the string comparator when provided and both values are strings', () => {
+            const localeCompare = (a: string, b: string) => a.localeCompare(b);
+            // localeCompare handles collation, so "à" sorts between "a" and "b" rather than after "z"
+            expect(sign(_defaultComparator('à', 'b', localeCompare))).toBe(-1);
+            expect(sign(_defaultComparator('à', 'b'))).toBe(1);
+            expect(_defaultComparator('é', 'é', localeCompare)).toBe(0);
+        });
+
+        it('ignores the string comparator unless both values are strings', () => {
+            const comparator = vi.fn(() => 0);
+            expect(sign(_defaultComparator(1, 2, comparator))).toBe(-1);
+            // a string and a number are neither greater nor less than each other, whichever comes first
+            expect(_defaultComparator('b', 1, comparator)).toBe(0);
+            expect(_defaultComparator(1, 'b', comparator)).toBe(0);
+            expect(comparator).not.toHaveBeenCalled();
         });
     });
 

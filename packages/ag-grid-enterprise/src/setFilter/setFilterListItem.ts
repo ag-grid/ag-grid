@@ -1,5 +1,6 @@
 import {
     RefPlaceholder,
+    _addManagedElementListeners,
     _setAriaChecked,
     _setAriaDescribedBy,
     _setAriaExpanded,
@@ -34,8 +35,8 @@ import {
     _createElement,
     _createIcon,
     _getCellRendererDetails,
-    _getShouldDisplayTooltip,
-    _isShowTooltipWhenTruncated,
+    _isAutomaticTooltipEnabled,
+    _resolveTextTooltip,
 } from 'ag-grid-community';
 
 import type { SetFilterModelTreeItem } from './iSetDisplayValueModel';
@@ -134,6 +135,7 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
     private tooltipFeature?: TooltipFeature;
     private shouldDisplayTooltip?: () => boolean;
     private rendererSetTooltip = false;
+    private rendererTooltipValue?: string;
     private readonly rendererGuard = new ComponentInstanceGuard();
     private rendererClaim?: ComponentInstanceClaim;
     private pendingCellRendererClaim?: ComponentInstanceClaim;
@@ -163,20 +165,48 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
         this.tooltipFeature = this.createOptionalManagedBean(
             this.beans.tooltipSvc?.createTooltip({
                 getGui: () => this.focusWrapper,
-                getTooltipComponentDefinition: () => this.params.colDef,
                 getLocation: () => 'setFilterValue',
-                shouldDisplayTooltip: () => this.shouldDisplayTooltip?.() ?? true,
-                getAdditionalParams: () => {
+                getTextElement: () => {
+                    if (this.params.cellRenderer && !this.isKeyOnly) {
+                        return undefined;
+                    }
+                    const eGui = this.eCheckbox.getGui();
+                    return (
+                        eGui.querySelector<HTMLElement>('.ag-set-filter-item-missing-value') ??
+                        eGui.querySelector<HTMLElement>('.ag-label') ??
+                        undefined
+                    );
+                },
+                getTooltip: () => {
                     const { colDef, column } = this.params;
-                    const additionalParams: TooltipSourceParams = {
+                    const params: TooltipSourceParams & { level?: number } = {
                         colDef,
                         column: column as AgColumn,
+                        value: this.cellRendererParams?.value,
                         valueFormatted: this.formattedValue ?? undefined,
                     };
                     if (this.isTree) {
-                        (additionalParams as any).level = this.depth;
+                        params.level = this.depth;
                     }
-                    return additionalParams;
+                    const tooltip = {
+                        value: this.rendererTooltipValue,
+                        params,
+                        componentDefinition: colDef,
+                        shouldDisplay: this.shouldDisplayTooltip,
+                    };
+                    if (!this.rendererSetTooltip && this.hasDefaultTooltip()) {
+                        const value = this.getDefaultTooltipText(this.cellRendererParams?.value, this.formattedValue);
+                        // Missing-value information belongs to the tooltip, not its source text.
+                        return {
+                            ..._resolveTextTooltip(this.gos, {
+                                ...tooltip,
+                                value,
+                                automatic: this.params.showTooltips === undefined,
+                            }),
+                            value,
+                        };
+                    }
+                    return _resolveTextTooltip(this.gos, tooltip);
                 },
             })
         );
@@ -232,12 +262,12 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
         eGroupClosedIcon.appendChild(_createIcon('setFilterGroupClosed', beans, null));
         eGroupOpenedIcon.appendChild(_createIcon('setFilterGroupOpen', beans, null));
         const listener = this.onExpandOrContractClicked.bind(this);
-        this.addManagedElementListeners(eGroupClosedIcon, { click: listener });
-        this.addManagedElementListeners(eGroupOpenedIcon, { click: listener });
+        _addManagedElementListeners(this, eGroupClosedIcon, { click: listener });
+        _addManagedElementListeners(this, eGroupOpenedIcon, { click: listener });
 
         if (hasIndeterminateExpandState) {
             eGroupIndeterminateIcon.appendChild(_createIcon('setFilterGroupIndeterminate', beans, null));
-            this.addManagedElementListeners(eGroupIndeterminateIcon, {
+            _addManagedElementListeners(this, eGroupIndeterminateIcon, {
                 click: listener,
             });
         }
@@ -331,7 +361,12 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
         const translate = this.getLocaleTextFunc();
         const itemLabel = translate('ariaFilterValue', 'Filter Value');
         const ariaEl = this.getAriaElement();
-        _setAriaLabel(ariaEl, `${value} ${itemLabel}${this.getMissingSuffix()}`);
+        const missingLabel = this.getMissingLabel();
+        // The label goes right after the value, as it is shown, before the item label.
+        const ariaLabel = missingLabel
+            ? `${value}, ${missingLabel} ${itemLabel}`
+            : `${value} ${itemLabel}${this.getMissingSuffix()}`;
+        _setAriaLabel(ariaEl, ariaLabel);
         _setAriaDescribedBy(ariaEl, this.eCheckbox.getInputElement().id);
     }
 
@@ -347,11 +382,20 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
             _setAriaLabel(ariaEl, null);
             _setAriaDescribedBy(ariaEl);
         } else {
-            _setAriaLabel(
-                ariaEl,
-                isMissing ? this.getDefaultTooltipText(this.cellRendererParams.value, this.formattedValue) : null
-            );
+            _setAriaLabel(ariaEl, isMissing ? this.getMissingAriaLabel() : null);
         }
+    }
+
+    /** The configured label replaces `ariaNotInCurrentData`, so the name holds the text shown. */
+    private getMissingAriaLabel(): string {
+        const text = this.formattedValue ?? _toStringOrNull(this.cellRendererParams.value) ?? '';
+        const missingLabel = this.getMissingLabel();
+        return missingLabel ? `${text}, ${missingLabel}` : `${text}${this.getMissingSuffix()}`;
+    }
+
+    /** The label shown after a missing value, if any. */
+    private getMissingLabel(): string | undefined {
+        return (this.isMissing && this.params.preservePreviousValuesLabel) || undefined;
     }
 
     private getMissingSuffix(): string {
@@ -469,22 +513,6 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
         const rendererClaim = this.rendererGuard.claim();
         this.rendererClaim = rendererClaim;
         this.formattedValue = formattedValue;
-        if (resetTooltip) {
-            this.rendererSetTooltip = false;
-            if (this.hasDefaultTooltip()) {
-                // With a label after it, the value truncates in its own span rather than the whole label.
-                this.shouldDisplayTooltip = _getShouldDisplayTooltip(gos, () => {
-                    const eGui = this.eCheckbox.getGui();
-                    return (eGui.querySelector('.ag-set-filter-item-missing-value') ??
-                        eGui.querySelector('.ag-label')) as HTMLElement | undefined;
-                });
-                this.tooltipFeature?.setTooltipAndRefresh(this.getDefaultTooltipText(value, formattedValue));
-            } else {
-                this.shouldDisplayTooltip = undefined;
-                this.tooltipFeature?.setTooltipAndRefresh(null);
-            }
-        }
-
         this.cellRendererParams = _addGridCommonParams(gos, {
             value,
             valueFormatted: formattedValue,
@@ -494,20 +522,32 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
                 gos.assertModuleRegistered('Tooltip', 3);
                 if (rendererClaim.isCurrent()) {
                     this.rendererSetTooltip = true;
+                    this.rendererTooltipValue = value;
                     this.shouldDisplayTooltip = shouldDisplayTooltip;
-                    this.tooltipFeature?.setTooltipAndRefresh(value);
+                    this.tooltipFeature?.refreshTooltip();
                 }
             },
         });
+        if (resetTooltip) {
+            this.rendererSetTooltip = false;
+            this.rendererTooltipValue = undefined;
+            this.shouldDisplayTooltip = undefined;
+            this.tooltipFeature?.refreshTooltip();
+        }
     }
 
     private hasDefaultTooltip(): boolean {
         const params = this.params;
-        return !!params.showTooltips && (!_isShowTooltipWhenTruncated(this.gos) || !params.cellRenderer);
+        return (
+            params.showTooltips === true ||
+            (params.showTooltips === undefined &&
+                _isAutomaticTooltipEnabled(this.gos) &&
+                (!params.cellRenderer || this.isKeyOnly))
+        );
     }
 
     private getDefaultTooltipText(value: V | null | (() => string), formattedValue: string | null): string | null {
-        const text = formattedValue != null ? formattedValue : _toStringOrNull(value);
+        const text = formattedValue ?? _toStringOrNull(value);
         return this.isMissing ? `${text ?? ''}${this.getMissingSuffix()}` : text;
     }
 
@@ -550,7 +590,7 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
 
     private renderCellWithoutCellRenderer(): void {
         const { valueFormatted, value } = this.cellRendererParams;
-        let valueToRender = valueFormatted == null ? value : valueFormatted;
+        let valueToRender = valueFormatted ?? value;
         if (typeof valueToRender !== 'string') {
             this.beans.log.warn(208);
             valueToRender = '';
@@ -570,7 +610,7 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
         if (content === undefined) {
             return;
         }
-        const missingLabel = this.isMissing ? this.params.preservePreviousValuesLabel : undefined;
+        const missingLabel = this.getMissingLabel();
         if (!missingLabel) {
             this.eCheckbox.setLabel(content);
             return;

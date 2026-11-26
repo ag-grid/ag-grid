@@ -3,7 +3,6 @@ import { defineComponent, nextTick, onMounted, ref } from 'vue';
 import { GridApi, IToolPanelParams } from 'ag-grid-community';
 
 import { callChatGPT } from './chatgptApi';
-import { ChatMessage } from './types';
 
 export interface ChatMessage {
     role: 'system' | 'user' | 'assistant';

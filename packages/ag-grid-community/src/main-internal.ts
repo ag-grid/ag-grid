@@ -9,6 +9,7 @@ export type {
     _AggregationGridApi,
     _AiToolkitGridApi,
     _BatchEditApi,
+    _CalculatedColumnsGridApi,
     _CellSelectionGridApi,
     _ClientSideRowModelGridApi,
     _ClipboardGridApi,
@@ -138,6 +139,7 @@ export { BaseGridSerializingSession } from './export/baseGridSerializingSession'
 
 export {
     _getFilterModel,
+    _isFilterCompActive,
     _refreshFilterUi,
     _refreshHandlerAndUi,
     _updateFilterModel,
@@ -152,6 +154,8 @@ export {
     _isGridSuppliedFilterParam,
 } from './filter/filterDataTypeUtils';
 export { _getDefaultFilter, _getFilterKey, _resolveFilter } from './filter/filterDefResolver';
+export { _legacyFilterMethods, _reportFilterModifiedListened, _warnLegacyFilterMode } from './filter/legacyFilterMode';
+export type { LegacyFilterMethods } from './filter/legacyFilterMode';
 export type { ResolvedFilter } from './filter/filterDefResolver';
 export { _getDisplayHandler, _getRowHandler } from './filter/pairedFilterHandler';
 export { translateForFilter as _translateForFilter } from './filter/filterLocaleText';
@@ -166,6 +170,7 @@ export { _getFilterValueSource } from './filter/filterValueService';
 export { FilterWrapperComp } from './filter/filterWrapperComp';
 export { _getDefaultFloatingFilterType } from './filter/floating/floatingFilterMapper';
 export { _getFloatingFilterAriaLabel } from './filter/floating/floatingFilterUtils';
+export { _addFloatingFilterValueTooltip } from './filter/floating/provided/floatingFilterValueTooltip';
 export { _isUseApplyButton } from './filter/provided/providedFilterUtils';
 export {
     _ADVANCED_FILTER_ONLY_OPTIONS,
@@ -359,6 +364,7 @@ export type { GroupValueResult, IShowRowGroupColsValueService } from './interfac
 export type { IShowValuesAsService } from './interfaces/iShowValuesAsService';
 export type { ISideBar, ISideBarService } from './interfaces/iSideBar';
 export type { SortOption } from './interfaces/iSortOption';
+export { _getColumnStringComparator } from './sort/accentedSort';
 export { _resolveSortOptions } from './sort/sortOptionUtils';
 export type { IAutoCompleteComponentParams } from './interfaces/iAutoComplete';
 export type { IToolbarComp, IToolbarService } from './interfaces/iToolbar';
@@ -376,6 +382,7 @@ export {
     _findEnterpriseCoreModule,
     _getGridRegisteredModules,
     _registerModule,
+    _resetModuleRegistry,
     _setUmd,
 } from './modules/moduleRegistry';
 export type { CellNavigationService } from './navigation/cellNavigationService';
@@ -402,6 +409,7 @@ export type { RowNodeSorter } from './sort/rowNodeSorter';
 export type { SortService } from './sort/sortService';
 export { _getSortModel } from './sort/sortService';
 export type { CellStyleService } from './styling/cellStyleService';
+export { _getLayoutCssClass } from './styling/layoutFeature';
 export { coreDefaults as _coreThemeDefaults } from './theming/core/core-css';
 export {
     themeAlpineParams as _themeAlpineParams,
@@ -412,11 +420,12 @@ export {
 export {
     _getCellTooltipComponentDefinition,
     _getHeaderTooltipComponentDefinition,
-    _getShouldDisplayTooltip,
-    _isShowTooltipWhenTruncated,
+    _isAutomaticTooltipEnabled,
+    _resolveTextTooltip,
     type TooltipFeature,
     type TooltipSource,
     type TooltipSourceParams,
+    type ResolvedTooltip,
 } from './tooltip/tooltipFeature';
 export {
     _getLegacyTooltipFieldValue,
@@ -424,6 +433,7 @@ export {
     _resolveCellTooltipValue,
     _resolveGroupTooltipValue,
     _resolveHeaderTooltipValue,
+    _resolveHeaderTooltip,
     type LegacyTooltipFieldResolution,
 } from './tooltip/tooltipValueUtils';
 export type { ChangedCellsPath, ChangedPath, ChangedRowsPath, IChangedPathFactory } from './utils/changedPath';
@@ -459,6 +469,7 @@ export {
     _errorWithoutAttribution,
     _logPreInitWarn,
     _resetMissingModuleReports,
+    _resetValidationLogging,
     _warnForGrid,
     _warnWithoutAttribution,
 } from './validation/logging';

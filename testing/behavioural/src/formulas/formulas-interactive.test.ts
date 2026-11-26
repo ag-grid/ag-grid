@@ -7,8 +7,10 @@ import {
     asyncSetTimeout,
     clipboardUtils,
     initPointerEventPolyfill,
+    mockGridLayout,
     waitForEvent,
 } from 'ag-test-utils';
+import { onTestFinished } from 'vitest';
 
 import type { CellRangeParams, GridApi, GridOptions, Module } from 'ag-grid-community';
 import {
@@ -1165,5 +1167,174 @@ describe('ag-grid formulas interactive workflows', () => {
             ROOT id:ROOT_NODE_ID
             └── LEAF id:r0 row-number:"1" a:"xyz"
         `);
+    });
+
+    // Inside a shadow root the page's focused element is the host, never the editor, so focus is read through the grid's root.
+    test('typing a function name in a formula cell of a grid inside a shadow root suggests the matching functions', async () => {
+        const host = document.body.appendChild(document.createElement('div'));
+        onTestFinished(() => host.remove());
+        const shadowRoot = host.attachShadow({ mode: 'open' });
+        const api = await gridsManager.createGridAndWait(shadowRoot.appendChild(document.createElement('div')), {
+            defaultColDef: { allowFormula: true, editable: true },
+            rowData: [{ id: 'r1', a: 2, b: null }],
+            columnDefs: [{ field: 'a' }, { field: 'b' }],
+        });
+
+        const started = waitForEvent('cellEditingStarted', api);
+        api.startEditingCell({ rowIndex: 0, colKey: 'b' });
+        await started;
+        const editor = shadowRoot.querySelector<HTMLTextAreaElement>('.ag-formula-input-field textarea')!;
+        await userEvent.type(editor, '=SU');
+
+        await waitFor(() =>
+            expect(
+                Array.from(shadowRoot.querySelectorAll('.ag-autocomplete-row-label'), (label) => label.textContent)
+            ).toContain('SUM')
+        );
+        await waitFor(() =>
+            expect(
+                shadowRoot.getElementById(editor.getAttribute('aria-activedescendant') ?? '')?.textContent?.trim()
+            ).toBe('SUM')
+        );
+        await userEvent.keyboard('{Enter}');
+        expect(editor.value).toBe('=SUM(');
+    });
+
+    test('the formula editor is a named combobox that is collapsed when no suggestions show', async () => {
+        const api = await createGrid('fx-editor-aria-name', {
+            rowData: [{ id: 'r1', a: 2, b: '=A1' }],
+            columnDefs: [{ field: 'a' }, { field: 'b' }],
+        });
+
+        const started = waitForEvent('cellEditingStarted', api);
+        api.startEditingCell({ rowIndex: 0, colKey: 'b' });
+        await started;
+        const editor = document.querySelector<HTMLTextAreaElement>('.ag-formula-input-field textarea')!;
+
+        expect(editor.value).toBe('=A1');
+        expect(editor.getAttribute('aria-label')).toBe('B');
+        expect(editor.getAttribute('role')).toBe('combobox');
+        expect(editor.getAttribute('aria-autocomplete')).toBe('list');
+        expect(editor.getAttribute('aria-haspopup')).toBe('listbox');
+        expect(editor.getAttribute('aria-expanded')).toBe('false');
+        expect(editor.hasAttribute('aria-controls')).toBe(false);
+        expect(editor.hasAttribute('aria-activedescendant')).toBe(false);
+    });
+
+    test('the formula editor exposes the function suggestions and the highlighted one while they show', async () => {
+        const api = await createGrid('fx-editor-aria-suggestions', {
+            rowData: [{ id: 'r1', a: 2, b: null }],
+            columnDefs: [{ field: 'a' }, { field: 'b' }],
+        });
+
+        const started = waitForEvent('cellEditingStarted', api);
+        api.startEditingCell({ rowIndex: 0, colKey: 'b' });
+        await started;
+        const editor = document.querySelector<HTMLTextAreaElement>('.ag-formula-input-field textarea')!;
+        const activeOption = () => document.getElementById(editor.getAttribute('aria-activedescendant') ?? '');
+        const activeOptionLabel = () => activeOption()?.textContent?.trim();
+
+        await userEvent.type(editor, '=SU');
+
+        await waitFor(() => expect(activeOptionLabel()).toBe('SUM'));
+        expect(editor.getAttribute('aria-expanded')).toBe('true');
+        expect(document.getElementById(editor.getAttribute('aria-controls')!)?.getAttribute('role')).toBe('listbox');
+        expect(activeOption()?.getAttribute('role')).toBe('option');
+        expect(activeOption()?.getAttribute('aria-selected')).toBe('true');
+
+        const firstOption = activeOption()!;
+        await userEvent.keyboard('{ArrowDown}');
+        await waitFor(() => expect(activeOption()?.getAttribute('aria-posinset')).toBe('2'));
+        expect(activeOption()).not.toBe(firstOption);
+        expect(activeOption()?.getAttribute('aria-selected')).toBe('true');
+
+        await userEvent.keyboard('{Escape}');
+        expect(editor.getAttribute('aria-expanded')).toBe('false');
+        expect(editor.hasAttribute('aria-controls')).toBe(false);
+        expect(editor.hasAttribute('aria-activedescendant')).toBe(false);
+
+        await userEvent.type(editor, 'M');
+        await waitFor(() => expect(editor.getAttribute('aria-expanded')).toBe('true'));
+        await userEvent.keyboard('{Tab}');
+        expect(editor.value).toBe('=SUM(');
+        expect(editor.getAttribute('aria-expanded')).toBe('false');
+        expect(editor.hasAttribute('aria-activedescendant')).toBe(false);
+    });
+
+    test('the formula editor falls back to the localised "Input Editor" name when the column has no display name', async () => {
+        const api = await createGrid('fx-editor-aria-name-fallback', {
+            rowData: [{ id: 'r1', a: 2, b: '=A1' }],
+            columnDefs: [{ field: 'a' }, { field: 'b', headerName: '' }],
+        });
+
+        const started = waitForEvent('cellEditingStarted', api);
+        api.startEditingCell({ rowIndex: 0, colKey: 'b' });
+        await started;
+        const editor = document.querySelector<HTMLTextAreaElement>('.ag-formula-input-field textarea')!;
+
+        expect(editor.getAttribute('aria-label')).toBe('Input Editor');
+    });
+
+    test('the formula editor references a function suggestion that only renders once scrolled into view', async () => {
+        onTestFinished(() => mockGridLayout.resetOptions());
+        mockGridLayout.asyncScrollEvents = true;
+
+        const formulaFuncs: GridOptions['formulaFuncs'] = {};
+        for (let i = 0; i < 30; ++i) {
+            formulaFuncs[`ZTEST${String(i).padStart(2, '0')}`] = { func: () => i };
+        }
+        const api = await createGrid('fx-editor-aria-scrolled-suggestion', {
+            rowData: [{ id: 'r1', a: 2, b: null }],
+            columnDefs: [{ field: 'a' }, { field: 'b' }],
+            formulaFuncs,
+        });
+
+        const started = waitForEvent('cellEditingStarted', api);
+        api.startEditingCell({ rowIndex: 0, colKey: 'b' });
+        await started;
+        const editor = document.querySelector<HTMLTextAreaElement>('.ag-formula-input-field textarea')!;
+        const activeOptionLabel = () =>
+            document.getElementById(editor.getAttribute('aria-activedescendant') ?? '')?.textContent?.trim();
+
+        await userEvent.type(editor, '=ZTEST');
+        await waitFor(() => expect(activeOptionLabel()).toBe('ZTEST00'));
+        expect(document.querySelector('[aria-posinset="12"]')).toBeNull();
+
+        // Held down, the key outpaces the scrolls it causes, so the target row renders only afterwards.
+        await userEvent.setup({ delay: null }).keyboard('{ArrowDown>11/}');
+
+        await waitFor(() => expect(activeOptionLabel()).toBe('ZTEST11'));
+    });
+
+    test('returning to a formula editor in a grid inside a shadow root after picking a reference puts the caret at the end', async () => {
+        const host = document.body.appendChild(document.createElement('div'));
+        const outside = document.body.appendChild(document.createElement('button'));
+        onTestFinished(() => {
+            host.remove();
+            outside.remove();
+        });
+        const shadowRoot = host.attachShadow({ mode: 'open' });
+        const api = await gridsManager.createGridAndWait(shadowRoot.appendChild(document.createElement('div')), {
+            defaultColDef: { allowFormula: true, editable: true },
+            cellSelection: true,
+            rowData: [{ id: 'r1', a: 2, b: null }],
+            columnDefs: [{ field: 'a' }, { field: 'b' }],
+        });
+
+        const started = waitForEvent('cellEditingStarted', api);
+        api.startEditingCell({ rowIndex: 0, colKey: 'b' });
+        await started;
+        const editor = shadowRoot.querySelector<HTMLTextAreaElement>('.ag-formula-input-field textarea')!;
+        await userEvent.type(editor, '=1+*2');
+        await userEvent.keyboard('{ArrowLeft}{ArrowLeft}');
+
+        api.addCellRange({ rowStartIndex: 0, rowEndIndex: 0, columns: ['a'] });
+        await waitFor(() => expect(editor.value).toBe('=1+A1*2'));
+        await waitFor(() => expect(editor.selectionStart).toBe('=1+A1'.length));
+        await asyncSetTimeout(0);
+
+        outside.focus();
+        editor.focus();
+        expect(editor.selectionStart).toBe('=1+A1*2'.length);
     });
 });

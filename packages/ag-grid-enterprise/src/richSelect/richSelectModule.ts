@@ -13,13 +13,5 @@ export const RichSelectModule: _ModuleWithoutApi = {
     version: VERSION,
     beans: [],
     userComponents: { agRichSelect: RichSelectCellEditor, agRichSelectCellEditor: RichSelectCellEditor },
-    icons: {
-        // open icon for rich select editor
-        richSelectOpen: 'small-down',
-        // remove for rich select editor pills
-        richSelectRemove: 'cancel',
-        // loading async values
-        richSelectLoading: 'loading',
-    },
     dependsOn: [EnterpriseCoreModule, _EditCoreModule],
 };

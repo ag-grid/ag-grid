@@ -5,7 +5,7 @@
 // Each iteration clicks the same row, so state alternates: select, then deselect. The measurement is
 // the whole gesture — the `isSoleSelection` read plus the selection mutation it enables — and the
 // mutation dominates for the grouped case, where selecting a group touches every descendant.
-import { bench, suite } from 'vitest';
+import { suite } from 'vitest';
 
 import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
 import {
@@ -16,7 +16,7 @@ import {
 } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
-import { BenchGridsManager, benchDefaults } from './bench-utils';
+import { BenchGridsManager, bench } from './bench-utils';
 
 const modules = [
     ClientSideRowModelModule,
@@ -61,7 +61,6 @@ suite('row selection — click toggle', () => {
                 api.flushAllAnimationFrames();
             },
             {
-                ...benchDefaults(),
                 setup: async () => {
                     await gridsManager.reset();
                     api = gridsManager.createGrid(id, { ...gridOptions, rowData });

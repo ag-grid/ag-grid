@@ -1,4 +1,5 @@
 import {
+    ANGULAR_PRIMITIVES_SEPARATOR_PLACEHOLDER,
     DEVELOPMENT_FLAGS,
     DEV_FLAG_PLACEHOLDERS,
     FRAMEWORK_VERSION_PARAM,
@@ -11,7 +12,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 
-const CLIENT_PATH = join(__dirname, '../../../../../public/example-runner/example-runner.js');
+const CLIENT_PATH = join(__dirname, '../../../../../public/example-runner/example-runner.mjs');
 const clientSource = readFileSync(CLIENT_PATH, 'utf8');
 
 const IMPORTS = {
@@ -65,7 +66,7 @@ const registeredImports = (head: any[]) => JSON.parse(head[0].textContent).impor
 
 afterEach(() => vi.unstubAllGlobals());
 
-describe('example-runner.js injectImportMap', () => {
+describe('example-runner.mjs injectImportMap', () => {
     test('registers the pinned version when the URL requests none', () => {
         const { head, options } = stubPage('?enableTestIds=true', { defaultProd: true });
 
@@ -141,6 +142,22 @@ describe('example-runner.js injectImportMap', () => {
         expect(registeredImports(head).react).toBe('https://esm.sh/react@18.3.1');
     });
 
+    test.each([
+        ['21.0.0', 'primitives-di.mjs'],
+        ['20.3.0', 'primitives/di.mjs'],
+    ])('resolves the Angular core primitives layout for version %s', (version, entryPoint) => {
+        const imports = {
+            '@angular/core/primitives/di': `https://cdn/@angular/core@${FRAMEWORK_VERSION_PLACEHOLDER}/fesm2022/primitives${ANGULAR_PRIMITIVES_SEPARATOR_PLACEHOLDER}di.mjs`,
+        };
+        const { head, options } = stubPage(`?version=${version}`, { imports });
+
+        loadClient().injectImportMap(options);
+
+        expect(registeredImports(head)['@angular/core/primitives/di']).toBe(
+            `https://cdn/@angular/core@${version}/fesm2022/${entryPoint}`
+        );
+    });
+
     test('takes the nonce the page hands it, for a page whose CSP allows only nonces', () => {
         const { head, options } = stubPage('', { nonce: 'test-nonce' });
 
@@ -188,7 +205,7 @@ describe('example-runner.js injectImportMap', () => {
     describe('carries the same constants the map is rendered with', () => {
         const literal = (name: string) => {
             const match = clientSource.match(new RegExp(`const ${name} = ('[^']*');`));
-            expect(match, `${name} not found in example-runner.js`).not.toBeNull();
+            expect(match, `${name} not found in example-runner.mjs`).not.toBeNull();
             return new Function(`return ${match![1]}`)() as string;
         };
 
@@ -206,7 +223,7 @@ describe('example-runner.js injectImportMap', () => {
 
         test('BUILD_TOKENS', () => {
             const tokens = clientSource.match(/const BUILD_TOKENS = (\{[\s\S]*?\n {4}\});/);
-            expect(tokens, 'BUILD_TOKENS not found in example-runner.js').not.toBeNull();
+            expect(tokens, 'BUILD_TOKENS not found in example-runner.mjs').not.toBeNull();
 
             expect(new Function(`return ${tokens![1]}`)()).toEqual({
                 production: {

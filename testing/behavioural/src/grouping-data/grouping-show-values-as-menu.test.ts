@@ -5,27 +5,6 @@ import type { GridApi, IAggFunc, IRowNode, ShowValuesAsModeDef } from 'ag-grid-c
 import { ClientSideRowModelModule, LocaleModule } from 'ag-grid-community';
 import { ColumnMenuModule, RowGroupingModule, ShowValuesAsModule } from 'ag-grid-enterprise';
 
-let restoreOffsetParent: (() => void) | undefined;
-
-function enableOffsetParentPolyfill(): void {
-    if (restoreOffsetParent) {
-        return;
-    }
-    const original = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'offsetParent');
-    Object.defineProperty(HTMLElement.prototype, 'offsetParent', {
-        configurable: true,
-        get(this: HTMLElement) {
-            return this.closest('.ag-measurement-container') ? null : this.parentElement;
-        },
-    });
-    restoreOffsetParent = () => {
-        if (original) {
-            Object.defineProperty(HTMLElement.prototype, 'offsetParent', original);
-        }
-        restoreOffsetParent = undefined;
-    };
-}
-
 function leaf(api: GridApi, id: string): IRowNode {
     const node = api.getRowNode(id);
     if (!node) {
@@ -51,7 +30,6 @@ async function openMenuOption(name: string): Promise<HTMLElement> {
 
 /** Opens a column's menu and its "Show Values As" submenu; resolves once the submenu has rendered. */
 async function openShowValuesAsSubmenu(api: GridApi, colKey: string): Promise<void> {
-    enableOffsetParentPolyfill();
     api.showColumnMenu(colKey);
     const parent = await openMenuOption('Show Values As');
     parent.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
@@ -65,7 +43,6 @@ describe('showValuesAs column menu', () => {
 
     afterEach(() => {
         gridMgr.reset();
-        restoreOffsetParent?.();
     });
 
     test('menu eligibility: a defaultColDef opt-in offers it only where supported; a direct `true` forces any type; `false` blocks', async () => {
@@ -93,7 +70,6 @@ describe('showValuesAs column menu', () => {
             ],
         });
 
-        enableOffsetParentPolyfill();
         for (const colId of ['region', 'score', 'units', 'label', 'note', 'amount']) {
             api.showColumnMenu(colId);
             await waitFor(() => expect(captured[colId]).toBeTruthy());
@@ -133,7 +109,6 @@ describe('showValuesAs column menu', () => {
             ],
         });
 
-        enableOffsetParentPolyfill();
         for (const colId of ['a', 'b', 'c', 'd']) {
             api.showColumnMenu(colId);
             await waitFor(() => expect(captured[colId]).toBeTruthy());
@@ -181,7 +156,6 @@ describe('showValuesAs column menu', () => {
             ],
         });
 
-        enableOffsetParentPolyfill();
         for (const colId of ['a', 'b']) {
             api.showColumnMenu(colId);
             await waitFor(() => expect(captured[colId]).toBeTruthy());
@@ -225,7 +199,6 @@ describe('showValuesAs column menu', () => {
         expect(api.getCellValue({ rowNode: leaf(api, '1'), colKey: 'gated', transformValues: true })).toBeCloseTo(0.25);
         expect(api.getCellValue({ rowNode: leaf(api, '1'), colKey: 'shown', transformValues: true })).toBeCloseTo(0.25);
 
-        enableOffsetParentPolyfill();
         for (const colId of ['gated', 'shown']) {
             api.showColumnMenu(colId);
             await waitFor(() => expect(captured[colId]).toBeTruthy());
@@ -346,7 +319,6 @@ describe('showValuesAs column menu', () => {
         expect(api.getCellValue({ rowNode: leaf(api, '1'), colKey: 'amount', transformValues: true })).toBeCloseTo(0.3);
         const callsBefore = aggCalls;
 
-        enableOffsetParentPolyfill();
         api.showColumnMenu('amount');
 
         // Open the "Show Values As" submenu and confirm the active mode is checked.
@@ -584,7 +556,6 @@ describe('showValuesAs column menu', () => {
             ],
         });
 
-        enableOffsetParentPolyfill();
         api.showColumnMenu('amount');
         let parent = await openMenuOption('Show Values As');
         parent.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));

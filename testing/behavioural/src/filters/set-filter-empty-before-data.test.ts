@@ -277,4 +277,22 @@ describe('Set Filter dropdown opened before data arrives (AG-17369)', () => {
         expect(scenarioA.modelValues).toEqual(['one']);
         expect(scenarioA.displayedRowCount).toBe(1);
     });
+
+    test.each([undefined, 'text'])(
+        'a model set before any row data keeps its values until rows are added, then drops those not in them, cell data type %s',
+        async (cellDataType) => {
+            const api = gridsManager.createGrid<RowData>('grid1', {
+                columnDefs: [{ field: 'value', filter: 'agSetColumnFilter', cellDataType }],
+            });
+            await asyncSetTimeout(0);
+            api.setFilterModel({ value: { filterType: 'set', values: ['one', 'three'] } });
+            await asyncSetTimeout(0);
+            expect(api.getFilterModel()).toEqual({ value: { filterType: 'set', values: ['one', 'three'] } });
+
+            api.setGridOption('rowData', [{ value: 'one' }, { value: 'two' }]);
+            await asyncSetTimeout(0);
+            expect(api.getFilterModel()).toEqual({ value: { filterType: 'set', values: ['one'] } });
+            expect(api.getDisplayedRowCount()).toBe(1);
+        }
+    );
 });

@@ -200,9 +200,10 @@ import type { RowModelType } from '../interfaces/iRowModel';
 import type { IRowNode, RowPinnedType } from '../interfaces/iRowNode';
 import type { IServerSideDatasource } from '../interfaces/iServerSideDatasource';
 import type { SideBarDef } from '../interfaces/iSideBar';
-import type { SortDirection } from '../interfaces/iSort';
+import type { AccentedSortOptions } from '../interfaces/iSort';
 import type { StatusBar } from '../interfaces/iStatusPanel';
 import type { Toolbar } from '../interfaces/iToolbar';
+import type { ViewSubscriptionOptions } from '../interfaces/iViewSubscription';
 import type { IViewportDatasource } from '../interfaces/iViewportDatasource';
 import type {
     DefaultColumnDropZoneMenuItem,
@@ -213,6 +214,12 @@ import type {
 import type { FullWidthNotesDataSource, NotesDataSource } from '../interfaces/notes';
 import type { RowNumbersOptions } from '../interfaces/rowNumbers';
 import type { OverlaySelectorFunc, OverlayType } from '../rendering/overlays/overlayComponent';
+import type {
+    TooltipCallbackParams,
+    TooltipContentParams,
+    TooltipPosition,
+    TooltipPositionCallback,
+} from '../tooltip/tooltipComponent';
 import type { Icons } from '../utils/icon';
 import type {
     CheckboxSelectionCallback,
@@ -285,16 +292,66 @@ export interface GridOptions<TData = any> {
      */
     enableBrowserTooltips?: boolean;
     /**
+     * Hide built-in control hints only.
+     * Automatic text tooltips, explicitly configured tooltips and validation tooltips are unaffected.
+     * @default false
+     * @agModule `TooltipModule`
+     */
+    suppressBuiltInTooltips?: boolean;
+    /**
+     * Custom component for built-in control hints only, separate from a column's `tooltipComponent`.
+     * Receives `IBuiltInTooltipParams`.
+     * @agModule `TooltipModule`
+     */
+    builtInTooltipComponent?: any;
+    /** Additional parameters for `builtInTooltipComponent`. */
+    builtInTooltipComponentParams?: any;
+    /**
      * The trigger that will cause tooltips to show and hide.
-     *  - `hover` - The tooltip will show/hide when a cell/header is hovered.
-     *  - `focus` - The tooltip will show/hide when a cell/header is focused.
+     * Applies wherever grid tooltips are supported, including cells, headers, set filter values and menu items.
+     *  - `hover` - The tooltip will show/hide when its element is hovered.
+     *  - `focus` - The tooltip shows on keyboard focus after `tooltipShowDelay`.
+     *  - `hoverOrFocus` - The tooltip shows on hover or keyboard focus after `tooltipShowDelay`.
+     * Source-specific show delays take precedence in all modes.
+     * Built-in control tooltips always show on hover and immediately on focus.
      * @default 'hover'
      * @initial
      * @agModule `TooltipModule`
      */
-    tooltipTrigger?: 'hover' | 'focus';
+    tooltipTrigger?: 'hover' | 'focus' | 'hoverOrFocus';
     /**
-     * The delay in milliseconds that it takes for tooltips to show up once an element is hovered over.
+     * Preferred tooltip placement. Flips or shifts to stay within the available space.
+     * Return `undefined` from the callback to use the default placement: towards the grid for Side Bar tabs, `top` for other built-in controls, otherwise `top-start`.
+     * Does not apply to browser tooltips.
+     * @agModule `TooltipModule`
+     */
+    tooltipPosition?: TooltipPosition | TooltipPositionCallback<TData>;
+    /**
+     * Anchor for hover tooltips. Focus and built-in control tooltips always use the target; mouse tracking uses the pointer.
+     * Does not apply to browser tooltips.
+     * @default 'target'
+     * @agModule `TooltipModule`
+     */
+    tooltipAnchor?: 'target' | 'pointer';
+    /**
+     * Distance in pixels between the tooltip and its anchor, along the placement axis.
+     * Does not apply to browser tooltips.
+     * @default 6
+     * @agModule `TooltipModule`
+     */
+    tooltipOffset?: number;
+    /**
+     * Provides a plain-text accessible description, available on focus before the visual tooltip appears.
+     * Use this for custom tooltips whose resolved `params.value` is structured data.
+     * Return `undefined` to use the resolved textual value, or `null` / an empty string for no description.
+     * @agModule `TooltipModule`
+     */
+    getTooltipAriaDescription?: (params: TooltipContentParams<TData>) => string | null | undefined;
+    /**
+     * The delay in milliseconds before a tooltip shows on hover or focus.
+     * Built-in control tooltips use this delay on hover but show immediately on focus.
+     * Filter Apply-button validation and Advanced Filter validation tooltips override this delay with 1000ms.
+     * Pointer switching uses `tooltipSwitchShowDelay` instead.
      * **Note:** This property does not work if `enableBrowserTooltips` is `true`.
      * @default 2000
      * @agModule `TooltipModule`
@@ -309,35 +366,42 @@ export interface GridOptions<TData = any> {
      */
     tooltipSwitchShowDelay?: number;
     /**
-     * The delay in milliseconds that it takes for tooltips to hide once they have been displayed.
-     * **Note:** This property does not work if `enableBrowserTooltips` is `true` and `tooltipHideTriggers` includes `timeout`.
-     * @default 10000
+     * An optional timeout in milliseconds after a tooltip appears. By default there is no timed hide.
+     * A timeout does not close an interactive tooltip while keyboard focus is inside it.
+     * **Note:** This property does not work if `enableBrowserTooltips` is `true`.
      * @agModule `TooltipModule`
      */
     tooltipHideDelay?: number;
     /**
      * Set to `true` to have tooltips follow the cursor once they are displayed.
+     * Does not apply to built-in control tooltips.
      * @default false
      * @initial
      * @agModule `TooltipModule`
      */
     tooltipMouseTrack?: boolean;
     /**
-     * This defines when tooltip will show up for Cells, Headers and SetFilter Items.
-     *  - `standard` - The tooltip always shows up when the items configured with Tooltips are hovered.
-     * - `whenTruncated` - The tooltip will only be displayed when the items hovered have truncated (showing ellipsis) values. This property does not work when `enableBrowserTooltips={true}`.
-     * @default `standard`
+     * Controls tooltips for grid-rendered text, including cells, headers, Set Filter items and tool panel labels.
+     * - `auto` - Automatically shows truncated text and configured tooltips with different content.
+     * - `standard` - Shows only configured tooltips, without requiring truncation.
+     * - `whenTruncated` - Shows only configured tooltips, and only when the target text is truncated.
+     * - `whenDifferent` - Shows only configured tooltips that differ from the default tooltip value:
+     *   the formatted value when available, otherwise the raw value.
+     * Applies to browser tooltips too. Custom components can supply their own display predicate.
+     * @default 'auto'
      * @agModule `TooltipModule`
      */
-    tooltipShowMode?: 'standard' | 'whenTruncated';
+    tooltipShowMode?: 'auto' | 'standard' | 'whenTruncated' | 'whenDifferent';
     /**
-     * Set to `true` to enable tooltip interaction. When this option is enabled, the tooltip will not hide while the
-     * tooltip itself it being hovered or has focus.
+     * Set to `true` for custom tooltip content containing focusable controls. Tab can enter the tooltip and
+     * Escape closes it and returns focus to its source. All tooltips remain visible while hovered.
+     * A callback receives the source parameters and decides separately each time a tooltip opens.
+     * Does not apply to browser tooltips.
      * @default false
      * @initial
      * @agModule `TooltipModule`
      */
-    tooltipInteraction?: boolean;
+    tooltipInteraction?: boolean | ((params: TooltipCallbackParams<TData>) => boolean);
     /**
      * DOM element to use as the popup parent for grid popups (context menu, column menu etc).
      */
@@ -516,20 +580,6 @@ export interface GridOptions<TData = any> {
      * @default false
      */
     suppressGroupChangesColumnVisibility?: boolean | 'suppressHideOnGroup' | 'suppressShowOnUngroup';
-
-    /**
-     * By default, when a column is un-grouped, i.e. using the Row Group Panel, it is made visible in the grid. This property stops the column becoming visible again when un-grouping.
-     * @default false
-     * @deprecated v33.0.0 - Use `suppressGroupChangesColumnVisibility: 'suppressShowOnUngroup'` instead.
-     */
-    suppressMakeColumnVisibleAfterUnGroup?: boolean;
-
-    /**
-     * If `true`, when you drag a column into a row group panel the column is not hidden.
-     * @default false
-     * @deprecated v33.0.0 - Use `suppressGroupChangesColumnVisibility: 'suppressHideOnGroup'` instead.
-     */
-    suppressRowGroupHidesColumns?: boolean;
 
     // *** Column Sizing *** //
     /**
@@ -812,6 +862,8 @@ export interface GridOptions<TData = any> {
      *
      * Note that grid-provided filters (except for the Multi Filter) always use filter handlers.
      * The Multi Filter will also use a filter handler if this is enabled.
+     *
+     * The default becomes `true` in v38. Setting `false` (legacy filter mode) is deprecated in v37, and legacy filter mode and this option will be removed in a major version after v38. See [Migrating to Filter Handlers](https://www.ag-grid.com/javascript-data-grid/enable-filter-handlers-migration/).
      * @initial
      */
     enableFilterHandlers?: boolean;
@@ -1013,18 +1065,6 @@ export interface GridOptions<TData = any> {
      * @default false
      */
     suppressFocusAfterRefresh?: boolean;
-    /**
-     * @deprecated As of v32.2 the grid always uses the browser's ResizeObserver, this grid option has no effect
-     * @default false
-     * @initial
-     */
-    suppressBrowserResizeObserver?: boolean;
-    /**
-     * @deprecated As of v33 `gridOptions` and `columnDefs` both have a `context` property that should be used for arbitrary user data. This means that column definitions and gridOptions should only contain valid properties making this property redundant.
-     * @default false
-     * @initial
-     */
-    suppressPropertyNamesCheck?: boolean;
     /**
      * Disables change detection.
      * @default false
@@ -1590,6 +1630,14 @@ export interface GridOptions<TData = any> {
     grandTotalRow?: 'top' | 'bottom' | 'pinnedTop' | 'pinnedBottom';
 
     /**
+     * When `true`, the grand total row is shown even when the grid has no rows to display,
+     * for example when the row data is empty or all rows are filtered out.
+     * @default false
+     * @agModule `RowGroupingModule` / `ServerSideRowModelModule`
+     */
+    alwaysShowGrandTotalRow?: boolean;
+
+    /**
      * Suppress the sticky behaviour of the total rows, can be suppressed individually by passing `'grand'` or `'group'`.
      * @agModule `RowGroupingModule` / `ServerSideRowModelModule`
      */
@@ -1620,18 +1668,6 @@ export interface GridOptions<TData = any> {
      * @agModule `RowGroupingModule`
      */
     groupHideParentOfSingleChild?: boolean | 'leafGroupsOnly';
-    /**
-     * Set to `true` to collapse groups that only have one child.
-     * @default false
-     * @deprecated v33.0.0 - use `groupHideParentOfSingleChild` instead.
-     */
-    groupRemoveSingleChildren?: boolean;
-    /**
-     * Set to `true` to collapse lowest level groups that only have one child.
-     * @default false
-     * @deprecated v33.0.0 - use `groupHideParentOfSingleChild: 'leafGroupsOnly'` instead.
-     */
-    groupRemoveLowestSingleChildren?: boolean;
     /**
      * Set to `true` to hide parents that are open. When used with multiple columns for showing groups, it can give a more pleasing user experience.
      * @default false
@@ -1776,6 +1812,24 @@ export interface GridOptions<TData = any> {
      * @agModule `ClientSideRowModelModule` / `InfiniteRowModelModule` / `ServerSideRowModelModule` / `ViewportRowModelModule`
      */
     rowModelType?: RowModelType;
+    /**
+     * Calls `subscribeRows` and `unsubscribeRows` as loaded rows enter and leave the view,
+     * so that a server stream only sends updates for rows the user can see.
+     * The grid subscribes to the rows in view when it is ready. Every row passed to `subscribeRows` is later passed
+     * to `unsubscribeRows` exactly once, including when `viewSubscriptionActive` is set to `false`, the option is removed, or the grid
+     * is destroyed. The handlers are read each time they are called, so changing them does not unsubscribe any rows.
+     * The grand total row is passed while it is in view, and a group total row keeps its group row subscribed. Detail rows are not passed.
+     * Requires `getRowId`. Supported by the Server-Side Row Model.
+     * @agModule `ViewSubscriptionModule`
+     */
+    viewSubscription?: ViewSubscriptionOptions<TData>;
+    /**
+     * Set to `false` to unsubscribe every row from `viewSubscription` and stop calling its handlers, while keeping
+     * them configured, to control the subscription manually. Set back to `true` to subscribe to the rows in view again.
+     * @default true
+     * @agModule `ViewSubscriptionModule`
+     */
+    viewSubscriptionActive?: boolean;
 
     // *** Row Model: Client-side *** //
     // changeable with impact
@@ -1915,12 +1969,23 @@ export interface GridOptions<TData = any> {
 
     // *** Scrolling *** //
     /**
+     * Use `'native'` for browser-controlled scrolling, or `'axisLocked'` to lock each wheel or single-touch gesture to its initial dominant axis.
+     * Sustained wheel input strongly favouring the other axis starts a new gesture without requiring a pause.
+     * Axis-locked touch scrolling uses grid-managed momentum on both axes, rather than the browser's native momentum.
+     * Keyboard, API scrolling and scrollbar dragging are unaffected.
+     * @default 'native'
+     * @agModule `ScrollGestureModule`
+     */
+    scrollGestureMode?: 'native' | 'axisLocked';
+    /**
      * Set to `true` to always show the horizontal scrollbar.
+     * Windows and macOS let users hide scrollbars until they scroll, and depending on the browser this OS setting can take precedence over this property.
      * @default false
      */
     alwaysShowHorizontalScroll?: boolean;
     /**
      * Set to `true` to always show the vertical scrollbar.
+     * Windows and macOS let users hide scrollbars until they scroll, and depending on the browser this OS setting can take precedence over this property.
      * @default false
      */
     alwaysShowVerticalScroll?: boolean;
@@ -2069,22 +2134,15 @@ export interface GridOptions<TData = any> {
 
     // *** Sorting *** //
     /**
-     * Array defining the order in which sorting occurs (if sorting is enabled). Values can be `'asc'`, `'desc'` or `null`. For example: `sortingOrder: ['asc', 'desc']`.
-     * @default ['asc', 'desc', null]
-     * @deprecated v33 Use `defaultColDef.sortingOrder` instead
-     */
-    sortingOrder?: SortDirection[];
-    /**
-     * Set to `true` to specify that the sort should take accented characters into account. If this feature is turned on the sort will be slower.
+     * Set to `true` to sort strings using locale-specific rules, so accented characters are taken into account. If this feature is turned on the sort will be slower.
+     *
+     * Provide an object to sort using a specific locale and collator options, such as `{ locales: 'de', options: { sensitivity: 'accent' } }`.
+     * Only applies when both values are strings. Also orders the values in the Set Filter list.
+     *
+     * Can be overridden per column with `colDef.accentedSort`.
      * @default false
      */
-    accentedSort?: boolean;
-    /**
-     * Set to `true` to show the 'no sort' icon.
-     * @default false
-     * @deprecated v33 Use `defaultColDef.unSortIcon` instead
-     */
-    unSortIcon?: boolean;
+    accentedSort?: boolean | AccentedSortOptions;
     /**
      * Set to `true` to suppress multi-sort when the user shift-clicks a column header.
      * @default false
@@ -2204,16 +2262,6 @@ export interface GridOptions<TData = any> {
      * @agModule `GridStateModule`
      */
     initialState?: GridState;
-
-    /**
-     * **React only**.
-     *
-     * @deprecated As of v32 custom components are created reactively by default.
-     * Set this property to `false` to switch to the legacy way of declaring custom components imperatively.
-     * @initial
-     * @default true
-     */
-    reactiveCustomComponents?: boolean;
 
     /**
      *
@@ -2649,7 +2697,7 @@ export interface GridOptions<TData = any> {
      */
     onCalculatedColumnCreated?(event: CalculatedColumnCreatedEvent<TData>): void;
     /**
-     * A calculated column's title, data type, expression or group visibility has changed.
+     * A calculated column's title, data type, expression, group visibility or expression validation has changed.
      * Fires once per committed update, not during initialisation or Grid State restoration.
      * Live updates can contain incomplete or invalid expressions.
      */
@@ -2877,6 +2925,7 @@ export interface GridOptions<TData = any> {
     onFilterChanged?(event: FilterChangedEvent<TData>): void;
     /**
      * Filter was modified but not applied  (when using `enableFilterHandlers = false`). Used when filters have 'Apply' buttons.
+     * @deprecated v37 Use `onFilterUiChanged` and `onFloatingFilterUiChanged` with `enableFilterHandlers` instead. See [Migrating to Filter Handlers](https://www.ag-grid.com/javascript-data-grid/enable-filter-handlers-migration/).
      */
     onFilterModified?(event: FilterModifiedEvent<TData>): void;
     /**
@@ -2942,6 +2991,7 @@ export interface GridOptions<TData = any> {
     onModelUpdated?(event: ModelUpdatedEvent<TData>): void;
     /**
      * A row was removed from the DOM, for any reason. Use to clean up resources (if any) used by the row.
+     * A rendered row is not always in view, as the grid also renders rows in the row buffer. To subscribe to updates for the rows in view only, use `viewSubscription`.
      */
     onVirtualRowRemoved?(event: VirtualRowRemovedEvent<TData>): void;
     /**
@@ -3404,6 +3454,8 @@ interface CommonRowSelectionOptions<TData = any, TValue = any, TContext = any> {
     hideDisabledCheckboxes?: boolean;
     /**
      * Callback to be used to determine which rows are selectable. By default rows are selectable, so return `false` to make a row non-selectable.
+     * The grand total row (`footer` is `true`) is passed too, except to the Client-Side Row Model with `groupSelects`
+     * set to `'descendants'` or `'filteredDescendants'`. With the Client-Side Row Model it has no `data`.
      */
     isRowSelectable?: IsRowSelectable<TData>;
     /**

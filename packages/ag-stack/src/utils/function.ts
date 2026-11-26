@@ -1,4 +1,4 @@
-import type { UtilBeanCollection } from '../interfaces/agCoreBeanCollection';
+import type { UtilBeanCollection } from '../interfaces/agBeanCollection';
 import { _requestAnimationFrame } from './dom';
 
 const doOnceSet = new Set<string>();
@@ -83,38 +83,6 @@ export function _batchCall(
 }
 
 /**
- * Creates a debounced function, and attach it to a bean for lifecycle
- * @param {Function} func The function to be debounced
- * @param {number} delay The time in ms to debounce
- * @returns {Function} The debounced function
- * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
- */
-export function _debounce<TArgs extends any[], TContext>(
-    bean: { isAlive(): boolean },
-    func: (this: TContext, ...args: TArgs) => void,
-    delay: number
-): (this: TContext, ...args: TArgs) => number {
-    let timeout: number;
-
-    // Calling debounce returns a new anonymous function
-    return function (this: TContext, ...args: TArgs): number {
-        const context = this as any;
-        window.clearTimeout(timeout);
-
-        // Set the new timeout
-        timeout = window.setTimeout(function () {
-            // at the moment we just check if the bean is still alive, in the future the bean stub should
-            // another option is to manage a list of active timers and clear them when the bean is destroyed.
-            if (bean.isAlive()) {
-                func.apply(context, args);
-            }
-        }, delay);
-
-        return timeout;
-    };
-}
-
-/**
  * @param {Function} func The function to be throttled
  * @param {number} wait The time in ms to throttle
  * @returns {Function} The throttled function
@@ -136,40 +104,4 @@ export function _throttle(func: (...args: any[]) => void, wait: number): (...arg
 
         func.apply(context, args);
     };
-}
-
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export function _waitUntil(
-    bean: { addDestroyFunc(func: () => void): void },
-    condition: () => boolean,
-    callback: () => void,
-    timeout: number = 100
-) {
-    const timeStamp = Date.now();
-
-    let interval: number | null = null;
-    let executed: boolean = false;
-
-    const clearWait = () => {
-        if (interval != null) {
-            window.clearInterval(interval);
-            interval = null;
-        }
-    };
-    bean.addDestroyFunc(clearWait);
-
-    const internalCallback = () => {
-        const reachedTimeout = Date.now() - timeStamp > timeout;
-        if (condition() || reachedTimeout) {
-            callback();
-            executed = true;
-            clearWait();
-        }
-    };
-
-    internalCallback();
-
-    if (!executed) {
-        interval = window.setInterval(internalCallback, 10);
-    }
 }

@@ -1,7 +1,7 @@
 import { waitFor } from '@testing-library/dom';
 import { ALL_SEVERITIES, TestGridsManager, asyncSetTimeout, nextAnimationFrame } from 'ag-test-utils';
 import { mockGridLayout } from 'ag-test-utils/polyfills/mockGridLayout';
-import { installMockResizeObserver, triggerResizeObservers } from 'ag-test-utils/polyfills/mockResizeObserver';
+import { triggerResizeObservers } from 'ag-test-utils/polyfills/mockResizeObserver';
 
 import type { GridApi, GridOptions, IViewportDatasourceParams } from 'ag-grid-community';
 import {
@@ -24,7 +24,6 @@ describe('Auto height of pinned rows in the infinite and viewport row models', (
 
     const cellHeights = new Map<string, number>();
 
-    let uninstallResizeObserver: () => void;
     let warn: ReturnType<typeof vi.spyOn>;
 
     beforeAll(() => {
@@ -45,7 +44,6 @@ describe('Auto height of pinned rows in the infinite and viewport row models', (
     });
 
     beforeEach(() => {
-        uninstallResizeObserver = installMockResizeObserver();
         // Deliberate: auto height is not supported by either model, which warning 309 says.
         enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [309] });
         warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
@@ -55,7 +53,6 @@ describe('Auto height of pinned rows in the infinite and viewport row models', (
         expect(warn.mock.calls.flat().join(' ')).toContain('warning #309');
         warn.mockRestore();
         enableDevValidations({ throwOn: ALL_SEVERITIES });
-        uninstallResizeObserver();
         cellHeights.clear();
         gridsManager.reset();
     });

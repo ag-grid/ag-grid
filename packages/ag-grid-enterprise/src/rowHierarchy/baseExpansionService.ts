@@ -48,7 +48,7 @@ export abstract class BaseExpansionService extends BeanStub {
 
         rowNode.dispatchRowEvent('expandedChanged');
 
-        const event = { ..._createGlobalRowEvent(rowNode, this.gos, 'rowGroupOpened'), expanded, event: e || null };
+        const event = { ..._createGlobalRowEvent(rowNode, this.gos, 'rowGroupOpened'), expanded, event: e ?? null };
 
         this.dispatchExpandedEvent(event, forceSync);
     }
@@ -107,7 +107,8 @@ export abstract class BaseExpansionService extends BeanStub {
 
     private updateExpandedCss(rowCtrl: RowCtrl, rowNode: RowNode): void {
         const expandable = rowNode.isExpandable();
-        const expanded = rowNode.expanded == true;
+        // The server-side expansion service can report `undefined` despite the `boolean` type.
+        const expanded = !!rowNode.expanded;
         const gui = rowCtrl.getGui();
 
         if (!gui) {

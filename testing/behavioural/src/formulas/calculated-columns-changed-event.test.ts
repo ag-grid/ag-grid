@@ -1,17 +1,23 @@
-import { getByRole, waitFor } from '@testing-library/dom';
+import { waitFor } from '@testing-library/dom';
 import { asyncSetTimeout, clickMenuOption } from 'ag-test-utils';
 import { vi } from 'vitest';
 
-import type { CalculatedColumnChangedEvent, ColDef } from 'ag-grid-community';
+import type {
+    CalculatedColumnChangedEvent,
+    CalculatedColumnValidationParams,
+    ColDef,
+    GridApi,
+} from 'ag-grid-community';
 import { _processOnChange } from 'ag-grid-community';
 
 import {
     clickDialogButton,
+    closeDialog,
     createGrid,
-    getCalculatedColumnDialog,
     openEditDialogViaMenu,
     selectDataType,
     setExpression,
+    setTitle,
     setupCalculatedColumnsSuite,
     showColumnMenu,
 } from './calculatedColumnsHarness';
@@ -24,16 +30,6 @@ const profit: ColDef = {
 };
 const columnDefs: ColDef[] = [{ field: 'revenue' }, { field: 'cost' }, profit];
 const rowData = [{ id: 'r1', revenue: 10, cost: 3 }];
-
-function setTitle(value: string): void {
-    const input = getByRole(getCalculatedColumnDialog(), 'textbox', { name: 'Title' }) as HTMLInputElement;
-    input.value = value;
-    input.dispatchEvent(new Event('input', { bubbles: true }));
-}
-
-function closeDialog(): void {
-    document.querySelector<HTMLButtonElement>('.ag-dialog .ag-panel-title-bar-button')!.click();
-}
 
 describe('calculatedColumnChanged', () => {
     setupCalculatedColumnsSuite();
@@ -75,6 +71,7 @@ describe('calculatedColumnChanged', () => {
         };
         expect(event).toMatchObject({ column: api.getColumn('profit'), source, expression: '[revenue] * 2' });
         expect(event.changes).toEqual(changes);
+        expect(event.expressionValidation).toEqual({ valid: true });
 
         original.width = 240;
         original.filter = true;
@@ -116,6 +113,7 @@ describe('calculatedColumnChanged', () => {
             calculatedExpression: { oldValue: '[revenue] - [cost]', newValue: '[revenue] * 2' },
         });
         expect(changed.mock.calls[0][0].source).toBe('calculatedColumn');
+        expect(changed.mock.calls[0][0].expressionValidation).toEqual({ valid: true });
         expect(expressionChanged).toHaveBeenCalledTimes(1);
         expect(expressionChanged).toHaveBeenCalledWith(
             expect.objectContaining({
@@ -192,11 +190,15 @@ describe('calculatedColumnChanged', () => {
             headerName: { oldValue: 'Profit', newValue: 'Net Profit' },
             calculatedExpression: { oldValue: '[revenue] - [cost]', newValue: '[revenue] +' },
         });
+        const invalidSnapshot = changed.mock.calls[0][0].expressionValidation;
+        expect(invalidSnapshot).toEqual({ valid: false, reason: 'invalidExpression' });
         setExpression('[Revenue] + 1');
         await waitFor(() => expect(changed).toHaveBeenCalledTimes(2));
         expect(changed.mock.calls[1][0].changes).toEqual({
             calculatedExpression: { oldValue: '[revenue] +', newValue: '[revenue] + 1' },
         });
+        expect(changed.mock.calls[1][0].expressionValidation).toEqual({ valid: true });
+        expect(invalidSnapshot).toEqual({ valid: false, reason: 'invalidExpression' });
         expect(expressionChanged).toHaveBeenCalledTimes(2);
         setTitle('Profit');
         await waitFor(() => expect(changed).toHaveBeenCalledTimes(3));
@@ -204,6 +206,133 @@ describe('calculatedColumnChanged', () => {
             headerName: { oldValue: 'Net Profit', newValue: 'Profit' },
         });
         expect(expressionChanged).toHaveBeenCalledTimes(2);
+    });
+
+    test.each([
+        { expression: '[missing]', validation: { valid: false, reason: 'unknownReference' } },
+        { expression: '[revenue] +', validation: { valid: false, reason: 'invalidExpression' } },
+        { expression: 'NOT_A_FUNC([revenue])', validation: { valid: false, reason: 'invalidExpression' } },
+        { expression: '', validation: { valid: true } },
+        { expression: '   ', validation: { valid: true } },
+        { expression: '[revenue] / 0', validation: { valid: true } },
+    ])('reports expression validation for an API edit to "$expression"', async ({ expression, validation }) => {
+        const changed = vi.fn<(event: CalculatedColumnChangedEvent) => void>();
+        const isColumnReferenceable = vi.fn(() => false);
+        const getValidationErrors = vi.fn(() => ({ calculatedExpression: ['Dialog edits are not allowed.'] }));
+        const api = createGrid('changed-validation-api', {
+            columnDefs,
+            rowData,
+            calculatedColumns: { isColumnReferenceable, getValidationErrors },
+            onCalculatedColumnChanged: changed,
+        });
+        api.setGridOption('columnDefs', [...columnDefs.slice(0, 2), { ...profit, calculatedExpression: expression }]);
+        await waitFor(() => expect(changed).toHaveBeenCalledTimes(1));
+        expect(changed.mock.calls[0][0].expressionValidation).toEqual(validation);
+        expect(isColumnReferenceable).not.toHaveBeenCalled();
+        expect(getValidationErrors).not.toHaveBeenCalled();
+    });
+
+    test('reports restricted live edits without rechecking grandfathered or programmatic expressions', async () => {
+        const changed = vi.fn<(event: CalculatedColumnChangedEvent) => void>();
+        const isColumnReferenceable = vi.fn(({ colDef }: { colDef: ColDef }) => colDef.field !== 'cost');
+        const api = createGrid('changed-validation-restricted', {
+            columnDefs,
+            rowData,
+            calculatedColumns: { isColumnReferenceable },
+            onCalculatedColumnChanged: changed,
+        });
+        await openEditDialogViaMenu(api, 'profit');
+        isColumnReferenceable.mockClear();
+        setTitle('Net Profit');
+        await waitFor(() => expect(changed).toHaveBeenCalledTimes(1));
+        expect(changed.mock.calls[0][0].expressionValidation).toEqual({ valid: true });
+
+        setExpression('[Cost] * 2');
+        await waitFor(() => expect(changed).toHaveBeenCalledTimes(2));
+        const blockedEvent = changed.mock.calls[1][0];
+        expect(blockedEvent.expression).toBe('[cost] * 2');
+        expect(blockedEvent.expressionValidation).toEqual({ valid: false, reason: 'restrictedReference' });
+        expect(api.getCellValue({ rowNode: api.getRowNode('r1')!, colKey: 'profit' })).toBe('#REF!');
+
+        setExpression('[Revenue] * 2');
+        await waitFor(() => expect(changed).toHaveBeenCalledTimes(3));
+        expect(changed.mock.calls[2][0].expressionValidation).toEqual({ valid: true });
+        expect(blockedEvent.expressionValidation).toEqual({ valid: false, reason: 'restrictedReference' });
+        expect(isColumnReferenceable).not.toHaveBeenCalled();
+    });
+
+    test('reports custom validation on expression and title edits without invoking the callback again', async () => {
+        const changed = vi.fn<(event: CalculatedColumnChangedEvent) => void>();
+        const getValidationErrors = vi.fn(({ colDef }: CalculatedColumnValidationParams) =>
+            colDef.calculatedExpression === '[revenue] * 2'
+                ? { calculatedExpression: ['This expression is not allowed.'] }
+                : null
+        );
+        const api = createGrid('changed-validation-custom', {
+            columnDefs,
+            rowData,
+            calculatedColumns: { getValidationErrors },
+            onCalculatedColumnChanged: changed,
+        });
+        await openEditDialogViaMenu(api, 'profit');
+        getValidationErrors.mockClear();
+        setExpression('[Revenue] * 2');
+        await waitFor(() => expect(changed).toHaveBeenCalledTimes(1));
+        expect(changed.mock.calls[0][0].expressionValidation).toEqual({ valid: false, reason: 'customValidation' });
+        expect(getValidationErrors).toHaveBeenCalledTimes(1);
+
+        setTitle('Net Profit');
+        await waitFor(() => expect(changed).toHaveBeenCalledTimes(2));
+        expect(changed.mock.calls[1][0].changes).toEqual({
+            headerName: { oldValue: 'Profit', newValue: 'Net Profit' },
+        });
+        expect(changed.mock.calls[1][0].expressionValidation).toEqual({ valid: false, reason: 'customValidation' });
+        expect(getValidationErrors).toHaveBeenCalledTimes(2);
+
+        setExpression('[Revenue] * 3');
+        await waitFor(() => expect(changed).toHaveBeenCalledTimes(3));
+        expect(changed.mock.calls[2][0].expressionValidation).toEqual({ valid: true });
+        expect(getValidationErrors).toHaveBeenCalledTimes(3);
+    });
+
+    test('captures validation before asynchronous event delivery', async () => {
+        const changed = vi.fn<(event: CalculatedColumnChangedEvent) => void>();
+        const api = createGrid('changed-validation-snapshot', {
+            columnDefs,
+            rowData,
+            onCalculatedColumnChanged: changed,
+        });
+        api.setGridOption('columnDefs', [...columnDefs.slice(0, 2), { ...profit, calculatedExpression: '[missing]' }]);
+        api.setGridOption('columnDefs', [...columnDefs.slice(0, 2), { ...profit, calculatedExpression: '[revenue]' }]);
+        await waitFor(() => expect(changed).toHaveBeenCalledTimes(2));
+        expect(
+            changed.mock.calls.map(([event]) => ({
+                expression: event.expression,
+                validation: event.expressionValidation,
+            }))
+        ).toEqual([
+            { expression: '[missing]', validation: { valid: false, reason: 'unknownReference' } },
+            { expression: '[revenue]', validation: { valid: true } },
+        ]);
+    });
+
+    test('validates the authored event expression rather than processColDef output', async () => {
+        const changed = vi.fn<(event: CalculatedColumnChangedEvent) => void>();
+        const api = createGrid('changed-validation-authored', {
+            columnDefs: columnDefs.slice(0, 2),
+            rowData,
+            calculatedColumns: {
+                processColDef: ({ colDef }) => ({ ...colDef, calculatedExpression: '[revenue]' }),
+            },
+            onCalculatedColumnChanged: changed,
+        });
+        showColumnMenu(api, 'revenue');
+        await clickMenuOption('Add Calculated Column');
+        setExpression('[Missing]');
+        await waitFor(() => expect(changed).toHaveBeenCalledTimes(1));
+        expect(changed.mock.calls[0][0].expression).toBe('[Missing]');
+        expect(changed.mock.calls[0][0].expressionValidation).toEqual({ valid: false, reason: 'unknownReference' });
+        expect(api.getCellValue({ rowNode: api.getRowNode('r1')!, colKey: 'calculated_1' })).toBe(10);
     });
 
     test.each(['live', 'deferred'] as const)(
@@ -287,6 +416,66 @@ describe('calculatedColumnChanged', () => {
         setTitle('Final');
         await waitFor(() => expect(changed).toHaveBeenCalledTimes(1));
         expect(changed.mock.calls[0][0].changes).toEqual({ headerName: { oldValue: 'Saved', newValue: 'Final' } });
+    });
+
+    describe('validation state across a state restore and a later column rebuild', () => {
+        const eventTypes = [
+            'calculatedColumnCreated',
+            'calculatedColumnRemoved',
+            'calculatedColumnChanged',
+            'calculatedColumnExpressionChanged',
+            'calculatedColumnValidationStateChanged',
+        ] as const;
+
+        /** Records every calculatedColumn* event; `flush` returns those raised since the last flush, in order. */
+        function recordCalculatedColumnEvents(api: GridApi) {
+            const events: { type: string; colId: string; source: string; valid?: boolean }[] = [];
+            for (const type of eventTypes) {
+                api.addEventListener(type, (event: any) => {
+                    const entry: (typeof events)[number] = {
+                        type,
+                        colId: event.column.getColId(),
+                        source: event.source,
+                    };
+                    if (type === 'calculatedColumnValidationStateChanged') {
+                        entry.valid = event.valid;
+                    }
+                    events.push(entry);
+                });
+            }
+            return async () => {
+                await asyncSetTimeout(0);
+                return events.splice(0);
+            };
+        }
+
+        const abc = [{ field: 'a' }, { field: 'b' }];
+        const data = [{ id: 'r1', a: 5, b: 2 }];
+
+        test('a column turned invalid by a columnDefs update after a state restore raises its validation event once, and the next column rebuild none', async () => {
+            const declared = { colId: 'c', calculatedExpression: '[b] * 2' };
+            const api = createGrid('validation-columnDefs-flip', { columnDefs: [...abc, declared], rowData: data });
+            const flush = recordCalculatedColumnEvents(api);
+            expect(await flush()).toEqual([]);
+
+            api.setState({
+                userColumns: [{ colId: 'c', type: 'calculated', properties: [{ property: 'headerName', value: 'X' }] }],
+            });
+            expect(api.getColumn('c')!.getColDef().headerName).toBe('X');
+            expect(await flush()).toEqual([]);
+
+            api.setGridOption('columnDefs', [{ field: 'a' }, declared]);
+            expect(await flush()).toEqual([
+                { type: 'calculatedColumnChanged', colId: 'c', source: 'api' },
+                { type: 'calculatedColumnValidationStateChanged', colId: 'c', source: 'api', valid: false },
+            ]);
+
+            api.setGridOption('columnTypes', { foo: {} });
+            expect(await flush()).toEqual([]);
+
+            api.setGridOption('defaultColDef', { width: 150 });
+            expect(await flush()).toEqual([]);
+        });
     });
 
     test('an ordinary rebuild keeps user overrides without reporting changes', async () => {

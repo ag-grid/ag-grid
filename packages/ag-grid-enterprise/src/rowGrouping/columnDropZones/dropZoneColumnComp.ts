@@ -1,4 +1,4 @@
-import { RefPlaceholder } from 'ag-stack';
+import { RefPlaceholder, _addManagedElementListeners } from 'ag-stack';
 
 import type {
     AgColumn,
@@ -6,20 +6,19 @@ import type {
     DragAndDropIcon,
     DragItem,
     DropTarget,
+    HeaderTooltipCallbackParams,
+    ResolvedTooltip,
     SortDef,
     SortDirection,
     SortIndicatorComp,
-    TooltipCallbackParams,
     TooltipLocation,
 } from 'ag-grid-community';
 import {
     Component,
     DragSourceType,
     KeyCode,
-    _addGridCommonParams,
     _createElement,
-    _getHeaderTooltipComponentDefinition,
-    _resolveHeaderTooltipValue,
+    _resolveHeaderTooltip,
     _resolvePivotSort,
 } from 'ag-grid-community';
 
@@ -113,18 +112,8 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
         return this.displayName!;
     }
 
-    protected getTooltip(): string | null | undefined {
-        const colDef = this.column.colDef;
-        return _resolveHeaderTooltipValue(
-            colDef,
-            _addGridCommonParams<TooltipCallbackParams>(this.gos, {
-                location: this.getTooltipLocation(),
-                colDef,
-                column: this.column,
-                value: this.displayName,
-                valueFormatted: this.displayName,
-            })
-        );
+    protected getTooltip(params: HeaderTooltipCallbackParams): ResolvedTooltip {
+        return _resolveHeaderTooltip(this.gos, params);
     }
 
     protected override getTooltipLocation(): TooltipLocation {
@@ -142,12 +131,8 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
         return {
             colDef: this.column.colDef,
             column: this.column,
-            valueFormatted: this.displayName,
+            valueFormatted: this.getDisplayValue(),
         };
-    }
-
-    protected override getTooltipComponentDefinition() {
-        return _getHeaderTooltipComponentDefinition(this.column.colDef);
     }
 
     protected override addAdditionalAriaInstructions(
@@ -175,7 +160,17 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
     }
 
     public override isMovable(): boolean {
-        return this.isDraggable();
+        if (!this.isDraggable() || !this.column.primary) {
+            return false;
+        }
+        switch (this.dropZonePurpose) {
+            case 'rowGroup':
+                return this.column.isAllowRowGroup();
+            case 'pivot':
+                return this.column.isAllowPivot();
+            case 'aggregation':
+                return this.column.isAllowValue();
+        }
     }
 
     protected override isDraggable(): boolean {
@@ -267,7 +262,7 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
         progress: (column: AgColumn, event: MouseEvent | KeyboardEvent) => void
     ): void {
         const { column, eSortIndicator } = this;
-        eSortIndicator.setupSort(column, true, override);
+        eSortIndicator.setupSort(column, true, override, this.getTooltipLocation());
 
         const performSort = (event: MouseEvent | KeyboardEvent) => {
             event.preventDefault();
@@ -385,7 +380,7 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
         ePopup.appendChild(virtualListGui);
         ePopup.style.width = `${eGui.clientWidth}px`;
 
-        const [focusoutListener] = this.addManagedElementListeners(ePopup, {
+        const [focusoutListener] = _addManagedElementListeners(this, ePopup, {
             focusout: (e: FocusEvent) => {
                 if (!ePopup.contains(e.relatedTarget as HTMLElement) && addPopupRes) {
                     addPopupRes.hideFunc();

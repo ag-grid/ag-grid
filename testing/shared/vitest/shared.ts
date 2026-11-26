@@ -2,13 +2,15 @@
 // same behaviour applies whether a project runs via `./behave.sh` or standalone (e.g. benches.sh, nx).
 import { existsSync } from 'node:fs';
 import { readFile, readdir } from 'node:fs/promises';
+import { availableParallelism, totalmem } from 'node:os';
 import path from 'node:path';
+import { setFlagsFromString } from 'node:v8';
 import type { ViteUserConfig } from 'vitest/config';
 
 import { TEST_TIMEOUT_MS } from './timings';
 
 /** Output-volume controls (`--no-diff`, `--stack-trace-len`, DEBUG_PRINT_LIMIT), shared by every unit project. */
-const outputSetupFile = path.resolve(__dirname, 'output.setup.ts');
+export const outputSetupFile = path.resolve(__dirname, 'output.setup.ts');
 
 /** Diff options module (`--diff-lines`), shared by every unit project. */
 export const diffConfigFile = path.resolve(__dirname, 'diff.ts');
@@ -16,6 +18,12 @@ export const diffConfigFile = path.resolve(__dirname, 'diff.ts');
 // Pin the timezone so date-sensitive tests behave identically on every machine. Set when any config
 // imports this module (main process), before workers spawn and inherit the env.
 process.env.TZ = 'UTC';
+
+// Read by each worker's heap as it starts: a larger young generation scavenges the tests' short-lived DOM objects
+// less often (full suite 43.0s -> 38.2s). It can reach ~384MB a worker, so only where each core has 2GB to spare.
+if (totalmem() / availableParallelism() >= 2 * 1024 ** 3) {
+    setFlagsFromString('--max-semi-space-size=128');
+}
 
 const isCI = process.env.CI != null;
 
@@ -28,11 +36,7 @@ const SOURCE_PACKAGE_DIRS = ['packages', 'community-modules'] as const;
 
 export type Alias = { find: string | RegExp; replacement: string };
 
-/**
- * Alias every workspace package under `repoRoot` to its TS source entry, so tests import internal deps from
- * source with no prior build - dist is absent in CI. `repoRoot` is passed rather than derived, so this
- * module needs no `import.meta`: the package `tsconfig.spec` type-checks it as CommonJS, which forbids it.
- */
+/** Aliases each package under `repoRoot` (another checkout's for benchmarks) to its source: tests need no build. */
 export const packageSourceAliases = async (repoRoot: string): Promise<Alias[]> => {
     const aliases: Alias[] = [];
     for (const dir of SOURCE_PACKAGE_DIRS) {

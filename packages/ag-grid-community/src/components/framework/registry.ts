@@ -1,4 +1,4 @@
-import type { AgBaseComponent, IconValue } from 'ag-stack';
+import type { AgBaseComponent } from 'ag-stack';
 import { BaseRegistry } from 'ag-stack';
 
 import type { NamedBean } from '../../context/bean';
@@ -9,7 +9,6 @@ import type { GridOptionsWithDefaults } from '../../gridOptionsDefault';
 import type { GridOptionsService } from '../../gridOptionsService';
 import type { AgGridCommon } from '../../interfaces/iCommon';
 import type { Module } from '../../interfaces/iModule';
-import type { IconName } from '../../utils/icon';
 import { _errorToThrowForGrid } from '../../validation/logging';
 import type { AgComponentSelectorType, ComponentSelector } from '../../widgets/component';
 
@@ -35,8 +34,6 @@ export class Registry
 
     private selectors: { [name in AgComponentSelectorType]?: ComponentSelector<any> } = {};
 
-    private icons: { [K in IconName]?: IconValue } = {};
-
     public postConstruct(): void {
         const comps = this.gos.get('components');
         if (comps != null) {
@@ -47,7 +44,7 @@ export class Registry
     }
 
     public registerModule(module: Module): void {
-        const { icons, userComponents, dynamicBeans, selectors } = module;
+        const { userComponents, dynamicBeans, selectors } = module;
 
         if (userComponents) {
             const registerUserComponent = (
@@ -79,12 +76,6 @@ export class Registry
 
         for (const selector of selectors ?? []) {
             this.selectors[selector.selector] = selector;
-        }
-
-        if (icons) {
-            for (const name of Object.keys(icons) as IconName[]) {
-                this.icons[name] = icons[name];
-            }
         }
     }
 
@@ -136,25 +127,26 @@ export class Registry
 
     /** Whether `getUserComponent` finds `name`, reporting it the same way when it does not. */
     public hasUserComponent(propertyName: string, name: string): boolean {
-        if (
-            this.jsComps[name] ||
-            this.agGridDefaults[name as UserComponentName] ||
-            this.beans.frameworkOverrides.frameworkComponent(name, this.gos.get('components'), propertyName) != null
-        ) {
+        if (this.isUserComponent(propertyName, name)) {
             return true;
         }
         this.beans.validation?.missingUserComponent(propertyName, name, this.agGridDefaults, this.jsComps);
         return false;
     }
 
+    /** Whether `getUserComponent` finds `name`, without reporting it when it does not. */
+    public isUserComponent(propertyName: string, name: string): boolean {
+        return !!(
+            this.jsComps[name] ||
+            this.agGridDefaults[name as UserComponentName] ||
+            this.beans.frameworkOverrides.frameworkComponent(name, this.gos.get('components'), propertyName) != null
+        );
+    }
+
     public getSelector<TComponent extends AgBaseComponent<BeanCollection>>(
         name: AgComponentSelectorType
     ): ComponentSelector<TComponent> | undefined {
         return this.selectors[name];
-    }
-
-    public getIcon(name: IconName): IconValue | undefined {
-        return this.icons[name];
     }
 
     protected override createDynamicError(name: DynamicBeanName, init: boolean): Error {

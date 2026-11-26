@@ -117,6 +117,60 @@ function processGlobalComponentsForVue(propertyName: string, providedExamples) {
     return false;
 }
 
+/**
+ * An inline event handler's parameter is typed by the grid options it is declared in. Returns the
+ * handler with that type written out, when it is not already, so it keeps it once moved out.
+ */
+function withEventParameterType(handler: ts.Expression, typings: GridOptionsType | undefined) {
+    if (!typings || !(ts.isArrowFunction(handler) || ts.isFunctionExpression(handler))) {
+        return undefined;
+    }
+    const [parameter, ...otherParameters] = handler.parameters;
+    const parameterType = getFirstParameterType(typings.typeName);
+    if (!parameter || parameter.type || !parameterType) {
+        return undefined;
+    }
+    const typedParameter = ts.factory.updateParameterDeclaration(
+        parameter,
+        parameter.modifiers,
+        parameter.dotDotDotToken,
+        parameter.name,
+        parameter.questionToken,
+        ts.factory.createTypeReferenceNode(parameterType),
+        parameter.initializer
+    );
+    const parameters = [typedParameter, ...otherParameters];
+    return ts.isArrowFunction(handler)
+        ? ts.factory.updateArrowFunction(
+              handler,
+              handler.modifiers,
+              handler.typeParameters,
+              parameters,
+              handler.type,
+              handler.equalsGreaterThanToken,
+              handler.body
+          )
+        : ts.factory.updateFunctionExpression(
+              handler,
+              handler.modifiers,
+              handler.asteriskToken,
+              handler.name,
+              handler.typeParameters,
+              parameters,
+              handler.type,
+              handler.body
+          );
+}
+
+/** e.g. `CellClickedEvent<TData>` from `(event: CellClickedEvent<TData>) => void` */
+function getFirstParameterType(functionType: string): string | undefined {
+    const statement = parseFile(`type Handler = ${functionType};`).statements[0];
+    if (statement && ts.isTypeAliasDeclaration(statement) && ts.isFunctionTypeNode(statement.type)) {
+        return statement.type.parameters[0]?.type?.getText();
+    }
+    return undefined;
+}
+
 interface Collector {
     matches: (node: any) => boolean;
     apply: (bindings: ParsedBindings, node: any) => void;
@@ -219,10 +273,9 @@ function internalParser(
         matches: tsNodeIsSimpleFetchRequest,
         apply: (bindings, node) => {
             const url = node.arguments[0].getText();
-            const callback = tsGenerate(node.parent.parent.parent.parent.arguments[0].body, tsTree).replace(
-                /gridOptions/g,
-                'params'
-            );
+            const callbackFunction = node.parent.parent.parent.parent.arguments[0];
+            const dataType: string | undefined = callbackFunction.parameters?.[0]?.type?.getText();
+            const callback = tsGenerate(callbackFunction.body, tsTree).replace(/gridOptions/g, 'params');
 
             // extract the numbers from data.slice(0, 600) when this is contained in the callback
             const matches = callback.match(/data\.slice\((\d+), (\d+)\)/);
@@ -238,7 +291,7 @@ function internalParser(
                 totalRows = end;
             }
 
-            bindings.data = { url, callback, totalRows };
+            bindings.data = { url, callback, totalRows, dataType };
         },
     });
 
@@ -275,7 +328,9 @@ function internalParser(
             matches: (node) => tsNodeIsPropertyWithName(node, onEventName) && onEventName !== 'onGridReady',
             apply: (bindings, node: ts.PropertyAssignment) => {
                 // Find any inline arrow functions or functions for events and convert to external function definition
-                const eventHandler = tsGenerate(node.initializer, tsTree);
+                const typings = gridOpsTypeLookup(onEventName);
+                const typedHandler = withEventParameterType(node.initializer, typings);
+                const eventHandler = tsGenerate(typedHandler ?? node.initializer, tsTree);
                 const functionHandler = ts.isArrowFunction(node.initializer)
                     ? eventHandler
                           // (event: RowEditingStoppedEvent) => {
@@ -288,6 +343,7 @@ function internalParser(
                     name: eventName,
                     handlerName: onEventName,
                     handler: functionHandler,
+                    typings: typedHandler ? typings : undefined,
                 });
             },
         });

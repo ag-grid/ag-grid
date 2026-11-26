@@ -19,7 +19,7 @@ export function get(source: any, expression: string, defaultValue: any): any {
 
     const value = objectToRead[keys[0]];
 
-    return value != null ? value : defaultValue;
+    return value ?? defaultValue;
 }
 
 export function set(target: any, expression: string, value: any) {

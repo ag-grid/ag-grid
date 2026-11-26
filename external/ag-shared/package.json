@@ -31,6 +31,9 @@
   "keywords": [],
   "author": "AG Grid <info@ag-grid.com>",
   "license": "MIT",
+  "installConfig": {
+    "hoistingLimits": "workspaces"
+  },
   "devDependencies": {
     "@nx/devkit": "^20.8.4",
     "@swc/helpers": "0.5.23",
@@ -38,7 +41,7 @@
     "glob": "^11.1.0",
     "process": "0.11.10",
     "tinypool": "^2.2.0",
-    "typescript": "^5.8.3",
+    "typescript": "^5.9.3",
     "xml-js": "^1.6.11"
   },
   "publishConfig": {

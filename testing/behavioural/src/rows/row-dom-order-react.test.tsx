@@ -1,5 +1,5 @@
 import { act, cleanup, render, waitFor } from '@testing-library/react';
-import { asyncSetTimeout } from 'ag-test-utils';
+import { asyncSetTimeout, nextAnimationFrame } from 'ag-test-utils';
 import React, { Profiler } from 'react';
 
 import type { GridApi } from 'ag-grid-community';
@@ -42,7 +42,15 @@ describe('row DOM order (React)', () => {
 
     afterEach(() => {
         cleanup();
+        vi.useRealTimers();
     });
+
+    /** Runs out the 400 ms row animation (ROW_ANIMATION_TIMEOUT) keeping removed rows in the DOM, on a fake clock. */
+    const runOutRowAnimation = async () => {
+        await act(async () => {
+            await vi.advanceTimersByTimeAsync(400);
+        });
+    };
 
     const renderGrid = (ensureDomOrder: boolean) => {
         let api: GridApi<Row> | undefined;
@@ -73,29 +81,36 @@ describe('row DOM order (React)', () => {
         const api = renderGrid(false);
         await waitFor(() => expect(rowIdsInDom(api())).toEqual(['a', 'b', 'c']));
 
+        vi.useFakeTimers();
         act(() => api().setGridOption('rowData', [{ id: 'c' }, { id: 'a' }, { id: 'd' }]));
+        await runOutRowAnimation();
 
-        await waitFor(() => expect(rowIdsInDom(api())).toEqual(['a', 'c', 'd']));
+        expect(rowIdsInDom(api())).toEqual(['a', 'c', 'd']);
     });
 
     test('without ensureDomOrder, a row added before rows kept in order goes after them in the DOM', async () => {
         const api = renderGrid(false);
         await waitFor(() => expect(rowIdsInDom(api())).toEqual(['a', 'b', 'c']));
 
+        vi.useFakeTimers();
         act(() => api().setGridOption('rowData', [{ id: 'd' }, { id: 'a' }, { id: 'b' }]));
+        await runOutRowAnimation();
 
-        await waitFor(() => expect(rowIdsInDom(api())).toEqual(['a', 'b', 'd']));
+        expect(rowIdsInDom(api())).toEqual(['a', 'b', 'd']);
     });
 
     test('without ensureDomOrder, a row list rendered as given still keeps its rows in place on the next update', async () => {
         const api = renderGrid(false);
         await waitFor(() => expect(rowIdsInDom(api())).toEqual(['a', 'b', 'c']));
+        vi.useFakeTimers();
         act(() => api().setGridOption('rowData', [{ id: 'c' }]));
-        await waitFor(() => expect(rowIdsInDom(api())).toEqual(['c']));
+        await runOutRowAnimation();
+        expect(rowIdsInDom(api())).toEqual(['c']);
 
         act(() => api().setGridOption('rowData', [{ id: 'x' }, { id: 'c' }]));
+        await runOutRowAnimation();
 
-        await waitFor(() => expect(rowIdsInDom(api())).toEqual(['c', 'x']));
+        expect(rowIdsInDom(api())).toEqual(['c', 'x']);
     });
 
     test('setting empty rowData on a grid that is already empty commits nothing', async () => {
@@ -116,6 +131,9 @@ describe('row DOM order (React)', () => {
         await waitFor(() => expect(rowIdsInDom(api!)).toEqual(['a']));
         await act(async () => {
             api!.setGridOption('rowData', []);
+            await asyncSetTimeout(0);
+            // and the frame the emptied rows' resize reports land in
+            await nextAnimationFrame();
             await asyncSetTimeout(0);
         });
 

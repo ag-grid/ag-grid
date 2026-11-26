@@ -35,8 +35,6 @@ import {
     _isClientSideRowModel,
     _isServerSideRowModel,
     _processOnChange,
-    _warnForGrid,
-    _warnWithoutAttribution,
 } from 'ag-grid-community';
 
 import GroupCellRenderer from '../reactUi/cellRenderer/groupCellRenderer';
@@ -53,7 +51,6 @@ import { InnerHeaderComponentWrapper } from '../shared/customComp/innerHeaderCom
 import { MenuItemComponentWrapper } from '../shared/customComp/menuItemComponentWrapper';
 import { StatusPanelComponentWrapper } from '../shared/customComp/statusPanelComponentWrapper';
 import { ToolPanelComponentWrapper } from '../shared/customComp/toolPanelComponentWrapper';
-import { warnReactiveCustomComponents } from '../shared/customComp/util';
 import type { AgGridReactProps, InternalAgGridReactProps } from '../shared/interfaces';
 import { PortalManager } from '../shared/portalManager';
 import { ReactComponent } from '../shared/reactComponent';
@@ -62,12 +59,6 @@ import { BeansContext, RenderModeContext } from './beansContext';
 import GridComp from './gridComp';
 import { RenderStatusService } from './renderStatusService';
 import { CssClasses, isReact19, runWithoutFlushSync } from './utils';
-
-const deprecatedProps: Pick<InternalAgGridReactProps, 'setGridApi' | 'children' | 'maxComponentCreationTimeMs'> = {
-    setGridApi: undefined,
-    maxComponentCreationTimeMs: undefined,
-    children: undefined,
-};
 
 // Used to only pass gridOptions to the GridCoreCreator from the props
 type ReactCompProps = Omit<InternalAgGridReactProps, keyof GridOptions>;
@@ -79,10 +70,9 @@ const reactPropsNotGridOptions: ReactCompProps = {
     passGridApi: undefined,
     hasAncestorStyledRoot: undefined,
     componentWrappingElement: undefined,
-    ...deprecatedProps,
 };
-const excludeReactCompProps = new Set(Object.keys(reactPropsNotGridOptions));
-const deprecatedReactCompProps = new Set(Object.keys(deprecatedProps));
+// `children` is a React prop (a new element on every render), never a grid option
+const excludeReactCompProps = new Set([...Object.keys(reactPropsNotGridOptions), 'children']);
 
 export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) => {
     const modulesFromContext = useContext(ModulesContext);
@@ -125,8 +115,7 @@ export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) =>
         if (!portalManager.current) {
             portalManager.current = new PortalManager(
                 () => setPortalRefresher((prev) => prev + 1),
-                props.componentWrappingElement,
-                props.maxComponentCreationTimeMs
+                props.componentWrappingElement
             );
             destroyFuncs.current.push(() => {
                 portalManager.current?.destroy();
@@ -249,7 +238,7 @@ export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) =>
     }, []);
 
     useEffect(() => {
-        const changes = extractGridPropertyChanges(gridIdRef.current, prevProps.current, props);
+        const changes = extractGridPropertyChanges(prevProps.current, props);
         prevProps.current = props;
         processWhenReady(() => {
             if (apiRef.current) {
@@ -281,22 +270,20 @@ export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) =>
     );
 };
 
-function extractGridPropertyChanges(gridId: string | undefined, prevProps: any, nextProps: any): { [p: string]: any } {
+function extractGridPropertyChanges(prevProps: any, nextProps: any): { [p: string]: any } {
     const changes: { [p: string]: any } = {};
     for (const propKey of Object.keys(nextProps)) {
         if (excludeReactCompProps.has(propKey)) {
-            if (deprecatedReactCompProps.has(propKey)) {
-                if (gridId) {
-                    _warnForGrid(gridId, 274, { prop: propKey });
-                } else {
-                    _warnWithoutAttribution(274, { prop: propKey });
-                }
-            }
             continue;
         }
         const propValue = nextProps[propKey];
         if (prevProps[propKey] !== propValue) {
             changes[propKey] = propValue;
+        }
+    }
+    for (const propKey of Object.keys(prevProps)) {
+        if (!(propKey in nextProps) && !excludeReactCompProps.has(propKey)) {
+            changes[propKey] = undefined;
         }
     }
 
@@ -316,64 +303,42 @@ class ReactFrameworkComponentWrapper
 
     protected createWrapper(UserReactComponent: { new (): any }, componentType: ComponentType): WrappableInterface {
         const gridOptions = this.gridOptions;
-        const reactiveCustomComponents = _getGridOption(gridOptions, 'reactiveCustomComponents');
-        if (reactiveCustomComponents) {
-            const getComponentClass = (propertyName: string) => {
-                switch (propertyName) {
-                    case 'filter':
-                        return _getGridOption(gridOptions, 'enableFilterHandlers')
-                            ? FilterDisplayComponentWrapper
-                            : FilterComponentWrapper;
-                    case 'floatingFilterComponent':
-                        return _getGridOption(gridOptions, 'enableFilterHandlers')
-                            ? FloatingFilterDisplayComponentWrapper
-                            : FloatingFilterComponentWrapper;
-                    case 'dateComponent':
-                        return DateComponentWrapper;
-                    case 'dragAndDropImageComponent':
-                        return DragAndDropImageComponentWrapper;
-                    case 'loadingOverlayComponent':
-                    case 'noRowsOverlayComponent':
-                    case 'overlayComponent':
-                    case 'activeOverlay':
-                        return CustomOverlayComponentWrapper;
-                    case 'statusPanel':
-                        return StatusPanelComponentWrapper;
-                    case 'toolPanel':
-                        return ToolPanelComponentWrapper;
-                    case 'menuItem':
-                        return MenuItemComponentWrapper;
-                    case 'cellRenderer':
-                        return CellRendererComponentWrapper;
-                    case 'columnLabelRenderer':
-                        return ColumnSelectionLabelRendererComponentWrapper;
-                    case 'innerHeaderComponent':
-                        return InnerHeaderComponentWrapper;
-                }
-            };
-            const ComponentClass = getComponentClass(componentType.name);
-            if (ComponentClass) {
-                return new ComponentClass(UserReactComponent, this.parent, componentType);
-            }
-        } else {
-            switch (componentType.name) {
+        const getComponentClass = (propertyName: string) => {
+            switch (propertyName) {
                 case 'filter':
+                    return _getGridOption(gridOptions, 'enableFilterHandlers')
+                        ? FilterDisplayComponentWrapper
+                        : FilterComponentWrapper;
                 case 'floatingFilterComponent':
+                    return _getGridOption(gridOptions, 'enableFilterHandlers')
+                        ? FloatingFilterDisplayComponentWrapper
+                        : FloatingFilterComponentWrapper;
                 case 'dateComponent':
+                    return DateComponentWrapper;
                 case 'dragAndDropImageComponent':
+                    return DragAndDropImageComponentWrapper;
                 case 'loadingOverlayComponent':
                 case 'noRowsOverlayComponent':
                 case 'overlayComponent':
                 case 'activeOverlay':
+                    return CustomOverlayComponentWrapper;
                 case 'statusPanel':
+                    return StatusPanelComponentWrapper;
                 case 'toolPanel':
+                    return ToolPanelComponentWrapper;
                 case 'menuItem':
+                    return MenuItemComponentWrapper;
                 case 'cellRenderer':
+                    return CellRendererComponentWrapper;
                 case 'columnLabelRenderer':
-                    // Grid ID is always set at this point
-                    warnReactiveCustomComponents(this.gridId!);
-                    break;
+                    return ColumnSelectionLabelRendererComponentWrapper;
+                case 'innerHeaderComponent':
+                    return InnerHeaderComponentWrapper;
             }
+        };
+        const ComponentClass = getComponentClass(componentType.name);
+        if (ComponentClass) {
+            return new ComponentClass(UserReactComponent, this.parent, componentType);
         }
         // only renderers supporting JavaScript functions and tool panels should use fallback methods
         const suppressFallbackMethods = !componentType.supportsJsFunction && componentType.name !== 'toolPanel';

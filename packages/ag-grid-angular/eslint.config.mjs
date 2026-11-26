@@ -1,3 +1,4 @@
+import noMismatchedGenericArgs from '../../eslint-rules/no-mismatched-generic-args.mjs';
 import rootESLint, { sonarjsConfig } from '../../eslint.config.mjs';
 
 export default [
@@ -17,7 +18,24 @@ export default [
     {
         files: ['projects/ag-grid-angular/src/**'],
         rules: {
+            // Angular dependency injection needs value imports of its tokens (ElementRef, ViewContainerRef).
             '@typescript-eslint/consistent-type-imports': 'off',
+        },
+    },
+    {
+        files: ['projects/ag-grid-angular/src/**/*.ts'],
+        plugins: { ag: { rules: { 'no-mismatched-generic-args': noMismatchedGenericArgs } } },
+        languageOptions: {
+            parserOptions: {
+                project: [
+                    './projects/ag-grid-angular/tsconfig.lib.json',
+                    './projects/ag-grid-angular/tsconfig.spec.json',
+                ],
+                tsconfigRootDir: import.meta.dirname,
+            },
+        },
+        rules: {
+            'ag/no-mismatched-generic-args': 'error',
         },
     },
 ];

@@ -1,8 +1,14 @@
 import { waitFor } from '@testing-library/dom';
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
+import { ALL_SEVERITIES, GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import type { ColDef, Column, ColumnState } from 'ag-grid-community';
-import { ClientSideRowModelModule, ColumnApiModule, TextFilterModule, TooltipModule } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    ColumnApiModule,
+    TextFilterModule,
+    TooltipModule,
+    enableDevValidations,
+} from 'ag-grid-community';
 import { ColumnMenuModule, PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
 
 describe('Column API', () => {
@@ -811,6 +817,58 @@ describe('Column API', () => {
             await asyncSetTimeout(0);
 
             expect([cellFor('a'), cellFor('b'), cellFor('c')]).toEqual(before);
+        });
+
+        test('a move after suppressColumnMoveAnimation is turned on and off again while columns slide slides', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ colId: 'a' }, { colId: 'b' }, { colId: 'c' }],
+            });
+            await asyncSetTimeout(0);
+            api.moveColumns(['a'], 2);
+            expect(document.querySelector('.ag-column-moving')).not.toBeNull();
+
+            api.setGridOption('suppressColumnMoveAnimation', true);
+            api.moveColumns(['b'], 2);
+
+            api.setGridOption('suppressColumnMoveAnimation', false);
+            api.moveColumns(['c'], 2);
+            expect(document.querySelector('.ag-column-moving')).not.toBeNull();
+        });
+
+        describe('moveColumns toIndex bound: the columns left after removal', () => {
+            const createAbcd = (gridId: string) =>
+                gridsManager.createGrid(gridId, {
+                    columnDefs: [{ colId: 'a' }, { colId: 'b' }, { colId: 'c' }, { colId: 'd' }],
+                });
+            const allColIds = (api: ReturnType<typeof createAbcd>) =>
+                api.getAllGridColumns().map((c: Column) => c.getColId());
+
+            test('toIndex past the columns left after removal warns #30 and moves nothing', () => {
+                enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [30] });
+                const api = createAbcd('invalid-index');
+                const warnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
+                try {
+                    api.moveColumns(['b', 'c'], 3);
+
+                    expect(warnSpy.mock.calls.map((call) => call[0])).toEqual(['AG Grid: warning #30']);
+                    expect(allColIds(api)).toEqual(['a', 'b', 'c', 'd']);
+                } finally {
+                    warnSpy.mockRestore();
+                }
+            });
+
+            test('toIndex equal to the columns left after removal moves them to the end without warning', () => {
+                const api = createAbcd('last-slot');
+                const warnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
+                try {
+                    api.moveColumns(['b', 'c'], 2);
+
+                    expect(warnSpy.mock.calls).toEqual([]);
+                    expect(allColIds(api)).toEqual(['a', 'd', 'b', 'c']);
+                } finally {
+                    warnSpy.mockRestore();
+                }
+            });
         });
     });
 

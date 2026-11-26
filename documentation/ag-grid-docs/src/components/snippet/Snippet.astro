@@ -2,7 +2,7 @@
 import Code, { LanguageMap } from '@ag-website-shared/components/code/Code';
 import agDocsTheme from '@ag-website-shared/components/code/theme.json';
 import { getFrameworkFromPath } from '@components/docs/utils/urlPaths';
-import he from 'he';
+import { decode } from 'he';
 import { codeToHtml } from 'shiki';
 import * as snippetTransformer from './snippetTransformer';
 
@@ -32,7 +32,7 @@ const langKey = (dataLanguage || frameworkLanguages[framework] || 'ts') as keyof
 const shikiLang = LanguageMap[langKey] ?? langKey;
 
 const encodedHtmlContent = await Astro.slots.render('default');
-const content = he.decode(encodedHtmlContent);
+const content = decode(encodedHtmlContent);
 
 const snippet = frameworkTransform
     ? snippetTransformer.transform(content, framework, {

@@ -1,9 +1,9 @@
-import { bench, suite } from 'vitest';
+import { suite } from 'vitest';
 
 import type { GridApi } from 'ag-grid-community';
 import { ClientSideRowModelApiModule, ClientSideRowModelModule, ColumnApiModule } from 'ag-grid-community';
 
-import { BenchGridsManager, SimplePRNG, benchDefaults } from './bench-utils';
+import { BenchGridsManager, SimplePRNG, bench } from './bench-utils';
 
 /**
  * Benchmarks the delta-sorting example scenario:
@@ -71,18 +71,17 @@ suite(`delta sort transactions (${ROW_COUNT / 1000}k rows, multi-column sort)`, 
         getRowId: ({ data }: { data: IData }) => String(data.id),
     };
 
-    const benchOptions = (deltaSort: boolean) =>
-        benchDefaults({
-            setup: async () => {
-                await gridsManager.reset();
-                idx = 0;
-                api = gridsManager.createGrid('delta-sort', {
-                    ...gridOptions,
-                    deltaSort,
-                    rowData: baseRowData.slice(),
-                });
-            },
-        });
+    const benchOptions = (deltaSort: boolean) => ({
+        setup: async () => {
+            await gridsManager.reset();
+            idx = 0;
+            api = gridsManager.createGrid('delta-sort', {
+                ...gridOptions,
+                deltaSort,
+                rowData: baseRowData.slice(),
+            });
+        },
+    });
 
     bench(
         'applyTransaction (deltaSort: true) - 1 update',

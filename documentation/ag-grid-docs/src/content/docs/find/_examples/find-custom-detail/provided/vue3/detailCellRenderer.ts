@@ -1,4 +1,15 @@
-export default {
+import { defineComponent } from 'vue';
+import type { PropType } from 'vue';
+
+import type { FindPart, ICellRendererParams } from 'ag-grid-community';
+
+export default defineComponent({
+    props: {
+        params: {
+            type: Object as PropType<ICellRendererParams>,
+            required: true,
+        },
+    },
     template: `<div role="gridcell">
         <h1 style="padding: 20px;">
             <template v-for="part in parts">
@@ -9,18 +20,18 @@ export default {
     </div>`,
     data: function () {
         return {
-            parts: [],
+            parts: [] as FindPart[],
         };
     },
     beforeMount() {
         this.updateDisplay(this.params);
     },
     methods: {
-        refresh(params) {
+        refresh(params: ICellRendererParams): boolean {
             this.updateDisplay(params);
             return true;
         },
-        updateDisplay(params) {
+        updateDisplay(params: ICellRendererParams): void {
             const { api, node } = params;
             const cellDisplayValue = 'My Custom Detail';
             const parts = api.findGetParts({
@@ -31,4 +42,4 @@ export default {
             this.parts = parts.length ? parts : [{ value: cellDisplayValue }];
         },
     },
-};
+});

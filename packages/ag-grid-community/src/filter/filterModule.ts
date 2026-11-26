@@ -72,12 +72,6 @@ export const ColumnFilterModule: _ModuleWithApi<_ColumnFilterGridApi> = {
     version: VERSION,
     beans: [ColumnFilterService, FilterMenuFactory],
     dynamicBeans: { headerFilterCellCtrl: HeaderFilterCellCtrl as any },
-    icons: {
-        // open filter button - header, floating filter, menu
-        filter: 'filter',
-        // filter is applied - header (legacy column menu), filter tool panel
-        filterActive: 'filter',
-    },
     apiFunctions: {
         isColumnFilterPresent,
         getColumnFilterInstance,

@@ -3,12 +3,12 @@
 // that differs between a cell whose renderer registers a tooltip, one that doesn't, and one with none.
 //
 // AllEnterpriseModule is registered so the per-cell cost reflects every feature being loaded.
-import { bench, suite } from 'vitest';
+import { suite } from 'vitest';
 
 import type { ColDef, GridApi, GridOptions, ICellRendererComp, ICellRendererParams } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
-import { BenchGridsManager, benchDefaults } from './bench-utils';
+import { BenchGridsManager, bench } from './bench-utils';
 
 const modules = [AllEnterpriseModule];
 
@@ -91,7 +91,6 @@ suite('cell repaint — tooltip shapes', () => {
                 api.flushAllAnimationFrames();
             },
             {
-                ...benchDefaults(),
                 setup: async () => {
                     await gridsManager.reset();
                     api = gridsManager.createGrid(id, { ...options, rowData: data });

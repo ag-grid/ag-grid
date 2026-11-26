@@ -14,7 +14,6 @@ import type {
 import { _EmptyBean } from 'ag-grid-community';
 
 import { CellEditorComponentProxy } from '../../shared/customComp/cellEditorComponentProxy';
-import { warnReactiveCustomComponents } from '../../shared/customComp/util';
 import { BeansContext } from '../beansContext';
 import { agStartTransition, isComponentStateless } from '../utils';
 import { jsxEditValue } from './cellEditorComp';
@@ -165,7 +164,7 @@ const CellComp = ({
         }
 
         const result = cellRendererRef.current.refresh(newCompDetails.params);
-        if (result != true) {
+        if (result !== true) {
             // increasing the render key forces the refresh. this is undocumented (for React users,
             // we don't document the refresh method, instead we tell them to act on new params).
             // however the GroupCellRenderer has this logic in it and would need a small refactor
@@ -353,17 +352,13 @@ const CellComp = ({
                 setDetails();
             },
 
-            setEditDetails: (compDetails, popup, popupPosition, reactiveCustomComponents) => {
+            setEditDetails: (compDetails, popup, popupPosition) => {
                 if (compDetails) {
                     let compProxy = undefined;
                     if (compDetails.componentFromFramework) {
-                        if (reactiveCustomComponents) {
-                            compProxy = new CellEditorComponentProxy(compDetails.params!, () =>
-                                setRenderKey((prev) => prev + 1)
-                            );
-                        } else {
-                            warnReactiveCustomComponents(beans.context.getId());
-                        }
+                        compProxy = new CellEditorComponentProxy(compDetails.params!, () =>
+                            setRenderKey((prev) => prev + 1)
+                        );
                     }
                     // start editing
                     setEditDetails({

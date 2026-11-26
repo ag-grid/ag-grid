@@ -640,8 +640,7 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
         for (const col of columns) {
             if (!liveValueColIds.has(col.colId) && !aggFuncs.values.has(col.colId)) {
                 const existingAggFunc = col.aggFunc;
-                const aggFunc =
-                    existingAggFunc != null ? existingAggFunc : this.beans.aggFuncSvc?.getDefaultAggFunc(col);
+                const aggFunc = existingAggFunc ?? this.beans.aggFuncSvc?.getDefaultAggFunc(col);
                 if (aggFunc != null) {
                     aggFuncs.values.set(col.colId, aggFunc);
                 }

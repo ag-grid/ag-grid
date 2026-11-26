@@ -1,4 +1,15 @@
-export default {
+import { defineComponent } from 'vue';
+import type { PropType } from 'vue';
+
+import type { IDragAndDropImageParams } from 'ag-grid-community';
+
+export default defineComponent({
+    props: {
+        params: {
+            type: Object as PropType<IDragAndDropImageParams & { accentColour: string }>,
+            required: true,
+        },
+    },
     template: `
         <div class="my-custom-drag-and-drop-cover" ref="eImage">
             <i class="fas fa-2x" ref="eIcon"></i>
@@ -6,16 +17,16 @@ export default {
         </div>
     `,
     mounted() {
-        this.$refs.eImage.style.setProperty('background-color', this.params.accentColour);
+        (this.$refs.eImage as HTMLElement).style.setProperty('background-color', this.params.accentColour);
     },
     methods: {
-        setLabel(label) {
-            this.$refs.eLabel.innerHTML = label;
+        setLabel(label: string) {
+            (this.$refs.eLabel as HTMLElement).innerHTML = label;
         },
 
-        setIcon(icon) {
+        setIcon(icon: string | null) {
             const { dragSource, api } = this.params;
-            const { eIcon } = this.$refs;
+            const eIcon = this.$refs.eIcon as HTMLElement;
 
             if (!icon) {
                 icon = dragSource.getDefaultIconName ? dragSource.getDefaultIconName() : 'notAllowed';
@@ -36,4 +47,4 @@ export default {
             eIcon.classList.toggle('fa-ruler-combined', icon === 'pivot');
         },
     },
-};
+});

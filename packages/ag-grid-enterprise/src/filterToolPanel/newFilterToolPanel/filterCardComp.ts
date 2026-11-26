@@ -1,5 +1,7 @@
+import type { ITooltipFeature } from 'ag-stack';
 import {
     RefPlaceholder,
+    _addManagedElementListeners,
     _clearElement,
     _removeFromParent,
     _setAriaControls,
@@ -8,8 +10,8 @@ import {
     _setDisplayed,
 } from 'ag-stack';
 
-import type { ElementParams, FilterOpenedEvent, FilterPanelFilterState } from 'ag-grid-community';
-import { Component, _createIcon } from 'ag-grid-community';
+import type { ElementParams, FilterOpenedEvent, FilterPanelFilterState, TooltipFeature } from 'ag-grid-community';
+import { Component, _createIcon, _resolveHeaderTooltip } from 'ag-grid-community';
 
 import { FilterDetailComp } from './filterDetailComp';
 import { translateForFilterPanel } from './filterPanelUtils';
@@ -66,6 +68,8 @@ export class FilterCardComp extends Component {
     private state?: FilterPanelFilterState;
     private summaryComp?: FilterSummaryComp;
     private detailComp?: FilterDetailComp;
+    private tooltipFeature?: TooltipFeature;
+    private expandTooltip?: ITooltipFeature;
 
     constructor(private readonly id: string) {
         super(FilterCardElement);
@@ -77,14 +81,52 @@ export class FilterCardComp extends Component {
         _setAriaLabel(eDelete, translateForFilterPanel(this, 'ariaLabelFilterCardDelete'));
         eDeleteIcon.appendChild(_createIcon('close', beans, null));
         this.activateTabIndex([eExpand, eDelete]);
-        this.addManagedElementListeners(eExpand, {
+        _addManagedElementListeners(this, eExpand, {
             click: () => filterPanelService.expand(id, !this.state?.expanded),
         });
-        this.addManagedElementListeners(eDelete, {
+        _addManagedElementListeners(this, eDelete, {
             click: () => filterPanelService.remove(id),
         });
         this.addManagedEventListeners({ filterOpened: this.onFilterOpened.bind(this) });
         eEditing.appendChild(_createIcon('filterCardEditing', beans, null));
+        this.tooltipFeature = this.createOptionalManagedBean(
+            beans.tooltipSvc?.createTooltip({
+                getGui: () => eExpand,
+                getTextElement: () => this.eTitle,
+                getLocation: () => 'filterToolPanelColumnGroup',
+                getTooltip: () =>
+                    _resolveHeaderTooltip(
+                        this.gos,
+                        this.gos.addCommon({
+                            location: 'filterToolPanelColumnGroup',
+                            column: this.state?.column,
+                            colDef: this.state?.column?.colDef,
+                            value: this.state?.name,
+                            valueFormatted: this.state?.name,
+                        })
+                    ),
+            })
+        );
+        this.expandTooltip = this.addTooltip({
+            control: 'filterExpand',
+            getGui: () => this.eExpandIcon,
+            getLocation: () => 'filterToolPanelColumnGroup',
+            getTooltip: () => ({
+                value: this.state?.expanded
+                    ? this.getLocaleTextFunc()('tooltipCollapseFilter', 'Collapse filter')
+                    : this.getLocaleTextFunc()('tooltipExpandFilter', 'Expand filter'),
+                params: { column: this.state?.column },
+            }),
+        });
+        this.addTooltip({
+            control: 'filterRemove',
+            getGui: () => eDelete,
+            getLocation: () => 'filterToolPanelColumnGroup',
+            getTooltip: () => ({
+                value: this.getLocaleTextFunc()('tooltipRemoveFilter', 'Remove filter'),
+                params: { column: this.state?.column },
+            }),
+        });
     }
 
     public refresh(newState: FilterPanelFilterState): void {
@@ -93,6 +135,8 @@ export class FilterCardComp extends Component {
         const { name, expanded, isEditing } = newState;
 
         this.eTitle.textContent = name;
+        this.tooltipFeature?.refreshTooltip();
+        this.expandTooltip?.refreshTooltip();
 
         _setDisplayed(eEditing, isEditing);
 

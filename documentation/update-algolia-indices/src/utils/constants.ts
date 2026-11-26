@@ -1,6 +1,7 @@
 export const WORKING_DIR = '../ag-grid-docs';
 export const DOC_SOURCE_DIR = `${WORKING_DIR}/src/content/docs`;
 export const BRYNTUM_CAMPAIGN_CONTENT_DIR = `${WORKING_DIR}/src/content/campaigns/bryntum-products`;
+export const BRYNTUM_CAMPAIGN_TIERS_PATH = `${WORKING_DIR}/src/content/campaigns/bryntum-tiers.json`;
 export const API_SOURCE_DIR = `${WORKING_DIR}/src/content/api-documentation`;
 export const DIST_DIR = `${WORKING_DIR}/dist`;
 export const API_REFERENCE_DIR = `${DIST_DIR}/files/reference`;

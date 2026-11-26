@@ -1,0 +1,27 @@
+.style-guide-item {
+    margin-bottom: 24px;
+}
+
+.style-guide-item > code:first-child {
+    display: block;
+    color: #f09;
+    margin-bottom: 8px;
+
+    &::before {
+        content: '<';
+        color: #f09;
+    }
+
+    &::after {
+        content: '>';
+        color: #f09;
+    }
+}
+
+.swatch-a {
+    background-color: #2196f3;
+}
+
+.swatch-b {
+    background-color: #ff9800;
+}

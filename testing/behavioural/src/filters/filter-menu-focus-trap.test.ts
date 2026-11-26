@@ -1,10 +1,15 @@
 import { waitFor } from '@testing-library/dom';
 import '@testing-library/jest-dom/vitest';
 import { userEvent } from '@testing-library/user-event';
-import { TestGridsManager } from 'ag-test-utils';
+import { ALL_SEVERITIES, LEGACY_FILTER_WARNING_IDS, TestGridsManager } from 'ag-test-utils';
 
 import type { IFilterComp } from 'ag-grid-community';
-import { ClientSideRowModelModule, CustomFilterModule, TextFilterModule } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    CustomFilterModule,
+    TextFilterModule,
+    enableDevValidations,
+} from 'ag-grid-community';
 import { MultiFilterModule } from 'ag-grid-enterprise';
 
 function createInput(className: string): HTMLInputElement {
@@ -69,6 +74,23 @@ class PanelBeforeInputFilter extends StaticPanelFilter {
     }
 }
 
+class NativeControlsFilter extends StaticPanelFilter {
+    protected override createChildren(): HTMLElement[] {
+        const button = document.createElement('button');
+        button.tabIndex = 0;
+        button.textContent = 'Action';
+        return [createInput('test-filter-input'), button];
+    }
+}
+
+class PositiveTabIndexFilter extends NativeControlsFilter {
+    protected override createChildren(): HTMLElement[] {
+        const children = super.createChildren();
+        children[0].tabIndex = 3;
+        return [...children, createStaticPanel()];
+    }
+}
+
 class RadioGroupFirstFilter extends StaticPanelFilter {
     protected override createChildren(): HTMLElement[] {
         const [unchecked, checked] = [createInput('test-unchecked'), createInput('test-checked')];
@@ -86,8 +108,110 @@ describe('Filter menu focus trap', () => {
         modules: [ClientSideRowModelModule, CustomFilterModule],
     });
 
+    beforeEach(() => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: LEGACY_FILTER_WARNING_IDS });
+    });
+
     afterEach(() => {
         gridsManager.reset();
+    });
+
+    test.each([0, 3, -1])('custom filter traps native controls with grid tabIndex %s', async (tabIndex) => {
+        const api = await gridsManager.createGridAndWait('nativeFilterTabOrder', {
+            tabIndex,
+            columnDefs: [{ field: 'a', filter: NativeControlsFilter }],
+            rowData: [{ a: 1 }],
+        });
+        api.showColumnFilter('a');
+        const input = await waitFor(() => {
+            const input = document.querySelector<HTMLInputElement>('.ag-filter-menu .test-filter-input');
+            expect(input).not.toBeNull();
+            return input!;
+        });
+        const button = document.querySelector<HTMLButtonElement>('.ag-filter-menu button')!;
+        const user = userEvent.setup();
+        input.focus();
+        await user.tab();
+        expect(button).toHaveFocus();
+        await user.tab();
+        expect(input).toHaveFocus();
+        await user.tab({ shift: true });
+        expect(button).toHaveFocus();
+        await user.tab({ shift: true });
+        expect(input).toHaveFocus();
+    });
+
+    test.each([false, true])('wraps past an unchecked radio group as one stop (backwards: %s)', async (backwards) => {
+        const api = await gridsManager.createGridAndWait('uncheckedRadioFilter', {
+            columnDefs: [{ field: 'a', filter: RadioGroupFirstFilter }],
+            rowData: [{ a: 1 }],
+        });
+        api.showColumnFilter('a');
+        const input = await waitFor(() => {
+            const input = document.querySelector<HTMLInputElement>('.ag-filter-menu .test-filter-input');
+            expect(input).not.toBeNull();
+            return input!;
+        });
+        const radios = input.parentElement!.querySelectorAll<HTMLInputElement>('input[type="radio"]');
+        radios[1].checked = false;
+        if (!backwards) {
+            input.parentElement!.prepend(input);
+        }
+        const user = userEvent.setup();
+        input.focus();
+        await user.tab({ shift: backwards });
+        expect(radios[backwards ? 1 : 0]).toHaveFocus();
+        await user.tab({ shift: backwards });
+        expect(input).toHaveFocus();
+        expect(radios[0]).not.toBeChecked();
+        expect(radios[1]).not.toBeChecked();
+    });
+
+    test('popup preserves custom tab order when controls are inserted, updated and removed', async () => {
+        const api = await gridsManager.createGridAndWait('localFilterTabOrder', {
+            columnDefs: [{ field: 'a', filter: PositiveTabIndexFilter }],
+            rowData: [{ a: 1 }],
+        });
+        api.showColumnFilter('a');
+        const input = await waitFor(() => {
+            const input = document.querySelector<HTMLInputElement>('.ag-filter-menu .test-filter-input');
+            expect(input).toHaveAttribute('tabindex', '3');
+            return input!;
+        });
+        const container = input.parentElement!;
+        expect(container.querySelector('.test-static-panel')).toHaveAttribute('tabindex', '-1');
+
+        const added = createInput('test-added-input');
+        added.tabIndex = 5;
+        container.appendChild(added);
+        const button = container.querySelector('button')!;
+        const user = userEvent.setup();
+        input.focus();
+        await user.tab();
+        expect(added).toHaveFocus();
+        await user.tab();
+        expect(button).toHaveFocus();
+        await user.tab();
+        expect(input).toHaveFocus();
+        await user.tab({ shift: true });
+        expect(button).toHaveFocus();
+        await user.tab({ shift: true });
+        expect(added).toHaveFocus();
+
+        added.tabIndex = 1;
+        await user.tab();
+        expect(input).toHaveFocus();
+        await user.tab({ shift: true });
+        expect(added).toHaveFocus();
+        await user.tab({ shift: true });
+        expect(button).toHaveFocus();
+        added.remove();
+        await user.tab();
+        expect(input).toHaveFocus();
+
+        api.hideColumnFilter();
+        expect(input).toHaveAttribute('tabindex', '3');
+        expect(added).toHaveAttribute('tabindex', '1');
     });
 
     async function openFilterMenu(colId: 'a' | 'b' | 'c'): Promise<HTMLElement> {
@@ -181,6 +305,40 @@ describe('Simple filter AND/OR join operator keyboard navigation', () => {
         gridsManager.reset();
     });
 
+    test('provided controls wrap in both directions with a positive grid tabIndex', async () => {
+        const api = await gridsManager.createGridAndWait('providedFilterTabOrder', {
+            tabIndex: 3,
+            suppressInputClearButton: true,
+            columnDefs: [{ field: 'a', filter: 'agTextColumnFilter', filterParams: { buttons: ['apply'] } }],
+            rowData: [{ a: 'x' }],
+        });
+        api.showColumnFilter('a');
+        const select = await waitFor(() => {
+            const select = document.querySelector<HTMLElement>('.ag-filter-menu [role="combobox"]');
+            expect(select).toHaveAttribute('tabindex', '3');
+            return select!;
+        });
+        const menu = document.querySelector<HTMLElement>('.ag-filter-menu')!;
+        const input = menu.querySelector<HTMLInputElement>('input')!;
+        const apply = menu.querySelector<HTMLButtonElement>('.ag-filter-apply-panel button')!;
+        const user = userEvent.setup();
+        select.focus();
+        await user.tab({ shift: true });
+        expect(apply).toHaveFocus();
+        await user.tab();
+        expect(select).toHaveFocus();
+
+        await user.type(input, 'x');
+        await waitFor(() => expect(menu.querySelectorAll('[role="combobox"]')).toHaveLength(2));
+        const lastInput = menu.querySelectorAll<HTMLInputElement>('.ag-filter-body input')[1];
+        expect(lastInput).toHaveAttribute('tabindex', '3');
+        apply.focus();
+        await user.tab();
+        expect(select).toHaveFocus();
+        await user.tab({ shift: true });
+        expect(apply).toHaveFocus();
+    });
+
     async function openFilter() {
         const api = await gridsManager.createGridAndWait('joinOperatorKeyboardGrid', {
             columnDefs: [{ field: 'a', filter: 'agTextColumnFilter', filterParams: { numAlwaysVisibleConditions: 2 } }],
@@ -263,6 +421,10 @@ describe('Simple filter AND/OR join operator keyboard navigation', () => {
 describe('Multi filter radio group entry', () => {
     const gridsManager = new TestGridsManager({
         modules: [ClientSideRowModelModule, CustomFilterModule, TextFilterModule, MultiFilterModule],
+    });
+
+    beforeEach(() => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: LEGACY_FILTER_WARNING_IDS });
     });
 
     afterEach(() => {

@@ -1,7 +1,14 @@
+import type { ColumnVO, IServerSideGetRowsRequest, ServerSideTransaction } from 'ag-grid-community';
+
+// Request values are bound as `?` parameters, and column names, sort directions and
+// aggregation functions are checked against allow-lists of known values.
 function FakeServer() {
     alasql.options.cache = false;
 
-    let intervals = [];
+    const knownColumns = new Set(Object.keys(data[0] ?? {}));
+    const aggFuncs = new Set(['sum', 'min', 'max', 'avg', 'count', 'first', 'last']);
+
+    let intervals: ReturnType<typeof setInterval>[] = [];
     return {
         randomUpdates: () => {
             intervals.push(setInterval(() => randomTransaction({ numUpdate: 5, numAdd: 2, numRemove: 2 }), 1000));
@@ -10,7 +17,7 @@ function FakeServer() {
             intervals.forEach(clearInterval);
             intervals = [];
         },
-        getData: function (request) {
+        getData: function (request: IServerSideGetRowsRequest) {
             const results = executeQuery(request);
 
             return {
@@ -18,18 +25,22 @@ function FakeServer() {
                 rows: results,
             };
         },
-        getAggValues: function (groupRow) {
+        getAggValues: function (groupRow: Record<string, unknown>) {
+            const params: any[] = [data];
             const whereClause = Object.entries(groupRow)
-                .map(([field, val]) => `${field} = "${val}"`)
+                .map(([field, val]) => {
+                    params.push(String(val));
+                    return `${column(field)} = ?`;
+                })
                 .join(' AND ');
             const SQL = `
         SELECT SUM(current) as current, SUM(previous) as previous, COUNT(tradeId) as childCount FROM ? WHERE ${whereClause}
       `;
-            return alasql(SQL, [data])[0];
+            return alasql(SQL, params)[0];
         },
     };
 
-    function executeQuery(request) {
+    function executeQuery(request: IServerSideGetRowsRequest) {
         const groupByResult = executeRowGroupQuery(request);
         const rowGroupCols = request.rowGroupCols;
         const groupKeys = request.groupKeys;
@@ -43,46 +54,64 @@ function FakeServer() {
         const childCountResult = executeGroupChildCountsQuery(request, groupColId);
 
         // add 'childCount' to group results
-        return groupByResult.map(function (group) {
+        return groupByResult.map(function (group: any) {
             group['childCount'] = childCountResult[group[groupColId]];
             return group;
         });
     }
 
-    function executeRowGroupQuery(request) {
-        const groupByQuery = buildGroupBySql(request);
+    function executeRowGroupQuery(request: IServerSideGetRowsRequest) {
+        const params: any[] = [data];
+        const groupByQuery = buildGroupBySql(request, params);
 
-        return alasql(groupByQuery, [data]);
+        return alasql(groupByQuery, params);
     }
 
-    function executeGroupChildCountsQuery(request, groupId) {
-        const SQL = interpolate('SELECT {0} FROM ? pivot (count({0}) for {0})' + whereSql(request), [groupId]);
+    function executeGroupChildCountsQuery(request: IServerSideGetRowsRequest, groupId: string) {
+        const params: any[] = [data];
+        const SQL =
+            interpolate('SELECT {0} FROM ? pivot (count({0}) for {0})', [column(groupId)]) + whereSql(request, params);
 
-        return alasql(SQL, [data])[0];
+        return alasql(SQL, params)[0];
     }
 
-    function buildGroupBySql(request) {
+    function column(colId: string) {
+        if (!knownColumns.has(colId)) {
+            throw new Error('Unknown column: ' + colId);
+        }
+        return colId;
+    }
+
+    function aggFunc(name?: string) {
+        if (!name || !aggFuncs.has(name)) {
+            throw new Error('Unsupported aggregation: ' + name);
+        }
+        return name;
+    }
+
+    function buildGroupBySql(request: IServerSideGetRowsRequest, params: unknown[]) {
         return (
             selectSql(request) +
             ' FROM ?' +
-            whereSql(request) +
+            whereSql(request, params) +
             groupBySql(request) +
             orderBySql(request) +
             limitSql(request)
         );
     }
 
-    function selectSql(request) {
+    function selectSql(request: IServerSideGetRowsRequest) {
         const rowGroupCols = request.rowGroupCols;
         const valueCols = request.valueCols;
         const groupKeys = request.groupKeys;
 
         if (isDoingGrouping(rowGroupCols, groupKeys)) {
             const rowGroupCol = rowGroupCols[groupKeys.length];
-            const colsToSelect = [rowGroupCol.id];
+            const colsToSelect = [column(rowGroupCol.id)];
 
             valueCols.forEach(function (valueCol) {
-                colsToSelect.push(valueCol.aggFunc + '(' + valueCol.id + ') AS ' + valueCol.id);
+                const id = column(valueCol.id);
+                colsToSelect.push(aggFunc(valueCol.aggFunc) + '(' + id + ') AS ' + id);
             });
 
             return 'SELECT ' + colsToSelect.join(', ');
@@ -91,16 +120,15 @@ function FakeServer() {
         return 'SELECT *';
     }
 
-    function whereSql(request) {
+    function whereSql(request: IServerSideGetRowsRequest, params: unknown[]) {
         const rowGroups = request.rowGroupCols;
         const groupKeys = request.groupKeys;
-        const whereParts = [];
+        const whereParts: string[] = [];
 
         if (groupKeys) {
             groupKeys.forEach(function (key, i) {
-                const value = typeof key === 'string' ? "'" + key + "'" : key;
-
-                whereParts.push(rowGroups[i].id + ' = ' + value);
+                whereParts.push(column(rowGroups[i].id) + ' = ?');
+                params.push(key);
             });
         }
 
@@ -111,46 +139,51 @@ function FakeServer() {
         return '';
     }
 
-    function groupBySql(request) {
+    function groupBySql(request: IServerSideGetRowsRequest) {
         const rowGroupCols = request.rowGroupCols;
         const groupKeys = request.groupKeys;
 
         if (isDoingGrouping(rowGroupCols, groupKeys)) {
             const rowGroupCol = rowGroupCols[groupKeys.length];
 
-            return ' GROUP BY ' + rowGroupCol.id + ' HAVING count(*) > 0';
+            return ' GROUP BY ' + column(rowGroupCol.id) + ' HAVING count(*) > 0';
         }
 
         return '';
     }
 
-    function orderBySql(request) {
-        const sortModel = request.sortModel;
+    function orderBySql(request: IServerSideGetRowsRequest) {
+        // sorts on columns that aren't in the data (e.g. the auto group column) are ignored
+        const sortModel = request.sortModel.filter(function (s) {
+            return knownColumns.has(s.colId);
+        });
 
         if (sortModel.length === 0) return '';
 
         const sorts = sortModel.map(function (s) {
-            return s.colId + ' ' + s.sort.toUpperCase();
+            return column(s.colId) + (s.sort === 'desc' ? ' DESC' : ' ASC');
         });
 
         return ' ORDER BY ' + sorts.join(', ');
     }
 
-    function limitSql(request) {
+    function limitSql(request: IServerSideGetRowsRequest) {
         if (request.endRow == undefined || request.startRow == undefined) {
             return '';
         }
-        const blockSize = request.endRow - request.startRow;
+        // AlaSQL doesn't accept bound parameters here, so only ever write whole numbers
+        const startRow = Math.max(0, Math.floor(Number(request.startRow)) || 0);
+        const blockSize = Math.max(0, Math.floor(Number(request.endRow)) - startRow || 0);
 
-        return ' LIMIT ' + blockSize + ' OFFSET ' + request.startRow;
+        return ' LIMIT ' + blockSize + ' OFFSET ' + startRow;
     }
 
-    function isDoingGrouping(rowGroupCols, groupKeys) {
+    function isDoingGrouping(rowGroupCols: ColumnVO[], groupKeys: string[]) {
         // we are not doing grouping if at the lowest level
         return rowGroupCols.length > groupKeys.length;
     }
 
-    function getLastRowIndex(request, results) {
+    function getLastRowIndex(request: IServerSideGetRowsRequest, results: any[]) {
         if (!results || results.length === 0) {
             return null;
         }
@@ -163,16 +196,16 @@ function FakeServer() {
     }
 }
 
-let fakeServerInstance: FakeServer;
+let fakeServerInstance: ReturnType<typeof FakeServer>;
 export function getFakeServer() {
     if (!fakeServerInstance) {
-        fakeServerInstance = new FakeServer();
+        fakeServerInstance = FakeServer();
     }
     return fakeServerInstance;
 }
 
 // IE Workaround - as templates literals are not supported
-function interpolate(str, o) {
+function interpolate(str: string, o: string[]) {
     return str.replace(/{([^{}]*)}/g, function (a, b) {
         const r = o[b];
         return typeof r === 'string' || typeof r === 'number' ? r : a;
@@ -207,18 +240,18 @@ const portfolios = ['Aggressive', 'Defensive', 'Income', 'Speculative', 'Hybrid'
 let nextTradeId = 0;
 const FIRST_BOOK_ID = 62472;
 
-const PRODUCT_BOOK_START = {};
+const PRODUCT_BOOK_START: Record<string, number> = {};
 products.forEach((product, idx) => {
     PRODUCT_BOOK_START[product] = FIRST_BOOK_ID + portfolios.length * BOOK_COUNT * idx;
 });
-const PORTFOLIO_BOOK_OFFSET = {};
+const PORTFOLIO_BOOK_OFFSET: Record<string, number> = {};
 portfolios.forEach((portfolio, idx) => {
     PORTFOLIO_BOOK_OFFSET[portfolio] = idx * BOOK_COUNT;
 });
 
 let nextBookId = 62472;
 
-export const data = [];
+export const data: Trade[] = [];
 
 // IIFE to create initial data
 (function () {
@@ -245,36 +278,42 @@ export const data = [];
     }
 })();
 
-export const dataObservers = [];
-export const registerObserver = ({ transactionFunc, groupedFields }) => {
-    const existingObserver = dataObservers.find(({ transactionFunc: oldFunc }) => oldFunc === transactionFunc);
-    if (existingObserver) {
-        existingObserver.groupedFields = groupedFields;
-        return;
-    }
-    dataObservers.push({
-        transactionFunc,
-        groupedFields,
-    });
+interface DataObserver {
+    transactionFunc: (transaction: ServerSideTransaction) => void;
+    groupedFields?: string[];
+}
+
+// The showcase has one grid, so a new registration replaces the observer, and with it the grouping it routes by.
+let dataObserver: DataObserver | undefined;
+export const registerObserver = (observer: DataObserver) => {
+    dataObserver = observer;
 };
 
 const uniqueQueries = new Map();
-export function randomTransaction({ numAdd, numUpdate, numRemove }) {
+export function randomTransaction({
+    numAdd,
+    numUpdate,
+    numRemove,
+}: {
+    numAdd: number;
+    numUpdate: number;
+    numRemove: number;
+}) {
     uniqueQueries.clear();
     // updates
-    const update = [];
+    const update: Trade[] = [];
     for (let i = 0; i < numUpdate && data.length; i++) {
         const idx = randomBetween(0, data.length - 1);
         const d = data[idx];
         d.previous = d.current;
         d.current = d.previous + 13;
         d.lastUpdated = new Date();
-        d.updateCount = ++d.updateCount;
+        d.updateCount = (d.updateCount ?? 0) + 1;
         update.push(d);
     }
 
     // adds
-    const add = [];
+    const add: Trade[] = [];
     const lastUpdate = new Date();
     for (let i = 0; i < numAdd; i++) {
         const product = products[randomBetween(0, products.length - 1)];
@@ -290,7 +329,7 @@ export function randomTransaction({ numAdd, numUpdate, numRemove }) {
     data.push(...add);
 
     // removes
-    const remove = [];
+    const remove: Trade[] = [];
     for (let i = 0; i < numRemove && data.length; i++) {
         const idx = randomBetween(0, data.length - 1);
         const d = data[idx];
@@ -298,34 +337,46 @@ export function randomTransaction({ numAdd, numUpdate, numRemove }) {
         remove.push(d);
     }
 
-    dataObservers.forEach(({ transactionFunc, groupedFields }) => {
-        const routedTransactions = {};
+    if (!dataObserver) {
+        return;
+    }
+    const { transactionFunc, groupedFields = [] } = dataObserver;
+    const routedTransactions: Record<string, ServerSideTransaction> = {};
 
-        translateRowsToRoutes({
-            rows: update,
-            op: 'update',
-            fields: groupedFields,
-            mutableTransactionObj: routedTransactions,
-        });
-        translateRowsToRoutes({
-            rows: remove,
-            op: 'remove',
-            fields: groupedFields,
-            mutableTransactionObj: routedTransactions,
-        });
-        translateRowsToRoutes({
-            rows: add,
-            op: 'add',
-            fields: groupedFields,
-            mutableTransactionObj: routedTransactions,
-        });
-
-        // may want to filter duplicates here
-        Object.values(routedTransactions).forEach(transactionFunc);
+    translateRowsToRoutes({
+        rows: update,
+        op: 'update',
+        fields: groupedFields,
+        mutableTransactionObj: routedTransactions,
     });
+    translateRowsToRoutes({
+        rows: remove,
+        op: 'remove',
+        fields: groupedFields,
+        mutableTransactionObj: routedTransactions,
+    });
+    translateRowsToRoutes({
+        rows: add,
+        op: 'add',
+        fields: groupedFields,
+        mutableTransactionObj: routedTransactions,
+    });
+
+    // may want to filter duplicates here
+    Object.values(routedTransactions).forEach(transactionFunc);
 }
 
-const translateRowsToRoutes = ({ rows, op, fields, mutableTransactionObj }) => {
+const translateRowsToRoutes = ({
+    rows,
+    op,
+    fields,
+    mutableTransactionObj,
+}: {
+    rows: Record<string, any>[];
+    op: 'add' | 'update' | 'remove';
+    fields: string[];
+    mutableTransactionObj: Record<string, ServerSideTransaction>;
+}) => {
     rows.forEach((item) => {
         for (let i = 0; i < fields.length; i++) {
             const route = fields.slice(0, i).map((field) => item[field]);
@@ -335,7 +386,8 @@ const translateRowsToRoutes = ({ rows, op, fields, mutableTransactionObj }) => {
 
             // does a row belonging to this group already exist
             const doesGroupExist = data.some(
-                (row) => row !== item && groupRowFields.every((field) => groupRow[field] === row[field])
+                (row: Record<string, any>) =>
+                    row !== item && groupRowFields.every((field) => groupRow[field] === row[field])
             );
 
             const stringifiedRow = JSON.stringify(groupRow);
@@ -375,17 +427,38 @@ const translateRowsToRoutes = ({ rows, op, fields, mutableTransactionObj }) => {
         const existingTransaction = mutableTransactionObj[routeId] || {};
 
         mutableTransactionObj[routeId] = {
+            ...existingTransaction,
             route,
             [op]: [...(existingTransaction[op] ?? []), item],
         };
     });
 };
 
-function randomBetween(min, max) {
+function randomBetween(min: number, max: number) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-function createTradeRecord(product, portfolio, book) {
+interface Trade {
+    product: string;
+    portfolio: string;
+    book: string;
+    tradeId: number;
+    submitterID: number;
+    submitterDealID: number;
+    dealType: string;
+    bidFlag: string;
+    current: number;
+    previous: number;
+    pl1: number;
+    pl2: number;
+    gainDx: number;
+    sxPx: number;
+    _99Out: number;
+    updateCount?: number;
+    lastUpdated?: Date;
+}
+
+function createTradeRecord(product: string, portfolio: string, book: string): Trade {
     const current = Math.floor(Math.random() * 100000) + 100;
     const previous = current + Math.floor(Math.random() * 10000) - 2000;
     const trade = {

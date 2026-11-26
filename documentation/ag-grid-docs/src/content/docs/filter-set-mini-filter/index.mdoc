@@ -83,7 +83,9 @@ The formatter is also passed the grid `api` and `context` as a second argument, 
 
 By default the Mini Filter is case-insensitive. Practically this means that searching for `bl` would match Filter List values of `Black`, `blue` and `BLONDE`.
 
-Case-sensitive searches can be enabled by using the `caseSensitive` filter parameter:
+This also applies when the `caseSensitive` filter parameter is enabled: values that differ only by case are listed separately, but searching for `black` matches `Black`, `black` and `BLACK`. A [Tree List](./filter-set-tree-list/) shows such values as one entry.
+
+Case-sensitive searches can be enabled by using the `miniFilterCaseSensitive` filter parameter together with `caseSensitive`:
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -92,7 +94,8 @@ const gridOptions = {
             field: 'colour',
             filter: 'agSetColumnFilter',
             filterParams: {
-                caseSensitive: true
+                caseSensitive: true,
+                miniFilterCaseSensitive: true
             }
         }
     ]
@@ -116,7 +119,7 @@ When no matching values are found when typing in the Mini Filter, a message is d
 The example below shows this text being customised:
 
 - `searchOoo` is set so that the Mini Filter textbox displays `'Search values...'` instead of the default text `'Search...'`
-- `noMatches` is set so that when no matches are found for the Mini Filter search, the message displays `'No matches could be found.'` instead of `'No matches.'`
+- `noMatches` is set so that when no matches are found for the Mini Filter search, the message displays `'No matches could be found.'` instead of `'No matches'`
 
 {% gridExampleRunner title="Text Customisation" name="text-customisation" /%}
 

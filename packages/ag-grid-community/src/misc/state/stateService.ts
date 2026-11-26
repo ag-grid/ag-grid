@@ -6,7 +6,6 @@ import { _applyColumnState, _getColumnState } from '../../columns/columnStateUti
 import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
 import type { AgColumn } from '../../entities/agColumn';
-import type { FilterChangedEventSourceType } from '../../events';
 import { _isCellSelectionEnabled, _isClientSideRowModel } from '../../gridOptionsUtils';
 import type { CellRange } from '../../interfaces/IRangeService';
 import type {
@@ -70,6 +69,8 @@ export class StateService extends BeanStub implements NamedBean {
     private columnGroupStates?: { groupId: string; open: boolean; headerName?: string | null }[];
     /** Filter state held back until firstDataRendered, when pivot result columns exist. */
     private deferredFilterState?: FilterState;
+    /** The initial filter state until applied, when the row count is ready or before a filter set through the API. */
+    private initialFilterState?: FilterState;
     private readonly staleStateKeys: Set<keyof GridState> = new Set();
 
     public postConstruct(): void {
@@ -80,6 +81,7 @@ export class StateService extends BeanStub implements NamedBean {
         const partialColumnState = initialState.partialColumnState;
         delete initialState.partialColumnState;
         this.cachedState = initialState;
+        this.initialFilterState = initialState.filter;
 
         const suppressEventsAndDispatchInitEvent = this.suppressEventsAndDispatchInitEvent.bind(this);
 
@@ -141,6 +143,7 @@ export class StateService extends BeanStub implements NamedBean {
         this.cachedState = state;
 
         this.startSuppressEvents();
+        this.applyInitialFilterState();
 
         const source = 'api';
 
@@ -322,7 +325,8 @@ export class StateService extends BeanStub implements NamedBean {
     }
 
     private setupStateOnRowCountReady(initialState: GridState): void {
-        this.setRowCountState(initialState, 'gridInitializing');
+        this.applyInitialFilterState();
+        this.setRowCountState({ ...initialState, filter: undefined }, 'gridInitializing');
 
         const updateCachedState = this.updateCachedState.bind(this);
         const updateRowGroupExpansionState = () => {
@@ -729,16 +733,11 @@ export class StateService extends BeanStub implements NamedBean {
         if (selectableFilters !== undefined) {
             selectableFilter?.setState(selectableFilters ?? undefined);
         }
-        // A programmatic `api` restore reports `api`; init-time restore has no public source, so it keeps
-        // reporting the filter's own type (`gridInitializing` cannot be added to the public union without a break).
-        const isApi = source === 'api';
         if (filterModel !== undefined || columnFilterState !== undefined) {
-            const columnFilterSource: FilterChangedEventSourceType = isApi ? 'api' : 'columnFilter';
-            filterManager?.setFilterState(filterModel ?? null, columnFilterState ?? null, columnFilterSource);
+            filterManager?.setFilterState(filterModel ?? null, columnFilterState ?? null, source);
         }
         if (advancedFilterModel !== undefined) {
-            const advancedFilterSource: FilterChangedEventSourceType = isApi ? 'api' : 'advancedFilter';
-            filterManager?.setAdvFilterModel(advancedFilterModel ?? null, advancedFilterSource);
+            filterManager?.setAdvFilterModel(advancedFilterModel ?? null, source);
         }
     }
 
@@ -762,10 +761,16 @@ export class StateService extends BeanStub implements NamedBean {
         const { text } = quickFilterState ?? {};
         // An `api` restore resets what it omits, so a state without the text clears the Quick Filter. At
         // initialisation an absent value instead leaves the `quickFilterText` grid option as provided.
-        this.beans.quickFilter?.setState(
-            { text: source === 'api' ? (text ?? '') : text },
-            source === 'api' ? 'api' : undefined
-        );
+        this.beans.quickFilter?.setState({ text: source === 'api' ? (text ?? '') : text }, source);
+    }
+
+    /** Applies the initial filter state once, so a filter set through the API before the rows arrive lands after it. */
+    public applyInitialFilterState(): void {
+        const filterState = this.initialFilterState;
+        if (filterState) {
+            this.initialFilterState = undefined;
+            this.setFilterStateDeferringPivot(filterState, 'gridInitializing');
+        }
     }
 
     /** Defers to firstDataRendered if any target column is missing (a pivot result column not yet created). */
@@ -968,8 +973,9 @@ export class StateService extends BeanStub implements NamedBean {
         const noSelections =
             !selectionState ||
             (!Array.isArray(selectionState) &&
-                ((selectionState as ServerSideRowSelectionState).selectAll === false ||
-                    (selectionState as ServerSideRowGroupSelectionState).selectAllChildren === false) &&
+                ('selectAll' in selectionState
+                    ? !selectionState.selectAll
+                    : selectionState.selectAllChildren === false) &&
                 !selectionState?.toggledNodes?.length);
         return noSelections ? undefined : selectionState;
     }

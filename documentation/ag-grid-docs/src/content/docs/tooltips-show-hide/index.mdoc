@@ -1,0 +1,83 @@
+---
+title: "Showing & Hiding Tooltips"
+---
+
+By default, tooltips show after 2 seconds and have no timed hide. They stay open while their element or the tooltip is hovered, or their element has focus in a focus-enabled mode. Press `Escape` to dismiss them.
+
+## Show and Hide Delay
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    tooltipShowDelay: 0,
+    tooltipSwitchShowDelay: 1000,
+    tooltipHideDelay: 2000,
+};
+```
+
+{% gridExampleRunner title="Show Hide Delay" name="show-hide-delay" /%}
+
+{% apiDocumentation source="grid-options/properties.json" section="tooltips" names=["tooltipShowDelay", "tooltipSwitchShowDelay", "tooltipHideDelay"] /%}
+
+- `tooltipSwitchShowDelay` (200 ms by default) applies when the pointer moves between tooltip sources.
+- Filter Apply-button validation and Advanced Filter validation tooltips override the initial show delay with 1 second, even with `tooltipShowDelay: 0`. Pointer switching still uses `tooltipSwitchShowDelay`.
+- [Built-in control tooltips](./tooltips-built-in/) use the hover delays; keyboard-reachable controls show them immediately on focus.
+- `tooltipHideDelay` opts into a timeout. It does not close an interactive tooltip while keyboard focus is inside it.
+
+{% note %}
+Setting delays will have no effect if using Browser Tooltips as Browser Tooltips are controlled by the browser and not the grid.
+{% /note %}
+
+## Tooltip Trigger
+
+`tooltipTrigger` controls what shows ordinary grid tooltips, including cells, headers, Set Filter values, menu items and tool panel items:
+
+- `'hover'` (default): show on mouse hover only.
+- `'focus'`: show on keyboard focus only, after `tooltipShowDelay`.
+- `'hoverOrFocus'`: show on hover or keyboard focus after `tooltipShowDelay`.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    tooltipTrigger: 'hoverOrFocus',
+};
+```
+
+{% gridExampleRunner title="Tooltip Trigger" name="tooltip-trigger" exampleHeight=200 /%}
+
+{% apiDocumentation source="grid-options/properties.json" section="tooltips" names=["tooltipTrigger"] /%}
+
+Built-in control tooltips ignore `tooltipTrigger`. Non-focusable header icons, resize handles and filter-panel chevrons show their action hints on hover only; focusing the enclosing header or filter title retains its text-tooltip behaviour. See [Column Header Navigation](./keyboard-navigation/#column-header-navigation) for keyboard actions, including resizing.
+
+Existing accessible names are preserved; identical tooltip text is not repeated as a description. In combined mode, the most recently hovered or focused element owns the tooltip; moving away does not restore an earlier element's tooltip.
+
+### Screen Readers
+
+Tooltip text is available to screen readers immediately on focus, before the visual delay. For custom tooltips with structured values, return plain text from `getTooltipAriaDescription`: `undefined` uses the resolved textual value, `null` or `''` omits the focus description.
+
+{% apiDocumentation source="grid-options/properties.json" section="tooltips" names=["getTooltipAriaDescription"] /%}
+
+## Interactive Tooltips
+
+All tooltips can be hovered and their text selected. Use `tooltipInteraction: true`, or a callback for individual sources, to enable custom content containing inputs, buttons or links. Interactive tooltips use `role="dialog"` rather than `role="tooltip"`.
+
+- `Tab` from the source moves focus into the tooltip.
+- `Escape` closes it and returns focus to the source if focus was inside.
+- While focus is inside, hovering another element does not replace the tooltip.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    // Only Athlete cell tooltips are interactive.
+    tooltipInteraction: (params) =>
+        params.location === 'cell' && params.column === params.api.getColumn('athlete')
+}
+```
+
+The Age and Year tooltips below are plain text. The Athlete tooltip is a [Custom Tooltip Component](./component-tooltip/) with its own controls: its Submit button updates the hovered row's Athlete cell, then closes the tooltip by calling `hideTooltipCallback()`.
+
+{% gridExampleRunner title="Tooltip Interaction" name="tooltip-interaction" /%}
+
+## Touch Devices
+
+On iOS and Android, press and hold an element to show its tooltip immediately after the long press is recognised. Tap elsewhere to dismiss it.
+
+- An available context menu or column menu takes precedence.
+- Movement, cancellation or `suppressTouch: true` prevents the long-press tooltip.

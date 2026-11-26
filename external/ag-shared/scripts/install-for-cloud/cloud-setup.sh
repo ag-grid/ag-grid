@@ -37,6 +37,7 @@ set -uo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="${AG_CLOUD_REPO_ROOT:-$(cd "$SCRIPT_DIR/../../../.." && pwd)}"
+. "$SCRIPT_DIR/registry-env.sh"
 
 # NOT under $HOME. This script runs as root, so $HOME is /root, while the session
 # that later reads the cache runs as another user with its own home (/home/user in
@@ -291,7 +292,10 @@ EOF
         nx_version="$(node -p "require('$REPO_ROOT/package.json').devDependencies.nx" 2>/dev/null)"
         if [[ -n "$nx_version" && "$nx_version" != "undefined" ]]; then
             if slice="$(budgeted 120)"; then
-                with_timeout "$slice" yarn global add "nx@${nx_version}" >/dev/null 2>&1 ||
+                # Yarn 4 removed `yarn global add`; npm's global installer is the
+                # replacement for a persistent global binary (yarn itself is installed
+                # the same way elsewhere — see docs/claude-code-cloud-sessions.md).
+                with_timeout "$slice" npm install -g "nx@${nx_version}" >/dev/null 2>&1 ||
                     log_warn "nx@${nx_version} global install failed (yarn nx still works)"
             else
                 log_warn "no budget left to install nx (yarn nx still works)"

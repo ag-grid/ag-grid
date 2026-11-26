@@ -1,4 +1,4 @@
-import type { AgEvent } from 'ag-stack';
+import type { AgEvent, StringComparator } from 'ag-stack';
 import { _areEqual } from 'ag-stack';
 
 import { placeLockedColumns } from '../columnMove/columnMoveUtils';
@@ -11,6 +11,7 @@ import type { GridOptions } from '../entities/gridOptions';
 import type { ColumnEventType, ColumnStateUpdatedEvent } from '../events';
 import type { PropertyChangedEvent, PropertyValueChangedEvent } from '../gridOptionsService';
 import { _shouldMaintainColumnOrder } from '../gridOptionsUtils';
+import { _mergedEqual } from '../utils/mergeDeep';
 import { _buildColumnTree, finalizeColumnTree } from './buildColumnTree';
 import { applyPrevColumnsOrder } from './colsApplyPrevOrder';
 import { ColWrapperCache } from './columnGroups/colWrapperCache';
@@ -59,6 +60,16 @@ export class ColumnModel extends BeanStub implements NamedBean {
     public colDefList: AgColumn[] = [];
     /** Invalidation key for anything memoised off the colDefs. Mutating a live colDef in place doesn't register. */
     public colDefsVersion = 0;
+    /** Bumped when the `accentedSort` grid option changes to an unequal value, so columns rebuild their string comparator. */
+    public accentedSortVersion = 0;
+    /** The comparator for the `accentedSort` grid option, shared by the columns without their own. */
+    public gridStringComparator: StringComparator | undefined = undefined;
+    /** The {@link accentedSortVersion} {@link gridStringComparator} was built for; `-1` until built. */
+    public gridStringComparatorVersion = -1;
+    /** Whether the `accentedSort` grid option changed since `stringComparatorsChanged` was last raised. */
+    private gridAccentedSortChanged = false;
+    /** The columns whose colDef `accentedSort` changed since `stringComparatorsChanged` was last raised. */
+    public accentedSortChangedCols: AgColumn[] = [];
     /** >0 between {@link beginColUpdate} and {@link endColUpdate}, queueing the column events raised and deferring the
      *  role changes staged. */
     public colUpdateDepth = 0;
@@ -134,6 +145,14 @@ export class ColumnModel extends BeanStub implements NamedBean {
             ['defaultColDef', 'defaultColGroupDef', 'columnTypes', 'suppressFieldDotNotation'],
             this.recreateColumnDefs.bind(this)
         );
+        // the grid options compare by identity, so a framework re-creating them with an equal value keeps the comparators
+        this.addManagedPropertyListener('accentedSort', ({ currentValue, previousValue }) => {
+            if (!_mergedEqual(currentValue, previousValue)) {
+                ++this.accentedSortVersion;
+                this.gridAccentedSortChanged = true;
+                this.raiseStringComparatorsChanged();
+            }
+        });
         this.addManagedPropertyListener('pivotMode', (event) =>
             this.setPivotMode(this.gos.get('pivotMode'), _convertColumnEventSourceType(event.source))
         );
@@ -279,11 +298,10 @@ export class ColumnModel extends BeanStub implements NamedBean {
             this.changeEventsDispatching = true;
             try {
                 this.refreshCols(newColDefs, source);
+                visibleCols.refresh(source, false);
             } finally {
                 this.changeEventsDispatching = false;
             }
-
-            visibleCols.refresh(source, false);
 
             // unused by AG Grid but kept for backwards compatibility
             eventSvc.dispatchEvent({ type: 'columnEverythingChanged', source });
@@ -318,9 +336,9 @@ export class ColumnModel extends BeanStub implements NamedBean {
         ++this.colUpdateDepth;
     }
 
-    /** Call from a `finally`, so a throw cannot leave the events queued for good. The outermost end runs the role changes
-     *  staged and their grid events, then raises the column events queued, until no listener stages more; then the
-     *  layout events. A throw skips none of these steps, and the first is rethrown once they have run. */
+    /** Call from a `finally`, so a throw cannot leave the events queued for good. Each outermost end pass re-derives
+     *  redefined filters' params, runs staged role changes and their grid events, then raises queued column events,
+     *  until no listener stages more; then the layout events. A throw skips no step; the first is rethrown after. */
     public endColUpdate(): void {
         const depth = this.colUpdateDepth;
         if (depth > 1) {
@@ -331,19 +349,22 @@ export class ColumnModel extends BeanStub implements NamedBean {
         this.colUpdateDepth = 1;
         let threw = false;
         let error: unknown;
+        const colFilter = this.beans.colFilter;
         do {
             try {
+                colFilter?.refreshRedefinedFilters();
                 this.runColChanges();
                 this.flushColEvents();
             } catch (e) {
                 error = threw ? error : e;
                 threw = true;
             }
-        } while (this.queuedColEvents.length !== 0 || this.hasColChangesStaged());
+        } while (this.queuedColEvents.length !== 0 || this.hasColChangesStaged() || !!colFilter?.hasRedefinedFilters());
         this.colUpdateDepth = 0;
         this.everythingChangedInUpdate = false;
         try {
             this.beans.visibleCols.raiseDeferredLayoutEvents();
+            this.raiseStringComparatorsChanged();
         } catch (e) {
             error = threw ? error : e;
             threw = true;
@@ -472,6 +493,16 @@ export class ColumnModel extends BeanStub implements NamedBean {
             valueColsSvc?.dispatchColChange(source);
         } finally {
             colAnimation?.finish();
+        }
+    }
+
+    /** Once per change, so client-side sorting can re-sort: the sort model, and so `sortChanged`, stays the same. */
+    private raiseStringComparatorsChanged(): void {
+        const { gridAccentedSortChanged: gridOption, accentedSortChangedCols: columns } = this;
+        if (gridOption || columns.length) {
+            this.gridAccentedSortChanged = false;
+            this.accentedSortChangedCols = [];
+            this.eventSvc.dispatchEvent({ type: 'stringComparatorsChanged', gridOption, columns });
         }
     }
 

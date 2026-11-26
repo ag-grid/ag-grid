@@ -585,7 +585,7 @@ const addSheetViews = (rtl: boolean = false, xSplit?: number, ySplit?: number) =
                     name: 'sheetView',
                     properties: {
                         rawMap: {
-                            rightToLeft: rtl === true ? '1' : '0',
+                            rightToLeft: rtl ? '1' : '0',
                             workbookViewId: '0',
                         },
                     },

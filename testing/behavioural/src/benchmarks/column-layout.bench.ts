@@ -1,9 +1,9 @@
-import { bench, suite } from 'vitest';
+import { suite } from 'vitest';
 
 import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelApiModule, ClientSideRowModelModule, ColumnApiModule } from 'ag-grid-community';
 
-import { BenchGridsManager, benchDefaults, scrollStep, sweep } from './bench-utils';
+import { BenchGridsManager, bench, scrollStep, sweep } from './bench-utils';
 
 // column moves are in the core module
 const modules = [ClientSideRowModelModule, ClientSideRowModelApiModule, ColumnApiModule];
@@ -87,7 +87,6 @@ suite('column layout — rendered rows under colSpan density', () => {
                 api.flushAllAnimationFrames();
             },
             {
-                ...benchDefaults(),
                 setup: async () => {
                     await gridsManager.reset();
                     iter = 0;

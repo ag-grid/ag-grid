@@ -416,7 +416,7 @@ export class EditService extends BeanStub implements NamedBean {
 
         const res = this.shouldStartEditing(position, event, startedEdit, source);
 
-        if (res === false && source !== 'api') {
+        if (!res && source !== 'api') {
             if (this.isEditing(position)) {
                 this.stopEditing();
             }
@@ -488,7 +488,7 @@ export class EditService extends BeanStub implements NamedBean {
             forceCancel = false,
             forceStop = false,
             commit = false,
-        } = params || {};
+        } = params ?? {};
 
         if (STOP_EDIT_SOURCE_TRANSFORM_KEYS.has(source) && this.batch) {
             // if we are in batch editing, we do not stop editing on paste
@@ -1249,7 +1249,8 @@ export class EditService extends BeanStub implements NamedBean {
 
     /** Ends edits on every column dropping out of colsList, destroyed or merely parked. */
     public releaseColumnsLeaving(newCols: AgColumn[]): void {
-        const editMap = this.model.getEditMap();
+        // Columns can be set before postConstruct (e.g. autoGenerateColumnDefs with initial rowData), when there is no model and nothing in edit.
+        const editMap = this.model?.getEditMap();
         if (!editMap?.size) {
             return;
         }
@@ -1543,7 +1544,7 @@ export class EditService extends BeanStub implements NamedBean {
         // if a cell wasn't found, it's possible that focus was moved to the header
         res = res || !!this.beans.focusSvc.focusedHeader;
 
-        if (res === false && !preventNavigation) {
+        if (!res && !preventNavigation) {
             // not a header and not the table
             this.stopEditing(undefined, undefined, validation?.validationCache);
         }
@@ -2090,8 +2091,8 @@ export class EditService extends BeanStub implements NamedBean {
 
         const edits: EditMap = new Map();
 
-        for (let { colId, column, colKey, rowIndex, rowPinned, newValue: pendingValue, state } of cells) {
-            const col = colId ? colModel.colsById[colId] : colKey ? colModel.getCol(colKey) : column;
+        for (let { colId, rowIndex, rowPinned, newValue: pendingValue, state } of cells) {
+            const col = colModel.colsById[colId];
 
             if (!col) {
                 continue;

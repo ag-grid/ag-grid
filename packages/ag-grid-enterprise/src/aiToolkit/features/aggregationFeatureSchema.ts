@@ -1,8 +1,9 @@
 import type { BeanCollection } from 'ag-grid-community';
 
+import type { SchemaBuilder } from '../schemaBuilder';
 import { s } from '../schemaBuilder';
 
-export const buildAggregationFeatureSchema = (beans: BeanCollection) => {
+export const buildAggregationFeatureSchema = (beans: BeanCollection): SchemaBuilder | undefined => {
     const { aggFuncSvc } = beans;
     if (!aggFuncSvc) {
         return;
@@ -23,7 +24,7 @@ export const buildAggregationFeatureSchema = (beans: BeanCollection) => {
                         aggregatableColumns.map((col) =>
                             s.object({
                                 colId: s.literal(col.colId, 'Column identifier'),
-                                aggFunc: s.enum(beans.aggFuncSvc?.getFuncNames(col) || [], 'Aggregation function'),
+                                aggFunc: s.enum(beans.aggFuncSvc?.getFuncNames(col) ?? [], 'Aggregation function'),
                             })
                         )
                     ),

@@ -535,10 +535,12 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
                 colDef.calculatedExpression = undefined;
                 colDef.allowFormula = undefined;
             }
+            // `aggValueGetter` applies to aggregated primary columns only, never to pivot result columns.
+            colDef.aggValueGetter = undefined;
         }
 
         colDef.headerName = headerName;
-        colDef.colId = this.generateColumnId(pivotKeys || [], valueColumn && !totalColumn ? valueColumn.colId : '');
+        colDef.colId = this.generateColumnId(pivotKeys ?? [], valueColumn && !totalColumn ? valueColumn.colId : '');
 
         // pivot columns repeat over field, so it makes sense to use the unique id instead. For example if you want to
         // assign values to pinned bottom rows using setPinnedBottomRowData the value service will use this colId.

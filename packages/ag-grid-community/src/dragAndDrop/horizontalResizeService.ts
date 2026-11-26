@@ -49,7 +49,7 @@ export class HorizontalResizeService extends BeanStub implements NamedBean {
 
         this.setResizeIcons(!!params.isColumn);
 
-        const shiftKey = mouseEvent instanceof MouseEvent && mouseEvent.shiftKey === true;
+        const shiftKey = mouseEvent instanceof MouseEvent && mouseEvent.shiftKey;
         params.onResizeStart(shiftKey);
     }
 

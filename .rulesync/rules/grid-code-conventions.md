@@ -24,21 +24,35 @@ Enforced by ESLint plus team preferences.
 - Destructure only for 2+ fields; single field uses dot access.
 - `import type` for compile-time-only imports; separate `import type { Foo }` statements, no inline `{ type Foo, Bar }`.
 
-## Annotate only the published internal entry point with `AG_GRID_INTERNAL`
+## Annotate only the published internal entry points with `AG_GRID_INTERNAL`
 
 `/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */` marks
-membership of a package's published internal entry point — nothing else. Only `ag-grid-community` and
-`ag-stack` have one (`src/main-internal.ts`).
+membership of a package's published internal entry points — nothing else. `ag-grid-community` has one
+(`src/main-internal.ts`); `ag-stack` has two (`src/main-internal.ts`, and `src/main-core.ts` published as
+`ag-stack/core`).
 
-- Add it to a top-level declaration **only** when `main-internal.ts` re-exports that declaration, and add
-  it whenever it does.
-- Never add it to a class member, a property, a non-exported declaration, or an exported symbol
-  `main-internal.ts` does not re-export. It is not a general "this is internal" marker — the `_` name
-  prefix already carries that.
-- Never add it in a package with no `main-internal.ts`, which has no internal entry point to belong to.
+- Add it to a top-level declaration **only** when an internal entry point re-exports that declaration, and
+  add it whenever `main-internal.ts` does.
+- Never add it to a class member, a property, a non-exported declaration, or an exported symbol no
+  internal entry point re-exports. It is not a general "this is internal" marker — the `_` name prefix
+  already carries that.
+- Never add it in a package with no internal entry point.
 
 `main-internal.test.ts` enforces both directions in each package, so a speculative annotation fails CI.
 Removing an annotation is a comment-only change: nothing in the build reads `@internal`.
+
+## Keep `ag-stack/core` free of the DOM
+
+`ag-stack/src/main-core.ts` is the entry point for hosts with no DOM, such as parts of AG Studio. Everything
+it reaches through imports must type-check without `lib.dom` and run without `window` or `document`.
+`ag-stack:build:test` (part of `./checks.sh`) enforces this against Node's types and the WebWorker lib.
+
+- Use bare `setTimeout` / `clearTimeout` rather than `window.setTimeout` in modules it reaches.
+- Import from the narrowest module. A value import of `utils/dom`, `utils/event` or a UI interface
+  pulls the DOM into the whole entry point.
+- Keep `AgAbstractBean` and the contracts it reaches free of DOM types. DOM-typed bean helpers are
+  functions in `utils/dom` or `utils/event` (`_addManagedElementListeners`, `_throttleToFrame`), and
+  DOM-typed beans belong in `AgBeanCollection` rather than `AgCoreBeanCollection`.
 
 ## Prefer inline null checks over `_exists` / `_missing`
 
@@ -72,3 +86,21 @@ setTimeout(() => {
 ```
 
 Only needed when the callback reaches back into the component or grid — self-contained deferred work does not need the guard.
+
+## Self-check before review
+
+Apply this list while writing grid source, and check the diff against it before asking for review. Each item is a class of finding that automated review kept raising across several PRs.
+
+- **Existing setups keep working.** Apart from the bug being fixed, behaviour with no new option set and no new field returned matches the base branch: event order and count, `getRows` calls and request shape, scroll position, timing. A new feature sits behind an opt-in or activates only when its new input is present. Deprecated options keep working.
+- **Late async results.** A response, timer or callback can arrive after a refresh, purge, eviction or destroy. Tag each request with a generation or version and drop results that no longer match. A late result must never re-create state that was removed.
+- **Grid lifecycle order.** Deferred work that calls application callbacks or expects the API to be wired must not run before the grid is ready, and no deferred work may run after destroy (see *Guard deferred work against teardown*).
+- **Row and column kinds.** Check the change against pinned rows, sticky rows, group rows and footers, grand totals, detail rows, server-side stub rows and duplicate IDs within one call; and against auto-group, selection, row-number and pinned columns.
+- **Every entry path.** A fix reached through one path usually has siblings: API and user action, keyboard variants, header and body, menus and submenus. Check each one, and fix and test those that share the defect.
+- **Derived state stays fresh.** Every cached or derived value is invalidated by every input that can change it.
+- **Read the effective config.** Use the merged value (defaults, column types, grid options, theme chain) through the core services, not one source.
+- **Applied, not requested, sizes.** Use widths and heights after min, max and pinned caps.
+- **Bounded work.** No unbounded retry or reload loops (cap them), no new full-row scan on a per-cell or per-transaction path, no chain of loads in a single task.
+- **Hot paths cost nothing for grids without the feature.** On per-cell or per-row paths (`ValueService.getValueFromData`, `setValue`, aggregation, sort and filter reads), an opt-in feature adds at most one property read for everyone else. Don't wrap a hot method in a new one or split it into two read paths; branch inside it, after the existing logic, behind the feature's own property. Keep the existing `if` order for grids without the feature. Decide per-feature checks once, outside per-row and per-child loops. Run the matching benchmark paired against the base (`./benches.sh --bench-compare all`) before review.
+- **Result containers are fresh.** When a returned array or map is the caller's to mutate, build a new one rather than handing back an input container or internal state. Application row-data objects are the exception: keep their identity, as `getSelectedRows()` and transactions rely on it.
+- **Docs move with the change.** When behaviour changes, grep the docs and the option's JSDoc for the feature and update what describes the old behaviour, including the exceptions the change keeps or adds.
+- **Targeted runs cover the surface.** Add `main-internal` to a targeted `./behave.sh` run when an export or `AG_GRID_INTERNAL` annotation changes, and `react.test` when rendering or load timing changes (see *Running* in the testing rules).

@@ -1,74 +1,47 @@
 import { waitFor, within } from '@testing-library/dom';
-import { ALL_SEVERITIES, GridColumns, GridRows, asyncSetTimeout, clickMenuOption } from 'ag-test-utils';
+import {
+    ALL_SEVERITIES,
+    GridColumns,
+    GridRows,
+    LEGACY_FILTER_WARNING_IDS,
+    asyncSetTimeout,
+    clickMenuOption,
+} from 'ag-test-utils';
 import { vi } from 'vitest';
 
 import type {
     CalculatedColumnProcessColDefParams,
+    CalculatedColumnsOptions,
     ColDef,
     ColGroupDef,
     GridApi,
     GridOptions,
-    GridState,
-    UserColumnProperty,
+    IDoesFilterPassParams,
+    IFilterComp,
+    IFilterParams,
 } from 'ag-grid-community';
-import { enableDevValidations } from 'ag-grid-community';
+import { CustomFilterModule, ModuleRegistry, enableDevValidations } from 'ag-grid-community';
 
+import type { ProcessColDef } from './calculatedColumnsProcessColDefHarness';
+import {
+    ROW_DATA,
+    columnDefs,
+    gridWithUserColumn,
+    userColumnsState,
+    waitForColumn,
+} from './calculatedColumnsProcessColDefHarness';
 import {
     addViaDialog,
     cellValue,
     clickDialogButton,
     createGrid,
-    getDialog,
+    getCalculatedColumnDialog,
     propertiesOf,
     selectDataType,
     setExpression,
     setTitle,
     setupCalculatedColumnsStateSuite,
 } from './calculatedColumnsStateHarness';
-
-type ProcessColDef = (params: CalculatedColumnProcessColDefParams) => ColDef | undefined;
-
-const ROW_DATA = [
-    { id: 'r1', g: 'x', a: 10, b: 3 },
-    { id: 'r2', g: 'x', a: 5, b: 2 },
-];
-const columnDefs = (): GridOptions['columnDefs'] => [{ field: 'a' }, { field: 'b' }];
-
-/** A dialog-created calc col as grid state stores it, so a grid can start with one without driving the dialog. */
-function userColumnsState(
-    colId: string,
-    expression: string,
-    properties: UserColumnProperty[] = []
-): GridState['userColumns'] {
-    return [
-        {
-            colId,
-            created: true,
-            parentGroupId: null,
-            properties: [{ property: 'calculatedExpression', value: expression }, ...properties],
-        },
-    ];
-}
-
-function gridWithUserColumn(
-    id: string,
-    colId: string,
-    expression: string,
-    processColDef: ProcessColDef | undefined,
-    opts: Partial<GridOptions> = {}
-): GridApi {
-    return createGrid(id, {
-        rowData: ROW_DATA,
-        columnDefs: columnDefs(),
-        calculatedColumns: processColDef ? { processColDef } : true,
-        initialState: { userColumns: userColumnsState(colId, expression) },
-        ...opts,
-    });
-}
-
-async function waitForColumn(api: GridApi, colId: string): Promise<void> {
-    await waitFor(() => expect(api.getColumn(colId)).not.toBeNull());
-}
 
 function headerOf(api: GridApi, colId: string): string | null {
     return api.getDisplayNameForColumn(api.getColumn(colId)!, 'header');
@@ -126,21 +99,23 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
         expect(cellValue(api, calcId)).toBe(20);
     });
 
-    test.each<[string, string, CalculatedColumnProcessColDefParams['validationState']]>([
-        ['a valid expression', '[a] + [b]', 'valid'],
-        ['an empty expression', '', 'valid'],
-        ['a reference to a missing column', '[missing] * 2', 'unknownReference'],
-        ['an expression that fails to parse', '[a] +', 'invalidExpression'],
-    ])('validationState is correct for a restored column with %s', async (name, expression, expected) => {
+    test.each<[string, string, CalculatedColumnProcessColDefParams['expressionValidation']]>([
+        ['a valid expression', '[a] + [b]', { valid: true }],
+        ['an empty expression', '', { valid: true }],
+        ['a reference to a missing column', '[missing] * 2', { valid: false, reason: 'unknownReference' }],
+        ['an expression that fails to parse', '[a] +', { valid: false, reason: 'invalidExpression' }],
+    ])('expressionValidation is correct for a restored column with %s', async (name, expression, expected) => {
         const processColDef = vi.fn<ProcessColDef>((params) => params.colDef);
         const api = gridWithUserColumn(`pcd-valid-${name}`, 'calc', expression, processColDef);
         await waitForColumn(api, 'calc');
 
-        const states = new Set(processColDef.mock.calls.map(([params]) => params.validationState));
-        expect([...states]).toEqual([expected]);
+        expect(processColDef).toHaveBeenCalled();
+        for (const [params] of processColDef.mock.calls) {
+            expect(params.expressionValidation).toEqual(expected);
+        }
     });
 
-    test('validationState follows the expression while typing in the dialog', async () => {
+    test('expressionValidation follows the expression while typing in the dialog', async () => {
         const processColDef = vi.fn<ProcessColDef>((params) => params.colDef);
         const api = createGrid('pcd-valid-dialog', {
             rowData: ROW_DATA,
@@ -149,14 +124,69 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
         });
         api.showColumnMenu('a');
         await clickMenuOption('Add Calculated Column');
-        await waitFor(() => getDialog());
-        const lastState = () => processColDef.mock.calls.at(-1)![0].validationState;
+        await waitFor(() => getCalculatedColumnDialog());
+        const lastState = () => processColDef.mock.calls.at(-1)![0].expressionValidation;
 
         setExpression('[a] +');
-        await waitFor(() => expect(lastState()).toBe('invalidExpression'));
+        await waitFor(() => expect(lastState()).toEqual({ valid: false, reason: 'invalidExpression' }));
         setExpression('[a] + [b]');
-        await waitFor(() => expect(lastState()).toBe('valid'));
+        await waitFor(() => expect(lastState()).toEqual({ valid: true }));
     });
+
+    test.each(['customValidation', 'restrictedReference'] as const)(
+        'expressionValidation includes %s rejections and restores them without rerunning dialog callbacks',
+        async (reason) => {
+            const processColDef = vi.fn<ProcessColDef>((params) => params.colDef);
+            const changed = vi.fn();
+            const getValidationErrors = vi.fn<NonNullable<CalculatedColumnsOptions['getValidationErrors']>>(
+                ({ referencedColumns }) =>
+                    reason === 'customValidation' && referencedColumns.some((col) => col.getColId() === 'b')
+                        ? { calculatedExpression: ['Not allowed'] }
+                        : null
+            );
+            const isColumnReferenceable = vi.fn<NonNullable<CalculatedColumnsOptions['isColumnReferenceable']>>(
+                ({ column }) => reason !== 'restrictedReference' || column.getColId() !== 'b'
+            );
+            const calculatedColumns = { processColDef, getValidationErrors, isColumnReferenceable };
+            const api = createGrid(`pcd-rejection-${reason}`, {
+                rowData: ROW_DATA,
+                columnDefs: columnDefs(),
+                calculatedColumns,
+                onCalculatedColumnChanged: changed,
+            });
+            const calcId = await addViaDialog(api, 'a', '[b] * 2');
+            const expected = { valid: false, reason };
+
+            await waitFor(() =>
+                expect(changed).toHaveBeenCalledWith(expect.objectContaining({ expressionValidation: expected }))
+            );
+            expect(processColDef.mock.calls.at(-1)![0].expressionValidation).toEqual(expected);
+            expect(cellValue(api, calcId)).toBe(reason === 'customValidation' ? '#ERROR!' : '#REF!');
+
+            const state = api.getState();
+            getValidationErrors.mockClear();
+            isColumnReferenceable.mockClear();
+            processColDef.mockClear();
+            const restored = createGrid(`pcd-rejection-restored-${reason}`, {
+                rowData: ROW_DATA,
+                columnDefs: columnDefs(),
+                calculatedColumns,
+                initialState: state,
+            });
+            await waitForColumn(restored, calcId);
+            expect(processColDef.mock.calls.at(-1)![0].expressionValidation).toEqual(expected);
+            expect(getValidationErrors).not.toHaveBeenCalled();
+            expect(isColumnReferenceable).not.toHaveBeenCalled();
+
+            api.showColumnMenu(calcId);
+            await clickMenuOption('Edit Calculated Column');
+            await waitFor(() => getCalculatedColumnDialog());
+            setExpression('[a] * 2');
+            await waitFor(() => expect(cellValue(api, calcId)).toBe(20));
+            expect(processColDef.mock.calls.at(-1)![0].expressionValidation).toEqual({ valid: true });
+            await waitFor(() => expect(changed.mock.calls.at(-1)![0].expressionValidation).toEqual({ valid: true }));
+        }
+    );
 
     test('returning params.colDef is the same as having no callback', async () => {
         const plain = gridWithUserColumn('pcd-b2-plain', 'calc', '[a] * 2', undefined);
@@ -290,9 +320,9 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
 
         api.showColumnMenu('calc');
         await clickMenuOption('Edit Calculated Column');
-        await waitFor(() => getDialog());
+        await waitFor(() => getCalculatedColumnDialog());
         // The dialog shows references by header name.
-        expect(getDialog().querySelector('textarea')!.value).toBe('[A] * 2');
+        expect(getCalculatedColumnDialog().querySelector('textarea')!.value).toBe('[A] * 2');
     });
 
     test('callback changes to headerName, cellDataType, calculatedExpression and columnGroupShow apply', async () => {
@@ -400,8 +430,8 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
         for (const multiplier of [3, 4, 5]) {
             api.showColumnMenu('calc');
             await clickMenuOption('Edit Calculated Column');
-            await waitFor(() => getDialog());
-            expect(getDialog().querySelector<HTMLInputElement>('input')!.value).toBe('Profit');
+            await waitFor(() => getCalculatedColumnDialog());
+            expect(getCalculatedColumnDialog().querySelector<HTMLInputElement>('input')!.value).toBe('Profit');
             setExpression(`[a] * ${multiplier}`);
             clickDialogButton('Apply');
             await waitFor(() => expect(cellValue(api, 'calc')).toBe(10 * multiplier));
@@ -424,9 +454,10 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
         const openEditDialog = async () => {
             api.showColumnMenu('calc');
             await clickMenuOption('Edit Calculated Column');
-            await waitFor(() => getDialog());
+            await waitFor(() => getCalculatedColumnDialog());
         };
-        const shownDataType = () => getDialog().querySelector('.ag-select .ag-picker-field-display')!.textContent;
+        const shownDataType = () =>
+            getCalculatedColumnDialog().querySelector('.ag-select .ag-picker-field-display')!.textContent;
 
         await openEditDialog();
         expect(shownDataType()).toBe('Number');
@@ -603,8 +634,8 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
 
         api.showColumnMenu('calc');
         await clickMenuOption('Edit Calculated Column');
-        await waitFor(() => getDialog());
-        const dialog = within(getDialog());
+        await waitFor(() => getCalculatedColumnDialog());
+        const dialog = within(getCalculatedColumnDialog());
         expect(dialog.getByRole<HTMLButtonElement>('button', { name: 'Apply' }).disabled).toBe(false);
         expect(dialog.queryByRole('button', { name: /^(Columns|Functions|Operators)$/ })).toBeNull();
     });
@@ -699,7 +730,7 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
         // A no-op deferred Apply.
         api.showColumnMenu('calc');
         await clickMenuOption('Edit Calculated Column');
-        await waitFor(() => getDialog());
+        await waitFor(() => getCalculatedColumnDialog());
         clickDialogButton('Apply');
         await asyncSetTimeout(0);
 
@@ -721,20 +752,22 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
         });
 
         const calcId = await addViaDialog(api, 'a', '[a] * 2');
-        await waitFor(() => expect(created).toHaveBeenCalledTimes(1));
+        await waitFor(() => expect(created).toHaveBeenCalledTimes(1), { interval: 5 });
         changed.mockClear();
 
         api.showColumnMenu(calcId);
         await clickMenuOption('Edit Calculated Column');
-        await waitFor(() => getDialog());
+        await waitFor(() => getCalculatedColumnDialog());
         setExpression('[a] * 3');
         clickDialogButton('Apply');
-        await waitFor(() =>
-            expect(changed).toHaveBeenCalledWith(
-                expect.objectContaining({
-                    changes: { calculatedExpression: { oldValue: '[a] * 2', newValue: '[a] * 3' } },
-                })
-            )
+        await waitFor(
+            () =>
+                expect(changed).toHaveBeenCalledWith(
+                    expect.objectContaining({
+                        changes: { calculatedExpression: { oldValue: '[a] * 2', newValue: '[a] * 3' } },
+                    })
+                ),
+            { interval: 5 }
         );
         expect(cellValue(api, calcId)).toBe(30);
         expect(created).toHaveBeenCalledTimes(1);
@@ -758,7 +791,7 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
 
         api.showColumnMenu('calc');
         await clickMenuOption('Edit Calculated Column');
-        await waitFor(() => getDialog());
+        await waitFor(() => getCalculatedColumnDialog());
         setTitle('Margin');
         clickDialogButton('Apply');
 
@@ -853,16 +886,20 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
         api.setGridOption('calculatedColumns', {
             processColDef: (params) => ({ ...params.colDef, calculatedExpression: '[missing]' }),
         });
-        await waitFor(() =>
-            expect(validity).toHaveBeenCalledWith(
-                expect.objectContaining({ expression: '[missing]', valid: false, reason: 'unknownReference' })
-            )
+        await waitFor(
+            () =>
+                expect(validity).toHaveBeenCalledWith(
+                    expect.objectContaining({ expression: '[missing]', valid: false, reason: 'unknownReference' })
+                ),
+            { interval: 5 }
         );
 
         validity.mockClear();
         api.setGridOption('calculatedColumns', { processColDef: passthrough });
-        await waitFor(() =>
-            expect(validity).toHaveBeenCalledWith(expect.objectContaining({ expression: '[a] * 2', valid: true }))
+        await waitFor(
+            () =>
+                expect(validity).toHaveBeenCalledWith(expect.objectContaining({ expression: '[a] * 2', valid: true })),
+            { interval: 5 }
         );
     });
 
@@ -886,7 +923,7 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
 
         api.showColumnMenu('calc');
         await clickMenuOption('Edit Calculated Column');
-        await waitFor(() => getDialog());
+        await waitFor(() => getCalculatedColumnDialog());
         setTitle('Doubled');
         clickDialogButton('Apply');
 
@@ -895,100 +932,34 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
         expect(cellValue(api, 'calc')).toBe(6);
     });
 
-    test('sourceColumn is the auto group column when the column is added from it', async () => {
-        const processColDef = vi.fn<ProcessColDef>();
-        const api = createGrid('pcd-source-auto-group', {
+    test('expressionValidation is valid on restore and on every column rebuild for a reference to a calculated column declared after it', async () => {
+        const processColDef = vi.fn<ProcessColDef>((params) => params.colDef);
+        const api = createGrid('pcd-valid-forward-ref', {
             rowData: ROW_DATA,
-            columnDefs: [{ field: 'g', rowGroup: true, hide: true }, { field: 'a' }, { field: 'b' }],
             calculatedColumns: { processColDef },
+            columnDefs: [{ field: 'a', type: 't' }, { field: 'b' }],
+            columnTypes: { t: {} },
+            initialState: {
+                userColumns: [...userColumnsState('first', '[second] + 1')!, ...userColumnsState('second', '[a] * 2')!],
+            },
         });
-        await waitFor(() => expect(api.getColumn('ag-Grid-AutoColumn')).not.toBeNull());
-
-        await addViaDialog(api, 'ag-Grid-AutoColumn', '[a] * 2');
-
-        expect(processColDef).toHaveBeenCalled();
-        for (const [params] of processColDef.mock.calls) {
-            expect(params.sourceColumn).toBe(api.getColumn('ag-Grid-AutoColumn'));
+        await waitForColumn(api, 'first');
+        await waitForColumn(api, 'second');
+        const restoreCallsForFirst = processColDef.mock.calls.filter(([params]) => params.colDef.colId === 'first');
+        expect(restoreCallsForFirst.length).toBeGreaterThan(0);
+        for (const [params] of restoreCallsForFirst) {
+            expect(params.expressionValidation).toEqual({ valid: true });
         }
-    });
-
-    test('sourceColumn is null once a column rebuild removes the grouping behind the auto group column', async () => {
-        const processColDef = vi.fn<ProcessColDef>();
-        const api = createGrid('pcd-source-auto-group-removed', {
-            rowData: ROW_DATA,
-            columnDefs: [{ field: 'g', type: 'grouped', hide: true }, { field: 'a' }, { field: 'b' }],
-            columnTypes: { grouped: { rowGroup: true } },
-            calculatedColumns: { processColDef },
-        });
-        await waitFor(() => expect(api.getColumn('ag-Grid-AutoColumn')).not.toBeNull());
-        const calcId = await addViaDialog(api, 'ag-Grid-AutoColumn', '[a] * 2');
         processColDef.mockClear();
 
-        api.setGridOption('columnTypes', { grouped: { rowGroup: false } });
+        api.setGridOption('columnTypes', { t: { headerName: 'A' } });
 
-        expect(api.getColumn('ag-Grid-AutoColumn')).toBeNull();
-        expect(api.getColumn(calcId)).not.toBeNull();
-        expect(processColDef).toHaveBeenCalled();
-        for (const [params] of processColDef.mock.calls) {
-            expect(params.sourceColumn).toBeNull();
+        const callsForFirst = processColDef.mock.calls.filter(([params]) => params.colDef.colId === 'first');
+        expect(callsForFirst.length).toBeGreaterThan(0);
+        for (const [params] of callsForFirst) {
+            expect(params.expressionValidation).toEqual({ valid: true });
         }
     });
-
-    test.each([
-        { groupDisplayType: 'singleColumn' as const, columnDefs: columnDefs(), autoColId: 'ag-Grid-AutoColumn' },
-        {
-            groupDisplayType: 'multipleColumns' as const,
-            columnDefs: [{ field: 'g', rowGroup: true, hide: true }, { field: 'a' }, { field: 'b' }],
-            autoColId: 'ag-Grid-AutoColumn-calc',
-        },
-    ])(
-        'sourceColumn is the auto group column of a grouped calculated column ($groupDisplayType)',
-        async ({ groupDisplayType, columnDefs, autoColId }) => {
-            const processColDef = vi.fn<ProcessColDef>();
-            const api = gridWithUserColumn('pcd-source-calc-auto-group', 'calc', '[a] * 2', processColDef, {
-                columnDefs,
-                groupDisplayType,
-            });
-            await waitForColumn(api, 'calc');
-            api.applyColumnState({ state: [{ colId: 'calc', rowGroup: true }] });
-            await waitForColumn(api, autoColId);
-            processColDef.mockClear();
-
-            const calcId = await addViaDialog(api, autoColId, '[b] * 2');
-
-            const callsForAdded = processColDef.mock.calls.filter(([params]) => params.colDef.colId === calcId);
-            expect(callsForAdded.length).toBeGreaterThan(0);
-            for (const [params] of callsForAdded) {
-                expect(params.sourceColumn).toBe(api.getColumn(autoColId));
-            }
-        }
-    );
-
-    test.each([
-        { label: 'without a callback', callback: false, expectedTitle: 'Profit!' },
-        { label: 'with a callback', callback: true, expectedTitle: 'Profit' },
-    ])(
-        'with a defaultColDef.headerValueGetter, the dialog title is $expectedTitle $label',
-        async ({ callback, expectedTitle }) => {
-            const api = createGrid('pcd-header-value-getter', {
-                rowData: ROW_DATA,
-                columnDefs: columnDefs(),
-                defaultColDef: { headerValueGetter: (params) => `${params.colDef?.headerName}!` },
-                calculatedColumns: callback ? { processColDef: (params) => params.colDef } : true,
-                initialState: {
-                    userColumns: userColumnsState('calc', '[a] * 2', [{ property: 'headerName', value: 'Profit' }]),
-                },
-            });
-            await waitForColumn(api, 'calc');
-            expect(headerOf(api, 'calc')).toBe('Profit!');
-
-            api.showColumnMenu('calc');
-            await clickMenuOption('Edit Calculated Column');
-            await waitFor(() => getDialog());
-
-            expect(getDialog().querySelector<HTMLInputElement>('input')!.value).toBe(expectedTitle);
-        }
-    );
 
     test('without a callback the dialog title of a restored column inherits defaultColDef.headerName', async () => {
         const api = gridWithUserColumn('pcd-default-header', 'calc', '[a] * 2', undefined, {
@@ -998,8 +969,65 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
 
         api.showColumnMenu('calc');
         await clickMenuOption('Edit Calculated Column');
-        await waitFor(() => getDialog());
+        await waitFor(() => getCalculatedColumnDialog());
 
-        expect(getDialog().querySelector<HTMLInputElement>('input')!.value).toBe('Inherited');
+        expect(getCalculatedColumnDialog().querySelector<HTMLInputElement>('input')!.value).toBe('Inherited');
+    });
+
+    test('a columnDefs update made from inside the callback refreshes the filter with the new filterParams and re-filters the rows', async () => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: LEGACY_FILTER_WARNING_IDS });
+        ModuleRegistry.registerModules([CustomFilterModule]);
+        type MinParams = IFilterParams & { min: number };
+        const refreshedWith: number[] = [];
+        class MinFilter implements IFilterComp {
+            private min = -1;
+            public init(params: MinParams) {
+                this.min = params.min;
+            }
+            public getGui() {
+                return document.createElement('div');
+            }
+            public isFilterActive() {
+                return true;
+            }
+            public doesFilterPass(params: IDoesFilterPassParams) {
+                return params.data.a >= this.min;
+            }
+            public getModel() {
+                return null;
+            }
+            public setModel() {}
+            public refresh(newParams: MinParams) {
+                refreshedWith.push(newParams.min);
+                this.min = newParams.min;
+                return true;
+            }
+        }
+        const defs = (min: number): GridOptions['columnDefs'] => [
+            { field: 'a', filter: MinFilter, filterParams: { min } },
+            { field: 'b' },
+        ];
+        const displayedIds = (api: GridApi) => {
+            const ids: string[] = [];
+            api.forEachNodeAfterFilterAndSort((node) => ids.push(node.id!));
+            return ids;
+        };
+        const api = gridWithUserColumn('pcd-filter-params', 'calc', '[a] * 2', undefined, { columnDefs: defs(0) });
+        await waitForColumn(api, 'calc');
+        expect(await api.getColumnFilterInstance('a')).toBeInstanceOf(MinFilter);
+        api.onFilterChanged(); // the filter's own params are its model: it is active once the grid is told
+        await waitFor(() => expect(displayedIds(api)).toEqual(['r1', 'r2']));
+        let innerCalls = 0;
+        const processColDef: ProcessColDef = (params) => {
+            if (++innerCalls === 1) {
+                api.setGridOption('columnDefs', defs(8));
+            }
+            return params.colDef;
+        };
+
+        api.setGridOption('calculatedColumns', { processColDef });
+
+        expect({ innerCalls: innerCalls > 0, refreshedWith }).toEqual({ innerCalls: true, refreshedWith: [8] });
+        await waitFor(() => expect(displayedIds(api)).toEqual(['r1']), { timeout: 1000 });
     });
 });

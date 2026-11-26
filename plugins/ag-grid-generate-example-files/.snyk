@@ -1,6 +1,96 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
 version: v1.25.1
 ignore:
+  SNYK-JS-UNDICI-22392401:
+    - cheerio@1.2.0 > undici@7.29.0:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:47:30.218Z
+  SNYK-JS-UNDICI-22370261:
+    - cheerio@1.2.0 > undici@7.29.0:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:46:57.133Z
+  SNYK-JS-UNDICI-22291127:
+    - cheerio@1.2.0 > undici@7.29.0:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:46:20.948Z
+  SNYK-JS-UNDICI-22291066:
+    - cheerio@1.2.0 > undici@7.29.0:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:44:33.512Z
+  SNYK-JS-UNDICI-22290988:
+    - cheerio@1.2.0 > undici@7.29.0:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-16T10:43:29.071Z
+  SNYK-JS-FFLATE-20883305:
+    - 'ag-grid-community@* > *':
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+  SNYK-JS-PICOMATCH-21248802:
+    - 'sucrase@3.35.1 > tinyglobby@0.2.15 > picomatch@4.0.7':
+        reason: >-
+            Private build & test tooling - not published, not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+  SNYK-JS-UNDICI-21181005:
+    - 'cheerio@1.2.0 > undici@7.29.0':
+        reason: >-
+            Private build & test tooling - not published, not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+  SNYK-JS-UNDICI-21181009:
+    - 'cheerio@1.2.0 > undici@7.29.0':
+        reason: >-
+            Private build & test tooling - not published, not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+  SNYK-JS-UNDICI-21181011:
+    - 'cheerio@1.2.0 > undici@7.29.0':
+        reason: >-
+            Private build & test tooling - not published, not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+  SNYK-JS-UNDICI-21181013:
+    - 'cheerio@1.2.0 > undici@7.29.0':
+        reason: >-
+            Private build & test tooling - not published, not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+  SNYK-JS-UNDICI-21181015:
+    - 'cheerio@1.2.0 > undici@7.29.0':
+        reason: >-
+            Private build & test tooling - not published, not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+  SNYK-JS-UNDICI-21181017:
+    - 'cheerio@1.2.0 > undici@7.29.0':
+        reason: >-
+            Private build & test tooling - not published, not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+  SNYK-JS-UNDICI-21181019:
+    - 'cheerio@1.2.0 > undici@7.29.0':
+        reason: >-
+            Private build & test tooling - not published, not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+  SNYK-JS-UNDICI-21185768:
+    - 'cheerio@1.2.0 > undici@7.29.0':
+        reason: >-
+            Private build & test tooling - not published, not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
   SNYK-JS-AGGRIDCOMMUNITY-7414157:
     - ag-grid-community@* > *:
         reason: >-
@@ -13,12 +103,12 @@ ignore:
             Local workspace package - its dependencies are scanned and triaged in its own project
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T10:22:59.691Z
-    - '@nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6 > brace-expansion@2.1.4':
+    - '@nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6 > brace-expansion@2.1.4':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T09:31:44.786Z
-    - '@nx/devkit@20.8.4 > minimatch@9.0.3 > brace-expansion@2.1.4':
+    - '@nx/devkit@24.0.6 > minimatch@10.2.5 > brace-expansion@5.0.9':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
@@ -29,12 +119,12 @@ ignore:
             Local workspace package - its dependencies are scanned and triaged in its own project
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T10:22:59.690Z
-    - '@nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6 > brace-expansion@2.1.4':
+    - '@nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6 > brace-expansion@2.1.4':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-10-12T09:30:45.614Z
-    - '@nx/devkit@20.8.4 > minimatch@9.0.3 > brace-expansion@2.1.4':
+    - '@nx/devkit@24.0.6 > minimatch@10.2.5 > brace-expansion@5.0.9':
         reason: >-
             Used in build & dev - not included in final production build
         expires: '2027-03-02T00:00:00.000Z'
@@ -105,7 +195,7 @@ ignore:
         reason: Used in build & dev - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T11:46:21.570Z
-    - '@nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6':
+    - '@nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6':
         reason: Build dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
@@ -123,7 +213,7 @@ ignore:
         reason: Used in build & dev - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T11:46:21.570Z
-    - '@nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6':
+    - '@nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.6 > minimatch@5.1.6':
         reason: Build dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
@@ -161,4 +251,20 @@ ignore:
         reason: Build dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-05-28T00:00:00.000Z
+  SNYK-JS-PARSE5-22742152:
+    - 'cheerio@1.2.0 > parse5@7.3.0':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-24T10:29:28.361Z
+    - 'cheerio@1.2.0 > parse5-parser-stream@7.1.2 > parse5@7.3.0':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-24T10:29:28.361Z
+    - 'cheerio@1.2.0 > parse5-htmlparser2-tree-adapter@7.1.0 > parse5@7.3.0':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-11-24T10:29:28.361Z
 patch: {}

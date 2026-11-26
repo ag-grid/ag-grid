@@ -22,7 +22,7 @@ import { createHeaderMenuSource } from '../../headerUtils';
 import type { IAbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellCtrl';
 import { AbstractHeaderCellCtrl } from '../abstractCell/abstractHeaderCellCtrl';
 import { _getHeaderClassesFromColDef } from '../cssClassApplier';
-import type { IHeaderGroupComp, IHeaderGroupParams } from './agColumnGroupHeader';
+import type { AgColumnGroupHeader, IHeaderGroupComp, IHeaderGroupParams } from './agColumnGroupHeader';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IHeaderGroupCellComp extends IAbstractHeaderCellComp {
@@ -61,6 +61,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
 > {
     private expandable: boolean;
     private displayName: string | null;
+    private userCompDetails: UserCompDetails | undefined;
     private tooltipFeature: TooltipFeature | undefined;
     /** Tooltip supplied by a custom header component via `setTooltip`. */
     private componentTooltip: ComponentTooltip = {};
@@ -110,6 +111,8 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
 
         const leafCols = column.getProvidedColumnGroup().getLeafColumns();
 
+        this.addLeafColumnListeners(compBean, leafCols);
+
         colHover?.createHoverFeature(compBean, leafCols, eGui);
         rangeSvc?.createRangeHighlightFeature(compBean, column, comp);
         if (colResize) {
@@ -139,6 +142,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         compBean.addDestroyFunc(() => {
             this.headerCompGuard.invalidate();
             this.clearComponentTooltip();
+            this.userCompDetails = undefined;
             this.clearComponent();
         });
     }
@@ -169,6 +173,17 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
             comp.setHeaderWrapperHidden(false);
             comp.setHeaderWrapperMaxHeight(null);
         }
+    }
+
+    private addLeafColumnListeners(compBean: BeanStub, leafCols: AgColumn[]): void {
+        compBean.addManagedEventListeners({
+            columnPinned: ({ columns }) => {
+                // All fragments can be reused for different pinned sections when the group splits or merges.
+                if (columns && leafCols.some((col) => columns.includes(col))) {
+                    this.refreshHeaderStyles();
+                }
+            },
+        });
     }
 
     private addHighlightListeners(compBean: BeanStub, columns: AgColumn[]): void {
@@ -247,16 +262,8 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         this.comp.toggleCss('ag-hidden', width === 0);
     }
 
-    protected resizeHeader(delta: number, shiftKey: boolean): void {
-        const { resizeFeature } = this;
-        // check to avoid throwing when a component has not been setup yet (React 18)
-        if (!resizeFeature) {
-            return;
-        }
-
-        const initialValues = resizeFeature.getInitialValues(shiftKey);
-
-        resizeFeature.resizeColumns(initialValues, initialValues.resizeStartWidth + delta, 'uiColumnResized', true);
+    protected resizeHeader(delta: number, takeFromAdjacent: boolean): void {
+        this.resizeFeature?.resizeByKey(delta, takeFromAdjacent); // optional: a component not set up yet has none (React 18)
     }
 
     public resizeLeafColumnsToFit(source: ColumnEventType): void {
@@ -308,6 +315,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         if (compDetails) {
             // Adopting a new component supersedes every earlier claim; a kept component's claims stay live.
             this.headerCompGuard.supersede();
+            this.userCompDetails = compDetails;
             this.comp.setUserCompDetails(compDetails);
         }
     }
@@ -353,6 +361,20 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
             type: isMouseOver ? 'columnHeaderMouseOver' : 'columnHeaderMouseLeave',
             column: this.column.getProvidedColumnGroup(),
         });
+    }
+
+    public getTooltipTextElement(): HTMLElement | undefined {
+        const headerComp = this.comp?.getUserCompInstance();
+        const compDetails = this.userCompDetails;
+        if (
+            !compDetails ||
+            compDetails.componentFromFramework ||
+            compDetails.componentClass !== headerComp?.constructor ||
+            compDetails.params.innerHeaderGroupComponent
+        ) {
+            return undefined;
+        }
+        return (headerComp as AgColumnGroupHeader).getTooltipTextElement?.();
     }
 
     private setupTooltip(): void {

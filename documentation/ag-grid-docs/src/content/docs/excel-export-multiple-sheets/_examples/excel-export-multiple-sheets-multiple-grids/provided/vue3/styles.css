@@ -1,9 +1,3 @@
-.top-container {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-}
-
 .panel-body input {
     margin-right: 2px !important;
 }
@@ -14,8 +8,6 @@
 
 .grid-wrapper {
     display: flex;
-    flex: 1 1 auto;
-    margin-top: 5px;
 }
 
 .grid-wrapper .panel {

@@ -322,7 +322,7 @@ describe('Column Autosize', () => {
             expect(widths()).toEqual([350, 600, 50]);
         });
 
-        test('an auto-size sizes the columns that sizing the rendered ones brings into view', async () => {
+        test('an auto-size sizes the columns that sizing the rendered ones brings into view, a flex column too', async () => {
             const measured = vi.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(function (
                 this: HTMLElement
             ) {
@@ -330,9 +330,11 @@ describe('Column Autosize', () => {
             });
             try {
                 const columnDefs: ColDef[] = [];
-                for (let i = 0; i < 20; ++i) {
+                for (let i = 0; i < 10; ++i) {
                     columnDefs.push({ colId: `c${i}` });
                 }
+                // re-flexed by every pass before it is rendered and measured
+                columnDefs[9].flex = 1;
                 const api = gridsManager.createGrid('myGrid', {
                     columnDefs,
                     autoSizePadding: 0,
@@ -341,10 +343,11 @@ describe('Column Autosize', () => {
                 });
                 const widths = () => api.getAllDisplayedColumns().map((col) => col.getActualWidth());
                 // at 200px each only the first few are rendered, so measurable
-                expect(api.getAllDisplayedVirtualColumns().length).toBeLessThan(20);
+                expect(api.getAllDisplayedVirtualColumns().length).toBeLessThan(columnDefs.length);
 
                 api.autoSizeAllColumns();
 
+                // the flex col measures 50 too, where flex alone would give it the 550px left over
                 await waitFor(() => expect(widths()).toEqual(columnDefs.map(() => 50)));
             } finally {
                 measured.mockRestore();
@@ -705,6 +708,22 @@ describe('Column Autosize', () => {
             expect(api.getColumn('b')!.getActualWidth()).toBe(50);
         });
 
+        test('a column its own maxWidth keeps from the auto-size limit lays out nothing again', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ colId: 'a', width: 200, maxWidth: 200 }],
+            });
+            await asyncSetTimeout(0);
+            let laidOut = 0;
+            api.addEventListener('displayedColumnsChanged', () => ++laidOut);
+
+            // asked for 300, but the column's own maxWidth holds it where it is
+            api.autoSizeColumns({ colIds: ['a'], defaultMinWidth: 300, defaultMaxWidth: 1000 });
+            await asyncSetTimeout(0);
+
+            expect(api.getColumn('a')!.getActualWidth()).toBe(200);
+            expect(laidOut).toBe(0);
+        });
+
         test('defaultMinWidth / defaultMaxWidth apply when per-col limits absent', async () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [
@@ -1025,23 +1044,11 @@ describe('Column Autosize', () => {
             `);
 
             api.autoSizeAllColumns({ scaleUpToFitGridWidth: true });
-            await new GridColumns(
-                api,
-                `pinned cols are excluded; suppressAutoSize cols are excluded after autoSizeAllColumns`
-            ).checkColumns(`
-                LEFT
-                └── left1 width:100
-                CENTER
-                ├── suppressed width:100
-                └── center1 width:60
-                RIGHT
-                └── right1 width:100
-            `);
             await asyncSetTimeout(0);
 
-            // left/right pinned + suppressAutoSize: width preserved (excluded by both passes).
-            // center1's exact width depends on the zero-layout scale-up math (which short-circuits
-            // when grid width = 0); the assertion that matters here is the filter exclusion.
+            // left/right pinned + suppressAutoSize: width preserved (excluded by both passes); center1, the
+            // only column scaled, takes the rest of the 1000px viewport
+            expect(api.getColumn('center1')!.getActualWidth()).toBe(700);
             expect(api.getColumn('left1')!.getActualWidth()).toBe(100);
             expect(api.getColumn('right1')!.getActualWidth()).toBe(100);
             expect(api.getColumn('suppressed')!.getActualWidth()).toBe(100);
@@ -1081,14 +1088,6 @@ describe('Column Autosize', () => {
 
             // Pass the hidden col explicitly so it reaches the scale-up filter.
             api.autoSizeColumns({ colIds: ['hiddenLeft', 'center1', 'center2'], scaleUpToFitGridWidth: true });
-            await new GridColumns(
-                api,
-                `hidden pinned col is treated as not-pinned by the filter (matches latest display after autoSizeColumns`
-            ).checkColumns(`
-                CENTER
-                ├── center1 width:60
-                └── center2 width:60
-            `);
             await asyncSetTimeout(0);
 
             // Non-displayed → never resized by content or scale-up pass; original width preserved.
@@ -1115,13 +1114,6 @@ describe('Column Autosize', () => {
             const rowNumberWidthBefore = rowNumberCol!.getActualWidth();
 
             api.autoSizeAllColumns({ scaleUpToFitGridWidth: true });
-            await new GridColumns(api, `row-number col is excluded from both passes after autoSizeAllColumns`)
-                .checkColumns(`
-                    LEFT
-                    └── ag-Grid-RowNumbersColumn width:60 !resizable !sortable suppressMovable lockPosition:left
-                    CENTER
-                    └── a width:80
-                `);
             await asyncSetTimeout(0);
 
             expect(rowNumberCol!.getActualWidth()).toBe(rowNumberWidthBefore);
@@ -1155,6 +1147,69 @@ describe('Column Autosize', () => {
             // Content-fit ran (shrunk to minWidth) but no scale-up second pass.
             expect(api.getColumn('a')!.getActualWidth()).toBe(70);
             expect(api.getColumn('b')!.getActualWidth()).toBe(70);
+        });
+    });
+
+    /** AG-18502: the scale-up pass spreads the free space in proportion to each column's width. */
+    describe('scaleUpToFitGridWidth width ratios', () => {
+        /** Content sizing falls back to `minWidth` in happy-dom, so `minWidth` stands in for the content width. */
+        const autoSizeAndScaleUp = async (columnDefs: ColDef[], defaultColDef?: ColDef): Promise<number[]> => {
+            const api = gridsManager.createGrid('myGrid', { columnDefs, defaultColDef, rowData: [{}] });
+            // the scale-up measures the body's computed width, which happy-dom takes from the inline style
+            api.getGridElement()!.querySelector<HTMLElement>('.ag-root')!.style.width = '600px';
+            api.autoSizeAllColumns({ scaleUpToFitGridWidth: true });
+            const widths = () => api.getAllDisplayedColumns().map((col) => col.getActualWidth());
+            await waitFor(() => expect(widths().reduce((total, width) => total + width, 0)).toBe(600));
+            return widths();
+        };
+
+        test('without colDef widths, keeps the ratio of the auto-sized widths', async () => {
+            expect(
+                await autoSizeAndScaleUp([
+                    { colId: 'a', minWidth: 100 },
+                    { colId: 'b', minWidth: 50 },
+                ])
+            ).toEqual([400, 200]);
+        });
+
+        test('with colDef widths, keeps the ratio of the colDef widths', async () => {
+            expect(
+                await autoSizeAndScaleUp([
+                    { colId: 'a', width: 200, minWidth: 60 },
+                    { colId: 'b', width: 100, minWidth: 60 },
+                ])
+            ).toEqual([400, 200]);
+        });
+
+        test('with initialWidth, keeps the ratio of the initial widths', async () => {
+            expect(
+                await autoSizeAndScaleUp([
+                    { colId: 'a', initialWidth: 200, minWidth: 60 },
+                    { colId: 'b', initialWidth: 100, minWidth: 60 },
+                ])
+            ).toEqual([400, 200]);
+        });
+
+        test('with a defaultColDef width, keeps the ratio of that width', async () => {
+            expect(
+                await autoSizeAndScaleUp(
+                    [
+                        { colId: 'a', minWidth: 100 },
+                        { colId: 'b', minWidth: 50 },
+                    ],
+                    { width: 100 }
+                )
+            ).toEqual([300, 300]);
+        });
+
+        test('in a mixed grid, scales the colDef width and the auto-sized width of a column without one', async () => {
+            // a grows from its colDef width of 200, b from its auto-sized width of 50: 200:50 spread over 600
+            expect(
+                await autoSizeAndScaleUp([
+                    { colId: 'a', width: 200, minWidth: 60 },
+                    { colId: 'b', minWidth: 50 },
+                ])
+            ).toEqual([480, 120]);
         });
     });
 

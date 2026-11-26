@@ -23,12 +23,11 @@ import type { ICellRenderer, ICellRendererParams } from '../cellRenderers/iCellR
 import { _suppressFullWidthMouseEvent } from '../renderUtils';
 import type { FullWidthTarget, IRowModeFeature } from './iRowModeFeature';
 import { NO_CELLS } from './normalRowFeature';
-import type { RowCtrl } from './rowCtrl';
+import type { IRowComp, RowCtrl } from './rowCtrl';
 
 export class FullWidthRowFeature extends BeanStub implements IRowModeFeature {
     private tooltips: FullWidthRowTooltips | undefined;
     private notesFeature: INotesFeature | undefined;
-    private focusEventWhileNotReady: CellFocusedEvent | null = null;
 
     public constructor(private readonly rowCtrl: RowCtrl) {
         super();
@@ -71,6 +70,7 @@ export class FullWidthRowFeature extends BeanStub implements IRowModeFeature {
             return;
         }
 
+        this.rowCtrl.onRowRefreshed();
         this.notesFeature?.refresh();
     }
 
@@ -215,33 +215,32 @@ export class FullWidthRowFeature extends BeanStub implements IRowModeFeature {
 
     public setupFocus(): void {
         this.restoreFullWidthFocus(true);
-        this.onRowFocused(this.focusEventWhileNotReady ?? undefined);
+        this.onRowFocused();
     }
 
     private restoreFullWidthFocus(waitForRender = false): void {
         const { focusSvc, editSvc } = this.beans;
         const { rowCtrl } = this;
-        if (editSvc?.isEditing(rowCtrl)) {
+        if (editSvc?.isEditing(rowCtrl) || !this.isFocused()) {
             return;
         }
-
-        if (
-            !focusSvc.isRowFocused(rowCtrl.rowNode.rowIndex!, rowCtrl.rowNode.rowPinned) ||
-            !focusSvc.shouldTakeFocus()
-        ) {
+        const owedEvent = focusSvc.takeOwedFocusEvent();
+        if (owedEvent) {
+            this.onRowFocused(owedEvent);
             return;
         }
+        const takeFocus = focusSvc.shouldTakeFocus();
 
-        const element = rowCtrl.getCurrentRowElement();
-        if (!element) {
-            return;
-        }
-
+        // owed focus is taken only as it lands, so a row destroyed before then leaves it to the next one drawn
         const focus = () => {
-            if (!rowCtrl.isAlive()) {
-                return;
-            }
-            if (focusSvc.isRowFocused(rowCtrl.rowNode.rowIndex!, rowCtrl.rowNode.rowPinned)) {
+            const element = rowCtrl.getCurrentRowElement();
+            if (
+                element &&
+                rowCtrl.isAlive() &&
+                this.isFocused() &&
+                (focusSvc.takeOwedFocus() || takeFocus) &&
+                focusSvc.isFocusFreeForGrid()
+            ) {
                 element.focus({ preventScroll: true });
             }
         };
@@ -254,10 +253,15 @@ export class FullWidthRowFeature extends BeanStub implements IRowModeFeature {
         focus();
     }
 
+    private isFocused(): boolean {
+        const rowNode = this.rowCtrl.rowNode;
+        return this.beans.focusSvc.isRowFocused(rowNode.rowIndex!, rowNode.rowPinned);
+    }
+
     public onRowFocused(event?: CellFocusedEvent): void {
         const { focusSvc } = this.beans;
         const { rowCtrl } = this;
-        const isFocused = focusSvc.isRowFocused(rowCtrl.rowNode.rowIndex!, rowCtrl.rowNode.rowPinned);
+        const isFocused = this.isFocused();
 
         const element = rowCtrl.getCurrentRowElement();
 
@@ -268,13 +272,12 @@ export class FullWidthRowFeature extends BeanStub implements IRowModeFeature {
 
         if (!element) {
             if (event) {
-                this.focusEventWhileNotReady = event;
+                focusSvc.oweFocus(event);
             }
             return;
         }
 
         element.classList.add('ag-full-width-focus');
-        this.focusEventWhileNotReady = null;
 
         if (event?.forceBrowserFocus) {
             element.focus({ preventScroll: true });
@@ -304,7 +307,8 @@ export class FullWidthRowFeature extends BeanStub implements IRowModeFeature {
             column: (lastFocusedCell?.column as AgColumn) ?? this.getNavigationColumn(),
         };
 
-        navigation?.navigateToNextCell(keyboardEvent, keyboardEvent.key, cellPosition, true);
+        const ctrlJump = !!navigation?.isCtrlArrowJump(keyboardEvent);
+        navigation?.navigateToNextCell(keyboardEvent, keyboardEvent.key, cellPosition, true, ctrlJump);
         keyboardEvent.preventDefault();
     }
 
@@ -391,14 +395,7 @@ export class FullWidthRowFeature extends BeanStub implements IRowModeFeature {
         const element = rowCtrl.getCurrentRowElement();
 
         const fullWidthRowGui = element?.contains(mouseEvent.target as HTMLElement) && rowComp ? rowComp : undefined;
-        const pinnedSection: ColumnPinnedType =
-            fullWidthRowGui && mouseEvent.target instanceof HTMLElement
-                ? fullWidthRowGui.getPinnedLeftRowElement()?.contains(mouseEvent.target)
-                    ? 'left'
-                    : fullWidthRowGui.getPinnedRightRowElement()?.contains(mouseEvent.target)
-                      ? 'right'
-                      : null
-                : null;
+        const pinnedSection = getPinnedSection(fullWidthRowGui, mouseEvent.target);
         const fullWidthParams =
             fullWidthRowGui?.getFullWidthCellRendererParamsForPinned?.(pinnedSection) ??
             fullWidthRowGui?.getFullWidthCellRendererParams();
@@ -520,4 +517,14 @@ export class FullWidthRowFeature extends BeanStub implements IRowModeFeature {
         this.notesFeature = undefined;
         super.destroy();
     }
+}
+
+function getPinnedSection(rowComp: IRowComp | undefined, target: EventTarget | null): ColumnPinnedType {
+    if (!rowComp || !(target instanceof HTMLElement)) {
+        return null;
+    }
+    if (rowComp.getPinnedLeftRowElement()?.contains(target)) {
+        return 'left';
+    }
+    return rowComp.getPinnedRightRowElement()?.contains(target) ? 'right' : null;
 }

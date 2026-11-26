@@ -1,4 +1,11 @@
-import { RefPlaceholder, _isIOSUserAgent, _isMacOsUserAgent, _isVisible, _waitUntil } from 'ag-stack';
+import {
+    FAST_TEST_TIMINGS,
+    RefPlaceholder,
+    _addManagedElementListeners,
+    _isIOSUserAgent,
+    _isMacOsUserAgent,
+    _throttleToFrame,
+} from 'ag-stack';
 
 import type { BodyScrollEvent } from '../events';
 import type { ElementParams } from '../utils/element';
@@ -11,6 +18,8 @@ import type { ScrollPartner } from './gridBodyScrollFeature';
  */
 export const INVISIBLE_SCROLLBAR_SIZE = 16;
 
+const SCROLLING_CSS_HIDE_DELAY = FAST_TEST_TIMINGS ? 0 : 400;
+
 export abstract class AbstractFakeScrollComp extends Component implements ScrollPartner {
     public readonly eViewport: HTMLElement = RefPlaceholder;
     protected readonly eContainer: HTMLElement = RefPlaceholder;
@@ -22,7 +31,11 @@ export abstract class AbstractFakeScrollComp extends Component implements Scroll
     protected abstract setScrollVisible(): void;
     public abstract getScrollPosition(): number;
     public abstract setScrollPosition(value: number): void;
-    private readonly queueSetScrollVisible = this.throttleToFrame(() => this.setScrollVisible());
+    private readonly queueSetScrollVisible = _throttleToFrame(
+        this,
+        () => this.beans,
+        () => this.setScrollVisible()
+    );
 
     constructor(
         template: ElementParams,
@@ -67,7 +80,7 @@ export abstract class AbstractFakeScrollComp extends Component implements Scroll
         const eGui = this.getGui();
         const onActivate = () => this.toggleCss('ag-scrollbar-active', true);
         const onDeactivate = () => this.toggleCss('ag-scrollbar-active', false);
-        this.addManagedListeners(eGui, {
+        _addManagedElementListeners(this, eGui, {
             mouseenter: onActivate,
             mousedown: onActivate,
             touchstart: onActivate,
@@ -97,22 +110,12 @@ export abstract class AbstractFakeScrollComp extends Component implements Scroll
                 this.hideTimeout = window.setTimeout(() => {
                     this.toggleCss('ag-scrollbar-scrolling', false);
                     this.hideTimeout = 0;
-                }, 400);
+                }, SCROLLING_CSS_HIDE_DELAY);
             },
         });
     }
 
-    protected attemptSettingScrollPosition(value: number) {
-        const viewport = this.eViewport;
-        _waitUntil(
-            this,
-            () => _isVisible(viewport),
-            () => this.setScrollPosition(value),
-            100
-        );
-    }
-
     public onScrollCallback(fn: () => void): void {
-        this.addManagedElementListeners(this.eViewport, { scroll: fn });
+        _addManagedElementListeners(this, this.eViewport, { scroll: fn });
     }
 }

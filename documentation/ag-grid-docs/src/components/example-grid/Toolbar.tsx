@@ -115,6 +115,7 @@ export const Toolbar = ({
                         <Select
                             isPopper
                             options={dataSizeOptions}
+                            triggerAriaLabel="Data Size"
                             value={dataSizeOption}
                             onChange={onDataSizeChanged}
                             renderItem={(o: SelectOption) => {
@@ -127,6 +128,7 @@ export const Toolbar = ({
                     <Select
                         isPopper
                         options={themeOptions}
+                        triggerAriaLabel="Theme"
                         value={themeOption}
                         onChange={onThemeChanged}
                         renderItem={(o: SelectOption) => {

@@ -5,7 +5,6 @@ import type { BeanCollection } from '../context/context';
 import type { SelectionEventSourceType } from '../events';
 import { _getRowIdCallback } from '../gridOptionsUtils';
 import type { IServerSideStore } from '../interfaces/IServerSideStore';
-import type { IFrameworkEventListenerService } from '../interfaces/iFrameworkEventListenerService';
 import type {
     AgRowNodeEventListener,
     CellChangedEvent,
@@ -79,7 +78,7 @@ export class RowNode<TData = any>
 
     /**
      * The data as provided by the application.
-     * Can be `undefined` when using row grouping or during grid initialisation.
+     * Can be `undefined` when using row grouping, on total rows, or during grid initialisation.
      */
     public data: TData | undefined;
 
@@ -118,10 +117,6 @@ export class RowNode<TData = any>
 
     /** `true` if this node is a group and the group is the bottom level in the tree. */
     public leafGroup: boolean | undefined;
-
-    public firstChild: boolean;
-    public lastChild: boolean;
-    public childIndex: number;
 
     /** The current row index. If the row is filtered out or in a collapsed group, this value is set to `null`. */
     public rowIndex: number | null = null;
@@ -319,6 +314,8 @@ export class RowNode<TData = any>
      * If re-naming this property, you must also update `IGNORED_SIBLING_PROPERTIES`
      */
     public __autoHeights?: { [id: string]: number | undefined };
+    /** The content height auto height last sized this row to, kept while the row is out of view. */
+    public __autoContentHeight?: number;
 
     /** `true` when nodes with the same id are being removed and added as part of the same batch transaction */
     public alreadyRendered = false;
@@ -332,7 +329,6 @@ export class RowNode<TData = any>
     public __selected: boolean | undefined = false;
     /** If re-naming this property, you must also update `IGNORED_SIBLING_PROPERTIES` */
     public __localEventService: LocalEventService<RowNodeEventType> | null;
-    private frameworkEventListenerService?: IFrameworkEventListenerService<any, any>;
 
     private readonly beans: BeanCollection;
 
@@ -628,15 +624,15 @@ export class RowNode<TData = any>
     }
 
     public getDataValue<TValue = any>(
-        colKey: ColKey<TValue>,
+        colKey: ColKey<TData, TValue>,
         from: 'value' | 'data-raw' | 'edit' | 'batch' | 'transformed'
     ): TValue | null | undefined;
     public getDataValue<TValue = any>(
-        colKey: ColKey<TValue>,
+        colKey: ColKey<TData, TValue>,
         from?: 'data'
     ): TValue | IAggFuncResult<TValue> | null | undefined;
     public getDataValue<TValue = any>(
-        colKey: ColKey<TValue>,
+        colKey: ColKey<TData, TValue>,
         from: DataValueFrom | undefined
     ): TValue | IAggFuncResult<TValue> | null | undefined {
         // PERFORMANCE CRITICAL
@@ -824,41 +820,15 @@ export class RowNode<TData = any>
     }
 
     public __addEventListener<T extends RowNodeEventType>(eventType: T, listener: AgRowNodeEventListener<T>): void {
-        const localEventService = (this.__localEventService ??= new LocalEventService());
+        let localEventService = this.__localEventService;
+        if (!localEventService) {
+            localEventService = new LocalEventService();
+            this.__localEventService = localEventService;
+        }
         localEventService.addEventListener(eventType, listener as any);
     }
 
     public __removeEventListener<T extends RowNodeEventType>(eventType: T, listener: AgRowNodeEventListener<T>): void {
-        this.removeLocalListener(eventType, listener);
-    }
-
-    /**
-     * PUBLIC USE ONLY: for internal use within AG Grid use the `__addEventListener` and `__removeEventListener` methods.
-     */
-    public addEventListener<T extends RowNodeEventType>(eventType: T, userListener: AgRowNodeEventListener<T>): void {
-        this.beans.validation?.checkRowEvents(eventType);
-        const localEventService = (this.__localEventService ??= new LocalEventService());
-        this.frameworkEventListenerService = this.beans.frameworkOverrides.createLocalEventListenerWrapper?.(
-            this.frameworkEventListenerService,
-            localEventService
-        );
-
-        const listener = this.frameworkEventListenerService?.wrap(eventType, userListener) ?? userListener;
-        localEventService.addEventListener(eventType, listener);
-    }
-
-    /**
-     * PUBLIC USE ONLY: for internal use within AG Grid use the `__addEventListener` and `__removeEventListener` methods.
-     */
-    public removeEventListener<T extends RowNodeEventType>(
-        eventType: T,
-        userListener: AgRowNodeEventListener<T>
-    ): void {
-        const listener = this.frameworkEventListenerService?.unwrap(eventType, userListener) ?? userListener;
-        this.removeLocalListener(eventType, listener);
-    }
-
-    private removeLocalListener<T extends RowNodeEventType>(eventType: T, listener: AgRowNodeEventListener<T>) {
         const localEventService = this.__localEventService;
         if (localEventService) {
             localEventService.removeEventListener(eventType, listener as any);
@@ -869,22 +839,39 @@ export class RowNode<TData = any>
     }
 
     /**
-     * @deprecated v32.2.0 Check `node.detail` then user provided callback `isFullWidthRow` instead.
-     *
-     * Returns:
-     * - `true` if the node is a full width cell
-     * - `false` if the node is not a full width cell
+     * PUBLIC USE ONLY: for internal use within AG Grid use the `__addEventListener` and `__removeEventListener` methods.
      */
-    public isFullWidthCell(): boolean {
-        // log deprecation
-        this.beans.log.warn(61);
-
-        if (this.detail) {
-            return true;
+    public addEventListener<T extends RowNodeEventType>(eventType: T, userListener: AgRowNodeEventListener<T>): void {
+        if (typeof userListener !== 'function') {
+            return; // ignoring non functions for compatibility
         }
+        let localEventService = this.__localEventService;
+        if (!localEventService) {
+            localEventService = new LocalEventService();
+            this.__localEventService = localEventService;
+        }
+        const listener =
+            this.beans.frameworkOverrides.wrapLocalListener?.(localEventService, eventType, userListener) ??
+            userListener;
+        localEventService.addEventListener(eventType, listener as any);
+    }
 
-        const isFullWidthCellFunc = this.beans.gos.getCallback('isFullWidthRow');
-        return isFullWidthCellFunc ? isFullWidthCellFunc({ rowNode: this }) : false;
+    /**
+     * PUBLIC USE ONLY: for internal use within AG Grid use the `__addEventListener` and `__removeEventListener` methods.
+     */
+    public removeEventListener<T extends RowNodeEventType>(
+        eventType: T,
+        userListener: AgRowNodeEventListener<T>
+    ): void {
+        const localEventService = this.__localEventService;
+        if (!localEventService) {
+            return;
+        }
+        const listener = localEventService.listenerWrapper?.unwrap(eventType, userListener) ?? userListener;
+        localEventService.removeEventListener(eventType, listener as any);
+        if (localEventService.noRegisteredListenersExist()) {
+            this.__localEventService = null;
+        }
     }
 
     /**

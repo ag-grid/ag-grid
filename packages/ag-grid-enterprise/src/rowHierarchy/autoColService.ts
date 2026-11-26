@@ -4,6 +4,7 @@ import type {
     ColumnHeaderNameChangedEvent,
     ColumnState,
     IAutoColService,
+    IRowNode,
     ITooltipParams,
     NamedBean,
     PropertyValueChangedEvent,
@@ -35,12 +36,18 @@ import { isGroupFilterDef } from './rowHierarchyUtils';
 const hasTooltipComponent = (colDef: ColDef | undefined): colDef is ColDef =>
     !!colDef && (colDef.tooltipComponent != null || colDef.tooltipComponentSelector != null);
 
+const getGroupedColDef = (node: IRowNode | undefined): ColDef | undefined =>
+    node?.group ? (node.rowGroupColumn as AgColumn | null)?.colDef : undefined;
+
 export class AutoColService extends BeanStub implements NamedBean, IAutoColService {
     beanName = 'autoColSvc' as const;
 
     /** Generated auto-group columns; empty when no auto-cols are active. Wrappers around these
      *  leaves are built/destroyed by `colGroupSvc.serviceWrapperCache`. */
     public columns: AgColumn[] = [];
+
+    private singleColumnTooltipDef?: ColDef;
+    private singleColumnLeafTooltipDef?: ColDef;
 
     /** Flips true on the first `modelUpdated` — used to detect the CSRM-no-rowData edge case
      *  where the modelUpdated hook (and therefore the visibility update) never fires. */
@@ -155,7 +162,7 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
                 state[i] = this.updateOneAutoCol(cols[i], i, source);
             }
             // one state pass lays the auto cols out once, and tells them together
-            _applyColumnState(beans, { state }, source);
+            _applyColumnState(beans, { state }, source, true);
         } finally {
             colModel.endColUpdate();
         }
@@ -301,24 +308,37 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
         }
 
         if (!underlyingColumn) {
-            this.applyDynamicSingleColumnTooltips(res, autoGroupColumnDef);
+            this.applyDynamicSingleColumnTooltips(res);
         }
 
         return res;
     }
 
+    public getTooltipColDef(column: AgColumn, node: IRowNode): ColDef {
+        const colDef = column.colDef;
+        if (colDef !== this.singleColumnTooltipDef || colDef.tooltip === false) {
+            return colDef;
+        }
+        return getGroupedColDef(node) ?? this.singleColumnLeafTooltipDef ?? colDef;
+    }
+
     // Each group row's `rowGroupColumn` differs per row, so tooltips must dispatch at render time.
-    private applyDynamicSingleColumnTooltips(res: ColDef, autoGroupColumnDef: ColDef | undefined): void {
+    private applyDynamicSingleColumnTooltips(res: ColDef): void {
+        this.singleColumnTooltipDef = res;
+        this.singleColumnLeafTooltipDef = res;
         const rowGroupCols = this.beans.rowGroupColsSvc?.columns ?? [];
         const anyGroupColHasTooltip = rowGroupCols.some((col) => _isCellTooltipConfigured(col.colDef));
         const anyGroupColHasTooltipComponent = rowGroupCols.some(({ colDef }) => hasTooltipComponent(colDef));
-        const leafHasTooltip = !!autoGroupColumnDef && _isCellTooltipConfigured(autoGroupColumnDef);
-        const leafHasTooltipComponent = hasTooltipComponent(autoGroupColumnDef);
+        const leafHasTooltip = _isCellTooltipConfigured(res);
+        const leafHasTooltipComponent = hasTooltipComponent(res);
 
         if (!anyGroupColHasTooltip && !anyGroupColHasTooltipComponent && !leafHasTooltip && !leafHasTooltipComponent) {
             return;
         }
 
+        // Preserve merged leaf settings before replacing them with the per-row dispatcher.
+        const leafColDef = { ...res };
+        this.singleColumnLeafTooltipDef = leafColDef;
         res.tooltip = undefined;
         res.tooltipField = undefined;
         res.tooltipValueGetter = undefined;
@@ -327,29 +347,22 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
         res.tooltipComponentSelector = undefined;
 
         if (anyGroupColHasTooltip || leafHasTooltip) {
-            res.tooltip = (params) => this.resolveDynamicSingleColumnTooltip(params, autoGroupColumnDef);
+            res.tooltip = (params) => this.resolveDynamicSingleColumnTooltip(params, leafColDef);
         }
 
         if (!anyGroupColHasTooltipComponent && !leafHasTooltipComponent) {
             return;
         }
 
-        res.tooltipComponentSelector = (params) =>
-            this.resolveDynamicSingleColumnTooltipComponent(params, autoGroupColumnDef);
+        res.tooltipComponentSelector = (params) => this.resolveDynamicSingleColumnTooltipComponent(params, leafColDef);
     }
 
-    private resolveDynamicSingleColumnTooltip(
-        params: TooltipCallbackParams,
-        autoGroupColumnDef: ColDef | undefined
-    ): any {
-        const isGroupRow = !!params.node?.group;
-        const colDef = isGroupRow ? (params.node?.rowGroupColumn as AgColumn | undefined)?.colDef : autoGroupColumnDef;
-        if (!colDef) {
-            return undefined;
-        }
+    private resolveDynamicSingleColumnTooltip(params: TooltipCallbackParams, leafColDef: ColDef): any {
+        const groupedColDef = getGroupedColDef(params.node);
+        const colDef = groupedColDef ?? leafColDef;
 
         return _resolveGroupTooltipValue(colDef, params, () => {
-            if (isGroupRow) {
+            if (groupedColDef) {
                 return { resolved: true, value: params.value };
             }
             const { tooltipField } = colDef;
@@ -366,11 +379,9 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
 
     private resolveDynamicSingleColumnTooltipComponent(
         params: ITooltipParams,
-        autoGroupColumnDef: ColDef | undefined
+        leafColDef: ColDef
     ): TooltipComponentSelectorResult | undefined {
-        const colDef = params.node?.group
-            ? (params.node.rowGroupColumn as AgColumn | undefined)?.colDef
-            : autoGroupColumnDef;
+        const colDef = getGroupedColDef(params.node) ?? leafColDef;
         if (!hasTooltipComponent(colDef)) {
             return undefined;
         }

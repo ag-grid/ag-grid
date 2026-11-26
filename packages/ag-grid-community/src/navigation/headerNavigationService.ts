@@ -1,4 +1,4 @@
-import { _getDocument, _last } from 'ag-stack';
+import { _addManagedElementListeners, _getDocument, _last } from 'ag-stack';
 
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
@@ -66,7 +66,7 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
         });
 
         const eDocument = _getDocument(beans);
-        this.addManagedElementListeners(eDocument, {
+        _addManagedElementListeners(this, eDocument, {
             mousedown: () => {
                 this.currentHeaderRowWithoutSpan = -1;
             },
@@ -99,7 +99,7 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
 
         const headerRowContainerCtrl = ctrlsSvc.getHeaderRowContainerCtrl();
         const allCtrls = headerRowContainerCtrl?.getAllCtrls();
-        const isFloatingFilterVisible = _last(allCtrls || []).type === 'filter';
+        const isFloatingFilterVisible = _last(allCtrls ?? []).type === 'filter';
         const headerRowCount = getFocusHeaderRowCount(this.beans) - 1;
 
         let row = -1;

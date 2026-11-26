@@ -18,6 +18,8 @@ interface Props {
     suppressFrameworkHeader?: boolean;
     path: string;
     menuItems: MenuItem[];
+    /** The frameworks the page exists in, from its frontmatter. Omit for a page that exists in all of them. */
+    pageFrameworks?: Framework[];
     version?: string;
     markdownHref?: string;
 }
@@ -29,6 +31,7 @@ export const Header: FunctionComponent<Props> = ({
     suppressFrameworkHeader,
     path,
     menuItems,
+    pageFrameworks,
     version,
     markdownHref,
 }) => {
@@ -75,6 +78,7 @@ export const Header: FunctionComponent<Props> = ({
                                 path={path}
                                 currentFramework={framework}
                                 menuItems={menuItems}
+                                pageFrameworks={pageFrameworks}
                             />
                         </div>
                     </div>

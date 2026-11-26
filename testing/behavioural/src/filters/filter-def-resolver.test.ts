@@ -159,6 +159,7 @@ describe('a filter definition is read alike by every reader', () => {
     test.each(CASES)(
         "the column filter reads the author's params over the data type's: $label",
         async ({ form, ...shape }) => {
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [348] });
             for (const enableFilterHandlers of [false, true]) {
                 const api = await createGrid(shape, form, { inRangeInclusive: true }, { enableFilterHandlers });
                 await api.setColumnFilterModel(
@@ -375,6 +376,7 @@ describe('a filter definition is read alike by every reader', () => {
 
     // The handler and the panel are built apart with filter handlers, so the panel must lay the same params.
     test("a Multi Filter child's panel offers the data type's options under the author's params, with or without handlers", async () => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [348] });
         for (const enableFilterHandlers of [false, true]) {
             for (const form of Object.keys(FORMS) as Form[]) {
                 const api = await gridsManager.createGridAndWait('grid', {
@@ -459,7 +461,7 @@ describe('a filter name nothing is registered under', () => {
         async ({ modules, model, panel }) => {
             gridsManager = new TestGridsManager({ modules });
             for (const enableFilterHandlers of [false, true]) {
-                enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [101] });
+                enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [101, 348] });
                 const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
                 const api = await gridsManager.createGridAndWait('grid', {
                     enableFilterHandlers,
@@ -774,5 +776,23 @@ describe("a built-in filter given the author's `handler` or `doesFilterPass`", (
         expect(document.querySelector('.ag-filter-menu .ag-date-filter input')).not.toBeNull();
         expect(init).not.toHaveBeenCalled();
         expect(warnSpy.mock.calls.flat().join(' ')).toContain('warning #335');
+    });
+
+    test('with filter handlers, a custom filter given neither `doesFilterPass` nor `handler` is warned about and lets every row pass', async () => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [277] });
+        const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        class DisplayComponent {
+            public getGui = () => document.createElement('div');
+        }
+        const api = await gridsManager.createGridAndWait('grid', {
+            enableFilterHandlers: true,
+            columnDefs: [{ field: 'id' }, { field: 'country', filter: DisplayComponent }],
+            rowData: ROWS,
+        });
+        await api.setColumnFilterModel('country', { value: 'Italy' });
+        api.onFilterChanged();
+        await asyncSetTimeout(0);
+        expect(displayedIds(api)).toEqual([0, 1, 2, 3]);
+        expect(warnSpy.mock.calls.flat().join(' ')).toContain('warning #277');
     });
 });

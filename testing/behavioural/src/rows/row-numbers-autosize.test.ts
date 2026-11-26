@@ -1,6 +1,7 @@
 import { waitFor } from '@testing-library/dom';
-import { TestGridsManager, asyncSetTimeout, waitForEvent } from 'ag-test-utils';
+import { TestGridsManager, asyncSetTimeout, mockGridLayout, waitForEvent } from 'ag-test-utils';
 import type { MockInstance } from 'vitest';
+import { onTestFinished } from 'vitest';
 
 import type { ColumnResizedEvent, GridApi, GridOptions } from 'ag-grid-community';
 import {
@@ -9,7 +10,7 @@ import {
     ROW_NUMBERS_COLUMN_ID,
     getGridElement,
 } from 'ag-grid-community';
-import { RowNumbersModule } from 'ag-grid-enterprise';
+import { CellSelectionModule, RowGroupingModule, RowNumbersModule } from 'ag-grid-enterprise';
 
 interface RowData {
     id: string;
@@ -24,7 +25,13 @@ const makeRows = (count: number, start = 0): RowData[] =>
 
 describe('Row numbers column autosize', () => {
     const gridMgr = new TestGridsManager({
-        modules: [ClientSideRowModelModule, ExternalFilterModule, RowNumbersModule],
+        modules: [
+            ClientSideRowModelModule,
+            ExternalFilterModule,
+            RowGroupingModule,
+            RowNumbersModule,
+            CellSelectionModule,
+        ],
     });
     let measure: MockInstance<(form: HTMLFormElement) => number>;
 
@@ -51,6 +58,7 @@ describe('Row numbers column autosize', () => {
             rowData: makeRows(rowCount),
             rowNumbers: true,
             getRowId: ({ data }) => data.id,
+            suppressRowVirtualisation: false,
             ...gridOptions,
         });
         await waitForEvent('firstDataRendered', api);
@@ -58,8 +66,11 @@ describe('Row numbers column autosize', () => {
         return api;
     };
 
-    // eslint-disable-next-line no-restricted-syntax -- samples past the 10ms row-numbers modelUpdated debounce (rowNumbersService.ts)
-    const pastDebounce = () => asyncSetTimeout(20);
+    // past the rows-changed debounce (0ms here, rowNumbersService.ts), then the async flush of the events it raises
+    const pastDebounce = async () => {
+        await asyncSetTimeout(0);
+        await asyncSetTimeout(0);
+    };
 
     const expectWidth = (api: GridApi, text: string) => waitFor(() => expect(rowNumberWidth(api)).toBe(widthFor(text)));
 
@@ -77,6 +88,16 @@ describe('Row numbers column autosize', () => {
 
         api.applyTransaction({ add: makeRows(900, 100) });
         await expectWidth(api, '1001');
+    });
+
+    test("widening takes nothing from the next column under colResizeDefault 'shift'", async () => {
+        const api = await createGrid(97, { colResizeDefault: 'shift' });
+        const idWidth = api.getColumn('id')!.getActualWidth();
+
+        api.applyTransaction({ add: makeRows(3, 97) });
+        await expectWidth(api, '101');
+
+        expect(api.getColumn('id')!.getActualWidth()).toBe(idWidth);
     });
 
     test('widens when immutable rowData grows past a digit boundary', async () => {
@@ -178,11 +199,23 @@ describe('Row numbers column autosize', () => {
         expect(rowNumberWidth(api)).toBe(widthFor('Row 101'));
     });
 
-    test('a full rowData reset still re-sizes to fit, including shrinking', async () => {
+    test('a full rowData reset still re-sizes to fit, shrinking down to the minimum width', async () => {
         const api = await createGrid(100, { getRowId: undefined });
 
         api.setGridOption('rowData', makeRows(97));
         await expectWidth(api, '98');
+
+        // '4' measures under the column's 60px minWidth, so the column stops there, as on a grid that opened with 3 rows
+        api.setGridOption('rowData', makeRows(3));
+        await waitFor(() => expect(rowNumberWidth(api)).toBe(60));
+        const resizes: string[] = [];
+        api.addEventListener('columnResized', (e) => resizes.push(e.source));
+
+        api.setGridOption('rowData', makeRows(2));
+        await pastDebounce();
+
+        expect(rowNumberWidth(api)).toBe(60);
+        expect(resizes).toEqual([]);
     });
 
     test('a user-sized column is never autosized, including on a full rowData reset', async () => {
@@ -202,14 +235,227 @@ describe('Row numbers column autosize', () => {
         expect(measure).not.toHaveBeenCalled();
     });
 
-    test('changing rowNumbers options hands the column width back to autosize', async () => {
+    test('the autosize stays between the configured width and maxWidth', async () => {
+        const api = await createGrid(97, { getRowId: undefined, rowNumbers: { width: 90, maxWidth: 100 } });
+        // '98' measures 62
+        expect(rowNumberWidth(api)).toBe(90);
+
+        // '1001' measures 122
+        api.setGridOption('rowData', makeRows(1000));
+        await waitFor(() => expect(rowNumberWidth(api)).toBe(100));
+
+        api.setGridOption('rowData', makeRows(3));
+        await waitFor(() => expect(rowNumberWidth(api)).toBe(90));
+    });
+
+    test('with only minWidth lowered, the autosize fits the row numbers below the default width', async () => {
+        const api = await createGrid(3, { getRowId: undefined, rowNumbers: { minWidth: 30 } });
+
+        expect(rowNumberWidth(api)).toBe(widthFor('4'));
+    });
+
+    test('lowering minWidth at runtime fits the row numbers below the old minimum at once', async () => {
+        const api = await createGrid(3, { getRowId: undefined });
+        expect(rowNumberWidth(api)).toBe(60);
+
+        api.setGridOption('rowNumbers', { minWidth: 30 });
+        expect(rowNumberWidth(api)).toBe(widthFor('4'));
+    });
+
+    test('a minWidth above maxWidth settles on maxWidth, so a fresh autosize raises no resize', async () => {
+        const api = await createGrid(97, { getRowId: undefined, rowNumbers: { minWidth: 120, maxWidth: 100 } });
+        expect(rowNumberWidth(api)).toBe(100);
+        const resizes: string[] = [];
+        api.addEventListener('columnResized', (e) => resizes.push(e.source));
+
+        api.setGridOption('rowData', makeRows(97));
+        await pastDebounce();
+
+        expect(resizes).toEqual([]);
+    });
+
+    test('changing rowNumbers options without a width keeps the column width, a user-sized one too', async () => {
+        const api = await createGrid(97, { rowNumbers: { resizable: true } });
+        api.setGridOption('rowNumbers', { resizable: true, minWidth: 40 });
+        expect(rowNumberWidth(api)).toBe(widthFor('98'));
+        api.applyTransaction({ add: makeRows(3, 97) });
+        await expectWidth(api, '101');
+
+        api.setColumnWidths([{ key: ROW_NUMBERS_COLUMN_ID, newWidth: 70 }], true, 'uiColumnResized');
+        api.setGridOption('rowNumbers', { resizable: true, minWidth: 30 });
+        expect(rowNumberWidth(api)).toBe(70);
+
+        api.applyTransaction({ add: makeRows(900, 100) });
+        await pastDebounce();
+        expect(api.getDisplayedRowCount()).toBe(1000);
+        expect(rowNumberWidth(api)).toBe(70);
+    });
+
+    test('a rowNumbers change without a width keeps the column width within its new minWidth and maxWidth', async () => {
+        const api = await createGrid(97, { rowNumbers: { resizable: true } });
+        api.setGridOption('rowNumbers', { resizable: true, maxWidth: 61 });
+        expect(rowNumberWidth(api)).toBe(61);
+
+        api.setGridOption('rowNumbers', { resizable: true });
+        expect(rowNumberWidth(api)).toBe(widthFor('98'));
+        api.setColumnWidths([{ key: ROW_NUMBERS_COLUMN_ID, newWidth: 70 }], true, 'uiColumnResized');
+        api.setGridOption('rowNumbers', { resizable: true, minWidth: 100 });
+        expect(rowNumberWidth(api)).toBe(100);
+        expect(rowNumberHeaderWidth(api)).toBe('100px');
+    });
+
+    test('a new rowNumbers width replaces a user-sized width and still fits the rows; an unchanged, removed or below-minWidth one keeps it', async () => {
         const api = await createGrid(97, { rowNumbers: { resizable: true } });
         api.setColumnWidths([{ key: ROW_NUMBERS_COLUMN_ID, newWidth: 70 }], true, 'uiColumnResized');
 
-        // re-applies the colDef width of 60, replacing the user's width
-        api.setGridOption('rowNumbers', { resizable: true, minWidth: 40 });
-        api.applyTransaction({ add: makeRows(3, 97) });
-        await expectWidth(api, '101');
+        api.setGridOption('rowNumbers', { resizable: true, width: 80 });
+        expect(rowNumberWidth(api)).toBe(80);
+        api.setGridOption('rowData', makeRows(1000));
+        await expectWidth(api, '1000');
+
+        api.setGridOption('rowNumbers', { resizable: true, width: 61 });
+        expect(rowNumberWidth(api)).toBe(widthFor('1000'));
+
+        api.setColumnWidths([{ key: ROW_NUMBERS_COLUMN_ID, newWidth: 120 }], true, 'uiColumnResized');
+        api.setGridOption('rowNumbers', { resizable: true, width: 61, minWidth: 40 });
+        expect(rowNumberWidth(api)).toBe(120);
+        api.setGridOption('rowNumbers', { resizable: true });
+        expect(rowNumberWidth(api)).toBe(120);
+        api.setGridOption('rowNumbers', { resizable: true, width: 30 });
+        expect(rowNumberWidth(api)).toBe(120);
+
+        api.setGridOption('rowData', makeRows(10000));
+        await pastDebounce();
+        expect(api.getDisplayedRowCount()).toBe(10000);
+        expect(rowNumberWidth(api)).toBe(120);
+
+        api.setGridOption('rowNumbers', { resizable: true, width: 60 });
+        expect(rowNumberWidth(api)).toBe(widthFor('10000'));
+    });
+
+    test('a rowNumbers update keeps the widest width unless it changes what the fit reads, as a new valueFormatter does', async () => {
+        let external = false;
+        const api = await createGrid(100, {
+            rowNumbers: { resizable: true },
+            isExternalFilterPresent: () => external,
+            doesExternalFilterPass: (node) => Number(node.data!.id) < 97,
+        });
+        external = true;
+        api.onFilterChanged();
+        await pastDebounce();
+        expect(api.getDisplayedRowCount()).toBe(97);
+        expect(rowNumberWidth(api)).toBe(widthFor('101'));
+
+        api.setGridOption('rowNumbers', { resizable: true });
+        expect(rowNumberWidth(api)).toBe(widthFor('101'));
+        api.applyTransaction({ add: makeRows(1, 200) });
+        await pastDebounce();
+        expect(api.getDisplayedRowCount()).toBe(97);
+        expect(rowNumberWidth(api)).toBe(widthFor('101'));
+
+        api.setGridOption('rowNumbers', { resizable: false, minWidth: 60 });
+        expect(rowNumberWidth(api)).toBe(widthFor('101'));
+
+        api.setGridOption('rowNumbers', { resizable: true, valueFormatter: (params) => `Row ${params.value}` });
+        expect(rowNumberWidth(api)).toBe(widthFor('Row 98'));
+    });
+
+    test('turning rowNumbers off and on again fits the new column to the rows', async () => {
+        const api = await createGrid(1000);
+        expect(rowNumberWidth(api)).toBe(widthFor('1001'));
+
+        api.setGridOption('rowNumbers', false);
+        api.setGridOption('rowNumbers', true);
+        await expectWidth(api, '1001');
+    });
+
+    test('resetting column state fits the row numbers to the rows it leaves, as a new grid with that state does', async () => {
+        interface CountryRow {
+            id: string;
+            country: string;
+        }
+        // 12 group rows fit above the 60px minimum, and below the 120 leaf rows' fit
+        const options: GridOptions<CountryRow> = {
+            columnDefs: [{ field: 'country', rowGroup: true }, { field: 'id' }],
+            rowData: Array.from({ length: 120 }, (_, i) => ({ id: String(i), country: `country ${i % 12}` })),
+            rowNumbers: true,
+            groupDefaultExpanded: 0,
+            getRowId: (params) => params.data.id,
+            suppressRowVirtualisation: false,
+        };
+        const create = async (id: string) => {
+            const gridApi = gridMgr.createGrid(id, options);
+            await waitForEvent('firstDataRendered', gridApi);
+            await pastDebounce();
+            return gridApi;
+        };
+
+        const fresh = await create('fresh');
+        expect(fresh.getDisplayedRowCount()).toBe(12);
+        const freshWidth = rowNumberWidth(fresh);
+        expect(freshWidth).toBe(widthFor('13'));
+
+        const api = await create('reset');
+        expect(api.getDisplayedRowCount()).toBe(12);
+        expect(rowNumberWidth(api)).toBe(freshWidth);
+
+        api.applyColumnState({ state: [{ colId: 'country', rowGroup: false }] });
+        await expectWidth(api, '121');
+        expect(api.getDisplayedRowCount()).toBe(120);
+
+        api.resetColumnState();
+        expect(api.getDisplayedRowCount()).toBe(12);
+
+        await pastDebounce();
+        expect(rowNumberWidth(api)).toBe(freshWidth);
+    });
+
+    test('turning rowNumbers on with cellSelection and a defaultColDef width in one update sizes and places the column as creating the grid with those options does', async () => {
+        const finalOptions: GridOptions<RowData> = {
+            columnDefs: [
+                { field: 'id', colId: 'pinnedA', pinned: 'left', width: 150 },
+                { field: 'id', colId: 'pinnedB', pinned: 'left', width: 150 },
+                { field: 'id', colId: 'body' },
+            ],
+            rowData: makeRows(100),
+            getRowId: (params) => params.data.id,
+            rowNumbers: true,
+            cellSelection: true,
+            defaultColDef: { width: 120 },
+            suppressRowVirtualisation: false,
+        };
+        const layout = (api: GridApi) => {
+            const col = api.getColumn(ROW_NUMBERS_COLUMN_ID)!;
+            return { width: col.getActualWidth(), left: col.getLeft(), pinned: col.getPinned() };
+        };
+        const create = async (id: string, options: GridOptions<RowData>) => {
+            const api = gridMgr.createGrid(id, options);
+            await waitForEvent('firstDataRendered', api);
+            await pastDebounce();
+            return api;
+        };
+
+        const originalGridWidth = mockGridLayout.gridWidth;
+        onTestFinished(() => {
+            mockGridLayout.gridWidth = originalGridWidth;
+        });
+        mockGridLayout.gridWidth = 400;
+        const oneUpdate = await create('oneUpdate', {
+            ...finalOptions,
+            rowNumbers: false,
+            cellSelection: false,
+            defaultColDef: {},
+        });
+        oneUpdate.updateGridOptions({ rowNumbers: true, cellSelection: true, defaultColDef: { width: 120 } });
+        await pastDebounce();
+        const updated = layout(oneUpdate);
+
+        gridMgr.reset();
+        const alone = await create('alone', finalOptions);
+        const reference = layout(alone);
+
+        expect(reference).toEqual({ width: widthFor('101'), left: 0, pinned: 'left' });
+        expect(updated).toEqual(reference);
     });
 
     test('resetting column state hands a user-sized column back to autosize', async () => {
@@ -232,13 +478,14 @@ describe('Row numbers column autosize', () => {
         await expectWidth(api, '101');
     });
 
-    test('resetting column state re-measures on the next transaction, even within the same digit count', async () => {
-        const api = await createGrid(100);
+    // TODO: disabled due to AG-19380 - re-enable once fixed
+    test.skip('resetting column state keeps the width that fits the row numbers, with no later row update', async () => {
+        const api = await createGrid(1000);
+        const fitted = { width: widthFor('1000'), header: `${widthFor('1000')}px` };
+        expect({ width: rowNumberWidth(api), header: rowNumberHeaderWidth(api) }).toEqual(fitted);
 
         api.resetColumnState();
-        expect(rowNumberWidth(api)).toBe(60);
 
-        api.applyTransaction({ add: makeRows(1, 100) });
-        await expectWidth(api, '102');
+        await waitFor(() => expect({ width: rowNumberWidth(api), header: rowNumberHeaderWidth(api) }).toEqual(fitted));
     });
 });

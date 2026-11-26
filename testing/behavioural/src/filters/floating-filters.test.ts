@@ -1,13 +1,28 @@
 import { fireEvent, getByTestId, waitFor } from '@testing-library/dom';
-import { GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
+import { ALL_SEVERITIES, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
+import type {
+    ColDef,
+    ColGroupDef,
+    FilterHandler,
+    FloatingFilterDisplayParams,
+    GridApi,
+    IDoesFilterPassParams,
+    IFilterComp,
+    IFilterParams,
+    IFloatingFilterComp,
+    IFloatingFilterParams,
+} from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
+    CustomFilterModule,
     DateFilterModule,
     NumberFilterModule,
     RenderApiModule,
+    RowApiModule,
     TextFilterModule,
     agTestIdFor,
+    enableDevValidations,
     getGridElement,
     setupAgTestIds,
 } from 'ag-grid-community';
@@ -21,7 +36,15 @@ function typeIntoFloatingFilter(input: HTMLInputElement, value: string): void {
 
 describe('Floating Filters', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, TextFilterModule, NumberFilterModule, DateFilterModule, RenderApiModule],
+        modules: [
+            ClientSideRowModelModule,
+            TextFilterModule,
+            NumberFilterModule,
+            DateFilterModule,
+            RenderApiModule,
+            RowApiModule,
+            CustomFilterModule,
+        ],
     });
 
     beforeAll(() => setupAgTestIds());
@@ -30,7 +53,7 @@ describe('Floating Filters', () => {
     describe('apply filtering as you type', () => {
         test('typing in a floating text filter filters the grid, and clearing restores every row', async () => {
             const api = await gridsManager.createGridAndWait('grid1', {
-                columnDefs: [{ field: 'country', filter: 'agTextColumnFilter' }],
+                columnDefs: [{ field: 'country', filter: 'agTextColumnFilter', filterParams: { debounceMs: 0 } }],
                 defaultColDef: { floatingFilter: true },
                 rowData: [{ country: 'Ireland' }, { country: 'Ireland' }, { country: 'Italy' }],
             });
@@ -152,7 +175,7 @@ describe('Floating Filters', () => {
 
         test('clearing during a pending debounce applies immediately, exactly once', async () => {
             const api = await gridsManager.createGridAndWait('grid1', {
-                columnDefs: [{ field: 'country', filter: 'agTextColumnFilter', filterParams: { debounceMs: 200 } }],
+                columnDefs: [{ field: 'country', filter: 'agTextColumnFilter', filterParams: { debounceMs: 20 } }],
                 defaultColDef: { floatingFilter: true },
                 rowData: [{ country: 'Ireland' }, { country: 'Italy' }],
             });
@@ -172,7 +195,7 @@ describe('Floating Filters', () => {
                 })
             );
 
-            // type again, then clear while the 200ms sync debounce is still pending
+            // type again, then clear while the 20ms sync debounce is still pending
             typeIntoFloatingFilter(input, 'Irel');
             let filterChangedCount = 0;
             api.addEventListener('filterChanged', () => ++filterChangedCount);
@@ -186,8 +209,8 @@ describe('Floating Filters', () => {
             expect(api.getColumnFilterModel('country')).toBeNull();
             expect(filterChangedCount).toBe(1);
 
-            // eslint-disable-next-line no-restricted-syntax -- negative assertion: samples past the 200ms sync debounce so an uncancelled 'Irel' timer would already have fired
-            await asyncSetTimeout(300);
+            // eslint-disable-next-line no-restricted-syntax -- negative assertion: samples past the 20ms sync debounce so an uncancelled 'Irel' timer would already have fired
+            await asyncSetTimeout(40);
             expect(api.getColumnFilterModel('country')).toBeNull();
             expect(filterChangedCount).toBe(1);
         });
@@ -437,5 +460,214 @@ describe('Floating Filters', () => {
         const rebuilt = () => getByTestId(gridDiv, inputId) as HTMLInputElement;
         await waitFor(() => expect(rebuilt()).not.toBe(input));
         expect(document.activeElement).toBe(rebuilt().closest('.ag-header-cell'));
+    });
+
+    describe.each([false, true])(
+        'a custom filter giving its model as a string, with enableFilterHandlers %s',
+        (enableFilterHandlers) => {
+            beforeEach(() => {
+                enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [348] });
+            });
+
+            const describeModel = (model: number | null) => (model == null ? '' : `>${model}`);
+            const passes = (value: number | null | undefined, model: number | null | undefined) =>
+                model == null || (value != null && value > model);
+
+            class LegacyFilter implements IFilterComp {
+                private model: number | null = null;
+                private params!: IFilterParams;
+                public init(params: IFilterParams): void {
+                    this.params = params;
+                }
+                public getGui(): HTMLElement {
+                    return document.createElement('div');
+                }
+                public isFilterActive(): boolean {
+                    return this.model != null;
+                }
+                public doesFilterPass({ node }: IDoesFilterPassParams): boolean {
+                    return passes(this.params.getValue(node), this.model);
+                }
+                public getModel(): number | null {
+                    return this.model;
+                }
+                public setModel(model: number | null): void {
+                    this.model = model;
+                }
+                public getModelAsString(model: number | null): string {
+                    return describeModel(model);
+                }
+            }
+            class DisplayComp {
+                public getGui(): HTMLElement {
+                    return document.createElement('div');
+                }
+            }
+            const handler = (): FilterHandler<any, any, number> => ({
+                doesFilterPass: ({ node, model, handlerParams }) => passes(handlerParams.getValue(node), model),
+                getModelAsString: describeModel,
+            });
+
+            test('its floating filter is a disabled input showing that string as the model changes', async () => {
+                const api = await gridsManager.createGridAndWait('grid1', {
+                    columnDefs: [
+                        {
+                            field: 'gold',
+                            floatingFilter: true,
+                            filter: enableFilterHandlers ? { component: DisplayComp, handler } : LegacyFilter,
+                        },
+                    ],
+                    enableFilterHandlers,
+                    rowData: [{ gold: 1 }, { gold: 5 }, { gold: 8 }],
+                });
+                const input = () =>
+                    getGridElement(api)!.querySelector<HTMLInputElement>('.ag-floating-filter[col-id="gold"] input')!;
+                expect({ value: input().value, disabled: input().disabled }).toEqual({ value: '', disabled: true });
+
+                api.setFilterModel({ gold: 4 });
+                await waitFor(() => expect(input().value).toBe('>4'));
+                expect(api.getDisplayedRowCount()).toBe(2);
+
+                api.setFilterModel(null);
+                await waitFor(() => expect(input().value).toBe(''));
+                expect(api.getDisplayedRowCount()).toBe(3);
+            });
+        }
+    );
+
+    test.each([false, true])(
+        'with enableFilterHandlers %s, a floating filter replaced by another component shows the model set before',
+        async (enableFilterHandlers) => {
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [348] });
+            class ModelFloatingFilter implements IFloatingFilterComp {
+                private readonly eGui = document.createElement('input');
+                public init(): void {
+                    this.eGui.className = 'model-floating-filter';
+                }
+                public getGui(): HTMLElement {
+                    return this.eGui;
+                }
+                public onParentModelChanged(model: { filter?: string } | null): void {
+                    this.eGui.value = model?.filter ?? '';
+                }
+                public refresh(params: IFloatingFilterParams | FloatingFilterDisplayParams): void {
+                    this.eGui.value = 'model' in params ? (params.model?.filter ?? '') : '';
+                }
+            }
+            const withComponent = (floatingFilterComponent?: typeof ModelFloatingFilter): ColDef[] => [
+                { field: 'athlete', filter: 'agTextColumnFilter', floatingFilter: true, floatingFilterComponent },
+            ];
+            const api = await gridsManager.createGridAndWait('grid1', {
+                enableFilterHandlers,
+                columnDefs: withComponent(),
+                rowData: [{ athlete: 'Ian Thorpe' }, { athlete: 'Mark Spitz' }],
+            });
+            await api.setColumnFilterModel('athlete', { filterType: 'text', type: 'contains', filter: 'Thorpe' });
+            api.onFilterChanged();
+
+            api.setGridOption('columnDefs', withComponent(ModelFloatingFilter));
+
+            await waitFor(() =>
+                expect(getGridElement(api)!.querySelector<HTMLInputElement>('.model-floating-filter')?.value).toBe(
+                    'Thorpe'
+                )
+            );
+            expect(api.getDisplayedRowCount()).toBe(1);
+        }
+    );
+
+    describe('headerClass on floating filter cells', () => {
+        const createGrid = (columnDefs: (ColDef | ColGroupDef)[]) =>
+            gridsManager.createGridAndWait('grid1', {
+                columnDefs,
+                defaultColDef: { filter: 'agTextColumnFilter', floatingFilter: true },
+                rowData: [{ x: 'x1', y: 'y1' }],
+            });
+
+        const cells = (api: GridApi, colId: string) => {
+            const root = getGridElement(api)! as HTMLElement;
+            return {
+                header: root.querySelector<HTMLElement>(`.ag-header-cell:not(.ag-floating-filter)[col-id="${colId}"]`)!,
+                floatingFilter: root.querySelector<HTMLElement>(`.ag-floating-filter[col-id="${colId}"]`)!,
+            };
+        };
+
+        const userClasses = (element: HTMLElement) =>
+            Array.from(element.classList).filter((name) => /^(a|b|c|hdr|ff|grp)$/.test(name));
+
+        test('a string headerClass applies to the header and the floating filter', async () => {
+            const api = await createGrid([{ field: 'x', headerClass: 'a' }]);
+            const { header, floatingFilter } = cells(api, 'x');
+
+            expect(userClasses(header)).toEqual(['a']);
+            expect(userClasses(floatingFilter)).toEqual(['a']);
+        });
+
+        test('an array headerClass applies every class to the header and the floating filter', async () => {
+            const api = await createGrid([{ field: 'x', headerClass: ['a', 'b'] }]);
+            const { header, floatingFilter } = cells(api, 'x');
+
+            expect(userClasses(header).sort()).toEqual(['a', 'b']);
+            expect(userClasses(floatingFilter).sort()).toEqual(['a', 'b']);
+        });
+
+        test('a headerClass callback receives floatingFilter and can target each cell', async () => {
+            const seen = new Set<boolean | undefined>();
+            const api = await createGrid([
+                {
+                    field: 'x',
+                    headerClass: (params) => {
+                        seen.add(params.floatingFilter);
+                        return params.floatingFilter ? 'ff' : 'hdr';
+                    },
+                },
+            ]);
+            const { header, floatingFilter } = cells(api, 'x');
+
+            expect(userClasses(header)).toEqual(['hdr']);
+            expect(userClasses(floatingFilter)).toEqual(['ff']);
+            expect(seen).toEqual(new Set([true, false]));
+        });
+
+        test('updating headerClass through columnDefs updates the floating filter classes', async () => {
+            const api = await createGrid([{ field: 'x', headerClass: 'a' }]);
+
+            api.setGridOption('columnDefs', [{ field: 'x', headerClass: 'b' }]);
+            await waitFor(() => expect(userClasses(cells(api, 'x').floatingFilter)).toEqual(['b']));
+            expect(userClasses(cells(api, 'x').header)).toEqual(['b']);
+
+            api.setGridOption('columnDefs', [{ field: 'x' }]);
+            await waitFor(() => expect(userClasses(cells(api, 'x').floatingFilter)).toEqual([]));
+            expect(userClasses(cells(api, 'x').header)).toEqual([]);
+        });
+
+        test('a column group headerClass applies to the group header only', async () => {
+            const groupCalls: (boolean | undefined)[] = [];
+            const api = await createGrid([
+                {
+                    groupId: 'g',
+                    headerClass: (params) => {
+                        groupCalls.push(params.floatingFilter);
+                        return 'grp';
+                    },
+                    children: [{ field: 'x' }, { field: 'y' }],
+                },
+            ]);
+            const root = getGridElement(api)! as HTMLElement;
+
+            expect(userClasses(root.querySelector<HTMLElement>('.ag-header-group-cell')!)).toEqual(['grp']);
+            expect(groupCalls.length).toBeGreaterThan(0);
+            expect(groupCalls.every((floatingFilter) => floatingFilter === false)).toBe(true);
+            expect(userClasses(cells(api, 'x').floatingFilter)).toEqual([]);
+            expect(userClasses(cells(api, 'y').floatingFilter)).toEqual([]);
+        });
+
+        test('updating headerStyle through columnDefs updates the floating filter style', async () => {
+            const api = await createGrid([{ field: 'x', headerStyle: { '--ff-test': 'one' } }]);
+            expect(cells(api, 'x').floatingFilter.style.getPropertyValue('--ff-test')).toBe('one');
+
+            api.setGridOption('columnDefs', [{ field: 'x', headerStyle: { '--ff-test': 'two' } }]);
+            await waitFor(() => expect(cells(api, 'x').floatingFilter.style.getPropertyValue('--ff-test')).toBe('two'));
+        });
     });
 });

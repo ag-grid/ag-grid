@@ -84,7 +84,7 @@ const radarArea = (d: string, series: number): MiniChartSvgShape => ({
     attrs: { 'fill-opacity': 0.8, ...RADAR_OUTLINE },
 });
 
-const DONUT: MiniChartSvgTemplate = {
+const DONUT: MiniChartSvgTemplate = /* #__PURE__ */ (() => ({
     tooltip: 'donutTooltip',
     axes: 'none',
     series: [
@@ -113,7 +113,7 @@ const DONUT: MiniChartSvgTemplate = {
             5
         ),
     ],
-};
+}))();
 
 /**
  * One box plot: the box `[x, y, width, height]`, then the median, whiskers and caps as `[x1, y1, x2, y2]` lines.
@@ -250,8 +250,11 @@ const customHeatmapFills = (paletteFills: string[], doc: Document): string[] => 
     });
 };
 
-/** Thumbnail geometry coloured from the palette; stock themes override some types below. */
-const MINI_CHART_SVG_GEOMETRY: Partial<Record<ChartType, MiniChartSvgTemplate>> = {
+/**
+ * Thumbnail geometry coloured from the palette; stock themes override some types below.
+ * Wrapped in a pure call so a bundler can drop all of it when no chart thumbnails are used.
+ */
+const MINI_CHART_SVG_GEOMETRY: Partial<Record<ChartType, MiniChartSvgTemplate>> = /* #__PURE__ */ (() => ({
     groupedColumn: {
         tooltip: 'groupedColumnTooltip',
         series: [rect(9.364, 29, 10.182, 24, 0), rect(23.909, 17, 10.182, 36, 1), rect(38.455, 5, 10.182, 48, 2)],
@@ -730,10 +733,10 @@ const MINI_CHART_SVG_GEOMETRY: Partial<Record<ChartType, MiniChartSvgTemplate>> 
             filled('M 45 38.103 L 53 53 L 5 53 L 13 38.103', 2),
         ],
     },
-    boxPlot: /* #__PURE__ */ boxPlot(false),
-    treemap: /* #__PURE__ */ treemap(false),
-    waterfall: /* #__PURE__ */ waterfall(fills(0), fills(1)),
-};
+    boxPlot: boxPlot(false),
+    treemap: treemap(false),
+    waterfall: waterfall(fills(0), fills(1)),
+}))();
 
 /** Stock themes colour these thumbnails with fixed theme colours instead of the palette. */
 const STOCK_THEME_GEOMETRY: Partial<Record<ChartType, MiniChartSvgTemplate>> = {

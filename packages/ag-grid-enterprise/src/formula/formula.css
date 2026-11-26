@@ -8,4 +8,8 @@
     border-width: 0 var(--ag-note-indicator-size) var(--ag-note-indicator-size) 0;
     border-color: transparent var(--ag-invalid-color) transparent transparent;
     pointer-events: none;
+
+    @media (forced-colors: active) {
+        border-right-color: Mark;
+    }
 }

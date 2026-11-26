@@ -4,12 +4,7 @@
   "sourceRoot": "packages/ag-grid-vue3/src",
   "projectType": "library",
   "targets": {
-    "lint": {
-      "command": "eslint",
-      "options": {
-        "cwd": "{projectRoot}"
-      }
-    },
+    "lint": {},
     "updateGridAndColumnProperties": {
       "executor": "nx:run-commands",
       "dependsOn": ["ag-grid-community:build:package"],
@@ -34,7 +29,7 @@
       "inputs": [
         "tsDeclarations",
         "{projectRoot}/src/**",
-        "{projectRoot}/vite.config.ts",
+        "{projectRoot}/vite.config.mts",
         "!{projectRoot}/dist",
         "{workspaceRoot}/packages/ag-grid-community/src/components/componentUtil.ts",
         "{workspaceRoot}/packages/ag-grid-community/src/propertyKeys.ts"
@@ -81,7 +76,7 @@
     "pack:verify": {
       "executor": "nx:run-commands",
       "dependsOn": ["pack:extract"],
-      "inputs": ["allOutputs"],
+      "inputs": ["allOutputs", "{workspaceRoot}/scripts/package/sanity-check-package.js"],
       "options": {
         "commands": ["node scripts/package/sanity-check-package.js dist/artifacts/contents/{projectRoot}/package"]
       },

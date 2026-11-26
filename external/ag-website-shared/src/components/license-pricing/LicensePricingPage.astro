@@ -1,0 +1,31 @@
+---
+import { Icon } from '@ag-website-shared/components/icon/Icon';
+import PageHero from '@ag-website-shared/components/page-hero/PageHero.astro';
+
+import { LicensePricing, type LicenseTab } from './LicensePricing';
+import styles from './license-pricing.module.scss';
+import { PRICING_ANCHORS, PRICING_HERO } from './pricingContent';
+
+/**
+ * The body of every product site's /license-pricing/ page. Each site wraps it in its own Layout,
+ * passing PRICING_PAGE's title and description.
+ */
+interface Props {
+    /** The site hosting the page, recorded against contact form submissions. */
+    defaultSelection: LicenseTab;
+}
+
+const { defaultSelection } = Astro.props as Props;
+---
+
+<PageHero eyebrow={PRICING_HERO.eyebrow} headline={PRICING_HERO.headline} subhead={PRICING_HERO.intro}>
+    <a class:list={['button', styles.iconButton]} href={`#${PRICING_ANCHORS.products}`}>
+        <Icon name="arrowDown" />
+        Explore products
+    </a>
+    <a class:list={['button-secondary', styles.iconButton]} href={`#${PRICING_ANCHORS.contact}`}>
+        <Icon name="email" />
+        Contact sales
+    </a>
+</PageHero>
+<LicensePricing client:load defaultSelection={defaultSelection} />

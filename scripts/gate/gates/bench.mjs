@@ -15,10 +15,8 @@ export default {
     script: 'benches.sh',
     helpCommand: ['vitest', 'bench', '--help'],
     failRe: /^( FAIL|\s+×)/,
-    // `vitest bench` reports a table rather than test counts; these are the lines worth echoing back. The
-    // profiles line is in there because --profile --async is exactly the case where the terminal has nothing
-    // else to go on.
-    summaryRe: /^ *(BENCH|Duration|Bench Files|CPU profiles written)/,
+    // The lines worth echoing back; the profiles one because --profile --async leaves the terminal nothing else.
+    summaryRe: /^ *(Test Files|Tests|Duration|CPU profiles written)/,
 
     // `--bench-compare [args...]` is a thin pass-through to the bench-compare.mjs tool, handled before
     // anything else reads argv so its sub-commands and flags (base/test/compare/all/backup, --runs, --filter,
@@ -50,6 +48,13 @@ export default {
                 state.forward.push('--ui', '--standalone', '--watch');
             },
         },
+        '--large': {
+            takes: NONE,
+            apply() {
+                // Includes the *.large.bench.ts files (1M rows, seconds per call), left out of a plain run.
+                process.env.AG_BENCH_LARGE = '1';
+            },
+        },
         '--profile': {
             takes: NONE,
             apply(state) {
@@ -74,7 +79,8 @@ export default {
         }
         return {
             command: bin('vitest'),
-            args: ['bench', ...(state.endless ? [] : ['--run']), ...state.forward],
+            // `vitest bench` leaves Vite's mode at `test`; the behavioural config builds the browser project for this one.
+            args: ['bench', '--mode', 'benchmark', ...(state.endless ? [] : ['--run']), ...state.forward],
             cwd: path.join(rootDir, 'testing/behavioural'),
         };
     },
@@ -129,6 +135,8 @@ Modes:
   --headed, --interactive  Visible Chromium, single run — watch the grid render.
   --ui                   Visible Chromium + the Vitest dashboard at a localhost URL; starts WITHOUT
                          running (pick benches from the dashboard), and stays open.
+  --large                Also runs the *.large.bench.ts benches (1M rows, seconds per call), left out of a
+                         plain run. With --bench-compare, set AG_BENCH_LARGE=1 in the environment instead.
   --profile              CPU-profiles each bench's measured run in Chromium (CDP) for method-cost analysis.
                          Writes one .cpuprofile per bench under benchmarks/tmp/profiles/ (printed after the
                          run); open them in Chrome DevTools or speedscope. Not for timings.

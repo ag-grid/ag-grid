@@ -1,4 +1,4 @@
-import { createApp, ref } from 'vue';
+import { createApp, defineComponent, ref } from 'vue';
 
 import type { GridApi } from 'ag-grid-community';
 import { ModuleRegistry, createGrid, enableDevValidations } from 'ag-grid-community';
@@ -15,7 +15,7 @@ if (process.env.NODE_ENV !== 'production') {
 
 ModuleRegistry.registerModules([AllEnterpriseModule]);
 
-const App = {
+const App = defineComponent({
     setup() {
         const gridApi = ref<GridApi | null>(null);
         const naturalLanguageInput = ref('');
@@ -132,7 +132,7 @@ const App = {
                         <button type="submit" :disabled="isProcessing">→</button>
                     </form>
                     <div id="processingStatus" v-html="processingStatus"></div>
-                    <div>
+                    <div class="controls-row">
                         <button @click="resetGrid">Reset Grid</button>
                     </div>
                 </div>
@@ -149,6 +149,6 @@ const App = {
     mounted() {
         this.initializeGrid();
     },
-};
+});
 
 createApp(App).mount('#app');

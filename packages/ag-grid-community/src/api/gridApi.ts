@@ -46,6 +46,7 @@ import type {
 } from '../interfaces/autoSize';
 import type { CsvExportParams } from '../interfaces/exportParams';
 import type { GridState, GridStateKey } from '../interfaces/gridState';
+import type { RefreshCalculatedColumnsParams } from '../interfaces/iCalculatedColumns';
 import type { RenderedRowEvent } from '../interfaces/iCallbackParams';
 import type {
     EditingCellPosition,
@@ -240,7 +241,7 @@ export interface _RowGridApi<TData> {
      *
      * Special IDs for built-in row types (import constants from `ag-grid-community`):
      * - `ROOT_NODE_ID` — the invisible root node (level -1, always a group)
-     * - `GRAND_TOTAL_ROW_ID` — the grand total footer row (when `grandTotalRow` is enabled)
+     * - `GRAND_TOTAL_ROW_ID` — the grand total footer row, when `grandTotalRow` is enabled and the grid shows rows, or with `alwaysShowGrandTotalRow` also while it has none, as that option describes (the Server-Side Row Model needs `grandTotalData` either way); without the option, the Client-Side Row Model keeps the row, not displayed, once its rows are removed or filtered out
      * - `GROUP_TOTAL_ROW_ID_PREFIX + groupId` — a group total footer row for the group with the given ID
      * - `DETAIL_ROW_ID_PREFIX + masterRowId` — the detail row for the master row with the given ID
      * @agModule `RowApiModule`
@@ -316,37 +317,48 @@ export interface _ScrollGridApi<TData> {
     getHorizontalPixelRange(): { left: number; right: number };
 
     /**
-     *  Ensures the column is visible by scrolling the table if needed.
+     * Horizontally scrolls the grid until the provided column is inside the visible viewport.
+     * This will have no effect before the `firstDataRendered` event has fired.
      *
-     * This will have no effect before the firstDataRendered event has fired.
-     *
-     * @param key - The column to ensure visible
-     * @param position - Where the column will be positioned. Defaults to `auto`
+     * The optional `position` sets where the column is placed in the viewport.
      * - `auto` - Scrolls the minimum amount to make sure the column is visible.
      * - `start` - Scrolls the column to the start of the viewport.
      * - `middle` - Scrolls the column to the middle of the viewport.
      * - `end` - Scrolls the column to the end of the viewport.
+     * @default 'auto'
      * @agModule `ScrollApiModule`
      */
     ensureColumnVisible(key: string | Column, position?: 'auto' | 'start' | 'middle' | 'end'): void;
 
     /**
      * Vertically scrolls the grid until the provided row index is inside the visible viewport.
-     * If a position is provided, the grid will attempt to scroll until the row is at the given position within the viewport.
-     * This will have no effect before the firstDataRendered event has fired.
+     * This will have no effect before the `firstDataRendered` event has fired.
+     *
+     * The optional `position` sets where the row is placed in the viewport.
+     * - `auto` - Scrolls the minimum amount to make sure the row is visible. `null` is equivalent.
+     * - `top` - Scrolls the row to the top of the viewport.
+     * - `middle` - Scrolls the row to the middle of the viewport.
+     * - `bottom` - Scrolls the row to the bottom of the viewport.
+     * @default 'auto'
      * @agModule `ScrollApiModule`
      */
-    ensureIndexVisible(index: number, position?: 'top' | 'bottom' | 'middle' | null): void;
+    ensureIndexVisible(index: number, position?: 'auto' | 'top' | 'bottom' | 'middle' | null): void;
 
     /**
      * Vertically scrolls the grid until the provided row (or a row matching the provided comparator) is inside the visible viewport.
-     * If a position is provided, the grid will attempt to scroll until the row is at the given position within the viewport.
-     * This will have no effect before the firstDataRendered event has fired.
+     * This will have no effect before the `firstDataRendered` event has fired.
+     *
+     * The optional `position` sets where the row is placed in the viewport.
+     * - `auto` - Scrolls the minimum amount to make sure the row is visible. `null` is equivalent.
+     * - `top` - Scrolls the row to the top of the viewport.
+     * - `middle` - Scrolls the row to the middle of the viewport.
+     * - `bottom` - Scrolls the row to the bottom of the viewport.
+     * @default 'auto'
      * @agModule `ScrollApiModule`
      */
     ensureNodeVisible(
         nodeSelector: TData | IRowNode<TData> | ((row: IRowNode<TData>) => boolean),
-        position?: 'top' | 'bottom' | 'middle' | null
+        position?: 'auto' | 'top' | 'bottom' | 'middle' | null
     ): void;
 }
 
@@ -657,7 +669,7 @@ export interface _ColumnAutosizeApi {
 }
 
 export interface _ColumnResizeApi {
-    /** Sets the column widths of the columns provided. The finished flag gets included in the resulting event and not used internally by the grid. The finished flag is intended for dragging, where a dragging action will produce many `columnResized` events, so the consumer of events knows when it receives the last event in a stream. The finished parameter is optional, and defaults to `true`. */
+    /** Sets the column widths of the columns provided. The finished flag gets included in the resulting event, which a finished call naming a column raises even when no width changes. The finished flag is intended for dragging, where a dragging action will produce many `columnResized` events, so the consumer of events knows when it receives the last event in a stream. The finished parameter is optional, and defaults to `true`. A width outside its column's `minWidth` and `maxWidth`, the `maxWidth` winning over a `minWidth` above it, leaves every width unchanged. With `colResizeDefault: 'shift'`, the column after each named column, or after a run of adjacent named columns, takes their change, and a change that column cannot take within its own `minWidth` and `maxWidth` also leaves every width unchanged. When that column is not resizable, or there is none because the named column is the last or hidden, the named columns change alone. */
     setColumnWidths(
         columnWidths: { key: ColKey; newWidth: number }[],
         finished?: boolean,
@@ -1081,7 +1093,7 @@ export interface _ColumnFilterGridApi {
 
     /**
      * Gets the current filter model for the specified column.
-     * Will return `null` if no active filter.
+     * Will return `null` if the column has no filter model.
      * @param useUnapplied If `enableFilterHandlers = true` and value is `true`, will return the unapplied filter model.
      * @agModule `TextFilterModule` / `NumberFilterModule` / `DateFilterModule` / `SetFilterModule` / `MultiFilterModule` / `CustomFilterModule`
      */
@@ -1091,6 +1103,8 @@ export interface _ColumnFilterGridApi {
      * Sets the filter model for the specified column.
      * Setting a `model` of `null` will reset the filter (make inactive).
      * Must wait on the response before calling `api.onFilterChanged()`.
+     * If inferring cell data types, and row data is initially empty or yet to be set,
+     * the filter model will be applied asynchronously after row data is added.
      * @agModule `TextFilterModule` / `NumberFilterModule` / `DateFilterModule` / `SetFilterModule` / `MultiFilterModule` / `CustomFilterModule`
      */
     setColumnFilterModel<TModel>(column: string | Column, model: TModel | null): Promise<void>;
@@ -1497,11 +1511,6 @@ export interface _InfiniteRowModelGridApi {
      * @agModule `InfiniteRowModelModule`
      */
     purgeInfiniteCache(): void;
-
-    /**
-     * @deprecated v32.2 gridApi.getInfiniteRowCount() deprecated, please use gridApi.getDisplayedRowCount() instead.
-     */
-    getInfiniteRowCount(): number | undefined;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -1775,6 +1784,36 @@ export interface _ColumnChooserGridApi {
      * @agModule `ColumnMenuModule`
      */
     hideColumnChooser(): void;
+}
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export interface _CalculatedColumnsGridApi<TData = any> {
+    /**
+     * Opens and focuses the dialog for an existing calculated column.
+     * Read-only calculated columns open in view mode. Reuses and brings forward an already-open dialog.
+     * On close, returns focus to the column's header, scrolling it into view if needed.
+     * Does nothing if Calculated Columns are disabled or the key does not resolve to a calculated column.
+     * @agModule `CalculatedColumnsModule`
+     */
+    openCalculatedColumnDialog(column: ColKey<TData>): void;
+    /**
+     * Opens the Add Calculated Column dialog, optionally after a source column as with the column menu.
+     * Without a source column, the new column is appended. Unknown or non-primary source columns are ignored.
+     * Uses the configured apply mode: live creates the column immediately, deferred creates it on Apply.
+     * Moves focus into the dialog. Does not open in pivot mode.
+     * On close, returns focus to the new column's header, or the source column if no column was created.
+     * @agModule `CalculatedColumnsModule`
+     */
+    openAddCalculatedColumnDialog(sourceColumn?: ColKey<TData>): void;
+    /**
+     * Revalidate committed calculated expressions against the current `getValidationErrors` and
+     * `isColumnReferenceable` callbacks, update saved errors and recalculate values and dependants.
+     * Applies to read-only columns too. Does not apply pending dialog edits. Empty expressions are allowed.
+     * Open dialogs revalidate their drafts without restarting pending live updates.
+     * Validation changes raise `calculatedColumnChanged` with `source: 'api'`.
+     * @agModule `CalculatedColumnsModule`
+     */
+    refreshCalculatedColumns(params?: RefreshCalculatedColumnsParams): void;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -2075,6 +2114,7 @@ export interface GridApi<TData = any>
         _ColumnChooserGridApi,
         _MasterDetailGridApi,
         _FormulaGridApi<TData>,
+        _CalculatedColumnsGridApi<TData>,
         _ExcelExportGridApi,
         _PdfExportGridApi,
         _ClipboardGridApi,

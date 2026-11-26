@@ -1,3 +1,5 @@
+import { _throwErrors } from 'ag-stack';
+
 import type { NamedBean } from './context/bean';
 import { BeanStub } from './context/beanStub';
 
@@ -14,7 +16,7 @@ export class GridDestroyService extends BeanStub implements NamedBean {
 
         const { stateSvc, ctrlsSvc, context } = this.beans;
 
-        this.eventSvc.dispatchEvent({
+        const errors = this.eventSvc.dispatchEventCollectingErrors({
             type: 'gridPreDestroyed',
             state: stateSvc?.getState() ?? {},
         });
@@ -26,7 +28,9 @@ export class GridDestroyService extends BeanStub implements NamedBean {
         ctrlsSvc.get('gridCtrl')?.destroyGridUi();
 
         // destroy the services
-        context.destroy();
+        context.destroy(errors);
         super.destroy();
+
+        _throwErrors(errors);
     }
 }

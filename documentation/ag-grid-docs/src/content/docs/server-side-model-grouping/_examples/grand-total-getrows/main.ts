@@ -1,3 +1,5 @@
+import { FakeServer } from '@example-fake-servers/standard';
+
 import type { GridApi, GridOptions, IServerSideDatasource } from 'ag-grid-community';
 import {
     ModuleRegistry,
@@ -13,8 +15,6 @@ import {
     RowGroupingPanelModule,
     ServerSideRowModelModule,
 } from 'ag-grid-enterprise';
-
-import { FakeServer } from './fakeServer';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
@@ -88,7 +88,7 @@ document.addEventListener('DOMContentLoaded', function () {
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
         .then((response) => response.json())
         .then(function (data) {
-            const fakeServer = new FakeServer(data);
+            const fakeServer = FakeServer(data);
             const datasource = getServerSideDatasource(fakeServer);
             gridApi!.setGridOption('serverSideDatasource', datasource);
         });

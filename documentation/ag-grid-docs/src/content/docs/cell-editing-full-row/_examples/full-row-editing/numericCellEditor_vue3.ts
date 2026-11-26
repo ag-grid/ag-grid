@@ -1,32 +1,42 @@
-import { nextTick } from 'vue';
+import { defineComponent, nextTick } from 'vue';
+import type { PropType } from 'vue';
 
-export default {
+import type { ICellEditorParams } from 'ag-grid-community';
+
+export default defineComponent({
+    props: {
+        params: {
+            type: Object as PropType<ICellEditorParams>,
+            required: true,
+        },
+    },
     template: `<input :ref="'input'" @keydown="onKeyDown($event)" v-model="value" class="ag-input-field-input" />`,
     data() {
         return {
-            value: '',
+            value: '' as string | null,
             focusAfterAttached: false,
         };
     },
     methods: {
-        getValue() {
+        getValue(): number | null {
             const value = this.value;
             return value === '' || value == null ? null : parseInt(value);
         },
 
-        onKeyDown(event) {
+        onKeyDown(event: KeyboardEvent) {
             if (!event.key || event.key.length !== 1 || this.isNumericKey(event)) {
                 return;
             }
-            this.$refs.input.focus();
+            (this.$refs.input as HTMLInputElement).focus();
 
             if (event.preventDefault) event.preventDefault();
         },
 
         // when we tab into this editor, we want to focus the contents
         focusIn() {
-            this.$refs.input.focus();
-            this.$refs.input.select();
+            const input = this.$refs.input as HTMLInputElement;
+            input.focus();
+            input.select();
             console.log('NumericCellEditor.focusIn()');
         },
 
@@ -35,11 +45,11 @@ export default {
             console.log('NumericCellEditor.focusOut()');
         },
 
-        isCharNumeric(charStr) {
+        isCharNumeric(charStr: string | null): boolean {
             return charStr != null && !!/^\d+$/.test(charStr);
         },
 
-        isNumericKey(event) {
+        isNumericKey(event: KeyboardEvent): boolean {
             const charStr = event.key;
             return this.isCharNumeric(charStr);
         },
@@ -54,12 +64,13 @@ export default {
     },
     mounted() {
         nextTick(() => {
-            if (this.$refs.input) {
+            const input = this.$refs.input as HTMLInputElement | undefined;
+            if (input) {
                 if (this.focusAfterAttached) {
-                    this.$refs.input.focus();
-                    this.$refs.input.select();
+                    input.focus();
+                    input.select();
                 }
             }
         });
     },
-};
+});

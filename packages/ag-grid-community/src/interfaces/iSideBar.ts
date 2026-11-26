@@ -1,3 +1,4 @@
+import type { IconKey } from '../utils/icon';
 import type { Component, ComponentSelector } from '../widgets/component';
 import type { SideBarState } from './gridState';
 import type { IToolPanel } from './iToolPanel';
@@ -13,6 +14,7 @@ export interface ISideBar {
     refresh(): void;
     setDisplayed(show: boolean): void;
     setSideBarPosition(position?: 'left' | 'right'): void;
+    getSideBarPosition(): 'left' | 'right';
     isToolPanelShowing(): boolean;
     openToolPanel(
         key: string,
@@ -35,6 +37,10 @@ export interface ToolPanelDef {
     labelKey: string;
     /** The default label if `labelKey` is missing or does not map to valid text through localisation. */
     labelDefault: string;
+    /** The localisation key for the tooltip displayed on the tab button. */
+    tooltipKey?: string;
+    /** The default tooltip when `tooltipKey` is omitted or has no translation. */
+    tooltipDefault?: string;
     /**
      * The min width of the tool panel.
      * @default 100
@@ -47,8 +53,8 @@ export interface ToolPanelDef {
      * @default $side-bar-panel-width (theme variable)
      */
     width?: number;
-    /** The key of the icon to be used as a graphical aid beside the label in the side bar. */
-    iconKey: string;
+    /** Icon shown beside the label in the side bar: a provided icon's CSS name, a grid icon name, or a custom key from the `icons` grid option. A grid icon name also picks up any override set for it in the `icons` grid option. */
+    iconKey: IconKey;
 
     /**
      * The tool panel component to use as the panel.

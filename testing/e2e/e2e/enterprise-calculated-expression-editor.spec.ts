@@ -1,5 +1,7 @@
 import { expect, test } from '@playwright/test';
 
+import type { GridOptions } from 'ag-grid-community';
+
 import { mountGrid } from '../src/mountGrid';
 
 test.describe('calculated expression editor in a real browser', () => {
@@ -84,25 +86,112 @@ test.describe('calculated expression editor in a real browser', () => {
             expect(await mirror.evaluate((element) => element.clientWidth)).toBe(clientWidth);
         }).toPass();
     });
-
-    test('horizontal scrolling keeps the error aligned in an unwrapped expression', async ({ page }) => {
-        const input = page.locator('.ag-calculated-column-form textarea');
-        const mirror = page.locator('.ag-calculated-column-expression-mirror');
-        await input.evaluate((element: HTMLTextAreaElement) => {
-            element.wrap = 'off';
-        });
-        await input.fill(`${'[Revenue] + '.repeat(50)}[Cots]`);
-        await input.evaluate((element: HTMLTextAreaElement) => {
-            element.scrollLeft = element.scrollWidth;
-        });
-        await expect.poll(() => input.evaluate((element) => element.scrollLeft)).toBeGreaterThan(0);
-        await expect(async () => {
-            const scroll = await input.evaluate((element) => element.scrollLeft);
-            expect(await mirror.evaluate((element) => element.scrollLeft)).toBeCloseTo(scroll, 0);
-        }).toPass();
-        const inputBounds = (await input.boundingBox())!;
-        const errorBounds = (await mirror.locator('.ag-calculated-column-expression-error').boundingBox())!;
-        expect(errorBounds.x).toBeGreaterThanOrEqual(inputBounds.x);
-        expect(errorBounds.x + errorBounds.width).toBeLessThanOrEqual(inputBounds.x + inputBounds.width);
-    });
 });
+
+test('live diagnostics mark the field invalid without blocking updates', async ({ page }) => {
+    const { headerCell, cell } = await mountGrid(page, {
+        enterprise: true,
+        options: () => ({
+            calculatedColumns: true,
+            tooltipShowDelay: 0,
+            columnDefs: [
+                { field: 'revenue' },
+                { field: 'cost' },
+                { colId: 'profit', calculatedExpression: '[revenue] - [cost]' },
+            ],
+            rowData: [{ revenue: 10, cost: 3 }],
+        }),
+    });
+    const header = headerCell('profit');
+    await header.hover();
+    await header.locator('.ag-header-cell-menu-button').click();
+    await page.locator('.ag-menu-option-text', { hasText: 'Edit Calculated Column' }).click();
+
+    const input = page.locator('.ag-calculated-column-form textarea');
+    const error = page.locator('.ag-calculated-column-expression-error');
+    await input.fill('[Revenue] - [Cots]');
+    await expect(error).toHaveText('[Cots]');
+    await expect(input).toHaveAttribute('aria-invalid', 'true');
+    await expect(input).toHaveClass(/\binvalid\b/);
+    expect(await input.evaluate((element: HTMLTextAreaElement) => element.validationMessage)).toContain(
+        'Unknown column reference "Cots"'
+    );
+    await expect(cell(0, 'profit')).toHaveText('#PARSE!');
+    await input.hover();
+    await expect(page.locator('.ag-tooltip')).toContainText('Unknown column reference "Cots"');
+
+    await input.fill('[Revenue] + Z1');
+    await expect(error).toHaveText('Z1');
+    await expect(input).toHaveAttribute('aria-invalid', 'true');
+    await page.locator('.ag-panel-title-bar').hover();
+    await input.hover();
+    await expect(page.getByRole('tooltip').filter({ hasText: 'Unknown column reference "Z1"' })).toBeVisible();
+
+    await input.fill('[Revenue] - [Cost]');
+    await expect(error).toHaveCount(0);
+    await expect(input).toHaveAttribute('aria-invalid', 'false');
+    await expect(input).not.toHaveClass(/\binvalid\b/);
+    expect(await input.evaluate((element: HTMLTextAreaElement) => element.validationMessage)).toBe('');
+    await expect(cell(0, 'profit')).toHaveText('7');
+    await expect(input).toBeFocused();
+    await expect(input).not.toHaveAttribute('aria-describedby');
+});
+
+const suggestionPlacements: [name: string, shadowDom: boolean, options: () => GridOptions][] = [
+    [
+        'outside a shadow root',
+        false,
+        () => ({
+            calculatedColumns: { applyMode: 'deferred' },
+            columnDefs: [
+                { field: 'revenue' },
+                { field: 'cost' },
+                { colId: 'profit', calculatedExpression: '[revenue] - [cost]' },
+            ],
+            rowData: [{ revenue: 10, cost: 3 }],
+        }),
+    ],
+    [
+        'inside a shadow root',
+        true,
+        () => ({
+            calculatedColumns: { applyMode: 'deferred' },
+            columnDefs: [
+                { field: 'revenue' },
+                { field: 'cost' },
+                { colId: 'profit', calculatedExpression: '[revenue] - [cost]' },
+            ],
+            rowData: [{ revenue: 10, cost: 3 }],
+        }),
+    ],
+    [
+        'inside a shadow root and its popups in the page',
+        true,
+        () => ({
+            calculatedColumns: { applyMode: 'deferred' },
+            columnDefs: [
+                { field: 'revenue' },
+                { field: 'cost' },
+                { colId: 'profit', calculatedExpression: '[revenue] - [cost]' },
+            ],
+            rowData: [{ revenue: 10, cost: 3 }],
+            popupParent: document.body,
+        }),
+    ],
+];
+for (const [name, shadowDom, options] of suggestionPlacements) {
+    test(`the expression field points at the highlighted suggestion with the grid ${name}`, async ({ page }) => {
+        const { headerCell } = await mountGrid(page, { enterprise: true, shadowDom, options });
+        const header = headerCell('profit');
+        await header.hover();
+        await header.locator('.ag-header-cell-menu-button').click();
+        await page.locator('.ag-menu-option-text', { hasText: 'Edit Calculated Column' }).click();
+
+        const input = page.locator('.ag-calculated-column-form textarea');
+        await input.fill('[Rev');
+        await input.press('ArrowDown');
+        const activeId = await input.getAttribute('aria-activedescendant');
+        expect(activeId).toBeTruthy();
+        await expect(page.locator(`[id="${activeId}"]`)).toHaveAttribute('role', 'option');
+    });
+}

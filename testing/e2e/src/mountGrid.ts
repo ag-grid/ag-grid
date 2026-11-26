@@ -1,12 +1,13 @@
 import type { Locator, Page } from '@playwright/test';
 import path from 'node:path';
 
-import type { GridApi, GridOptions } from 'ag-grid-community';
+import type * as AgGrid from 'ag-grid-community';
 
 declare global {
     interface Window {
+        agGrid: typeof AgGrid;
         /** The API of the grid `mountGrid` created, for code evaluated in the page. */
-        gridApi: GridApi;
+        gridApi: AgGrid.GridApi;
     }
 }
 
@@ -42,11 +43,13 @@ export interface MountGridParams {
     css?: string;
     /** Classes for the grid's container element, such as a legacy theme's `ag-theme-*` class. */
     className?: string;
+    /** Create the grid inside an open shadow root. */
+    shadowDom?: boolean;
     /**
      * Builds the grid options inside the page. It is serialised with `toString()`, so it must be
      * self-contained: it cannot close over variables from the spec.
      */
-    options: () => GridOptions;
+    options: () => AgGrid.GridOptions;
 }
 
 export interface MountedGrid {
@@ -54,7 +57,7 @@ export interface MountedGrid {
     cell(rowIndex: number, colId: string): Locator;
     headerCell(colId: string): Locator;
     /** Runs `fn` in the page with the grid API as its argument. */
-    withApi<T>(fn: (api: GridApi) => T): Promise<T>;
+    withApi<T>(fn: (api: AgGrid.GridApi) => T): Promise<T>;
 }
 
 export async function mountGrid(
@@ -66,6 +69,7 @@ export async function mountGrid(
         height = 500,
         css,
         className = '',
+        shadowDom = false,
         options,
     }: MountGridParams
 ): Promise<MountedGrid> {
@@ -81,16 +85,24 @@ export async function mountGrid(
     }
     await page.addScriptTag(gridBundle(enterprise ? 'ag-grid-enterprise' : 'ag-grid-community'));
     await page.evaluate(
-        ({ optionsSource, selector }) => {
+        ({ optionsSource, selector, shadowDom, width, height }) => {
             const gridOptions = new Function(`return (${optionsSource})()`)();
             const gridDiv = document.querySelector<HTMLElement>(selector)!;
-            window.gridApi = (window as any).agGrid.createGrid(gridDiv, gridOptions);
+            if (shadowDom) {
+                const host = document.createElement('div');
+                host.id = 'shadow-host';
+                gridDiv.before(host);
+                host.attachShadow({ mode: 'open' }).appendChild(gridDiv);
+                gridDiv.style.width = `${width}px`;
+                gridDiv.style.height = `${height}px`;
+            }
+            window.gridApi = window.agGrid.createGrid(gridDiv, gridOptions);
         },
-        { optionsSource: options.toString(), selector: GRID_SELECTOR }
+        { optionsSource: options.toString(), selector: GRID_SELECTOR, shadowDom, width, height }
     );
 
     const grid = page.locator(GRID_SELECTOR);
-    await grid.locator('.ag-root-wrapper').waitFor();
+    await grid.locator('.ag-root-wrapper').first().waitFor();
 
     return {
         grid,

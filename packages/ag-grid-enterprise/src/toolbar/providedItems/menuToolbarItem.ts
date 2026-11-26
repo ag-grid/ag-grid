@@ -1,5 +1,7 @@
+import type { ITooltipFeature } from 'ag-stack';
 import {
     RefPlaceholder,
+    _addManagedElementListeners,
     _removeAriaExpanded,
     _setAriaExpanded,
     _setAriaHasPopup,
@@ -33,6 +35,7 @@ export class MenuToolbarItem extends Component implements IToolbarItemComp {
     private readonly eLabel: HTMLElement = RefPlaceholder;
     private readonly eChevron: HTMLElement = RefPlaceholder;
     private params!: MenuItemParams;
+    private menuTooltip?: ITooltipFeature;
 
     constructor() {
         super(MenuToolbarItemElement);
@@ -48,7 +51,17 @@ export class MenuToolbarItem extends Component implements IToolbarItemComp {
             `AG Grid toolbar item: \`agMenuToolbarItem\``
         );
         this.applyParams(params as MenuItemParams);
-        this.addManagedElementListeners(this.getGui(), {
+        this.menuTooltip = this.addTooltip({
+            getLocation: () => 'toolbar',
+            control: 'toolbarMenu',
+            getTooltip: () => ({
+                value:
+                    this.params.tooltip ??
+                    this.params.label ??
+                    this.getLocaleTextFunc()('tooltipOpenMenu', 'Open menu'),
+            }),
+        });
+        _addManagedElementListeners(this, this.getGui(), {
             click: () => this.showMenu(),
         });
     }
@@ -86,6 +99,7 @@ export class MenuToolbarItem extends Component implements IToolbarItemComp {
         } else {
             _removeAriaExpanded(eGui);
         }
+        this.menuTooltip?.refreshTooltip();
     }
 
     private showMenu(): void {

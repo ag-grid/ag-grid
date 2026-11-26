@@ -80,7 +80,7 @@
             "year": "2016",
             "icon": "rocket",
             "title": "Commercial launch",
-            "description": "<a href=\"/data-grid/community-vs-enterprise/\">AG Grid Enterprise</a> is launched to widespread adoption within the developer community."
+            "description": "<a href=\"/react-data-grid/community-vs-enterprise/\" data-framework-link>AG Grid Enterprise</a> is launched to widespread adoption within the developer community."
         },
         {
             "year": "2017",
@@ -122,7 +122,7 @@
             "year": "2023",
             "icon": "donutAccelerating",
             "title": "AG Chart Enterprise",
-            "description": "<a href=\"/data-grid/community-vs-enterprise/\">AG Chart Enterprise</a> is launched in response to strong user demand."
+            "description": "<a href=\"https://www.ag-grid.com/charts/react/community-vs-enterprise/\" data-framework-link>AG Chart Enterprise</a> is launched in response to strong user demand."
         },
         {
             "year": "2024",
@@ -183,10 +183,10 @@
             "imageSrc": "images/about/rob-clarke.webp"
         },
         {
-            "name": "Jon Williams",
-            "role": "CRO",
-            "bio": "Jon has over 25 years' experience leading commercial teams from start-ups to global organisations. Honing his skills at companies such as Aprimo, Boxever, and Sitecore. Jon now brings a wealth of experience delivering go-to-market strategies, business integration, and delivering B2B sales success to AG Grid.",
-            "imageSrc": "images/about/jon-williams.webp"
+            "name": "Charles McGiffen",
+            "role": "VP Sales",
+            "bio": "As VP Sales, Charles leads AG Grid's go-to-market team, helping enterprise customers unlock data-driven growth at scale. He focuses on turning developer adoption into enterprise-wide success across the world's largest organisations. Charles brings extensive experience building and leading commercial teams. He previously held senior leadership roles at Workfront and Seismic, and earlier in his career worked at Box, Salesforce and Cisco.",
+            "imageSrc": "images/about/charles-mcgiffen.webp"
         },
         {
             "name": "Jason Forget",

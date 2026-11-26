@@ -1,3 +1,5 @@
+import { _addManagedElementListeners } from 'ag-stack';
+
 import type { ColumnMoveService } from '../../columnMove/columnMoveService';
 import { BeanStub } from '../../context/beanStub';
 import type { AgColumn } from '../../entities/agColumn';
@@ -216,8 +218,7 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
     }
 
     public getFloatingFilterCtrlForColumn(column: AgColumn): HeaderFilterCellCtrl | undefined {
-        return this.filtersRowCtrl?.getHeaderCellCtrls().find((ctrl) => ctrl.column === column) as
-            HeaderFilterCellCtrl | undefined;
+        return this.filtersRowCtrl?.getHeaderCellCtrl(column) as HeaderFilterCellCtrl | undefined;
     }
 
     public getHtmlElementForColumnHeader(column: AgColumn | AgColumnGroup): HTMLElement | null {
@@ -255,7 +256,7 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
     }
 
     public onScrollCallback(fn: () => void): void {
-        this.addManagedElementListeners(this.eViewport, { scroll: fn });
+        _addManagedElementListeners(this, this.eViewport, { scroll: fn });
     }
 
     public override destroy(): void {

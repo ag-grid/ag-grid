@@ -1,4 +1,15 @@
-export default {
+import { defineComponent } from 'vue';
+import type { PropType } from 'vue';
+
+import type { IAfterGuiAttachedParams, IDoesFilterPassParams, IFilterParams } from 'ag-grid-community';
+
+export default defineComponent({
+    props: {
+        params: {
+            type: Object as PropType<IFilterParams>,
+            required: true,
+        },
+    },
     template: `
       <div class="person-filter">
         <div>Custom Athlete Filter</div>
@@ -10,7 +21,7 @@ export default {
     `,
     data: function () {
         return {
-            filterText: null,
+            filterText: null as string | null,
         };
     },
     methods: {
@@ -18,14 +29,13 @@ export default {
             this.params.filterChangedCallback();
         },
 
-        doesFilterPass(params) {
+        doesFilterPass(params: IDoesFilterPassParams): boolean {
             const { api, colDef, column, context } = this.params;
             const { node } = params;
 
             // make sure each word passes separately, ie search for firstname, lastname
             let passed = true;
-            this.filterText
-                .toLowerCase()
+            this.filterText!.toLowerCase()
                 .split(' ')
                 .forEach((filterWord) => {
                     const value = this.params.getValue(node);
@@ -38,7 +48,7 @@ export default {
             return passed;
         },
 
-        isFilterActive() {
+        isFilterActive(): boolean {
             return this.filterText != null && this.filterText !== '';
         },
 
@@ -50,15 +60,15 @@ export default {
             return { value: this.filterText };
         },
 
-        setModel(model) {
+        setModel(model: { value: string } | null) {
             this.filterText = model == null ? null : model.value;
         },
 
-        afterGuiAttached(params) {
+        afterGuiAttached(params?: IAfterGuiAttachedParams) {
             if (!params || !params.suppressFocus) {
                 // focus the input element for keyboard navigation
-                this.$refs.eFilterText.focus();
+                (this.$refs.eFilterText as HTMLInputElement).focus();
             }
         },
     },
-};
+});

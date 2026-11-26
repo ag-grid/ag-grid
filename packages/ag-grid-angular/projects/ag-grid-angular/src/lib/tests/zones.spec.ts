@@ -1,8 +1,10 @@
-import { Component, NgZone, ViewChild } from '@angular/core';
+import { Component, NgZone, ViewChild, provideZonelessChangeDetection } from '@angular/core';
 import type { ComponentFixture } from '@angular/core/testing';
 import { TestBed } from '@angular/core/testing';
 
 import type {
+    AgColumnGroup,
+    AgProvidedColumnGroup,
     GetRowIdParams,
     GridApi,
     GridOptions,
@@ -10,10 +12,12 @@ import type {
     ICellRendererParams,
     Module,
     RowClassParams,
+    RowNode,
 } from 'ag-grid-community';
 import { AllCommunityModule } from 'ag-grid-community';
 
 import { AgGridAngular } from '../ag-grid-angular.component';
+import { AngularFrameworkOverrides } from '../angularFrameworkOverrides';
 import type { ICellRendererAngularComp } from '../interfaces';
 
 // These tests are run to validate that the grid is running in / out of the Angular Zone as expected
@@ -223,6 +227,266 @@ describe('GridWrapperComponent', () => {
         }, 100);
     });
 
+    it('should remove event listeners added inside the Angular Zone', (done) => {
+        const api = fixture.componentInstance.agGrid.api;
+        const zone = TestBed.inject(NgZone);
+        const rowNode = api.getRowNode('Toyota')!;
+        const column = api.getColumn('make')!;
+
+        const removed = {
+            event: (_event: any) => {},
+            global: (_event: any) => {},
+            row: (_event: any) => {},
+            column: (_event: any) => {},
+            eventAddedOutsideFirst: (_event: any) => {},
+            rowAddedOutsideFirst: (_event: any) => {},
+        };
+        const kept = {
+            event: (_event: any) => {},
+            global: (_event: any) => {},
+            row: (_event: any) => {},
+            column: (_event: any) => {},
+        };
+        for (const name of Object.keys(removed) as (keyof typeof removed)[]) {
+            spyOn(removed, name);
+        }
+        for (const name of Object.keys(kept) as (keyof typeof kept)[]) {
+            spyOn(kept, name);
+        }
+
+        // the first add outside the zone decides: the in-zone re-add below reuses it
+        zone.runOutsideAngular(() => {
+            api.addEventListener('newColumnsLoaded', removed.eventAddedOutsideFirst);
+            rowNode.addEventListener('dataChanged', removed.rowAddedOutsideFirst);
+        });
+        zone.run(() => {
+            api.addEventListener('newColumnsLoaded', removed.event);
+            api.addEventListener('newColumnsLoaded', removed.event);
+            api.addEventListener('newColumnsLoaded', removed.eventAddedOutsideFirst);
+            api.addGlobalListener(removed.global);
+            api.addGlobalListener(removed.global);
+            rowNode.addEventListener('dataChanged', removed.row);
+            rowNode.addEventListener('dataChanged', removed.rowAddedOutsideFirst);
+            column.addEventListener('visibleChanged', removed.column);
+            column.addEventListener('visibleChanged', removed.column);
+            api.addEventListener('newColumnsLoaded', kept.event);
+            api.addGlobalListener(kept.global);
+            column.addEventListener('visibleChanged', kept.column);
+        });
+        // a listener added outside the zone must not lose the in-zone one's wrapper
+        zone.runOutsideAngular(() => rowNode.addEventListener('dataChanged', kept.row));
+        zone.run(() => {
+            api.removeEventListener('newColumnsLoaded', removed.event);
+            api.removeEventListener('newColumnsLoaded', removed.eventAddedOutsideFirst);
+            api.removeGlobalListener(removed.global);
+            rowNode.removeEventListener('dataChanged', removed.row);
+            rowNode.removeEventListener('dataChanged', removed.rowAddedOutsideFirst);
+            column.removeEventListener('visibleChanged', removed.column);
+        });
+
+        rowNode.setData({ make: 'Toyota', model: 'Celica', price: 40000 });
+        api.applyColumnState({ state: [{ colId: 'make', hide: true }] });
+
+        setTimeout(() => {
+            api.updateGridOptions({ columnDefs: [{ field: 'make' }, { field: 'model' }] });
+            fixture.detectChanges();
+
+            // the grid delivers api events in a setTimeout(0) queued before this one
+            setTimeout(() => {
+                for (const [name, listener] of Object.entries(removed)) {
+                    expect(listener).withContext(name).toHaveBeenCalledTimes(0);
+                }
+                for (const [name, listener] of Object.entries(kept)) {
+                    expect(listener).withContext(name).toHaveBeenCalled();
+                }
+
+                done();
+            }, 0);
+        }, 100);
+    });
+
+    it('should run a row listener added outside the zone outside it after the node lost all its listeners', () => {
+        const api = fixture.componentInstance.agGrid.api;
+        const zone = TestBed.inject(NgZone);
+        const rowNode = api.getRowNode('Toyota')!;
+        // filtered out, the row is not rendered, so the listeners added here are its only ones
+        api.setGridOption('quickFilterText', 'no-match');
+        expect(api.getDisplayedRowCount()).toBe(0);
+
+        const first = () => {};
+        zone.run(() => rowNode.addEventListener('dataChanged', first));
+        zone.run(() => rowNode.removeEventListener('dataChanged', first));
+        zone.run(() => rowNode.addEventListener('dataChanged', () => {}));
+        let outsideListenerRanInZone: boolean | undefined;
+        zone.runOutsideAngular(() =>
+            rowNode.addEventListener('dataChanged', () => {
+                outsideListenerRanInZone = NgZone.isInAngularZone();
+            })
+        );
+
+        zone.run(() => rowNode.setData({ make: 'Toyota', model: 'Celica', price: 1 }));
+        expect(outsideListenerRanInZone).toBe(false);
+    });
+
+    it('should run a row listener outside the zone when re-added outside it after its in-zone add was removed', () => {
+        const api = fixture.componentInstance.agGrid.api;
+        const zone = TestBed.inject(NgZone);
+        const rowNode = api.getRowNode('Toyota')!;
+        let ranInZone: boolean | undefined;
+        const listener = () => {
+            ranInZone = NgZone.isInAngularZone();
+        };
+
+        zone.run(() => rowNode.addEventListener('dataChanged', listener));
+        zone.run(() => rowNode.removeEventListener('dataChanged', listener));
+        zone.runOutsideAngular(() => rowNode.addEventListener('dataChanged', listener));
+        zone.run(() => rowNode.setData({ make: 'Toyota', model: 'Celica', price: 1 }));
+        expect(ranInZone).toBe(false);
+    });
+
+    it('should run column group listeners added inside the zone inside it, and remove them', () => {
+        const api = fixture.componentInstance.agGrid.api;
+        const zone = TestBed.inject(NgZone);
+        api.setGridOption('columnDefs', [
+            { groupId: 'car', children: [{ field: 'make' }, { field: 'model', columnGroupShow: 'open' }] },
+        ]);
+        const providedGroup = api.getProvidedColumnGroup('car')!;
+        const group = api.getColumnGroup('car')!;
+
+        const ranInZone: Record<string, boolean> = {};
+        const removed = jasmine.createSpy('removed');
+        zone.run(() => {
+            providedGroup.addEventListener('expandedChanged', () => {
+                ranInZone['expandedChanged'] = NgZone.isInAngularZone();
+            });
+            group.addEventListener('displayedChildrenChanged', () => {
+                ranInZone['displayedChildrenChanged'] = NgZone.isInAngularZone();
+            });
+            providedGroup.addEventListener('expandedChanged', removed);
+            providedGroup.removeEventListener('expandedChanged', removed, true);
+            providedGroup.removeEventListener('expandedChanged', removed);
+            group.addEventListener('displayedChildrenChanged', removed);
+            group.removeEventListener('displayedChildrenChanged', removed);
+        });
+
+        zone.runOutsideAngular(() => api.setColumnGroupOpened('car', true));
+        expect(ranInZone).toEqual({ expandedChanged: true, displayedChildrenChanged: true });
+        expect(removed).not.toHaveBeenCalled();
+    });
+
+    it('should run async column group listeners inside the zone, and remove one added both sync and async', (done) => {
+        const api = fixture.componentInstance.agGrid.api;
+        const zone = TestBed.inject(NgZone);
+        api.setGridOption('columnDefs', [
+            { groupId: 'car', children: [{ field: 'make' }, { field: 'model', columnGroupShow: 'open' }] },
+        ]);
+        const providedGroup = api.getProvidedColumnGroup('car')!;
+        const group = api.getColumnGroup('car')!;
+
+        const asyncRanInZone: Record<string, boolean[]> = { expandedChanged: [], displayedChildrenChanged: [] };
+        const bothWays = jasmine.createSpy('bothWays');
+        zone.run(() => {
+            providedGroup.addEventListener(
+                'expandedChanged',
+                () => asyncRanInZone['expandedChanged'].push(NgZone.isInAngularZone()),
+                true
+            );
+            group.addEventListener(
+                'displayedChildrenChanged',
+                () => asyncRanInZone['displayedChildrenChanged'].push(NgZone.isInAngularZone()),
+                true
+            );
+            providedGroup.addEventListener('expandedChanged', bothWays);
+            providedGroup.addEventListener('expandedChanged', bothWays, true);
+            providedGroup.removeEventListener('expandedChanged', bothWays, true);
+            providedGroup.removeEventListener('expandedChanged', bothWays);
+            group.addEventListener('displayedChildrenChanged', bothWays);
+            group.addEventListener('displayedChildrenChanged', bothWays, true);
+            group.removeEventListener('displayedChildrenChanged', bothWays, true);
+            group.removeEventListener('displayedChildrenChanged', bothWays);
+        });
+
+        zone.runOutsideAngular(() => api.setColumnGroupOpened('car', true));
+        expect(asyncRanInZone).toEqual({ expandedChanged: [], displayedChildrenChanged: [] });
+        setTimeout(() => {
+            expect(asyncRanInZone).toEqual({ expandedChanged: [true], displayedChildrenChanged: [true] });
+            expect(bothWays).not.toHaveBeenCalled();
+            done();
+        });
+    });
+
+    it('should run a column group listener added outside the zone outside it, once one was added inside', () => {
+        const api = fixture.componentInstance.agGrid.api;
+        const zone = TestBed.inject(NgZone);
+        api.setGridOption('columnDefs', [
+            { groupId: 'car', children: [{ field: 'make' }, { field: 'model', columnGroupShow: 'open' }] },
+        ]);
+        const providedGroup = api.getProvidedColumnGroup('car')!;
+        const group = api.getColumnGroup('car')!;
+
+        zone.run(() => {
+            providedGroup.addEventListener('expandedChanged', () => {});
+            group.addEventListener('displayedChildrenChanged', () => {});
+        });
+        const ranInZone: Record<string, boolean> = {};
+        zone.runOutsideAngular(() => {
+            providedGroup.addEventListener('expandedChanged', () => {
+                ranInZone['expandedChanged'] = NgZone.isInAngularZone();
+            });
+            group.addEventListener('displayedChildrenChanged', () => {
+                ranInZone['displayedChildrenChanged'] = NgZone.isInAngularZone();
+            });
+        });
+
+        zone.run(() => api.setColumnGroupOpened('car', true));
+        expect(ranInZone).toEqual({ expandedChanged: false, displayedChildrenChanged: false });
+    });
+
+    it("should not bring the grid's own column group listeners into the zone", () => {
+        const api = fixture.componentInstance.agGrid.api;
+        const zone = TestBed.inject(NgZone);
+        api.setGridOption('columnDefs', [
+            { groupId: 'car', children: [{ field: 'make' }, { field: 'model', columnGroupShow: 'open' }] },
+        ]);
+        const providedGroup = api.getProvidedColumnGroup('car') as AgProvidedColumnGroup;
+        const group = api.getColumnGroup('car') as AgColumnGroup;
+
+        const ranInZone: Record<string, boolean> = {};
+        zone.run(() => {
+            providedGroup.__addEventListener('expandedChanged', () => {
+                ranInZone['expandedChanged'] = NgZone.isInAngularZone();
+            });
+            group.__addEventListener('displayedChildrenChanged', () => {
+                ranInZone['displayedChildrenChanged'] = NgZone.isInAngularZone();
+            });
+        });
+
+        zone.runOutsideAngular(() => api.setColumnGroupOpened('car', true));
+        expect(ranInZone).toEqual({ expandedChanged: false, displayedChildrenChanged: false });
+    });
+
+    it('should remove a row listener added in the zone to a row and to its pinned copy', () => {
+        const api = fixture.componentInstance.agGrid.api;
+        const zone = TestBed.inject(NgZone);
+        api.setGridOption('enableRowPinning', true);
+        const rowNode = api.getRowNode('Toyota')!;
+        const removed = jasmine.createSpy('removed');
+
+        zone.run(() => rowNode.addEventListener('dataChanged', removed));
+        api.setGridOption('isRowPinned', () => 'top');
+        const pinnedCopy = api.getPinnedTopRow(0)!;
+        expect(pinnedCopy).toBeDefined();
+        zone.run(() => {
+            pinnedCopy.addEventListener('dataChanged', removed);
+            rowNode.removeEventListener('dataChanged', removed);
+            pinnedCopy.removeEventListener('dataChanged', removed);
+        });
+
+        rowNode.setData({ make: 'Toyota', model: 'Celica', price: 1 });
+        pinnedCopy.setData({ make: 'Toyota', model: 'Celica', price: 2 });
+        expect(removed).not.toHaveBeenCalled();
+    });
+
     it('should run in / out Angular Zone Setup Outside', (done) => {
         // Access AG Grid API and check if the row data is updated
         const api = fixture.componentInstance.agGrid.api;
@@ -260,6 +524,47 @@ describe('GridWrapperComponent', () => {
                 done();
             }, 1500);
         }, 1500);
+    });
+});
+
+describe('GridWrapperComponent without a zone', () => {
+    beforeEach(() => {
+        const warn = spyOn(console, 'warn');
+        TestBed.configureTestingModule({ providers: [provideZonelessChangeDetection()] });
+        // this suite loads Zone.js, so Angular warns that zoneless change detection does not need it
+        expect(warn).toHaveBeenCalledWith(jasmine.stringContaining('NG0914'));
+        warn.and.callThrough();
+    });
+
+    it('should not track the listeners added to a row', () => {
+        const fixture = TestBed.createComponent(GridWrapperComponent);
+        fixture.detectChanges();
+        const api = fixture.componentInstance.agGrid.api;
+        const rowNode = api.getRowNode('Toyota') as RowNode;
+        const removed = jasmine.createSpy('removed');
+
+        rowNode.addEventListener('dataChanged', removed);
+        expect(rowNode.__localEventService!.listenerWrapper).toBeUndefined();
+        rowNode.removeEventListener('dataChanged', removed);
+        rowNode.setData({ make: 'Toyota', model: 'Celica', price: 1 });
+        expect(removed).not.toHaveBeenCalled();
+    });
+});
+
+describe('AngularFrameworkOverrides without an NgZone', () => {
+    beforeAll(() => {
+        // not the test zone, whose wrapIncoming never touches the zone: without the null guard this one throws
+        (window as any).AG_GRID_UNDER_TEST = false;
+    });
+    afterAll(() => {
+        (window as any).AG_GRID_UNDER_TEST = undefined;
+    });
+
+    it('should run the callbacks it wraps as they are', () => {
+        const overrides = new AngularFrameworkOverrides(null);
+        expect(overrides.wrapIncoming(() => 'incoming')).toBe('incoming');
+        expect(overrides.wrapOutgoing(() => 'outgoing')).toBe('outgoing');
+        expect(overrides.runOutsideAngular(() => 'outside')).toBe('outside');
     });
 });
 

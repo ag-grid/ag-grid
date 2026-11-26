@@ -30,8 +30,7 @@
 }
 
 .ag-panel-title-bar-button {
-    margin-left: calc(var(--ag-spacing) * 2);
-    margin-right: var(--ag-spacing);
+    margin-left: calc(var(--ag-spacing) * 1.5);
     cursor: pointer;
 
     :where(.ag-icon) {

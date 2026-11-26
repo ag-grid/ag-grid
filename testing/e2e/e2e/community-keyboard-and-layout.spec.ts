@@ -1,5 +1,7 @@
-import type { Page } from '@playwright/test';
+import type { Locator, Page } from '@playwright/test';
 import { expect, test } from '@playwright/test';
+import fs from 'node:fs';
+import path from 'node:path';
 
 import { mountGrid } from '../src/mountGrid';
 
@@ -18,6 +20,100 @@ const medalsLabelShown = (page: Page) =>
     });
 
 test.describe('community grid in a real browser', () => {
+    test('RTL left-pinned columns keep their visual order through resizing, dragging and scrolling', async ({
+        page,
+    }) => {
+        const { grid, headerCell, cell, withApi } = await mountGrid(page, {
+            width: 800,
+            options: () => ({
+                enableRtl: true,
+                defaultColDef: { width: 100 },
+                columnDefs: [
+                    {
+                        headerName: 'Pinned',
+                        groupId: 'pinned',
+                        children: [
+                            { field: 'a', pinned: 'left' },
+                            { field: 'b', pinned: 'left', width: 150 },
+                        ],
+                    },
+                    { field: 'c', width: 300 },
+                    { field: 'd', width: 300 },
+                    { field: 'e', width: 300 },
+                    { field: 'f', pinned: 'right' },
+                ],
+                rowData: [{ a: 1, b: 2, c: 3, d: 4, e: 5, f: 6 }],
+            }),
+        });
+
+        await expect(async () => {
+            const a = (await headerCell('a').boundingBox())!;
+            const b = (await headerCell('b').boundingBox())!;
+            expect(b.x + b.width).toBeCloseTo(a.x, 0);
+            expect((await cell(0, 'a').boundingBox())!.x).toBeCloseTo(a.x, 0);
+            expect((await cell(0, 'b').boundingBox())!.x).toBeCloseTo(b.x, 0);
+            const group = (await grid.locator('.ag-header-group-cell').filter({ hasText: 'Pinned' }).boundingBox())!;
+            expect(group.x).toBeCloseTo(b.x, 0);
+            expect(group.width).toBeCloseTo(a.width + b.width, 0);
+        }).toPass();
+        expect(await withApi((api) => api.getColumn('a')!.isLastLeftPinned())).toBe(true);
+        expect(await withApi((api) => api.getColumn('b')!.isLastLeftPinned())).toBe(false);
+
+        const handle = (await headerCell('a').locator('.ag-header-cell-resize').boundingBox())!;
+        await page.mouse.move(handle.x + handle.width / 2, handle.y + handle.height / 2);
+        await page.mouse.down();
+        await page.mouse.move(handle.x + handle.width / 2 + 40, handle.y + handle.height / 2, { steps: 10 });
+        await page.mouse.up();
+        await expect.poll(() => withApi((api) => api.getColumn('a')!.getActualWidth())).toBe(140);
+
+        await withApi((api) => api.ensureColumnVisible('e', 'end'));
+        const a = (await headerCell('a').boundingBox())!;
+        const b = (await headerCell('b').boundingBox())!;
+        expect(b.x + b.width).toBeCloseTo(a.x, 0);
+        await page.mouse.move(b.x + b.width / 2, b.y + b.height / 2);
+        await page.mouse.down();
+        await page.mouse.move(a.x + a.width - 20, a.y + a.height / 2, { steps: 15 });
+        await page.mouse.up();
+        await expect
+            .poll(() => withApi((api) => api.getDisplayedLeftColumns().map((col) => col.getColId())))
+            .toEqual(['b', 'a']);
+        await expect(async () => {
+            const movedA = (await headerCell('a').boundingBox())!;
+            const movedB = (await headerCell('b').boundingBox())!;
+            expect(movedA.x + movedA.width).toBeCloseTo(movedB.x, 0);
+            expect((await cell(0, 'a').boundingBox())!.x).toBeCloseTo(movedA.x, 0);
+        }).toPass();
+        expect(await withApi((api) => api.getColumn('b')!.isLastLeftPinned())).toBe(true);
+
+        await withApi((api) => api.setGridOption('domLayout', 'print'));
+        await expect(async () => {
+            expect((await headerCell('a').boundingBox())!.x).toBeLessThan((await headerCell('b').boundingBox())!.x);
+            expect((await cell(0, 'a').boundingBox())!.x).toBeCloseTo((await headerCell('a').boundingBox())!.x, 0);
+        }).toPass();
+
+        await withApi((api) => {
+            api.setGridOption('domLayout', 'normal');
+            api.setGridOption('suppressMoveWhenColumnDragging', true);
+        });
+        const dropTarget = (await headerCell('a').boundingBox())!;
+        const dragSource = (await headerCell('b').boundingBox())!;
+        await page.mouse.move(dragSource.x + dragSource.width / 2, dragSource.y + dragSource.height / 2);
+        await page.mouse.down();
+        await page.mouse.move(dropTarget.x + 20, dropTarget.y + dropTarget.height / 2, { steps: 15 });
+        await expect(headerCell('a')).toHaveClass(/ag-header-highlight-after/);
+        expect(await withApi((api) => api.getDisplayedLeftColumns().map((col) => col.getColId()))).toEqual(['b', 'a']);
+        await page.mouse.up();
+        await expect
+            .poll(() => withApi((api) => api.getDisplayedLeftColumns().map((col) => col.getColId())))
+            .toEqual(['a', 'b']);
+        await expect(async () => {
+            const first = (await headerCell('a').boundingBox())!;
+            const second = (await headerCell('b').boundingBox())!;
+            expect(second.x + second.width).toBeCloseTo(first.x, 0);
+            expect((await cell(0, 'b').boundingBox())!.x).toBeCloseTo(second.x, 0);
+        }).toPass();
+    });
+
     test('typing into the text editor and pressing Tab commits the value and moves focus right', async ({ page }) => {
         const { cell, withApi } = await mountGrid(page, {
             options: () => ({
@@ -197,5 +293,319 @@ test.describe('community grid in a real browser', () => {
 
         await expect(grid).toBeHidden();
         expect(framesRequestedWhileHidden).toBe(0);
+    });
+
+    for (const animating of [false, true]) {
+        test(`a header focused through the API is scrolled into view on the page, as columns animate=${animating}`, async ({
+            page,
+        }) => {
+            const { headerCell, withApi } = await mountGrid(page, {
+                css: 'body{padding-top:2000px}',
+                options: () => ({
+                    columnDefs: [{ field: 'make' }, { field: 'model' }],
+                    rowData: [{ make: 'Toyota', model: 'Celica' }],
+                }),
+            });
+            await expect(headerCell('make')).not.toBeInViewport();
+
+            // `withApi` serialises the function, so each variant is its own literal
+            const moving = await withApi(
+                animating
+                    ? (api) => {
+                          api.applyColumnState({ state: [{ colId: 'model' }, { colId: 'make' }], applyOrder: true });
+                          api.setFocusedHeader('make');
+                          return document.querySelector('.ag-column-moving') !== null;
+                      }
+                    : (api) => {
+                          api.setFocusedHeader('make');
+                          return false;
+                      }
+            );
+
+            expect(moving).toBe(animating);
+            await expect(headerCell('make')).toBeFocused();
+            await expect(headerCell('make')).toBeInViewport({ ratio: 1 });
+        });
+    }
+
+    test('a header focused as grid state moves its column stays scrolled into view', async ({ page }) => {
+        const { headerCell, withApi } = await mountGrid(page, {
+            width: 400,
+            options: () => ({
+                columnDefs: [{ field: 'a' }, ...Array.from({ length: 12 }, (_, i) => ({ field: `b${i}` }))],
+                defaultColDef: { width: 100 },
+                rowData: [{}],
+                suppressColumnVirtualisation: true,
+            }),
+        });
+
+        await withApi((api) => {
+            const order = api.getColumnState().map(({ colId }) => colId);
+            api.setState({ columnOrder: { orderedColIds: [...order.slice(1), order[0]] } }, ['scroll']);
+            api.setFocusedHeader('a');
+        });
+
+        await expect(headerCell('a')).toBeFocused();
+        await expect(headerCell('a')).toHaveCSS('left', '1200px');
+        await expect(headerCell('a')).toBeInViewport({ ratio: 1 });
+    });
+
+    test.describe('print layout with no rows', () => {
+        // Print layout needs a grid with no size of its own; seven 100px columns then outgrow the 300px container.
+        const printCss = '#myGrid{width:auto;height:auto}';
+
+        const expectSizedByColumns = async (page: Page, grid: Locator) => {
+            const check = async () => {
+                await expect(grid.locator('.ag-header-cell')).toHaveCount(7);
+                await expect(grid.locator('.ag-header-cell[col-id="col0"]')).toBeInViewport({ ratio: 1 });
+                await expect(grid.locator('.ag-header-cell[col-id="col6"]')).toBeInViewport({ ratio: 1 });
+                await expect(grid.locator('.ag-overlay-no-rows-center')).toBeInViewport({ ratio: 1 });
+                await expect(async () => {
+                    expect((await grid.locator('.ag-root').boundingBox())!.width).toBeCloseTo(700, 0);
+                }).toPass();
+            };
+            await check();
+            // the grid's @media print rules change the display type of its containers
+            await page.emulateMedia({ media: 'print' });
+            await check();
+        };
+
+        test('a grid created in print layout is as wide as its columns and shows every header and the no-rows overlay', async ({
+            page,
+        }) => {
+            const { grid } = await mountGrid(page, {
+                width: 300,
+                height: 300,
+                css: printCss,
+                options: () => ({
+                    columnDefs: Array.from({ length: 7 }, (_, i) => ({ field: `col${i}`, width: 100 })),
+                    rowData: [],
+                    domLayout: 'print',
+                }),
+            });
+
+            await expectSizedByColumns(page, grid);
+        });
+
+        test('a grid switched to print layout is as wide as its columns and shows every header and the no-rows overlay', async ({
+            page,
+        }) => {
+            const { grid, withApi } = await mountGrid(page, {
+                width: 300,
+                height: 300,
+                options: () => ({
+                    columnDefs: Array.from({ length: 7 }, (_, i) => ({ field: `col${i}`, width: 100 })),
+                    rowData: [],
+                }),
+            });
+            await expect(grid.locator('.ag-header-cell[col-id="col6"]')).toHaveCount(0);
+
+            await page.addStyleTag({ content: printCss });
+            await withApi((api) => api.setGridOption('domLayout', 'print'));
+
+            await expectSizedByColumns(page, grid);
+        });
+
+        test('a grid with a legacy CSS theme in print layout is as wide as its columns', async ({ page }) => {
+            const styles = path.join(__dirname, '../../../packages/ag-grid-community/styles');
+            const legacyCss = ['ag-grid.css', 'ag-theme-quartz.css']
+                .map((file) => fs.readFileSync(path.join(styles, file), 'utf8'))
+                .join('\n');
+            const { grid } = await mountGrid(page, {
+                width: 300,
+                height: 300,
+                className: 'ag-theme-quartz',
+                css: legacyCss + printCss,
+                options: () => ({
+                    theme: 'legacy',
+                    columnDefs: Array.from({ length: 7 }, (_, i) => ({ field: `col${i}`, width: 100 })),
+                    rowData: [],
+                    domLayout: 'print',
+                }),
+            });
+
+            await expectSizedByColumns(page, grid);
+        });
+
+        test('a grid with left and right pinned columns in print layout is as wide as its columns', async ({
+            page,
+        }) => {
+            const { grid } = await mountGrid(page, {
+                width: 300,
+                height: 300,
+                css: printCss,
+                options: () => ({
+                    columnDefs: Array.from({ length: 7 }, (_, i) => ({
+                        field: `col${i}`,
+                        width: 100,
+                        pinned: i === 0 ? ('left' as const) : i === 6 ? ('right' as const) : undefined,
+                    })),
+                    rowData: [],
+                    domLayout: 'print',
+                }),
+            });
+
+            await expectSizedByColumns(page, grid);
+        });
+
+        test('a print-layout grid that starts empty stays as wide as its columns and prints every row once rows load', async ({
+            page,
+            browserName,
+        }) => {
+            test.skip(browserName !== 'chromium', 'page.pdf() is only supported in Chromium');
+            const { grid, withApi } = await mountGrid(page, {
+                width: 300,
+                height: 300,
+                css: printCss,
+                options: () => ({
+                    columnDefs: Array.from({ length: 7 }, (_, i) => ({
+                        field: `col${i}`,
+                        width: 100,
+                        // only a link Chrome prints is written into the PDF, so its links are the rows that printed
+                        cellRenderer:
+                            i === 0
+                                ? (params: { value: number }) =>
+                                      `<a href="https://print-row.test/${params.value}">${params.value}</a>`
+                                : undefined,
+                    })),
+                    rowData: [],
+                    domLayout: 'print',
+                }),
+            });
+            await expectSizedByColumns(page, grid);
+
+            await withApi((api) =>
+                api.setGridOption(
+                    'rowData',
+                    Array.from({ length: 200 }, (_, index) => ({ col0: index + 1 }))
+                )
+            );
+            await expect(grid.locator('.ag-row')).toHaveCount(200);
+            await expect(async () => {
+                expect((await grid.locator('.ag-root').boundingBox())!.width).toBeCloseTo(700, 0);
+            }).toPass();
+
+            const pdf = (await page.pdf({ format: 'A4' })).toString('latin1');
+            const printedRowIds = new Set(
+                Array.from(pdf.matchAll(/https:\/\/print-row\.test\/(\d+)/g), ([, id]) => Number(id))
+            );
+            expect(printedRowIds.size).toBe(200);
+        });
+    });
+
+    test('a right to left print-layout grid with no rows is as wide as its columns with the first column at the right edge', async ({
+        page,
+    }) => {
+        const { grid } = await mountGrid(page, {
+            width: 300,
+            height: 300,
+            css: '#myGrid{width:auto;height:auto}',
+            options: () => ({
+                enableRtl: true,
+                columnDefs: Array.from({ length: 7 }, (_, i) => ({ field: `col${i}`, width: 100 })),
+                rowData: [],
+                domLayout: 'print',
+            }),
+        });
+        await page.emulateMedia({ media: 'print' });
+
+        await expect(grid.locator('.ag-header-cell')).toHaveCount(7);
+        await expect(async () => {
+            const root = (await grid.locator('.ag-root').boundingBox())!;
+            const first = (await grid.locator('.ag-header-cell[col-id="col0"]').boundingBox())!;
+            const last = (await grid.locator('.ag-header-cell[col-id="col6"]').boundingBox())!;
+            expect(root.width).toBeCloseTo(700, 0);
+            expect(first.x + first.width).toBeCloseTo(root.x + root.width, 0);
+            expect(last.x).toBeCloseTo(root.x, 0);
+        }).toPass();
+    });
+
+    test('flex columns in a grid created in print layout keep their own widths rather than their minimum or the page width', async ({
+        page,
+    }) => {
+        const { grid } = await mountGrid(page, {
+            width: 300,
+            height: 300,
+            css: '#myGrid{width:auto;height:auto}',
+            options: () => ({
+                defaultColDef: { flex: 1, minWidth: 80 },
+                columnDefs: Array.from({ length: 3 }, (_, i) => ({ field: `col${i}` })),
+                rowData: Array.from({ length: 5 }, (_, i) => ({ col0: i, col1: i, col2: i })),
+                domLayout: 'print',
+            }),
+        });
+        await page.emulateMedia({ media: 'print' });
+
+        await expect(async () => {
+            expect((await grid.locator('.ag-root').boundingBox())!.width).toBeCloseTo(600, 0);
+            expect((await grid.locator('.ag-header-cell[col-id="col2"]').boundingBox())!.width).toBeCloseTo(200, 0);
+        }).toPass();
+    });
+
+    test('a normal-layout detail grid inside a print-layout master keeps the width of its own columns', async ({
+        page,
+    }) => {
+        const { grid, withApi } = await mountGrid(page, {
+            enterprise: true,
+            width: 300,
+            height: 300,
+            css: '#myGrid{width:auto;height:auto}',
+            options: () => ({
+                domLayout: 'print',
+                masterDetail: true,
+                detailRowHeight: 150,
+                columnDefs: [
+                    { field: 'col0', width: 100, cellRenderer: 'agGroupCellRenderer' },
+                    { field: 'col1', width: 100 },
+                    { field: 'col2', width: 100 },
+                ],
+                rowData: [{ col0: 'a', col1: 'b', col2: 'c' }],
+                detailCellRendererParams: {
+                    detailGridOptions: {
+                        columnDefs: Array.from({ length: 5 }, (_, i) => ({ field: `detail${i}`, width: 100 })),
+                    },
+                    getDetailRowData: (params: { successCallback: (rows: object[]) => void }) =>
+                        params.successCallback([{ detail0: 1 }]),
+                },
+            }),
+        });
+        await withApi((api) => api.forEachNode((node) => node.setExpanded(true)));
+        await page.emulateMedia({ media: 'print' });
+
+        const detailArea = grid.locator('.ag-details-grid .ag-grid-scrollable-area');
+        await expect(detailArea).toHaveCount(1);
+        await expect(async () => {
+            expect((await grid.locator('.ag-root').first().boundingBox())!.width).toBeCloseTo(300, 0);
+            expect((await detailArea.boundingBox())!.width).toBeCloseTo(500, 0);
+        }).toPass();
+    });
+
+    test('printing a print-layout grid prints every row', async ({ page, browserName }) => {
+        test.skip(browserName !== 'chromium', 'page.pdf() is only supported in Chromium');
+        await mountGrid(page, {
+            css: '#myGrid { width: auto; height: auto; }',
+            options: () => ({
+                columnDefs: [
+                    {
+                        field: 'id',
+                        // Chrome writes a link annotation into the PDF only for a link it prints, so the links in
+                        // the PDF are the rows that reached the printed pages.
+                        cellRenderer: (params: { value: number }) =>
+                            `<a href="https://print-row.test/${params.value}">${params.value}</a>`,
+                    },
+                    { field: 'model' },
+                ],
+                rowData: Array.from({ length: 200 }, (_, index) => ({ id: index + 1, model: `Model ${index + 1}` })),
+                domLayout: 'print',
+            }),
+        });
+        await expect(page.locator('.ag-row')).toHaveCount(200);
+
+        const pdf = (await page.pdf({ format: 'A4' })).toString('latin1');
+        const printedRowIds = new Set(
+            Array.from(pdf.matchAll(/https:\/\/print-row\.test\/(\d+)/g), ([, id]) => Number(id))
+        );
+
+        expect(printedRowIds.size).toBe(200);
     });
 });

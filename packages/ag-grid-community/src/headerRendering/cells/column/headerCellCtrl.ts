@@ -138,11 +138,19 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         });
 
         const listener = () => this.checkDisplayName();
-        const colId = column.getColId();
+        const colId = column.colId;
         compBean.addManagedEventListeners({
             columnValueChanged: listener,
             columnRowGroupChanged: listener,
             columnPivotChanged: listener,
+            columnPinned: ({ columns }) => {
+                if (!columns?.includes(column)) {
+                    return;
+                }
+
+                this.refreshHeaderStyles();
+                this.refreshFunctions.headerClasses?.();
+            },
             headerHeightChanged: this.onHeaderHeightChanged.bind(this),
             // Toggle the edit highlight in place (no header component recreation).
             columnHeaderEditHighlightChanged: (event) => {
@@ -178,8 +186,9 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         });
     }
 
-    protected resizeHeader(delta: number, shiftKey: boolean): void {
-        this.beans.colResize?.resizeHeader(this.column, delta, shiftKey);
+    protected resizeHeader(delta: number, takeFromAdjacent: boolean): void {
+        const column = this.column;
+        this.beans.colResize?.resizeColumn(column, column.actualWidth + delta, takeFromAdjacent, true);
     }
 
     protected getHeaderClassParams(): HeaderClassParams {
@@ -210,7 +219,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
     private lookupUserCompDetails(): UserCompDetails | undefined {
         const componentClaim = this.headerCompGuard.provisionalClaim();
         const params = this.createParams(componentClaim);
-        const colDef = this.column.getColDef();
+        const colDef = this.column.colDef;
         return _getHeaderCompDetails(this.beans.userCompFactory, colDef, params)!;
     }
 
@@ -304,6 +313,10 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         } else if (e.key === KeyCode.DOWN && e.altKey) {
             this.showMenuOnKeyPress(e, false);
         }
+        const rowNumbersSvc = this.beans.rowNumbersSvc;
+        if (rowNumbersSvc && this.getWrapperHasFocus()) {
+            rowNumbersSvc.handleKeyDownOnHeader(this.column, e);
+        }
     }
 
     private onEnterKeyDown(e: KeyboardEvent): void {
@@ -355,6 +368,21 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         }
 
         this.setActiveHeader(false);
+    }
+
+    public getTooltipTextElement(): HTMLElement | undefined {
+        const headerComp = this.comp?.getUserCompInstance();
+        const compDetails = this.userCompDetails;
+        // A pending replacement must not expose the previous component's text.
+        if (
+            !compDetails ||
+            compDetails.componentFromFramework ||
+            compDetails.componentClass !== headerComp?.constructor ||
+            compDetails.params.innerHeaderComponent
+        ) {
+            return undefined;
+        }
+        return (headerComp as AgColumnHeader).getTooltipTextElement?.();
     }
 
     private setupTooltip(): void {
@@ -450,6 +478,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         const headerCompRefreshed = attemptRefresh ? this.attemptHeaderCompRefresh(newCompDetails.params) : false;
 
         if (headerCompRefreshed) {
+            this.userCompDetails = newCompDetails;
             // we do this as a refresh happens after colDefs change, and it's possible the column has had it's
             // draggable property toggled. no need to call this if not refreshing, as setDragSource is done
             // as part of appendHeaderComp
@@ -536,7 +565,12 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         updateSortableCssClass();
 
         this.setRefreshFunction('updateSortable', updateSortableCssClass);
-        compBean.addManagedEventListeners({ sortChanged: this.refreshAriaSort.bind(this) });
+        compBean.addManagedEventListeners({
+            sortChanged: () => {
+                this.refreshAriaSort();
+                this.announceAriaDescription();
+            },
+        });
     }
 
     private setupFilterClass(compBean: BeanStub): void {
@@ -552,7 +586,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
 
     private setupWrapTextClass() {
         const listener = () => {
-            const wrapText = !!this.column.getColDef().wrapHeaderText;
+            const wrapText = !!this.column.colDef.wrapHeaderText;
             this.comp.toggleCss('ag-header-cell-wrap-text', wrapText);
         };
         listener();
@@ -626,15 +660,29 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
     private refreshAriaSort(): void {
         let description: string | null = null;
         const { beans, column, comp, sortable, gos } = this;
+        const translate = this.getLocaleTextFunc();
+        const sortSvc = beans.sortSvc;
         if (sortable) {
-            const translate = this.getLocaleTextFunc();
-            const sortDef = beans.sortSvc?.getDisplaySort(column) ?? null;
+            const sortDef = sortSvc?.getDisplaySort(column) ?? null;
             comp.setAriaSort(_getAriaSortState(sortDef));
             description = _getEnableColumnSelection(gos)
                 ? translate('ariaSortableColumnWithCellSelection', 'Press ALT ENTER to sort')
                 : translate('ariaSortableColumn', 'Press ENTER to sort');
         } else {
             comp.setAriaSort();
+        }
+        const sortIndex = sortSvc?.getDisplaySortIndex(column);
+        const sortCount = sortSvc?.getDisplaySortCount() ?? 0;
+        if (sortIndex != null && sortCount > 1) {
+            const priority = String(sortIndex + 1);
+            const count = String(sortCount);
+            const sortPriority = translate('ariaSortPriority', 'Sort priority ${priority} of ${count}', [
+                priority,
+                count,
+            ])
+                .replaceAll('${priority}', priority)
+                .replaceAll('${count}', count);
+            description = description ? `${sortPriority}. ${description}` : sortPriority;
         }
         this.setAriaDescriptionProperty('sort', description);
     }

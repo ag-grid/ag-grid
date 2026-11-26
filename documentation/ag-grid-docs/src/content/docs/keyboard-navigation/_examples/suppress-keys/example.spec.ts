@@ -114,6 +114,29 @@ test.agExample(import.meta, () => {
     );
 
     test.eachFramework(
+        'Alt+ArrowRight resizes the Athlete column but not the Country column, nor Shift+ArrowRight moves it (suppressed)',
+        async ({ agIdFor, page }) => {
+            const width = async (colId: string) => (await agIdFor.headerCell(colId).boundingBox())!.width;
+            const country = agIdFor.headerCell('country');
+
+            await country.click();
+            const countryWidth = await width('country');
+            const countryIndex = await country.getAttribute('aria-colindex');
+            await page.keyboard.press('Alt+ArrowRight');
+            await page.keyboard.press('Shift+ArrowRight');
+
+            // pressed after Country's keys, so once its resize shows, theirs would have shown too
+            await agIdFor.headerCell('athlete').click();
+            const athleteWidth = await width('athlete');
+            await page.keyboard.press('Alt+ArrowRight');
+            await expect.poll(() => width('athlete')).toBeGreaterThan(athleteWidth);
+
+            expect(await width('country')).toBe(countryWidth);
+            await expect(country).toHaveAttribute('aria-colindex', countryIndex!);
+        }
+    );
+
+    test.eachFramework(
         'ArrowDown from Country header navigates to first Country cell (not suppressed)',
         async ({ agIdFor, page }) => {
             await agIdFor.headerCell('country').click();

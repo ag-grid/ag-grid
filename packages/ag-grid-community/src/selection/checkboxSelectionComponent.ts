@@ -1,3 +1,4 @@
+import type { ITooltipFeature } from 'ag-stack';
 import { RefPlaceholder, _getAriaCheckboxStateName } from 'ag-stack';
 
 import { AgCheckboxSelector } from '../agWidgets/agCheckbox';
@@ -29,6 +30,8 @@ export class CheckboxSelectionComponent extends Component {
 
     private rowNode: RowNode;
     private column: AgColumn | undefined;
+    private selectionTooltip?: ITooltipFeature;
+    private tooltipSelected = false;
     private overrides?: {
         isVisible: boolean | CheckboxSelectionCallback | GroupCheckboxSelectionCallback | undefined;
         callbackParams: any;
@@ -65,6 +68,11 @@ export class CheckboxSelectionComponent extends Component {
 
         eCheckbox.setValue(state, true);
         eCheckbox.setInputAriaLabel(`${translatedLabel} (${stateName})`);
+        const selected = state === true;
+        if (this.tooltipSelected !== selected) {
+            this.tooltipSelected = selected;
+            this.selectionTooltip?.refreshTooltip();
+        }
     }
 
     public init(params: {
@@ -81,6 +89,19 @@ export class CheckboxSelectionComponent extends Component {
         this.overrides = params.overrides;
 
         this.onSelectionChanged();
+
+        const eInput = this.eCheckbox.getInputElement();
+        this.selectionTooltip = this.addTooltip({
+            control: 'selectRow',
+            getAriaElement: () => eInput,
+            getLocation: () => 'cell',
+            getTooltip: () => ({
+                value: this.tooltipSelected
+                    ? this.getLocaleTextFunc()('tooltipDeselectRow', 'Deselect row')
+                    : this.getLocaleTextFunc()('tooltipSelectRow', 'Select row'),
+                params: { column: this.column, node: this.rowNode, data: this.rowNode.data },
+            }),
+        });
 
         this.addManagedListeners(this.eCheckbox.getWrapperElement(), {
             // we don't want double click on this icon to open a group
@@ -113,7 +134,7 @@ export class CheckboxSelectionComponent extends Component {
         });
 
         const isRowSelectableFunc = _getIsRowSelectable(this.gos);
-        const checkboxVisibleIsDynamic = isRowSelectableFunc || typeof this.getIsVisible() === 'function';
+        const checkboxVisibleIsDynamic = isRowSelectableFunc ?? typeof this.getIsVisible() === 'function';
 
         if (checkboxVisibleIsDynamic) {
             const showOrHideSelectListener = this.showOrHideSelect.bind(this);

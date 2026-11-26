@@ -58,6 +58,8 @@ const gridOptions: GridOptions<IOlympicData> = {
                             height: 250,
                             imageType: 'png',
                             recolor: 'Grayscale',
+                            brightness: 50,
+                            contrast: 50,
                         },
                         position: 'Center',
                     },

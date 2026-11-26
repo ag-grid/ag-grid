@@ -3,6 +3,7 @@
 import React, { StrictMode, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
+import type { ColDef } from 'ag-grid-community';
 import { ClientSideRowModelModule, enableDevValidations } from 'ag-grid-community';
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
@@ -21,9 +22,9 @@ export function GridExample() {
             <div style={{ height: '100%' }}>
                 <button
                     onClick={() => {
-                        setVisibility('hidden'); // Making the grid not-visible will force the 'setScrollPosition' function to invoke the 'attemptSettingScrollPosition' function, which in turn triggers the _waitUntil
+                        setVisibility('hidden');
                         const scroller = document.querySelector('.ag-grid-viewport')!;
-                        scroller.scrollTop += 50; // Performing a scroll will trigger a code path that uses the problematic _waitUntil function
+                        scroller.scrollTop += 50;
                         setTimeout(() => {
                             setShow(false); // Simulating _disposal_ of the Ag-Grid
                             setTimeout(() => {
@@ -54,7 +55,7 @@ function GridWrapper() {
         { make: 'Tesla', model: 'Model Y', price: 64950, electric: true },
     ];
 
-    const colDefs = [{ field: 'make' }, { field: 'model' }, { field: 'price' }, { field: 'electric' }];
+    const colDefs: ColDef[] = [{ field: 'make' }, { field: 'model' }, { field: 'price' }, { field: 'electric' }];
 
     return <AgGridReact rowData={rowData} columnDefs={colDefs} />;
 }

@@ -1,14 +1,21 @@
 import type {
+    AgBeanCollection,
     AgComponent,
-    AgCoreBeanCollection,
     BaseEvents,
     BaseProperties,
     IPopupService,
     IPropertiesService,
+    ITooltipFeature,
     ResizableStructure,
     StopPropagationCallbacks,
 } from 'ag-stack';
-import { AgComponentStub, AgTabGuardFeature, _setDisplayed } from 'ag-stack';
+import {
+    AgAbstractComponent,
+    AgTabGuardFeature,
+    _addManagedElementListeners,
+    _setAriaLabel,
+    _setDisplayed,
+} from 'ag-stack';
 
 import type { AgPanelOptions, AgPanelPostProcessPopupParams } from './agPanel';
 import { AgPanel } from './agPanel';
@@ -37,11 +44,11 @@ export interface AgDialogCallbacks<TBeanCollection, TDialog> {
 }
 
 export class AgDialog<
-    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TBeanCollection extends AgBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
-    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
+    TPropertiesService extends IPropertiesService<TProperties>,
     TComponentSelectorType extends string,
     TDialogOptions extends AgDialogOptions<TBeanCollection, TProperties, TGlobalEvents, AgPanelPostProcessPopupParams> =
         AgDialogOptions<TBeanCollection, TProperties, TGlobalEvents, AgPanelPostProcessPopupParams>,
@@ -71,6 +78,7 @@ export class AgDialog<
     private isMaximized: boolean = false;
     private readonly maximizeListeners: (() => void)[] = [];
     private maximizeButtonComp: AgComponent<TBeanCollection, TProperties, TGlobalEvents, any> | undefined;
+    private maximizeTooltip?: ITooltipFeature;
     private maximizeIcon: Element | undefined;
     private minimizeIcon: Element | undefined;
     private resizeListenerDestroy: (() => void) | null | undefined = null;
@@ -198,6 +206,14 @@ export class AgDialog<
     private refreshMaximizeIcon() {
         _setDisplayed(this.maximizeIcon!, !this.isMaximized);
         _setDisplayed(this.minimizeIcon!, this.isMaximized);
+
+        _setAriaLabel(this.maximizeButtonComp!.getGui(), this.getMaximizeLabel());
+        this.maximizeTooltip?.refreshTooltip();
+    }
+
+    private getMaximizeLabel(): string {
+        const translate = this.getLocaleTextFunc();
+        return this.isMaximized ? translate('ariaLabelRestore', 'Restore') : translate('ariaLabelMaximize', 'Maximize');
     }
 
     private clearMaximizebleListeners() {
@@ -236,6 +252,7 @@ export class AgDialog<
             if (this.maximizeButtonComp) {
                 this.destroyBean(this.maximizeButtonComp);
                 this.maximizeButtonComp = this.maximizeIcon = this.minimizeIcon = undefined;
+                this.maximizeTooltip = undefined;
             }
             return;
         }
@@ -251,14 +268,14 @@ export class AgDialog<
         const maximizeButtonComp = this.buildMaximizeAndMinimizeElements();
         this.refreshMaximizeIcon();
 
-        maximizeButtonComp.addManagedElementListeners(maximizeButtonComp.getGui(), {
+        _addManagedElementListeners(maximizeButtonComp, maximizeButtonComp.getGui(), {
             click: this.toggleMaximize.bind(this),
         });
 
         this.addTitleBarButton(maximizeButtonComp, 0);
 
         this.maximizeListeners.push(
-            ...this.addManagedElementListeners(eTitleBar, {
+            ..._addManagedElementListeners(this, eTitleBar, {
                 dblclick: this.toggleMaximize.bind(this),
             })
         );
@@ -274,9 +291,24 @@ export class AgDialog<
     private buildMaximizeAndMinimizeElements(): AgComponent<TBeanCollection, TProperties, TGlobalEvents, any> {
         const maximizeButtonComp = (this.maximizeButtonComp = this.createBean<
             AgComponent<TBeanCollection, TProperties, TGlobalEvents, any>
-        >(new AgComponentStub({ tag: 'div', cls: 'ag-dialog-button' })));
+        >(
+            new AgAbstractComponent({
+                tag: 'button',
+                cls: 'ag-button ag-dialog-button',
+                attrs: { type: 'button' },
+            })
+        ));
 
         const eGui = maximizeButtonComp.getGui();
+        this.maximizeTooltip = maximizeButtonComp.addTooltip({
+            getLocation: () => 'dialog',
+            control: 'maximize',
+            getTooltip: () => ({
+                value: this.isMaximized
+                    ? this.getLocaleTextFunc()('tooltipRestore', 'Restore')
+                    : this.getLocaleTextFunc()('tooltipMaximize', 'Maximise'),
+            }),
+        });
 
         const iconSvc = this.beans.iconSvc;
         this.maximizeIcon = iconSvc.createIconNoSpan('maximize')!;

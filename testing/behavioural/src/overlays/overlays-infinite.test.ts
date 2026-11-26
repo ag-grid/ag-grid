@@ -1,4 +1,4 @@
-import { GridColumns, GridRows, TestGridsManager, isAgHtmlElementVisible } from 'ag-test-utils';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, isAgHtmlElementVisible } from 'ag-test-utils';
 
 import type { ICellRendererParams } from 'ag-grid-community';
 import { InfiniteRowModelModule } from 'ag-grid-community';
@@ -198,5 +198,21 @@ describe('ag-grid overlays state for Infinite Row Model', () => {
         await loadPromise;
         expect(hasNoRowsOverlay()).toBe(false);
         expect(hasNoMatchingRowsOverlay()).toBe(false);
+    });
+
+    test('fires rowCountReady once across datasource resets', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'athlete' }],
+            rowModelType: 'infinite',
+        });
+
+        let rowCountReady = 0;
+        // rowCountReady is an internal event, so it is not on the public addEventListener type
+        api.addEventListener('rowCountReady' as any, () => rowCountReady++);
+        api.setGridOption('datasource', { getRows: () => {} });
+        api.setGridOption('datasource', { getRows: () => {} });
+        await asyncSetTimeout(0);
+
+        expect(rowCountReady).toBe(1);
     });
 });

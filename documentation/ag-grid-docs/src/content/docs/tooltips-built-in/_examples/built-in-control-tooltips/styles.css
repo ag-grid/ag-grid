@@ -1,0 +1,23 @@
+.example-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+#myGrid {
+    flex: 1 1 0px;
+    min-height: 0;
+    width: 100%;
+}
+
+.control-tooltip {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 8px 12px;
+    border: 1px solid var(--ag-border-color);
+    border-radius: var(--ag-border-radius);
+    color: var(--ag-foreground-color);
+    background: var(--ag-background-color);
+    box-shadow: var(--ag-popup-shadow);
+}

@@ -7,7 +7,6 @@ import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 import { callChatGPT } from './chatgptApi';
 import { type IOlympicData, gridOptions } from './gridOptions';
 import './styles.css';
-import { useFetchJson } from './useFetchJson';
 
 interface ChatMessage {
     prompt: string;
@@ -154,7 +153,7 @@ const GridExample = () => {
                             </div>
                         )}
 
-                        <div>
+                        <div className="controls-row">
                             <button onClick={resetGrid}>Reset Grid</button>
                         </div>
                     </div>

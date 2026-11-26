@@ -22,7 +22,7 @@ test.agExample(import.meta, () => {
             const cell = agIdFor.cell('1', 'total');
             await cell.dblclick();
 
-            const editable = page.locator('.ag-cell-inline-editing [contenteditable]').first();
+            const editable = page.locator('.ag-cell-inline-editing textarea').first();
             await editable.click();
             await page.keyboard.press('Control+a');
             await page.keyboard.type('=1+');

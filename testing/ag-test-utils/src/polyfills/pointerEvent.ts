@@ -1,3 +1,5 @@
+import { definePropertyForFile } from '../fileScope';
+
 type TouchListConstructor = new (touches?: readonly Touch[]) => TouchList;
 
 class TouchListPolyfill extends Array<Touch> implements TouchList {
@@ -106,6 +108,7 @@ class PointerEventPolyfill extends MouseEvent implements PointerEvent {
     public isPrimary: boolean;
     public altitudeAngle: number;
     public azimuthAngle: number;
+    public persistentDeviceId: number = 0;
 
     constructor(type: string, eventInitDict: PointerEventInit = {}) {
         const mouseInit: MouseEventInit = {
@@ -256,7 +259,7 @@ function defineEventHandlerProps(proto: object, events: string[]): void {
     for (const event of events) {
         const prop = `on${event}`;
         if (!(prop in proto)) {
-            Object.defineProperty(proto, prop, {
+            definePropertyForFile(proto, prop, {
                 configurable: true,
                 enumerable: true,
                 get(this: any) {
@@ -287,7 +290,7 @@ const TOUCH_EVENTS = ['touchstart', 'touchmove', 'touchend', 'touchcancel'];
 
 function ensurePointerEvent(): void {
     if (typeof (globalThis as any).PointerEvent !== 'function') {
-        Object.defineProperty(globalThis, 'PointerEvent', {
+        definePropertyForFile(globalThis, 'PointerEvent', {
             configurable: true,
             writable: true,
             value: PointerEventPolyfill,
@@ -315,7 +318,7 @@ function ensureDragEvent(): void {
         carriesDataTransfer = false;
     }
     if (!carriesDataTransfer) {
-        Object.defineProperty(globalThis, 'DragEvent', {
+        definePropertyForFile(globalThis, 'DragEvent', {
             configurable: true,
             writable: true,
             value: DragEventPolyfill,
@@ -325,7 +328,7 @@ function ensureDragEvent(): void {
 
 function ensureTouch(): void {
     if (typeof (globalThis as any).Touch !== 'function') {
-        Object.defineProperty(globalThis, 'Touch', {
+        definePropertyForFile(globalThis, 'Touch', {
             configurable: true,
             writable: true,
             value: TouchPolyfill,
@@ -333,7 +336,7 @@ function ensureTouch(): void {
     }
 
     if (typeof (globalThis as any).TouchList !== 'function') {
-        Object.defineProperty(globalThis, 'TouchList', {
+        definePropertyForFile(globalThis, 'TouchList', {
             configurable: true,
             writable: true,
             value: TouchListPolyfill,
@@ -341,7 +344,7 @@ function ensureTouch(): void {
     }
 
     if (typeof (globalThis as any).TouchEvent !== 'function') {
-        Object.defineProperty(globalThis, 'TouchEvent', {
+        definePropertyForFile(globalThis, 'TouchEvent', {
             configurable: true,
             writable: true,
             value: TouchEventPolyfill,
@@ -358,10 +361,16 @@ function ensureTouch(): void {
 }
 
 export function initPointerEventPolyfill(): void {
-    window.DataTransferItem ??= DataTransferItemMock;
-    window.DataTransferItemList ??= DataTransferItemListMock;
-    window.DataTransfer ??= DataTransferMock;
+    defineMissingGlobalForFile('DataTransferItem', DataTransferItemMock);
+    defineMissingGlobalForFile('DataTransferItemList', DataTransferItemListMock);
+    defineMissingGlobalForFile('DataTransfer', DataTransferMock);
     ensureTouch();
     ensurePointerEvent();
     ensureDragEvent();
+}
+
+function defineMissingGlobalForFile(name: string, value: unknown): void {
+    if ((globalThis as Record<string, unknown>)[name] == null) {
+        definePropertyForFile(globalThis, name, { configurable: true, writable: true, value });
+    }
 }

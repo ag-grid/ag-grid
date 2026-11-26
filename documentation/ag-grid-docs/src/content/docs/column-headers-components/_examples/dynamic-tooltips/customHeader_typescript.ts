@@ -68,10 +68,9 @@ export class CustomHeader {
 
         this.eGui = div;
 
-        const customHeaderLabel = div.querySelector('.customHeaderLabel');
         agParams.setTooltip(
-            agParams.displayName,
-            () => customHeaderLabel!.scrollWidth > customHeaderLabel!.clientWidth
+            'Click the cross to remove the sort',
+            () => agParams.column.getSortDef()?.direction != null
         );
     }
 

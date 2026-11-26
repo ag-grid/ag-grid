@@ -1,4 +1,15 @@
-export default {
+import { defineComponent } from 'vue';
+import type { PropType } from 'vue';
+
+import type { ICellRendererParams } from 'ag-grid-community';
+
+export default defineComponent({
+    props: {
+        params: {
+            type: Object as PropType<ICellRendererParams>,
+            required: true,
+        },
+    },
     template: `
         <div role="gridcell">
             <form>
@@ -31,11 +42,11 @@ export default {
     },
     methods: {
         // called when the cell is refreshed
-        refresh(params) {
+        refresh(params: ICellRendererParams) {
             this.callsCount = params.data.calls;
             this.now = new Date().toLocaleTimeString();
             // tell the grid not to destroy and recreate
             return true;
         },
     },
-};
+});

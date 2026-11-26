@@ -1,10 +1,10 @@
-import { bench, suite } from 'vitest';
+import { suite } from 'vitest';
 
 import type { ColDef, ColGroupDef, GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, ColumnApiModule, RowSelectionModule } from 'ag-grid-community';
 import { GroupFilterModule, PivotModule, RowGroupingModule, RowNumbersModule } from 'ag-grid-enterprise';
 
-import { BenchGridsManager, benchDefaults } from './bench-utils';
+import { BenchGridsManager, bench } from './bench-utils';
 
 const modules = [
     ClientSideRowModelModule,
@@ -70,7 +70,6 @@ suite('column refresh — pure col-model rebuild paths (tiny rowData)', () => {
                 apply(api, iter++);
             },
             {
-                ...benchDefaults(),
                 setup: async () => {
                     await gridsManager.reset();
                     iter = 0;
@@ -194,7 +193,7 @@ suite('column refresh — pure col-model rebuild paths (tiny rowData)', () => {
         api.setGridOption('columnDefs', i & 1 ? cols20FlexA : cols20FlexB);
     });
 
-    // 100-col scenarios — setColumnDefs is the full rebuild path (refreshCols + visibleCols.refresh).
+    // 100-col scenarios — setColumnDefs is the full rebuild path (tree build + refreshCols + visibleCols.refresh).
     const cols100A = buildFlatCols(100, 'A');
     const cols100B = buildFlatCols(100, 'B');
     benchRefresh('setColumnDefs 100 flat cols (alternating defs)', { columnDefs: cols100A }, (api, i) => {
