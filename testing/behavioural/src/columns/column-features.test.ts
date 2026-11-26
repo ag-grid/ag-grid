@@ -150,6 +150,54 @@ describe('Column Features', () => {
     });
 
     describe('column headers', () => {
+        describe('header height follows header row type changes', () => {
+            const rowClasses = (api: GridApi) =>
+                Array.from(TestGridsManager.getHTMLElement(api)!.querySelectorAll('.ag-header-row'), (row) =>
+                    ['ag-header-row-group', 'ag-header-row-column', 'ag-header-row-filter'].find((cls) =>
+                        row.classList.contains(cls)
+                    )
+                );
+            const heights = { headerHeight: 30, groupHeaderHeight: 20, floatingFiltersHeight: 40 };
+            const filteredColDefs = [
+                { field: 'a', filter: 'agTextColumnFilter', floatingFilter: true },
+                { field: 'b', filter: 'agTextColumnFilter', floatingFilter: true },
+            ];
+            const groupedColDefs = [{ headerName: 'Group', children: [{ field: 'a' }, { field: 'b' }] }];
+
+            test('[column, floating filter] -> [group, column]', async () => {
+                const api = await gridsManager.createGridAndWait(
+                    'myGrid',
+                    { ...heights, columnDefs: filteredColDefs, rowData: [{ a: 'a1', b: 'b1' }] },
+                    { modules: [TextFilterModule] }
+                );
+                expect(rowClasses(api)).toEqual(['ag-header-row-column', 'ag-header-row-filter']);
+                // The header is sized for its rows plus the theme's header row border.
+                const border = getHeaderHeight(api) - (30 + 40);
+                expect(border).toBeGreaterThanOrEqual(0);
+
+                api.setGridOption('columnDefs', groupedColDefs);
+
+                await waitFor(() => expect(rowClasses(api)).toEqual(['ag-header-row-group', 'ag-header-row-column']));
+                await waitFor(() => expect(getHeaderHeight(api)).toBe(20 + 30 + border));
+            });
+
+            test('[group, column] -> [column, floating filter]', async () => {
+                const api = await gridsManager.createGridAndWait(
+                    'myGrid',
+                    { ...heights, columnDefs: groupedColDefs, rowData: [{ a: 'a1', b: 'b1' }] },
+                    { modules: [TextFilterModule] }
+                );
+                expect(rowClasses(api)).toEqual(['ag-header-row-group', 'ag-header-row-column']);
+                const border = getHeaderHeight(api) - (20 + 30);
+                expect(border).toBeGreaterThanOrEqual(0);
+
+                api.setGridOption('columnDefs', filteredColDefs);
+
+                await waitFor(() => expect(rowClasses(api)).toEqual(['ag-header-row-column', 'ag-header-row-filter']));
+                await waitFor(() => expect(getHeaderHeight(api)).toBe(30 + 40 + border));
+            });
+        });
+
         test('headerValueGetter overrides headerName', async () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [
