@@ -106,8 +106,8 @@ function extractFromMultiFilter(multiFilter: MultiFilterUi | MultiFilter): {
 } {
     const numFilters = multiFilter.getNumChildFilters();
     for (let i = 0; i < numFilters; i++) {
-        const childFilter = multiFilter.getChildFilterInstance(i);
-        if ((childFilter as unknown as IProvidedFilter | undefined)?.filterType === 'set') {
+        const childFilter = multiFilter.getChildFilterInstance(i) as IProvidedFilter | undefined;
+        if (childFilter?.filterType === 'set') {
             return {
                 setFilter: childFilter as any,
                 processModel: (model) => processMultiFilterModel(model, i, numFilters),
