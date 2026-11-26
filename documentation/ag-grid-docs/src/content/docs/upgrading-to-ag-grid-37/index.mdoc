@@ -137,7 +137,7 @@ The following deprecated APIs have now been removed.
 - `onNewRowsLoaded()` on grid-provided filter instances and `onAnyFilterChanged()` on the Set Filter instance - removed, they were internal no-ops with no replacement. Custom legacy filters that implement them are still called.
 - `suppressAdvancedFilterEval` - removed, it had no effect.
 - `ScalarFilterParams` - removed, use `IScalarFilterParams & IFilterParams` instead.
-- `rowModel` in filter params (`IFilterParams`, `filterParams` functions and the React `CustomFilterProps`) - removed, use the grid API via `params.api` instead.
+- `rowModel` in filter params (`IFilterParams`, `filterParams` functions and the React `CustomFilterProps`) - removed. Filter params were the only place the grid exposed its row model, so the row model is no longer available. Use the grid API via `params.api` instead.
 
 | Removed                  | Replacement                    |
 | ------------------------ | ------------------------------ |
