@@ -11,8 +11,7 @@ export function updateFloatingFilterParent(params: IFloatingFilterParams, model:
             void params.api.setColumnFilterModel(params.column, model).then(filterChanged);
             return;
         }
-        // Custom parents, including the legacy Multi Filter, apply the model themselves: routing a Multi Filter
-        // child's model through the API would set it on the Multi Filter column and clear every child.
+        // A custom Multi Filter child shares the Multi Filter column, so the API would replace every child's model.
         (_legacyFilterMethods(instance).setModel(model) || AgPromise.resolve()).then(filterChanged);
     });
 }

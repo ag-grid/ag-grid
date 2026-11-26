@@ -193,7 +193,7 @@ describe('Filter Manager API — whole-grid model & external filters', () => {
         api.onFilterChanged();
         await asyncSetTimeout(0);
 
-        // grid-provided filter instances no longer have getModel/doesFilterPass; the model is read through the API.
+        // grid-provided filter instances have no doesFilterPass; their model is read through the API.
         const instance = await api.getColumnFilterInstance('age');
         expect(instance).toBeTruthy();
         expect(typeof instance!.doesFilterPass).toBe('undefined');

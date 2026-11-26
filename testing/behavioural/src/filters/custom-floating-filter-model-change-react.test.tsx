@@ -111,9 +111,8 @@ describe('Custom floating filter onModelChange (React)', () => {
         expect(unexpectedWarnings(warnSpy)).toEqual([]);
     });
 
-    // The child floating filter's params carry the Multi Filter column, so the child model is applied to the
-    // whole Multi Filter and clears every child. This pins that existing behaviour; it is not the intended one.
-    // Multi Filter children are wrapped by FloatingFilterComponentWrapper, not FloatingFilterComponentProxy.
+    // Pins existing, unintended behaviour: the child's params carry the Multi Filter column, so its model clears
+    // every child. Goes through FloatingFilterComponentWrapper, not FloatingFilterComponentProxy.
     test('pins the model change of a floating filter over a grid-provided Multi Filter child', async () => {
         const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
         vi.spyOn(console, 'error').mockImplementation(() => {});
@@ -163,7 +162,6 @@ describe('Custom floating filter onModelChange (React)', () => {
         expect(unexpectedWarnings(warnSpy)).toEqual([]);
     });
 
-    // A fully-custom parent filter is not a ProvidedFilter, so its own setModel applies the model.
     test('leaves a fully-custom parent filter on its own path', async () => {
         const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
         let api: GridApi | undefined;
