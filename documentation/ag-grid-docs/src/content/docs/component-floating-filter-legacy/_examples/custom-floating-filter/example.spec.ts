@@ -13,12 +13,7 @@ test.agExample(import.meta, () => {
 
     test.eachFramework(
         'Custom floating filter applies a greater-than filter',
-        async ({ agIdFor, page, agFramework }) => {
-            test.fixme(
-                agFramework.startsWith('reactFunctionalTs'),
-                'AG-17785: React custom floating filter emits #286'
-            );
-
+        async ({ agIdFor, page }) => {
             await dismissValidationOverlay(page);
             // Only Michael Phelps (2008) has gold > 7 in the dataset.
             await agIdFor.floatingFilter('gold').locator('input').fill('7');
