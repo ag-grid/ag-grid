@@ -16,7 +16,6 @@ import type {
     IMultiFilter,
     IMultiFilterDef,
     IMultiFilterModel,
-    IMultiFilterParams,
     IProvidedFilter,
     IRowNode,
     LegacyFilterMethods,
