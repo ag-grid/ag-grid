@@ -135,7 +135,8 @@ The function receives the same parameters as a `valueGetter`, plus:
 
 The returned value is used everywhere the grid reads the cell value, including export, the clipboard,
 `api.getCellValue`, and sorting and filtering in the Client-Side Row Model. With the Server-Side Row Model, the server
-sorts and filters group rows. The returned value is not stored, so parent groups aggregate the computed aggregates of
+sorts and filters group rows, see
+[Grouping and Aggregating the Same Column](./server-side-model-aggregation/#grouping-and-aggregating-the-same-column). The returned value is not stored, so parent groups aggregate the computed aggregates of
 their children, and the `avg` function still weights each child group by its row count.
 
 The grid cannot reverse an `aggValueGetter`, so its built-in distribution cannot turn a value typed into a group

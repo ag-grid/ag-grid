@@ -12,19 +12,21 @@ test.agExample(import.meta, () => {
                 .filter({ has: page.locator('.ag-group-value', { hasText: name }) })
                 .first();
 
-        // Top level is grouped by Country, with server-side aggregated medal totals.
+        // Top level is grouped by Country; no column is aggregated, so group rows hold only their key.
         const usa = groupRow('United States');
         await expect(usa.locator('[col-id="ag-Grid-AutoColumn"]')).toContainText('United States', {
             useInnerText: true,
         });
-        await expect(usa.locator('.ag-cell[col-id="gold"]')).toContainText('552');
-        await expect(usa.locator('.ag-cell[col-id="silver"]')).toContainText('440');
-        await expect(usa.locator('.ag-cell[col-id="bronze"]')).toContainText('320');
+        await expect(usa.locator('.ag-cell[col-id="gold"]')).toHaveText('');
         await expect(groupRow('Russia')).toBeVisible();
 
         // Expanding a country lazy-loads the second group level (Sport) from the server.
         await usa.locator('.ag-group-contracted').first().click();
-        await expect(groupRow('Swimming')).toBeVisible();
-        await expect(groupRow('Swimming').locator('.ag-cell[col-id="gold"]')).toContainText('139');
+        const swimming = groupRow('Swimming');
+        await expect(swimming).toBeVisible();
+
+        // Expanding the last group level loads the leaf rows, shown by athlete in the group column.
+        await swimming.locator('.ag-group-contracted').first().click();
+        await expect(page.locator('.ag-row-level-2').filter({ hasText: 'Michael Phelps' }).first()).toBeVisible();
     });
 });
