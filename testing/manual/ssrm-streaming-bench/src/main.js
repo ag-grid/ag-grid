@@ -2,7 +2,7 @@ import { valueColIds } from './backend.js';
 import { LiveGrid } from './grids.js';
 import { Metrics } from './metrics.js';
 
-const { ModuleRegistry, AllEnterpriseModule, VERSION } = window.agGrid;
+const { ModuleRegistry, AllEnterpriseModule } = window.agGrid;
 
 ModuleRegistry.registerModules([AllEnterpriseModule]);
 
@@ -67,7 +67,10 @@ function renderControls(cfg) {
 
 const cfg = readConfig();
 renderControls(cfg);
-document.getElementById('version').textContent = `AG Grid ${VERSION}`;
+const version = fetch('/dist/package.json')
+    .then((r) => r.json())
+    .then((p) => p.version);
+version.then((v) => (document.getElementById('version').textContent = `AG Grid ${v}`));
 
 const host = document.getElementById('grids');
 const perRow = Math.ceil(Math.sqrt(cfg.grids));
@@ -318,7 +321,7 @@ async function horizontalScrollCheck() {
 
 window.__bench = {
     ready,
-    version: VERSION,
+    version,
     config: () => ({ ...cfg }),
     snapshot: () => metrics.snapshot(),
     reset: () => metrics.reset(),

@@ -28,6 +28,7 @@ const arg = (name, fallback) => {
 const previous = existsSync(resultsFile) ? JSON.parse(readFileSync(resultsFile, 'utf8')) : { scenarios: {} };
 
 if (args.includes('--report-only')) {
+    previous.gridVersion ??= gridVersion();
     writeReports(previous);
     process.exit(0);
 }
@@ -46,6 +47,7 @@ const run = {
     machine: machineSpec(browser),
     startedAt: new Date().toISOString(),
     gitSha: git('rev-parse HEAD'),
+    gridVersion: gridVersion(),
     warmupS: warmupMs / 1000,
     measureS: measureMs / 1000,
     scenarios: only ? previous.scenarios : {},
@@ -218,6 +220,11 @@ function machineSpec(b) {
     };
 }
 
+function gridVersion() {
+    const file = join(here, '../../../packages/ag-grid-enterprise/dist/package.json');
+    return existsSync(file) ? JSON.parse(readFileSync(file, 'utf8')).version : null;
+}
+
 function git(cmd) {
     try {
         return execSync(`git ${cmd}`, { cwd: here }).toString().trim();
@@ -249,7 +256,7 @@ function writeReports(data) {
         '',
         BANNER,
         '',
-        `Run ${data.startedAt} to ${data.finishedAt ?? '-'}, git ${data.gitSha}, AG Grid ${Object.values(data.scenarios).find((s) => s.version)?.version ?? '-'}, ${data.warmupS} s warm-up + ${data.measureS} s measured per scenario.`,
+        `Run ${data.startedAt} to ${data.finishedAt ?? '-'}, git ${data.gitSha}, AG Grid ${data.gridVersion ?? '-'}, ${data.warmupS} s warm-up + ${data.measureS} s measured per scenario.`,
         `Machine: ${data.machine.cpu} x ${data.machine.cores}, ${data.machine.memoryGb} GB, ${data.machine.os}, Node ${data.machine.node}, ${data.machine.browser} (headless), viewport ${data.machine.viewport}.`,
         '',
         '## Per requirement',
