@@ -122,11 +122,11 @@
             },
             {
                 "title": "Make stock figures editable",
-                "body": "Set `editable: true` on columns users update, and use `cellEditor: 'agNumberCellEditor'` with `precision: 0` for whole-unit quantities."
+                "body": "Set `editable: true` on columns users update. Number columns get the number editor; set `cellEditorParams: { precision: 0 }` for whole-unit quantities."
             },
             {
                 "title": "Add search and status filters",
-                "body": "Bind a text input to the `quickFilterText` grid option. For status tabs, call `api.setColumnFilterModel('status', ...)` then `api.onFilterChanged()`, as the demo does."
+                "body": "Bind a text input to the `quickFilterText` grid option. For status tabs with the Enterprise Set Filter, call `api.setColumnFilterModel('status', { values: [status] })` and, once it resolves, `api.onFilterChanged()`, as the demo does."
             },
             {
                 "title": "Page and export the data",
@@ -147,7 +147,7 @@
         },
         {
             "question": "Is there a free inventory management dashboard template?",
-            "answer": "The AG Grid inventory demo is published on GitHub in the ag-grid/ag-grid-demos repository, with React, JavaScript (TypeScript), Angular and Vue versions. It registers Enterprise modules for the Set Filter, Multi Filter, Master Detail and Excel export, which show a watermark without a licence key."
+            "answer": "The AG Grid inventory demo is published on GitHub in the ag-grid/ag-grid-demos repository, with React, JavaScript (TypeScript), Angular and Vue versions. It registers Enterprise modules for the Set Filter, Multi Filter, Master Detail and Excel export; deployed without a licence key, these show a watermark and console warnings."
         },
         {
             "question": "What does the inventory management dashboard UI in the demo include?",
@@ -169,9 +169,9 @@
             "checkedOn": "2026-11-24"
         },
         {
-            "claim": "Without a licence key, AG Grid Enterprise features show a watermark and a console error.",
+            "claim": "AG Grid Enterprise can be tested locally without a licence key; deployed without one, it shows a watermark and console warnings.",
             "sourceUrl": "https://www.ag-grid.com/react-data-grid/community-vs-enterprise/",
-            "checkedOn": "2026-11-24"
+            "checkedOn": "2026-11-26"
         },
         {
             "claim": "The Quick Filter, CSV export and pagination are Community features; the Set Filter, Excel export, row grouping and aggregation are Enterprise features.",

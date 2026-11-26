@@ -21,7 +21,7 @@
     "example": {
         "id": "pivot-tables",
         "intro": "Revenue by region, pivoted by quarter. Drag columns in the side bar or pivot panel to change the layout.",
-        "note": "Sample data. Uses AG Grid Enterprise features, which show a trial watermark without a licence key."
+        "note": "Sample data. Uses AG Grid Enterprise features; deployed without a licence key, these show a watermark and console warnings."
     },
     "keyFigures": {
         "heading": "Key figures",
@@ -113,7 +113,7 @@
         "steps": [
             {
                 "title": "Install AG Grid Enterprise",
-                "body": "Install `ag-grid-react` and `ag-grid-enterprise`, then pass `[AllEnterpriseModule]`, or just `PivotModule` plus the modules you use, to `AgGridProvider`. Without a licence key the grid shows a watermark."
+                "body": "Install `ag-grid-react`, `ag-grid-enterprise` and, for Pivot Charts, `ag-charts-community`, then pass `[AllEnterpriseModule]`, or just `PivotModule` plus the modules you use, to `AgGridProvider`. You can try Enterprise features locally without a licence key; deployed without one, the grid shows a watermark and console warnings."
             },
             {
                 "title": "Group rows and set a value column",
@@ -138,7 +138,7 @@
     "faq": [
         {
             "question": "Is there an open-source JavaScript pivot table?",
-            "answer": "AG Grid Community is MIT licensed but does not include pivoting. Pivoting is in AG Grid Enterprise, whose source is public on GitHub but which requires a commercial licence for production use. You can test Enterprise locally without a key; the grid shows a watermark."
+            "answer": "AG Grid Community is MIT licensed but does not include pivoting. Pivoting is in AG Grid Enterprise, whose source is public on GitHub but which requires a commercial licence for production use. You can test Enterprise locally without a key; deployed without one, the grid shows a watermark and console warnings."
         },
         {
             "question": "Can a JavaScript pivot table export to Excel?",
@@ -243,9 +243,9 @@
             "checkedOn": "2026-11-24"
         },
         {
-            "claim": "AG Grid Community is MIT licensed; AG Grid Enterprise is open source but needs a commercial licence for production and can be tested locally without a key, showing a watermark.",
+            "claim": "AG Grid Community is MIT licensed; AG Grid Enterprise is open source but needs a commercial licence for production and can be tested locally without a key; deployed without one, it shows a watermark.",
             "sourceUrl": "https://www.ag-grid.com/react-data-grid/community-vs-enterprise/",
-            "checkedOn": "2026-11-24"
+            "checkedOn": "2026-11-26"
         },
         {
             "claim": "Excel export follows the grid as rendered, including row grouping, and is an Enterprise feature.",

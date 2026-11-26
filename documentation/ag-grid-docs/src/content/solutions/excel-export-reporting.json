@@ -21,7 +21,7 @@
     "example": {
         "id": "excel-export",
         "intro": "Export the grid to Excel with currency formatting, or to CSV. Excel export is Enterprise; CSV export is Community.",
-        "note": "Sample data. Uses AG Grid Enterprise features, which show a trial watermark without a licence key."
+        "note": "Sample data. Uses AG Grid Enterprise features; deployed without a licence key, these show a watermark and console warnings."
     },
     "keyFigures": {
         "heading": "Key figures",
@@ -113,15 +113,15 @@
         "steps": [
             {
                 "title": "Provide the export modules",
-                "body": "Pass `CsvExportModule` (Community) and `ExcelExportModule` (Enterprise) to `AgGridProvider`, or use `AllEnterpriseModule`. Enterprise features run locally without a licence key but show a watermark."
+                "body": "Pass `CsvExportModule` (Community) and `ExcelExportModule` (Enterprise) to `AgGridProvider`, or use `AllEnterpriseModule`. You can try Enterprise features locally without a licence key; deployed without one, the grid shows a watermark and console warnings."
             },
             {
                 "title": "Trigger the export",
-                "body": "With `ContextMenuModule` (Enterprise) registered, users get Excel and CSV items in the right-click context menu. From your own button, call `gridRef.current.api.exportDataAsExcel({ fileName, sheetName })`. Shared settings can go in the `defaultExcelExportParams` grid option."
+                "body": "With `ContextMenuModule` (Enterprise) registered, the right-click menu gets an Export submenu with Excel and CSV items. From your own button, call `gridRef.current.api.exportDataAsExcel({ fileName, sheetName })`. Shared settings can go in the `defaultExcelExportParams` grid option."
             },
             {
                 "title": "Carry formatting into Excel",
-                "body": "Add `excelStyles` with ids such as `'header'`, and link columns to them with `cellClass`. Use `numberFormat` for currency and `dataType: 'DateTime'` with ISO date strings for real Excel dates."
+                "body": "Add `excelStyles`. The `header` id styles every header automatically; other ids link to body cells through `cellClass`. Use `numberFormat` for currency and `dataType: 'DateTime'` with ISO date strings for real Excel dates."
             },
             {
                 "title": "Choose rows and columns",
@@ -132,7 +132,7 @@
                 "body": "Collect sheets with `getSheetDataForExcel()` and pass them to `exportMultipleSheetsAsExcel({ data, fileName })`. For master/detail grids, use `getCustomContentBelowRow` to write order lines under each master row."
             }
         ],
-        "code": "// AG Grid v36. CSV export is Community; Excel export (ExcelExportModule) is Enterprise.\nimport { useMemo, useRef } from \"react\";\nimport { AgGridProvider, AgGridReact } from \"ag-grid-react\";\nimport { ClientSideRowModelModule, CsvExportModule } from \"ag-grid-community\";\nimport type { ColDef, ExcelStyle } from \"ag-grid-community\";\nimport { ExcelExportModule } from \"ag-grid-enterprise\";\n\nconst modules = [ClientSideRowModelModule, CsvExportModule, ExcelExportModule];\n\ninterface Sale { region: string; product: string; orderDate: string; revenue: number }\n\nexport function SalesReport({ rows }: { rows: Sale[] }) {\n  const gridRef = useRef<AgGridReact<Sale>>(null);\n\n  const columnDefs = useMemo<ColDef<Sale>[]>(() => [\n    { field: \"region\" },\n    { field: \"product\" },\n    // ISO strings (`yyyy-mm-ddThh:mm:ss`) export as Excel dates via the DateTime data type\n    { field: \"orderDate\", cellClass: \"isoDate\" },\n    { field: \"revenue\", cellClass: \"currency\" },\n  ], []);\n\n  // Excel Styles are matched to columns by cellClass id\n  const excelStyles = useMemo<ExcelStyle[]>(() => [\n    { id: \"header\", font: { bold: true } },\n    { id: \"isoDate\", dataType: \"DateTime\", numberFormat: { format: \"dd/mm/yyyy\" } },\n    { id: \"currency\", numberFormat: { format: \"#,##0.00\" } },\n  ], []);\n\n  return (\n    <AgGridProvider modules={modules}>\n      <button onClick={() => gridRef.current?.api.exportDataAsExcel({ fileName: \"sales.xlsx\", sheetName: \"Sales\" })}>\n        Export to Excel\n      </button>\n      <button onClick={() => gridRef.current?.api.exportDataAsCsv({ fileName: \"sales.csv\" })}>\n        Export to CSV\n      </button>\n      <div style={{ height: 500 }}>\n        <AgGridReact<Sale>\n          ref={gridRef}\n          rowData={rows}\n          columnDefs={columnDefs}\n          excelStyles={excelStyles}\n        />\n      </div>\n    </AgGridProvider>\n  );\n}",
+        "code": "// AG Grid v36. CSV export is Community; Excel export (ExcelExportModule) is Enterprise.\nimport { useMemo, useRef } from \"react\";\nimport { AgGridProvider, AgGridReact } from \"ag-grid-react\";\nimport { ClientSideRowModelModule, CsvExportModule } from \"ag-grid-community\";\nimport type { ColDef, ExcelStyle } from \"ag-grid-community\";\nimport { ContextMenuModule, ExcelExportModule } from \"ag-grid-enterprise\";\n\nconst modules = [ClientSideRowModelModule, CsvExportModule, ExcelExportModule, ContextMenuModule];\n\ninterface Sale { region: string; product: string; orderDate: string; revenue: number }\n\nexport function SalesReport({ rows }: { rows: Sale[] }) {\n  const gridRef = useRef<AgGridReact<Sale>>(null);\n\n  const columnDefs = useMemo<ColDef<Sale>[]>(() => [\n    { field: \"region\" },\n    { field: \"product\" },\n    // ISO strings (`yyyy-mm-ddThh:mm:ss`) export as Excel dates via the DateTime data type\n    { field: \"orderDate\", cellClass: \"isoDate\" },\n    { field: \"revenue\", cellClass: \"currency\" },\n  ], []);\n\n  // Excel Styles are matched to columns by cellClass id\n  const excelStyles = useMemo<ExcelStyle[]>(() => [\n    { id: \"header\", font: { bold: true } },\n    { id: \"isoDate\", dataType: \"DateTime\", numberFormat: { format: \"dd/mm/yyyy\" } },\n    { id: \"currency\", numberFormat: { format: \"£#,##0.00\" } },\n  ], []);\n\n  return (\n    <AgGridProvider modules={modules}>\n      <button onClick={() => gridRef.current?.api.exportDataAsExcel({ fileName: \"sales.xlsx\", sheetName: \"Sales\" })}>\n        Export to Excel\n      </button>\n      <button onClick={() => gridRef.current?.api.exportDataAsCsv({ fileName: \"sales.csv\" })}>\n        Export to CSV\n      </button>\n      <div style={{ height: 500 }}>\n        <AgGridReact<Sale>\n          ref={gridRef}\n          rowData={rows}\n          columnDefs={columnDefs}\n          excelStyles={excelStyles}\n        />\n      </div>\n    </AgGridProvider>\n  );\n}",
         "outro": "See the [default Excel export example](./excel-export/): reorder, filter and sort the columns, export, then compare the file with the grid."
     },
     "faq": [
@@ -142,7 +142,7 @@
         },
         {
             "question": "Can I export AG Grid to Excel without Enterprise?",
-            "answer": "Excel (.xlsx) export is an Enterprise feature. Community includes CSV export through `api.exportDataAsCsv()`, which Excel can open. You can try Excel export locally without a licence key; the grid shows a watermark and console message until a licence is installed."
+            "answer": "Excel (.xlsx) export is an Enterprise feature. Community includes CSV export through `api.exportDataAsCsv()`, which Excel can open. You can try Excel export locally without a licence key; deployed without one, the grid shows a watermark and console warnings."
         },
         {
             "question": "Should I export as CSV or XLSX?",
@@ -253,9 +253,9 @@
             "checkedOn": "2026-11-24"
         },
         {
-            "claim": "AG Grid Enterprise can be tested locally without a licence key, with a watermark and console warnings.",
+            "claim": "AG Grid Enterprise can be tested locally without a licence key; deployed without one, it shows a watermark and console warnings.",
             "sourceUrl": "https://www.ag-grid.com/react-data-grid/license-install/",
-            "checkedOn": "2026-11-24"
+            "checkedOn": "2026-11-26"
         }
     ]
 }

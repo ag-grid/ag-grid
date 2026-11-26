@@ -17,11 +17,11 @@
         "heading": "Build a project management table with AG Grid",
         "subHeading": "Show tasks and subtasks in one grid, let people edit owner, status and due date in place, and export the plan to Excel."
     },
-    "shortAnswer": "A project management table in AG Grid is a grid of tasks with columns for owner, status, due date and estimate. Cell editing, the date and select editors, undo and redo, custom status cell renderers, row dragging, text, number and date filters, and CSV export are all in AG Grid Community, which is free under the MIT licence. Showing subtasks under parent tasks needs Tree Data or Row Grouping, and summing estimates up the tree needs Aggregation. Those are Enterprise features, as are the Rich Select dropdown editor, the Set Filter and Excel export. Enterprise is free to try locally with a watermark and needs a licence in production.",
+    "shortAnswer": "A project management table in AG Grid is a grid of tasks with columns for owner, status, due date and estimate. Cell editing, the date and select editors, undo and redo, custom status cell renderers, row dragging, text, number and date filters, and CSV export are all in AG Grid Community, which is free under the MIT licence. Showing subtasks under parent tasks needs Tree Data or Row Grouping, and summing estimates up the tree needs Aggregation. Those are Enterprise features, as are the Rich Select dropdown editor, the Set Filter and Excel export. Enterprise is free to try locally without a licence key and needs a licence in production.",
     "example": {
         "id": "project-management",
         "intro": "Tasks and subtasks as tree data. Double-click an owner, status or due date to edit it.",
-        "note": "Sample data. Uses AG Grid Enterprise features, which show a trial watermark without a licence key."
+        "note": "Sample data. Uses AG Grid Enterprise features; deployed without a licence key, these show a watermark and console warnings."
     },
     "keyFigures": {
         "heading": "Key figures",
@@ -115,7 +115,7 @@
         "steps": [
             {
                 "title": "Model tasks as rows",
-                "body": "Give each task an `id`, the fields you want as columns (owner, status, due date, estimate) and, for subtasks, a `parentId`. Return the id from `getRowId` so edits and drags keep their row."
+                "body": "Give each task an `id`, the fields you want as columns (owner, status, due date, estimate) and, for subtasks, a `parentId`. Return the id from `getRowId`; the parent-ID tree and row dragging both need it."
             },
             {
                 "title": "Turn on the task hierarchy",
@@ -127,15 +127,15 @@
             },
             {
                 "title": "Add status cells, drag and totals",
-                "body": "Render status with your own `cellRenderer` component. Put `rowDrag: true` on the group column with `rowDragManaged`, and add `aggFunc: \"sum\"` to the estimate column so parent tasks show totals."
+                "body": "Render status with your own `cellRenderer` component. Put `rowDrag: true` on the group column with `rowDragManaged`, and add `aggFunc: \"sum\"` to the estimate column so parent tasks show totals. Managed dragging pauses while a sort or filter is applied."
             },
             {
                 "title": "Filter and export",
                 "body": "Add `filter` to the columns people search on and call `api.exportDataAsExcel()` from a button. Excel export, Tree Data, Rich Select, Set Filter and aggregation need `ag-grid-enterprise`."
             }
         ],
-        "code": "import { useCallback, useMemo, useRef, useState } from \"react\";\nimport { AgGridProvider, AgGridReact } from \"ag-grid-react\";\nimport type { ColDef, GetRowIdParams, ICellRendererParams } from \"ag-grid-community\";\nimport { AllEnterpriseModule } from \"ag-grid-enterprise\";\n\nconst modules = [AllEnterpriseModule];\n\ninterface Task {\n  id: string;\n  parentId?: string;\n  name: string;\n  owner: string;\n  status: \"Not started\" | \"In progress\" | \"Blocked\" | \"Done\";\n  due: string; // YYYY-MM-DD\n  estimateHours: number;\n}\n\nconst StatusPill = (p: ICellRendererParams<Task, Task[\"status\"]>) =>\n  p.value ? <span className={`status status-${p.value.replace(\" \", \"-\").toLowerCase()}`}>{p.value}</span> : null;\n\nexport function ProjectGrid() {\n  const gridRef = useRef<AgGridReact<Task>>(null);\n  const [rowData] = useState<Task[]>([\n    { id: \"1\", name: \"Website relaunch\", owner: \"Sam\", status: \"In progress\", due: \"2026-11-30\", estimateHours: 0 },\n    { id: \"2\", parentId: \"1\", name: \"Wireframes\", owner: \"Alex\", status: \"Done\", due: \"2026-10-10\", estimateHours: 16 },\n    { id: \"3\", parentId: \"1\", name: \"Build pages\", owner: \"Taylor\", status: \"Not started\", due: \"2026-11-15\", estimateHours: 40 },\n  ]);\n\n  const columnDefs = useMemo<ColDef<Task>[]>(() => [\n    { field: \"owner\", editable: true, filter: \"agSetColumnFilter\",\n      cellEditor: \"agRichSelectCellEditor\",\n      cellEditorParams: { values: [\"Alex\", \"Sam\", \"Taylor\"] } },\n    { field: \"status\", editable: true, cellRenderer: StatusPill,\n      cellEditor: \"agRichSelectCellEditor\",\n      cellEditorParams: { values: [\"Not started\", \"In progress\", \"Blocked\", \"Done\"] } },\n    { field: \"due\", editable: true, cellDataType: \"dateString\", filter: \"agDateColumnFilter\" },\n    { field: \"estimateHours\", editable: true, aggFunc: \"sum\" },\n  ], []);\n\n  const autoGroupColumnDef = useMemo<ColDef<Task>>(() => ({\n    headerName: \"Task\", field: \"name\", rowDrag: true, minWidth: 260,\n  }), []);\n\n  const getRowId = useCallback((p: GetRowIdParams<Task>) => p.data.id, []);\n\n  return (\n    <AgGridProvider modules={modules}>\n      <button onClick={() => gridRef.current?.api.exportDataAsExcel()}>Export to Excel</button>\n      <div style={{ height: 480 }}>\n        <AgGridReact<Task>\n          ref={gridRef}\n          rowData={rowData}\n          columnDefs={columnDefs}\n          autoGroupColumnDef={autoGroupColumnDef}\n          treeData\n          treeDataParentIdField=\"parentId\"\n          getRowId={getRowId}\n          groupDefaultExpanded={-1}\n          rowDragManaged\n          suppressMoveWhenRowDragging\n          undoRedoCellEditing\n        />\n      </div>\n    </AgGridProvider>\n  );\n}",
-        "outro": "See the [HR demo](/example-hr/), which uses the same building blocks: a tree of rows from `getDataPath`, editable columns with the Rich Select editor and a custom status cell renderer, with source on GitHub in React, JavaScript, Angular and Vue."
+        "code": "import { useCallback, useMemo, useRef, useState } from \"react\";\nimport { AgGridProvider, AgGridReact } from \"ag-grid-react\";\nimport type { ColDef, GetRowIdParams, ICellRendererParams } from \"ag-grid-community\";\nimport { AllEnterpriseModule } from \"ag-grid-enterprise\";\n\nconst modules = [AllEnterpriseModule];\n\ninterface Task {\n  id: string;\n  parentId?: string;\n  name: string;\n  owner: string;\n  status: \"Not started\" | \"In progress\" | \"Blocked\" | \"Done\";\n  due: string; // YYYY-MM-DD\n  estimateHours: number;\n}\n\nconst StatusPill = (p: ICellRendererParams<Task, Task[\"status\"]>) =>\n  p.value ? <span className={`status status-${p.value.replace(\" \", \"-\").toLowerCase()}`}>{p.value}</span> : null;\n\nexport function ProjectGrid() {\n  const gridRef = useRef<AgGridReact<Task>>(null);\n  const [rowData] = useState<Task[]>([\n    { id: \"1\", name: \"Website relaunch\", owner: \"Sam\", status: \"In progress\", due: \"2026-11-30\", estimateHours: 0 },\n    { id: \"2\", parentId: \"1\", name: \"Wireframes\", owner: \"Alex\", status: \"Done\", due: \"2026-10-10\", estimateHours: 16 },\n    { id: \"3\", parentId: \"1\", name: \"Build pages\", owner: \"Taylor\", status: \"Not started\", due: \"2026-11-15\", estimateHours: 40 },\n  ]);\n\n  const columnDefs = useMemo<ColDef<Task>[]>(() => [\n    { field: \"owner\", editable: true, filter: \"agSetColumnFilter\",\n      cellEditor: \"agRichSelectCellEditor\",\n      cellEditorParams: { values: [\"Alex\", \"Sam\", \"Taylor\"] } },\n    { field: \"status\", editable: true, cellRenderer: StatusPill,\n      cellEditor: \"agRichSelectCellEditor\",\n      cellEditorParams: { values: [\"Not started\", \"In progress\", \"Blocked\", \"Done\"] } },\n    { field: \"due\", editable: true, cellDataType: \"dateString\", filter: \"agDateColumnFilter\" },\n    { field: \"estimateHours\", editable: (p) => !p.node.group, aggFunc: \"sum\" },\n  ], []);\n\n  const autoGroupColumnDef = useMemo<ColDef<Task>>(() => ({\n    headerName: \"Task\", field: \"name\", rowDrag: true, minWidth: 260,\n  }), []);\n\n  const getRowId = useCallback((p: GetRowIdParams<Task>) => p.data.id, []);\n\n  return (\n    <AgGridProvider modules={modules}>\n      <button onClick={() => gridRef.current?.api.exportDataAsExcel()}>Export to Excel</button>\n      <div style={{ height: 480 }}>\n        <AgGridReact<Task>\n          ref={gridRef}\n          rowData={rowData}\n          columnDefs={columnDefs}\n          autoGroupColumnDef={autoGroupColumnDef}\n          treeData\n          treeDataParentIdField=\"parentId\"\n          getRowId={getRowId}\n          groupDefaultExpanded={-1}\n          rowDragManaged\n          suppressMoveWhenRowDragging\n          undoRedoCellEditing\n        />\n      </div>\n    </AgGridProvider>\n  );\n}",
+        "outro": "See the [HR demo](/example-hr/), which uses similar building blocks: a tree of rows from `getDataPath`, editable columns with the Rich Select editor and a custom status cell renderer, with source on GitHub in React, JavaScript, Angular and Vue."
     },
     "faq": [
         {
@@ -170,9 +170,9 @@
             "checkedOn": "2026-11-24"
         },
         {
-            "claim": "AG Grid Enterprise can be tested locally without a licence key, showing a watermark, and requires a licence in production.",
+            "claim": "AG Grid Enterprise can be tested locally without a licence key and requires a licence in production; deployed without one, it shows a watermark.",
             "sourceUrl": "https://www.ag-grid.com/react-data-grid/community-vs-enterprise/",
-            "checkedOn": "2026-11-24"
+            "checkedOn": "2026-11-26"
         },
         {
             "claim": "Tree Data is Enterprise and can be supplied three ways: data paths (getDataPath), nested records (treeDataChildrenField) or self-referential records with a parent id (treeDataParentIdField).",

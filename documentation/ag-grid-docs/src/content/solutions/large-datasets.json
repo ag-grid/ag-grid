@@ -117,7 +117,7 @@
             },
             {
                 "title": "Profile, then tune rendering",
-                "body": "Compare your grid with the AG Grid performance demo at the same size. Remove custom cell renderers to see if they are the cost, use `valueFormatter` instead where possible, mark slow renderers with `deferRender: true`, and adjust `rowBuffer`."
+                "body": "Compare your grid with the AG Grid performance demo at the same size. Remove custom cell renderers to see if they are the cost, use `valueFormatter` instead where possible, mark slow renderers with `cellRendererParams: { deferRender: true }`, and adjust `rowBuffer`."
             },
             {
                 "title": "Load in blocks when the data is too big to send",
@@ -125,7 +125,7 @@
             },
             {
                 "title": "Update rows with transactions",
-                "body": "Use `api.applyTransaction({ add, update, remove })` with `getRowId` rather than replacing `rowData`. For many small updates in quick succession, `applyTransactionAsync()` batches them."
+                "body": "With the default row model, use `api.applyTransaction({ add, update, remove })` with `getRowId` rather than replacing `rowData`. For many small updates in quick succession, `applyTransactionAsync()` batches them. With the Server-Side Row Model, use `api.applyServerSideTransaction()`."
             },
             {
                 "title": "Choose scrolling or pagination",
@@ -133,7 +133,7 @@
             }
         ],
         "code": "// AG Grid v36. Infinite Row Model: Community. Loads rows from the server in blocks as the user scrolls.\nimport { useMemo } from \"react\";\nimport { AgGridProvider, AgGridReact } from \"ag-grid-react\";\nimport { AllCommunityModule } from \"ag-grid-community\";\nimport type { ColDef, IDatasource, IGetRowsParams } from \"ag-grid-community\";\n\nconst modules = [AllCommunityModule];\n\ninterface Order { id: number; customer: string; status: string; total: number }\n\nexport function LargeOrdersGrid() {\n  const columnDefs = useMemo<ColDef<Order>[]>(() => [\n    { field: \"id\" }, { field: \"customer\" }, { field: \"status\" }, { field: \"total\" },\n  ], []);\n\n  // Hypothetical endpoint: returns { rows, lastRow } for the requested range\n  const datasource = useMemo<IDatasource>(() => ({\n    getRows: async (params: IGetRowsParams) => {\n      try {\n        const res = await fetch(`/api/orders?start=${params.startRow}&end=${params.endRow}`);\n        const { rows, lastRow } = await res.json();\n        params.successCallback(rows, lastRow);\n      } catch {\n        params.failCallback();\n      }\n    },\n  }), []);\n\n  return (\n    <AgGridProvider modules={modules}>\n      <div style={{ height: 600 }}>\n        <AgGridReact<Order>\n          columnDefs={columnDefs}\n          rowModelType=\"infinite\"\n          datasource={datasource}\n          cacheBlockSize={100}\n          maxBlocksInCache={10}\n          rowBuffer={10}\n        />\n      </div>\n    </AgGridProvider>\n  );\n}",
-        "outro": "See the [performance demo](/example/): change the row and column counts live, up to 100,000 rows, while scrolling, sorting and filtering, with React, JavaScript, Angular and Vue source on GitHub."
+        "outro": "See the [performance demo](/example/): pick a data size up to 100,000 rows while scrolling, sorting and filtering, with React, JavaScript, Angular and Vue source on GitHub."
     },
     "faq": [
         {

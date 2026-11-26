@@ -21,7 +21,7 @@
     "example": {
         "id": "tree-data",
         "intro": "An organisation chart as tree data, with a filter on each column.",
-        "note": "Sample data. Uses AG Grid Enterprise features, which show a trial watermark without a licence key."
+        "note": "Sample data. Uses AG Grid Enterprise features; deployed without a licence key, these show a watermark and console warnings."
     },
     "keyFigures": {
         "heading": "Key figures",
@@ -122,11 +122,11 @@
             },
             {
                 "title": "Add totals, filters and dragging",
-                "body": "Add `aggFunc: \"sum\"` to numeric columns, filters to the columns users search, and `rowDrag: true` on the group column with `rowDragManaged` to let users re-parent rows."
+                "body": "Add `aggFunc: \"sum\"` to numeric columns, filters to the columns users search, and `rowDrag: true` on the group column with `rowDragManaged`, `getRowId` and `suppressMoveWhenRowDragging` to let users re-parent rows. Managed dragging pauses while a sort or filter is applied."
             },
             {
                 "title": "Move large trees to the server",
-                "body": "For trees too large to send at once, switch to `rowModelType=\"serverSide\"` and implement `isServerSideGroup` and `getServerSideGroupKey` so children load on expand."
+                "body": "For trees too large to send at once, switch to `rowModelType=\"serverSide\"` with a server-side datasource, and implement `isServerSideGroup` and `getServerSideGroupKey` so children load on expand."
             }
         ],
         "code": "import { useCallback, useMemo, useState } from \"react\";\nimport { AgGridProvider, AgGridReact } from \"ag-grid-react\";\nimport type { ColDef, GetDataPath } from \"ag-grid-community\";\nimport { AllEnterpriseModule } from \"ag-grid-enterprise\";\n\nconst modules = [AllEnterpriseModule];\n\ninterface FileRow {\n  path: string[];\n  size?: number;\n  modified?: string;\n}\n\nexport function FileTree() {\n  const [rowData] = useState<FileRow[]>([\n    { path: [\"Documents\"] },\n    { path: [\"Documents\", \"Contracts\"] },\n    { path: [\"Documents\", \"Contracts\", \"nda.pdf\"], size: 120, modified: \"2026-09-12\" },\n    { path: [\"Documents\", \"Contracts\", \"msa.pdf\"], size: 340, modified: \"2026-08-03\" },\n    { path: [\"Documents\", \"budget.xlsx\"], size: 88, modified: \"2026-09-30\" },\n  ]);\n\n  const columnDefs = useMemo<ColDef<FileRow>[]>(() => [\n    { field: \"size\", headerName: \"Size (KB)\", aggFunc: \"sum\" }, // group rows show the sum of their children\n    { field: \"modified\", filter: \"agDateColumnFilter\", cellDataType: \"dateString\" },\n  ], []);\n\n  const autoGroupColumnDef = useMemo<ColDef<FileRow>>(() => ({\n    headerName: \"Name\", minWidth: 280, filter: \"agTextColumnFilter\",\n  }), []);\n\n  // Each row's position in the tree, as an array of keys\n  const getDataPath = useCallback<GetDataPath<FileRow>>((data) => data.path, []);\n\n  return (\n    <AgGridProvider modules={modules}>\n      <div style={{ height: 400 }}>\n        <AgGridReact<FileRow>\n          rowData={rowData}\n          columnDefs={columnDefs}\n          autoGroupColumnDef={autoGroupColumnDef}\n          treeData\n          getDataPath={getDataPath}\n          groupDefaultExpanded={-1}\n        />\n      </div>\n    </AgGridProvider>\n  );\n}",
@@ -143,7 +143,7 @@
         },
         {
             "question": "Is tree data free in AG Grid?",
-            "answer": "No. Tree Data is an AG Grid Enterprise feature, both client-side and with the Server-Side Row Model. You can try it locally without a licence key; the grid shows a watermark and a console message until a licence is installed."
+            "answer": "No. Tree Data is an AG Grid Enterprise feature, both client-side and with the Server-Side Row Model. You can try it locally without a licence key; deployed without one, the grid shows a watermark and console warnings."
         },
         {
             "question": "What is the difference between tree data and row grouping?",
@@ -230,9 +230,9 @@
             "checkedOn": "2026-11-24"
         },
         {
-            "claim": "AG Grid Enterprise can be tested locally without a licence key, showing a watermark and console warnings.",
+            "claim": "AG Grid Enterprise can be tested locally without a licence key; deployed without one, it shows a watermark and console warnings.",
             "sourceUrl": "https://www.ag-grid.com/react-data-grid/license-install/",
-            "checkedOn": "2026-11-24"
+            "checkedOn": "2026-11-26"
         },
         {
             "claim": "The Tree Data overview example is a file explorer built with getDataPath and a size column aggregated with sum.",

@@ -17,11 +17,11 @@
         "heading": "Spreadsheet-style editing in a React data grid",
         "subHeading": "Let users edit cells, select ranges, drag the fill handle, paste from Excel and undo mistakes, inside a grid that also sorts, filters and exports."
     },
-    "shortAnswer": "AG Grid turns a table into an editable, spreadsheet-like grid. AG Grid Community, free under the MIT licence, includes cell editing, full-row editing, text, number, date, checkbox and select editors, validation, undo and redo, keyboard navigation and CSV export. The features that make it behave most like Excel are in AG Grid Enterprise: cell range selection, the fill handle, clipboard copy, cut and paste, formulas with A1-style references, the Rich Select editor, batch editing, row numbers and Excel export. Excel import is shown in the docs using a third-party library to read the file. Enterprise is free to test locally with a watermark.",
+    "shortAnswer": "AG Grid turns a table into an editable, spreadsheet-like grid. AG Grid Community, free under the MIT licence, includes cell editing, full-row editing, text, number, date, checkbox and select editors, validation, undo and redo, keyboard navigation and CSV export. The features that make it behave most like Excel are in AG Grid Enterprise: cell range selection, the fill handle, clipboard copy, cut and paste, formulas with A1-style references, the Rich Select editor, batch editing, row numbers and Excel export. Excel import is shown in the docs using a third-party library to read the file. Enterprise is free to test locally without a licence key.",
     "example": {
         "id": "spreadsheet-editing",
         "intro": "Select a range and drag the fill handle, edit cells, then use Undo and Redo. The status bar sums the selection.",
-        "note": "Sample data. Uses AG Grid Enterprise features, which show a trial watermark without a licence key."
+        "note": "Sample data. Uses AG Grid Enterprise features; deployed without a licence key, these show a watermark and console warnings."
     },
     "keyFigures": {
         "heading": "Key figures",
@@ -130,7 +130,7 @@
             },
             {
                 "title": "Add formulas and export",
-                "body": "Set `allowFormula: true` on calculated columns and provide `getRowId`. Call `api.exportDataAsExcel()` to download the sheet with its formulas."
+                "body": "Set `allowFormula: true` on the columns that hold formulas and provide `getRowId`. For one expression across a whole column, use `calculatedExpression` instead. Call `api.exportDataAsExcel()` to download the sheet with its formulas."
             }
         ],
         "code": "import { useCallback, useMemo, useState } from \"react\";\nimport { AgGridProvider, AgGridReact } from \"ag-grid-react\";\nimport type { CellSelectionOptions, ColDef, GetRowIdParams } from \"ag-grid-community\";\nimport { AllEnterpriseModule } from \"ag-grid-enterprise\";\n\nconst modules = [AllEnterpriseModule];\n\ninterface Line {\n  id: number;\n  product: string;\n  price: number;\n  quantity: number;\n  total: string | number;\n}\n\nexport function SpreadsheetGrid() {\n  const [rowData] = useState<Line[]>([\n    { id: 1, product: \"Apples\", price: 1.25, quantity: 4,\n      total: '=REF(COLUMN(\"price\"),ROW(1))*REF(COLUMN(\"quantity\"),ROW(1))' },\n    { id: 2, product: \"Oranges\", price: 0.8, quantity: 6,\n      total: '=REF(COLUMN(\"price\"),ROW(2))*REF(COLUMN(\"quantity\"),ROW(2))' },\n  ]);\n\n  const columnDefs = useMemo<ColDef<Line>[]>(() => [\n    { field: \"product\" },\n    { field: \"price\" },\n    { field: \"quantity\" },\n    { field: \"total\", allowFormula: true },\n  ], []);\n\n  const defaultColDef = useMemo<ColDef<Line>>(() => ({ editable: true, flex: 1 }), []);\n\n  // Excel-style ranges plus a fill handle on the selection\n  const cellSelection = useMemo<CellSelectionOptions>(() => ({ handle: { mode: \"fill\" } }), []);\n\n  // Formulas need stable row IDs\n  const getRowId = useCallback((p: GetRowIdParams<Line>) => String(p.data.id), []);\n\n  return (\n    <AgGridProvider modules={modules}>\n      <div style={{ height: 400 }}>\n        <AgGridReact<Line>\n          rowData={rowData}\n          columnDefs={columnDefs}\n          defaultColDef={defaultColDef}\n          cellSelection={cellSelection}\n          getRowId={getRowId}\n          undoRedoCellEditing\n          undoRedoCellEditingLimit={20}\n        />\n      </div>\n    </AgGridProvider>\n  );\n}",
@@ -249,9 +249,9 @@
             "checkedOn": "2026-11-24"
         },
         {
-            "claim": "AG Grid Enterprise can be tested locally without a licence key, showing a watermark and console warnings.",
+            "claim": "AG Grid Enterprise can be tested locally without a licence key; deployed without one, it shows a watermark and console warnings.",
             "sourceUrl": "https://www.ag-grid.com/react-data-grid/license-install/",
-            "checkedOn": "2026-11-24"
+            "checkedOn": "2026-11-26"
         }
     ]
 }
