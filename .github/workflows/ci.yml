@@ -845,6 +845,8 @@ jobs:
         if: needs.test.result == 'success' || needs.test.result == 'failure' ||
           needs.e2e.result == 'success' || needs.e2e.result == 'failure'
         with:
+          # Only the test reports: the run's other artifacts include the Nx cache parts.
+          pattern: test-results-*
           path: test-results/
 
       - name: Merge JUnit Report XMLs
