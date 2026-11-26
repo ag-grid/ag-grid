@@ -230,8 +230,9 @@ import type {
     IAggFuncs,
 } from './colDef';
 import type { DataTypeDefinitions } from './dataType';
+import type { GridOptionsRemovedInV37 } from './removedProperties';
 
-export interface GridOptions<TData = any> {
+export interface GridOptions<TData = any> extends GridOptionsRemovedInV37 {
     // ******************************************************************************************************
     // If you change the properties on this interface, you must also update PropertyKeys to be consistent. *
     // ******************************************************************************************************

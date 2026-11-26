@@ -31,6 +31,7 @@ import type {
 } from './colDef-groupRowValueSetter';
 import type { ShowValuesAs, ShowValuesAsDef, ShowValuesAsType } from './colDef-showValuesAs';
 import type { GetColumnMenuItems, GetContextMenuItems, GetMainMenuItems, RowClassParams } from './gridOptions';
+import type { ColDefRemovedInV37 } from './removedProperties';
 
 export type { BaseColDefParams, ColumnFunctionCallbackParams } from './colDef-base';
 
@@ -321,7 +322,8 @@ export type SortComparatorFn<TData = any, TValue = any> = (
 ) => number;
 
 /** Configuration options for columns in AG Grid. */
-export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData, TValue>, IFilterDef {
+export interface ColDef<TData = any, TValue = any>
+    extends AbstractColDef<TData, TValue>, IFilterDef, ColDefRemovedInV37 {
     // *** Columns *** //
 
     /** The unique ID to give the column. This is optional. If missing, the ID will default to the field.

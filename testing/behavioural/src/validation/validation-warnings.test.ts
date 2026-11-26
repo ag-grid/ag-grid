@@ -212,9 +212,9 @@ describe('ag-grid validation warnings', () => {
         gridsManager.createGrid('myGrid', {
             columnDefs: [],
             rowData: [],
-            suppressPropertyNamesCheck: true,
-            notARealOption: 1,
-        } as GridOptions);
+            ['suppressPropertyNamesCheck' as any]: true,
+            ['notARealOption' as any]: 1,
+        });
 
         const invalidPropWarnings = (name: string) =>
             consoleWarnSpy.mock.calls.filter((args) =>
