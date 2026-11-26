@@ -8,6 +8,7 @@ import {
     _setAriaExpanded,
     _setAriaLabel,
     _setDisplayed,
+    _translateTokens,
 } from 'ag-stack';
 
 import type { ElementParams, FilterOpenedEvent, FilterPanelFilterState, TooltipFeature } from 'ag-grid-community';
@@ -144,9 +145,15 @@ export class FilterCardComp extends Component {
             this.toggleExpand(newState);
         }
 
-        let ariaLabel = expanded ? null : `${name} ${newState.summary}`;
+        const translate = this.getLocaleTextFunc();
+        let ariaLabel = expanded
+            ? null
+            : _translateTokens(translate, 'ariaLabelFilterCardSummary', '${name} ${summary}', {
+                  name,
+                  summary: String(newState.summary),
+              });
         if (isEditing) {
-            ariaLabel = `${ariaLabel ?? name}. ${translateForFilterPanel(this, 'ariaLabelFilterCardHasEdits')}`;
+            ariaLabel = `${ariaLabel ?? name}${translate('ariaAnnouncementSeparator', '. ')}${translateForFilterPanel(this, 'ariaLabelFilterCardHasEdits')}`;
         }
         _setAriaLabel(eExpand, ariaLabel);
 

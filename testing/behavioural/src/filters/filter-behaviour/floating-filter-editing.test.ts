@@ -17,6 +17,7 @@ import {
     BigIntFilterModule,
     ClientSideRowModelModule,
     DateFilterModule,
+    LocaleModule,
     NumberFilterModule,
     TextFilterModule,
     enableDevValidations,
@@ -41,6 +42,7 @@ describe('Floating filter editing', () => {
     const gridsManager = new TestGridsManager({
         modules: [
             ClientSideRowModelModule,
+            LocaleModule,
             TextFilterModule,
             NumberFilterModule,
             BigIntFilterModule,
@@ -121,6 +123,27 @@ describe('Floating filter editing', () => {
             ├── LEAF id:1 country:"Italy"
             └── LEAF id:2 country:"Australia"
         `);
+    });
+
+    test('text: a locale phrases how the summary joins combined conditions', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [{ field: 'country', filter: 'agTextColumnFilter', floatingFilter: true }],
+            rowData: [{ country: 'Italy' }, { country: 'Iceland' }],
+            localeText: { orCondition: 'または', filterSummaryJoin: '${left}、${operator}${right}' },
+        });
+
+        await api.setColumnFilterModel('country', {
+            filterType: 'text',
+            operator: 'OR',
+            conditions: [
+                { filterType: 'text', type: 'contains', filter: 'ita' },
+                { filterType: 'text', type: 'contains', filter: 'ice' },
+            ],
+        });
+        await api.onFilterChanged();
+        await asyncSetTimeout(0);
+
+        expect(floatingInput(api, 'country').value).toBe('ita、またはice');
     });
 
     test('text: a combined (two-condition) model set via API renders read-only with a summary', async () => {

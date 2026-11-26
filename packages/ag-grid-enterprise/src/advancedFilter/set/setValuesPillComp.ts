@@ -1,4 +1,5 @@
 import type { AgComponentPopupPositionParams } from 'ag-stack';
+import { _translateTokens } from 'ag-stack';
 
 import type {
     AgColumn,
@@ -76,7 +77,11 @@ export class SetValuesPillComp extends PillComp {
         if (total > MAX_SUMMARY_VALUES) {
             shown.push(this.advFilterExpSvc.translate('advancedFilterSetMore', [String(total - MAX_SUMMARY_VALUES)]));
         }
-        return `(${total}) ${shown.join(', ')}`;
+        const translate = this.getLocaleTextFunc();
+        return _translateTokens(translate, 'advancedFilterSetSummary', '(${count}) ${values}', {
+            count: String(total),
+            values: shown.join(translate('filterSummaryListSeparator', ', ')),
+        });
     }
 
     protected override open(): void {

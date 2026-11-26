@@ -1,3 +1,5 @@
+import { _translateTokens } from 'ag-stack';
+
 import { BeanStub } from '../../context/beanStub';
 import type { Column } from '../../interfaces/iColumn';
 import type { FilterLocaleTextKey } from '../filterLocaleText';
@@ -65,7 +67,16 @@ export abstract class SimpleFilterModelFormatter<
             const conditions = combinedModel.conditions ?? [];
             const customOptions = conditions.map((condition) => this.getModelAsString(condition, source));
             const joinOperatorTranslateKey = combinedModel.operator === 'AND' ? 'andCondition' : 'orCondition';
-            return customOptions.join(` ${translateForFilter(this, joinOperatorTranslateKey)} `);
+            const operator = translateForFilter(this, joinOperatorTranslateKey);
+            let summary = customOptions[0] ?? '';
+            for (let i = 1, len = customOptions.length; i < len; ++i) {
+                summary = _translateTokens(translate, 'filterSummaryJoin', '${left} ${operator} ${right}', {
+                    left: summary,
+                    operator,
+                    right: customOptions[i] ?? '',
+                });
+            }
+            return summary;
         } else if (model.type === 'blank' || model.type === 'notBlank') {
             return forToolPanel
                 ? translateForFilter(this, model.type === 'blank' ? 'filterSummaryBlank' : 'filterSummaryNotBlank')
@@ -123,11 +134,13 @@ export abstract class SimpleFilterModelFormatter<
         }
         if (typeValue != null) {
             // 0 inputs covered by parent
-            if (isRange) {
-                return `${typeValue} ${translateForFilter(this, 'filterSummaryInRangeValues', [getFilter(), getFilterTo()])}`;
-            } else {
-                return `${typeValue} ${getFilter()}`;
-            }
+            const value = isRange
+                ? translateForFilter(this, 'filterSummaryInRangeValues', { from: getFilter(), to: getFilterTo() })
+                : getFilter();
+            return _translateTokens(this.getLocaleTextFunc(), 'filterSummaryCondition', '${operator} ${value}', {
+                operator: typeValue,
+                value,
+            });
         }
         return null;
     }

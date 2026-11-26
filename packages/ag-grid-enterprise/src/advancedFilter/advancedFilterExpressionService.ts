@@ -1,4 +1,12 @@
-import { _getOwn, _parseBigIntOrNull, _parseDateTimeFromString, _serialiseDate, _toStringOrNull } from 'ag-stack';
+import type { LocaleTokenValues } from 'ag-stack';
+import {
+    _getOwn,
+    _parseBigIntOrNull,
+    _parseDateTimeFromString,
+    _serialiseDate,
+    _toStringOrNull,
+    _translate,
+} from 'ag-stack';
 
 import type {
     AgColumn,
@@ -441,12 +449,11 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
         }
     }
 
-    public translate(key: keyof typeof ADVANCED_FILTER_LOCALE_TEXT, variableValues?: string[]): string {
-        let defaultValue = ADVANCED_FILTER_LOCALE_TEXT[key];
-        if (typeof defaultValue === 'function') {
-            defaultValue = defaultValue(variableValues!);
-        }
-        return this.getLocaleTextFunc()(key, defaultValue, variableValues);
+    public translate(
+        key: keyof typeof ADVANCED_FILTER_LOCALE_TEXT,
+        variableValues?: string[] | LocaleTokenValues
+    ): string {
+        return _translate(this, ADVANCED_FILTER_LOCALE_TEXT, key, variableValues);
     }
 
     public generateAutocompleteListParams(

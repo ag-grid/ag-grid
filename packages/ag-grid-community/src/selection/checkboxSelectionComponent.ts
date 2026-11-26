@@ -1,5 +1,5 @@
 import type { ITooltipFeature } from 'ag-stack';
-import { RefPlaceholder, _getAriaCheckboxStateName } from 'ag-stack';
+import { RefPlaceholder, _getAriaCheckboxStateName, _getAriaLabelWithState } from 'ag-stack';
 
 import { AgCheckboxSelector } from '../agWidgets/agCheckbox';
 import type { AgColumn } from '../entities/agColumn';
@@ -67,7 +67,7 @@ export class CheckboxSelectionComponent extends Component {
         const translatedLabel = translate(ariaKey, ariaLabel);
 
         eCheckbox.setValue(state, true);
-        eCheckbox.setInputAriaLabel(`${translatedLabel} (${stateName})`);
+        eCheckbox.setInputAriaLabel(_getAriaLabelWithState(translate, translatedLabel, stateName));
         const selected = state === true;
         if (this.tooltipSelected !== selected) {
             this.tooltipSelected = selected;

@@ -1,4 +1,4 @@
-import { _exists, _getActiveDomElement, _getDocument, _setAriaLabel, _setAriaLevel } from 'ag-stack';
+import { _exists, _getActiveDomElement, _getDocument, _setAriaLabel, _setAriaLevel, _translateTokens } from 'ag-stack';
 
 import type {
     AbstractColDef,
@@ -598,7 +598,13 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
         const localeColumns = translate('columns', 'Columns');
         const items = this.displayedColsList.length;
 
-        _setAriaLabel(this.virtualList.getAriaElement(), `${columnListName} ${items} ${localeColumns}`);
+        _setAriaLabel(
+            this.virtualList.getAriaElement(),
+            // Built from the existing words so a localeText without this key reads as before.
+            _translateTokens(translate, 'ariaColumnPanelListCount', `${columnListName} \${count} ${localeColumns}`, {
+                count: String(items),
+            })
+        );
     }
 
     private focusRowIfAlive(rowIndex: number): Promise<void> {

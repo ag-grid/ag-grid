@@ -7,6 +7,7 @@ import {
     ColumnApiModule,
     GRAND_TOTAL_ROW_ID,
     GROUP_TOTAL_ROW_ID_PREFIX,
+    LocaleModule,
     getGridElement,
 } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule, TreeDataModule } from 'ag-grid-enterprise';
@@ -336,6 +337,43 @@ describe('ag-grid grouping display types and footers', () => {
         const grandTotalNode = api.getRowNode(GRAND_TOTAL_ROW_ID);
         expect(grandTotalNode?.footer).toBe(true);
         expect(grandTotalNode?.aggData?.gold).toBe(6);
+    });
+
+    test('the grand total row shows the total word alone, not the group total phrase without a value', async () => {
+        const rowData = cachedJSONObjects.array([
+            { id: '1', country: 'Ireland', gold: 1 },
+            { id: '2', country: 'Italy', gold: 3 },
+        ]);
+
+        const api = gridsManager.createGrid(
+            'myGrid',
+            {
+                columnDefs: [
+                    { field: 'country', rowGroup: true, hide: true },
+                    { field: 'gold', aggFunc: 'sum' },
+                ],
+                autoGroupColumnDef: { headerName: 'Country' },
+                animateRows: false,
+                groupDefaultExpanded: -1,
+                groupTotalRow: 'bottom',
+                grandTotalRow: 'bottom',
+                localeText: { footerTotal: 'Összesen', footerTotalValue: '${value} összesen' },
+                rowData,
+                getRowId: (params) => params.data.id,
+            },
+            { modules: [LocaleModule] }
+        );
+
+        await new GridRows(api, 'localised group and grand total rows').check(`
+            ROOT id:ROOT_NODE_ID gold:4
+            ├─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+            │ ├── LEAF id:1 country:"Ireland" gold:1
+            │ └─ footer id:rowGroupFooter_row-group-country-Ireland ag-Grid-AutoColumn:"Ireland összesen" gold:1
+            ├─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            │ ├── LEAF id:2 country:"Italy" gold:3
+            │ └─ footer id:rowGroupFooter_row-group-country-Italy ag-Grid-AutoColumn:"Italy összesen" gold:3
+            └─ footer id:rowGroupFooter_ROOT_NODE_ID ag-Grid-AutoColumn:"Összesen " gold:4
+        `);
     });
 
     test('grouping with custom group ordering', async () => {

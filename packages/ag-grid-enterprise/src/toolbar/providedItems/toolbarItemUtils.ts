@@ -2,9 +2,11 @@ import {
     FAST_TEST_TIMINGS,
     _addOrRemoveAttribute,
     _clearElement,
+    _getLocaleTextFunc,
     _setAriaLabel,
     _setDisabled,
     _setDisplayed,
+    _translateTokens,
 } from 'ag-stack';
 
 import type { BeanCollection, GridInputTextField, IconName } from 'ag-grid-community';
@@ -35,7 +37,13 @@ export function createToolbarInput(
         eIconWrapper.appendChild(eIcon);
     }
 
-    eInputField.setInputPlaceholder(`${label}...`).setInputAriaLabel(label).setValue(initialValue, true);
+    const placeholder = _translateTokens(
+        _getLocaleTextFunc(beans.localeSvc),
+        'toolbarInputPlaceholder',
+        '${label}...',
+        { label }
+    );
+    eInputField.setInputPlaceholder(placeholder).setInputAriaLabel(label).setValue(initialValue, true);
     eInputField.addCss('ag-toolbar-input-widget');
     const eInput = eInputField.getInputElement();
     eInput.classList.add('ag-toolbar-input-field');

@@ -1,4 +1,5 @@
 import type { LocaleTextFunc } from 'ag-stack';
+import { _translateTokens } from 'ag-stack';
 
 import type {
     AgColumn,
@@ -574,7 +575,12 @@ export class ShowValuesAsService extends BeanStub implements NamedBean, IShowVal
     private modeTooltip(type: ShowValuesAsType, mode: ShowValuesAsModeDefResolved): string {
         const label = modeLabel(mode.def, type);
         const description = resolveText(mode.def.description);
-        return description ? `${label}: ${description}` : label;
+        return description
+            ? _translateTokens(this.getLocaleTextFunc(), 'showValuesAsTooltip', '${label}: ${description}', {
+                  label,
+                  description,
+              })
+            : label;
     }
 
     public getActiveModeTooltip(column: AgColumn): string | null {
