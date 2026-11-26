@@ -1,6 +1,8 @@
 import { Icon } from '@ag-website-shared/components/icon/Icon';
-import type { FunctionComponent, MouseEventHandler, ReactNode } from 'react';
+import classnames from 'classnames';
+import type { FunctionComponent, MouseEventHandler } from 'react';
 
+import tooltipStyles from '../tooltip/Tooltip.module.scss';
 import styles from './OpenInCTA.module.scss';
 
 type CtaType = 'newTab' | 'plunker' | 'stackblitz' | 'codesandbox';
@@ -27,39 +29,18 @@ const DISPLAY_NAME: Record<CtaType, string> = {
     codesandbox: 'CodeSandbox',
 };
 
-const TOOLTIPS: Record<CtaType, ReactNode> = {
-    newTab: (
-        <>
-            <span className={styles.tooltip}>{DISPLAY_NAME.newTab}</span>
-        </>
-    ),
-    plunker: (
-        <>
-            <span className={styles.tooltip}>{DISPLAY_NAME.plunker}</span>
-        </>
-    ),
-    stackblitz: (
-        <>
-            <span className={styles.tooltip}>{DISPLAY_NAME.stackblitz}</span>
-        </>
-    ),
-    codesandbox: (
-        <>
-            <span className={styles.tooltip}>{DISPLAY_NAME.codesandbox}</span>
-        </>
-    ),
-};
-
 export const OpenInCTA: FunctionComponent<Props> = (props) => {
     const { type, tracking } = props;
-    const tooltip = TOOLTIPS[type];
+    const tooltip = (
+        <span className={classnames(tooltipStyles.bubble, tooltipStyles.bubbleLarge)}>{DISPLAY_NAME[type]}</span>
+    );
 
     const isButton = Boolean((props as ButtonProps).onClick);
 
     if (isButton) {
         const { onClick } = props as ButtonProps;
         return (
-            <span className={styles.cta}>
+            <span className={classnames(styles.cta, tooltipStyles.trigger)}>
                 {tooltip}
                 <button
                     className="button-style-none"
@@ -77,7 +58,7 @@ export const OpenInCTA: FunctionComponent<Props> = (props) => {
     } else {
         const { href } = props as LinkProps;
         return (
-            <span className={styles.cta}>
+            <span className={classnames(styles.cta, tooltipStyles.trigger)}>
                 {tooltip}
                 <a
                     href={href}

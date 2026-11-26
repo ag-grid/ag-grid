@@ -312,6 +312,7 @@ async function renderTagBlock(node: Node, ctx: RenderContext): Promise<string> {
         case 'kbd':
         case 'br':
         case 'enterpriseIcon':
+        case 'studioIcon':
             return renderTagInline(node, ctx);
         default:
             return renderDelegatedTag(node, ctx);
@@ -402,6 +403,9 @@ function renderTagInline(node: Node, ctx: RenderContext): string {
             return '\n';
         case 'enterpriseIcon':
             return ' (Enterprise)';
+        case 'studioIcon':
+            // An AG Studio product icon; its label stands in for it, and a decorative one has none.
+            return escapeMarkdownText(stringifyAttr(node.attributes.alt, ctx));
         case 'link':
             return renderLink(node, ctx);
         case 'image':
@@ -912,6 +916,17 @@ function getPath(source: Record<string, unknown>, pathParts: (string | number)[]
         current = current[pathParts[i]];
     }
     return current;
+}
+
+/**
+ * Make plain text read back literally rather than as Markdown, by collapsing it onto one line and
+ * backslash-escaping every ASCII punctuation character (CommonMark allows escaping all of them).
+ */
+function escapeMarkdownText(text: string): string {
+    return text
+        .replace(/\s+/g, ' ')
+        .trim()
+        .replace(/[\x21-\x2f\x3a-\x40\x5b-\x60\x7b-\x7e]/g, '\\$&');
 }
 
 function stringifyAttr(attr: unknown, ctx: RenderContext): string {
