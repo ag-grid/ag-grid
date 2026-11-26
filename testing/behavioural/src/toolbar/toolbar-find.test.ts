@@ -13,12 +13,18 @@ import {
 } from 'ag-test-utils';
 
 import type { GridOptions, ToolbarBuiltInItemDef } from 'ag-grid-community';
-import { ClientSideRowModelModule, PinnedRowModule, TooltipModule, enableDevValidations } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    LocaleModule,
+    PinnedRowModule,
+    TooltipModule,
+    enableDevValidations,
+} from 'ag-grid-community';
 import { FindModule, ToolbarModule } from 'ag-grid-enterprise';
 
 describe('Toolbar find item', () => {
     const gridMgr = new TestGridsManager({
-        modules: [ClientSideRowModelModule, FindModule, PinnedRowModule, ToolbarModule],
+        modules: [ClientSideRowModelModule, FindModule, LocaleModule, PinnedRowModule, ToolbarModule],
     });
 
     afterEach(() => {
@@ -416,6 +422,18 @@ describe('Toolbar find item', () => {
             input.value = 'bob';
             pressEnter(input);
             await expectAnnouncement(announcement, 'Match 1 of 1, Name, row 4');
+        });
+
+        test('a localeText written with ${variable} still fills the values by position', async () => {
+            const { input, announcement } = await createFindGrid('find-announce-positional-locale', {
+                localeText: {
+                    ariaFindActiveMatch: 'Treffer ${variable} von ${variable}, ${variable}, Zeile ${variable}',
+                },
+            });
+
+            input.value = 'a';
+            pressEnter(input);
+            await expectAnnouncement(announcement, 'Treffer 1 von 3, Name, Zeile 1');
         });
 
         test('marks only the active match with aria-current', async () => {
