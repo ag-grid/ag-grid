@@ -29,7 +29,7 @@ export class CalculatedColumnAutocompleteRow extends Component<HighlightTooltipE
     public postConstruct(): void {
         // Mirrors AgListItem: a tooltip that only shows when the row text is truncated.
         this.tooltipFeature = this.createOptionalManagedBean(
-            this.beans.tooltipSvc?.createHighlightTooltip(
+            this.beans.tooltipCoreSvc?.createHighlightTooltip(
                 {
                     getGui: () => this.getGui(),
                     getAriaElement: () => this.getGui().parentElement!,

@@ -14,7 +14,7 @@ import { _getCellTooltipComponentDefinition, _resolveTextTooltip, getGroupToolti
 import { _getLegacyTooltipFieldValue, _isCellTooltipConfigured, _resolveCellTooltipValue } from './tooltipValueUtils';
 import type { LegacyTooltipFieldResolution } from './tooltipValueUtils';
 
-type ResolvedCellTooltip = ResolvedTooltip & {
+export type ResolvedCellTooltip = ResolvedTooltip & {
     location: Extract<TooltipLocation, 'cell' | 'cellEditor' | 'cellFormula'>;
 };
 
@@ -126,6 +126,15 @@ const resolveCellTooltip = (
         }
     }
 
+    return beans.tooltipSvc?.resolveCellTooltip(ctrl, sourceParams) ?? null;
+};
+
+export function _resolveConfiguredCellTooltip(
+    beans: BeanCollection,
+    ctrl: CellCtrl,
+    sourceParams: TooltipSourceParams
+): ResolvedCellTooltip | null {
+    const { column, rowNode } = ctrl;
     if (ctrl.rendererTooltipValue != null) {
         return {
             ..._resolveTextTooltip(beans.gos, {
@@ -157,7 +166,7 @@ const resolveCellTooltip = (
         }),
         location: 'cell',
     };
-};
+}
 
 export function _createCellTooltipSource(beans: BeanCollection, ctrl: CellCtrl): TooltipSource {
     const translate = _getLocaleTextFunc(beans.localeSvc);

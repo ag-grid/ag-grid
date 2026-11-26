@@ -153,6 +153,7 @@ type InternalModuleName =
     | 'Sort'
     | 'SsrmInfiniteSharedApi'
     | 'StickyRow'
+    | 'TooltipCore'
     | 'Touch'
     | 'Testing';
 

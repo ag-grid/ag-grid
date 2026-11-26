@@ -91,7 +91,7 @@ export class AdvancedFilterComp extends Component {
 
     public postConstruct(): void {
         this.tooltipFeature = this.createOptionalManagedBean(
-            this.beans.tooltipSvc?.createTooltip({
+            this.beans.tooltipCoreSvc?.createTooltip({
                 getGui: () => this.getGui(),
                 getTooltipShowDelayOverride: () => 1000,
                 getLocation: () => 'advancedFilter',

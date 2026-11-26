@@ -1,5 +1,5 @@
 import type { _CalculatedColumnsGridApi, _ModuleWithApi } from 'ag-grid-community';
-import { ColumnApiModule, TooltipModule, _PopupModule, _UserColumnService } from 'ag-grid-community';
+import { ColumnApiModule, _PopupModule, _TooltipCoreModule, _UserColumnService } from 'ag-grid-community';
 
 import { FormulaModule } from '../formula/formulaModule';
 import { VERSION } from '../version';
@@ -19,6 +19,6 @@ export const CalculatedColumnsModule: _ModuleWithApi<_CalculatedColumnsGridApi> 
     version: VERSION,
     beans: [CalculatedColumnsService, _UserColumnService],
     apiFunctions: { openAddCalculatedColumnDialog, openCalculatedColumnDialog, refreshCalculatedColumns },
-    dependsOn: [FormulaModule, _PopupModule, ColumnApiModule, TooltipModule],
+    dependsOn: [FormulaModule, _PopupModule, ColumnApiModule, _TooltipCoreModule],
     css: [calculatedColumnsCSS],
 };

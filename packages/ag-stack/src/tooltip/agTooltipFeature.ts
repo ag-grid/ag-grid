@@ -184,13 +184,17 @@ export class AgTooltipFeature<
         this.refreshTooltip();
     }
 
+    protected areBuiltInTooltipsSuppressed(): boolean {
+        return !!this.gos.get('suppressBuiltInTooltips');
+    }
+
     public refreshTooltip(clearWithEmptyString?: boolean): void {
         this.browserTooltips = this.beans.gos.get('enableBrowserTooltips')!;
         if (!this.eventSource || this.browserTooltips || this.removeSourceListeners) {
             this.setupSourceListeners();
         }
 
-        if (this.ctrl.control && this.gos.get('suppressBuiltInTooltips')) {
+        if (this.ctrl.control && this.areBuiltInTooltipsSuppressed()) {
             this.setBrowserTooltip(null);
             this.tooltipManager = this.destroyBean(this.tooltipManager, this.beans.context);
             return;

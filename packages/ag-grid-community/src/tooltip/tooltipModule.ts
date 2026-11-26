@@ -1,12 +1,33 @@
-import { AgHighlightTooltipFeature, AgTooltipComponent, AgTooltipFeature } from 'ag-stack';
+import { AgHighlightTooltipFeature, AgTooltipComponent } from 'ag-stack';
 
 import type { _ModuleWithoutApi } from '../interfaces/iModule';
 import { VERSION } from '../version';
 import { PopupModule } from '../widgets/popupModule';
+import { GridTooltipFeature } from './gridTooltipFeature';
 import tooltipCSS from './tooltip.css';
+import { TooltipCoreService } from './tooltipCoreService';
 import { TooltipService } from './tooltipService';
 import { TooltipStateManager } from './tooltipStateManager';
 import { TooltipTouchCoordinator } from './tooltipTouchCoordinator';
+
+/**
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export const TooltipCoreModule: _ModuleWithoutApi = {
+    moduleName: 'TooltipCore',
+    version: VERSION,
+    beans: [TooltipCoreService, TooltipTouchCoordinator],
+    dynamicBeans: {
+        tooltipFeature: GridTooltipFeature as any,
+        highlightTooltipFeature: AgHighlightTooltipFeature as any,
+        tooltipStateManager: TooltipStateManager as any,
+    },
+    userComponents: {
+        agTooltipComponent: AgTooltipComponent,
+    },
+    dependsOn: [PopupModule],
+    css: [tooltipCSS],
+};
 
 /**
  * @feature Tooltips
@@ -15,19 +36,12 @@ import { TooltipTouchCoordinator } from './tooltipTouchCoordinator';
 export const TooltipModule: _ModuleWithoutApi = {
     moduleName: 'Tooltip',
     version: VERSION,
-    beans: [TooltipService, TooltipTouchCoordinator],
-    dynamicBeans: {
-        tooltipFeature: AgTooltipFeature as any,
-        highlightTooltipFeature: AgHighlightTooltipFeature as any,
-        tooltipStateManager: TooltipStateManager as any,
-    },
+    beans: [TooltipService],
     userComponents: {
-        agTooltipComponent: AgTooltipComponent,
         agBuiltInTooltipComponent: {
             classImp: AgTooltipComponent,
             processParams: (params) => ({ ...params, value: params.text }),
         },
     },
-    dependsOn: [PopupModule],
-    css: [tooltipCSS],
+    dependsOn: [TooltipCoreModule],
 };

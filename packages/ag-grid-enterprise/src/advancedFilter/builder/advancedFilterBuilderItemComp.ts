@@ -247,7 +247,7 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp<AdvancedFilterBu
     private setupValidation(): void {
         this.eValidation.appendChild(_createIconNoSpan('advancedFilterBuilderInvalid', this.beans)!);
         this.validationTooltipFeature = this.createOptionalManagedBean(
-            this.beans.tooltipSvc?.createTooltip({
+            this.beans.tooltipCoreSvc?.createTooltip({
                 getGui: () => this.eValidation,
                 getLocation: () => 'advancedFilter',
                 getTooltip: () => ({ value: this.ePillWrapper.getValidationMessage() }),
@@ -274,7 +274,7 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp<AdvancedFilterBu
         this.eAddButton.appendChild(eAddButton.getGui());
 
         this.createOptionalManagedBean(
-            this.beans.tooltipSvc?.createTooltip({
+            this.beans.tooltipCoreSvc?.createTooltip({
                 getGui: () => this.eAddButton,
                 getLocation: () => 'advancedFilter',
                 getTooltip: () => ({
@@ -298,7 +298,7 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp<AdvancedFilterBu
         });
 
         this.createOptionalManagedBean(
-            this.beans.tooltipSvc?.createTooltip({
+            this.beans.tooltipCoreSvc?.createTooltip({
                 getGui: () => this.eRemoveButton,
                 getLocation: () => 'advancedFilter',
                 getTooltip: () => ({
@@ -327,7 +327,7 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp<AdvancedFilterBu
             });
 
             this.moveUpTooltipFeature = this.createOptionalManagedBean(
-                this.beans.tooltipSvc?.createTooltip({
+                this.beans.tooltipCoreSvc?.createTooltip({
                     getGui: () => this.eMoveUpButton,
                     getLocation: () => 'advancedFilter',
                     getTooltip: () => ({
@@ -355,7 +355,7 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp<AdvancedFilterBu
             });
 
             this.moveDownTooltipFeature = this.createOptionalManagedBean(
-                this.beans.tooltipSvc?.createTooltip({
+                this.beans.tooltipCoreSvc?.createTooltip({
                     getGui: () => this.eMoveDownButton,
                     getLocation: () => 'advancedFilter',
                     getTooltip: () => ({

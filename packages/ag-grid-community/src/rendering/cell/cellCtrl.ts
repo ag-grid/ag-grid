@@ -227,7 +227,7 @@ export class CellCtrl extends BeanStub implements CompBeanOwner {
     }
 
     private enableTooltipFeature(): void {
-        this.tooltipFeature = this.beans.tooltipSvc?.enableCellTooltipFeature(this);
+        this.tooltipFeature = this.beans.tooltipCoreSvc?.enableCellTooltipFeature(this);
     }
 
     private disableTooltipFeature() {
@@ -253,7 +253,7 @@ export class CellCtrl extends BeanStub implements CompBeanOwner {
         if (this.editorTooltipFeature) {
             this.disableEditorTooltipFeature();
         }
-        this.editorTooltipFeature = this.beans.tooltipSvc?.setupCellEditorTooltip(this, editor);
+        this.editorTooltipFeature = this.beans.tooltipCoreSvc?.setupCellEditorTooltip(this, editor);
 
         // Cell identity lets a delayed framework editor consume only its own preflight validation snapshot.
         this.editSvc?.populateModelValidationErrors(this);

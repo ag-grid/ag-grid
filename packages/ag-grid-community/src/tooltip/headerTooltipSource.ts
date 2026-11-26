@@ -72,7 +72,7 @@ export function _setupHeaderTooltip(
         getDisplayName: () => beans.colNames.getDisplayNameForColumn(column, 'header', true),
         getTextElement: () => ctrl.getTooltipTextElement(),
     });
-    return beans.tooltipSvc!.registerTooltip(ctrl, source, current);
+    return beans.tooltipCoreSvc!.registerTooltip(ctrl, source, current);
 }
 
 export function _setupHeaderGroupTooltip(
@@ -96,5 +96,5 @@ export function _setupHeaderGroupTooltip(
         getDisplayName: () => beans.colNames.getDisplayNameForColumnGroup(column, 'header'),
         getTextElement: () => ctrl.getTooltipTextElement(),
     });
-    return beans.tooltipSvc!.registerTooltip(ctrl, source, current);
+    return beans.tooltipCoreSvc!.registerTooltip(ctrl, source, current);
 }
