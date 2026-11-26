@@ -138,6 +138,8 @@ export class LiveGrid {
     stop() {
         this.timers.forEach(clearInterval);
         this.timers = [];
+        clearTimeout(this.refreshTimer);
+        this.refreshTimer = null;
     }
 
     insertTick() {
@@ -181,6 +183,7 @@ export class LiveGrid {
     }
 
     runRefreshes() {
+        clearTimeout(this.refreshTimer);
         this.refreshTimer = null;
         if (this.paused) {
             return;
@@ -266,7 +269,6 @@ export class LiveGrid {
 
     destroy() {
         this.stop();
-        clearTimeout(this.refreshTimer);
         this.api.destroy();
     }
 }

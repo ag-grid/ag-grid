@@ -91,11 +91,13 @@ export const SCENARIOS = [
         id: 'S9e',
         title: '100 grids, 700 px tall, most below the fold, pauseWhenHidden on',
         query: 'cols=50&grids=100&gridHeight=700',
+        measureS: 30,
     },
     {
         id: 'S9e0',
         title: 'S9e with pauseWhenHidden off',
         query: 'cols=50&grids=100&gridHeight=700&pauseHidden=0',
+        measureS: 30,
     },
     { id: 'S9f', title: '100 grids, viewSubscriptionActive on 4 of them', query: 'cols=50&grids=100&live=4' },
     { id: 'S9g', title: '100 grids, 1 value column changed per update', query: 'cols=50&grids=100&changed=1' },
@@ -265,7 +267,7 @@ export function evaluate(results) {
             const match = sv.viewChecks
                 ? `, view equal to the backend's current rows in ${sv.viewMatchesBackend} of ${sv.viewChecks}`
                 : '';
-            return `${id} ${sv.orderOrFilterViolations} order or filter violations in ${sv.checks} checks${match}, new rows in view after p95 ${sv.newRowInViewLagMs.p95 ?? '-'} ms (n ${sv.newRowInViewLagMs.n}), ${g0(results[id]).feed.refreshesPerS} store refreshes/s`;
+            return `${id} ${sv.orderOrFilterViolations} order or filter violations in ${sv.checks} checks${match}, new rows in view after p95 ${sv.newRowInViewLagMs.p95 ?? '-'} ms (n ${sv.newRowInViewLagMs.n}; ${sv.newRowsNotSeenInView ?? '-'} never seen in view), ${g0(results[id]).feed.refreshesPerS} store refreshes/s`;
         };
         out.R5 = v(
             g1.orderChecks > 0 && g1.orderMismatches === 0 && s1.snapshot.fps >= 1 ? 'pass' : 'fail',
@@ -328,7 +330,7 @@ export function evaluate(results) {
         const cells = s7.rangeStillCoversSameRows;
         out.R8 = v(
             rows && cells ? 'pass' : rows ? 'partial' : 'fail',
-            `rows still selected: ${rows} (indexes ${s7.before.indexes.join(',')} -> ${s7.rows.map((r) => r.index).join(',')}); cell range still on the same row ids: ${cells}; range re-created from the row ids (workaround): ${s7.restored?.rangeStillCoversSameRows ?? 'not run'} in ${s7.restored?.ms ?? '-'} ms; ${s7.resume.applied} buffered transactions applied on resume in ${s7.resume.ms} ms`,
+            `rows still selected: ${rows} (indexes ${s7.before.indexes.join(',')} -> ${s7.rows.map((r) => r.index).join(',')}); cell range still on the same row ids: ${cells}; range re-created from the row ids (workaround) in ${s7.restored?.ms ?? '-'} ms, still on those rows 1 s later with the feed running: ${s7.restored?.oneSecondLater ?? 'not run'}; ${s7.resume.applied} buffered transactions applied on resume in ${s7.resume.ms} ms`,
             ['S7']
         );
     } else {
@@ -362,11 +364,13 @@ export function evaluate(results) {
             return `${id} ${r?.error ?? 'not run'}`;
         }
         const live = r.snapshot.grids.filter((x) => x.subscribedRows > 0).length;
-        const rates = r.snapshot.grids
-            .filter(keep)
-            .map((x) => x.contentRefreshPerS)
+        const kept = r.snapshot.grids.filter(keep);
+        const rates = kept.map((x) => x.contentRefreshPerS).sort((a, b) => a - b);
+        const inserts = kept
+            .map((x) => x.insertsEmitted ?? x.feed?.insertsEmitted)
+            .filter((n) => n != null)
             .sort((a, b) => a - b);
-        return `${id} (${what}): those grids ${rates[0]} refreshes/s slowest, ${rates[Math.floor(rates.length / 2)]} median, ${r.snapshot.fps} fps, ${live} grids subscribed`;
+        return `${id} (${what}): those grids ${rates[0]} refreshes/s slowest, ${rates[Math.floor(rates.length / 2)]} median, median ${inserts[Math.floor(inserts.length / 2)] ?? '-'} inserts emitted per grid in ${r.snapshot.seconds} s, ${r.snapshot.fps} fps, ${live} grids subscribed`;
     };
     if (ok(results.S9c)) {
         const full = minRefresh(results.S9c);
@@ -374,7 +378,7 @@ export function evaluate(results) {
         const attached = results.S9c.snapshot.gridsAttached;
         out.R10a = v(
             full > 1 && attached === 100 ? 'pass' : reduced > 1 ? 'partial' : 'fail',
-            `100 grids (${attached} rendered data): slowest grid ${full} refreshes/s, ${results.S9c.snapshot.fps} fps, grid 1 feed delivered ${feed(results.S9c)}; reduced feed: slowest ${reduced ?? '-'} refreshes/s, grid 1 feed delivered ${feed(results.S9d)}. Workarounds (not judged): ${workaround('S9e', (x) => x.onScreen, 'grids on screen')}; ${workaround('S9e0', (x) => x.onScreen, 'pauseWhenHidden off, grids on screen')}; ${workaround('S9f', (_, i) => i < 4, 'the 4 live grids')}; ${workaround('S9g', () => true, 'all grids')}`,
+            `100 grids (${attached} rendered data): slowest grid ${full} refreshes/s, ${results.S9c.snapshot.fps} fps, grid 1 feed delivered ${feed(results.S9c)}; reduced feed: slowest ${reduced ?? '-'} refreshes/s, grid 1 feed delivered ${feed(results.S9d)}. Workarounds (not judged): ${workaround('S9e', (x) => x.onScreen, 'grids on screen')}; ${workaround('S9e0', (x) => x.onScreen, 'pauseWhenHidden off, grids on screen')}; ${workaround('S9f', (x) => x.index < 4, 'the 4 live grids')}; ${workaround('S9g', () => true, 'all grids')}`,
             ['S9a', 'S9b', 'S9c', 'S9d', 'S9e', 'S9e0', 'S9f', 'S9g']
         );
     } else {

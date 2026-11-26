@@ -52,8 +52,11 @@ const run = {
     measureS: measureMs / 1000,
     scenarios: only ? previous.scenarios : {},
 };
+// Uncommitted changes to the demo or harness mean the git sha does not describe what ran.
+const dirty = git('status --porcelain -- src index.html serve.mjs scenarios.mjs run-bench.mjs') !== '';
 const provenance = (scenario) => ({
     gitSha: run.gitSha,
+    uncommittedChanges: dirty,
     gridVersion: run.gridVersion,
     machine: run.machine,
     warmupS: run.warmupS,
@@ -156,7 +159,11 @@ async function measure(page, scenario, errors) {
             const resume = await page.evaluate(() => window.__bench.resume()[0]);
             await page.waitForTimeout(1000);
             result.action = { ...(await page.evaluate(() => window.__bench.checkSelection())), resume };
-            result.action.restored = await page.evaluate(() => window.__bench.restoreRange());
+            // The feed keeps running, so the re-created range is checked again a second later.
+            const restored = await page.evaluate(() => window.__bench.restoreRange());
+            await page.waitForTimeout(1000);
+            const after = await page.evaluate(() => window.__bench.checkSelection());
+            result.action.restored = { ms: restored.ms, oneSecondLater: after.rangeStillCoversSameRows };
         } else {
             await page.evaluate(() => window.__bench.reset());
             await page.waitForTimeout(scenario.measureS ? scenario.measureS * 1000 : measureMs);
@@ -170,10 +177,13 @@ async function measure(page, scenario, errors) {
             const [first, ...rest] = result.snapshot.grids;
             result.snapshot.grids = [
                 first,
-                ...rest.map(({ contentRefreshPerS, subscribedRows, onScreen }) => ({
+                ...rest.map(({ index, contentRefreshPerS, subscribedRows, onScreen, feed }) => ({
+                    index,
                     contentRefreshPerS,
                     subscribedRows,
                     onScreen,
+                    insertsEmitted: feed.insertsEmitted,
+                    updateTicks: feed.updateTicks,
                 })),
             ];
         }
@@ -278,7 +288,7 @@ function writeReports(data) {
         '',
         BANNER,
         '',
-        `Last run ${data.startedAt} to ${data.finishedAt ?? '-'}; ${data.measureS} s measured per scenario (S5: 40 s), each scenario's time in results.json (measuredAt).`,
+        `Last run ${data.startedAt} to ${data.finishedAt ?? '-'}; each scenario's time is in results.json (measuredAt).`,
         ...provenanceLines(data),
         '',
         '## Per requirement',
@@ -317,7 +327,7 @@ function writeReports(data) {
 /** One line when every scenario was measured in the same environment; otherwise a line per environment, naming its scenarios. */
 function provenanceLines(data) {
     const describe = (p) =>
-        `git ${p.gitSha}, AG Grid ${p.gridVersion ?? '-'}, ${p.machine.cpu} x ${p.machine.cores}, ${p.machine.memoryGb} GB, ${p.machine.os}, Node ${p.machine.node}, ${p.machine.browser} (headless), viewport ${p.machine.viewport}, ${p.warmupS} s warm-up`;
+        `git ${p.gitSha}${p.uncommittedChanges ? ' with uncommitted changes' : ''}, AG Grid ${p.gridVersion ?? '-'}, ${p.machine.cpu} x ${p.machine.cores}, ${p.machine.memoryGb} GB, ${p.machine.os}, Node ${p.machine.node}, ${p.machine.browser} (headless), viewport ${p.machine.viewport}, ${p.warmupS} s warm-up`;
     const groups = new Map();
     for (const [id, r] of Object.entries(data.scenarios)) {
         const key = r.provenance
@@ -325,13 +335,21 @@ function provenanceLines(data) {
             : 'unknown (measured before provenance was recorded per scenario)';
         groups.set(key, [...(groups.get(key) ?? []), id]);
     }
+    const durations = new Map();
+    for (const [id, r] of Object.entries(data.scenarios)) {
+        const key = r.provenance?.measureS ?? '?';
+        durations.set(key, [...(durations.get(key) ?? []), id]);
+    }
+    const measured = `Measured for ${[...durations].map(([sec, ids]) => `${sec} s (${ids.join(', ')})`).join('; ')}.`;
     if (groups.size <= 1) {
-        return [`Measured with ${[...groups.keys()][0] ?? '-'}.`];
+        return [`Measured with ${[...groups.keys()][0] ?? '-'}.`, measured];
     }
     return [
         '**Scenarios were measured in different environments:**',
         '',
         ...[...groups].map(([key, ids]) => `- ${ids.join(', ')}: ${key}`),
+        '',
+        measured,
     ];
 }
 

@@ -183,7 +183,7 @@ function restoreRange() {
             columnEnd: 'c3',
         });
     }
-    return { ms: r1(performance.now() - t0), ...checkSelection() };
+    return { ms: r1(performance.now() - t0) };
 }
 
 function checkSelection() {

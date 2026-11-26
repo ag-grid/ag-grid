@@ -104,7 +104,8 @@ class GridTracker {
             if (rect.top < top - 1 || rect.bottom > bottom + 1) {
                 continue;
             }
-            visible.push([Math.round(rect.top), rowId]);
+            // The row's target position, not its painted one, so a row sliding under animateRows counts once.
+            visible.push([+rowEl.getAttribute('row-index'), `${rowId}@${rowEl.style.transform || rowEl.style.top}`]);
             const sentAt = this.pendingNew.get(rowId);
             if (sentAt != null) {
                 this.newRowLag.push(now - sentAt);
@@ -142,7 +143,7 @@ class GridTracker {
         // A row entering, leaving or moving within the view changes the screen even when no sampled cell text did.
         const visibleKey = visible
             .sort((a, b) => a[0] - b[0])
-            .map(([y, id]) => `${id}@${y}`)
+            .map(([, key]) => key)
             .join(',');
         const rowsChanged = this.lastVisible != null && visibleKey !== this.lastVisible;
         this.lastVisible = visibleKey;
@@ -177,6 +178,10 @@ class GridTracker {
                 rows.push({ index: +rowEl.getAttribute('row-index'), node: api.getRowNode(id) });
             }
         }
+        if (!rows.length) {
+            this.checkMs += performance.now() - t0;
+            return;
+        }
         rows.sort((a, b) => a.index - b.index);
         const { sortModel, filterModel } = this.grid.order();
         const sort = sortModel[0];
@@ -199,7 +204,7 @@ class GridTracker {
         }
         this.sortChecks++;
         this.sortViolations += violation ? 1 : 0;
-        if (!this.grid.grouped && rows.length) {
+        if (!this.grid.grouped) {
             const expected = backend.query({
                 startRow: rows[0].index,
                 endRow: rows.at(-1).index + 1,
@@ -274,21 +279,25 @@ class GridTracker {
         return { rows, cols };
     }
 
-    /** Resolved lags plus, for values still not on screen, their age so far (a lower bound on their lag). */
+    /**
+     * Resolved lags, plus values still not on screen at their age so far when that age is above the resolved p95: their
+     * real lag is at least that, so they can only raise the p95, never lower it.
+     */
     aggSummary(kind, now) {
-        const unresolved = [];
+        const pending = [];
         for (const queue of this.pendingAgg.values()) {
             for (const p of queue) {
                 if (!!p.total === (kind === 'total')) {
-                    unresolved.push(now - p.t);
+                    pending.push(now - p.t);
                 }
             }
         }
+        const resolvedP95 = stats(this.aggLag[kind]).p95 ?? 0;
         return {
-            ...stats([...this.aggLag[kind], ...unresolved]),
+            ...stats([...this.aggLag[kind], ...pending.filter((age) => age > resolvedP95)]),
             rendered: this.aggLag[kind].length,
-            stillPending: unresolved.length,
-            stillPendingMaxAgeMs: unresolved.length ? r2(Math.max(...unresolved)) : 0,
+            stillPending: pending.length,
+            stillPendingMaxAgeMs: pending.length ? r2(Math.max(...pending)) : 0,
             rowNotRendered: this.aggNotRendered[kind],
         };
     }
@@ -319,6 +328,7 @@ class GridTracker {
         const cellStats = stats(cellRates);
         const sortedRates = [...cellRates].sort((a, b) => a - b);
         return {
+            index: this.grid.index,
             contentRefreshPerS: r2(this.refreshFrames / seconds),
             cellRefreshPerS: r2(this.cellRefreshFrames / seconds),
             rowMoveRefreshPerS: r2(this.rowRefreshFrames / seconds),
@@ -344,6 +354,7 @@ class GridTracker {
                       viewChecks: this.viewChecks,
                       viewMatchesBackend: this.viewMatches,
                       newRowInViewLagMs: stats(this.newRowLag),
+                      newRowsNotSeenInView: this.pendingNew.size,
                       checkMsPerS: r2(this.checkMs / seconds),
                   }
                 : undefined,
