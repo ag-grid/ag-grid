@@ -16,7 +16,6 @@ import { AgRadioButton } from '../../agWidgets/agRadioButton';
 import { AgSelect } from '../../agWidgets/agSelect';
 import type { AgColumn } from '../../entities/agColumn';
 import type { IAfterGuiAttachedParams } from '../../interfaces/iAfterGuiAttachedParams';
-import type { FilterDisplayParams } from '../../interfaces/iFilter';
 import type { ElementParams } from '../../utils/element';
 import { _createElement } from '../../utils/element';
 import type { Component, ComponentSelector } from '../../widgets/component';
@@ -31,7 +30,6 @@ import type {
     IFilterOptionDef,
     ISimpleFilter,
     ISimpleFilterModel,
-    ISimpleFilterParams,
     JoinOperator,
     MapValuesFromSimpleFilterModel,
     SimpleFilterParams,
@@ -48,10 +46,6 @@ import {
     validateAndUpdateConditions,
 } from './simpleFilterUtils';
 
-/** temporary type until `SimpleFilterParams` is updated as breaking change */
-export type SimpleFilterDisplayParams<M extends ISimpleFilterModel> = ISimpleFilterParams &
-    FilterDisplayParams<any, any, M | ICombinedSimpleModel<M>>;
-
 type FilterModelOrCombined<M extends ISimpleFilterModel> = M | ICombinedSimpleModel<M> | null;
 
 /**
@@ -65,7 +59,7 @@ export abstract class SimpleFilter<
     M extends ISimpleFilterModel,
     V,
     E = GridInputTextField,
-    P extends SimpleFilterDisplayParams<M> = SimpleFilterDisplayParams<M>,
+    P extends SimpleFilterParams<any, M> = SimpleFilterParams<any, M>,
 >
     extends ProvidedFilter<M | ICombinedSimpleModel<M>, V, P>
     implements ISimpleFilter

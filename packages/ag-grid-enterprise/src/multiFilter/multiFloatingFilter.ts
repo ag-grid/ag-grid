@@ -6,10 +6,11 @@ import type {
     FilterChangedEvent,
     FloatingFilterDisplayParams,
     IFilter,
+    IFilterParams,
     IFloatingFilterComp,
     IFloatingFilterParams,
     IMultiFilterModel,
-    MultiFilterParams,
+    IMultiFilterParams,
     ResolvedFilter,
     UserCompDetails,
 } from 'ag-grid-community';
@@ -127,7 +128,7 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
     } {
         const compDetailsList: UserCompDetails[] = [];
         const floatingFilterParamsList: IFloatingFilterParams<IFilter>[] = [];
-        const filterParams = params.filterParams as MultiFilterParams;
+        const filterParams = params.filterParams as IMultiFilterParams & IFilterParams;
         const currentParentModel = params.currentParentModel;
         const { beans, gos } = this;
         const column = params.column as AgColumn;

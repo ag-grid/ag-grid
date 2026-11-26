@@ -299,7 +299,7 @@ export default forwardRef((props, ref) => {
 // later in your app, if you want to execute myMethod()...
 laterOnInYourApplicationSomewhere() {
     // get reference to the AG Grid Filter component on name column
-    api.getColumnFilterInstance('name').then(filterInstance => {
+    api.getColumnFilterInstance<FilterDisplay>('name').then(filterInstance => {
         getInstance(filterInstance, comp => {
             if (comp != null) {
                 comp.myMethod();
@@ -330,7 +330,7 @@ export default {
     // later in your app, if you want to execute myMethod()...
     laterOnInYourApplicationSomewhere() {
         // assume filter on name column
-        api.getColumnFilterInstance('name').then(filterInstance => {
+        api.getColumnFilterInstance<{ myMethod(): void }>('name').then(filterInstance => {
             filterInstance.myMethod();
         });
     }

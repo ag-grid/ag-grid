@@ -136,17 +136,13 @@ export class SetFilter<V = string>
         this.initialiseFilterBodyUi();
     }
 
-    public override refresh(legacyNewParams: SetFilterParams<any, V>): boolean {
-        if (this.params.treeList !== legacyNewParams.treeList) {
+    public override refresh(newParams: SetFilterParams<any, V>): boolean {
+        if (this.params.treeList !== newParams.treeList) {
             // too hard to refresh when tree list changes, just destroy
             return false;
         }
-        this.updateHandler(
-            (
-                legacyNewParams as unknown as ISetFilterParams<any, V> & FilterDisplayParams<any, any, SetFilterModel>
-            ).getHandler() as unknown as SetFilterHandler<V>
-        );
-        return super.refresh(legacyNewParams);
+        this.updateHandler(newParams.getHandler() as unknown as SetFilterHandler<V>);
+        return super.refresh(newParams);
     }
 
     protected override updateParams(

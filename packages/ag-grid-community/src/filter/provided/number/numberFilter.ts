@@ -1,11 +1,9 @@
 import { AgInputNumberField } from '../../../agWidgets/agInputNumberField';
-import type { FilterDisplayParams } from '../../../interfaces/iFilter';
 import type { GridInputNumberField, GridInputTextField } from '../../../widgets/gridWidgetTypes';
-import type { ICombinedSimpleModel } from '../iSimpleFilter';
 import { _bindFilterCallback, getValidityMessageKey } from '../simpleFilterUtils';
 import type { RenderChange } from '../textInputSimpleFilter';
 import { TextInputSimpleFilter } from '../textInputSimpleFilter';
-import type { INumberFilterParams, NumberFilterModel } from './iNumberFilter';
+import type { NumberFilterModel, NumberFilterParams } from './iNumberFilter';
 import { DEFAULT_NUMBER_FILTER_OPTIONS } from './numberFilterConstants';
 import {
     getAllowedCharPattern,
@@ -15,18 +13,9 @@ import {
     usesTextInput,
 } from './numberFilterUtils';
 
-/** temporary type until `NumberFilterParams` is updated as breaking change */
-type NumberFilterDisplayParams = INumberFilterParams &
-    FilterDisplayParams<any, any, NumberFilterModel | ICombinedSimpleModel<NumberFilterModel>>;
-
 type NumberInput = GridInputTextField | GridInputNumberField;
 
-export class NumberFilter extends TextInputSimpleFilter<
-    NumberFilterModel,
-    number,
-    NumberInput,
-    NumberFilterDisplayParams
-> {
+export class NumberFilter extends TextInputSimpleFilter<NumberFilterModel, number, NumberInput, NumberFilterParams> {
     public readonly filterType = 'number' as const;
 
     constructor() {
@@ -34,8 +23,8 @@ export class NumberFilter extends TextInputSimpleFilter<
     }
 
     protected override getRenderChange(
-        params: NumberFilterDisplayParams,
-        previous: NumberFilterDisplayParams | undefined
+        params: NumberFilterParams,
+        previous: NumberFilterParams | undefined
     ): RenderChange | undefined {
         // The element type and its pattern are fixed at build time, so only a replacement can change them.
         if (
@@ -53,7 +42,7 @@ export class NumberFilter extends TextInputSimpleFilter<
 
     protected override parseText(
         text: string | null | undefined,
-        params: NumberFilterDisplayParams | undefined
+        params: NumberFilterParams | undefined
     ): number | null {
         return processNumberFilterValue(stringToFloat(params?.numberParser, text, this.gos, this.params.column));
     }

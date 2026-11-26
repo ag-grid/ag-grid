@@ -22,6 +22,7 @@ import type {
     IFilterComp,
     IFilterParams,
     IFloatingFilterComp,
+    ISimpleFilter,
 } from 'ag-grid-community';
 import {
     AgPromise,
@@ -681,7 +682,7 @@ describe('Filter State & Events', () => {
         api.addEventListener('filterModified', onModified);
         api.addEventListener('filterChanged', onChanged);
 
-        const instance = await api.getColumnFilterInstance('athlete');
+        const instance = await api.getColumnFilterInstance<ISimpleFilter>('athlete');
 
         const filter = await ColumnFilterHarness.open(api, 'athlete');
         await filter.selectOperator('Contains');

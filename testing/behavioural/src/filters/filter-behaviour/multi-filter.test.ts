@@ -7,7 +7,7 @@ import {
     asyncSetTimeout,
 } from 'ag-test-utils';
 
-import type { GridApi, IFilterComp } from 'ag-grid-community';
+import type { GridApi, IFilterComp, IMultiFilter } from 'ag-grid-community';
 import { enableDevValidations } from 'ag-grid-community';
 
 import { ROWS, setupMultiFilterSuite, visibleFloatingChild, visibleFloatingKind } from './multiFilterHarness';
@@ -236,7 +236,7 @@ describe('Multi Filter — sub-filter combos & combined model (coverage)', () =>
         api.onFilterChanged();
         api.destroyFilter('name');
         await asyncSetTimeout(0);
-        expect((await api.getColumnFilterInstance('name'))!.getModel()).toBeNull();
+        expect((await api.getColumnFilterInstance<IMultiFilter>('name'))!.getModel()).toBeNull();
     });
 
     test("without filter handlers, a Multi Filter instance's own model methods set, read and test its column's model", async () => {

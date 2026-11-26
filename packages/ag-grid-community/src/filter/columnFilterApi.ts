@@ -1,7 +1,7 @@
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { Column } from '../interfaces/iColumn';
-import type { FilterAction, FilterActionParams, FilterHandler, FilterModel, IFilter } from '../interfaces/iFilter';
+import type { FilterAction, FilterActionParams, FilterHandler, FilterModel } from '../interfaces/iFilter';
 import { _getRowHandler } from './pairedFilterHandler';
 
 export function isColumnFilterPresent(beans: BeanCollection): boolean {
@@ -9,7 +9,7 @@ export function isColumnFilterPresent(beans: BeanCollection): boolean {
     return !!filterManager?.isColumnFilterPresent() || !!filterManager?.isAggregateFilterPresent();
 }
 
-export function getColumnFilterInstance<TFilter = IFilter>(
+export function getColumnFilterInstance<TFilter>(
     beans: BeanCollection,
     key: string | Column
 ): Promise<TFilter | null | undefined> {

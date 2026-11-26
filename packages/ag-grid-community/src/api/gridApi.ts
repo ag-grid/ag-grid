@@ -63,7 +63,7 @@ import type { Column, ColumnGroup, ColumnPinnedType, ProvidedColumnGroup } from 
 import type { IColumnToolPanel } from '../interfaces/iColumnToolPanel';
 import type { IContextMenuParams } from '../interfaces/iContextMenu';
 import type { ExcelExportMultipleSheetParams, ExcelExportParams } from '../interfaces/iExcelCreator';
-import type { FilterActionParams, FilterModel, IFilter } from '../interfaces/iFilter';
+import type { FilterActionParams, FilterModel } from '../interfaces/iFilter';
 import type { IFiltersToolPanel } from '../interfaces/iFiltersToolPanel';
 import type { FindCellParams, FindCellValueParams, FindMatch, FindPart } from '../interfaces/iFind';
 import type { AgModuleName } from '../interfaces/iModule';
@@ -1056,9 +1056,10 @@ export interface _ColumnFilterGridApi {
      * Returns the filter component instance for a column.
      * For getting/setting models for individual column filters, use `getColumnFilterModel` and `setColumnFilterModel` instead of this.
      * `key` can be a column ID or a `Column` object.
+     * Pass the filter's type as the type argument, e.g. `getColumnFilterInstance<ISimpleFilter>('name')`.
      * @agModule `TextFilterModule` / `NumberFilterModule` / `DateFilterModule` / `SetFilterModule` / `MultiFilterModule` / `CustomFilterModule`
      */
-    getColumnFilterInstance<TFilter = IFilter>(key: string | Column): Promise<TFilter | null | undefined>;
+    getColumnFilterInstance<TFilter>(key: string | Column): Promise<TFilter | null | undefined>;
 
     /**
      * Returns the filter handler instance for a column.

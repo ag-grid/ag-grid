@@ -1786,8 +1786,8 @@ describe('the column events of one call', () => {
             rowData: [{}, {}],
         });
         await asyncSetTimeout(0);
-        const nameFilter = await api.getColumnFilterInstance('name');
-        const habitatFilter = await api.getColumnFilterInstance('habitat');
+        const nameFilter = await api.getColumnFilterInstance<ThrowingFilter>('name');
+        const habitatFilter = await api.getColumnFilterInstance<RecordingFilter>('habitat');
         expect([nameFilter instanceof ThrowingFilter, habitatFilter instanceof RecordingFilter]).toEqual([true, true]);
         const raised = { newColumnsLoaded: 0, displayedColumnsChanged: 0, columnEverythingChanged: 0 };
         for (const event of ['newColumnsLoaded', 'displayedColumnsChanged', 'columnEverythingChanged'] as const) {

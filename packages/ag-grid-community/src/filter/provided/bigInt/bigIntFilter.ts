@@ -1,22 +1,16 @@
-import type { FilterDisplayParams } from '../../../interfaces/iFilter';
 import type { GridInputTextField } from '../../../widgets/gridWidgetTypes';
-import type { ICombinedSimpleModel } from '../iSimpleFilter';
 import { _bindFilterCallback, getValidityMessageKey } from '../simpleFilterUtils';
 import type { RenderChange } from '../textInputSimpleFilter';
 import { TextInputSimpleFilter } from '../textInputSimpleFilter';
 import { DEFAULT_BIGINT_FILTER_OPTIONS } from './bigIntFilterConstants';
 import { getAllowedCharPattern, mapValuesFromBigIntFilterModel, stringToBigInt } from './bigIntFilterUtils';
-import type { BigIntFilterModel, IBigIntFilterParams } from './iBigIntFilter';
-
-/** temporary type until `BigIntFilterParams` is updated as breaking change */
-type BigIntFilterDisplayParams = IBigIntFilterParams &
-    FilterDisplayParams<any, any, BigIntFilterModel | ICombinedSimpleModel<BigIntFilterModel>>;
+import type { BigIntFilterModel, BigIntFilterParams } from './iBigIntFilter';
 
 export class BigIntFilter extends TextInputSimpleFilter<
     BigIntFilterModel,
     bigint,
     GridInputTextField,
-    BigIntFilterDisplayParams
+    BigIntFilterParams
 > {
     public readonly filterType = 'bigint' as const;
 
@@ -25,8 +19,8 @@ export class BigIntFilter extends TextInputSimpleFilter<
     }
 
     protected override getRenderChange(
-        params: BigIntFilterDisplayParams,
-        previous: BigIntFilterDisplayParams | undefined
+        params: BigIntFilterParams,
+        previous: BigIntFilterParams | undefined
     ): RenderChange | undefined {
         // Read once when an input is built, so only replacing the element can change it.
         if (getAllowedCharPattern(params) !== getAllowedCharPattern(previous)) {
@@ -41,7 +35,7 @@ export class BigIntFilter extends TextInputSimpleFilter<
 
     protected override parseText(
         text: string | null | undefined,
-        params: BigIntFilterDisplayParams | undefined
+        params: BigIntFilterParams | undefined
     ): bigint | null {
         return stringToBigInt(params?.bigintParser, text, this.gos, this.params.column);
     }

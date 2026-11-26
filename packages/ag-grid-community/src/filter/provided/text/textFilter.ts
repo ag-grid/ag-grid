@@ -1,20 +1,15 @@
 import { _makeNull } from 'ag-stack';
 
 import { AgInputTextField } from '../../../agWidgets/agInputTextField';
-import type { FilterDisplayParams } from '../../../interfaces/iFilter';
 import { _createElement } from '../../../utils/element';
 import type { GridInputTextField } from '../../../widgets/gridWidgetTypes';
-import type { ICombinedSimpleModel, Tuple } from '../iSimpleFilter';
+import type { Tuple } from '../iSimpleFilter';
 import { SimpleFilter } from '../simpleFilter';
-import type { ITextFilterParams, TextFilterModel } from './iTextFilter';
+import type { TextFilterModel, TextFilterParams } from './iTextFilter';
 import { DEFAULT_TEXT_FILTER_OPTIONS } from './textFilterConstants';
 import { mapValuesFromTextFilterModel } from './textFilterUtils';
 
-/** temporary type until `TextFilterParams` is updated as breaking change */
-type TextFilterDisplayParams = ITextFilterParams &
-    FilterDisplayParams<any, any, TextFilterModel | ICombinedSimpleModel<TextFilterModel>>;
-
-export class TextFilter extends SimpleFilter<TextFilterModel, string, GridInputTextField, TextFilterDisplayParams> {
+export class TextFilter extends SimpleFilter<TextFilterModel, string, GridInputTextField, TextFilterParams> {
     public readonly filterType = 'text' as const;
 
     private readonly eValuesFrom: GridInputTextField[] = [];

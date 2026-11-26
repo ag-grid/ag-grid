@@ -2,24 +2,15 @@ import type { AgPromise } from 'ag-stack';
 import { _debounce } from 'ag-stack';
 
 import type { ContainerType, IAfterGuiAttachedParams } from '../../interfaces/iAfterGuiAttachedParams';
-import type { FilterDisplayParams, FilterDisplayState } from '../../interfaces/iFilter';
+import type { FilterDisplayState } from '../../interfaces/iFilter';
 import { PositionableFeature } from '../../rendering/features/positionableFeature';
 import type { ElementParams } from '../../utils/element';
 import type { ComponentSelector } from '../../widgets/component';
 import { Component } from '../../widgets/component';
 import type { FilterLocaleTextKey } from '../filterLocaleText';
 import { translateForFilter } from '../filterLocaleText';
-import type {
-    IProvidedFilter,
-    IProvidedFilterParams,
-    ProvidedFilterModel,
-    ProvidedFilterParams,
-} from './iProvidedFilter';
+import type { IProvidedFilter, ProvidedFilterModel, ProvidedFilterParams } from './iProvidedFilter';
 import { _isUseApplyButton, getDebounceMs } from './providedFilterUtils';
-
-/** temporary type until `ProvidedFilterParams` is updated as breaking change */
-type ProvidedFilterDisplayParams<M extends ProvidedFilterModel> = IProvidedFilterParams &
-    FilterDisplayParams<any, any, M>;
 
 /**
  * Contains common logic to all provided filters (apply button, clear button, etc).
@@ -33,7 +24,7 @@ export abstract class ProvidedFilter<
     M extends ProvidedFilterModel,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     V,
-    P extends ProvidedFilterDisplayParams<M> = ProvidedFilterDisplayParams<M>,
+    P extends ProvidedFilterParams<any, M> = ProvidedFilterParams<any, M>,
 >
     extends Component
     implements IProvidedFilter
@@ -82,8 +73,7 @@ export abstract class ProvidedFilter<
 
     public abstract getModelFromUi(): M | null;
 
-    public init(legacyParams: ProvidedFilterParams): void {
-        const params = legacyParams as unknown as P;
+    public init(params: P): void {
         this.setParams(params);
 
         this.setModelIntoUi(params.state.model, true).then(() => this.updateUiVisibility());
@@ -93,8 +83,7 @@ export abstract class ProvidedFilter<
         return stateA === stateB;
     }
 
-    public refresh(legacyNewParams: ProvidedFilterParams): boolean {
-        const newParams = legacyNewParams as unknown as P;
+    public refresh(newParams: P): boolean {
         const oldParams = this.params;
 
         this.params = newParams;

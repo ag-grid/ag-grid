@@ -51,7 +51,7 @@ The Mini Filter can be interacted with via the Set Filter UI instance:
 
 ```{% frameworkTransform=true %}
 // get filter UI instance
-api.getColumnFilterInstance('country').then(countryFilterComponent => {
+api.getColumnFilterInstance<SetFilterUi>('country').then(countryFilterComponent => {
     // use set filter UI instance
 });
 ```

@@ -4,11 +4,11 @@ import type { ValueGetterFunc } from '../entities/colDef';
 import type { IProvidedFilter, ProvidedFilterModel } from '../filter/provided/iProvidedFilter';
 import type {
     ColumnFilter,
+    FilterDisplayParams,
     IDoesFilterPassParams,
     IFilter,
     IFilterComp,
     IFilterDef,
-    IFilterParams,
     IFilterType,
     IFloatingFilterType,
 } from './iFilter';
@@ -78,10 +78,10 @@ export interface IMultiFilterDef extends IFilterDef {
 }
 
 /**
- * Parameters provided by the grid to the `init` method of a `MultiFilter`.
+ * Parameters provided by the grid to the `init` and `refresh` methods of a `MultiFilter` display component.
  * Do not use in `colDef.filterParams` - see `IMultiFilterParams` instead.
  */
-export type MultiFilterParams<TData = any> = IMultiFilterParams & IFilterParams<TData>;
+export type MultiFilterParams<TData = any> = IMultiFilterParams & FilterDisplayParams<TData, any, IMultiFilterModel>;
 
 /**
  * Parameters used in `colDef.filterParams` to configure a Multi Filter (`agMultiColumnFilter`).

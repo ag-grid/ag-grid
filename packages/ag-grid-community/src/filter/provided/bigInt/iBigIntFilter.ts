@@ -1,8 +1,9 @@
 import type { AdvancedFilterOnlyOptionKey } from '../../../interfaces/advancedFilterModel';
-import type { FilterInputCallbackParams, IFilterParams } from '../../../interfaces/iFilter';
+import type { FilterDisplayParams, FilterInputCallbackParams } from '../../../interfaces/iFilter';
 import type { IScalarFilterParams } from '../iScalarFilter';
 import type {
     CustomFilterOptionKey,
+    ICombinedSimpleModel,
     IFilterOptionDef,
     ISimpleFilterModel,
     ScalarFilterOptionKey,
@@ -27,11 +28,11 @@ export interface BigIntFilterModel extends ISimpleFilterModel {
 }
 
 /**
- * Parameters provided by the grid to the `init` method of a `BigIntFilter`.
+ * Parameters provided by the grid to the `init` and `refresh` methods of a `BigIntFilter` display component.
  * Do not use in `colDef.filterParams` - see `IBigIntFilterParams` instead.
  */
 export type BigIntFilterParams<TData = any, TContext = any> = IBigIntFilterParams<TData, TContext> &
-    IFilterParams<TData, TContext>;
+    FilterDisplayParams<TData, TContext, BigIntFilterModel | ICombinedSimpleModel<BigIntFilterModel>>;
 
 /**
  * Parameters used in `colDef.filterParams` to configure a BigInt Filter (`agBigIntColumnFilter`).

@@ -126,9 +126,9 @@ To access the filter handler, use `api.getColumnFilterHandler(colKey)`.
 
 {% apiDocumentation source="grid-api/api.json" section="filter" names=["getColumnFilterInstance", "getColumnFilterHandler"] /%}
 
-```js
+```ts
 // Get a reference to the 'name' filter UI instance
-const filterInstance = await api.getColumnFilterInstance('name');
+const filterInstance = await api.getColumnFilterInstance<FilterDisplay>('name');
 ```
 
 If using a custom filter, any other methods you have added will also be present, allowing bespoke behaviour to be added to your filter.

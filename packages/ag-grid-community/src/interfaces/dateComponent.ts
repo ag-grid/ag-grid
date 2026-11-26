@@ -1,8 +1,9 @@
 import type { IComponent } from 'ag-stack';
 
-import type { DateFilterParams } from '../filter/provided/date/iDateFilter';
+import type { IDateFilterParams } from '../filter/provided/date/iDateFilter';
 import type { IAfterGuiAttachedParams } from '../interfaces/iAfterGuiAttachedParams';
 import type { AgGridCommon } from '../interfaces/iCommon';
+import type { SharedFilterParams } from '../interfaces/iFilter';
 
 export interface BaseDate {
     /** Optional: Sets the disabled state of this component */
@@ -40,7 +41,7 @@ export interface IDate<TData = any, TContext = any> extends BaseDate {
 }
 
 export interface BaseDateParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
-    filterParams: DateFilterParams;
+    filterParams: IDateFilterParams & SharedFilterParams;
 
     location?: 'filter' | 'floatingFilter';
 

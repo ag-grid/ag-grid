@@ -10,7 +10,7 @@ import {
     uninstallFilterLayoutMock,
 } from 'ag-test-utils';
 
-import type { FilterChangedEvent, GridApi, IRowNode, IssueRaisedEvent } from 'ag-grid-community';
+import type { FilterChangedEvent, GridApi, IFilter, IRowNode, IssueRaisedEvent } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     ExternalFilterModule,
@@ -194,7 +194,7 @@ describe('Filter Manager API — whole-grid model & external filters', () => {
         await asyncSetTimeout(0);
 
         // grid-provided filter instances have no doesFilterPass; their model is read through the API.
-        const instance = await api.getColumnFilterInstance('age');
+        const instance = await api.getColumnFilterInstance<IFilter>('age');
         expect(instance).toBeTruthy();
         expect(instance!.doesFilterPass).toBeUndefined();
         expect(api.getColumnFilterModel('age')).toEqual({ filterType: 'number', type: 'greaterThan', filter: 24 });

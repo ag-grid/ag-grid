@@ -1,10 +1,11 @@
 import type { BaseColDefParams } from '../../../entities/colDef';
 import type { AdvancedFilterOnlyOptionKey } from '../../../interfaces/advancedFilterModel';
 import type { IAutoCompleteComponentParams } from '../../../interfaces/iAutoComplete';
-import type { FilterCallbackSource, FilterInputCallbackParams, IFilterParams } from '../../../interfaces/iFilter';
+import type { FilterCallbackSource, FilterDisplayParams, FilterInputCallbackParams } from '../../../interfaces/iFilter';
 import type { IFloatingFilterParams } from '../../floating/floatingFilter';
 import type {
     CustomFilterOptionKey,
+    ICombinedSimpleModel,
     IFilterOptionDef,
     ISimpleFilterModel,
     ISimpleFilterParams,
@@ -62,10 +63,11 @@ export type TextMatcher = (params: TextMatcherParams) => boolean;
 export type TextFormatter = (from?: string | null, params?: FilterInputCallbackParams) => string | null;
 
 /**
- * Parameters provided by the grid to the `init` method of a `TextFilter`.
+ * Parameters provided by the grid to the `init` and `refresh` methods of a `TextFilter` display component.
  * Do not use in `colDef.filterParams` - see `ITextFilterParams` instead.
  */
-export type TextFilterParams<TData = any> = ITextFilterParams & IFilterParams<TData>;
+export type TextFilterParams<TData = any> = ITextFilterParams &
+    FilterDisplayParams<TData, any, TextFilterModel | ICombinedSimpleModel<TextFilterModel>>;
 /**
  * Parameters used in `colDef.filterParams` to configure a  Text Filter (`agTextColumnFilter`).
  */

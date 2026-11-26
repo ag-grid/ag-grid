@@ -11,10 +11,10 @@ import type {
     IBigIntFilterParams,
     IDateFilterParams,
     IFilterOptionDef,
+    INumberFilterParams,
     ITextFilterParams,
     JoinAdvancedFilterModel,
     NamedBean,
-    NumberFilterParams,
     ResolvedFilter,
     SetAdvancedFilterModel,
     TextMatcherParams,
@@ -662,14 +662,14 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
 
     private bindNumberParser(
         column: AgColumn | null | undefined,
-        params: NumberFilterParams | undefined
+        params: INumberFilterParams | undefined
     ): FilterOperandParser<number> {
         return _bindFilterCallback(params?.numberParser, this.gos, column, 'advancedFilter') ?? parseNumberOrNull;
     }
 
     /** Needs a parser and a formatter, as a parser alone would reinterpret the plain number the grid stored. */
-    private getCustomNumberParams(column: AgColumn | null | undefined): NumberFilterParams | undefined {
-        const filterParams: NumberFilterParams | undefined = this.getOwnFilterParams(
+    private getCustomNumberParams(column: AgColumn | null | undefined): INumberFilterParams | undefined {
+        const filterParams: INumberFilterParams | undefined = this.getOwnFilterParams(
             column,
             'agNumberColumnFilter',
             undefined
