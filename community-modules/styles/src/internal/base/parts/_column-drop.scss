@@ -17,7 +17,11 @@
     }
 
     :where(.ag-column-drop-cell) .ag-calculated-column-icon {
-        margin-inline-start: var(--ag-grid-size);
+        margin-inline: var(--ag-grid-size) calc(var(--ag-grid-size) * -0.75);
+    }
+
+    :where(.ag-column-drop-cell) .ag-column-indicator-name {
+        margin-inline-end: calc(var(--ag-grid-size) / 2);
     }
 
     .ag-column-drop-cell-button {

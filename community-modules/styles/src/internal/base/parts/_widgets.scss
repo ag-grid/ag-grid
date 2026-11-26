@@ -1170,8 +1170,7 @@
     .ag-column-select-checkbox,
     .ag-column-select-column-drag-handle,
     .ag-column-select-column-group-drag-handle,
-    .ag-column-select-column-label,
-    :where(.ag-column-select-column) .ag-column-indicator-icon {
+    .ag-column-select-column-label {
         &:not(:last-child) {
             @include ag.unthemed-rtl(
                 (
@@ -1179,6 +1178,10 @@
                 )
             );
         }
+    }
+
+    :where(.ag-column-select-column) .ag-calculated-column-icon {
+        margin-inline-end: calc(var(--ag-grid-size) / 4);
     }
 
     @include ag.keyboard-focus((ag-column-select-virtual-list-item), 1px);

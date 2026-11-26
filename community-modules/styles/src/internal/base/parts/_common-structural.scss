@@ -652,6 +652,8 @@
     }
 
     :where(.ag-column-drop-cell) .ag-column-indicator-icon {
+        --ag-icon-size: calc(var(--ag-grid-size) * 2.25);
+
         display: flex;
     }
 
@@ -2009,8 +2011,13 @@
         flex-grow: 0;
     }
 
+    :where(.ag-column-select-column) .ag-column-indicator-icon {
+        --ag-icon-size: calc(var(--ag-grid-size) * 2.25);
+    }
+
     :where(.ag-column-select-column) .ag-show-values-as-icon {
         flex-grow: 1;
+        margin-inline-start: calc(var(--ag-grid-size) / 2 - var(--ag-widget-horizontal-spacing));
     }
 
     .ag-column-select-checkbox {

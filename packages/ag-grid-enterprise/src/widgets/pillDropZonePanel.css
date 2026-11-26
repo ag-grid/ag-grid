@@ -41,11 +41,17 @@
 }
 
 :where(.ag-column-drop-cell) .ag-column-indicator-icon {
+    --ag-icon-size: calc(var(--ag-spacing) * 2.25);
+
     display: flex;
 }
 
 :where(.ag-column-drop-cell) .ag-calculated-column-icon {
-    margin-inline-start: var(--ag-spacing);
+    margin-inline: var(--ag-spacing) calc(var(--ag-spacing) * -0.75);
+}
+
+:where(.ag-column-drop-cell) .ag-column-indicator-name {
+    margin-inline-end: calc(var(--ag-spacing) / 2);
 }
 
 .ag-column-indicator-name {
