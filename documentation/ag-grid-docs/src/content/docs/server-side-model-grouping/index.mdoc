@@ -183,7 +183,8 @@ hidden group.
 ## Expanding and Collapsing All Groups
 
 The `expandAll()` and `collapseAll()` grid API methods apply only to **loaded group rows** by default. To include groups
-that are not loaded yet, set `ssrmExpandAllAffectsAllRows: true`.
+that are not loaded yet, set `ssrmExpandAllAffectsAllRows: true`. This option requires the `getRowId` callback, as
+the grid tracks the expanded state of groups by their row IDs. See [Row IDs](./row-ids/).
 
 In the example below, note the following:
 

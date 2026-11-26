@@ -190,6 +190,9 @@ The example below demonstrates server-side Pivoting with multiple row groups whe
 - The **Gold**, **Silver** and **Bronze** value columns have `aggFunc='sum'` defined on their column definitions.
 - The `pivotCols` and `pivotMode` properties in the request are used by the server to perform pivoting.
 - New column group definitions are generated from the `pivotResultFields` provided by the success callback.
+- The `processPivotResultColDef` callback sets `columnGroupShow = 'open'` on every pivot result column except the
+  totals, so each **Year** group can be expanded and collapsed. See
+  [Pivot Result Columns](./pivoting-result-columns/#column-definitions).
 - Open the browser's dev console to view the request supplied to the datasource.
 
 {% gridExampleRunner title="Pivot Column Groups" name="pivot-column-groups"  exampleHeight=610 /%}
