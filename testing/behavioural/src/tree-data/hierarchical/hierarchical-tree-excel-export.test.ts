@@ -70,7 +70,7 @@ describe('ag-grid hierarchical tree excel export', () => {
             · └── 5 LEAF id:5 ag-Grid-AutoColumn:"grp-4" 0:"value-500"
         `);
 
-        api.exportDataAsExcel({ fileName: 'test.xlsx' });
+        void api.exportDataAsExcel({ fileName: 'test.xlsx' });
 
         expect(await getExcelJsonData(await objectUrls.pullBlob())).toEqual([
             { Group: ' -> grp-0', value: 'value-100' },
@@ -128,7 +128,7 @@ describe('ag-grid hierarchical tree excel export', () => {
             getRowId: (params) => params.data.uiId,
         });
 
-        api.exportDataAsExcel({ fileName: 'test.xlsx' });
+        void api.exportDataAsExcel({ fileName: 'test.xlsx' });
 
         expect(await getExcelJsonData(await objectUrls.pullBlob())).toEqual([
             { value: 'value-100' },

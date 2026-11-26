@@ -15,10 +15,11 @@ export function getDataAsExcel(beans: BeanCollection, params?: ExcelExportParams
     return undefined;
 }
 
-export function exportDataAsExcel(beans: BeanCollection, params?: ExcelExportParams): void {
+export function exportDataAsExcel(beans: BeanCollection, params?: ExcelExportParams): Promise<void> {
     if (assertNotExcelMultiSheet(beans)) {
-        beans.excelCreator?.exportDataAsExcel(params);
+        return beans.excelCreator?.exportDataAsExcel(params) ?? Promise.resolve();
     }
+    return Promise.resolve();
 }
 export function getSheetDataForExcel(beans: BeanCollection, params?: ExcelExportParams): string | undefined {
     beans.excelCreator?.setFactoryMode('MULTI_SHEET');
@@ -33,6 +34,9 @@ export function getMultipleSheetsAsExcel(
     return beans.excelCreator?.getMultipleSheetsAsExcel(params);
 }
 
-export function exportMultipleSheetsAsExcel(beans: BeanCollection, params: ExcelExportMultipleSheetParams): void {
-    beans.excelCreator?.exportMultipleSheetsAsExcel(params);
+export function exportMultipleSheetsAsExcel(
+    beans: BeanCollection,
+    params: ExcelExportMultipleSheetParams
+): Promise<void> {
+    return beans.excelCreator?.exportMultipleSheetsAsExcel(params) ?? Promise.resolve();
 }

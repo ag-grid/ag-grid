@@ -79,7 +79,7 @@ describe.skip('Excel export inputs that produce a file Excel refuses to open', (
 
     const exportParts = async (options: GridOptions, params: ExcelExportParams) => {
         const api = gridsManager.createGrid('excel-corrupt', options);
-        api.exportDataAsExcel(params);
+        void api.exportDataAsExcel(params);
         return readParts(new Uint8Array(await (await objectUrls.pullBlob()).arrayBuffer()));
     };
 

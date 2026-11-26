@@ -110,7 +110,7 @@ describe('dev validation overlay', () => {
         const createObjectURL = vitest.spyOn(URL, 'createObjectURL').mockReturnValue('blob:mock-url');
         const revokeObjectURL = vitest.spyOn(URL, 'revokeObjectURL').mockImplementation(() => {});
         try {
-            api.exportDataAsCsv();
+            void api.exportDataAsCsv();
 
             expect(hasErrorOverlay()).toBe(true);
             expect(isAgHtmlElementVisible('.ag-overlay-exporting-wrapper')).toBe(false);

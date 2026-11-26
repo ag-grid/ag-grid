@@ -61,7 +61,7 @@ describe('ag-grid tree excel export', () => {
             · · └── "Product 3" LEAF id:5 ag-Grid-AutoColumn:"grp-5" 0:"value-500"
         `);
 
-        api.exportDataAsExcel({ fileName: 'test.xlsx' });
+        void api.exportDataAsExcel({ fileName: 'test.xlsx' });
 
         expect(await getExcelJsonData(await objectUrls.pullBlob())).toEqual([
             { Group: ' -> grp-0', value: 'value-100' },
@@ -89,7 +89,7 @@ describe('ag-grid tree excel export', () => {
                 └── LEAF id:5 0:"value-500"
             `);
 
-        api.exportDataAsExcel({ fileName: 'test.xlsx' });
+        void api.exportDataAsExcel({ fileName: 'test.xlsx' });
 
         expect(await getExcelJsonData(await objectUrls.pullBlob())).toEqual([
             { value: 'value-100' },

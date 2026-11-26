@@ -4,6 +4,6 @@ export function getDataAsPdf(beans: BeanCollection, params?: PdfExportParams): B
     return beans.pdfCreator?.getDataAsPdf(params);
 }
 
-export function exportDataAsPdf(beans: BeanCollection, params?: PdfExportParams): void {
-    beans.pdfCreator?.exportDataAsPdf(params);
+export function exportDataAsPdf(beans: BeanCollection, params?: PdfExportParams): Promise<void> {
+    return beans.pdfCreator?.exportDataAsPdf(params) ?? Promise.resolve();
 }

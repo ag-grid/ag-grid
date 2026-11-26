@@ -45,6 +45,8 @@ export const _PUBLIC_EVENTS = [
     'cutEnd',
     'pasteStart',
     'pasteEnd',
+    'exportStart',
+    'exportEnd',
     'calculatedColumnCreated',
     'calculatedColumnChanged',
     'calculatedColumnExpressionChanged',
@@ -202,6 +204,7 @@ export const ALWAYS_SYNC_GLOBAL_EVENTS: Set<AgEventType> = new Set([
     'gridPreDestroyed',
     'fillStart',
     'pasteStart',
+    'exportStart',
     'issueRaised',
 ]);
 

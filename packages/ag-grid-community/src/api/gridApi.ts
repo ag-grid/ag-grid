@@ -1523,9 +1523,10 @@ export interface _CsvExportGridApi {
 
     /**
      * Downloads a CSV export of the grid's data.
+     * Returns a Promise that resolves once the download has been triggered, so it can be awaited before e.g. destroying the grid.
      * @agModule `CsvExportModule`
      */
-    exportDataAsCsv(params?: CsvExportParams): void;
+    exportDataAsCsv(params?: CsvExportParams): Promise<void>;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -1878,9 +1879,10 @@ export interface _ExcelExportGridApi {
 
     /**
      * Downloads an Excel export of the grid's data.
+     * Returns a Promise that resolves once the download has been triggered, so it can be awaited before e.g. destroying the grid.
      * @agModule `ExcelExportModule`
      */
-    exportDataAsExcel(params?: ExcelExportParams): void;
+    exportDataAsExcel(params?: ExcelExportParams): Promise<void>;
 
     /**
      * This is method to be used to get the grid's data as a sheet, that will later be exported either by `getMultipleSheetsAsExcel()` or `exportMultipleSheetsAsExcel()`.
@@ -1896,9 +1898,10 @@ export interface _ExcelExportGridApi {
 
     /**
      * Downloads an Excel export of multiple sheets in one file.
+     * Returns a Promise that resolves once the download has been triggered.
      * @agModule `ExcelExportModule`
      */
-    exportMultipleSheetsAsExcel(params: ExcelExportMultipleSheetParams): void;
+    exportMultipleSheetsAsExcel(params: ExcelExportMultipleSheetParams): Promise<void>;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -1911,9 +1914,10 @@ export interface _PdfExportGridApi {
 
     /**
      * Downloads a PDF export of the grid's data.
+     * Returns a Promise that resolves once the download has been triggered.
      * @agModule `PdfExportModule`
      */
-    exportDataAsPdf(params?: PdfExportParams): void;
+    exportDataAsPdf(params?: PdfExportParams): Promise<void>;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */

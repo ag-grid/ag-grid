@@ -262,7 +262,7 @@ export class OverlayService extends BeanStub implements NamedBean {
         this.userForcedNoRows = true;
         this.doShowOverlay(NoRowsOverlayDef);
     }
-    public showExportOverlay(heavyOperation: () => void): void {
+    public showExportOverlay(heavyOperation: () => void | Promise<void>): Promise<void> {
         const gos = this.gos;
         if (
             !this.eWrapper ||
@@ -272,20 +272,21 @@ export class OverlayService extends BeanStub implements NamedBean {
             this.devErrorOverlayActive ||
             (this.userForcedNoRows && this.currentDef === NoRowsOverlayDef)
         ) {
-            heavyOperation();
-            return;
+            return Promise.resolve(heavyOperation());
         }
 
         const desiredDef = this.getDesiredDefWithOverride(ExportingOverlayDef);
         if (!desiredDef) {
-            heavyOperation();
-            return;
+            return Promise.resolve(heavyOperation());
         }
 
-        void this.runWithExportOverlay(desiredDef, heavyOperation);
+        return this.runWithExportOverlay(desiredDef, heavyOperation);
     }
 
-    private async runWithExportOverlay(desiredDef: OverlayDef, heavyOperation: () => void): Promise<void> {
+    private async runWithExportOverlay(
+        desiredDef: OverlayDef,
+        heavyOperation: () => void | Promise<void>
+    ): Promise<void> {
         const beans = this.beans;
 
         // Make sure if multiple export calls are run we don't clear until the last one.
@@ -302,7 +303,7 @@ export class OverlayService extends BeanStub implements NamedBean {
         const shownAt = Date.now();
         // start the heavy operation (allow sync or promise)
         try {
-            heavyOperation();
+            await heavyOperation();
         } finally {
             const elapsed = Date.now() - shownAt;
             const remaining = Math.max(0, MIN_EXPORT_OVERLAY_SHOW_TIME - elapsed);

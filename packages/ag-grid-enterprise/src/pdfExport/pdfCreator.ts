@@ -1,6 +1,6 @@
 import { _downloadFile } from 'ag-stack';
 
-import type { IPdfCreator, NamedBean, PdfCustomContent, PdfExportParams } from 'ag-grid-community';
+import type { ExportEventSource, IPdfCreator, NamedBean, PdfCustomContent, PdfExportParams } from 'ag-grid-community';
 import { BaseCreator } from 'ag-grid-community';
 
 import { PdfSerializingSession } from './pdfSerializingSession';
@@ -76,28 +76,33 @@ export class PdfCreator
     /**
      * Run the export pipeline and trigger a download.
      * @param userParams - Optional export params to use for this export.
+     * @param source - What triggered the export.
      */
-    protected export(userParams?: PdfExportParams): void {
+    protected export(userParams: PdfExportParams | undefined, source: ExportEventSource): Promise<void> {
         if (this.isExportSuppressed()) {
             this.warn(160);
-            return;
+            return Promise.resolve();
         }
 
-        this.runExport(() => {
+        return this.runExport('pdf', source, () => {
             const mergedParams = this.getMergedParams(userParams);
             const blob = this.createPdfBlob(mergedParams);
-            if (blob) {
-                _downloadFile(this.resolveFileName(mergedParams), blob);
+            if (!blob) {
+                return undefined;
             }
+            const fileName = this.resolveFileName(mergedParams);
+            _downloadFile(fileName, blob);
+            return fileName;
         });
     }
 
     /**
      * Export and download a PDF file.
      * @param params - Optional export params to use for this export.
+     * @param source - What triggered the export.
      */
-    public exportDataAsPdf(params?: PdfExportParams): void {
-        this.export(params);
+    public exportDataAsPdf(params?: PdfExportParams, source: ExportEventSource = 'api'): Promise<void> {
+        return this.export(params, source);
     }
 
     /**

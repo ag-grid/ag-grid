@@ -1,11 +1,14 @@
 import { BeanStub } from '../context/beanStub';
+import type { ExportEventFormat, ExportEventSource } from '../events';
 import { _addGridCommonParams } from '../gridOptionsUtils';
 import type { ExportParams } from '../interfaces/exportParams';
 import type { GridSerializingSession } from './iGridSerializer';
 
+type ExportFunc = () => string | undefined | Promise<string | undefined>;
+
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export abstract class BaseCreator<T, S extends GridSerializingSession<T>, P extends ExportParams<T>> extends BeanStub {
-    protected abstract export(userParams?: P, compress?: boolean): void;
+    protected abstract export(userParams: P | undefined, source: ExportEventSource): Promise<void>;
 
     protected abstract getMergedParams(params?: P): P;
 
@@ -28,14 +31,51 @@ export abstract class BaseCreator<T, S extends GridSerializingSession<T>, P exte
         return this.getFileName(providedFileName);
     }
 
-    /** Run an export function, showing a transient export overlay when the overlay service is present. */
-    protected runExport(exportFunc: () => void): void {
+    /**
+     * Run an export function, showing a transient export overlay when the overlay service is present.
+     * `exportFunc` returns the name of the downloaded file, if there was one.
+     */
+    protected runExport(format: ExportEventFormat, source: ExportEventSource, exportFunc: ExportFunc): Promise<void> {
+        const tracked = this.trackExport(format, source, exportFunc);
         const { overlays } = this.beans;
         if (overlays) {
-            overlays.showExportOverlay(exportFunc);
-        } else {
-            exportFunc();
+            return overlays.showExportOverlay(tracked);
         }
+        return Promise.resolve(tracked());
+    }
+
+    /** Dispatches `exportStart` now, and returns a function that runs the export then dispatches `exportEnd`. */
+    protected trackExport(
+        format: ExportEventFormat,
+        source: ExportEventSource,
+        exportFunc: ExportFunc
+    ): () => void | Promise<void> {
+        const { eventSvc } = this.beans;
+        eventSvc.dispatchEvent({ type: 'exportStart', format, source });
+
+        const end = (success: boolean, fileName?: string) =>
+            eventSvc.dispatchEvent({ type: 'exportEnd', format, source, success, fileName });
+
+        return () => {
+            let result: string | undefined | Promise<string | undefined>;
+            try {
+                result = exportFunc();
+            } catch (error) {
+                end(false);
+                throw error;
+            }
+
+            if (result instanceof Promise) {
+                return result.then(
+                    (fileName) => end(fileName != null, fileName),
+                    (error) => {
+                        end(false);
+                        throw error;
+                    }
+                );
+            }
+            end(result != null, result);
+        };
     }
 
     protected getData(params: P): string {

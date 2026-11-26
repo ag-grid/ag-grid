@@ -46,7 +46,7 @@ describe.skip('Excel table column names with control characters', () => {
             columnDefs: [{ field: 'a', headerName: 'A\u0001B' }],
             rowData: [{ a: 1 }],
         });
-        api.exportDataAsExcel({ exportAsExcelTable: true });
+        void api.exportDataAsExcel({ exportAsExcelTable: true });
         const zip = XLSX.CFB.read(new Uint8Array(await (await objectUrls.pullBlob()).arrayBuffer()), { type: 'array' });
         const tableXml = new TextDecoder().decode(XLSX.CFB.find(zip, '/xl/tables/table1.xml').content);
         const name = /<tableColumn\b[^>]*\bname="([^"]*)"/.exec(tableXml)?.[1];

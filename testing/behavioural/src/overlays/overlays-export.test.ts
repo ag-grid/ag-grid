@@ -119,7 +119,7 @@ describe('ag-grid export overlay', () => {
             expect(document.querySelector('.my-custom-loading-overlay')).toBeFalsy();
 
             // When CSV export starts, loading overlay should be shown
-            api.exportDataAsCsv();
+            void api.exportDataAsCsv();
             await waitFor(() => {
                 expect(hasExportingOverlay()).toBeTruthy();
                 expect(hasExportingOverlayWrapper()).toBeTruthy();
@@ -162,7 +162,7 @@ describe('ag-grid export overlay', () => {
             expect(document.querySelector('.my-custom-loading-overlay')).toBeFalsy();
 
             // When CSV export starts, loading overlay should be shown
-            api.exportDataAsCsv();
+            void api.exportDataAsCsv();
             await waitFor(() => {
                 expect(document.querySelector('.my-custom-loading-overlay')).toBeTruthy();
             });
@@ -199,7 +199,7 @@ describe('ag-grid export overlay', () => {
             expect(hasExportingOverlay()).toBeFalsy();
 
             // When CSV export starts, loading overlay should be shown
-            api.exportDataAsCsv();
+            void api.exportDataAsCsv();
             await waitFor(() => {
                 expect(hasExportingOverlay()).toBeFalsy();
             });
@@ -264,7 +264,7 @@ describe('ag-grid export overlay', () => {
             expect(hasExportingOverlay()).toBeFalsy();
 
             // When CSV export starts, no-rows overlay should still be shown
-            api.exportDataAsCsv();
+            void api.exportDataAsCsv();
 
             await waitFor(() => expect(URL.createObjectURL).toHaveBeenCalled());
             await waitFor(() => expect(URL.revokeObjectURL).toHaveBeenCalled());
@@ -314,7 +314,7 @@ describe('ag-grid export overlay', () => {
             `);
 
             // When CSV export starts
-            api.exportDataAsCsv();
+            void api.exportDataAsCsv();
             expect(document.querySelector('.my-custom-exporting-overlay')).toBeTruthy();
 
             await waitFor(() => expect(URL.createObjectURL).toHaveBeenCalled());
@@ -355,7 +355,7 @@ describe('ag-grid export overlay', () => {
             expect(document.querySelector('.my-active-overlay')).toBeTruthy();
 
             // When CSV export starts, active overlay should still be shown
-            api.exportDataAsCsv();
+            void api.exportDataAsCsv();
 
             await waitFor(() => expect(URL.createObjectURL).toHaveBeenCalled());
             await waitFor(() => expect(URL.revokeObjectURL).toHaveBeenCalled());
@@ -392,7 +392,7 @@ describe('ag-grid export overlay', () => {
             expect(hasNoRowsOverlay).toBeTruthy();
 
             // When CSV export starts, loading overlay should be shown
-            api.exportDataAsCsv();
+            void api.exportDataAsCsv();
             await waitFor(() => {
                 expect(hasExportingOverlay()).toBeTruthy();
                 expect(hasExportingOverlayWrapper()).toBeTruthy();
@@ -434,7 +434,7 @@ describe('ag-grid export overlay', () => {
             `);
 
             // When excel export starts, exporting overlay should be shown
-            api.exportDataAsExcel();
+            void api.exportDataAsExcel();
 
             await waitFor(() => {
                 expect(hasExportingOverlay()).toBeTruthy();
@@ -483,7 +483,7 @@ describe('ag-grid export overlay', () => {
         `);
 
         // When CSV export starts
-        api.exportDataAsExcel();
+        void api.exportDataAsExcel();
         expect(document.querySelector('.my-custom-exporting-overlay')).toBeTruthy();
 
         await waitFor(() => expect(URL.createObjectURL).toHaveBeenCalled());
@@ -500,6 +500,53 @@ describe('ag-grid export overlay', () => {
             ROOT id:ROOT_NODE_ID
             └── LEAF id:0 athlete:"John" sport:"Tennis" age:25
         `);
+    });
+
+    describe('awaitable export', () => {
+        test('exportDataAsCsv resolves once the download is triggered and the grid can then be destroyed', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs,
+                rowData: [{ athlete: 'John', sport: 'Tennis', age: 25 }],
+            });
+
+            const exported = api.exportDataAsCsv();
+            expect(URL.createObjectURL).not.toHaveBeenCalled();
+
+            await exported;
+            expect(URL.createObjectURL).toHaveBeenCalledTimes(1);
+
+            const blob = (URL.createObjectURL as jest.Mock).mock.calls[0][0] as Blob;
+            expect(await blob.text()).toContain('John');
+
+            api.destroy();
+        });
+
+        test('exportDataAsExcel resolves once the download is triggered', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs,
+                rowData: [{ athlete: 'John', sport: 'Tennis', age: 25 }],
+            });
+
+            const exported = api.exportDataAsExcel();
+            expect(URL.createObjectURL).not.toHaveBeenCalled();
+
+            await exported;
+            expect(URL.createObjectURL).toHaveBeenCalledTimes(1);
+
+            api.destroy();
+        });
+
+        test('exportDataAsCsv with the overlay suppressed captures the data before returning', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs,
+                rowData: [{ athlete: 'John', sport: 'Tennis', age: 25 }],
+                suppressOverlays: ['exporting'],
+            });
+
+            const exported = api.exportDataAsCsv();
+            expect(URL.createObjectURL).toHaveBeenCalledTimes(1);
+            await exported;
+        });
     });
 });
 

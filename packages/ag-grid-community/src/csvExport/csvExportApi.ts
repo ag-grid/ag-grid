@@ -5,6 +5,6 @@ export function getDataAsCsv(beans: BeanCollection, params?: CsvExportParams): s
     return beans.csvCreator?.getDataAsCsv(params);
 }
 
-export function exportDataAsCsv(beans: BeanCollection, params?: CsvExportParams): void {
-    beans.csvCreator?.exportDataAsCsv(params);
+export function exportDataAsCsv(beans: BeanCollection, params?: CsvExportParams): Promise<void> {
+    return beans.csvCreator?.exportDataAsCsv(params) ?? Promise.resolve();
 }

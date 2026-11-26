@@ -67,6 +67,8 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         cutEnd: CutEndEvent<TData, TContext>;
         pasteStart: PasteStartEvent<TData, TContext>;
         pasteEnd: PasteEndEvent<TData, TContext>;
+        exportStart: ExportStartEvent<TData, TContext>;
+        exportEnd: ExportEndEvent<TData, TContext>;
         calculatedColumnCreated: CalculatedColumnCreatedEvent<TData, TContext>;
         calculatedColumnChanged: CalculatedColumnChangedEvent<TData, TContext>;
         calculatedColumnExpressionChanged: CalculatedColumnExpressionChangedEvent<TData, TContext>;
@@ -707,6 +709,30 @@ export interface PasteStartEvent<TData = any, TContext = any> extends AgGlobalEv
 
 export interface PasteEndEvent<TData = any, TContext = any> extends AgGlobalEvent<'pasteEnd', TData, TContext> {
     source: string;
+}
+
+/** The file format of an export. */
+export type ExportEventFormat = 'csv' | 'excel' | 'pdf';
+
+/** What triggered an export: a call to the grid API, or one of the built-in context menu export items. */
+export type ExportEventSource = 'api' | 'contextMenu';
+
+export interface ExportStartEvent<TData = any, TContext = any> extends AgGlobalEvent<'exportStart', TData, TContext> {
+    /** The format being exported. */
+    format: ExportEventFormat;
+    /** What triggered the export. */
+    source: ExportEventSource;
+}
+
+export interface ExportEndEvent<TData = any, TContext = any> extends AgGlobalEvent<'exportEnd', TData, TContext> {
+    /** The format that was exported. */
+    format: ExportEventFormat;
+    /** What triggered the export. */
+    source: ExportEventSource;
+    /** `false` if the export failed or produced no file. */
+    success: boolean;
+    /** The name of the file whose download was triggered. Not set if no file was produced. */
+    fileName?: string;
 }
 
 /**
