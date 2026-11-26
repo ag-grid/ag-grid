@@ -458,6 +458,12 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
     public syncInRowNode(rowNode: RowNode, oldNode?: RowNode): void {
         const selectedNodes = this.selectedNodes;
 
+        // Looking up each id hashes it, which is costly across a large load, so skip it when nothing is selected.
+        if (selectedNodes.size === 0) {
+            rowNode.__selected = false;
+            return;
+        }
+
         // Id changed: this node now holds different data. Swap in the daemon clone (old id + data) so the
         // old id stays selected and still surfaces in getSelectedNodes(), unrendered, until deselected.
         const oldId = oldNode?.id;
@@ -475,7 +481,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
     }
 
     public createDaemonNode(rowNode: RowNode): RowNode | undefined {
-        if (!rowNode.id) {
+        if (!rowNode.id || this.selectedNodes.size === 0) {
             return undefined;
         }
         const oldNode = new RowNode(this.beans);
