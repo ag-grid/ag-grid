@@ -442,15 +442,14 @@ export class RowNode<TData = any>
     }
 
     public setDataAndId(data: TData, id: string | undefined): void {
-        // Client-side selection skips both calls' work when nothing is selected; server-side still syncs every row.
-        const selectionSvc = this.beans.selectionSvc;
-        const oldNode = selectionSvc?.createDaemonNode?.(this);
+        const oldId = this.id;
         const oldData = this.data;
 
         this.data = data;
         this.updateDataOnDetailNode();
         this.setId(id);
-        selectionSvc?.syncInRowNode(this, oldNode);
+        // Client-side selection skips this when nothing is selected; server-side still syncs every row.
+        this.beans.selectionSvc?.syncInRowNode(this, oldId, oldData);
 
         const localEventService = this.__localEventService;
         if (localEventService) {

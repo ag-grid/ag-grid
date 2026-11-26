@@ -455,7 +455,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         return changed;
     }
 
-    public syncInRowNode(rowNode: RowNode, oldNode?: RowNode): void {
+    public syncInRowNode(rowNode: RowNode, oldId?: string, oldData?: any): void {
         const selectedNodes = this.selectedNodes;
 
         // Looking up each id hashes it, which is costly across a large load, so skip it when nothing is selected.
@@ -466,9 +466,13 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
 
         // Id changed: this node now holds different data. Swap in the daemon clone (old id + data) so the
         // old id stays selected and still surfaces in getSelectedNodes(), unrendered, until deselected.
-        const oldId = oldNode?.id;
-        if (oldId != null && oldId !== rowNode.id && selectedNodes.get(oldId) === rowNode) {
-            selectedNodes.set(oldId, oldNode!);
+        if (oldId && oldId !== rowNode.id && selectedNodes.get(oldId) === rowNode) {
+            const daemonNode = new RowNode(this.beans);
+            daemonNode.id = oldId;
+            daemonNode.data = oldData;
+            daemonNode.__selected = rowNode.__selected;
+            daemonNode.level = rowNode.level;
+            selectedNodes.set(oldId, daemonNode);
         }
 
         // Restore selection for the (re)created node from the persisted entry, rebinding it to this live node.
@@ -478,23 +482,6 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         if (selected) {
             selectedNodes.set(id, rowNode);
         }
-    }
-
-    /** Copies the node's old id and data so `syncInRowNode` can keep that id selected when the node is reused. Returns `undefined` when nothing is selected, as there is then nothing to keep. */
-    public createDaemonNode(rowNode: RowNode): RowNode | undefined {
-        if (!rowNode.id || this.selectedNodes.size === 0) {
-            return undefined;
-        }
-        const oldNode = new RowNode(this.beans);
-
-        // just copy the id and data, this is enough for the node to be used
-        // in the selection service
-        oldNode.id = rowNode.id;
-        oldNode.data = rowNode.data;
-        oldNode.__selected = rowNode.__selected;
-        oldNode.level = rowNode.level;
-
-        return oldNode;
     }
 
     public reset(source: SelectionEventSourceType): void {
