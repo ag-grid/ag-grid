@@ -32,6 +32,12 @@ export function parseArgs(argv, flags) {
     const state = { forward: [], capture: {} };
     for (let index = 0; index < argv.length; index++) {
         const arg = argv[index];
+        if (arg === '--') {
+            // The rest is the runner's, as typed; the `--` is kept only where the gate declares it.
+            flags['--']?.apply(state);
+            state.forward.push(...argv.slice(index + 1));
+            break;
+        }
         const split = arg.indexOf('=');
         const name = split < 0 ? arg : arg.slice(0, split);
         const inline = split < 0 ? undefined : arg.slice(split + 1);

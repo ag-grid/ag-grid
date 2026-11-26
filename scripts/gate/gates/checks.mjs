@@ -48,6 +48,8 @@ export default {
             apply: (state, value) => (state.targets = value),
         },
         '--fresh': { takes: NONE, apply: (state) => state.forward.push('--skip-nx-cache') },
+        // Nx hands what follows `--` to each target, so this gate forwards it.
+        '--': { takes: NONE, apply: (state) => state.forward.push('--') },
         '--warn': { takes: NONE, apply: (state) => (state.showWarnings = true) },
         '--verbose': { takes: NONE, apply: (state) => (state.verbose = true) },
     },
