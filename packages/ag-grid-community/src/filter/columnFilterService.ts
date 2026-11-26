@@ -1892,7 +1892,7 @@ export class ColumnFilterService
         );
     }
 
-    public setModelForColumnLegacy(key: string | AgColumn, model: any): AgPromise<void> {
+    private setModelForColumnLegacy(key: string | AgColumn, model: any): AgPromise<void> {
         const column = this.beans.colModel.getNonPivotCol(key);
         const filterWrapper = column ? this.getOrCreateFilterWrapper(column, true) : null;
         return filterWrapper ? this.setModelOnFilterWrapper(filterWrapper, model) : AgPromise.resolve();
