@@ -1104,7 +1104,7 @@ describe('Row Selection Grid API', () => {
                     `group selection state updated after add and remove transaction after applyServerSideTransaction #2`
                 ).check(`
                     ROOT id:<no-id>
-                    ├─┬ GROUP-leafGroup indeterminate id:':{"country":"United States"}' ag-Grid-AutoColumn:"United States" country:"United States"
+                    ├─┬ GROUP-leafGroup selected id:':{"country":"United States"}' ag-Grid-AutoColumn:"United States" country:"United States"
                     │ ├── LEAF selected id:'United States:{"athlete":"Michael Phelps","age":23,"country":"United States","year":2008,"date":"24/08/2008","sport":"Swimming","gold":8,"silver":0,"bronze":0,"total":8}' ag-Grid-AutoColumn:"Michael Phelps" country:"United States" sport:"Swimming" age:23 year:2008 date:"24/08/2008"
                     │ ├── LEAF selected id:'United States:{"athlete":"Michael Phelps","age":19,"country":"United States","year":2004,"date":"29/08/2004","sport":"Swimming","gold":6,"silver":0,"bronze":2,"total":8}' ag-Grid-AutoColumn:"Michael Phelps" country:"United States" sport:"Swimming" age:19 year:2004 date:"29/08/2004"
                     │ ├── LEAF selected id:'United States:{"athlete":"Michael Phelps","age":27,"country":"United States","year":2012,"date":"12/08/2012","sport":"Swimming","gold":4,"silver":2,"bronze":0,"total":6}' ag-Grid-AutoColumn:"Michael Phelps" country:"United States" sport:"Swimming" age:27 year:2012 date:"12/08/2012"
@@ -1126,10 +1126,8 @@ describe('Row Selection Grid API', () => {
                     └── GROUP-leafGroup collapsed id:':{"country":"Netherlands"}' ag-Grid-AutoColumn:"Netherlands" country:"Netherlands"
                 `);
 
-                // NOTE: This test encodes the current behaviour but it's possibly a bug:
-                // in CSRM one would expect swimming group to be selected again.
-                // This could just be a limitation of SSRM?
-                assertSelectedRowsById(expectedRowIds.slice(1), api);
+                // as in the client-side model, the group is selected again once the added row is removed
+                assertSelectedRowsById(expectedRowIds, api);
             });
         });
     });

@@ -83,6 +83,7 @@ const GridExample = () => {
                         <AgGridReact
                             rowData={data}
                             loading={loading}
+                            enableFilterHandlers={false}
                             columnDefs={columnDefs}
                             defaultColDef={defaultColDef}
                             alwaysShowVerticalScroll

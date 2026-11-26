@@ -3,7 +3,7 @@ title: "SSRM Configuration"
 enterprise: true
 ---
 
-This section covers the Server-Side Cache and configurations available in the Server-Side Row Model.
+This page covers SSRM settings, including caching, block loading, row IDs and the initial scroll position.
 
 As many of the configurations available in the Server-Side Row Model relate to the Server-Side Cache it is important to
 understand how the grid organises data obtained from the server into caches.
@@ -81,7 +81,7 @@ This is demonstrated in the example below, note the following:
 ## Providing Row IDs
 
 Some features of the server-side row model require Row IDs in order to be enabled or to enhance their behaviour, these features include [Row Selection](./server-side-model-selection/),
-[Transactions](./server-side-model-updating-transactions/) and [Refreshing Data](./server-side-model-updating-refresh/).
+[Transactions](./server-side-model-updating-transactions/), [Refreshing Data](./server-side-model-updating-refresh/) and [View Subscription](./server-side-model-updating-view-subscription/).
 
 The server-side row model requires unique Row IDs in order to identify rows after new data loads. For example, if a sort or filter is applied which results in new rows being loaded, the grid needs
 to be able to identify the previously known rows.
@@ -118,7 +118,7 @@ const gridOptions = {
 
 ## Grand Total Row
 
-A grand total row can be displayed at the top or bottom of the grid, even on flat grids without row grouping. See [Grand Total Row](./server-side-model-grouping/#grand-total-row) for full details and examples.
+A grand total row can be displayed at the top or bottom of the grid, even on flat grids without row grouping. See [Grand Total Row](./server-side-model-aggregation/#grand-total-row) for full details and examples.
 
 ## Debug Info
 

@@ -246,9 +246,9 @@ The `Refresh Data` button triggers the cell components to refresh by randomising
 
 {% gridExampleRunner title="Custom Props" name="custom-props" /%}
 
-### Dynamic Tooltips
+### Tooltips
 
-When working with Custom Cell Renderers it is possible to register custom tooltips that are displayed dynamically by calling the `setTooltip` method on the params passed to the component.
+Custom Cell Renderers can register a tooltip by calling the `setTooltip` method on the params passed to the component. See [Tooltips for Custom Components](./tooltips-columns/#tooltips-for-custom-components) for how this interacts with column tooltip options.
 {% if isFramework("javascript", "angular", "vue") %}
 {% interfaceDocumentation interfaceName="ICellRendererParams" names=["setTooltip"] config={"description": ""} /%}
 {% /if %}
@@ -257,11 +257,12 @@ When working with Custom Cell Renderers it is possible to register custom toolti
 {% interfaceDocumentation interfaceName="CustomCellRendererProps" names=["setTooltip"] /%}
 {% /if %}
 
-The example below demonstrates a dynamic tooltip being displayed on Cell Components. The following can be noted:
+The example below registers a tooltip on the Athlete cells. The following can be noted:
 
-- The Athlete column uses the `shouldDisplayTooltip` callback to only display Tooltips when the text is not fully displayed.
+- The `shouldDisplayTooltip` callback is evaluated each time the tooltip is about to show, so only athletes with more than one gold medal display it.
+- Edit a Gold value to above 1 and the Athlete tooltip appears for that row without the cell being re-rendered.
 
-{% gridExampleRunner title="Dynamic Tooltips" name="dynamic-tooltips" /%}
+{% gridExampleRunner title="Cell Renderer Tooltips" name="dynamic-tooltips" /%}
 
 ### Defer Slow Cell Components
 

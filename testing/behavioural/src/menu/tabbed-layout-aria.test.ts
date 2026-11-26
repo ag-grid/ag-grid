@@ -1,6 +1,6 @@
 import { waitFor } from '@testing-library/dom';
 import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';
-import { TestGridsManager, canvasPolyfill, polyfillOffsetParent } from 'ag-test-utils';
+import { TestGridsManager, canvasPolyfill } from 'ag-test-utils';
 
 import type { GridApi } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
@@ -15,19 +15,14 @@ describe('tabbed layout aria', () => {
         modules: [ClientSideRowModelModule, CellSelectionModule, IntegratedChartsModule.with(AgChartsEnterpriseModule)],
     });
     const menuGrids = new TestGridsManager({ modules: [ClientSideRowModelModule, ColumnMenuModule] });
-    let restoreOffsetParent: () => void;
 
     beforeAll(async () => {
         await canvasPolyfill.init();
     });
     afterAll(() => canvasPolyfill.reset());
-    beforeEach(() => {
-        restoreOffsetParent = polyfillOffsetParent();
-    });
     afterEach(() => {
         chartGrids.reset();
         menuGrids.reset();
-        restoreOffsetParent();
     });
 
     const openChartToolPanel = async () => {

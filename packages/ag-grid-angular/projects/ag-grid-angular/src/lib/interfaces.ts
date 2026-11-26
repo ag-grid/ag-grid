@@ -3,6 +3,7 @@ import type {
     FilterDisplayParams,
     FloatingFilterDisplay,
     FloatingFilterDisplayParams,
+    IBuiltInTooltipParams,
     ICellEditor,
     ICellEditorParams,
     ICellEditorRendererParams,
@@ -61,6 +62,7 @@ export interface IHeaderAngularComp<TData = any, TContext = any>
 export interface IInnerHeaderAngularComp<TData = any, TContext = any>
     extends AgFrameworkComponent<IHeaderParams<TData, TContext>>, IHeader<TData, TContext> {}
 
+/** @deprecated v37 Use `enableFilterHandlers` and `IFloatingFilterDisplayAngularComp` instead. See [Migrating to Filter Handlers](https://www.ag-grid.com/javascript-data-grid/enable-filter-handlers-migration/). */
 export interface IFloatingFilterAngularComp<P = any, TData = any, TContext = any>
     extends AgFrameworkComponent<IFloatingFilterParams<P, TData, TContext>>, IFloatingFilter<P> {}
 
@@ -75,6 +77,7 @@ export interface IDateAngularComp<TData = any, TContext = any>
 export interface IDragAndDropImageAngularComponent<TData = any, TContext = any>
     extends AgFrameworkComponent<IDragAndDropImageParams<TData, TContext>>, IDragAndDropImage {}
 
+/** @deprecated v37 Use `enableFilterHandlers` and `IFilterDisplayAngularComp` instead. See [Migrating to Filter Handlers](https://www.ag-grid.com/javascript-data-grid/enable-filter-handlers-migration/). */
 export interface IFilterAngularComp<TData = any, TContext = any>
     extends AgFrameworkComponent<IFilterParams<TData, TContext>>, IFilter {}
 
@@ -154,6 +157,10 @@ export interface IToolbarItemAngularComp<TData = any, TContext = any, TParams = 
 
 export interface ITooltipAngularComp<TData = any, TValue = any, TContext = any> extends AgFrameworkComponent<
     ITooltipParams<TData, TValue, TContext>
+> {}
+
+export interface IBuiltInTooltipAngularComp<TData = any, TContext = any> extends AgFrameworkComponent<
+    IBuiltInTooltipParams<TData, TContext>
 > {}
 
 export interface IMenuItemAngularComp<TData = any, TContext = any>

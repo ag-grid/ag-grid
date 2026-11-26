@@ -112,7 +112,7 @@ const LANGUAGES: Record<Language, LanguageConfig> = {
     selector: 'my-app',
     template: `
         <div class="example-wrapper">
-            <div class="example-controls" style="display: flex; gap: 0.5rem; align-items: center">
+            <div class="example-controls">
                 <div class="controls-row">
                     <label for="language">Language:</label>
                     <select id="language" (change)="onLanguageChange($event)">

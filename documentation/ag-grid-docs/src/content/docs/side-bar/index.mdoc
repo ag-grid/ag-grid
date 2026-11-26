@@ -198,6 +198,32 @@ If you are using the long form (providing a `SideBarDef` object) then it is poss
 
 {% gridExampleRunner title="Side Bar Fine Tuning" name="fine-tuning" /%}
 
+### Tab Tooltips
+
+With `TooltipModule` registered, the Columns tab defaults to "Configure columns" and both Filters panels default to "Configure filters". These defaults apply to shortcuts and explicit definitions using the provided tool panel components.
+
+By default, tooltips appear beside the tab towards the grid: to its left when the Side Bar is visually on the right, and to its right when visually on the left, including in RTL layouts. This leaves adjacent tabs available when moving between them. Use `tooltipPosition` to override this placement.
+
+Set `ToolPanelDef.tooltipKey` to a localisation key and `tooltipDefault` to its fallback text. Use `tooltipDefault` alone for fixed text. Custom tool panels have no tooltip unless configured; the tab label is not used as a fallback. The label remains the button's accessible name even when visually hidden.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    sideBar: {
+        toolPanels: [{
+            id: 'columns',
+            toolPanel: 'agColumnsToolPanel',
+            labelKey: 'columns',
+            labelDefault: 'Columns',
+            iconKey: 'columnsToolPanel',
+            tooltipKey: 'configureColumns',
+            tooltipDefault: 'Choose visible columns',
+        }],
+    },
+};
+```
+
+See [Built-in Control Tooltips](./tooltips-built-in/) for suppression and custom rendering.
+
 ### Tool Panel Parent
 
 By default, Tool Panels are rendered inside the Side Bar. If you want to render Tool Panels in a different location, you can set the [parent](./side-bar/#reference-ToolPanelDef-parent) property in the `ToolPanelDef`. This is useful if you want to render Tool Panel in a different part of your application, such as a popup window or a separate section of your page.

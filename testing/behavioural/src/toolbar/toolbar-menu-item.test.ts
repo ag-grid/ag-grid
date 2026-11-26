@@ -11,27 +11,6 @@ import {
 import { ClientSideRowModelModule, enableDevValidations } from 'ag-grid-community';
 import { ColumnMenuModule, ContextMenuModule, ToolbarModule } from 'ag-grid-enterprise';
 
-// `_focusInto` (used to focus the menu list on open and the button on close) relies on
-// `_isVisible`, which checks `offsetParent`. happy-dom does not compute layout, so
-// `offsetParent` is always null — polyfill it so the focus-management code can find the
-// rendered menu items and the toolbar button.
-const originalOffsetParent = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'offsetParent');
-beforeAll(() => {
-    Object.defineProperty(HTMLElement.prototype, 'offsetParent', {
-        configurable: true,
-        get(this: HTMLElement) {
-            return this.parentElement;
-        },
-    });
-});
-afterAll(() => {
-    if (originalOffsetParent) {
-        Object.defineProperty(HTMLElement.prototype, 'offsetParent', originalOffsetParent);
-    } else {
-        delete (HTMLElement.prototype as any).offsetParent;
-    }
-});
-
 describe('Toolbar menu item (agMenuToolbarItem)', () => {
     const gridMgr = new TestGridsManager({
         modules: [ClientSideRowModelModule, ToolbarModule, ContextMenuModule],

@@ -1,15 +1,13 @@
 import { waitFor } from '@testing-library/dom';
-import { TestGridsManager, polyfillOffsetParent } from 'ag-test-utils';
+import { TestGridsManager } from 'ag-test-utils';
 
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
 describe('tab guard accessibility', () => {
     const grids = new TestGridsManager({ modules: [AllEnterpriseModule] });
-    let restoreOffsetParent: () => void;
     let outside: HTMLButtonElement;
 
     beforeEach(() => {
-        restoreOffsetParent = polyfillOffsetParent();
         outside = document.createElement('button');
         outside.textContent = 'Outside';
         document.body.append(outside);
@@ -18,7 +16,6 @@ describe('tab guard accessibility', () => {
     afterEach(() => {
         grids.reset();
         outside.remove();
-        restoreOffsetParent();
     });
 
     test.each(['new', 'legacy', 'context', 'submenu'] as const)(

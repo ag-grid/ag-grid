@@ -5,7 +5,7 @@ import { blockConsentAndAnalytics } from '@utils/grid/test-utils';
 // examples only mounts, and only fetches source for, the runners near the viewport. Off-screen
 // runners keep their reserved height and mount when the reader reaches them.
 
-// Fourteen runners, the most rendered on any docs page
+// A page with ten runners
 const PAGE_PATH = 'react-data-grid/server-side-model-grouping/';
 
 test.describe('Example runner lazy hydration', () => {

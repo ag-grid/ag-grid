@@ -101,7 +101,8 @@ function isIdenticalPalette(paletteA: AgChartThemePalette, paletteB: AgChartThem
     return arrayCompare(paletteA.fills, paletteB.fills) && arrayCompare(paletteA.strokes, paletteB.strokes);
 }
 
-const STOCK_THEMES: Record<AgChartThemeName, true> = {
+// `Record<string, true>` allows themes newer than the pinned AG Charts; a missing `AgChartThemeName` still fails.
+const STOCK_THEMES: Record<AgChartThemeName, true> & Record<string, true> = {
     'ag-default': true,
     'ag-default-dark': true,
     'ag-sheets': true,
@@ -114,6 +115,8 @@ const STOCK_THEMES: Record<AgChartThemeName, true> = {
     'ag-material-dark': true,
     'ag-financial': true,
     'ag-financial-dark': true,
+    'ag-accessible': true,
+    'ag-accessible-dark': true,
 };
 
 export function isStockTheme(themeName: string): themeName is AgChartThemeName {

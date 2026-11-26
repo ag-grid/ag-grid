@@ -66,7 +66,7 @@ export type {
     AgPropertyValueChangedListener,
     IPropertiesService,
 } from './interfaces/iProperties';
-export type { ITooltipFeature, TooltipCtrl } from './interfaces/iTooltip';
+export type { ComponentTooltipSource, ITooltipFeature, TooltipCtrl, TooltipDetails } from './interfaces/iTooltip';
 export { AgPopupComponent } from './popup/agPopupComponent';
 export { BasePopupService } from './popup/basePopupService';
 export {
@@ -78,6 +78,10 @@ export {
     toRelativeRect as _toRelativeRect,
 } from './popup/popupPositionUtils';
 export type { Alignment, Anchor } from './popup/popupPositionUtils';
+export {
+    isTooltipPosition as _isTooltipPosition,
+    TOOLTIP_POSITIONS as _TOOLTIP_POSITIONS,
+} from './popup/tooltipPositionUtils';
 export { AgPositionableFeature } from './rendering/agPositionableFeature';
 export type { PositionableOptions, ResizableSides, ResizableStructure } from './rendering/agPositionableFeature';
 export { AutoScrollService } from './rendering/autoScrollService';
@@ -215,6 +219,7 @@ export {
     _isElementOverflowingCallback,
     _isFocusableFormField,
     _isHorizontalScrollShowing,
+    _isVerticalScrollShowing,
     _isInDOM,
     _isNodeOrElement,
     _isVisible,
@@ -264,6 +269,7 @@ export {
     _scrollHorizontallyToShow,
 } from './utils/focus';
 export { _debounce } from './utils/debounce';
+export { _throwErrors } from './utils/error';
 export { _batchCall, _doOnce, _throttle } from './utils/function';
 export { _fuzzySuggestions } from './utils/fuzzyMatch';
 export {

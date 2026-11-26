@@ -8,6 +8,7 @@ import type {
     IPropertiesService,
     ITooltipFeature,
     TooltipCtrl,
+    TooltipDetails,
 } from 'ag-stack';
 import {
     KeyCode,
@@ -110,9 +111,14 @@ export class AgSelect<
                 {
                     shouldDisplayTooltip: _isElementOverflowingCallback(() => this.eDisplayField),
                     getGui: () => this.getGui(),
-                    getTooltipComponentDefinition: () => undefined,
                     getLocation: () => 'select',
-                } as TooltipCtrl<string, any>
+                    getTooltip: () => ({
+                        params: {
+                            value: this.listComponent?.getValue(),
+                            valueFormatted: this.listComponent?.getDisplayValue(),
+                        },
+                    }),
+                } satisfies TooltipCtrl<'select', TooltipDetails<'select'>>
             )
         );
         super.postConstruct();

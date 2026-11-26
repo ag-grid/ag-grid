@@ -4,6 +4,7 @@ import { createRoot } from 'react-dom/client';
 import type { ColDef } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
+    NumberEditorModule,
     TextEditorModule,
     TextFilterModule,
     TooltipModule,
@@ -20,7 +21,7 @@ if (process.env.NODE_ENV !== 'production') {
     enableDevValidations();
 }
 
-const modules = [TextEditorModule, TextFilterModule, ClientSideRowModelModule, TooltipModule];
+const modules = [NumberEditorModule, TextEditorModule, TextFilterModule, ClientSideRowModelModule, TooltipModule];
 
 const GridExample = () => {
     const gridRef = useRef<AgGridReact<IOlympicData>>(null);
@@ -29,6 +30,7 @@ const GridExample = () => {
     const [columnDefs, setColumnDefs] = useState<ColDef[]>([
         { field: 'athlete', width: 120, cellRenderer: AthleteCellRenderer },
         { field: 'country', width: 150 },
+        { field: 'gold', width: 100 },
     ]);
     const defaultColDef = useMemo<ColDef>(() => {
         return {

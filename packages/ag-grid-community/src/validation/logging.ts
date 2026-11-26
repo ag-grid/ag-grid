@@ -8,6 +8,8 @@ import type { ErrorId, ErrorMap, GetErrorParams, MissingModuleErrors } from './e
 
 const MAX_URL_LENGTH = 2000;
 const MIN_PARAM_LENGTH = 100;
+/** Stands in for a param that cannot be turned into text. */
+const UNFORMATTABLE_VALUE = '[unformattable value]';
 const VERSION_PARAM_NAME = '_version_';
 
 let getConsoleMessage: (<TId extends ErrorId>(id: TId, args: GetErrorParams<TId>) => any[]) | null = null;
@@ -460,16 +462,26 @@ function stringifyArray(inputArr: any[]) {
     return JSON.stringify(array);
 }
 
+/**
+ * Formats a param for the error link and message. Never throws, so a param such as a value thrown by a
+ * user callback cannot stop its own diagnostic from being logged.
+ */
 function stringifyValue(value: any) {
-    let output = value;
-    if (value instanceof Error) {
-        output = value.toString();
-    } else if (Array.isArray(value)) {
-        output = stringifyArray(value);
-    } else if (typeof value === 'object') {
-        output = stringifyObject(value);
+    try {
+        if (value instanceof Error) {
+            return value.toString();
+        }
+        if (Array.isArray(value)) {
+            return stringifyArray(value);
+        }
+        if (typeof value === 'object') {
+            return stringifyObject(value);
+        }
+        return typeof value === 'symbol' ? value.toString() : value;
+    } catch {
+        // e.g. a bigint, which JSON cannot serialise, or an object whose `toString` throws
+        return UNFORMATTABLE_VALUE;
     }
-    return output;
 }
 
 /**

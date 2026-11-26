@@ -1,7 +1,15 @@
-import type { AgColumn, IFilterDef, IFilterParams, ISetFilterService, NamedBean } from 'ag-grid-community';
+import type {
+    AgColumn,
+    IFilterDef,
+    IFilterParams,
+    ISetFilterService,
+    NamedBean,
+    SetFilterModel,
+} from 'ag-grid-community';
 import { BeanStub, _getDefaultFilter, _getFilterKey } from 'ag-grid-community';
 
-import type { SetFilterHandler } from './setFilterHandler';
+import { SetFilter } from './setFilter';
+import { SetFilterHandler } from './setFilterHandler';
 
 /** Read from a filter's params as written, or as merged for the filter about to be created. */
 interface PreservingFilterParams extends Partial<IFilterParams> {
@@ -15,6 +23,11 @@ export class SetFilterService extends BeanStub implements NamedBean, ISetFilterS
     readonly beanName = 'setFilterSvc' as const;
 
     private readonly handlersByColId = new Map<string, Set<SetFilterHandler<any>>>();
+
+    public getFloatingFilterTooltip(filter: unknown, model: SetFilterModel | null): string | undefined {
+        const handler = filter instanceof SetFilter ? filter.handler : filter;
+        return handler instanceof SetFilterHandler ? handler.getModelAsString(model, 'floatingTooltip') : undefined;
+    }
 
     public postConstruct(): void {
         const createPreservingFilters = () => this.createPreservingFilters();

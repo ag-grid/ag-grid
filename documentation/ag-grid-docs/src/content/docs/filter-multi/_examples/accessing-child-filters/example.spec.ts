@@ -21,4 +21,22 @@ test.agExample(import.meta, () => {
             expect(consoleMessages.some((m) => m.includes('Michael'))).toBeTruthy();
         }).toPass();
     });
+
+    test.eachFramework('Buttons sit on the Multi Filter and apply every child', async ({ page, agIdFor }) => {
+        await agIdFor.headerFilterButton('athlete').click();
+        const filterMenu = page.locator('.ag-filter-menu');
+        const applyButton = filterMenu.getByRole('button', { name: 'Apply', exact: true });
+
+        // One Apply and one Clear for the whole Multi Filter, not one per child filter.
+        await expect(applyButton).toHaveCount(1);
+        await expect(filterMenu.getByRole('button', { name: 'Clear', exact: true })).toHaveCount(1);
+
+        // Typing in a child does not filter until Apply is clicked.
+        await filterMenu.locator('input[type="text"]').first().fill('Aaron Armstrong');
+        await expect(agIdFor.cell('0', 'athlete')).toContainText('Michael Phelps');
+
+        await applyButton.click();
+        await expect(agIdFor.cell('8041', 'athlete')).toContainText('Aaron Armstrong');
+        await expect(page.locator('.ag-row')).toHaveCount(1);
+    });
 });

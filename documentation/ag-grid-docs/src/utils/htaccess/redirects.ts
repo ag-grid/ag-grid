@@ -23,7 +23,9 @@ const pageForAllFrameworks = (from: string, to: string): Redirect[] => [
 
 /**
  * Note: when changing this file please add/update the tests in
- * documentation/ag-grid-docs/testing/htaccess-harness
+ * documentation/ag-grid-docs/testing/htaccess-harness, and the production edge tests in the
+ * ag-grid/ag-devops repo (edge-tests/src/expected/redirects.ts) for redirects a ticket asks for.
+ * See .rulesync/rules/redirects-and-edge-tests.md.
  */
 
 // SE-64 (www) and SE-66 (bare apex) chain shortening. These legacy paths currently reach
@@ -3064,11 +3066,6 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/react-data-grid/component-overlay/', to: '/react-data-grid/overlays/' },
     { from: '/vue-data-grid/component-overlay/', to: '/vue-data-grid/overlays/' },
 
-    { from: '/javascript-data-grid/component-tooltip/', to: '/javascript-data-grid/tooltips/' },
-    { from: '/angular-data-grid/component-tooltip/', to: '/angular-data-grid/tooltips/' },
-    { from: '/react-data-grid/component-tooltip/', to: '/react-data-grid/tooltips/' },
-    { from: '/vue-data-grid/component-tooltip/', to: '/vue-data-grid/tooltips/' },
-
     { from: '/javascript-data-grid/component-date/', to: '/javascript-data-grid/filter-date/' },
     { from: '/angular-data-grid/component-date/', to: '/angular-data-grid/filter-date/' },
     { from: '/react-data-grid/component-date/', to: '/react-data-grid/filter-date/' },
@@ -3413,6 +3410,8 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     // is not redirected: it is served as a bare document for the ecommerce site's iframe.
     // Older versioned and translated EULA addresses also go to the current EULA.
     { from: '/eula/AG-Grid-Enterprise-License-Latest.html', to: '/eula/commercial/' },
+    // Redirect paths are case-sensitive, and the lower-case form of the address is still requested.
+    { from: '/eula/ag-grid-enterprise-license-latest.html', to: '/eula/commercial/' },
     { from: '/eula/AG-Grid-Community-License.html', to: '/eula/community/' },
     { from: '/eula/AG-Grid-Enterprise-License-v12.0.html', to: '/eula/commercial/' },
     { from: '/eula/AG-Grid-Enterprise-License-v13.0.html', to: '/eula/commercial/' },
@@ -3435,4 +3434,6 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/pricing/', to: '/license-pricing/' },
     { from: '/javascript-data-grid/row-grouping/', to: '/javascript-data-grid/grouping/' },
     { from: '/react-data-grid/row-grouping/', to: '/react-data-grid/grouping/' },
+    { from: '/angular-data-grid/row-grouping/', to: '/angular-data-grid/grouping/' },
+    { from: '/vue-data-grid/row-grouping/', to: '/vue-data-grid/grouping/' },
 ];

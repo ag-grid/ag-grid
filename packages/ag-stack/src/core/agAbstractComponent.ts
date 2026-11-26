@@ -7,10 +7,13 @@ import type {
     VisibleChangedEvent,
 } from '../interfaces/agComponent';
 import { RefPlaceholder } from '../interfaces/agComponent';
+import type { AgCoreBean } from '../interfaces/agCoreBean';
 import type { BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
 import type { IPropertiesService } from '../interfaces/iProperties';
+import type { ComponentTooltipSource, ITooltipFeature } from '../interfaces/iTooltip';
 import { CssClassManager } from '../rendering/cssClassManager';
+import { _getAriaLabel } from '../utils/aria';
 import type { AgElementParams } from '../utils/dom';
 import {
     DataRefAttribute,
@@ -106,6 +109,19 @@ export class AgAbstractComponent<
 
     public getCompId(): number {
         return this.compId;
+    }
+
+    public addTooltip(source: ComponentTooltipSource): ITooltipFeature | undefined {
+        const { beans } = this;
+        const ctrl = { getGui: () => this.getGui(), ...source };
+        ctrl.getTooltipAccessibleName ??= () => _getAriaLabel(ctrl.getAriaElement?.() ?? ctrl.getGui());
+        const feature = beans.registry.createDynamicBean<AgCoreBean<TBeanCollection> & ITooltipFeature>(
+            'tooltipFeature',
+            false,
+            ctrl,
+            beans
+        );
+        return this.createOptionalManagedBean(feature, beans.context);
     }
 
     private getDataRefAttribute(element: Element): string | null {

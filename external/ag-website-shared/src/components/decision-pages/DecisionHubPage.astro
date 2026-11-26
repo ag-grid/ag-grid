@@ -1,0 +1,44 @@
+---
+/**
+ * A cluster hub (`/compare/`, `/alternatives/`, ...): one page that links to every page in its
+ * cluster with a descriptive anchor. Renders page content only; the site wraps it in its Layout.
+ */
+import PageHero from '@ag-website-shared/components/page-hero/PageHero.astro';
+
+import styles from './DecisionPage.module.scss';
+import type { DecisionHubCard } from './decisionHub';
+import { COMPARISON_SECTIONS } from './decisionPageText';
+import DecisionSection from './sections/DecisionSection.astro';
+import GetStartedPanel from './sections/GetStartedPanel.astro';
+import type { DecisionPageSite } from './types';
+
+interface Props {
+    site: DecisionPageSite;
+    heading: string;
+    subHeading: string;
+    listHeading: string;
+    cards: DecisionHubCard[];
+    analyticsPrefix: string;
+}
+
+const { site, heading, subHeading, listHeading, cards, analyticsPrefix } = Astro.props;
+---
+
+<PageHero headline={heading} subhead={subHeading} />
+
+<DecisionSection id="pages" heading={listHeading}>
+    <ul class={styles.hubCards}>
+        {cards.map(({ title, description, url }) => (
+            <li>
+                <a class={styles.hubCard} href={site.resolveUrl(url)}>
+                    <strong>{title}</strong>
+                    <span>{description}</span>
+                </a>
+            </li>
+        ))}
+    </ul>
+</DecisionSection>
+
+<DecisionSection id="get-started" heading={COMPARISON_SECTIONS.getStarted} headingHidden>
+    <GetStartedPanel site={site} analyticsPrefix={analyticsPrefix} />
+</DecisionSection>

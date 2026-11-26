@@ -1,25 +1,21 @@
 import type { LocaleTextFunc } from 'ag-stack';
-import { _exists, _getLocaleTextFunc, _isElementOverflowingCallback } from 'ag-stack';
+import { _exists, _getLocaleTextFunc } from 'ag-stack';
 
 import type { BeanCollection } from '../context/context';
 import { _formatValidationMessages } from '../edit/utils/validationMessages';
 import type { AgColumn } from '../entities/agColumn';
-import type { ColDef } from '../entities/colDef';
 import type { RowNode } from '../entities/rowNode';
 import { _addGridCommonParams } from '../gridOptionsUtils';
 import type { ICellEditor } from '../interfaces/iCellEditor';
 import type { CellCtrl } from '../rendering/cell/cellCtrl';
 import type { TooltipCallbackParams, TooltipLocation } from './tooltipComponent';
-import type { TooltipSource } from './tooltipFeature';
-import { _getCellTooltipComponentDefinition, _isShowTooltipWhenTruncated } from './tooltipFeature';
+import type { ResolvedTooltip, TooltipSource, TooltipSourceParams } from './tooltipFeature';
+import { _getCellTooltipComponentDefinition, _resolveTextTooltip, getGroupTooltipTextElement } from './tooltipFeature';
 import { _getLegacyTooltipFieldValue, _isCellTooltipConfigured, _resolveCellTooltipValue } from './tooltipValueUtils';
 import type { LegacyTooltipFieldResolution } from './tooltipValueUtils';
 
-type ResolvedCellTooltip = {
-    value: any;
+type ResolvedCellTooltip = ResolvedTooltip & {
     location: Extract<TooltipLocation, 'cell' | 'cellEditor' | 'cellFormula'>;
-    componentDefinition: ColDef | undefined;
-    shouldDisplay?: () => boolean;
 };
 
 type LocalisableError = Error & {
@@ -40,43 +36,17 @@ const getEditErrors = (beans: BeanCollection, cellCtrl: CellCtrl, translate: Loc
 
 const getOverflowTarget = (ctrl: CellCtrl): HTMLElement | undefined => {
     const eCell = ctrl.eGui;
-    return eCell.children.length === 0 ? eCell : (eCell.querySelector('.ag-cell-value') as HTMLElement | undefined);
+    return eCell.classList.contains('ag-cell-value')
+        ? eCell
+        : (eCell.querySelector<HTMLElement>('.ag-cell-value') ?? undefined);
 };
 
-const getTruncationCheck = (beans: BeanCollection, ctrl: CellCtrl): (() => boolean) | undefined => {
-    if (!_isShowTooltipWhenTruncated(beans.gos)) {
-        return undefined;
+const getTextElement = (ctrl: CellCtrl): HTMLElement | undefined => {
+    if (!ctrl.hasConfiguredCellRenderer()) {
+        return getOverflowTarget(ctrl);
     }
 
-    if (!ctrl.isCellRenderer()) {
-        return _isElementOverflowingCallback(() => getOverflowTarget(ctrl));
-    }
-
-    const colDef = ctrl.column.colDef;
-    const isGroupRenderer = !!colDef.showRowGroup || colDef.cellRenderer === 'agGroupCellRenderer';
-    if (!isGroupRenderer) {
-        return ctrl.hasActiveCellRenderer() ? undefined : _isElementOverflowingCallback(() => getOverflowTarget(ctrl));
-    }
-
-    return _isElementOverflowingCallback(() => {
-        const eCell = ctrl.eGui;
-        return (
-            (eCell.querySelector('.ag-group-value') as HTMLElement | undefined) ??
-            (eCell.querySelector('.ag-cell-value') as HTMLElement | undefined) ??
-            eCell
-        );
-    });
-};
-
-const shouldDisplayCellTooltip = (beans: BeanCollection, ctrl: CellCtrl, configuredOnly: boolean): boolean => {
-    if (beans.editSvc?.isEditing(ctrl, { withOpenEditor: true })) {
-        return false;
-    }
-    const truncationCheck = getTruncationCheck(beans, ctrl);
-    if (!truncationCheck) {
-        return true;
-    }
-    return (!configuredOnly || ctrl.column.isTooltipEnabled()) && truncationCheck();
+    return getGroupTooltipTextElement(getOverflowTarget(ctrl), ':scope > ');
 };
 
 const resolveLegacyFieldValue = (
@@ -126,7 +96,8 @@ const resolveLegacyFieldValue = (
 const resolveCellTooltip = (
     beans: BeanCollection,
     ctrl: CellCtrl,
-    translate: LocaleTextFunc
+    translate: LocaleTextFunc,
+    sourceParams: TooltipSourceParams
 ): ResolvedCellTooltip | null => {
     const { column, rowNode } = ctrl;
     const { editSvc, formula } = beans;
@@ -157,58 +128,66 @@ const resolveCellTooltip = (
 
     if (ctrl.rendererTooltipValue != null) {
         return {
-            value: ctrl.rendererTooltipValue,
+            ..._resolveTextTooltip(beans.gos, {
+                value: ctrl.rendererTooltipValue,
+                params: sourceParams,
+                componentDefinition: column.colDef,
+                shouldDisplay: ctrl.rendererTooltipShouldDisplay,
+            }),
             location: 'cell',
-            componentDefinition: column.colDef,
-            shouldDisplay: ctrl.rendererTooltipShouldDisplay ?? (() => shouldDisplayCellTooltip(beans, ctrl, false)),
         };
     }
 
     const colDef = column.colDef;
-    if (!_isCellTooltipConfigured(colDef)) {
+    const tooltipColDef = beans.autoColSvc?.getTooltipColDef(column, rowNode) ?? colDef;
+    if (tooltipColDef.tooltip === false) {
         return null;
     }
 
     const params = _addGridCommonParams<TooltipCallbackParams>(beans.gos, {
+        ...sourceParams,
         location: 'cell' as const,
-        colDef,
-        column,
-        rowIndex: ctrl.cellPosition.rowIndex,
-        node: rowNode,
-        data: rowNode.data,
-        value: ctrl.value,
-        valueFormatted: ctrl.valueFormatted,
     });
     return {
-        value: _resolveCellTooltipValue(colDef, params, () => resolveLegacyFieldValue(beans, column, rowNode)),
+        ..._resolveTextTooltip(beans.gos, {
+            value: _resolveCellTooltipValue(colDef, params, () => resolveLegacyFieldValue(beans, column, rowNode)),
+            automatic: !_isCellTooltipConfigured(tooltipColDef),
+            params: sourceParams,
+            componentDefinition: _getCellTooltipComponentDefinition(colDef),
+        }),
         location: 'cell',
-        componentDefinition: _getCellTooltipComponentDefinition(colDef),
-        shouldDisplay: () => shouldDisplayCellTooltip(beans, ctrl, true),
     };
 };
 
 export function _createCellTooltipSource(beans: BeanCollection, ctrl: CellCtrl): TooltipSource {
     const translate = _getLocaleTextFunc(beans.localeSvc);
-    let resolved: ResolvedCellTooltip | null = null;
-
-    const resolve = () => (resolved = resolveCellTooltip(beans, ctrl, translate));
     return {
         getGui: () => ctrl.eGui,
-        getTooltipComponentDefinition: () => (resolved ?? resolve())?.componentDefinition,
-        getTooltipValue: () => resolve()?.value,
-        getLocation: () => resolved?.location ?? 'cell',
-        shouldDisplayTooltip: () => {
-            const current = resolved ?? resolve();
-            return !!current && (current.shouldDisplay?.() ?? true);
+        getTextElement: () => getTextElement(ctrl),
+        getTooltip: () => {
+            const params = {
+                column: ctrl.column,
+                colDef: ctrl.column.colDef,
+                rowIndex: ctrl.cellPosition.rowIndex,
+                node: ctrl.rowNode,
+                data: ctrl.rowNode.data,
+                value: ctrl.value,
+                valueFormatted: ctrl.valueFormatted,
+            };
+            const tooltip = resolveCellTooltip(beans, ctrl, translate, params);
+            return {
+                value: undefined,
+                ...tooltip,
+                params,
+                sourceValues:
+                    tooltip && tooltip.location !== 'cell'
+                        ? { value: tooltip.value, valueFormatted: undefined }
+                        : undefined,
+            };
         },
-        getAdditionalParams: () => ({
-            column: ctrl.column,
-            colDef: ctrl.column.colDef,
-            rowIndex: ctrl.cellPosition.rowIndex,
-            node: ctrl.rowNode,
-            data: ctrl.rowNode.data,
-            valueFormatted: ctrl.valueFormatted,
-        }),
+        getLocation: () => 'cell',
+        shouldDisplayTooltip: (tooltip) =>
+            tooltip.location !== 'cell' || !beans.editSvc?.isEditing(ctrl, { withOpenEditor: true }),
     };
 }
 
@@ -225,20 +204,22 @@ export function _createCellEditorTooltipSource(
     const translate = _getLocaleTextFunc(beans.localeSvc);
     return {
         getGui: () => eGui,
-        getTooltipComponentDefinition: () => cellCtrl.column.colDef,
-        getTooltipValue: () => getEditErrors(beans, cellCtrl, translate),
+        getTooltip: () => ({
+            value: getEditErrors(beans, cellCtrl, translate),
+            componentDefinition: cellCtrl.column.colDef,
+            params: {
+                column: cellCtrl.column,
+                colDef: cellCtrl.column.colDef,
+                rowIndex: cellCtrl.cellPosition.rowIndex,
+                node: cellCtrl.rowNode,
+                data: cellCtrl.rowNode.data,
+            },
+        }),
         getLocation: () => 'cellEditor',
         shouldDisplayTooltip: () => {
             const rowErrors = beans.editModelSvc?.getRowValidationModel()?.getRowValidationMap();
             const cellErrors = beans.editModelSvc?.getCellValidationModel()?.getCellValidationMap();
             return !!rowErrors?.size || !!cellErrors?.size;
         },
-        getAdditionalParams: () => ({
-            column: cellCtrl.column,
-            colDef: cellCtrl.column.colDef,
-            rowIndex: cellCtrl.cellPosition.rowIndex,
-            node: cellCtrl.rowNode,
-            data: cellCtrl.rowNode.data,
-        }),
     };
 }

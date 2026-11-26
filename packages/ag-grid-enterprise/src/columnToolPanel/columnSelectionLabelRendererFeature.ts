@@ -40,6 +40,10 @@ export class ColumnSelectionLabelRendererFeature extends BeanStub {
         this.refresh();
     }
 
+    public hasRenderer(): boolean {
+        return this.renderer != null;
+    }
+
     public refresh(): void {
         const params = this.getParams();
         if (this.renderer == null) {

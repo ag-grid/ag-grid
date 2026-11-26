@@ -49,6 +49,14 @@ export class RowDragComp extends Component {
             this.setTemplate(RowDragElement);
             this.getGui().appendChild(_createIconNoSpan('rowDrag', beans, null)!);
             this.addDragSource();
+            this.addTooltip({
+                control: 'rowDrag',
+                getLocation: () => 'cell',
+                getTooltip: () => ({
+                    value: this.getLocaleTextFunc()('tooltipDragToMove', 'Drag to move'),
+                    params: { column: this.column, node: this.rowNode, data: this.rowNode.data },
+                }),
+            });
         }
 
         if (!this.alwaysVisible) {

@@ -41,7 +41,7 @@ export class IssueEventService extends BeanStub implements NamedBean {
         } catch (e) {
             // Reported straight to the console rather than raised as a diagnostic: raising it would throw
             // again under a matching `throwOn`, from inside the listener loop the guard exists to protect.
-            _errorOnce(_errMsg(333, { error: e }));
+            _errorOnce(_errMsg(333, { callback: 'onIssueRaised', error: e }));
         } finally {
             this.dispatching = false;
         }

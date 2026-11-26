@@ -1,3 +1,4 @@
+import type { ITooltipFeature } from 'ag-stack';
 import { _addManagedElementListeners, _debounce, _getActiveDomElement, _setDisabled } from 'ag-stack';
 
 import type {
@@ -29,6 +30,8 @@ export class FindToolbarItem extends Component implements IToolbarItemComp {
     private eMatchCount!: HTMLLabelElement;
     private ePrevButton!: HTMLButtonElement;
     private eNextButton!: HTMLButtonElement;
+    private previousTooltip?: ITooltipFeature;
+    private nextTooltip?: ITooltipFeature;
     private lastAnnouncement = '';
 
     constructor() {
@@ -94,6 +97,19 @@ export class FindToolbarItem extends Component implements IToolbarItemComp {
             disabled: true,
         });
         eGui.appendChild(this.eNextButton);
+
+        this.previousTooltip = this.addTooltip({
+            getGui: () => this.ePrevButton,
+            getLocation: () => 'toolbar',
+            control: 'findPrevious',
+            getTooltip: () => ({ value: localeTextFunc('tooltipFindPreviousMatch', 'Go to previous match') }),
+        });
+        this.nextTooltip = this.addTooltip({
+            getGui: () => this.eNextButton,
+            getLocation: () => 'toolbar',
+            control: 'findNext',
+            getTooltip: () => ({ value: localeTextFunc('tooltipFindNextMatch', 'Go to next match') }),
+        });
 
         const updateFindSearchValueDebounced = _debounce(this, flushFindSearchValue, INPUT_DEBOUNCE_MS);
 
@@ -180,8 +196,14 @@ export class FindToolbarItem extends Component implements IToolbarItemComp {
         this.eMatchCount.textContent = hasSearch ? `${activeIndex}/${totalMatches}` : '';
 
         const hasMatches = totalMatches > 0;
+        if (this.ePrevButton.disabled === !hasMatches) {
+            return;
+        }
+
         _setDisabled(this.ePrevButton, !hasMatches);
         _setDisabled(this.eNextButton, !hasMatches);
+        this.previousTooltip?.refreshTooltip();
+        this.nextTooltip?.refreshTooltip();
     }
 
     private updateAnnouncement(announcement: string, announce: boolean): void {

@@ -1,0 +1,122 @@
+---
+/**
+ * The alternative page template (`/alternatives/{competitor}-alternative/`), shared by AG Grid,
+ * AG Charts and AG Studio. It renders page content only: each site wraps it in its own Layout,
+ * passing the JSON-LD from `buildDecisionPageStructuredData` plus its reviewer nodes.
+ *
+ * Slots:
+ * - review-credit: the site's "Technically reviewed by" credit, rendered in the hero beside the last-updated date.
+ *
+ * Section order and labels match `buildAlternativePageMarkdown`, the page's `.md` twin.
+ */
+import { LandingPageFAQ } from '@ag-website-shared/components/landing-pages/LandingPageFAQ';
+import { renderFAQAnswers } from '@ag-website-shared/components/landing-pages/renderFAQAnswers';
+
+import styles from './DecisionPage.module.scss';
+import {
+    ALTERNATIVE_SECTIONS,
+    COMPARISON_SECTIONS,
+    alternativePageName,
+    fullComparisonLinkText,
+} from './decisionPageText';
+import { competitorFeatureMatrix } from './featureMatrix';
+import DecisionHero from './sections/DecisionHero.astro';
+import DecisionSection from './sections/DecisionSection.astro';
+import FeatureMatrix from './sections/FeatureMatrix.astro';
+import GetStartedPanel from './sections/GetStartedPanel.astro';
+import PricingTables from './sections/PricingTables.astro';
+import ProductReasons from './sections/ProductReasons.astro';
+import ReasonList from './sections/ReasonList.astro';
+import RelatedPages from './sections/RelatedPages.astro';
+import type {
+    AlternativePageContent,
+    DecisionHubLink,
+    DecisionPageSite,
+    RelatedPageGroup,
+    RelatedPageLink,
+} from './types';
+
+interface Props {
+    content: AlternativePageContent;
+    site: DecisionPageSite;
+    /** The alternatives hub, the breadcrumb's parent. */
+    hub: DecisionHubLink;
+    /** The comparison page for the same competitor, linked below the feature table. */
+    comparison: RelatedPageLink;
+    related: RelatedPageGroup[];
+}
+
+const { content, site, hub, comparison, related } = Astro.props;
+const { productName } = site;
+const competitorName = content.competitor.name;
+const pageName = alternativePageName(content.competitor);
+const product = { name: productName, logo: site.productLogo };
+const competitor = {
+    name: competitorName,
+    logo: content.competitor.logo && site.resolveUrl(content.competitor.logo),
+};
+---
+
+<DecisionHero
+    site={site}
+    hub={hub}
+    pageName={pageName}
+    heading={content.hero.heading}
+    subHeading={content.hero.subHeading}
+    lastUpdated={content.lastUpdated}
+    analyticsPrefix={content.analyticsPrefix}
+    logos={{ first: competitor.logo, second: product.logo, separator: 'alternative' }}
+>
+    <slot name="review-credit" slot="review-credit" />
+</DecisionHero>
+
+<DecisionSection id="why-switch" eyebrow={pageName} heading={content.whySwitch.heading}>
+    <ReasonList reasons={content.whySwitch.reasons} />
+</DecisionSection>
+
+<DecisionSection id="why-product" heading={ALTERNATIVE_SECTIONS.whyProduct(productName)} tone="muted">
+    <ProductReasons reasons={content.whyProduct} />
+</DecisionSection>
+
+<DecisionSection id="at-a-glance" heading={ALTERNATIVE_SECTIONS.atAGlance(productName, competitorName)}>
+    <FeatureMatrix
+        groups={competitorFeatureMatrix(content.features.groups)}
+        columns={[product, competitor]}
+        resolveUrl={site.resolveUrl}
+    />
+    <p class={styles.sectionNote}>
+        See the <a href={site.resolveUrl(comparison.url)}>{fullComparisonLinkText(comparison.title)}</a> for every
+        feature, pricing and licensing.
+    </p>
+</DecisionSection>
+
+<DecisionSection id="pricing" heading={ALTERNATIVE_SECTIONS.pricing} subHeading={content.pricing.subHeading}>
+    <PricingTables
+        tables={[
+            { name: productName, rows: content.pricing.product, isProduct: true },
+            { name: competitorName, rows: content.pricing.competitor },
+        ]}
+        site={site}
+        analyticsPrefix={content.analyticsPrefix}
+    />
+</DecisionSection>
+
+{content.faq.length > 0 && (
+    <DecisionSection id="faq" heading={COMPARISON_SECTIONS.faq}>
+        <LandingPageFAQ
+            client:load
+            FAQData={renderFAQAnswers(content.faq, site.framework)}
+            analyticsEventName={`${content.analyticsPrefix}-expand-faq`}
+        />
+    </DecisionSection>
+)}
+
+<DecisionSection id="get-started" heading={COMPARISON_SECTIONS.getStarted} headingHidden>
+    <GetStartedPanel site={site} analyticsPrefix={content.analyticsPrefix} />
+</DecisionSection>
+
+{related.length > 0 && (
+    <DecisionSection id="related" heading={COMPARISON_SECTIONS.related}>
+        <RelatedPages groups={related} resolveUrl={site.resolveUrl} />
+    </DecisionSection>
+)}

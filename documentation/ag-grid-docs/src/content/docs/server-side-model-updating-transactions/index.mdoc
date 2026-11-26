@@ -3,7 +3,7 @@ title: "SSRM Transactions"
 enterprise: true
 ---
 
-This section shows how rows can be added, removed and updated using the Server-Side Transaction API.
+With Transactions in the SSRM, the application adds, removes and updates rows in the grid without reloading them from the server.
 
 {% note %}
 Server-Side Transactions require [Row IDs](./server-side-model-configuration/#providing-row-ids) to be supplied to grid.
@@ -117,6 +117,8 @@ In the example below, note the following:
 - The transactions are batched, and only executed once every second.
 
 {% gridExampleRunner title="Asynchronous Example" name="transactions-async"  exampleHeight=615 /%}
+
+When the updates come from a live stream, [View Subscription](./server-side-model-updating-view-subscription/) tells your application which loaded rows are in view, so the server only needs to push transactions for those rows.
 
 ## Showcase Example
 

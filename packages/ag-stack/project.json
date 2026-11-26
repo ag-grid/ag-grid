@@ -253,7 +253,11 @@
     "pack:verify": {
       "executor": "nx:run-commands",
       "dependsOn": ["pack:extract"],
-      "inputs": ["allOutputs", "{workspaceRoot}/scripts/package/verify-package-resolution.mjs"],
+      "inputs": [
+        "allOutputs",
+        "{workspaceRoot}/scripts/package/sanity-check-package.js",
+        "{workspaceRoot}/scripts/package/verify-package-resolution.mjs"
+      ],
       "options": {
         "commands": [
           "node scripts/package/sanity-check-package.js --allowed-ext css scss -- dist/artifacts/contents/{projectRoot}/package",

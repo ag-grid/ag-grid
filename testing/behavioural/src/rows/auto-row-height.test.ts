@@ -1,7 +1,7 @@
 import { waitFor } from '@testing-library/dom';
 import { TestGridsManager, asyncSetTimeout, nextAnimationFrame } from 'ag-test-utils';
 import { mockGridLayout } from 'ag-test-utils/polyfills/mockGridLayout';
-import { installMockResizeObserver, triggerResizeObservers } from 'ag-test-utils/polyfills/mockResizeObserver';
+import { triggerResizeObservers } from 'ag-test-utils/polyfills/mockResizeObserver';
 
 import type { ColDef, GridApi, IServerSideGetRowsParams } from 'ag-grid-community';
 import {
@@ -448,23 +448,18 @@ describe('Auto row height', () => {
         // not to that last row, so the last row reports nothing and the height an earlier pass left on it
         // cannot stand in for what its own cells need.
         test('a span whose cell shrinks gives back the height it no longer needs', async () => {
-            const uninstallResizeObserver = installMockResizeObserver();
-            try {
-                cellHeights.set('*:b', 120);
-                const api = spanningGrid('myGrid', [
-                    { a: 'a0', b: 'same' },
-                    { a: 'a1', b: 'same' },
-                ]);
-                await settle();
-                await waitFor(() => expect(rowHeight(api, 1)).toBe(120 - DEFAULT_ROW_HEIGHT));
+            cellHeights.set('*:b', 120);
+            const api = spanningGrid('myGrid', [
+                { a: 'a0', b: 'same' },
+                { a: 'a1', b: 'same' },
+            ]);
+            await settle();
+            await waitFor(() => expect(rowHeight(api, 1)).toBe(120 - DEFAULT_ROW_HEIGHT));
 
-                cellHeights.set('*:b', 90);
-                triggerResizeObservers();
+            cellHeights.set('*:b', 90);
+            triggerResizeObservers();
 
-                await waitFor(() => expect(rowHeight(api, 1)).toBe(90 - DEFAULT_ROW_HEIGHT));
-            } finally {
-                uninstallResizeObserver();
-            }
+            await waitFor(() => expect(rowHeight(api, 1)).toBe(90 - DEFAULT_ROW_HEIGHT));
         });
 
         // Every row belongs to a run, so every row renders a plain auto-height cell of its own while the
@@ -703,153 +698,131 @@ describe('Auto row height', () => {
         // the row rendering the cell is among them. Nothing measures it on the way back, so a pass that
         // reaches only the rendered rows leaves the span taller than the rows it covers.
         test('a span reaching past the rendered rows grows and shrinks its last row', async () => {
-            const uninstallResizeObserver = installMockResizeObserver();
-            try {
-                const spannedRows = Array.from({ length: 21 }, (_, i) => 20 + i);
-                const api = virtualisedSpanGrid('myGrid', spannedRows, 20, 1200);
-                await settle();
+            const spannedRows = Array.from({ length: 21 }, (_, i) => 20 + i);
+            const api = virtualisedSpanGrid('myGrid', spannedRows, 20, 1200);
+            await settle();
 
-                expect(renderedRows(api)).toContain(20);
-                expect(renderedRows(api)).not.toContain(40);
+            expect(renderedRows(api)).toContain(20);
+            expect(renderedRows(api)).not.toContain(40);
 
-                // 1200 less the twenty rows above it, which keep the configured height.
-                await waitFor(() => expect(rowHeight(api, 40)).toBe(1200 - 20 * DEFAULT_ROW_HEIGHT));
+            // 1200 less the twenty rows above it, which keep the configured height.
+            await waitFor(() => expect(rowHeight(api, 40)).toBe(1200 - 20 * DEFAULT_ROW_HEIGHT));
 
-                cellHeights.set('*:b', 1000);
-                triggerResizeObservers();
+            cellHeights.set('*:b', 1000);
+            triggerResizeObservers();
 
-                await waitFor(() => expect(rowHeight(api, 40)).toBe(1000 - 20 * DEFAULT_ROW_HEIGHT));
-                expect(renderedRows(api)).not.toContain(40);
-            } finally {
-                uninstallResizeObserver();
-            }
+            await waitFor(() => expect(rowHeight(api, 40)).toBe(1000 - 20 * DEFAULT_ROW_HEIGHT));
+            expect(renderedRows(api)).not.toContain(40);
         });
 
         // Out of view, the row a span ends on has no cells to measure again, so what they measured last stands.
         test('a span whose last row is scrolled out of view keeps the height that row measured itself', async () => {
-            const uninstallResizeObserver = installMockResizeObserver();
-            try {
-                // Rows 20 to 39 keep the configured height, so the span leaves 60 for row 40, which needs 300.
-                for (let i = 0; i < 200; ++i) {
-                    if (i < 20 || i > 40) {
-                        cellHeights.set(`${i}:b`, 20);
-                    }
+            // Rows 20 to 39 keep the configured height, so the span leaves 60 for row 40, which needs 300.
+            for (let i = 0; i < 200; ++i) {
+                if (i < 20 || i > 40) {
+                    cellHeights.set(`${i}:b`, 20);
                 }
-                cellHeights.set('*:b', 900);
-                cellHeights.set('*:c', 20);
-                cellHeights.set('40:c', 300);
-                const api = gridsManager.createGrid('myGrid', {
-                    columnDefs: [
-                        { field: 'a' },
-                        { field: 'b', spanRows: true, autoHeight: true },
-                        { field: 'c', autoHeight: true },
-                    ],
-                    enableCellSpan: true,
-                    rowData: Array.from({ length: 200 }, (_, i) => ({
-                        a: `a${i}`,
-                        b: i >= 20 && i <= 40 ? 'same' : `b${i}`,
-                        c: `c${i}`,
-                    })),
-                    suppressRowVirtualisation: false,
-                });
-                await settle();
-
-                api.ensureIndexVisible(40, 'bottom');
-                await waitFor(() => expect(rowHeight(api, 40)).toBe(300));
-
-                api.ensureIndexVisible(0, 'top');
-                await waitFor(() => expect(renderedRows(api)).not.toContain(40));
-                expect(renderedRows(api)).toContain(20);
-
-                // Any report runs a pass, and every pass shares the span out again.
-                cellHeights.set('0:c', 60);
-                triggerResizeObservers();
-                await waitFor(() => expect(rowHeight(api, 0)).toBe(60));
-                await settle();
-
-                expect(rowHeight(api, 40)).toBe(300);
-            } finally {
-                uninstallResizeObserver();
             }
+            cellHeights.set('*:b', 900);
+            cellHeights.set('*:c', 20);
+            cellHeights.set('40:c', 300);
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    { field: 'a' },
+                    { field: 'b', spanRows: true, autoHeight: true },
+                    { field: 'c', autoHeight: true },
+                ],
+                enableCellSpan: true,
+                rowData: Array.from({ length: 200 }, (_, i) => ({
+                    a: `a${i}`,
+                    b: i >= 20 && i <= 40 ? 'same' : `b${i}`,
+                    c: `c${i}`,
+                })),
+                suppressRowVirtualisation: false,
+            });
+            await settle();
+
+            api.ensureIndexVisible(40, 'bottom');
+            await waitFor(() => expect(rowHeight(api, 40)).toBe(300));
+
+            api.ensureIndexVisible(0, 'top');
+            await waitFor(() => expect(renderedRows(api)).not.toContain(40));
+            expect(renderedRows(api)).toContain(20);
+
+            // Any report runs a pass, and every pass shares the span out again.
+            cellHeights.set('0:c', 60);
+            triggerResizeObservers();
+            await waitFor(() => expect(rowHeight(api, 0)).toBe(60));
+            await settle();
+
+            expect(rowHeight(api, 40)).toBe(300);
         });
 
         test('a span re-headed while its last row is out of view keeps the height that row measured itself', async () => {
-            const uninstallResizeObserver = installMockResizeObserver();
-            try {
-                for (let i = 0; i < 200; ++i) {
-                    if (i < 20 || i > 40) {
-                        cellHeights.set(`${i}:b`, 20);
-                    }
+            for (let i = 0; i < 200; ++i) {
+                if (i < 20 || i > 40) {
+                    cellHeights.set(`${i}:b`, 20);
                 }
-                cellHeights.set('*:b', 900);
-                cellHeights.set('*:c', 20);
-                cellHeights.set('40:c', 300);
-                const api = gridsManager.createGrid('myGrid', {
-                    columnDefs: [
-                        { field: 'a' },
-                        { field: 'b', spanRows: true, autoHeight: true },
-                        { field: 'c', autoHeight: true },
-                    ],
-                    enableCellSpan: true,
-                    rowData: Array.from({ length: 200 }, (_, i) => ({
-                        a: `a${i}`,
-                        b: i >= 20 && i <= 40 ? 'same' : `b${i}`,
-                        c: `c${i}`,
-                    })),
-                    suppressRowVirtualisation: false,
-                });
-                await settle();
-
-                api.ensureIndexVisible(40, 'bottom');
-                await waitFor(() => expect(rowHeight(api, 40)).toBe(300));
-                api.ensureIndexVisible(0, 'top');
-                await waitFor(() => expect(renderedRows(api)).not.toContain(40));
-
-                // Row 20 leaves, so the span is rebuilt from row 21 as a new one.
-                api.getDisplayedRowAtIndex(20)!.setDataValue('b', 'other');
-                await settle();
-                cellHeights.set('0:c', 60);
-                triggerResizeObservers();
-                await waitFor(() => expect(rowHeight(api, 0)).toBe(60));
-                await settle();
-
-                expect(rowHeight(api, 40)).toBe(300);
-            } finally {
-                uninstallResizeObserver();
             }
+            cellHeights.set('*:b', 900);
+            cellHeights.set('*:c', 20);
+            cellHeights.set('40:c', 300);
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    { field: 'a' },
+                    { field: 'b', spanRows: true, autoHeight: true },
+                    { field: 'c', autoHeight: true },
+                ],
+                enableCellSpan: true,
+                rowData: Array.from({ length: 200 }, (_, i) => ({
+                    a: `a${i}`,
+                    b: i >= 20 && i <= 40 ? 'same' : `b${i}`,
+                    c: `c${i}`,
+                })),
+                suppressRowVirtualisation: false,
+            });
+            await settle();
+
+            api.ensureIndexVisible(40, 'bottom');
+            await waitFor(() => expect(rowHeight(api, 40)).toBe(300));
+            api.ensureIndexVisible(0, 'top');
+            await waitFor(() => expect(renderedRows(api)).not.toContain(40));
+
+            // Row 20 leaves, so the span is rebuilt from row 21 as a new one.
+            api.getDisplayedRowAtIndex(20)!.setDataValue('b', 'other');
+            await settle();
+            cellHeights.set('0:c', 60);
+            triggerResizeObservers();
+            await waitFor(() => expect(rowHeight(api, 0)).toBe(60));
+            await settle();
+
+            expect(rowHeight(api, 40)).toBe(300);
         });
 
         // The share a span leaves its last row decides that row, so a cell of the row reporting a height the
         // share already covers moves nothing, rather than moving it to its own height and back.
         test('a cell reporting on the row a span ends on leaves that row alone while the span decides it', async () => {
-            const uninstallResizeObserver = installMockResizeObserver();
-            try {
-                cellHeights.set('*:b', 300);
-                cellHeights.set('*:c', 20);
-                const api = spanningGrid(
-                    'myGrid',
-                    [
-                        { a: 'a0', b: 'same', c: 'c0' },
-                        { a: 'a1', b: 'same', c: 'c1' },
-                    ],
-                    [{ field: 'c', autoHeight: true }]
-                );
-                await settle();
-                await waitFor(() => expect(rowHeight(api, 1)).toBe(300 - DEFAULT_ROW_HEIGHT));
+            cellHeights.set('*:b', 300);
+            cellHeights.set('*:c', 20);
+            const api = spanningGrid(
+                'myGrid',
+                [
+                    { a: 'a0', b: 'same', c: 'c0' },
+                    { a: 'a1', b: 'same', c: 'c1' },
+                ],
+                [{ field: 'c', autoHeight: true }]
+            );
+            await settle();
+            await waitFor(() => expect(rowHeight(api, 1)).toBe(300 - DEFAULT_ROW_HEIGHT));
 
-                let heightChanges = 0;
-                api.getDisplayedRowAtIndex(1)!.addEventListener('heightChanged', () => ++heightChanges);
-                cellHeights.set('1:c', 30);
-                triggerResizeObservers(
-                    document.querySelector('#myGrid [row-index="1"] [col-id="c"] .ag-cell-wrapper')!
-                );
-                await settle();
+            let heightChanges = 0;
+            api.getDisplayedRowAtIndex(1)!.addEventListener('heightChanged', () => ++heightChanges);
+            cellHeights.set('1:c', 30);
+            triggerResizeObservers(document.querySelector('#myGrid [row-index="1"] [col-id="c"] .ag-cell-wrapper')!);
+            await settle();
 
-                expect(rowHeight(api, 1)).toBe(300 - DEFAULT_ROW_HEIGHT);
-                expect(heightChanges).toBe(0);
-            } finally {
-                uninstallResizeObserver();
-            }
+            expect(rowHeight(api, 1)).toBe(300 - DEFAULT_ROW_HEIGHT);
+            expect(heightChanges).toBe(0);
         });
 
         // Growing the rows the spans it brought on screen end on moves the target down, so the scroll waits.
@@ -873,37 +846,32 @@ describe('Auto row height', () => {
         // The row a span ends on is held against its own cells as well, so while one of them has still to
         // report the span has nothing to be held against and waits, rather than size the row without it.
         test('a span waits on the row it ends on while a cell of that row is still to report', async () => {
-            const uninstallResizeObserver = installMockResizeObserver();
-            try {
-                cellHeights.set('*:b', 200);
-                cellHeights.set('*:c', 50);
-                const api = spanningGrid(
-                    'myGrid',
-                    [
-                        { a: 'a0', b: 'x', c: 'c0' },
-                        { a: 'a1', b: 'x', c: 'c1' },
-                    ],
-                    [{ field: 'c', autoHeight: true, editable: true }]
-                );
-                // Before its first measurement, which editing then holds back.
-                api.startEditingCell({ rowIndex: 1, colKey: 'c' });
-                const endsOn = api.getDisplayedRowAtIndex(1)!;
-                let resized = 0;
-                endsOn.addEventListener('heightChanged', () => ++resized);
-                await settle();
-                // Not resized at all, rather than resized to something partial and put back.
-                expect(resized).toBe(0);
-                expect(endsOn.rowHeight).toBe(DEFAULT_ROW_HEIGHT);
+            cellHeights.set('*:b', 200);
+            cellHeights.set('*:c', 50);
+            const api = spanningGrid(
+                'myGrid',
+                [
+                    { a: 'a0', b: 'x', c: 'c0' },
+                    { a: 'a1', b: 'x', c: 'c1' },
+                ],
+                [{ field: 'c', autoHeight: true, editable: true }]
+            );
+            // Before its first measurement, which editing then holds back.
+            api.startEditingCell({ rowIndex: 1, colKey: 'c' });
+            const endsOn = api.getDisplayedRowAtIndex(1)!;
+            let resized = 0;
+            endsOn.addEventListener('heightChanged', () => ++resized);
+            await settle();
+            // Not resized at all, rather than resized to something partial and put back.
+            expect(resized).toBe(0);
+            expect(endsOn.rowHeight).toBe(DEFAULT_ROW_HEIGHT);
 
-                // The renderer replacing the editor is a resize, which the browser reports. Row 0 is sized by
-                // its own c, so the span leaves 200 - 50 for the row it ends on.
-                api.stopEditing(true);
-                triggerResizeObservers();
-                await waitFor(() => expect(rowHeight(api, 1)).toBe(150));
-                expect(rowHeight(api, 0)).toBe(50);
-            } finally {
-                uninstallResizeObserver();
-            }
+            // The renderer replacing the editor is a resize, which the browser reports. Row 0 is sized by
+            // its own c, so the span leaves 200 - 50 for the row it ends on.
+            api.stopEditing(true);
+            triggerResizeObservers();
+            await waitFor(() => expect(rowHeight(api, 1)).toBe(150));
+            expect(rowHeight(api, 0)).toBe(50);
         });
 
         // Spanning off gives each row its own cell in the column, and back on hands the column to one cell
@@ -1026,41 +994,34 @@ describe('Auto row height', () => {
 
         // A spanned cell is taller than the row it is anchored to by design, so the scroll must not wait on it.
         test('a spanned row does not leave the scroll waiting for a measurement that never comes', async () => {
-            // Without it the resize below reaches nothing, and nothing grows the rows it asserts on.
-            const uninstallResizeObserver = installMockResizeObserver();
-            try {
-                cellHeights.set('*:b', 90);
-                const api = gridsManager.createGrid('myGrid', {
-                    columnDefs: [{ field: 'a' }, { field: 'b', spanRows: true, autoHeight: true }],
-                    enableCellSpan: true,
-                    // Runs of two, so a span covers a row beyond the one it is anchored to.
-                    rowData: Array.from({ length: 200 }, (_, i) => ({ a: `a${i}`, b: `s${Math.floor(i / 2)}` })),
-                    suppressRowVirtualisation: false,
-                });
-                await settle();
-                await waitFor(() => expect(rowHeight(api, 1)).toBeGreaterThan(DEFAULT_ROW_HEIGHT));
+            cellHeights.set('*:b', 90);
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ field: 'a' }, { field: 'b', spanRows: true, autoHeight: true }],
+                enableCellSpan: true,
+                // Runs of two, so a span covers a row beyond the one it is anchored to.
+                rowData: Array.from({ length: 200 }, (_, i) => ({ a: `a${i}`, b: `s${Math.floor(i / 2)}` })),
+                suppressRowVirtualisation: false,
+            });
+            await settle();
+            await waitFor(() => expect(rowHeight(api, 1)).toBeGreaterThan(DEFAULT_ROW_HEIGHT));
 
-                api.ensureIndexVisible(150, 'top');
-                await settle();
+            api.ensureIndexVisible(150, 'top');
+            await settle();
 
-                // Growing the rendered rows shifts the target down the viewport with no scroll event. A scroll
-                // still waiting to be told the rows are measured re-pins the target to the top instead, both
-                // when the heights change and again on the next model update.
-                cellHeights.set('*:b', 140);
-                triggerResizeObservers();
-                await settle();
-                const offset = api.getDisplayedRowAtIndex(150)!.rowTop! - api.getVerticalPixelRange().top;
-                expect(offset).not.toBe(0);
+            // Growing the rendered rows shifts the target down with no scroll event; a scroll still waiting on
+            // the measurements would re-pin it to the top, at the height change and the next model update.
+            cellHeights.set('*:b', 140);
+            triggerResizeObservers();
+            await settle();
+            const offset = api.getDisplayedRowAtIndex(150)!.rowTop! - api.getVerticalPixelRange().top;
+            expect(offset).not.toBe(0);
 
-                // Appended, so the model updates without moving the target itself.
-                api.applyTransaction({ add: [{ a: 'appended', b: 'appended' }] });
-                await waitFor(() => expect(api.getDisplayedRowCount()).toBe(201));
-                await settle();
+            // Appended, so the model updates without moving the target itself.
+            api.applyTransaction({ add: [{ a: 'appended', b: 'appended' }] });
+            await waitFor(() => expect(api.getDisplayedRowCount()).toBe(201));
+            await settle();
 
-                expect(api.getDisplayedRowAtIndex(150)!.rowTop! - api.getVerticalPixelRange().top).toBe(offset);
-            } finally {
-                uninstallResizeObserver();
-            }
+            expect(api.getDisplayedRowAtIndex(150)!.rowTop! - api.getVerticalPixelRange().top).toBe(offset);
         });
     });
 
@@ -1103,32 +1064,27 @@ describe('Auto row height', () => {
     // A resize the browser reports is applied a timer later, as resizing inside its callback is refused:
     // a scroll taken in between waits for the pass, though every cell already looks measured.
     test('a scroll taken before a reported height is applied waits for it', async () => {
-        const uninstallResizeObserver = installMockResizeObserver();
-        try {
-            cellHeights.set('*:b', 90);
-            // Every row rendered, so the scroll brings no new cell on screen to wait on.
-            const api = gridsManager.createGrid('myGrid', {
-                columnDefs: [{ field: 'a' }, { field: 'b', autoHeight: true }],
-                rowData: rowData(30),
-                suppressRowVirtualisation: true,
-            });
-            await waitFor(() => expect(rowHeight(api, 29)).toBe(90));
-            await settle();
+        cellHeights.set('*:b', 90);
+        // Every row rendered, so the scroll brings no new cell on screen to wait on.
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'a' }, { field: 'b', autoHeight: true }],
+            rowData: rowData(30),
+            suppressRowVirtualisation: true,
+        });
+        await waitFor(() => expect(rowHeight(api, 29)).toBe(90));
+        await settle();
 
-            cellHeights.set('*:b', 150);
-            for (const wrapper of document.querySelectorAll('#myGrid .ag-cell-wrapper')) {
-                triggerResizeObservers(wrapper);
-            }
-            expect(rowHeight(api, 9)).toBe(90);
-
-            api.ensureIndexVisible(10, 'top');
-            await waitFor(() => expect(rowHeight(api, 9)).toBe(150));
-            await settle();
-
-            expect(api.getDisplayedRowAtIndex(10)!.rowTop! - api.getVerticalPixelRange().top).toBe(0);
-        } finally {
-            uninstallResizeObserver();
+        cellHeights.set('*:b', 150);
+        for (const wrapper of document.querySelectorAll('#myGrid .ag-cell-wrapper')) {
+            triggerResizeObservers(wrapper);
         }
+        expect(rowHeight(api, 9)).toBe(90);
+
+        api.ensureIndexVisible(10, 'top');
+        await waitFor(() => expect(rowHeight(api, 9)).toBe(150));
+        await settle();
+
+        expect(api.getDisplayedRowAtIndex(10)!.rowTop! - api.getVerticalPixelRange().top).toBe(0);
     });
 
     // A loading row stands in for data not there yet: whatever its skeleton cells measure says nothing about
@@ -1222,35 +1178,30 @@ describe('Auto row height', () => {
 
     // A resize that leaves a cell the height it was reports nothing, so no row is reconsidered for it.
     test('a resize that leaves a cell the same height reconsiders no row', async () => {
-        const uninstallResizeObserver = installMockResizeObserver();
-        try {
-            cellHeights.set('*:b', 90);
-            let getRowHeightCalls = 0;
-            const api = gridsManager.createGrid('myGrid', {
-                columnDefs: [{ field: 'a' }, { field: 'b', autoHeight: true }],
-                rowData: rowData(5),
-                getRowHeight: () => {
-                    ++getRowHeightCalls;
-                    return DEFAULT_ROW_HEIGHT;
-                },
-            });
-            await waitFor(() => expect(rowHeight(api, 0)).toBe(90));
-            await settle();
+        cellHeights.set('*:b', 90);
+        let getRowHeightCalls = 0;
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'a' }, { field: 'b', autoHeight: true }],
+            rowData: rowData(5),
+            getRowHeight: () => {
+                ++getRowHeightCalls;
+                return DEFAULT_ROW_HEIGHT;
+            },
+        });
+        await waitFor(() => expect(rowHeight(api, 0)).toBe(90));
+        await settle();
 
-            getRowHeightCalls = 0;
-            triggerResizeObservers();
-            await settle();
+        getRowHeightCalls = 0;
+        triggerResizeObservers();
+        await settle();
 
-            expect(getRowHeightCalls).toBe(0);
+        expect(getRowHeightCalls).toBe(0);
 
-            // The same resize reaches the cells: one that did change is reconsidered.
-            cellHeights.set('*:b', 100);
-            triggerResizeObservers();
-            await waitFor(() => expect(rowHeight(api, 0)).toBe(100));
-            expect(getRowHeightCalls).toBeGreaterThan(0);
-        } finally {
-            uninstallResizeObserver();
-        }
+        // The same resize reaches the cells: one that did change is reconsidered.
+        cellHeights.set('*:b', 100);
+        triggerResizeObservers();
+        await waitFor(() => expect(rowHeight(api, 0)).toBe(100));
+        expect(getRowHeightCalls).toBeGreaterThan(0);
     });
 
     // Without a ResizeObserver nothing watches a cell, but each is still measured once as it is rendered.

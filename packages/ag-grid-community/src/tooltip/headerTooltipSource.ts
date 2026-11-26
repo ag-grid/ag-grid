@@ -1,5 +1,3 @@
-import { _isElementOverflowingCallback } from 'ag-stack';
-
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { AgColumnGroup } from '../entities/agColumnGroup';
@@ -7,10 +5,9 @@ import type { ColDef, ColGroupDef } from '../entities/colDef';
 import { _addGridCommonParams } from '../gridOptionsUtils';
 import type { HeaderCellCtrl } from '../headerRendering/cells/column/headerCellCtrl';
 import type { HeaderGroupCellCtrl } from '../headerRendering/cells/columnGroup/headerGroupCellCtrl';
-import type { TooltipCallbackParams } from './tooltipComponent';
+import type { HeaderTooltipCallbackParams } from './tooltipComponent';
 import type { TooltipFeature, TooltipSource } from './tooltipFeature';
-import { _getHeaderTooltipComponentDefinition, _isShowTooltipWhenTruncated } from './tooltipFeature';
-import { _resolveHeaderTooltipValue } from './tooltipValueUtils';
+import { _resolveHeaderTooltip } from './tooltipValueUtils';
 
 export interface ComponentTooltip {
     value?: any;
@@ -25,56 +22,32 @@ interface HeaderTooltipSourceParams {
     getColDef: () => ColDef | ColGroupDef | null | undefined;
     getComponentTooltip: () => ComponentTooltip;
     getDisplayName: () => string | null;
-    overflowElementSelector: string;
-    hasCustomHeader: () => boolean;
+    getTextElement: () => HTMLElement | undefined;
 }
 
 function createHeaderTooltipSource(params: HeaderTooltipSourceParams): TooltipSource {
     const { beans, eGui, location, column, getColDef, getComponentTooltip, getDisplayName } = params;
-    let latestDisplayName: string | null | undefined;
-    const isOverflowing = _isElementOverflowingCallback(
-        () => eGui.querySelector(params.overflowElementSelector) as HTMLElement | undefined
-    );
-
-    const getCallbackParams = () => {
-        const displayName = getDisplayName();
-        const colDef = getColDef();
-        latestDisplayName = displayName;
-        return _addGridCommonParams<TooltipCallbackParams>(beans.gos, {
-            location,
-            colDef,
-            column,
-            value: displayName,
-            valueFormatted: displayName,
-        });
-    };
 
     return {
         getGui: () => eGui,
-        getTooltipComponentDefinition: () => {
+        getTextElement: params.getTextElement,
+        getTooltip: () => {
+            const displayName = getDisplayName();
             const colDef = getColDef() ?? undefined;
-            return getComponentTooltip().value != null ? colDef : _getHeaderTooltipComponentDefinition(colDef);
+            const { value, shouldDisplay } = getComponentTooltip();
+            const sourceParams = {
+                colDef,
+                column,
+                value: displayName,
+                valueFormatted: displayName,
+            };
+            const callbackParams = _addGridCommonParams<HeaderTooltipCallbackParams>(beans.gos, {
+                ...sourceParams,
+                location,
+            });
+            return { ..._resolveHeaderTooltip(beans.gos, callbackParams, value), shouldDisplay };
         },
         getLocation: () => location,
-        getTooltipValue: () => {
-            const { value } = getComponentTooltip();
-            return _resolveHeaderTooltipValue(getColDef(), getCallbackParams(), value);
-        },
-        shouldDisplayTooltip: () => {
-            const componentShouldDisplay = getComponentTooltip().shouldDisplay;
-            if (componentShouldDisplay) {
-                return componentShouldDisplay();
-            }
-            return !_isShowTooltipWhenTruncated(beans.gos) || params.hasCustomHeader() || isOverflowing();
-        },
-        getAdditionalParams: () => {
-            const colDef = getColDef();
-            return {
-                column,
-                ...(colDef ? { colDef } : {}),
-                valueFormatted: latestDisplayName,
-            };
-        },
     };
 }
 
@@ -97,8 +70,7 @@ export function _setupHeaderTooltip(
         getColDef: () => column.colDef,
         getComponentTooltip,
         getDisplayName: () => beans.colNames.getDisplayNameForColumn(column, 'header', true),
-        overflowElementSelector: '.ag-header-cell-text',
-        hasCustomHeader: () => !!column.colDef.headerComponent,
+        getTextElement: () => ctrl.getTooltipTextElement(),
     });
     return beans.tooltipSvc!.registerTooltip(ctrl, source, current);
 }
@@ -122,8 +94,7 @@ export function _setupHeaderGroupTooltip(
         getColDef: () => column.getColGroupDef(),
         getComponentTooltip,
         getDisplayName: () => beans.colNames.getDisplayNameForColumnGroup(column, 'header'),
-        overflowElementSelector: '.ag-header-group-text',
-        hasCustomHeader: () => !!column.getColGroupDef()?.headerGroupComponent,
+        getTextElement: () => ctrl.getTooltipTextElement(),
     });
     return beans.tooltipSvc!.registerTooltip(ctrl, source, current);
 }

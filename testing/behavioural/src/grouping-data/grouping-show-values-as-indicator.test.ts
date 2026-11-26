@@ -175,6 +175,41 @@ describe('showValuesAs header indicator', () => {
         await waitFor(() => expect(ariaText()).toContain('Showing Values As % of Grand Total'));
     });
 
+    test('focusing the header after its mode changes announces the mode while on, and none once it is off', async () => {
+        const api = await gridMgr.createGridAndWait('sva-indicator-aria-follows', {
+            columnDefs: [{ field: 'id' }, { field: 'amount', aggFunc: 'sum' }],
+            getRowId: (params) => params.data.id,
+            rowData: [
+                { id: '1', amount: 25 },
+                { id: '2', amount: 75 },
+            ],
+        });
+        const refocusAmount = () => {
+            api.setFocusedHeader('id');
+            api.setFocusedHeader('amount');
+        };
+
+        refocusAmount();
+        // described by its sorting alone, with no mode yet: the positive control for the later absences
+        await waitFor(() => {
+            const text = ariaText();
+            expect(text).toContain('sort');
+            expect(text).not.toContain('Showing Values As');
+        });
+
+        api.applyColumnState({ state: [{ colId: 'amount', showValuesAs: 'percentOfGrandTotal' }] });
+        refocusAmount();
+        await waitFor(() => expect(ariaText()).toContain('Showing Values As % of Grand Total'));
+
+        api.applyColumnState({ state: [{ colId: 'amount', showValuesAs: null }] });
+        refocusAmount();
+        await waitFor(() => {
+            const text = ariaText();
+            expect(text).toContain('sort');
+            expect(text).not.toContain('Showing Values As');
+        });
+    });
+
     test('a dormant mode is not announced — the raw value is shown', async () => {
         const api = await gridMgr.createGridAndWait('sva-indicator-aria-dormant', {
             // Flat grid: percentOfParentRowTotal is dormant, so no transform to announce.

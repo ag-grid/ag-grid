@@ -100,20 +100,17 @@ describe('ag-grid grouping treeData is reactive', () => {
                 {
                     allChildrenCount: 2,
                     allLeafChildren: ['C'],
-                    childIndex: 0,
                     childrenAfterFilter: ['B'],
                     childrenAfterGroup: ['B'],
                     childrenAfterSort: ['B'],
                     detail: undefined,
                     displayed: true,
                     expanded: true,
-                    firstChild: true,
                     footer: undefined,
                     group: true,
                     groupData: { 'ag-Grid-AutoColumn': 'A' },
                     id: '0',
                     key: 'A',
-                    lastChild: false,
                     leafGroup: undefined,
                     level: 0,
                     master: false,
@@ -128,20 +125,17 @@ describe('ag-grid grouping treeData is reactive', () => {
                 {
                     allChildrenCount: 1,
                     allLeafChildren: ['C'],
-                    childIndex: 0,
                     childrenAfterFilter: ['C'],
                     childrenAfterGroup: ['C'],
                     childrenAfterSort: ['C'],
                     detail: undefined,
                     displayed: true,
                     expanded: true,
-                    firstChild: true,
                     footer: undefined,
                     group: true,
                     groupData: { 'ag-Grid-AutoColumn': 'B' },
                     id: 'row-group-0-A-1-B',
                     key: 'B',
-                    lastChild: true,
                     leafGroup: false,
                     level: 1,
                     master: false,
@@ -156,20 +150,17 @@ describe('ag-grid grouping treeData is reactive', () => {
                 {
                     allChildrenCount: null,
                     allLeafChildren: null,
-                    childIndex: 0,
                     childrenAfterFilter: null,
                     childrenAfterGroup: null,
                     childrenAfterSort: null,
                     detail: undefined,
                     displayed: true,
                     expanded: false,
-                    firstChild: true,
                     footer: undefined,
                     group: false,
                     groupData: { 'ag-Grid-AutoColumn': 'C' },
                     id: '1',
                     key: 'C',
-                    lastChild: true,
                     leafGroup: undefined,
                     level: 2,
                     master: false,
@@ -184,20 +175,17 @@ describe('ag-grid grouping treeData is reactive', () => {
                 {
                     allChildrenCount: 1,
                     allLeafChildren: ['E'],
-                    childIndex: 1,
                     childrenAfterFilter: ['E'],
                     childrenAfterGroup: ['E'],
                     childrenAfterSort: ['E'],
                     detail: undefined,
                     displayed: true,
                     expanded: true,
-                    firstChild: false,
                     footer: undefined,
                     group: true,
                     groupData: { 'ag-Grid-AutoColumn': 'D' },
                     id: 'row-group-0-D',
                     key: 'D',
-                    lastChild: true,
                     leafGroup: false,
                     level: 0,
                     master: false,
@@ -212,20 +200,17 @@ describe('ag-grid grouping treeData is reactive', () => {
                 {
                     allChildrenCount: null,
                     allLeafChildren: null,
-                    childIndex: 0,
                     childrenAfterFilter: null,
                     childrenAfterGroup: null,
                     childrenAfterSort: null,
                     detail: undefined,
                     displayed: true,
                     expanded: false,
-                    firstChild: true,
                     footer: undefined,
                     group: false,
                     groupData: { 'ag-Grid-AutoColumn': 'E' },
                     id: '2',
                     key: 'E',
-                    lastChild: true,
                     leafGroup: undefined,
                     level: 1,
                     master: false,
@@ -249,5 +234,55 @@ describe('ag-grid grouping treeData is reactive', () => {
             ├── g "G" width:200 rowGroup
             └── v "V" width:200
         `);
+    });
+
+    describe('sorted by the auto group column values', () => {
+        const rowData = [
+            { id: 'a', path: ['B'], v: 1 },
+            { id: 'b', path: ['B', 'x'], v: 5 },
+            { id: 'c', path: ['A'], v: 9 },
+            { id: 'd', path: ['A', 'y'], v: 2 },
+        ];
+
+        const createOptions = (treeData: boolean): GridOptions => ({
+            columnDefs: [{ field: 'v', aggFunc: 'sum' }],
+            autoGroupColumnDef: { sort: 'desc', valueGetter: (p) => p.data?.v },
+            treeData,
+            animateRows: false,
+            groupDefaultExpanded: -1,
+            rowData,
+            getRowId: (p) => p.data.id,
+            getDataPath: (d) => d.path,
+        });
+
+        const displayedIds = (api: ReturnType<TestGridsManager['createGrid']>) => {
+            const ids: (string | undefined)[] = [];
+            for (let i = 0; i < api.getDisplayedRowCount(); ++i) {
+                ids.push(api.getDisplayedRowAtIndex(i)?.id);
+            }
+            return ids;
+        };
+
+        test('turning tree data on sorts by the auto group column as a grid created with tree data', () => {
+            const api = gridsManager.createGrid('treeOn', createOptions(false));
+            expect(displayedIds(api)).toEqual(['a', 'b', 'c', 'd']);
+
+            api.setGridOption('treeData', true);
+
+            const ids = displayedIds(api);
+            expect(ids).toEqual(['c', 'd', 'a', 'b']);
+            expect(
+                ids.map((id) => api.getCellValue({ rowNode: api.getRowNode(id!)!, colKey: 'ag-Grid-AutoColumn' }))
+            ).toEqual([9, 2, 1, 5]);
+        });
+
+        test('turning tree data off shows the rows in data order, as a grid created without tree data', () => {
+            const api = gridsManager.createGrid('treeOff', createOptions(true));
+            expect(displayedIds(api)).toEqual(['c', 'd', 'a', 'b']);
+
+            api.setGridOption('treeData', false);
+
+            expect(displayedIds(api)).toEqual(['a', 'b', 'c', 'd']);
+        });
     });
 });

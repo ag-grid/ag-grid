@@ -43,7 +43,7 @@ describe('Popup cell editor accessible name in React', () => {
         const gridDiv = getGridElement(await readyPromise)! as HTMLElement;
         await asyncSetTimeout(0);
 
-        await userEvent.dblClick(getByTestId(gridDiv, agTestIdFor.cell('0', 'notes')));
+        await userEvent.dblClick(await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'notes'))));
         const popup = await waitForPopup(gridDiv);
 
         await waitFor(() => expect(within(popup).getByRole('dialog', { name: 'Notes' })).toBeTruthy());

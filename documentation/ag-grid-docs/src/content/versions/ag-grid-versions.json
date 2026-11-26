@@ -136,7 +136,7 @@
             },
             {
                 "text": "Grand Total Row for server-side row model",
-                "path": "./server-side-model-grouping/#grand-total-row"
+                "path": "./server-side-model-aggregation/#grand-total-row"
             },
             {
                 "text": "Performance Improvements"
@@ -290,7 +290,7 @@
             },
             {
                 "text": "Expand/Collapse all group rows in the server-side row model",
-                "path": "./server-side-model-grouping/#expand-all--collapse-all"
+                "path": "./server-side-model-grouping/#expanding-and-collapsing-all-groups"
             },
             {
                 "text": "Clipboard Improvements"
@@ -621,11 +621,11 @@
         "highlights": [
             {
                 "text": "Server-side Row Model - Hide Open Parents",
-                "path": "./server-side-model-grouping/#hide-open-parents"
+                "path": "./server-side-model-grouping/#hiding-expanded-group-rows"
             },
             {
                 "text": "Server-side Row Model - Unbalanced Row Groups",
-                "path": "./server-side-model-grouping/#unbalanced-groups"
+                "path": "./server-side-model-grouping/#unbalanced-groups-with-empty-keys"
             },
             {
                 "text": "Column Group Headers - Auto-Height",
@@ -730,7 +730,7 @@
             },
             {
                 "text": "Display Tooltips for Truncated Cell Values and Column Headers",
-                "path": "./component-cell-renderer/#dynamic-tooltips"
+                "path": "./tooltips-columns/#tooltips-for-truncated-text"
             },
             {
                 "text": "Exporting Grid Content as a Formatted Excel Table",
@@ -871,7 +871,7 @@
             },
             {
                 "text": "Interactive Tooltips",
-                "path": "./tooltips/#interactive-tooltips"
+                "path": "./tooltips-show-hide/#interactive-tooltips"
             }
         ]
     },
@@ -912,7 +912,7 @@
             },
             {
                 "text": "Group Footer Rows when Using Server-Side Row Model",
-                "path": "./server-side-model-grouping/#group-total-rows"
+                "path": "./server-side-model-aggregation/#group-total-rows"
             },
             {
                 "text": "Module Registration Is No Longer Global and Is Per-Grid",

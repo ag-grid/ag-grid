@@ -11,6 +11,7 @@ export type RowModelType = 'infinite' | 'viewport' | 'clientSide' | 'serverSide'
 
 export type ForEachNodeCallback<TData = any> = (node: RowNode<TData>, index: number) => void;
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IRowModel {
     /**
      * The root row.
@@ -22,7 +23,10 @@ export interface IRowModel {
     /** True when grouping or tree data is active (i.e. there may be group nodes below root). */
     readonly hierarchical: boolean;
 
-    /** True while a CSRM row-data update and its pipeline refresh are in flight; unset on other models. */
+    /**
+     * True while new row data is being applied and the model asks the rows' selectability itself afterwards: a CSRM
+     * row-data update and its pipeline refresh, or an SSRM store giving a row new data. Unset on other models.
+     */
     readonly refreshingData?: boolean;
 
     /** Returns the rowNode at the given index. */

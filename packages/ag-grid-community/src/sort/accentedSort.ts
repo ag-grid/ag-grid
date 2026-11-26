@@ -38,6 +38,16 @@ const createStringComparator = (
     return createCollatorComparator(accentedSort.locales, accentedSort.options);
 };
 
+/** The comparator for the `accentedSort` grid option, held by the column model so the columns using it share one. */
+const getGridStringComparator = (colModel: ColumnModel, gos: GridOptionsService): StringComparator | undefined => {
+    const version = colModel.accentedSortVersion;
+    if (colModel.gridStringComparatorVersion !== version) {
+        colModel.gridStringComparatorVersion = version;
+        colModel.gridStringComparator = createStringComparator(gos.get('accentedSort'));
+    }
+    return colModel.gridStringComparator;
+};
+
 /** `stringComparatorVersion` of a column with its own `accentedSort`, which the grid option does not affect. */
 const OWN_ACCENTED_SORT = -2;
 
@@ -56,7 +66,10 @@ export function _getColumnStringComparator(
     const version = ownAccentedSort === undefined ? colModel.accentedSortVersion : OWN_ACCENTED_SORT;
     if (column.stringComparatorVersion !== version) {
         column.stringComparatorVersion = version;
-        column.stringComparator = createStringComparator(ownAccentedSort ?? gos.get('accentedSort'));
+        column.stringComparator =
+            ownAccentedSort === undefined
+                ? getGridStringComparator(colModel, gos)
+                : createStringComparator(ownAccentedSort);
     }
     return column.stringComparator;
 }

@@ -1,5 +1,7 @@
 .ag-tooltip {
     position: absolute;
+    width: max-content;
+    max-width: min(100%, calc(100vw - 30px), var(--ag-internal-tooltip-max-width, 100%));
     padding: var(--ag-widget-container-vertical-padding) var(--ag-widget-container-horizontal-padding);
     background-color: var(--ag-tooltip-background-color);
     color: var(--ag-tooltip-text-color);
@@ -22,6 +24,52 @@
         font-weight: 500;
     }
 }
+
+/* rtl:begin:ignore */
+.ag-tooltip:where([class*='ag-tooltip-position-'])::after {
+    content: '';
+    position: absolute;
+    width: calc(var(--ag-tooltip-arrow-size) * 1.4142);
+    height: calc(var(--ag-tooltip-arrow-size) * 1.4142);
+    box-sizing: border-box;
+    background-color: inherit;
+    border: inherit;
+    border-top: 0;
+    border-left: 0;
+
+    /* Clip the inherited border too when the arrow size is zero. */
+    clip-path: circle(var(--ag-tooltip-arrow-size));
+    pointer-events: none;
+}
+
+.ag-tooltip:where(.ag-tooltip-position-top, .ag-tooltip-position-top-start, .ag-tooltip-position-top-end)::after {
+    top: 100%;
+    left: var(--ag-tooltip-arrow-offset);
+    transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.ag-tooltip:where(
+        .ag-tooltip-position-bottom,
+        .ag-tooltip-position-bottom-start,
+        .ag-tooltip-position-bottom-end
+    )::after {
+    bottom: 100%;
+    left: var(--ag-tooltip-arrow-offset);
+    transform: translate(-50%, 50%) rotate(225deg);
+}
+
+.ag-tooltip:where(.ag-tooltip-position-left, .ag-tooltip-position-left-start, .ag-tooltip-position-left-end)::after {
+    top: var(--ag-tooltip-arrow-offset);
+    left: 100%;
+    transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+.ag-tooltip:where(.ag-tooltip-position-right, .ag-tooltip-position-right-start, .ag-tooltip-position-right-end)::after {
+    top: var(--ag-tooltip-arrow-offset);
+    right: 100%;
+    transform: translate(50%, -50%) rotate(135deg);
+}
+/* rtl:end:ignore */
 
 .ag-tooltip-custom {
     position: absolute;

@@ -249,9 +249,8 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp<AdvancedFilterBu
         this.validationTooltipFeature = this.createOptionalManagedBean(
             this.beans.tooltipSvc?.createTooltip({
                 getGui: () => this.eValidation,
-                getTooltipComponentDefinition: () => undefined,
                 getLocation: () => 'advancedFilter',
-                getTooltipValue: () => this.ePillWrapper.getValidationMessage(),
+                getTooltip: () => ({ value: this.ePillWrapper.getValidationMessage() }),
                 getTooltipShowDelayOverride: () => 1000,
             })
         );
@@ -277,9 +276,10 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp<AdvancedFilterBu
         this.createOptionalManagedBean(
             this.beans.tooltipSvc?.createTooltip({
                 getGui: () => this.eAddButton,
-                getTooltipComponentDefinition: () => undefined,
                 getLocation: () => 'advancedFilter',
-                getTooltipValue: () => this.advFilterExpSvc.translate('advancedFilterBuilderAddButtonTooltip'),
+                getTooltip: () => ({
+                    value: this.advFilterExpSvc.translate('advancedFilterBuilderAddButtonTooltip'),
+                }),
             })
         );
     }
@@ -300,9 +300,10 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp<AdvancedFilterBu
         this.createOptionalManagedBean(
             this.beans.tooltipSvc?.createTooltip({
                 getGui: () => this.eRemoveButton,
-                getTooltipComponentDefinition: () => undefined,
                 getLocation: () => 'advancedFilter',
-                getTooltipValue: () => this.advFilterExpSvc.translate('advancedFilterBuilderRemoveButtonTooltip'),
+                getTooltip: () => ({
+                    value: this.advFilterExpSvc.translate('advancedFilterBuilderRemoveButtonTooltip'),
+                }),
             })
         );
         _setAriaLabel(this.eRemoveButton, this.advFilterExpSvc.translate('advancedFilterBuilderRemoveButtonTooltip'));
@@ -328,12 +329,12 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp<AdvancedFilterBu
             this.moveUpTooltipFeature = this.createOptionalManagedBean(
                 this.beans.tooltipSvc?.createTooltip({
                     getGui: () => this.eMoveUpButton,
-                    getTooltipComponentDefinition: () => undefined,
                     getLocation: () => 'advancedFilter',
-                    getTooltipValue: () =>
-                        this.moveUpDisabled
+                    getTooltip: () => ({
+                        value: this.moveUpDisabled
                             ? null
                             : this.advFilterExpSvc.translate('advancedFilterBuilderMoveUpButtonTooltip'),
+                    }),
                 })
             );
             _setAriaLabel(
@@ -356,12 +357,12 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp<AdvancedFilterBu
             this.moveDownTooltipFeature = this.createOptionalManagedBean(
                 this.beans.tooltipSvc?.createTooltip({
                     getGui: () => this.eMoveDownButton,
-                    getTooltipComponentDefinition: () => undefined,
                     getLocation: () => 'advancedFilter',
-                    getTooltipValue: () =>
-                        this.moveDownDisabled
+                    getTooltip: () => ({
+                        value: this.moveDownDisabled
                             ? null
                             : this.advFilterExpSvc.translate('advancedFilterBuilderMoveDownButtonTooltip'),
+                    }),
                 })
             );
             _setAriaLabel(
@@ -451,6 +452,12 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp<AdvancedFilterBu
     }
 
     private setupDragging(): void {
+        this.addTooltip({
+            getGui: () => this.eDragHandle,
+            getLocation: () => 'advancedFilter',
+            control: 'drag',
+            getTooltip: () => ({ value: this.getLocaleTextFunc()('tooltipDragToMove', 'Drag to move') }),
+        });
         const dragSource: GridDragSource = {
             type: DragSourceType.AdvancedFilterBuilder,
             eElement: this.eDragHandle,

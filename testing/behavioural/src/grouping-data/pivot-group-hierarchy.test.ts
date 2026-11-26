@@ -523,6 +523,45 @@ describe('pivot with groupHierarchy (date-time)', () => {
             groupDisplayType: 'multipleColumns',
         });
 
+    test('adding a hierarchy source col that is already grouped leaves the row group columns as they were', async () => {
+        const api = createHierarchyGrid('hierarchyReAddSource');
+        await asyncSetTimeout(0);
+        api.removeRowGroupColumns([YEAR_COL]);
+        await asyncSetTimeout(0);
+        expect(api.getRowGroupColumns().map((c) => c.getColId())).toEqual([MONTH_COL, 'date']);
+
+        api.addRowGroupColumns(['date']);
+        await asyncSetTimeout(0);
+
+        expect(api.getRowGroupColumns().map((c) => c.getColId())).toEqual([MONTH_COL, 'date']);
+    });
+
+    test('an array getRowGroupColumns returned keeps its order when column state sets new row group indexes', async () => {
+        const api = gridsManager.createGrid('hierarchyHeldArray', {
+            columnDefs: [
+                { field: 'country', rowGroup: true },
+                { field: 'date', rowGroup: true, groupHierarchy: ['year', 'month'] },
+            ],
+            rowData: [
+                { country: 'USA', date: new Date(2020, 0, 1) },
+                { country: 'UK', date: new Date(2021, 5, 15) },
+            ],
+            groupDisplayType: 'multipleColumns',
+        });
+        await asyncSetTimeout(0);
+        const before = api.getRowGroupColumns();
+        expect(before.map((c) => c.getColId())).toEqual(['country', YEAR_COL, MONTH_COL, 'date']);
+
+        api.applyColumnState({
+            state: [
+                { colId: 'date', rowGroupIndex: 0 },
+                { colId: 'country', rowGroupIndex: 1 },
+            ],
+        });
+        await asyncSetTimeout(0);
+        expect(before.map((c) => c.getColId())).toEqual(['country', YEAR_COL, MONTH_COL, 'date']);
+    });
+
     test('setRowGroupColumns gives the same groups whatever the current hierarchy state', async () => {
         const api = createHierarchyGrid('hierarchyExplicitList');
         await asyncSetTimeout(0);
@@ -1487,10 +1526,7 @@ describe('pivot with groupHierarchy (date-time)', () => {
     });
 
     test('setRowGroupColumns adding a hierarchy col to an existing group keeps rowGroupActiveIndex in order', async () => {
-        // singleColumn display => the auto-group column count does NOT change when a second row-group
-        // level is added, so no auto-col-driven colDef rebuild is forced. This isolates the
-        // setColList re-stamp path: onColumnsChanged stamps rowGroupActiveIndex BEFORE setColActive
-        // splices the date col's virtuals into the list.
+        // singleColumn: adding a level rebuilds no auto column, so only setRowGroupColumns re-stamps the indexes
         const api = gridsManager.createGrid('setRowGroupHierarchyIndexSingle', {
             columnDefs: [
                 { field: 'country', rowGroup: true },

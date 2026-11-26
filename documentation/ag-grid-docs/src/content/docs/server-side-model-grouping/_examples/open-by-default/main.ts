@@ -18,8 +18,8 @@ if (process.env.NODE_ENV !== 'production') {
 
 ModuleRegistry.registerModules([RowGroupingModule, ServerSideRowModelModule]);
 
-let gridApi: GridApi<IOlympicData>;
-const gridOptions: GridOptions<IOlympicData> = {
+let gridApi: GridApi<IOlympicDataWithId>;
+const gridOptions: GridOptions<IOlympicDataWithId> = {
     columnDefs: [
         { field: 'country', enableRowGroup: true, rowGroup: true, hide: true },
         { field: 'sport', enableRowGroup: true, rowGroup: true, hide: true },
@@ -42,8 +42,13 @@ const gridOptions: GridOptions<IOlympicData> = {
     getRowId,
 };
 
-function getRowId(params: GetRowIdParams) {
-    return Math.random().toString();
+function getRowId(params: GetRowIdParams<IOlympicDataWithId>) {
+    const parentKeysJoined = (params.parentKeys || []).join('-');
+    if (params.data.id != null) {
+        return parentKeysJoined + params.data.id;
+    }
+    const thisGroupCol = params.api.getRowGroupColumns()[params.level];
+    return parentKeysJoined + params.data[thisGroupCol.getColDef().field as keyof IOlympicDataWithId];
 }
 
 function isServerSideGroupOpenByDefault(params: IsServerSideGroupOpenByDefaultParams) {
@@ -97,8 +102,8 @@ document.addEventListener('DOMContentLoaded', function () {
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
         .then((response) => response.json())
         .then(function (data) {
-            // setup the fake server with entire dataset
-            const fakeServer = FakeServer(data);
+            // setup the fake server with entire dataset, giving each leaf row an ID
+            const fakeServer = FakeServer(data.map((row: IOlympicData, id: number) => ({ ...row, id })));
 
             // create datasource with a reference to the fake server
             const datasource = getServerSideDatasource(fakeServer);

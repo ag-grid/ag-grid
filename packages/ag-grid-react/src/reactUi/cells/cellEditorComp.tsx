@@ -35,20 +35,6 @@ const jsxEditorProxy = (
     );
 };
 
-const jsxEditor = (
-    editDetails: EditDetails,
-    CellEditorClass: any,
-    setRef: (cellEditor: ICellEditor | undefined) => void
-) => {
-    const newFormat = editDetails.compProxy;
-
-    return newFormat ? (
-        jsxEditorProxy(editDetails, CellEditorClass, setRef)
-    ) : (
-        <CellEditorClass {...editDetails.compDetails.params} ref={setRef} />
-    );
-};
-
 export const jsxEditValue = (
     editDetails: EditDetails,
     setCellEditorRef: (cellEditor: ICellEditor | undefined) => void,
@@ -64,13 +50,13 @@ export const jsxEditValue = (
     const jsPopupEditor = !compDetails.componentFromFramework && editDetails.popup;
 
     return reactInlineEditor ? (
-        jsxEditor(editDetails, CellEditorClass, setCellEditorRef)
+        jsxEditorProxy(editDetails, CellEditorClass, setCellEditorRef)
     ) : reactPopupEditor ? (
         <PopupEditorComp
             editDetails={editDetails}
             cellCtrl={cellCtrl}
             eParentCell={eGui}
-            wrappedContent={jsxEditor(editDetails, CellEditorClass, setCellEditorRef)}
+            wrappedContent={jsxEditorProxy(editDetails, CellEditorClass, setCellEditorRef)}
         />
     ) : jsPopupEditor && jsEditorComp ? (
         <PopupEditorComp editDetails={editDetails} cellCtrl={cellCtrl} eParentCell={eGui} jsChildComp={jsEditorComp} />

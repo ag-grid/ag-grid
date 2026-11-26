@@ -12,6 +12,12 @@
 
         --ag-header-foreground-color: var(--ag-secondary-foreground-color);
 
+        --ag-header-sort-index-text-color: color-mix(
+            in srgb,
+            var(--ag-header-background-color),
+            var(--ag-header-foreground-color) 70%
+        );
+
         --ag-disabled-foreground-color: rgba(0, 0, 0, 0.5);
 
         --ag-background-color: #fff;
@@ -25,6 +31,7 @@
         --ag-toolbar-separator-color: var(--ag-border-color);
         --ag-toolbar-separator-width: 1px;
 
+        --ag-tooltip-arrow-size: 5px;
         --ag-tooltip-background-color: transparent;
 
         --ag-tooltip-error-background-color: color-mix(
@@ -103,6 +110,17 @@
 
         --ag-value-change-delta-up-color: #43a047;
         --ag-value-change-delta-down-color: #e53935;
+
+        --ag-selected-row-range-selection-border-color: var(--ag-range-selection-border-color);
+        --ag-selected-row-drag-indicator-color: var(--ag-row-drag-indicator-color);
+        --ag-selected-row-drag-handle-color: var(--ag-secondary-foreground-color);
+        --ag-selected-row-note-indicator-color: var(--ag-note-indicator-color);
+        --ag-selected-row-value-change-delta-up-color: var(--ag-value-change-delta-up-color);
+        --ag-selected-row-value-change-delta-down-color: var(--ag-value-change-delta-down-color);
+        --ag-selected-row-checkbox-background-color: var(--ag-checkbox-background-color);
+        --ag-selected-row-checkbox-checked-color: var(--ag-checkbox-checked-color);
+        --ag-selected-row-checkbox-unchecked-color: var(--ag-checkbox-unchecked-color);
+        --ag-selected-row-checkbox-indeterminate-color: var(--ag-checkbox-indeterminate-color);
 
         --ag-row-loading-skeleton-effect-color: rgba(66, 66, 66, 0.2);
 

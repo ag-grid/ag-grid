@@ -1,3 +1,5 @@
+import { _TOOLTIP_POSITIONS, _isTooltipPosition } from 'ag-stack';
+
 import type { DomLayoutType, GridOptions } from '../../entities/gridOptions';
 import type { CalculatedColumnsOptions } from '../../interfaces/iCalculatedColumns';
 import { _BOOLEAN_GRID_OPTIONS, _GET_ALL_GRID_OPTIONS, _NUMBER_GRID_OPTIONS } from '../../propertyKeys';
@@ -65,11 +67,6 @@ const GRID_OPTION_DEPRECATIONS = (): Deprecations<GridOptions> => ({
         version: '32.2',
         message:
             'Either use `onDisplayedColumnsChanged` which is fired at the same time, or use one of the more specific column events.',
-    },
-
-    suppressAdvancedFilterEval: {
-        version: '34',
-        message: 'Advanced filter no longer uses function evaluation, so this option has no effect.',
     },
 
     suppressContentVisibilityAuto: { version: '36.1', message: 'Use `enableContentVisibilityAuto` instead.' },
@@ -162,6 +159,8 @@ export const GRID_OPTIONS_MODULES: Partial<Record<keyof GridOptions, RequiredMod
     undoRedoCellEditing: 'UndoRedoEdit',
     valueCache: 'ValueCache',
     viewportDatasource: 'ViewportRowModel',
+    viewSubscription: 'ViewSubscription',
+    viewSubscriptionActive: 'ViewSubscription',
 };
 
 const CALCULATED_COLUMNS_CALLBACKS = ['isColumnReferenceable', 'getValidationErrors', 'processColDef'] as const;
@@ -297,6 +296,9 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
         },
         enableCellSpan: {
             supportedRowModels: ['clientSide', 'serverSide'],
+        },
+        viewSubscription: {
+            supportedRowModels: ['serverSide'],
         },
         enableRangeSelection: {
             dependencies: {
@@ -619,6 +621,51 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 return tooltipTrigger != null && !allowed.includes(tooltipTrigger)
                     ? _createValidationWarning(320, { property: 'tooltipTrigger', allowed, value: tooltipTrigger })
                     : null;
+            },
+        },
+        tooltipInteraction: {
+            validate: ({ tooltipInteraction }) => {
+                const actualType = typeof tooltipInteraction;
+                return tooltipInteraction == null || actualType === 'boolean' || actualType === 'function'
+                    ? null
+                    : _createValidationWarning(314, {
+                          key: 'tooltipInteraction',
+                          expectedType: 'boolean or function',
+                          actualType,
+                          value: tooltipInteraction,
+                      });
+            },
+        },
+        tooltipPosition: {
+            validate: ({ tooltipPosition }) => {
+                if (
+                    tooltipPosition == null ||
+                    typeof tooltipPosition === 'function' ||
+                    _isTooltipPosition(tooltipPosition)
+                ) {
+                    return null;
+                }
+                return _createValidationWarning(320, {
+                    property: 'tooltipPosition',
+                    allowed: _TOOLTIP_POSITIONS,
+                    value: tooltipPosition,
+                });
+            },
+        },
+        tooltipAnchor: {
+            validate: ({ tooltipAnchor }) => {
+                const allowed = ['target', 'pointer'];
+                return tooltipAnchor != null && !allowed.includes(tooltipAnchor)
+                    ? _createValidationWarning(320, { property: 'tooltipAnchor', allowed, value: tooltipAnchor })
+                    : null;
+            },
+        },
+        tooltipOffset: {
+            validate: ({ tooltipOffset }) => {
+                if (tooltipOffset != null && !Number.isFinite(tooltipOffset)) {
+                    return 'tooltipOffset: value should be a finite number';
+                }
+                return toConstrainedNum('tooltipOffset', tooltipOffset, 0);
             },
         },
         tooltipHideDelay: {

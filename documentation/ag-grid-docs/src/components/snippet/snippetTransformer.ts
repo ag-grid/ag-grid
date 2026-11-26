@@ -62,7 +62,8 @@ class SnippetTransformer {
         } else if (isExprStatement(tree)) {
             return this.parseExpression(tree);
         } else if (isVarDeclarator(tree)) {
-            if (isCallableExpr(tree) || isArrowFunctionExpr(tree)) {
+            // a TypeScript type argument parses as a comparison, so treat every non-object initialiser as a statement
+            if (!isObjectExpr(tree.init)) {
                 return this.parseExpression(tree, true);
             }
             return tree.init.properties.map((node) => this.parse(node, depth + 1)).join('');
@@ -392,5 +393,3 @@ const isVarDeclarator = (node) => node.type === 'VariableDeclarator';
 const isExprStatement = (node) => node.type === 'ExpressionStatement';
 const isLabelStatement = (node) => node.type === 'LabeledStatement';
 const isBlockStatement = (node) => node.type === 'BlockStatement';
-const isCallableExpr = (node) => node.init.type === 'CallExpression' || node.init.type === 'NewExpression';
-const isArrowFunctionExpr = (node) => node.init.type === 'ArrowFunctionExpression';

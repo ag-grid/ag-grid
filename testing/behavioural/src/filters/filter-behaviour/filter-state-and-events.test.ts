@@ -4,6 +4,7 @@ import {
     ColumnFilterHarness,
     FilterDom,
     GridRows,
+    LEGACY_FILTER_WARNING_IDS,
     TestGridsManager,
     asyncSetTimeout,
     installFilterLayoutMock,
@@ -92,6 +93,7 @@ describe('Filter State & Events', () => {
     });
 
     test("a custom filter's initial model, cleared through the API, stays cleared when its column leaves the grid and comes back", async () => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: LEGACY_FILTER_WARNING_IDS });
         class CountryFilter implements IFilterComp {
             private model: string | null = null;
             private readonly eGui = document.createElement('div');
@@ -140,7 +142,7 @@ describe('Filter State & Events', () => {
     ])(
         'a custom filter without isFilterActive is inactive through %s, reported once, and never throws',
         async (action) => {
-            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [67] });
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [67, ...LEGACY_FILTER_WARNING_IDS] });
             const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
             class NoActiveStateFilter implements Omit<IFilterComp, 'isFilterActive'> {
                 private readonly eGui = document.createElement('div');
@@ -203,6 +205,7 @@ describe('Filter State & Events', () => {
     );
 
     test('a floating filter added to a column whose custom filter is already active shows its model', async () => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: LEGACY_FILTER_WARNING_IDS });
         class CountryFilter implements IFilterComp {
             private model: string | null = null;
             private readonly eGui = document.createElement('div');
@@ -253,6 +256,7 @@ describe('Filter State & Events', () => {
     });
 
     test('a custom filter given a model while its init is pending filters nothing once destroyFilter is called, its model gone', async () => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: LEGACY_FILTER_WARNING_IDS });
         const pendingInits: (() => void)[] = [];
         const destroyedFilterPasses: string[] = [];
         class SlowCountryFilter implements IFilterComp {
@@ -314,6 +318,7 @@ describe('Filter State & Events', () => {
     });
 
     test('a custom filter refreshed by new column definitions sees the columns laid out', async () => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: LEGACY_FILTER_WARNING_IDS });
         const displayedAtRefresh: string[][] = [];
         class CountryFilter implements IFilterComp {
             private api!: GridApi;
@@ -351,7 +356,8 @@ describe('Filter State & Events', () => {
         expect(displayedAtRefresh).toEqual([['athlete', 'country']]);
     });
 
-    test('a custom filter throwing on new column definitions leaves the next filter refreshed with its new params', async () => {
+    test('a custom filter throwing on new column definitions throws to the caller, and the next column definitions refresh every filter with its new params', async () => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: LEGACY_FILTER_WARNING_IDS });
         const refreshedWith: string[] = [];
         class OptionFilter implements IFilterComp {
             private readonly eGui = document.createElement('div');
@@ -389,8 +395,11 @@ describe('Filter State & Events', () => {
         await api.getColumnFilterInstance('country');
 
         expect(() => api.setGridOption('columnDefs', cols('throw', 'b'))).toThrow('refresh failed');
+        refreshedWith.length = 0;
 
-        expect(refreshedWith).toEqual(['country:b']);
+        api.setGridOption('columnDefs', cols('c', 'd'));
+
+        expect([...refreshedWith].sort()).toEqual(['athlete:c', 'country:d']);
     });
 
     test('new column definitions recreating a handler that holds a model filter the rows once', async () => {
@@ -415,6 +424,7 @@ describe('Filter State & Events', () => {
     });
 
     test('setColumnFilterModel applies to a custom filter whose setModel returns false instead of a promise', async () => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: LEGACY_FILTER_WARNING_IDS });
         class CountryFilter implements IFilterComp {
             private model: string | null = null;
             private readonly eGui = document.createElement('div');
@@ -449,6 +459,7 @@ describe('Filter State & Events', () => {
     });
 
     test('setColumnFilterModel resolves once the promise a custom filter setModel returns has settled', async () => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: LEGACY_FILTER_WARNING_IDS });
         let applyModel = () => {};
         class CountryFilter implements IFilterComp {
             private model: string | null = null;
@@ -649,6 +660,7 @@ describe('Filter State & Events', () => {
     // ===== EVENTS: filterModified while typing, before apply =====
 
     test('filterModified fires on each UI edit while filterChanged waits for Apply', async () => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: LEGACY_FILTER_WARNING_IDS });
         const api: GridApi = await gridsManager.createGridAndWait('grid1', {
             columnDefs: [
                 {

@@ -42,8 +42,8 @@
             "id": "block_agbryntum_partnership",
             "type": "partnership",
             "heading": "Your JavaScript stack just expanded",
-            "body_html": "<p>Since our 2025 <a href=\"https://www.ag-grid.com/blog/ag-grid-and-bryntum-join-forces-to-strengthen-developer-tooling-for-modern-web-applications/\">partnership with Bryntum</a>, the whole Bryntum suite (Gantt, Scheduler, Calendar, Task Board) sits alongside AG Grid for scheduling, planning and task workflows, crafted by a similar team and held to the same bar.</p>",
-            "body_text": "Since our 2025 partnership with Bryntum, the whole Bryntum suite (Gantt, Scheduler, Calendar, Task Board) sits alongside AG Grid for scheduling, planning and task workflows, crafted by a similar team and held to the same bar.",
+            "body_html": "<p>Since our 2025 <a href=\"https://www.ag-grid.com/blog/ag-grid-and-bryntum-join-forces-to-strengthen-developer-tooling-for-modern-web-applications/\">partnership with Bryntum</a>, the whole Bryntum suite (Gantt, Scheduler, Calendar, Task Board) sits alongside AG Grid for scheduling, planning and task workflows, built by a team held to the same engineering bar.</p>",
+            "body_text": "Since our 2025 partnership with Bryntum, the whole Bryntum suite (Gantt, Scheduler, Calendar, Task Board) sits alongside AG Grid for scheduling, planning and task workflows, built by a team held to the same engineering bar.",
             "logo_light_src": "/images/campaigns/bryntum-products/shared/ag-grid-x-bryntum-light.svg",
             "logo_dark_src": "/images/campaigns/bryntum-products/shared/ag-grid-x-bryntum-dark.svg",
             "logo_alt": "AG Grid x Bryntum partnership"
@@ -73,7 +73,7 @@
                 {
                     "kind": "image",
                     "src": "../assets/complete/Gantt-_-Transparent-_-Minimal-2.svg",
-                    "alt": "",
+                    "alt": "Gantt chart illustration with coloured task bars, dependency arrows and a Confirm Ports Availability milestone",
                     "width": "1",
                     "height": "1",
                     "src_original": "https://bryntum.com/wp-content/uploads/2022/10/Gantt-_-Transparent-_-Minimal-2.svg"
@@ -105,7 +105,7 @@
                 {
                     "kind": "image",
                     "src": "../assets/complete/Scheduler-_-Transparent-_-Larger.svg",
-                    "alt": "",
+                    "alt": "Timeline illustration of staggered coloured event bars with progress rings, crossed by a vertical marker line",
                     "width": "1",
                     "height": "1",
                     "src_original": "https://bryntum.com/wp-content/uploads/2022/06/Scheduler-_-Transparent-_-Larger.svg"
@@ -137,7 +137,7 @@
                 {
                     "kind": "image",
                     "src": "../assets/complete/Grid-_-Transparent-_-Minimal-2.svg",
-                    "alt": "",
+                    "alt": "Bryntum Grid illustration with rows of people showing avatars, dates, amounts, cities and coloured category tags",
                     "width": "1",
                     "height": "1",
                     "src_original": "https://bryntum.com/wp-content/uploads/2022/10/Grid-_-Transparent-_-Minimal-2.svg"
@@ -169,7 +169,7 @@
                 {
                     "kind": "image",
                     "src": "../assets/complete/Calendar-_-Transparent-_-Minimal-2.svg",
-                    "alt": "",
+                    "alt": "Calendar month view illustration with coloured multi-day event bars, assignee avatars and one date highlighted",
                     "width": "1",
                     "height": "1",
                     "src_original": "https://bryntum.com/wp-content/uploads/2022/10/Calendar-_-Transparent-_-Minimal-2.svg"
@@ -201,7 +201,7 @@
                 {
                     "kind": "image",
                     "src": "../assets/complete/Kanban-_-Transparent-_-Minimal-1.svg",
-                    "alt": "",
+                    "alt": "Task Board illustration with Requested, In Progress and Completed columns of cards with avatars and coloured tags",
                     "width": "1",
                     "height": "1",
                     "src_original": "https://bryntum.com/wp-content/uploads/2022/10/Kanban-_-Transparent-_-Minimal-1.svg"
@@ -214,8 +214,8 @@
             "modifiers": ["image", "added-shadow"],
             "eyebrow": "Component Library",
             "heading": "50+ Additional Widgets",
-            "body_html": "<p class=\"p1\">Pick from a <a href=\"/products/grid/examples/kitchen-sink/\">broad set of UI elements</a> that quickly give your app a polished, professional feel and meet user needs with fewer clicks and less searching. Drop lists, menus, toggles, sliders and more into Bryntum components.</p>",
-            "body_text": "Pick from a broad set of UI elements that quickly give your app a polished, professional feel and meet user needs with fewer clicks and less searching. Drop lists, menus, toggles, sliders and more into Bryntum components.",
+            "body_html": "<p class=\"p1\">Pick from a <a href=\"/products/grid/examples/kitchen-sink/\">broad set of UI elements</a> that quickly give your app a polished, professional feel. Drop lists, menus, toggles, sliders, date pickers, colour pickers and more into Bryntum components.</p>",
+            "body_text": "Pick from a broad set of UI elements that quickly give your app a polished, professional feel. Drop lists, menus, toggles, sliders, date pickers, colour pickers and more into Bryntum components.",
             "links": [
                 {
                     "text": "broad set of UI elements",
@@ -233,7 +233,7 @@
                 {
                     "kind": "image",
                     "src": "../assets/shared/more-widgets-taskboard-scaled.png",
-                    "alt": "",
+                    "alt": "Assorted Bryntum widgets including a list, date picker, slider, multi-select filter, form fields, checkboxes, a mini Task Board and colour picker",
                     "width": "1240",
                     "height": "732",
                     "src_original": "https://bryntum.com/wp-content/uploads/2022/05/more-widgets-taskboard-scaled.png"
@@ -265,7 +265,7 @@
             "eyebrow": "Quick Start",
             "heading": "Install via npm",
             "body_html": "<p>Pull Bryntum components straight from npm. <strong>No sign-in or auth needed</strong>. Install the trial packages, configure them, and you’re ready to build.</p>",
-            "body_text": "Pull Bryntum components straight from npm. No sign-in or auth needed . Install the trial packages, configure them, and you’re ready to build.",
+            "body_text": "Pull Bryntum components straight from npm. No sign-in or auth needed. Install the trial packages, configure them, and you’re ready to build.",
             "links": [],
             "ctas": [
                 {
@@ -304,28 +304,28 @@
                     }
                 },
                 {
-                    "heading": "gantt-taskboard-svalbard",
+                    "heading": "Gantt + Task Board",
                     "href": "/products/gantt/examples/gantt-taskboard/",
                     "body_text": "Gantt + Task Board",
                     "description": "Move tasks between project plan and Kanban with one click.",
                     "media": {
                         "kind": "image",
                         "src": "../assets/complete/gantt-taskboard-svalbard-768x452.png",
-                        "alt": "gantt-taskboard-svalbard",
+                        "alt": "Gantt chart linked to a Task Board below, showing the same tasks as cards in status columns",
                         "width": "768",
                         "height": "452",
                         "src_original": "https://bryntum.com/wp-content/uploads/2022/06/gantt-taskboard-svalbard-768x452.png"
                     }
                 },
                 {
-                    "heading": "gantt-calendar-scheduler-svalbard-crop",
+                    "heading": "Calendar + Scheduler",
                     "href": "/products/calendar/examples/calendar-scheduler",
                     "body_text": "Calendar + Scheduler",
                     "description": "Mix high-level calendar entries with detailed timeline views.",
                     "media": {
                         "kind": "image",
                         "src": "../assets/complete/gantt-calendar-scheduler-svalbard-crop-768x452.png",
-                        "alt": "gantt-calendar-scheduler-svalbard-crop",
+                        "alt": "Calendar with a Scheduler-style Timeline view, staff rows of colour-coded sessions and a mini month picker",
                         "width": "768",
                         "height": "452",
                         "src_original": "https://bryntum.com/wp-content/uploads/2022/06/gantt-calendar-scheduler-svalbard-crop-768x452.png"
@@ -345,35 +345,40 @@
                     "media": {
                         "kind": "svg-file",
                         "src": "brands/brand-1.svg"
-                    }
+                    },
+                    "label": "Samsung"
                 },
                 {
                     "href": "/company/customers/",
                     "media": {
                         "kind": "svg-file",
                         "src": "brands/brand-2.svg"
-                    }
+                    },
+                    "label": "Apple"
                 },
                 {
                     "href": "/company/customers/",
                     "media": {
                         "kind": "svg-file",
                         "src": "brands/brand-3.svg"
-                    }
+                    },
+                    "label": "Intel"
                 },
                 {
                     "href": "/company/customers/",
                     "media": {
                         "kind": "svg-file",
                         "src": "brands/brand-4.svg"
-                    }
+                    },
+                    "label": "BMW"
                 },
                 {
                     "href": "/company/customers/",
                     "media": {
                         "kind": "svg-file",
                         "src": "brands/brand-5.svg"
-                    }
+                    },
+                    "label": "Netflix"
                 }
             ]
         },

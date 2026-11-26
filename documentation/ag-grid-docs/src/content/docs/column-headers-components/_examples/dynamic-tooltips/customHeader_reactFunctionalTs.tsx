@@ -11,7 +11,6 @@ export default (props: MyCustomHeaderProps) => {
     const [descSort, setDescSort] = useState('inactive');
     const [noSort, setNoSort] = useState('inactive');
     const refButton = useRef(null);
-    const refLabel = useRef<HTMLDivElement>(null);
 
     const onMenuClicked = () => {
         props.showColumnMenu(refButton.current!);
@@ -34,11 +33,8 @@ export default (props: MyCustomHeaderProps) => {
     }, []);
 
     useEffect(() => {
-        if (!refLabel.current) {
-            return;
-        }
-        props.setTooltip(props.displayName, () => refLabel.current!.scrollWidth > refLabel.current!.clientWidth);
-    }, [refLabel]);
+        props.setTooltip('Click the cross to remove the sort', () => props.column.getSortDef()?.direction != null);
+    }, [props.setTooltip]);
 
     let menu = null;
     if (props.enableFilterButton) {
@@ -81,9 +77,7 @@ export default (props: MyCustomHeaderProps) => {
     return (
         <div className="headerWrapper">
             {menu}
-            <div ref={refLabel} className="customHeaderLabel">
-                {props.displayName}
-            </div>
+            <div className="customHeaderLabel">{props.displayName}</div>
             {sort}
         </div>
     );

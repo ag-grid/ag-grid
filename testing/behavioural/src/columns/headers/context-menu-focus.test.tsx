@@ -2,7 +2,7 @@ import { waitFor } from '@testing-library/dom';
 import '@testing-library/jest-dom/vitest';
 import { act, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { asyncSetTimeout, definePropertyForFile, getVisibleTooltips, polyfillOffsetParent } from 'ag-test-utils';
+import { asyncSetTimeout, getVisibleTooltips } from 'ag-test-utils';
 import React from 'react';
 
 import type { GridApi, IHeaderParams } from 'ag-grid-community';
@@ -18,15 +18,6 @@ import {
 } from 'ag-grid-enterprise';
 import type { CustomMenuItemProps } from 'ag-grid-react';
 import { AgGridReact, useGridMenuItem } from 'ag-grid-react';
-
-// happy-dom reports offsetParent as null, which the focus-management utilities read as
-// "not visible"; polyfill it so focusable detection inside the menu works.
-definePropertyForFile(HTMLElement.prototype, 'offsetParent', {
-    configurable: true,
-    get() {
-        return this.parentNode;
-    },
-});
 
 // A framework (React) custom menu item — its DOM is rendered asynchronously.
 const CustomMenuItem = ({ name }: CustomMenuItemProps) => {
@@ -51,6 +42,7 @@ describe('React menu initial focus with async framework menu items', () => {
                     { name: 'Next item', tooltip: 'Next tooltip' },
                 ]}
                 tooltipTrigger="focus"
+                tooltipShowDelay={0}
                 modules={[ValidationModule, ClientSideRowModelModule, ContextMenuModule, TooltipModule]}
             />
         );
@@ -256,10 +248,6 @@ describe('React menu initial focus with async framework menu items', () => {
         const customName = 'Custom Item';
         let api: GridApi | undefined;
 
-        // The chooser's virtual list needs the measurement-container-aware offsetParent polyfill to
-        // render its rows without layout; the file-level polyfill above is enough only for the open menu.
-        const restoreOffsetParent = polyfillOffsetParent();
-
         render(
             <AgGridReact
                 columnDefs={[{ field: 'name' }]}
@@ -304,8 +292,6 @@ describe('React menu initial focus with async framework menu items', () => {
         await waitFor(() => {
             expect(document.activeElement).toBe(menuItem);
         });
-
-        restoreOffsetParent();
     });
 
     it('still focuses the first native menu item (no regression for synchronous items)', async () => {

@@ -132,7 +132,7 @@ const App = defineComponent({
                         <button type="submit" :disabled="isProcessing">→</button>
                     </form>
                     <div id="processingStatus" v-html="processingStatus"></div>
-                    <div>
+                    <div class="controls-row">
                         <button @click="resetGrid">Reset Grid</button>
                     </div>
                 </div>

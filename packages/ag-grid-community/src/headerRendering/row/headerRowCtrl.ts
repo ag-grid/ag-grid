@@ -306,6 +306,11 @@ export class HeaderRowCtrl extends BeanStub implements CompBeanOwner {
         return this.allCtrls;
     }
 
+    public getHeaderCellCtrl(column: AgColumn | AgColumnGroup): AbstractHeaderCellCtrl | undefined {
+        const ctrl = this.ctrlsById?.get(column.getUniqueId());
+        return ctrl?.column === column ? ctrl : undefined;
+    }
+
     private recycleAndCreateHeaderCtrls(
         headerColumn: AgColumn | AgColumnGroup,
         currCtrls: Map<HeaderColumnId, AbstractHeaderCellCtrl>,

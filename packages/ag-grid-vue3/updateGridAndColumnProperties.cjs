@@ -10,7 +10,7 @@ const { formatNode, findNode, getFullJsDoc } = getFormatterForTS(ts);
 
 const AG_CHART_TYPES = ['AgChartTheme', 'AgChartThemeOverrides'];
 
-const skippableProperties = ['gridOptions', 'reactiveCustomComponents', 'renderingMode'];
+const skippableProperties = ['gridOptions', 'renderingMode'];
 const skippableEvents = [];
 const skippableEventTypes = [];
 

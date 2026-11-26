@@ -2,7 +2,7 @@ import { waitFor } from '@testing-library/dom';
 import { GridColumns, GridRows, TestGridsManager, cachedJSONObjects } from 'ag-test-utils';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 
-import type { ColDef } from 'ag-grid-community';
+import type { ColDef, GridApi } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
@@ -357,5 +357,54 @@ describe('ag-grid grouping edge cases', () => {
             api.addRowGroupColumns(['website']);
             await waitFor(() => expect(groupCountRendererTexts()).toEqual(['2:A', '2:x', '2:B', '2:y']));
         });
+    });
+
+    describe('showOpenedGroup shows the new opened group when the row group columns change', () => {
+        const ROW_DATA = [
+            { id: 'r1', country: 'UK', sport: 'Rowing' },
+            { id: 'r2', country: 'UK', sport: 'Golf' },
+            { id: 'r3', country: 'FR', sport: 'Rowing' },
+        ];
+        const columnDefs = (groupBy: 'country' | 'sport'): ColDef[] => [
+            { field: 'country', rowGroup: groupBy === 'country', enableRowGroup: true },
+            { field: 'sport', rowGroup: groupBy === 'sport', enableRowGroup: true },
+        ];
+
+        const leafAutoColumnTexts = () =>
+            Object.fromEntries(
+                ['r1', 'r2', 'r3'].map((id) => [
+                    id,
+                    document.querySelector(`[row-id="${id}"] [col-id="ag-Grid-AutoColumn"]`)?.textContent?.trim(),
+                ])
+            );
+
+        test.each([
+            ['setRowGroupColumns', (api: GridApi) => api.setRowGroupColumns(['sport'])],
+            [
+                'applyColumnState',
+                (api: GridApi) =>
+                    api.applyColumnState({
+                        state: [
+                            { colId: 'country', rowGroup: false },
+                            { colId: 'sport', rowGroup: true },
+                        ],
+                    }),
+            ],
+        ])(
+            'leaf rows show their new opened group after the row group columns change (%s)',
+            async (_path, changeRowGroups) => {
+                const api = gridsManager.createGrid('myGrid', {
+                    columnDefs: columnDefs('country'),
+                    showOpenedGroup: true,
+                    groupDefaultExpanded: -1,
+                    rowData: ROW_DATA,
+                    getRowId: (params) => params.data.id,
+                });
+                await waitFor(() => expect(leafAutoColumnTexts()).toEqual({ r1: 'UK', r2: 'UK', r3: 'FR' }));
+
+                changeRowGroups(api);
+                await waitFor(() => expect(leafAutoColumnTexts()).toEqual({ r1: 'Rowing', r2: 'Golf', r3: 'Rowing' }));
+            }
+        );
     });
 });

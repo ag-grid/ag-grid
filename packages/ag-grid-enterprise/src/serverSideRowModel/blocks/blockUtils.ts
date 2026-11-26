@@ -116,8 +116,9 @@ export class BlockUtils extends BeanStub implements NamedBean {
     }
 
     private setRowGroupInfo(rowNode: RowNode): void {
-        // Use 'data' - group keys should be based on committed data, not pending edits
-        rowNode.key = this.valueSvc.getValueFromData(rowNode.rowGroupColumn!, rowNode);
+        // Use 'data' - group keys should be based on committed data, not pending edits.
+        // Stored value: the key never goes through `aggValueGetter`, which can be set on a column that is grouped and aggregated.
+        rowNode.key = this.valueSvc.getValueFromData(rowNode.rowGroupColumn!, rowNode, false, true);
 
         if (rowNode.key === null || rowNode.key === undefined) {
             _doOnce(() => {
@@ -149,7 +150,14 @@ export class BlockUtils extends BeanStub implements NamedBean {
     }
 
     public updateDataIntoRowNode(rowNode: RowNode, data: any): void {
-        rowNode.updateData(data);
+        const serverSideRowModel = this.serverSideRowModel;
+        const wasRefreshingData = serverSideRowModel.refreshingData; // restored, so a nested update keeps the outer's
+        serverSideRowModel.refreshingData = true;
+        try {
+            rowNode.updateData(data);
+        } finally {
+            serverSideRowModel.refreshingData = wasRefreshingData;
+        }
 
         if (this.gos.get('treeData')) {
             this.setTreeGroupInfo(rowNode);
@@ -166,6 +174,9 @@ export class BlockUtils extends BeanStub implements NamedBean {
             // programming, so leaving for another day. to test this, create an example
             // where whether a master row is expandable or not is dynamic
         }
+
+        // asked once its group info is set, which can turn a group into a leaf and back
+        this.beans.selectionSvc?.refreshRowSelection?.(rowNode);
     }
 
     private updateRowFooter(rowNode: RowNode): void {
@@ -217,7 +228,11 @@ export class BlockUtils extends BeanStub implements NamedBean {
             this.setChildCountIntoRowNode(rowNode);
         }
 
-        this.beans.selectionSvc?.updateRowSelectable(rowNode);
+        // `setDataAndId` synced the row's selection before the row was asked, so a rejected row is synced again
+        const selectionSvc = this.beans.selectionSvc;
+        if (selectionSvc?.updateRowSelectable(rowNode, true) === false) {
+            selectionSvc.syncInRowNode(rowNode);
+        }
 
         // this needs to be done AFTER setGroupDataIntoRowNode(), as the height can depend on the group data
         // getting set, if it's a group node and colDef.autoHeight=true
@@ -255,8 +270,9 @@ export class BlockUtils extends BeanStub implements NamedBean {
             if (usingTreeData) {
                 groupData[col.colId] = key;
             } else if (col.isRowGroupDisplayed(rowNode.rowGroupColumn!.getId())) {
-                // Use 'data' - group keys should be based on committed data, not pending edits
-                const groupValue = this.valueSvc.getValueFromData(rowNode.rowGroupColumn!, rowNode);
+                // Use 'data' - group keys should be based on committed data, not pending edits.
+                // Stored value: the group shows its key, never the `aggValueGetter` result of the same column.
+                const groupValue = this.valueSvc.getValueFromData(rowNode.rowGroupColumn!, rowNode, false, true);
                 groupData[col.colId] = groupValue;
             }
         }

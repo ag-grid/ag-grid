@@ -254,6 +254,11 @@ export class AgPanel<
 
             const eGui = closeButtonComp.getGui();
             _setAriaLabel(eGui, this.getLocaleTextFunc()('ariaLabelClose', 'Close'));
+            closeButtonComp.addTooltip({
+                getLocation: () => 'dialog',
+                control: 'close',
+                getTooltip: () => ({ value: this.getLocaleTextFunc()('tooltipClose', 'Close') }),
+            });
             const child = this.beans.iconSvc.createIconNoSpan('close', this.beans)!;
             child.classList.add('ag-panel-title-bar-button-icon');
             eGui.appendChild(child);

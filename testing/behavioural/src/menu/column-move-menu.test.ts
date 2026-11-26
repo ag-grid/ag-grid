@@ -15,7 +15,6 @@ import {
     getRevealedElements,
     installFocusScroll,
     mockGridLayout,
-    polyfillOffsetParent,
 } from 'ag-test-utils';
 import { onTestFinished } from 'vitest';
 
@@ -47,18 +46,13 @@ describe('column movement menu actions', () => {
     });
     const headerGrids = new TestGridsManager({ modules: [ClientSideRowModelModule, ColumnMenuModule] });
     const panelGrids = new TestGridsManager({ modules: [ClientSideRowModelModule, ColumnsToolPanelModule] });
-    let restoreOffsetParent: () => void;
 
-    beforeEach(() => {
-        restoreOffsetParent = polyfillOffsetParent();
-    });
     afterEach(() => {
         // Ends the process-wide keyboard mode a key press left on, in which every drop-zone refresh scans the grid.
         document.body.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
         grids.reset();
         headerGrids.reset();
         panelGrids.reset();
-        restoreOffsetParent();
     });
 
     const columnDefs: ColDef[] = ['a', 'b', 'c', 'd'].map((field) => ({ field }));

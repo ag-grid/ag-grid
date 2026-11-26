@@ -2,33 +2,57 @@ import { waitFor } from '@testing-library/dom';
 import '@testing-library/jest-dom/vitest';
 import { userEvent } from '@testing-library/user-event';
 import {
+    AdvancedFilterHarness,
     ColumnFilterHarness,
     TestGridsManager,
     fakeElementAttribute,
     getVisibleTooltips,
-    polyfillOffsetParent,
 } from 'ag-test-utils';
 
 import { getGridElement, setupAgTestIds } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
-describe('Combined tooltip focus surfaces', () => {
+describe('Tooltip focus surfaces', () => {
     const grids = new TestGridsManager({ modules: [AllEnterpriseModule] });
-    let restoreOffsetParent: (() => void) | undefined;
 
     beforeAll(() => setupAgTestIds());
 
     beforeEach(() => {
         fakeElementAttribute('offsetHeight', 300, '.ag-virtual-list-viewport');
-        restoreOffsetParent = polyfillOffsetParent();
     });
 
     afterEach(() => {
         grids.reset();
-        restoreOffsetParent?.();
         vi.clearAllTimers();
         vi.useRealTimers();
     });
+
+    test.each(['focus', 'hoverOrFocus'] as const)(
+        'preserves the Advanced Filter show-delay override in %s mode',
+        async (tooltipTrigger) => {
+            const api = await grids.createGridAndWait('advanced-filter-tooltip-delay', {
+                columnDefs: [{ field: 'value', filter: true }],
+                rowData: [{ value: 7 }],
+                enableAdvancedFilter: true,
+                tooltipTrigger,
+                tooltipShowDelay: 0,
+            });
+            const filter = AdvancedFilterHarness.get(api);
+            await filter.type('[Missing] equals "value"');
+
+            vi.useFakeTimers();
+            filter.input.focus();
+            expect(filter.input).toHaveFocus();
+            expect(getGridElement(api)!.querySelector('.ag-advanced-filter')).toHaveAccessibleDescription(
+                /Column not found/
+            );
+            await vi.advanceTimersByTimeAsync(999);
+            expect(getVisibleTooltips()).toHaveLength(0);
+            await vi.advanceTimersByTimeAsync(1);
+            expect(getVisibleTooltips()).toHaveLength(1);
+            expect(getVisibleTooltips()[0]).toHaveTextContent('Column not found');
+        }
+    );
 
     test('headers and Columns Tool Panel items expose their descriptions before the visual delay', async () => {
         const api = await grids.createGridAndWait('focus-surfaces', {

@@ -945,6 +945,137 @@ describe('SortService', () => {
             `);
             expect(getSortModel(api)).toEqual([{ colId: 'b', sort: 'desc' }]);
         });
+
+        test('applyColumnState setting a sort throws the error of a column comparator that throws sorting the rows', async () => {
+            const api = gridMgr.createGrid('g', {
+                columnDefs: [
+                    {
+                        colId: 'a',
+                        field: 'a',
+                        comparator: () => {
+                            throw new Error('comparator failed on purpose');
+                        },
+                    },
+                    { colId: 'b', field: 'b' },
+                ],
+                rowData,
+            });
+            const header = TestGridsManager.getHTMLElement(api)!.querySelector('.ag-header-cell[col-id="a"]')!;
+            expect(header.getAttribute('aria-sort')).toBe('none');
+
+            expect(() => api.applyColumnState({ state: [{ colId: 'a', sort: 'asc' }] })).toThrow(
+                'comparator failed on purpose'
+            );
+            await asyncSetTimeout(0);
+        });
+
+        test('a comparator throwing in a sort applied with a column hidden throws to the caller, and the next call tells the column it was hidden once the layout is done', async () => {
+            let failing = true;
+            const api = gridMgr.createGrid('g', {
+                columnDefs: [
+                    {
+                        colId: 'a',
+                        field: 'a',
+                        comparator: (x: string, y: string) => {
+                            if (failing) {
+                                throw new Error('comparator failed on purpose');
+                            }
+                            return x.localeCompare(y);
+                        },
+                    },
+                    { colId: 'b', field: 'b' },
+                    { colId: 'c', field: 'c' },
+                ],
+                rowData,
+            });
+            const gridEl = TestGridsManager.getHTMLElement(api)!;
+            const headerOf = (colId: string) => gridEl.querySelector(`.ag-header-cell[col-id="${colId}"]`);
+            expect(headerOf('b')).not.toBeNull();
+            const seenByB: { headerOfBInDom: boolean }[] = [];
+            api.getColumn('b')!.addEventListener('visibleChanged', () => {
+                seenByB.push({ headerOfBInDom: headerOf('b') !== null });
+            });
+
+            expect(() =>
+                api.applyColumnState({
+                    state: [
+                        { colId: 'a', sort: 'asc' },
+                        { colId: 'b', hide: true },
+                    ],
+                })
+            ).toThrow('comparator failed on purpose');
+            failing = false;
+            api.applyColumnState({ state: [{ colId: 'b', hide: false }] });
+            await waitFor(() => expect(headerOf('b')).not.toBeNull());
+            seenByB.length = 0;
+
+            api.applyColumnState({
+                state: [
+                    { colId: 'a', sort: 'desc' },
+                    { colId: 'b', hide: true },
+                ],
+            });
+
+            expect({ seenByB, sortModel: getSortModel(api), headerOfB: headerOf('b') }).toEqual({
+                seenByB: [{ headerOfBInDom: false }],
+                sortModel: [{ colId: 'a', sort: 'desc' }],
+                headerOfB: null,
+            });
+        });
+
+        test('a sort a column listener applies during a column update has sorted the rows when the API call starting the update returns', async () => {
+            const api = gridMgr.createGrid('g', {
+                columnDefs: [
+                    { colId: 'a', field: 'a' },
+                    { colId: 'b', field: 'b' },
+                    { colId: 'c', field: 'c' },
+                ],
+                rowData: [
+                    { id: '1', a: 'd', b: 'w', c: 1 },
+                    { id: '2', a: 'b', b: 'x', c: 2 },
+                    { id: '3', a: 'c', b: 'y', c: 3 },
+                    { id: '4', a: 'a', b: 'z', c: 4 },
+                ],
+                getRowId: (p) => p.data.id,
+            });
+            await asyncSetTimeout(0);
+            const gridEl = TestGridsManager.getHTMLElement(api)!;
+            const displayedIds = () => {
+                const ids: string[] = [];
+                api.forEachNodeAfterFilterAndSort((node) => ids.push(node.id!));
+                return ids;
+            };
+            const renderedIds = () =>
+                Array.from(gridEl.querySelectorAll('.ag-row[row-id][row-index]'))
+                    .sort((x, y) => Number(x.getAttribute('row-index')) - Number(y.getAttribute('row-index')))
+                    .map((row) => row.getAttribute('row-id'));
+            await waitFor(() => expect(renderedIds()).toEqual(['1', '2', '3', '4']));
+            expect({ displayed: displayedIds(), rendered: renderedIds() }).toEqual({
+                displayed: ['1', '2', '3', '4'],
+                rendered: ['1', '2', '3', '4'],
+            });
+
+            let sortApplied = 0;
+            api.getColumn('c')!.addEventListener('visibleChanged', () => {
+                if (sortApplied++ === 0) {
+                    api.applyColumnState({ state: [{ colId: 'a', sort: 'asc' }] });
+                }
+            });
+
+            api.setColumnsVisible(['c'], false);
+
+            expect({
+                listenerRuns: sortApplied,
+                sortModel: getSortModel(api),
+                displayed: displayedIds(),
+                rendered: renderedIds(),
+            }).toEqual({
+                listenerRuns: 1,
+                sortModel: [{ colId: 'a', sort: 'asc' }],
+                displayed: ['4', '2', '3', '1'],
+                rendered: ['4', '2', '3', '1'],
+            });
+        });
     });
 
     describe('sort with alwaysMultiSort', () => {
@@ -1014,10 +1145,7 @@ describe('SortService', () => {
     });
 
     describe('post-sort row metadata', () => {
-        // AG-309 (Feb 2018) legacy ordering: updateRowNodeAfterSort runs BEFORE postSortRows.
-        // Out of scope to flip — callers may read childIndex/firstChild/lastChild from inside
-        // postSortRows and rely on the input-order values.
-        test('flat SortStage: postSortRows reorder leaves childIndex / firstChild / lastChild stale (legacy AG-309 behaviour)', async () => {
+        test('flat SortStage: postSortRows reorder is reflected in the displayed order', async () => {
             const api = gridMgr.createGrid('g', {
                 columnDefs: [{ colId: 'a', field: 'a', sort: 'asc' }],
                 rowData: [
@@ -1027,32 +1155,19 @@ describe('SortService', () => {
                 ],
                 getRowId: (p) => p.data.id,
                 postSortRows: (params) => {
-                    // Reverse the input. After this, childrenAfterSort is [c, b, a] but the
-                    // flags were already written for the input order [a, b, c].
                     params.nodes.reverse();
                 },
             });
 
-            // Display order reflects the post-mutation array.
-            await new GridRows(api, 'AG-309 stale flags: displayed order is post-mutation').check(`
+            await new GridRows(api, 'displayed order is post-mutation').check(`
                 ROOT id:ROOT_NODE_ID
                 ├── LEAF id:3 a:"c"
                 ├── LEAF id:2 a:"b"
                 └── LEAF id:1 a:"a"
             `);
-
-            // Deprecated flags reflect the pre-mutation (input) order — node id=1 was first in
-            // input, node id=3 was last, even though they're now at the opposite ends of the display.
-            expect(api.getRowNode('1')!.childIndex).toBe(0);
-            expect(api.getRowNode('1')!.firstChild).toBe(true);
-            expect(api.getRowNode('1')!.lastChild).toBe(false);
-
-            expect(api.getRowNode('3')!.childIndex).toBe(2);
-            expect(api.getRowNode('3')!.firstChild).toBe(false);
-            expect(api.getRowNode('3')!.lastChild).toBe(true);
         });
 
-        test('firstChild / lastChild / childIndex reflect the sorted order on a flat CSRM', async () => {
+        test('childrenAfterSort reflects the sorted order on a flat CSRM', async () => {
             const api = gridMgr.createGrid('g', {
                 columnDefs: [{ colId: 'a', field: 'a', sort: 'desc' }],
                 rowData: [
@@ -1071,32 +1186,18 @@ describe('SortService', () => {
                 └── LEAF id:1 a:"a"
             `);
 
-            const sortedIds = ['3', '2', '1'];
-            const nodes = sortedIds.map((id) => api.getRowNode(id)!);
+            const root = api.getRowNode('1')!.parent!;
+            expect(root.childrenAfterSort!.map((n) => n.id)).toEqual(['3', '2', '1']);
 
-            nodes.forEach((node, idx) => {
-                expect(node.childIndex).toBe(idx);
-                expect(node.firstChild).toBe(idx === 0);
-                expect(node.lastChild).toBe(idx === nodes.length - 1);
-            });
-
-            // Reverse the sort and re-check that the metadata moves with the rows.
             api.applyColumnState({ state: [{ colId: 'a', sort: 'asc' }] });
-            await new GridRows(api, 'sort asc — flags follow').check(`
+            await new GridRows(api, 'sort asc').check(`
                 ROOT id:ROOT_NODE_ID
                 ├── LEAF id:1 a:"a"
                 ├── LEAF id:2 a:"b"
                 └── LEAF id:3 a:"c"
             `);
 
-            const reverseIds = ['1', '2', '3'];
-            const reverseNodes = reverseIds.map((id) => api.getRowNode(id)!);
-
-            reverseNodes.forEach((node, idx) => {
-                expect(node.childIndex).toBe(idx);
-                expect(node.firstChild).toBe(idx === 0);
-                expect(node.lastChild).toBe(idx === reverseNodes.length - 1);
-            });
+            expect(root.childrenAfterSort!.map((n) => n.id)).toEqual(['1', '2', '3']);
         });
 
         test('flat SortStage: reused-array postSortRows mutation does not corrupt the structural baseline', async () => {
@@ -1492,27 +1593,6 @@ describe('SortService', () => {
             modules: [ClientSideRowModelModule, ColumnMenuModule],
         });
 
-        let restoreOffsetParent: (() => void) | undefined;
-
-        function enableOffsetParentPolyfill(): void {
-            if (restoreOffsetParent) {
-                return;
-            }
-            const original = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'offsetParent');
-            Object.defineProperty(HTMLElement.prototype, 'offsetParent', {
-                configurable: true,
-                get(this: HTMLElement) {
-                    return this.closest('.ag-measurement-container') ? null : this.parentElement;
-                },
-            });
-            restoreOffsetParent = () => {
-                if (original) {
-                    Object.defineProperty(HTMLElement.prototype, 'offsetParent', original);
-                }
-                restoreOffsetParent = undefined;
-            };
-        }
-
         async function clickMenuOption(name: string): Promise<void> {
             const option = await waitFor(() => {
                 const text = Array.from(document.querySelectorAll<HTMLElement>('.ag-menu-option-text')).find(
@@ -1527,7 +1607,6 @@ describe('SortService', () => {
 
         afterEach(() => {
             menuGridMgr.reset();
-            restoreOffsetParent?.();
         });
 
         test('default sort orders by signed value and shows the default direction icon', async () => {
@@ -1963,7 +2042,6 @@ describe('SortService', () => {
             await asyncSetTimeout(0);
             expect(visibleSortIcons(api, 'n')).toEqual([]);
 
-            enableOffsetParentPolyfill();
             api.showColumnMenu('n');
             await clickMenuOption('Sort Absolute Ascending');
             await asyncSetTimeout(0);

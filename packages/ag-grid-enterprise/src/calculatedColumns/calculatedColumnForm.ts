@@ -474,8 +474,7 @@ export class CalculatedColumnForm extends Component {
         return this.createOptionalManagedBean(
             this.beans.tooltipSvc?.createTooltip({
                 getGui,
-                getTooltipComponentDefinition: () => undefined,
-                getTooltipValue: getMessage,
+                getTooltip: () => ({ value: getMessage() }),
                 getLocation: () => 'calculatedColumnExpression',
                 shouldDisplayTooltip: () => !!getMessage(),
             })

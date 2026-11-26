@@ -1,4 +1,5 @@
 import { act, cleanup, render, waitFor } from '@testing-library/react';
+import { ALL_SEVERITIES } from 'ag-test-utils';
 import React from 'react';
 
 import type {
@@ -8,8 +9,15 @@ import type {
     IFloatingFilterComp,
     IFloatingFilterParams,
 } from 'ag-grid-community';
-import { AgPromise, ClientSideRowModelModule, RowApiModule, TextFilterModule } from 'ag-grid-community';
-import type { CustomFloatingFilterProps } from 'ag-grid-react';
+import {
+    AgPromise,
+    ClientSideRowModelModule,
+    CustomFilterModule,
+    RowApiModule,
+    TextFilterModule,
+    enableDevValidations,
+} from 'ag-grid-community';
+import type { CustomFilterProps, CustomFloatingFilterProps } from 'ag-grid-react';
 import { AgGridReact } from 'ag-grid-react';
 
 interface Person {
@@ -44,6 +52,9 @@ const withComponent = (floatingFilterComponent?: unknown): ColDef<Person>[] => [
 ];
 
 describe('Floating Filters (React)', () => {
+    beforeEach(() => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [348] });
+    });
     afterEach(() => cleanup());
 
     const renderGrid = (enableFilterHandlers: boolean, columnDefs: ColDef<Person>[]) => {
@@ -153,5 +164,45 @@ describe('Floating Filters (React)', () => {
         await act(() => api!.setColumnFilterModel('athlete', THORPE));
         act(() => api!.setGridOption('columnDefs', withFloating(true)));
         await waitFor(() => expect(floatingInput()?.value).toBe('Thorpe'));
+    });
+
+    test.each([
+        ['a string', 'a', 'a', 'a'],
+        ['a callback', (params: { floatingFilter?: boolean }) => (params.floatingFilter ? 'ff' : 'hdr'), 'hdr', 'ff'],
+    ])('headerClass as %s applies to the header and the floating filter', async (_, headerClass, header, ff) => {
+        const { container } = renderGrid(false, [
+            { field: 'athlete', filter: 'agTextColumnFilter', floatingFilter: true, headerClass },
+        ]);
+        const names = (selector: string) =>
+            Array.from(container.querySelector(selector)?.classList ?? []).filter((name) => /^(a|hdr|ff)$/.test(name));
+
+        await waitFor(() => expect(names('.ag-floating-filter[col-id="athlete"]')).toEqual([ff]));
+        expect(names('.ag-header-cell:not(.ag-floating-filter)[col-id="athlete"]')).toEqual([header]);
+    });
+
+    test('a React custom filter receives props without rowModel', async () => {
+        let captured: CustomFilterProps | undefined;
+        const CapturingFilter = (props: CustomFilterProps) => {
+            captured = props;
+            return <div className="capturing-filter" />;
+        };
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [343, 348] });
+        let api: GridApi<Person> | undefined;
+        render(
+            <AgGridReact<Person>
+                columnDefs={[{ field: 'athlete', filter: CapturingFilter }]}
+                rowData={[{ athlete: 'Ian Thorpe' }]}
+                modules={[ClientSideRowModelModule, CustomFilterModule]}
+                onGridReady={(e) => (api = e.api)}
+            />
+        );
+        await waitFor(() => expect(api).toBeDefined());
+        await act(async () => {
+            await api!.getColumnFilterInstance('athlete');
+        });
+        await waitFor(() => expect(captured).toBeDefined());
+
+        expect(captured!.api).toBeDefined();
+        expect('rowModel' in captured!).toBe(false);
     });
 });

@@ -1671,7 +1671,7 @@
             "description": "(Server-side Row Model only) Controls whether expandAll / collapseAll operations apply to all rows (not just loaded ones), and whether group interactions override the default expansion state set by `isServerSideGroupOpenByDefault`. When true, users must provide a `getRowId` function to ensure proper row identification. Default: `false`.",
             "more": {
                 "name": "Row Grouping - Expand All / Collapse All",
-                "url": "./server-side-model-grouping/#expand-all--collapse-all"
+                "url": "./server-side-model-grouping/#expanding-and-collapsing-all-groups"
             }
         },
         "refreshAfterGroupEdit": {
@@ -1806,6 +1806,18 @@
                 "name": "Row IDs",
                 "url": "./row-ids/"
             }
+        },
+        "viewSubscription": {
+            "more": {
+                "name": "View Subscription",
+                "url": "./server-side-model-updating-view-subscription/"
+            }
+        },
+        "viewSubscriptionActive": {
+            "more": {
+                "name": "View Subscription",
+                "url": "./server-side-model-updating-view-subscription/"
+            }
         }
     },
     "clientRowModel": {
@@ -1908,7 +1920,7 @@
         "serverSideOnlyRefreshFilteredGroups": {
             "more": {
                 "name": "Filters",
-                "url": "./server-side-model-grouping/#filters"
+                "url": "./server-side-model-grouping/#filtering-with-row-groups"
             }
         },
         "serverSideInitialRowCount": {
@@ -1920,14 +1932,14 @@
         "getChildCount": {
             "more": {
                 "name": "Providing Child Counts",
-                "url": "./server-side-model-grouping/#providing-child-counts"
+                "url": "./server-side-model-grouping/#showing-child-counts-on-group-rows"
             }
         },
         "getServerSideGroupLevelParams": {},
         "isServerSideGroupOpenByDefault": {
             "more": {
                 "name": "Open by Default",
-                "url": "./server-side-model-grouping/#open-by-default"
+                "url": "./server-side-model-grouping/#opening-groups-by-default"
             }
         },
         "isApplyServerSideTransaction": {},
@@ -2268,7 +2280,7 @@
         "meta": {
             "displayName": "Tooltips",
             "page": {
-                "name": "Tooltip Component",
+                "name": "Tooltips",
                 "url": "./tooltips/"
             }
         },
@@ -2278,47 +2290,88 @@
                 "url": "./tooltips/#browser-tooltip"
             }
         },
+        "suppressBuiltInTooltips": {
+            "more": {
+                "name": "Built-in Control Tooltips",
+                "url": "./tooltips-built-in/"
+            }
+        },
+        "builtInTooltipComponent": {
+            "more": {
+                "name": "Built-in Control Tooltips",
+                "url": "./tooltips-built-in/"
+            }
+        },
+        "builtInTooltipComponentParams": {
+            "more": {
+                "name": "Built-in Control Tooltips",
+                "url": "./tooltips-built-in/"
+            }
+        },
         "tooltipShowDelay": {
+            "description": "The delay in milliseconds before a tooltip is shown. Built-in control tooltips appear immediately on keyboard focus; ordinary focus tooltips use this delay unless overridden by their source. Does not apply to browser tooltips.",
             "more": {
                 "name": "Tooltip Show and Hide Delay",
-                "url": "./tooltips/#show-and-hide-delay"
+                "url": "./tooltips-show-hide/"
             }
         },
         "tooltipSwitchShowDelay": {
             "more": {
                 "name": "Tooltip Show and Hide Delay",
-                "url": "./tooltips/#show-and-hide-delay"
+                "url": "./tooltips-show-hide/"
             }
         },
         "tooltipHideDelay": {
             "more": {
                 "name": "Tooltip Show and Hide Delay",
-                "url": "./tooltips/#show-and-hide-delay"
+                "url": "./tooltips-show-hide/"
+            }
+        },
+        "tooltipPosition": {
+            "description": "Preferred tooltip placement, or a callback for each source. Return `undefined` to use the source default: `top` for built-in controls, `top-start` otherwise. Tooltips flip or shift to fit the available space. Does not apply to browser tooltips.",
+            "more": {
+                "name": "Tooltip Positioning",
+                "url": "./tooltips-positioning/"
+            }
+        },
+        "tooltipAnchor": {
+            "description": "Anchor for ordinary hover tooltips. Focus and built-in control tooltips always use the target; mouse tracking uses the pointer for ordinary hover tooltips. Does not apply to browser tooltips.",
+            "more": {
+                "name": "Tooltip Positioning",
+                "url": "./tooltips-positioning/"
+            }
+        },
+        "tooltipOffset": {
+            "more": {
+                "name": "Tooltip Positioning",
+                "url": "./tooltips-positioning/"
             }
         },
         "tooltipMouseTrack": {
+            "description": "Set to `true` to make ordinary hover tooltips follow the pointer, regardless of `tooltipAnchor`. Focus and built-in control tooltips remain target-anchored. Does not apply to browser tooltips.",
             "more": {
                 "name": "Mouse Tracking",
-                "url": "./tooltips/#mouse-tracking"
+                "url": "./tooltips-positioning/#mouse-tracking"
             }
         },
         "tooltipShowMode": {},
         "tooltipTrigger": {
+            "description": "Whether ordinary tooltips show on `hover`, `focus` or `hoverOrFocus`. The `focus` trigger applies wherever ordinary grid tooltips are supported, including cells, headers, Set Filter values, menu items and tool panel items. Focus uses the configured show delay unless overridden by the source. Built-in control tooltips always support hover and immediate focus. Does not apply to browser tooltips.",
             "more": {
-                "name": "Keyboard Focus",
-                "url": "./tooltips/#keyboard-focus"
+                "name": "Tooltip Trigger",
+                "url": "./tooltips-show-hide/#tooltip-trigger"
             }
         },
         "getTooltipAriaDescription": {
             "more": {
-                "name": "Keyboard Focus",
-                "url": "./tooltips/#keyboard-focus"
+                "name": "Screen Readers",
+                "url": "./tooltips-show-hide/#screen-readers"
             }
         },
         "tooltipInteraction": {
             "more": {
                 "name": "Interactive Tooltips",
-                "url": "./tooltips/#interactive-tooltips"
+                "url": "./tooltips-show-hide/#interactive-tooltips"
             }
         }
     }

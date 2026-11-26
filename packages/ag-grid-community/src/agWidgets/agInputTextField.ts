@@ -169,13 +169,21 @@ export class AgInputTextField<
         if (clearIcon) {
             eClearButton.appendChild(clearIcon);
         }
-        _setAriaLabel(eClearButton, this.getLocaleTextFunc()('ariaLabelInputClear', 'Clear'));
+        const label = this.getLocaleTextFunc()('ariaLabelInputClear', 'Clear');
+        _setAriaLabel(eClearButton, label);
         _addManagedElementListeners(this, eClearButton, {
             mousedown: (event: MouseEvent) => event.preventDefault(),
             click: () => this.clearInput(),
         });
         this.eWrapper.appendChild(eClearButton);
         this.eClearButton = eClearButton;
+        this.addTooltip({
+            control: 'clear',
+            getGui: () => eClearButton,
+            getLocation: () => 'input',
+            getTooltip: () => ({ value: this.getLocaleTextFunc()('tooltipClear', 'Clear') }),
+            getTooltipAccessibleName: () => label,
+        });
     }
 
     private createSearchIcon(): void {

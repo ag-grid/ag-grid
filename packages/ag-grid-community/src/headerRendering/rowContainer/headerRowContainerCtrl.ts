@@ -219,8 +219,7 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
     }
 
     public getFloatingFilterCtrlForColumn(column: AgColumn): HeaderFilterCellCtrl | undefined {
-        return this.filtersRowCtrl?.getHeaderCellCtrls().find((ctrl) => ctrl.column === column) as
-            HeaderFilterCellCtrl | undefined;
+        return this.filtersRowCtrl?.getHeaderCellCtrl(column) as HeaderFilterCellCtrl | undefined;
     }
 
     public getHtmlElementForColumnHeader(column: AgColumn | AgColumnGroup): HTMLElement | null {

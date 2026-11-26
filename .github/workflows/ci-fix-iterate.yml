@@ -1,0 +1,143 @@
+name: CI fix iterate
+
+# `/pr-iterate [what to change]` on a `ci-fix/*` PR opened by ci-failure-handler.yml re-runs the
+# agent on that PR: it applies the PR's review feedback, pushes to the PR branch and replies on the
+# PR. All behaviour lives in the shared ci-fix-iterate-trigger (gate) and gha-ci-failure-handler
+# (`mode: iterate`) actions from @ag-grid/dev-prompts; this file owns only the trigger and the
+# repo-local setup. See ag-dev-prompts docs/ai-workflow-ci-failure-handler.md.
+#
+#   Manual:  gh workflow run ci-fix-iterate.yml -f pr_number=<n> [-f instructions='...']
+#
+# `issue_comment` and `workflow_dispatch` only fire workflows that exist on the default branch.
+#
+# Prerequisites: the same secrets and vars as ci-failure-handler.yml, minus Slack.
+
+on:
+    issue_comment:
+        types: [created]
+    workflow_dispatch:
+        inputs:
+            pr_number:
+                description: 'Fix PR to iterate on.'
+                required: true
+            instructions:
+                description: 'What to change (optional; otherwise the open review feedback).'
+                required: false
+                default: ''
+
+# Restrictive default; both jobs declare their own `permissions:`, which replace this.
+permissions:
+    contents: read
+
+env:
+    # As in ci-failure-handler.yml: no post-fetch background gc/maintenance.
+    GIT_CONFIG_COUNT: 2
+    GIT_CONFIG_KEY_0: gc.auto
+    GIT_CONFIG_VALUE_0: '0'
+    GIT_CONFIG_KEY_1: maintenance.auto
+    GIT_CONFIG_VALUE_1: 'false'
+    DEV_PROMPTS_CHANNEL: latest
+    NX_NO_CLOUD: true
+    SHARP_IGNORE_GLOBAL_LIBVIPS: true
+    YARN_NPM_REGISTRY_SERVER: 'https://registry.ag-grid.com'
+    CHROMEDRIVER_SKIP_DOWNLOAD: 'true'
+
+jobs:
+    gate:
+        if: >
+            github.event_name == 'workflow_dispatch' ||
+            (github.event.issue.pull_request != null && startsWith(github.event.comment.body, '/pr-iterate'))
+        runs-on: ubuntu-24.04
+        timeout-minutes: 5
+        permissions:
+            contents: read
+            pull-requests: write
+            issues: write
+            packages: read
+        outputs:
+            eligible: ${{ steps.gate.outputs.eligible }}
+            pr_number: ${{ steps.gate.outputs.pr_number }}
+            head_ref: ${{ steps.gate.outputs.head_ref }}
+            head_sha: ${{ steps.gate.outputs.head_sha }}
+            base_ref: ${{ steps.gate.outputs.base_ref }}
+            comment_id: ${{ steps.gate.outputs.comment_id }}
+        steps:
+            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+              with:
+                  fetch-depth: 1
+                  persist-credentials: false
+
+            - name: Install @ag-grid/dev-prompts
+              uses: ./external/ag-shared/github/actions/install-ag-dev-prompts
+              with:
+                  channel: ${{ env.DEV_PROMPTS_CHANNEL }}
+
+            - name: Gate /pr-iterate
+              id: gate
+              uses: ./.ag-dev-prompts/node_modules/@ag-grid/dev-prompts/.github/actions/ci-fix-iterate-trigger
+              with:
+                  github-token: ${{ github.token }}
+                  pr-number: ${{ inputs.pr_number }}
+
+    iterate:
+        needs: gate
+        if: needs.gate.outputs.eligible == 'true'
+        # Pinned like ci-failure-handler.yml: Playwright's browsers need ubuntu-24.04's system libraries.
+        runs-on: ubuntu-24.04
+        timeout-minutes: 90
+        # One run per PR at a time; a second /pr-iterate waits rather than racing the push.
+        concurrency:
+            group: ci-fix-iterate-${{ needs.gate.outputs.pr_number }}
+            cancel-in-progress: false
+        permissions:
+            contents: write
+            pull-requests: write
+            packages: read
+        steps:
+            # The default branch, as in ci-failure-handler.yml; the agent works on origin/<head>.
+            # persist-credentials: false so the GITHUB_TOKEN does not shadow the App token.
+            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+              with:
+                  fetch-depth: 0
+                  persist-credentials: false
+
+            # Best-effort, as in ci-failure-handler.yml.
+            - name: Setup
+              id: setup
+              continue-on-error: true
+              uses: ./.github/actions/setup-nx
+              with:
+                  cache_mode: 'ro'
+                  fetch_base: 'skip'
+
+            - name: Install Playwright browsers
+              id: playwright
+              if: steps.setup.outcome == 'success'
+              continue-on-error: true
+              run: bash scripts/ci/install-playwright.sh full chromium
+
+            - name: Report setup failure
+              if: steps.setup.outcome == 'failure' || steps.playwright.outcome == 'failure'
+              run: echo "::warning title=Setup failed::Dependency or browser setup failed, so the agent cannot run builds or tests locally."
+
+            - name: Install @ag-grid/dev-prompts
+              uses: ./external/ag-shared/github/actions/install-ag-dev-prompts
+              with:
+                  channel: ${{ env.DEV_PROMPTS_CHANNEL }}
+
+            - name: Apply review feedback
+              uses: ./.ag-dev-prompts/node_modules/@ag-grid/dev-prompts/.github/actions/gha-ci-failure-handler
+              with:
+                  mode: iterate
+                  pr_number: ${{ needs.gate.outputs.pr_number }}
+                  head_branch: ${{ needs.gate.outputs.head_ref }}
+                  head_sha: ${{ needs.gate.outputs.head_sha }}
+                  base_branch: ${{ needs.gate.outputs.base_ref }}
+                  trigger_comment_id: ${{ needs.gate.outputs.comment_id }}
+                  instructions: ${{ inputs.instructions }}
+                  extra_context: ${{ (steps.setup.outcome == 'failure' || steps.playwright.outcome == 'failure') && 'Repo-local setup (dependency install or Playwright browser install) failed in this job, so local builds and tests will not work here.' || '' }}
+                  github_app_id: ${{ vars.JIRA_AGENT_APP_ID }}
+                  github_app_private_key: ${{ secrets.JIRA_AGENT_APP_PRIVATE_KEY }}
+                  anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+                  dev_prompts_channel: ${{ env.DEV_PROMPTS_CHANNEL }}
+                  repos: ${{ github.event.repository.name }}

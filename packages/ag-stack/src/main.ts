@@ -5,6 +5,7 @@ export type { IComponent } from './interfaces/iComponent';
 export type { DragListenerParams } from './interfaces/iDrag';
 export type { IDragAndDropImage } from './interfaces/iDragAndDrop';
 export type { IEventEmitter, IEventListener } from './interfaces/iEventEmitter';
+export type { TooltipPosition } from './popup/tooltipPositionUtils';
 export type {
     AgComponentPopupPositionParams,
     AgMenuPopupPositionParams,
@@ -16,6 +17,8 @@ export type { Part } from './theming/part';
 export { createPart } from './theming/partImpl';
 export type { Theme } from './theming/theme';
 export type {
+    BackdropFilterFunction,
+    BackdropFilterValue,
     BorderStyleValue,
     BorderValue,
     ColorSchemeValue,

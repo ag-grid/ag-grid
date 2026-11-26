@@ -33,8 +33,7 @@ export class CalculatedColumnAutocompleteRow extends Component<HighlightTooltipE
                 {
                     getGui: () => this.getGui(),
                     getAriaElement: () => this.getGui().parentElement!,
-                    getTooltipComponentDefinition: () => undefined,
-                    getTooltipValue: () => this.tooltipValue,
+                    getTooltip: () => ({ value: this.tooltipValue }),
                     getLocation: () => 'calculatedColumnAutocomplete',
                     shouldDisplayTooltip: () => this.isTruncated(),
                 },

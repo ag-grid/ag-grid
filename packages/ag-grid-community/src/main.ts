@@ -43,18 +43,15 @@ export {
 export type {
     AllChildrenCountChangedEvent,
     CellChangedEvent,
-    ChildIndexChangedEvent,
     DataChangedEvent,
     DataValueFrom,
     DisplayedChangedEvent,
     DraggingChangedEvent,
     ExpandedChangedEvent,
-    FirstChildChangedEvent,
     GroupChangedEvent,
     HasChildrenChangedEvent,
     HeightChangedEvent,
     IRowNode,
-    LastChildChangedEvent,
     MasterChangedEvent,
     MouseEnterEvent,
     MouseLeaveEvent,
@@ -236,7 +233,7 @@ export type {
     ProvidedFilterModel,
     ProvidedFilterParams,
 } from './filter/provided/iProvidedFilter';
-export type { IScalarFilterParams, ScalarFilterParams } from './filter/provided/iScalarFilter';
+export type { IScalarFilterParams } from './filter/provided/iScalarFilter';
 export { isCombinedFilterModel } from './filter/provided/iSimpleFilter';
 export type {
     CommonFilterOptionKey,
@@ -362,7 +359,6 @@ export type {
     MultiFilterParams,
 } from './interfaces/iMultiFilter';
 export type {
-    ISetFilter,
     ISetFilterParams,
     ISetFilterTreeListTooltipParams,
     SetFilterHandler,
@@ -587,13 +583,12 @@ export type { RedrawRowsParams } from './interfaces/iRedrawRowsParams';
 export type { ICheckboxCellRendererParams } from './rendering/cellRenderers/checkboxCellRenderer';
 
 // Row Model
-export type { IRowModel, RowBounds, RowModelType } from './interfaces/iRowModel';
+export type { RowBounds, RowModelType } from './interfaces/iRowModel';
 
 // Client Side Row Model (CSRM)
 export type {
     ClientSideRowModelStage,
     ClientSideRowModelStep,
-    IClientSideRowModel,
     RefreshModelParams,
 } from './interfaces/iClientSideRowModel';
 export type { RowDataTransaction } from './interfaces/rowDataTransaction';
@@ -608,12 +603,23 @@ export type {
     IServerSideGetRowsRequest,
 } from './interfaces/iServerSideDatasource';
 export type {
-    IServerSideRowModel,
     IServerSideTransactionManager,
     LoadSuccessParams,
     RefreshServerSideParams,
 } from './interfaces/iServerSideRowModel';
 export type { IServerSideGroupSelectionState, IServerSideSelectionState } from './interfaces/iServerSideSelection';
+export type {
+    ViewGroupRow,
+    ViewGroupRowRef,
+    ViewLeafRow,
+    ViewLeafRowRef,
+    ViewRow,
+    ViewRowRef,
+    ViewSubscriptionOptions,
+    ViewSubscriptionParams,
+    ViewTreeRow,
+    ViewTreeRowRef,
+} from './interfaces/iViewSubscription';
 export type {
     IServerSideStore,
     ServerSideGroupLevelState,
@@ -753,6 +759,8 @@ export type { RowPosition } from './interfaces/iRowPosition';
 // Column Configuration
 export type {
     AbstractColDef,
+    AggValueGetterFunc,
+    AggValueGetterParams,
     CellClassFunc,
     CellClassParams,
     CellClassRules,
@@ -1050,10 +1058,19 @@ export type { IHeader, IHeaderComp, IHeaderParams, IInnerHeaderComponent } from 
 
 // Tooltips
 export type {
+    BuiltInTooltipControl,
+    IBuiltInTooltipComp,
+    IBuiltInTooltipParams,
+    HeaderTooltipCallbackParams,
+    HeaderTooltipDefinition,
     ITooltipComp,
     ITooltipParams,
+    TooltipPosition,
+    TooltipPositionParams,
+    TooltipPositionCallback,
     TooltipCallbackFunc,
     TooltipCallbackParams,
+    TooltipContentParams,
     TooltipDefinition,
     TooltipLocation,
 } from './tooltip/tooltipComponent';

@@ -1,12 +1,6 @@
 import { act, cleanup, findByText, render, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import {
-    dispatchGridSizeChanged,
-    getRevealedElements,
-    installFocusScroll,
-    mockGridLayout,
-    polyfillOffsetParent,
-} from 'ag-test-utils';
+import { dispatchGridSizeChanged, getRevealedElements, installFocusScroll, mockGridLayout } from 'ag-test-utils';
 import React from 'react';
 import { onTestFinished } from 'vitest';
 
@@ -29,7 +23,6 @@ describe('column movement menu actions (react)', () => {
     });
 
     test('a group header moved past the viewport stays scrolled into view', async () => {
-        onTestFinished(polyfillOffsetParent());
         onTestFinished(installFocusScroll());
         mockGridLayout.asyncScrollEvents = true;
         const a: ColDef = { field: 'a', width: 100 };

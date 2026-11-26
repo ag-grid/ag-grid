@@ -3,13 +3,14 @@ title: "SSRM Updating Data"
 enterprise: true
 ---
 
-There are various different approaches for having the grid update to changes while using the Server-Side Row Model.
+The SSRM can keep the grid in sync with changes on the server in several ways. This page helps choose one.
 
 The different options for keeping the grid updated are as follows:
 
 - [Refresh](./server-side-model-updating-refresh/) - Reload all loaded rows from the server.
 - [Single Row Updates](./server-side-model-updating-single-row/) - Update data directly on the existing rows.
 - [Transactions](./server-side-model-updating-transactions/) - Add, remove and update rows in the grid.
+- [View Subscription](./server-side-model-updating-view-subscription/) - Track which rows are in view, so the server only streams updates for those rows. Apply the updates with Transactions or Single Row Updates.
 
 ## Picking Your Strategy
 

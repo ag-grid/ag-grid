@@ -5,6 +5,7 @@ import {
     ColumnFilterHarness,
     FloatingFilterHarness,
     GridRows,
+    LEGACY_FILTER_WARNING_IDS,
     TestGridsManager,
     asyncSetTimeout,
     installFilterLayoutMock,
@@ -204,7 +205,7 @@ describe('a change before rows load to a filter holding none of the model set fo
         expect(told.sort()).toEqual(['model', 'rows']);
     });
 
-    test('with filter handlers, a built filter rejecting the model set before rows load tells only its own change', async () => {
+    test('with filter handlers, a built filter rejecting the model set before rows load fires no filterChanged, as nothing applied changes', async () => {
         const events: string[] = [];
         const api: GridApi = gridsManager.createGrid('grid1', {
             columnDefs: BASE_COLS,
@@ -216,7 +217,7 @@ describe('a change before rows load to a filter holding none of the model set fo
         api.setFilterModel({ age: { filterType: 'text', type: 'contains', filter: '2' } });
         api.setGridOption('rowData', ROWS);
         await asyncSetTimeout(0);
-        expect(events).toEqual(['columnFilter:age']);
+        expect(events).toEqual([]);
         expect(api.getFilterModel()).toEqual({});
     });
 });
@@ -444,6 +445,7 @@ describe('filter models set before rows load, through the filter manager API', (
     });
 
     test('a model set before the rows arrive on a custom filter taking it asynchronously survives an onFilterChanged meanwhile', async () => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: LEGACY_FILTER_WARNING_IDS });
         let applyModel = () => {};
         class AsyncFilter implements IFilterComp {
             private model: { filter: string } | null = null;
@@ -487,6 +489,7 @@ describe('filter models set before rows load, through the filter manager API', (
     });
 
     test('a filter of its own built before the rows arrive is not rebuilt by a model set meanwhile', async () => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: LEGACY_FILTER_WARNING_IDS });
         let inits = 0;
         class CustomFilter implements IFilterComp {
             private model: unknown = null;
@@ -523,6 +526,7 @@ describe('filter models set before rows load, through the filter manager API', (
     });
 
     test('a custom filter restored from the initial state is given its model once', async () => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: LEGACY_FILTER_WARNING_IDS });
         let setModelCalls = 0;
         class CustomFilter implements IFilterComp {
             private model: { filter: string } | null = null;
@@ -601,6 +605,7 @@ describe('models set before rows load, with a filter type inferred from them', (
     test.each([false, true])(
         'with enableFilterHandlers %s, an edit before rows load in the Text Filter they replace with a Number Filter goes with it',
         async (enableFilterHandlers) => {
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [348] });
             const changed: string[][] = [];
             const api: GridApi = gridsManager.createGrid('grid1', {
                 columnDefs: [{ field: 'age', filter: true, floatingFilter: true, filterParams: { debounceMs: 0 } }],

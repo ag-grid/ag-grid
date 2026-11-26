@@ -1,6 +1,8 @@
 import { fireEvent, waitFor } from '@testing-library/dom';
 import {
+    ALL_SEVERITIES,
     ColumnFilterHarness,
+    LEGACY_FILTER_WARNING_IDS,
     TestGridsManager,
     asyncSetTimeout,
     installFilterLayoutMock,
@@ -8,7 +10,13 @@ import {
 } from 'ag-test-utils';
 
 import type { GridApi, ISetFilterParams, SetFilterValuesFuncParams } from 'ag-grid-community';
-import { ClientSideRowModelModule, NumberFilterModule, TextFilterModule, setupAgTestIds } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    NumberFilterModule,
+    TextFilterModule,
+    enableDevValidations,
+    setupAgTestIds,
+} from 'ag-grid-community';
 import type { SetFilterHandler } from 'ag-grid-enterprise';
 import { SetFilterModule } from 'ag-grid-enterprise';
 
@@ -57,6 +65,7 @@ describe('Filter input clear button', () => {
     });
 
     test('without an apply button, one clear click runs the filter pipeline exactly once', async () => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: LEGACY_FILTER_WARNING_IDS });
         const api: GridApi = await gridsManager.createGridAndWait('grid1', {
             columnDefs: [{ field: 'country', filter: 'agTextColumnFilter', filterParams: { debounceMs: 0 } }],
             rowData: ROW_DATA,

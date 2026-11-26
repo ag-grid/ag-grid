@@ -145,6 +145,42 @@ describe('SSRM pivot-mode sort and expand/collapse (characterization)', () => {
         `);
     });
 
+    test('sorted primary column without an aggFunc is left out of the pivot request sortModel until it gets one', async () => {
+        const { datasource, requests } = createRecordingServer(SORT_DATA);
+        const sent = () => requests.map(({ sortModel, valueCols }) => ({ sortModel, valueCols }));
+
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { field: 'country', rowGroup: true },
+                { field: 'year', pivot: true },
+                { field: 'gold', sort: 'asc' },
+                { field: 'silver', aggFunc: 'sum' },
+            ],
+            pivotMode: true,
+            rowModelType: 'serverSide',
+            serverSideDatasource: datasource,
+        });
+        await waitForEvent('firstDataRendered', api);
+        await waitForNoLoadingRows(api);
+
+        // The first load leaves the aggFunc-less sorted column out of the sortModel.
+        expect(sent()).toEqual([{ sortModel: [], valueCols: ['silver'] }]);
+        expect(api.getColumn('gold')!.getAggFunc() ?? null).toBeNull();
+        expect(api.getColumn('gold')!.getSort()).toBe('asc');
+
+        const requestsBeforeAggFunc = requests.length;
+        api.setColumnAggFunc('gold', 'sum');
+        // Premise: the aggFunc took effect on the column.
+        expect(api.getColumn('gold')!.getAggFunc()).toBe('sum');
+        await waitFor(() => expect(requests.length).toBeGreaterThan(requestsBeforeAggFunc));
+        await waitForNoLoadingRows(api);
+
+        expect(sent()).toEqual([
+            { sortModel: [], valueCols: ['silver'] },
+            { sortModel: [{ colId: 'gold', sort: 'asc' }], valueCols: ['silver', 'gold'] },
+        ]);
+    });
+
     test('2. expand/collapse an expandable pivot group with purgeClosedRowNodes — children purged on collapse and re-fetched on re-expand', async () => {
         const { datasource, requests } = createRecordingServer(EXPAND_DATA);
         const api = gridsManager.createGrid('myGrid', {

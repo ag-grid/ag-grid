@@ -7,7 +7,6 @@ import {
     TestGridsManager,
     asyncSetTimeout,
     clickMenuOption,
-    polyfillOffsetParent,
     unindentText,
     waitForEvent,
     waitForNoLoadingRows,
@@ -936,27 +935,22 @@ describe('SSRM grand total row', () => {
         };
 
         test('when a context menu item pins it to the other side or unpins it', async () => {
-            const restoreOffsetParent = polyfillOffsetParent();
-            try {
-                const api = await createPinnedBottomGrid({ getContextMenuItems: () => ['pinTop', 'unpinRow'] });
-                const openMenuOnGrandTotal = () =>
-                    userEvent.pointer({
-                        keys: '[MouseRight]',
-                        target: pinnedRowElements(api, 'bottom')[0].querySelector<HTMLElement>('.ag-cell')!,
-                    });
+            const api = await createPinnedBottomGrid({ getContextMenuItems: () => ['pinTop', 'unpinRow'] });
+            const openMenuOnGrandTotal = () =>
+                userEvent.pointer({
+                    keys: '[MouseRight]',
+                    target: pinnedRowElements(api, 'bottom')[0].querySelector<HTMLElement>('.ag-cell')!,
+                });
 
-                await openMenuOnGrandTotal();
-                await clickMenuOption('Pin to Top');
-                await asyncSetTimeout(0);
-                expectPinnedBottomOnly(api);
+            await openMenuOnGrandTotal();
+            await clickMenuOption('Pin to Top');
+            await asyncSetTimeout(0);
+            expectPinnedBottomOnly(api);
 
-                await openMenuOnGrandTotal();
-                await clickMenuOption('Unpin Row');
-                await asyncSetTimeout(0);
-                expectPinnedBottomOnly(api);
-            } finally {
-                restoreOffsetParent();
-            }
+            await openMenuOnGrandTotal();
+            await clickMenuOption('Unpin Row');
+            await asyncSetTimeout(0);
+            expectPinnedBottomOnly(api);
         });
 
         test('when the row pinning state names it', async () => {

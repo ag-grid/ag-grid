@@ -24,7 +24,6 @@ describe('Dialog tab navigation', () => {
     const gridsManager = new TestGridsManager({
         modules: [ClientSideRowModelModule, ColumnMenuModule, NotesModule, PaginationModule],
     });
-    const originalOffsetParent = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'offsetParent');
     let agHiddenStyle: HTMLStyleElement;
 
     beforeAll(() => {
@@ -33,21 +32,10 @@ describe('Dialog tab navigation', () => {
         agHiddenStyle = document.createElement('style');
         agHiddenStyle.textContent = '.ag-hidden { display: none !important; }';
         document.head.appendChild(agHiddenStyle);
-        Object.defineProperty(HTMLElement.prototype, 'offsetParent', {
-            configurable: true,
-            get() {
-                return this.parentNode;
-            },
-        });
     });
 
     afterAll(() => {
         agHiddenStyle.remove();
-        if (originalOffsetParent) {
-            Object.defineProperty(HTMLElement.prototype, 'offsetParent', originalOffsetParent);
-        } else {
-            Reflect.deleteProperty(HTMLElement.prototype, 'offsetParent');
-        }
     });
 
     afterEach(() => {

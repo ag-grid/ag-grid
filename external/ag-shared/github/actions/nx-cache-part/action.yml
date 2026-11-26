@@ -1,0 +1,38 @@
+name: nx-cache-part
+description: 'Upload the Nx cache entries this job created, for nx-cache-save to merge. Needs setup-nx-core with nx_cache_scheme: merged.'
+
+inputs:
+    name:
+        description: 'Name unique to this job within the run, including any matrix values (e.g. test-2).'
+        required: true
+    exclude:
+        description: 'Tasks to leave out of the part, as project:target, comma or newline separated. For outputs too large to be worth caching.'
+        required: false
+        default: ''
+
+runs:
+    using: 'composite'
+    steps:
+        - name: Export Nx cache part
+          shell: bash
+          env:
+              NX_CACHE_EXCLUDE: ${{ inputs.exclude }}
+          run: |
+              # Cleared first, so nothing left by an earlier call is uploaded as this job's part.
+              rm -rf "${RUNNER_TEMP}/nx-cache-part" "${RUNNER_TEMP}/nx-cache-part.tar"
+              node "${{ github.action_path }}/../setup-nx-core/nx-cache-db.mjs" export "${RUNNER_TEMP}/nx-cache-state.json" "${RUNNER_TEMP}/nx-cache-part"
+              # An artifact zip drops empty directories, and Nx treats an entry whose (empty)
+              # output directory is missing as a miss. A tar keeps them, and file modes.
+              if [[ -d "${RUNNER_TEMP}/nx-cache-part" ]] ; then
+                tar -cf "${RUNNER_TEMP}/nx-cache-part.tar" -C "${RUNNER_TEMP}/nx-cache-part" .
+              fi
+
+        - name: Upload Nx cache part
+          uses: actions/upload-artifact@v7
+          with:
+              name: nx-cache-part-${{ inputs.name }}
+              path: ${{ runner.temp }}/nx-cache-part.tar
+              retention-days: 1
+              if-no-files-found: ignore
+              # A re-run job uploads under the same name.
+              overwrite: true

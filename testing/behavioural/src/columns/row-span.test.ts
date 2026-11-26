@@ -1,7 +1,6 @@
 import { waitFor } from '@testing-library/dom';
 import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, nextAnimationFrame } from 'ag-test-utils';
 import { mockGridLayout } from 'ag-test-utils/polyfills/mockGridLayout';
-import { installMockResizeObserver } from 'ag-test-utils/polyfills/mockResizeObserver';
 
 import type { ColDef, ColGroupDef, GridApi, GridOptions, IRowNode } from 'ag-grid-community';
 import {
@@ -509,7 +508,6 @@ describe('row spanning', () => {
             // A is exactly as tall as its first row, so its last row needs nothing extra from it; B needs 70.
             const SPAN_B_HEIGHT = 130;
             const SPANNED_TITLE_HEIGHTS: Record<string, number> = { A: ACTION_HEIGHT, B: SPAN_B_HEIGHT };
-            let uninstallResizeObserver: () => void;
 
             beforeAll(() => {
                 mockGridLayout.useRealOffsetDimensions = true;
@@ -530,14 +528,6 @@ describe('row spanning', () => {
             afterAll(() => {
                 mockGridLayout.useRealOffsetDimensions = false;
                 mockGridLayout.elementHeightOverride = undefined;
-            });
-
-            beforeEach(() => {
-                uninstallResizeObserver = installMockResizeObserver();
-            });
-
-            afterEach(() => {
-                uninstallResizeObserver();
             });
 
             test('toggling spanRows on sizes each span to the sum of its rows, every time', async () => {

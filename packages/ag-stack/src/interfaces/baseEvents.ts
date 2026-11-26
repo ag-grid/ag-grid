@@ -16,6 +16,12 @@ interface AgBodyScrollEvent extends AgEvent<'bodyScroll'> {
     top: number;
 }
 
+interface AgBodyScrollEndEvent extends AgEvent<'bodyScrollEnd'> {
+    direction: ScrollDirection;
+    left: number;
+    top: number;
+}
+
 interface AgBaseDragEvent<
     TEventType extends 'dragStarted' | 'dragStopped' | 'dragCancelled',
 > extends AgEvent<TEventType> {
@@ -49,6 +55,7 @@ export interface AgStylesChangedEvent extends AgEvent<'stylesChanged'> {
 export interface BaseEvents {
     checkboxChanged: AgCheckboxChangedEvent;
     bodyScroll: AgBodyScrollEvent;
+    bodyScrollEnd: AgBodyScrollEndEvent;
     dragStarted: AgDragStartedEvent;
     dragStopped: AgDragStoppedEvent;
     dragCancelled: AgDragCancelledEvent;

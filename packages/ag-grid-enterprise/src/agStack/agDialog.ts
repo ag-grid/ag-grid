@@ -5,6 +5,7 @@ import type {
     BaseProperties,
     IPopupService,
     IPropertiesService,
+    ITooltipFeature,
     ResizableStructure,
     StopPropagationCallbacks,
 } from 'ag-stack';
@@ -77,6 +78,7 @@ export class AgDialog<
     private isMaximized: boolean = false;
     private readonly maximizeListeners: (() => void)[] = [];
     private maximizeButtonComp: AgComponent<TBeanCollection, TProperties, TGlobalEvents, any> | undefined;
+    private maximizeTooltip?: ITooltipFeature;
     private maximizeIcon: Element | undefined;
     private minimizeIcon: Element | undefined;
     private resizeListenerDestroy: (() => void) | null | undefined = null;
@@ -205,11 +207,13 @@ export class AgDialog<
         _setDisplayed(this.maximizeIcon!, !this.isMaximized);
         _setDisplayed(this.minimizeIcon!, this.isMaximized);
 
+        _setAriaLabel(this.maximizeButtonComp!.getGui(), this.getMaximizeLabel());
+        this.maximizeTooltip?.refreshTooltip();
+    }
+
+    private getMaximizeLabel(): string {
         const translate = this.getLocaleTextFunc();
-        const label = this.isMaximized
-            ? translate('ariaLabelRestore', 'Restore')
-            : translate('ariaLabelMaximize', 'Maximize');
-        _setAriaLabel(this.maximizeButtonComp!.getGui(), label);
+        return this.isMaximized ? translate('ariaLabelRestore', 'Restore') : translate('ariaLabelMaximize', 'Maximize');
     }
 
     private clearMaximizebleListeners() {
@@ -248,6 +252,7 @@ export class AgDialog<
             if (this.maximizeButtonComp) {
                 this.destroyBean(this.maximizeButtonComp);
                 this.maximizeButtonComp = this.maximizeIcon = this.minimizeIcon = undefined;
+                this.maximizeTooltip = undefined;
             }
             return;
         }
@@ -295,6 +300,15 @@ export class AgDialog<
         ));
 
         const eGui = maximizeButtonComp.getGui();
+        this.maximizeTooltip = maximizeButtonComp.addTooltip({
+            getLocation: () => 'dialog',
+            control: 'maximize',
+            getTooltip: () => ({
+                value: this.isMaximized
+                    ? this.getLocaleTextFunc()('tooltipRestore', 'Restore')
+                    : this.getLocaleTextFunc()('tooltipMaximize', 'Maximise'),
+            }),
+        });
 
         const iconSvc = this.beans.iconSvc;
         this.maximizeIcon = iconSvc.createIconNoSpan('maximize')!;

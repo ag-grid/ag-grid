@@ -2,6 +2,7 @@ import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     ModuleRegistry,
+    NumberEditorModule,
     TextEditorModule,
     TextFilterModule,
     TooltipModule,
@@ -16,11 +17,18 @@ if (process.env.NODE_ENV !== 'production') {
     enableDevValidations();
 }
 
-ModuleRegistry.registerModules([TextEditorModule, TextFilterModule, ClientSideRowModelModule, TooltipModule]);
+ModuleRegistry.registerModules([
+    NumberEditorModule,
+    TextEditorModule,
+    TextFilterModule,
+    ClientSideRowModelModule,
+    TooltipModule,
+]);
 
 const columnDefs: ColDef[] = [
     { field: 'athlete', width: 120, cellRenderer: AthleteCellRenderer },
     { field: 'country', width: 150 },
+    { field: 'gold', width: 100 },
 ];
 
 let gridApi: GridApi<IOlympicData>;

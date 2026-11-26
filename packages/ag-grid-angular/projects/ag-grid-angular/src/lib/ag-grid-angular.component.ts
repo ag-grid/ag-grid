@@ -146,7 +146,6 @@ import type {
     IAggFuncs,
     IDatasource,
     IServerSideDatasource,
-    ITooltipParams,
     IViewportDatasource,
     Icons,
     InitialGroupOrderComparator,
@@ -243,12 +242,17 @@ import type {
     ToolPanelSizeChangedEvent,
     ToolPanelVisibleChangedEvent,
     Toolbar,
+    TooltipCallbackParams,
+    TooltipContentParams,
     TooltipHideEvent,
+    TooltipPosition,
+    TooltipPositionCallback,
     TooltipShowEvent,
     TreeDataDisplayType,
     UndoEndedEvent,
     UndoStartedEvent,
     UseGroupTotalRow,
+    ViewSubscriptionOptions,
     ViewportChangedEvent,
     VirtualColumnsChangedEvent,
     VirtualRowRemovedEvent,
@@ -259,6 +263,7 @@ import {
     _BOOLEAN_MIXED_GRID_OPTIONS,
     _combineAttributesAndGridOptions,
     _processOnChange,
+    _reportFilterModifiedListened,
     createGrid,
 } from 'ag-grid-community';
 
@@ -346,6 +351,9 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
             const api = createGrid(this._nativeElement, mergedGridOps, gridParams);
             if (api) {
                 this.api = api;
+                if (this.isEmitterUsed('filterModified')) {
+                    _reportFilterModifiedListened(api);
+                }
             }
 
             this._initialised = true;
@@ -472,24 +480,60 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `TooltipModule`
      */
     @Input({ transform: booleanAttribute }) public enableBrowserTooltips: boolean | undefined = undefined;
+    /** Hide built-in control hints only.
+     * Automatic text tooltips, explicitly configured tooltips and validation tooltips are unaffected.
+     * @default false
+     * @agModule `TooltipModule`
+     */
+    @Input({ transform: booleanAttribute }) public suppressBuiltInTooltips: boolean | undefined = undefined;
+    /** Custom component for built-in control hints only, separate from a column's `tooltipComponent`.
+     * Receives `IBuiltInTooltipParams`.
+     * @agModule `TooltipModule`
+     */
+    @Input() public builtInTooltipComponent: any = undefined;
+    /** Additional parameters for `builtInTooltipComponent`.     */
+    @Input() public builtInTooltipComponentParams: any = undefined;
     /** The trigger that will cause tooltips to show and hide.
      * Applies wherever grid tooltips are supported, including cells, headers, set filter values and menu items.
      *  - `hover` - The tooltip will show/hide when its element is hovered.
-     *  - `focus` - The tooltip shows immediately on keyboard focus.
+     *  - `focus` - The tooltip shows on keyboard focus after `tooltipShowDelay`.
      *  - `hoverOrFocus` - The tooltip shows on hover or keyboard focus after `tooltipShowDelay`.
+     * Source-specific show delays take precedence in all modes.
+     * Built-in control tooltips always show on hover and immediately on focus.
      * @default 'hover'
      * @initial
      * @agModule `TooltipModule`
      */
     @Input() public tooltipTrigger: 'hover' | 'focus' | 'hoverOrFocus' | undefined = undefined;
+    /** Preferred tooltip placement. Flips or shifts to stay within the available space.
+     * Return `undefined` from the callback to use the default placement: towards the grid for Side Bar tabs, `top` for other built-in controls, otherwise `top-start`.
+     * Does not apply to browser tooltips.
+     * @agModule `TooltipModule`
+     */
+    @Input() public tooltipPosition: TooltipPosition | TooltipPositionCallback<TData> | undefined = undefined;
+    /** Anchor for hover tooltips. Focus and built-in control tooltips always use the target; mouse tracking uses the pointer.
+     * Does not apply to browser tooltips.
+     * @default 'target'
+     * @agModule `TooltipModule`
+     */
+    @Input() public tooltipAnchor: 'target' | 'pointer' | undefined = undefined;
+    /** Distance in pixels between the tooltip and its anchor, along the placement axis.
+     * Does not apply to browser tooltips.
+     * @default 6
+     * @agModule `TooltipModule`
+     */
+    @Input() public tooltipOffset: number | undefined = undefined;
     /** Provides a plain-text accessible description, available on focus before the visual tooltip appears.
      * Use this for custom tooltips whose resolved `params.value` is structured data.
      * Return `undefined` to use the resolved textual value, or `null` / an empty string for no description.
      * @agModule `TooltipModule`
      */
     @Input() public getTooltipAriaDescription:
-        ((params: ITooltipParams<TData>) => string | null | undefined) | undefined = undefined;
-    /** The delay in milliseconds before a tooltip shows on hover, or on focus with `tooltipTrigger: 'hoverOrFocus'`.
+        ((params: TooltipContentParams<TData>) => string | null | undefined) | undefined = undefined;
+    /** The delay in milliseconds before a tooltip shows on hover or focus.
+     * Built-in control tooltips use this delay on hover but show immediately on focus.
+     * Filter Apply-button validation and Advanced Filter validation tooltips override this delay with 1000ms.
+     * Pointer switching uses `tooltipSwitchShowDelay` instead.
      *     **Note:** This property does not work if `enableBrowserTooltips` is `true`.
      * @default 2000
      * @agModule `TooltipModule`
@@ -509,25 +553,33 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      */
     @Input() public tooltipHideDelay: number | undefined = undefined;
     /** Set to `true` to have tooltips follow the cursor once they are displayed.
+     * Does not apply to built-in control tooltips.
      * @default false
      * @initial
      * @agModule `TooltipModule`
      */
     @Input({ transform: booleanAttribute }) public tooltipMouseTrack: boolean | undefined = undefined;
-    /** This defines when tooltip will show up for Cells, Headers and SetFilter Items.
-     *  - `standard` - The tooltip always shows up when the items configured with Tooltips are hovered.
-     * - `whenTruncated` - The tooltip will only be displayed when the items hovered have truncated (showing ellipsis) values. This property does not work when `enableBrowserTooltips={true}`.
-     * @default `standard`
+    /** Controls tooltips for grid-rendered text, including cells, headers, Set Filter items and tool panel labels.
+     * - `auto` - Automatically shows truncated text and configured tooltips with different content.
+     * - `standard` - Shows only configured tooltips, without requiring truncation.
+     * - `whenTruncated` - Shows only configured tooltips, and only when the target text is truncated.
+     * - `whenDifferent` - Shows only configured tooltips that differ from the default tooltip value:
+     *   the formatted value when available, otherwise the raw value.
+     * Applies to browser tooltips too. Custom components can supply their own display predicate.
+     * @default 'auto'
      * @agModule `TooltipModule`
      */
-    @Input() public tooltipShowMode: 'standard' | 'whenTruncated' | undefined = undefined;
+    @Input() public tooltipShowMode: 'auto' | 'standard' | 'whenTruncated' | 'whenDifferent' | undefined = undefined;
     /** Set to `true` for custom tooltip content containing focusable controls. Tab can enter the tooltip and
      * Escape closes it and returns focus to its source. All tooltips remain visible while hovered.
+     * A callback receives the source parameters and decides separately each time a tooltip opens.
+     * Does not apply to browser tooltips.
      * @default false
      * @initial
      * @agModule `TooltipModule`
      */
-    @Input({ transform: booleanAttribute }) public tooltipInteraction: boolean | undefined = undefined;
+    @Input({ transform: (value: unknown) => (typeof value === 'function' ? value : booleanAttribute(value)) })
+    public tooltipInteraction: (boolean | ((params: TooltipCallbackParams<TData>) => boolean)) | undefined = undefined;
     /** DOM element to use as the popup parent for grid popups (context menu, column menu etc).
      */
     @Input() public popupParent: HTMLElement | null | undefined = undefined;
@@ -867,11 +919,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `AdvancedFilterModule`
      */
     @Input() public advancedFilterParams: IAdvancedFilterParams | undefined = undefined;
-    /** @deprecated As of v34, advanced filter no longer uses function evaluation, so this option has no effect.
-     * @default true
-     * @agModule `AdvancedFilterModule`
-     */
-    @Input({ transform: booleanAttribute }) public suppressAdvancedFilterEval: boolean | undefined = undefined;
     /** When using AG Grid Enterprise, the Set Filter is used by default when `filter: true` is set on column definitions.
      * Set to `true` to prevent this and instead use the Text Filter, Number Filter or Date Filter based on the cell data type,
      * the same as when using AG Grid Community.
@@ -885,6 +932,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      *
      * Note that grid-provided filters (except for the Multi Filter) always use filter handlers.
      * The Multi Filter will also use a filter handler if this is enabled.
+     *
+     * The default becomes `true` in v38. Setting `false` (legacy filter mode) is deprecated in v37, and legacy filter mode and this option will be removed in a major version after v38. See [Migrating to Filter Handlers](https://www.ag-grid.com/javascript-data-grid/enable-filter-handlers-migration/).
      * @initial
      */
     @Input({ transform: booleanAttribute }) public enableFilterHandlers: boolean | undefined = undefined;
@@ -1631,6 +1680,22 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `ClientSideRowModelModule` / `InfiniteRowModelModule` / `ServerSideRowModelModule` / `ViewportRowModelModule`
      */
     @Input() public rowModelType: RowModelType | undefined = undefined;
+    /** Calls `subscribeRows` and `unsubscribeRows` as loaded rows enter and leave the view,
+     * so that a server stream only sends updates for rows the user can see.
+     * The grid subscribes to the rows in view when it is ready. Every row passed to `subscribeRows` is later passed
+     * to `unsubscribeRows` exactly once, including when `viewSubscriptionActive` is set to `false`, the option is removed, or the grid
+     * is destroyed. The handlers are read each time they are called, so changing them does not unsubscribe any rows.
+     * The grand total row is passed while it is in view, and a group total row keeps its group row subscribed. Detail rows are not passed.
+     * Requires `getRowId`. Supported by the Server-Side Row Model.
+     * @agModule `ViewSubscriptionModule`
+     */
+    @Input() public viewSubscription: ViewSubscriptionOptions<TData> | undefined = undefined;
+    /** Set to `false` to unsubscribe every row from `viewSubscription` and stop calling its handlers, while keeping
+     * them configured, to control the subscription manually. Set back to `true` to subscribe to the rows in view again.
+     * @default true
+     * @agModule `ViewSubscriptionModule`
+     */
+    @Input({ transform: booleanAttribute }) public viewSubscriptionActive: boolean | undefined = undefined;
     /** Set the data to be displayed as rows in the grid.
      * @agModule `ClientSideRowModelModule`
      */
@@ -1874,7 +1939,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * Provide an object to sort using a specific locale and collator options, such as `{ locales: 'de', options: { sensitivity: 'accent' } }`.
      * Only applies when both values are strings. Also orders the values in the Set Filter list.
      *
-     * Can be overridden per column with `colDef.accentedSort`.
+     * Equivalent to setting `accentedSort` on the `defaultColDef`, which is the recommended approach. Can be overridden per column with `colDef.accentedSort`.
      * @default false
      */
     @Input() public accentedSort: boolean | AccentedSortOptions | undefined = undefined;
@@ -2555,6 +2620,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
         FilterChangedEvent<TData>
     >();
     /** Filter was modified but not applied  (when using `enableFilterHandlers = false`). Used when filters have 'Apply' buttons.
+     * @deprecated v37 Use `onFilterUiChanged` and `onFloatingFilterUiChanged` with `enableFilterHandlers` instead. See [Migrating to Filter Handlers](https://www.ag-grid.com/javascript-data-grid/enable-filter-handlers-migration/).
      */
     @Output() public filterModified: EventEmitter<FilterModifiedEvent<TData>> = new EventEmitter<
         FilterModifiedEvent<TData>
@@ -2617,6 +2683,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
         ModelUpdatedEvent<TData>
     >();
     /** A row was removed from the DOM, for any reason. Use to clean up resources (if any) used by the row.
+     * A rendered row is not always in view, as the grid also renders rows in the row buffer. To subscribe to updates for the rows in view only, use `viewSubscription`.
      */
     @Output() public virtualRowRemoved: EventEmitter<VirtualRowRemovedEvent<TData>> = new EventEmitter<
         VirtualRowRemovedEvent<TData>

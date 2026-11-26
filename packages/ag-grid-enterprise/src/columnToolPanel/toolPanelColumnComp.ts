@@ -1,6 +1,8 @@
+import type { ITooltipFeature } from 'ag-stack';
 import {
     RefPlaceholder,
     _addManagedElementListeners,
+    _setAriaChecked,
     _setAriaDescribedBy,
     _setAriaLabel,
     _setDisplayed,
@@ -14,8 +16,8 @@ import type {
     ElementParams,
     GridCheckbox,
     GridDragSource,
+    HeaderTooltipCallbackParams,
     LongTapEvent,
-    TooltipCallbackParams,
     TooltipFeature,
 } from 'ag-grid-community';
 import {
@@ -26,10 +28,8 @@ import {
     TouchListener,
     _addGridCommonParams,
     _createIconNoSpan,
-    _getHeaderTooltipComponentDefinition,
-    _getShouldDisplayTooltip,
     _getToolPanelClassesFromColDef,
-    _resolveHeaderTooltipValue,
+    _resolveHeaderTooltip,
 } from 'ag-grid-community';
 
 import { _isContextMenuKey } from '../widgets/menuPopupUtils';
@@ -61,6 +61,8 @@ export class ToolPanelColumnComp extends Component {
     private eDragHandle: Element;
     private processingColumnStateChange = false;
     private tooltipFeature?: TooltipFeature;
+    private dragTooltip?: ITooltipFeature;
+    private selectionTooltip?: ITooltipFeature;
     private labelRendererFeature?: ColumnSelectionLabelRendererFeature;
 
     constructor(
@@ -122,31 +124,49 @@ export class ToolPanelColumnComp extends Component {
         this.tooltipFeature = this.createOptionalManagedBean(
             beans.tooltipSvc?.createTooltip({
                 getGui: () => this.focusWrapper,
-                getTooltipComponentDefinition: () => _getHeaderTooltipComponentDefinition(column.colDef),
                 getLocation: () => 'columnToolPanelColumn',
-                getTooltipValue: () => {
+                getTooltip: () => {
+                    const colDef = column.colDef;
                     const displayName = this.displayName;
-                    return _resolveHeaderTooltipValue(
-                        column.colDef,
-                        _addGridCommonParams<TooltipCallbackParams>(gos, {
+                    const params = {
+                        colDef,
+                        column,
+                        value: displayName,
+                        valueFormatted: displayName,
+                    };
+                    return _resolveHeaderTooltip(
+                        gos,
+                        _addGridCommonParams<HeaderTooltipCallbackParams>(gos, {
                             location: 'columnToolPanelColumn',
-                            colDef: column.colDef,
-                            column,
-                            value: displayName,
-                            valueFormatted: displayName,
+                            ...params,
                         })
                     );
                 },
-                shouldDisplayTooltip: _getShouldDisplayTooltip(gos, () => eLabel),
-                getAdditionalParams: () => ({
-                    colDef: column.colDef,
-                    column,
-                    valueFormatted: this.displayName,
-                }),
+                getTextElement: () => (this.labelRendererFeature?.hasRenderer() ? undefined : eLabel),
             })
         );
 
         this.setupDragging();
+        this.selectionTooltip = cbSelect.addTooltip({
+            control: 'columnSelect',
+            getLocation: () => 'columnToolPanelColumn',
+            getAriaElement: () => checkboxInput,
+            getTooltip: () => {
+                const pivotMode = beans.columnStateUpdateStrategy.getPivotMode(isDeferredMode(this.params));
+                const translate = this.getLocaleTextFunc();
+                let value: string;
+                if (pivotMode) {
+                    value = cbSelect.getValue()
+                        ? translate('tooltipDisableColumn', 'Disable column')
+                        : translate('tooltipEnableColumn', 'Enable column');
+                } else {
+                    value = cbSelect.getValue()
+                        ? translate('tooltipHideColumn', 'Hide column')
+                        : translate('tooltipShowColumn', 'Show column');
+                }
+                return { value, params: { column } };
+            },
+        });
 
         const onColStateChanged = this.onColumnStateChanged.bind(this);
         this.addManagedEventListeners({ columnPivotModeChanged: onColStateChanged });
@@ -174,9 +194,11 @@ export class ToolPanelColumnComp extends Component {
 
         this.addManagedListeners(cbSelect, { fieldValueChanged: this.onCheckboxChanged.bind(this) });
         _addManagedElementListeners(this, eLabel, { click: this.onLabelClicked.bind(this) });
+        _addManagedElementListeners(this, checkboxInput, { mousedown: this.onCheckboxMouseDown.bind(this) });
 
         this.onColumnStateChanged();
         this.refreshAriaLabel();
+        this.refreshAriaChecked();
 
         this.setupTooltip();
 
@@ -237,7 +259,14 @@ export class ToolPanelColumnComp extends Component {
         this.onChangeCommon(nextState);
     }
 
+    private onCheckboxMouseDown(e: MouseEvent): void {
+        // Keeps focus on the tree item, as a label click does, so both expose the same selected state.
+        e.preventDefault();
+        this.focusWrapper.focus();
+    }
+
     private onCheckboxChanged(event: any): void {
+        this.refreshAriaChecked();
         this.onChangeCommon(event.selected);
     }
 
@@ -279,12 +308,28 @@ export class ToolPanelColumnComp extends Component {
         _setAriaDescribedBy(focusWrapper, cbSelect.getInputElement().id);
     }
 
+    private refreshAriaChecked(): void {
+        _setAriaChecked(this.focusWrapper, this.cbSelect.getValue());
+    }
+
     private setupDragging(): void {
         const eDragHandle = this.eDragHandle;
         if (!this.allowDragging) {
             _setDisplayed(eDragHandle, false);
             return;
         }
+
+        this.dragTooltip = this.addTooltip({
+            getGui: () => eDragHandle as HTMLElement,
+            getLocation: () => 'columnToolPanelColumn',
+            control: 'drag',
+            getTooltip: () => ({
+                value: eDragHandle.classList.contains('ag-column-select-column-readonly')
+                    ? null
+                    : this.getLocaleTextFunc()('tooltipDragToMove', 'Drag to move'),
+                params: { column: this.column, colDef: this.column.colDef },
+            }),
+        });
 
         const beans = this.beans;
         const { gos, eventSvc, dragAndDrop } = beans;
@@ -388,6 +433,8 @@ export class ToolPanelColumnComp extends Component {
 
         this.cbSelect.setReadOnly(!canBeToggled);
         this.eDragHandle.classList.toggle('ag-column-select-column-readonly', !canBeDragged);
+        this.dragTooltip?.refreshTooltip();
+        this.selectionTooltip?.refreshTooltip();
         this.toggleCss('ag-column-select-column-readonly', !canBeDragged && !canBeToggled);
 
         this.cbSelect.setPassive(false);

@@ -1,17 +1,16 @@
 import { waitFor } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
-import { DragEventDispatcher, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
+import { ALL_SEVERITIES, LEGACY_FILTER_WARNING_IDS, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import type {
-    AgColumn,
     ColDef,
-    ColGroupDef,
     Column,
     ColumnGroup,
     ColumnStateUpdatedEvent,
     GridApi,
+    ICellRendererComp,
     ICellRendererParams,
-    IColumnStateUpdateStrategy,
+    IFilterComp,
     IHeaderComp,
     IHeaderParams,
 } from 'ag-grid-community';
@@ -19,12 +18,13 @@ import {
     ClientSideRowModelModule,
     ColumnApiModule,
     ColumnAutoSizeModule,
+    CustomFilterModule,
     RowSelectionModule,
     ScrollApiModule,
-    TextFilterModule,
+    enableDevValidations,
     getGridElement,
 } from 'ag-grid-community';
-import { AllEnterpriseModule, PivotModule, RowGroupingModule, ShowValuesAsModule } from 'ag-grid-enterprise';
+import { PivotModule, RowGroupingModule, RowNumbersModule, ShowValuesAsModule } from 'ag-grid-enterprise';
 
 /** Each displayed column as `colId@left`, failing where a column does not start where the one before it ends. */
 const contiguousLefts = (api: GridApi): string[] => {
@@ -395,6 +395,22 @@ describe('column layout events', () => {
         expect(told).toEqual([true]);
     });
 
+    test('a grid created without columns reports no virtual columns change until columns arrive', async () => {
+        let told = 0;
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [],
+            rowData: [{}],
+            onVirtualColumnsChanged: () => ++told,
+        });
+        await asyncSetTimeout(0);
+        const atCreation = told;
+
+        api.setGridOption('columnDefs', [{ colId: 'a' }]);
+        await asyncSetTimeout(0);
+
+        expect({ atCreation, told }).toEqual({ atCreation: 0, told: 1 });
+    });
+
     test('a refresh raises the grid events reporting it in a fixed order', async () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: Array.from({ length: 30 }, (_, i) => ({ colId: `c${i}`, width: 100 })),
@@ -434,27 +450,11 @@ describe('column layout events', () => {
             onMove: ['virtualColumnsChanged', 'displayedColumnsChanged', 'columnMoved'],
         });
     });
-
-    test('a grid created without columns reports no virtual columns change until columns arrive', async () => {
-        let told = 0;
-        const api = gridsManager.createGrid('myGrid', {
-            columnDefs: [],
-            rowData: [{}],
-            onVirtualColumnsChanged: () => ++told,
-        });
-        await asyncSetTimeout(0);
-        const atCreation = told;
-
-        api.setGridOption('columnDefs', [{ colId: 'a' }]);
-        await asyncSetTimeout(0);
-
-        expect({ atCreation, told }).toEqual({ atCreation: 0, told: 1 });
-    });
 });
 
 describe('the rows drawn for the columns', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, ColumnApiModule],
+        modules: [ClientSideRowModelModule, ColumnApiModule, ColumnAutoSizeModule],
     });
 
     afterEach(() => {
@@ -505,6 +505,57 @@ describe('the rows drawn for the columns', () => {
         expect(seen).toEqual(['bF c dL', 'b cF dL', 'b cL> dF<', 'aF b c dL']);
     });
 
+    test('the columns drawn after sizeColumnsToFit at an unchanged total are those of a new grid with the same widths', async () => {
+        const count = 30;
+        const colDefs = () => Array.from({ length: count }, (_, i) => ({ field: 'c' + i }));
+        const rowData = [Object.fromEntries(Array.from({ length: count }, (_, i) => ['c' + i, i]))];
+        const limits = (wide: boolean) =>
+            Array.from({ length: count }, (_, i) => {
+                const wideMin = i === 0 ? 390 : 90;
+                return { key: 'c' + i, minWidth: wide ? wideMin : 100 };
+            });
+        const ids = (selector: string, api: GridApi) =>
+            Array.from(getGridElement(api)!.querySelectorAll<HTMLElement>(selector)).map((el) =>
+                el.getAttribute('col-id')
+            );
+        const drawn = (api: GridApi) => ({
+            virtual: api.getAllDisplayedVirtualColumns().map((c) => c.getColId()),
+            headers: ids('.ag-header-cell', api),
+            cells: ids('.ag-row[row-index="0"] .ag-cell', api),
+        });
+        const totalWidth = (api: GridApi) => api.getColumns()!.reduce((sum, c) => sum + c.getActualWidth(), 0);
+
+        for (const [first, second] of [
+            [true, false],
+            [false, true],
+        ]) {
+            const order = first ? 'wide then even' : 'even then wide';
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: colDefs(),
+                rowData,
+                suppressColumnVirtualisation: false,
+            });
+            await asyncSetTimeout(0);
+            api.sizeColumnsToFit({ columnLimits: limits(first) });
+            const firstTotal = totalWidth(api);
+            api.sizeColumnsToFit({ columnLimits: limits(second) });
+            const sameTotal = firstTotal === totalWidth(api);
+            const widths = api.getColumns()!.map((c) => c.getActualWidth());
+            await asyncSetTimeout(0);
+            const fitted = drawn(api);
+            gridsManager.reset();
+
+            const fresh = gridsManager.createGrid('myGrid', {
+                columnDefs: colDefs().map((def, i) => ({ ...def, width: widths[i] })),
+                rowData,
+                suppressColumnVirtualisation: false,
+            });
+            await asyncSetTimeout(0);
+            expect({ order, sameTotal, drawn: fitted }).toEqual({ order, sameTotal: true, drawn: drawn(fresh) });
+            gridsManager.reset();
+        }
+    });
+
     test('a body row is numbered after the header rows a new column group adds', () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: [{ field: 'a' }],
@@ -552,6 +603,22 @@ describe('the rows drawn for the columns', () => {
         api.setColumnGroupOpened('g', false);
 
         expect(seen).toEqual(['a:100px b:100px c:100px', 'a:100px c:100px']);
+    });
+
+    // TODO: disabled due to AG-18901 - re-enable once fixed
+    test.skip('a column listener told of a move reads the row as moved', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'a' }, { field: 'b' }, { field: 'c' }],
+            defaultColDef: { width: 100 },
+            rowData: [{}],
+        });
+        await waitFor(() => expect(drawnRow(api)).toBe('a:100px b:100px c:100px'));
+        const seen: string[] = [];
+        api.getColumn('b')!.addEventListener('leftChanged', () => seen.push(drawnRow(api)));
+
+        api.moveColumns(['a'], 2);
+
+        expect(seen).toEqual(['b:100px c:100px a:100px']);
     });
 
     test('a column call keeps the cell of every column that stays rendered, and initialises only the cells that arrive', async () => {
@@ -668,7 +735,7 @@ describe('the rows drawn for the columns', () => {
 
 describe('a column update made from a layout event', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, ColumnApiModule],
+        modules: [ClientSideRowModelModule, ColumnApiModule, ColumnAutoSizeModule],
     });
 
     afterEach(() => {
@@ -830,6 +897,190 @@ describe('a column update made from a layout event', () => {
         expect(seen).toEqual(['p:false', 'a:left', 'a:true']);
     });
 
+    test('a widthChanged listener throwing during setColumnWidths throws to the caller, and the next resize raises its own columnResized', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ colId: 'a' }, { colId: 'b' }, { colId: 'c' }],
+            defaultColDef: { width: 100 },
+            rowData: [{}],
+        });
+        const resized: string[] = [];
+        api.addEventListener('columnResized', (event) =>
+            resized.push(
+                `${(event.columns ?? []).map((column) => column.getColId())}:${event.finished}:${event.source}`
+            )
+        );
+        let failing = true;
+        api.getColumn('a')!.addEventListener('widthChanged', () => {
+            if (failing) {
+                throw new Error('listener boom');
+            }
+        });
+
+        expect(() => api.setColumnWidths([{ key: 'a', newWidth: 333 }])).toThrow('listener boom');
+        failing = false;
+        await asyncSetTimeout(0);
+        await asyncSetTimeout(0);
+        resized.length = 0;
+
+        api.setColumnWidths([
+            { key: 'a', newWidth: 150 },
+            { key: 'c', newWidth: 222 },
+        ]);
+
+        await waitFor(() => expect(resized).toEqual(['a,c:true:api']), { timeout: 500 });
+        expect(contiguousLefts(api)).toEqual(['a@0', 'b@150', 'c@250']);
+        expect(api.getColumn('c')!.getActualWidth()).toBe(222);
+    });
+
+    test('a columnStateUpdated listener throwing during setColumnsPinned throws out of the call and still pins the column', async () => {
+        const api = createGrid();
+        api.getColumn('a')!.addEventListener('columnStateUpdated', () => {
+            throw new Error('listener boom');
+        });
+
+        expect(() => api.setColumnsPinned(['a'], 'left')).toThrow('listener boom');
+        expect(api.getDisplayedLeftColumns().map((column) => column.getColId())).toEqual(['p', 'a']);
+    });
+
+    /** The grid events of the operations on `api`, each with the columns it names. */
+    const listenToGridEvents = (api: GridApi): string[] => {
+        const seen: string[] = [];
+        const ids = (columns: Column[] | null) => (columns ?? []).map((column) => column.getColId()).join(',');
+        api.addEventListener('columnPinned', (event) =>
+            seen.push(`columnPinned:${ids(event.columns)}:${event.pinned}`)
+        );
+        api.addEventListener('columnResized', (event) =>
+            seen.push(`columnResized:${ids(event.columns)}:${event.finished}:${event.source}`)
+        );
+        api.addEventListener('virtualColumnsChanged', () => seen.push('virtualColumnsChanged'));
+        api.addEventListener('displayedColumnsChanged', () => seen.push('displayedColumnsChanged'));
+        return seen;
+    };
+
+    test.each([
+        ['autoSizeColumns', (grid: GridApi) => grid.autoSizeColumns(['a', 'b']), 'a,b'],
+        ['autoSizeAllColumns', (grid: GridApi) => grid.autoSizeAllColumns(), 'a,b,c'],
+    ])(
+        'a widthChanged listener throwing during %s rejects it, and the next one raises its own columnResized',
+        async (_name, call, sized) => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ colId: 'a' }, { colId: 'b' }, { colId: 'c' }],
+                defaultColDef: { width: 100 },
+                rowData: [{}],
+            });
+            const seen = listenToGridEvents(api);
+            let failing = true;
+            api.getColumn('a')!.addEventListener('widthChanged', () => {
+                if (failing) {
+                    throw new Error('listener boom');
+                }
+            });
+            // autosize settles asynchronously, so its listener's error rejects rather than throws from the call
+            const rejections: unknown[] = [];
+            const onRejection = (reason: unknown) => rejections.push(reason);
+            process.on('unhandledRejection', onRejection);
+            try {
+                call(api);
+                await waitFor(() => expect(rejections).toEqual([new Error('listener boom')]), { timeout: 500 });
+                failing = false;
+                await asyncSetTimeout(0);
+                await asyncSetTimeout(0);
+
+                // widths the autosize changes again
+                api.setColumnWidths([
+                    { key: 'a', newWidth: 150 },
+                    { key: 'b', newWidth: 150 },
+                    { key: 'c', newWidth: 150 },
+                ]);
+                await asyncSetTimeout(0);
+                await asyncSetTimeout(0);
+                seen.length = 0;
+                call(api);
+
+                const autosizeEvents = ['displayedColumnsChanged', `columnResized:${sized}:true:autosizeColumns`];
+                await waitFor(() => expect(seen).toEqual(autosizeEvents), { timeout: 500 });
+                await asyncSetTimeout(0);
+                expect({ seen, rejections }).toEqual({
+                    seen: autosizeEvents,
+                    rejections: [new Error('listener boom')],
+                });
+            } finally {
+                process.off('unhandledRejection', onRejection);
+            }
+        }
+    );
+
+    test('a cell renderer throwing in a column an autosize reveals rejects it, and the next autosize raises its columnResized naming every column it resized', async () => {
+        let failing = false;
+        class RevealedRenderer implements ICellRendererComp {
+            private readonly eGui = document.createElement('span');
+            public init(): void {
+                if (failing) {
+                    throw new Error('renderer boom');
+                }
+            }
+            public getGui(): HTMLElement {
+                return this.eGui;
+            }
+            public refresh(): boolean {
+                return true;
+            }
+        }
+        const autosized: string[] = [];
+        const columnDefs: ColDef[] = [];
+        for (let i = 0; i < 9; ++i) {
+            autosized.push(`c${i}`);
+            columnDefs.push({ colId: `c${i}`, width: 200, cellRenderer: RevealedRenderer });
+        }
+        columnDefs.push({ colId: 'flex', flex: 1, minWidth: 50 });
+        // cells drawn as the pass reveals them, so a renderer's error is thrown from inside the autosize
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs,
+            rowData: [{}],
+            suppressColumnVirtualisation: false,
+            suppressAnimationFrame: true,
+        });
+        const widths = () => api.getColumns()!.map((column) => column.getActualWidth());
+        const resized: string[] = [];
+        api.addEventListener('columnResized', (event) =>
+            resized.push(`${(event.columns ?? []).map((column) => column.getColId())}:${event.source}`)
+        );
+        const rejections: unknown[] = [];
+        const onRejection = (reason: unknown) => rejections.push(reason);
+        process.on('unhandledRejection', onRejection);
+        try {
+            failing = true;
+            api.autoSizeColumns(autosized);
+            await waitFor(() => expect(rejections).toEqual([new Error('renderer boom')]), { timeout: 500 });
+            failing = false;
+            await asyncSetTimeout(0);
+            await asyncSetTimeout(0);
+
+            // the widths of the columns the autosize changes again
+            api.applyColumnState({ state: autosized.map((colId) => ({ colId, width: 200 })) });
+            await asyncSetTimeout(0);
+            await asyncSetTimeout(0);
+            resized.length = 0;
+            const before = widths();
+            api.autoSizeColumns(autosized);
+            await waitFor(() => expect(resized).not.toEqual([]), { timeout: 500 });
+            await asyncSetTimeout(0);
+            const after = widths();
+            const changed = api
+                .getColumns()!
+                .filter((_column, i) => after[i] !== before[i])
+                .map((column) => column.getColId());
+
+            expect({ changed, resized, rejections }).toEqual({
+                changed: [...autosized, 'flex'],
+                resized: [`${changed}:autosizeColumns`],
+                rejections: [new Error('renderer boom')],
+            });
+        } finally {
+            process.off('unhandledRejection', onRejection);
+        }
+    });
+
     test('in firstRightPinnedChanged leaves the pinned edges in place, each column told where it is as it changes', () => {
         const api = createGrid();
         const seen = listenToEdge(api, 'firstRightPinnedChanged');
@@ -845,7 +1096,7 @@ describe('a column update made from a layout event', () => {
 
 describe('the layout events of a primary column while pivoting', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, ColumnApiModule, PivotModule],
+        modules: [ClientSideRowModelModule, ColumnApiModule, PivotModule, RowNumbersModule],
     });
 
     afterEach(() => {
@@ -936,7 +1187,14 @@ describe('the layout events of a primary column while pivoting', () => {
 
 describe('the column events of one call', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, ColumnApiModule, RowGroupingModule, RowSelectionModule, ShowValuesAsModule],
+        modules: [
+            ClientSideRowModelModule,
+            ColumnApiModule,
+            CustomFilterModule,
+            RowGroupingModule,
+            RowSelectionModule,
+            ShowValuesAsModule,
+        ],
     });
 
     afterEach(() => {
@@ -1373,6 +1631,48 @@ describe('the column events of one call', () => {
         expect(seen).toEqual(['a:desc', 'a-state:sort', 'b:asc']);
     });
 
+    test('after a listener threw late in a call, the next call changing a sort twice tells its column once, of the sort it ends with', () => {
+        const api = createGrid();
+        const a = api.getColumn('a')!;
+        const b = api.getColumn('b')!;
+        const toldBeforeThrow: string[] = [];
+        for (const colId of ['b', 'c']) {
+            api.getColumn(colId)!.addEventListener('visibleChanged', () => toldBeforeThrow.push(colId));
+        }
+        let armed = true;
+        api.getColumn('d')!.addEventListener('visibleChanged', () => {
+            if (armed) {
+                armed = false;
+                throw new Error('listener failed');
+            }
+        });
+
+        expect(() =>
+            api.applyColumnState({
+                state: [
+                    { colId: 'b', hide: true },
+                    { colId: 'c', hide: true },
+                    { colId: 'd', hide: true },
+                ],
+            })
+        ).toThrow('listener failed');
+        expect({ armed, toldBeforeThrow }).toEqual({ armed: false, toldBeforeThrow: ['b', 'c'] });
+
+        const seen: string[] = [];
+        a.addEventListener('sortChanged', () => seen.push(`a:${a.getSort()}`));
+        a.addEventListener('columnStateUpdated', (event) => seen.push(`a-state:${'key' in event ? event.key : ''}`));
+        b.addEventListener('sortChanged', () => seen.push(`b:${b.getSort()}`));
+        api.applyColumnState({
+            state: [
+                { colId: 'a', sort: 'asc' },
+                { colId: 'b', sort: 'asc' },
+                { colId: 'a', sort: 'desc' },
+            ],
+        });
+
+        expect(seen).toEqual(['a:desc', 'a-state:sort', 'b:asc']);
+    });
+
     test('a column told by an earlier call is told again, not merged into the column now queued where it was', () => {
         const api = createGrid();
         const seen: string[] = [];
@@ -1410,12 +1710,15 @@ describe('the column events of one call', () => {
         expect(seen).toEqual(['grouped:true']);
     });
 
-    test('a listener throwing stops none of the other columns being told, and the call throws its error after them', () => {
+    test('a listener throwing during applyColumnState throws to the caller, and the next call tells its columns, and only those', () => {
         const api = createGrid();
         const c = api.getColumn('c')!;
         const seen: string[] = [];
+        let failing = true;
         api.getColumn('a')!.addEventListener('visibleChanged', () => {
-            throw new Error('listener failed');
+            if (failing) {
+                throw new Error('listener failed');
+            }
         });
         c.addEventListener('visibleChanged', () => seen.push(`${c.isVisible()}:${ids(api.getAllDisplayedColumns())}`));
 
@@ -1427,32 +1730,249 @@ describe('the column events of one call', () => {
                 ],
             })
         ).toThrow('listener failed');
-        expect(seen).toEqual(['false:b,d']);
+        failing = false;
+        seen.length = 0;
 
-        // nothing is left over to be told again
-        api.applyColumnState({ state: [{ colId: 'c', hide: false }] });
+        api.applyColumnState({
+            state: [
+                { colId: 'a', hide: true },
+                { colId: 'c', hide: false },
+            ],
+        });
 
-        expect(seen).toEqual(['false:b,d', 'true:b,c,d']);
+        expect(seen).toEqual(['true:b,c,d']);
     });
 
-    test('a listener throwing during an update another listener makes throws from the outer call, not into the listener', () => {
+    test('a filter refresh throwing during a columnDefs update throws to the caller, and the next update raises its own grid events and refreshes every filter', async () => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: LEGACY_FILTER_WARNING_IDS });
+        const refreshed: string[] = [];
+        let failing = true;
+        class ThrowingFilter implements IFilterComp {
+            private readonly eGui = document.createElement('div');
+            public init() {}
+            public getGui() {
+                return this.eGui;
+            }
+            public isFilterActive() {
+                return false;
+            }
+            public doesFilterPass() {
+                return true;
+            }
+            public getModel() {
+                return null;
+            }
+            public setModel() {}
+            public refresh(): boolean {
+                if (failing) {
+                    throw new Error('filter refresh failed');
+                }
+                refreshed.push('name');
+                return true;
+            }
+        }
+        class RecordingFilter extends ThrowingFilter {
+            public override refresh(): boolean {
+                refreshed.push('habitat');
+                return true;
+            }
+        }
+        const defs = (x: number): ColDef[] => [
+            { colId: 'name', filter: ThrowingFilter, filterParams: { x } },
+            { colId: 'habitat', filter: RecordingFilter, filterParams: { x } },
+        ];
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: defs(1),
+            rowData: [{}, {}],
+        });
+        await asyncSetTimeout(0);
+        const nameFilter = await api.getColumnFilterInstance('name');
+        const habitatFilter = await api.getColumnFilterInstance('habitat');
+        expect([nameFilter instanceof ThrowingFilter, habitatFilter instanceof RecordingFilter]).toEqual([true, true]);
+        const raised = { newColumnsLoaded: 0, displayedColumnsChanged: 0, columnEverythingChanged: 0 };
+        for (const event of ['newColumnsLoaded', 'displayedColumnsChanged', 'columnEverythingChanged'] as const) {
+            api.addEventListener(event, () => ++raised[event]);
+        }
+
+        expect(() => api.setGridOption('columnDefs', [...defs(2), { colId: 'extra' }])).toThrow(
+            'filter refresh failed'
+        );
+
+        failing = false;
+        await asyncSetTimeout(0);
+        await asyncSetTimeout(0);
+        raised.newColumnsLoaded = 0;
+        raised.displayedColumnsChanged = 0;
+        raised.columnEverythingChanged = 0;
+        refreshed.length = 0;
+
+        api.setGridOption('columnDefs', [...defs(3), { colId: 'other' }]);
+
+        await asyncSetTimeout(0);
+        await asyncSetTimeout(0);
+        const header = (colId: string) =>
+            getGridElement(api)!.querySelector(`.ag-header-cell[col-id="${colId}"]`) !== null;
+        expect({
+            raised,
+            displayed: ids(api.getAllDisplayedColumns()),
+            headers: { extra: header('extra'), other: header('other') },
+            refreshed: [...refreshed].sort(),
+        }).toEqual({
+            raised: { newColumnsLoaded: 1, displayedColumnsChanged: 1, columnEverythingChanged: 1 },
+            displayed: 'name,habitat,other',
+            headers: { extra: false, other: true },
+            refreshed: ['habitat', 'name'],
+        });
+    });
+
+    test('a cell renderer refresh throwing during a columnDefs update throws to the caller, and the next update redraws every column it redefines', async () => {
+        let failing = true;
+        class ThrowingRenderer implements ICellRendererComp {
+            private readonly eGui = document.createElement('span');
+            public init() {}
+            public getGui() {
+                return this.eGui;
+            }
+            public refresh(): boolean {
+                if (failing) {
+                    throw new Error('cell refresh failed');
+                }
+                return true;
+            }
+        }
+        const defs = (x: number, bPrefix: string, cPrefix: string): ColDef[] => [
+            { colId: 'a', field: 'a', cellRenderer: ThrowingRenderer, cellRendererParams: { x } },
+            { colId: 'b', field: 'b', valueFormatter: (p) => `${bPrefix}${p.value}` },
+            { colId: 'c', field: 'c', valueFormatter: (p) => `${cPrefix}${p.value}` },
+        ];
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: defs(1, 'b0:', 'c0:'),
+            rowData: [
+                { a: 1, b: 2, c: 3 },
+                { a: 4, b: 5, c: 6 },
+            ],
+        });
+        await asyncSetTimeout(0);
+        const texts = (colId: string) =>
+            [...getGridElement(api)!.querySelectorAll(`.ag-row .ag-cell[col-id="${colId}"]`)].map(
+                (cell) => cell.textContent!
+            );
+        const cellTexts = () => ({ b: texts('b'), c: texts('c') });
+        expect(cellTexts()).toEqual({ b: ['b0:2', 'b0:5'], c: ['c0:3', 'c0:6'] });
+
+        expect(() => api.setGridOption('columnDefs', defs(2, 'B:', 'C:'))).toThrow('cell refresh failed');
+
+        failing = false;
+        await asyncSetTimeout(0);
+        await asyncSetTimeout(0);
+
+        api.setGridOption('columnDefs', defs(3, 'X:', 'Y:'));
+
+        await asyncSetTimeout(0);
+        await asyncSetTimeout(0);
+        expect(cellTexts()).toEqual({ b: ['X:2', 'X:5'], c: ['Y:3', 'Y:6'] });
+    });
+
+    test('a cell renderer refresh throwing for one row throws to the caller, and the next update redraws every row of its column', async () => {
+        let failing = true;
+        type LabelParams = ICellRendererParams & { label: string };
+        class LabelRenderer implements ICellRendererComp {
+            private readonly eGui = document.createElement('span');
+            public init(params: LabelParams) {
+                this.eGui.textContent = `${params.label}${params.value}`;
+            }
+            public getGui() {
+                return this.eGui;
+            }
+            public refresh(params: LabelParams): boolean {
+                if (failing && params.data.id === 'r1') {
+                    throw new Error('cell refresh failed');
+                }
+                this.eGui.textContent = `${params.label}${params.value}`;
+                return true;
+            }
+        }
+        const defs = (label: string): ColDef[] => [
+            { colId: 'a', field: 'a', cellRenderer: LabelRenderer, cellRendererParams: { label } },
+        ];
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: defs('old:'),
+            rowData: [
+                { id: 'r1', a: 1 },
+                { id: 'r2', a: 2 },
+                { id: 'r3', a: 3 },
+            ],
+            getRowId: (params) => params.data.id,
+        });
+        const cellText = (rowId: string) =>
+            getGridElement(api)!.querySelector(`.ag-row[row-id="${rowId}"] .ag-cell[col-id="a"]`)?.textContent;
+        await waitFor(() => expect(cellText('r3')).toBe('old:3'), { timeout: 1000 });
+        expect({ r2: cellText('r2'), r3: cellText('r3') }).toEqual({ r2: 'old:2', r3: 'old:3' });
+
+        expect(() => api.setGridOption('columnDefs', defs('new:'))).toThrow('cell refresh failed');
+        failing = false;
+        await asyncSetTimeout(0);
+        await asyncSetTimeout(0);
+
+        api.setGridOption('columnDefs', defs('newer:'));
+
+        await waitFor(
+            () =>
+                expect({ r1: cellText('r1'), r2: cellText('r2'), r3: cellText('r3') }).toEqual({
+                    r1: 'newer:1',
+                    r2: 'newer:2',
+                    r3: 'newer:3',
+                }),
+            { timeout: 1000 }
+        );
+    });
+
+    test('a listener throwing during an update another listener makes throws from the outer call, not into the listener, and the next update raises its own events', () => {
         const api = createGrid();
         const seen: string[] = [];
+        const caught: string[] = [];
+        let nesting = true;
+        let failing = true;
         api.getColumn('a')!.addEventListener('visibleChanged', () => {
+            if (!nesting) {
+                return;
+            }
             try {
                 api.setColumnsVisible(['b', 'd'], false);
             } catch {
-                seen.push('caught');
+                caught.push('caught');
             }
         });
         api.getColumn('b')!.addEventListener('visibleChanged', () => {
-            throw new Error('listener failed');
+            if (failing) {
+                throw new Error('listener failed');
+            }
         });
         api.getColumn('d')!.addEventListener('visibleChanged', () => seen.push('d'));
 
         expect(() => api.applyColumnState({ state: [{ colId: 'a', hide: true }] })).toThrow('listener failed');
+        expect(caught).toEqual([]);
 
-        expect(seen).toEqual(['d']);
+        failing = false;
+        nesting = false;
+        api.applyColumnState({
+            state: [
+                { colId: 'a', hide: false },
+                { colId: 'b', hide: false },
+                { colId: 'd', hide: false },
+            ],
+        });
+        expect(ids(api.getAllDisplayedColumns())).toBe('a,b,c,d');
+        nesting = true;
+        seen.length = 0;
+
+        api.applyColumnState({ state: [{ colId: 'a', hide: true }] });
+
+        expect({ seen, caught, displayed: ids(api.getAllDisplayedColumns()) }).toEqual({
+            seen: ['d'],
+            caught: [],
+            displayed: 'c',
+        });
     });
 
     test('a listener throwing during an aggregation change leaves the rows aggregated with the new function', () => {
@@ -1619,574 +2139,65 @@ describe('the column events of one call', () => {
         api.forEachNodeAfterFilterAndSort((node) => values.push(node.data.a));
         expect(values).toEqual([1, 2]);
     });
-});
 
-describe('the column events of a column tool panel apply', () => {
-    const gridsManager = new TestGridsManager({ modules: [AllEnterpriseModule] });
-
-    afterEach(() => {
-        gridsManager.reset();
-    });
-
-    const ids = (columns: Column[] | null) => (columns ?? []).map((column) => column.getColId()).join();
-
-    test('a column grouped with others by an apply is told once the apply has laid them out', async () => {
+    test('a columnDefs update redefining two columns raises colDefChanged on them, in a call adding a column too', async () => {
         const api = gridsManager.createGrid('myGrid', {
-            columnDefs: [{ field: 'a' }, { field: 'b' }, { field: 'c' }, { field: 'd' }],
-            rowData: [{ a: 1, b: 2, c: 3, d: 4 }],
-            sideBar: {
-                toolPanels: [
-                    {
-                        id: 'columns',
-                        labelDefault: 'Columns',
-                        labelKey: 'columns',
-                        iconKey: 'columns',
-                        toolPanel: 'agColumnsToolPanel',
-                        toolPanelParams: { buttons: ['apply'] },
-                    },
-                ],
-                defaultToolPanel: 'columns',
-            },
+            columnDefs: [{ field: 'a' }, { field: 'b' }, { field: 'c' }],
+            rowData: [{ a: 1, b: 2, c: 3 }],
         });
-        const toolPanel = await waitFor(() => {
-            const panel = api.getToolPanelInstance('columns') as any;
-            expect(panel).toBeTruthy();
-            return panel;
-        });
-        const strategy: IColumnStateUpdateStrategy = toolPanel.beans.columnStateUpdateStrategy;
-        const a = api.getColumn('a') as AgColumn;
-        const seen: string[] = [];
-        a.addEventListener('columnRowGroupChanged', () => seen.push(ids(api.getAllDisplayedColumns())));
-
-        strategy.setRowGroupColumns(true, [a, api.getColumn('c') as AgColumn], 'toolPanelUi');
-        strategy.commit(true);
-
-        expect(seen).toEqual([ids(api.getAllDisplayedColumns())]);
-        expect(api.getAllDisplayedColumns()[0].getColId()).toBe('ag-Grid-AutoColumn');
-    });
-
-    test('a column listener resizing a column during an apply leaves the apply reporting its own source', async () => {
-        const api = gridsManager.createGrid('myGrid', {
-            columnDefs: [{ field: 'a' }, { field: 'b' }, { field: 'c' }, { field: 'd' }],
-            rowData: [{ a: 1, b: 2, c: 3, d: 4 }],
-            sideBar: {
-                toolPanels: [
-                    {
-                        id: 'columns',
-                        labelDefault: 'Columns',
-                        labelKey: 'columns',
-                        iconKey: 'columns',
-                        toolPanel: 'agColumnsToolPanel',
-                        toolPanelParams: { buttons: ['apply'] },
-                    },
-                ],
-                defaultToolPanel: 'columns',
-            },
-        });
-        const toolPanel = await waitFor(() => {
-            const panel = api.getToolPanelInstance('columns') as any;
-            expect(panel).toBeTruthy();
-            return panel;
-        });
-        const strategy: IColumnStateUpdateStrategy = toolPanel.beans.columnStateUpdateStrategy;
-        const sources: string[] = [];
-        // `b` is moved by the apply alone: the listener resizes `d`, to its right
-        api.getColumn('b')!.addEventListener('leftChanged', (event) => sources.push(event.source));
-        api.getColumn('a')!.addEventListener('visibleChanged', () =>
-            api.setColumnWidths([{ key: 'd', newWidth: 150 }])
-        );
-
-        strategy.setColumnsVisible(true, [api.getColumn('a') as AgColumn], false, 'toolPanelUi');
-        strategy.commit(true);
-
-        expect(sources).toEqual(['toolPanelUi']);
-    });
-
-    test('a listener throwing during an apply leaves the next operation telling its columns once they are final', async () => {
-        const api = gridsManager.createGrid('myGrid', {
-            columnDefs: [{ field: 'a' }, { field: 'b' }, { field: 'c' }, { field: 'd' }],
-            rowData: [{ a: 1, b: 2, c: 3, d: 4 }],
-            sideBar: {
-                toolPanels: [
-                    {
-                        id: 'columns',
-                        labelDefault: 'Columns',
-                        labelKey: 'columns',
-                        iconKey: 'columns',
-                        toolPanel: 'agColumnsToolPanel',
-                        toolPanelParams: { buttons: ['apply'] },
-                    },
-                ],
-                defaultToolPanel: 'columns',
-            },
-        });
-        const toolPanel = await waitFor(() => {
-            const panel = api.getToolPanelInstance('columns') as any;
-            expect(panel).toBeTruthy();
-            return panel;
-        });
-        const strategy: IColumnStateUpdateStrategy = toolPanel.beans.columnStateUpdateStrategy;
-        const a = api.getColumn('a') as AgColumn;
-        let fail = true;
-        a.addEventListener('columnRowGroupChanged', () => {
-            if (fail) {
-                fail = false;
-                throw new Error('listener failed');
-            }
-        });
-        // a visibility op after a role op closes and reopens the apply's update, and the close raises the role events
-        strategy.setRowGroupColumns(true, [a], 'toolPanelUi');
-        strategy.setColumnsVisible(true, [api.getColumn('b') as AgColumn], false, 'toolPanelUi');
-        expect(() => strategy.commit(true)).toThrow('listener failed');
-        // the operations after the throw are applied all the same
-        expect(api.getColumn('b')!.isVisible()).toBe(false);
-        expect(strategy.hasPendingChanges(true)).toBe(false);
-
-        const seen: string[] = [];
-        api.getColumn('c')!.addEventListener('visibleChanged', () => seen.push(ids(api.getAllDisplayedColumns())));
-        api.applyColumnState({
-            state: [
-                { colId: 'c', hide: true },
-                { colId: 'd', hide: true },
-            ],
-        });
-
-        expect(seen).toEqual([ids(api.getAllDisplayedColumns())]);
-        expect(api.getColumn('c')!.isVisible() || api.getColumn('d')!.isVisible()).toBe(false);
-    });
-});
-
-describe('the column events of a tool panel drop on the body while pivoting', () => {
-    const gridsManager = new TestGridsManager({ modules: [AllEnterpriseModule] });
-
-    afterEach(() => {
-        gridsManager.reset();
-    });
-
-    test('a column given a role by the drop is told once every dropped column holds its role', async () => {
-        const api = gridsManager.createGrid('myGrid', {
-            columnDefs: [
-                {
-                    headerName: 'Medals',
-                    children: [
-                        { field: 'country', enableRowGroup: true },
-                        { field: 'gold', enableValue: true },
-                    ],
-                },
-            ],
-            rowData: [{ country: 'UK', gold: 1 }],
-            pivotMode: true,
-            allowDragFromColumnsToolPanel: true,
-            suppressDragLeaveHidesColumns: true,
-            sideBar: { toolPanels: ['columns'], defaultToolPanel: 'columns' },
-        });
-        const gridElement = getGridElement(api)! as HTMLElement;
-        const handle = await waitFor(() => {
-            const found = gridElement.querySelector<HTMLElement>('.ag-column-select-column-group-drag-handle');
-            expect(found).not.toBeNull();
-            return found!;
-        });
-        const viewport = gridElement.querySelector<HTMLElement>('.ag-grid-viewport')!;
-        const seen: string[] = [];
-        api.getColumn('gold')!.addEventListener('columnValueChanged', () =>
-            seen.push(
-                api
-                    .getRowGroupColumns()
-                    .map((column) => column.getColId())
-                    .join()
-            )
-        );
-        const sources: string[] = [];
-        api.addEventListener('columnRowGroupChanged', (event) => sources.push(event.source));
-
-        const dispatcher = new DragEventDispatcher('mouse', null, false);
-        try {
-            await dispatcher.startDrag(handle, 10, 10);
-            await dispatcher.movePointer(viewport, 50, 100);
-            await dispatcher.movePointer(viewport, 60, 100);
-            await dispatcher.finishDrag(viewport);
-        } finally {
-            dispatcher.reset();
-        }
-
-        expect(seen).toEqual(['country']);
-        await waitFor(() => expect(sources).toEqual(['toolPanelDragAndDrop']));
-    });
-});
-
-describe('the column group events of one call', () => {
-    const gridsManager = new TestGridsManager({ modules: [ClientSideRowModelModule, ColumnApiModule] });
-
-    afterEach(() => {
-        gridsManager.reset();
-    });
-
-    const createGrid = (openByDefault: boolean) =>
-        gridsManager.createGrid('myGrid', {
-            columnDefs: [
-                { groupId: 'g1', openByDefault, children: [{ field: 'a' }, { field: 'b', columnGroupShow: 'open' }] },
-                { groupId: 'g2', openByDefault, children: [{ field: 'c' }, { field: 'd', columnGroupShow: 'open' }] },
-            ],
-            rowData: [{ a: 1, b: 2, c: 3, d: 4 }],
-        });
-
-    const ids = (api: GridApi) =>
-        api
-            .getAllDisplayedColumns()
-            .map((column) => column.getColId())
-            .join();
-
-    test('a group opened with others is told once every group is opened and the columns laid out', () => {
-        const api = createGrid(false);
-        const seen: string[] = [];
-        api.getProvidedColumnGroup('g1')!.addEventListener('expandedChanged', () =>
-            seen.push(`${api.getProvidedColumnGroup('g2')!.isExpanded()}:${ids(api)}`)
-        );
-
-        api.setColumnGroupState([
-            { groupId: 'g1', open: true },
-            { groupId: 'g2', open: true },
-        ]);
-
-        expect(seen).toEqual(['true:a,b,c,d']);
-    });
-
-    test('a group a hide makes unexpandable is told once every column is hidden and laid out', () => {
-        const api = createGrid(true);
-        const seen: string[] = [];
-        api.getProvidedColumnGroup('g1')!.addEventListener('expandableChanged', () => seen.push(ids(api)));
-
-        api.setColumnsVisible(['b', 'd'], false);
-
-        expect(seen).toEqual(['a,c']);
-    });
-});
-
-describe('the header a column rebuild draws', () => {
-    const gridsManager = new TestGridsManager({ modules: [ClientSideRowModelModule, ColumnApiModule, PivotModule] });
-
-    afterEach(() => {
-        gridsManager.reset();
-    });
-
-    test('a column that stops spanning the header height through new columnDefs draws its padding group', async () => {
-        const defs = (suppressSpanHeaderHeight: boolean): (ColDef | ColGroupDef)[] => [
-            { groupId: 'g', headerName: 'G', children: [{ colId: 'a' }] },
-            { colId: 'b', suppressSpanHeaderHeight },
-        ];
-        const api = gridsManager.createGrid('myGrid', { columnDefs: defs(false), rowData: [{}] });
-        await asyncSetTimeout(0);
-        const groupRow = () =>
-            Array.from(getGridElement(api)!.querySelectorAll('.ag-header-row-group .ag-header-group-cell'), (cell) =>
-                cell.getAttribute('col-id')
-            ).join();
-        expect(groupRow()).toBe('g_0');
-
-        api.setGridOption('columnDefs', defs(true));
-        await asyncSetTimeout(0);
-
-        expect(groupRow()).toBe('g_0,0_0');
-    });
-
-    test('hiding the column whose header has the focus removes its header', async () => {
-        const api = gridsManager.createGrid('myGrid', {
-            columnDefs: [
-                { colId: 'a', headerName: 'A' },
-                { colId: 'b', headerName: 'B' },
-            ],
-            rowData: [{}],
-        });
-        await asyncSetTimeout(0);
-        const headers = () =>
-            Array.from(getGridElement(api)!.querySelectorAll('.ag-header-cell'), (cell) =>
-                cell.getAttribute('col-id')
-            ).join();
-        api.setFocusedHeader('b');
-        const focused = document.activeElement?.closest('.ag-header-cell')?.getAttribute('col-id');
-
-        api.setColumnsVisible(['b'], false);
-        await asyncSetTimeout(0);
-
-        expect({ focused, headers: headers() }).toEqual({ focused: 'b', headers: 'a' });
-    });
-
-    test('a group of a column scrolled out of view is drawn once the column, or the group, sizes its header row', async () => {
-        const defs = (sizedBy: 'column' | 'group' | null): (ColDef | ColGroupDef)[] => [
-            { colId: 'a', width: 3000 },
-            {
-                groupId: 'g',
-                headerName: 'G',
-                autoHeaderHeight: sizedBy === 'group',
-                children: [{ colId: 'x', autoHeaderHeight: sizedBy === 'column' }],
-            },
-        ];
-        const api = gridsManager.createGrid('myGrid', {
-            columnDefs: defs(null),
-            rowData: [{}],
-            suppressColumnVirtualisation: false,
-        });
-        await asyncSetTimeout(0);
-        const groupDrawn = () =>
-            Array.from(getGridElement(api)!.querySelectorAll('.ag-header-group-text')).some(
-                (text) => text.textContent === 'G'
+        const cellText = (colId: string) =>
+            api.getGridElement()?.querySelector(`.ag-row[row-index="0"] [col-id="${colId}"]`)?.textContent;
+        const heard: { on: string; a: string | null | undefined; b: string | null | undefined }[] = [];
+        for (const on of ['a', 'b']) {
+            api.getColumn(on)!.addEventListener('colDefChanged', () =>
+                heard.push({ on, a: cellText('a'), b: cellText('b') })
             );
-        const seen = [groupDrawn()];
-        for (const sizedBy of ['column', null, 'group'] as const) {
-            api.setGridOption('columnDefs', defs(sizedBy));
-            await asyncSetTimeout(0);
-            seen.push(groupDrawn());
         }
+        expect({ a: cellText('a'), b: cellText('b') }).toEqual({ a: '1', b: '2' });
+        const redefine = (prefix: string, extraDefs: ColDef[]) =>
+            api.setGridOption('columnDefs', [
+                { field: 'a', valueFormatter: (p) => prefix + p.value },
+                { field: 'b', valueFormatter: (p) => prefix + p.value },
+                { field: 'c' },
+                ...extraDefs,
+            ]);
 
-        expect(seen).toEqual([false, true, false, true]);
+        redefine('x', []);
+        await waitFor(() => expect(heard.length).toBeGreaterThanOrEqual(2), { timeout: 300 });
+
+        redefine('y', [{ field: 'd' }]);
+        await waitFor(() => expect(heard.length).toBeGreaterThanOrEqual(4), { timeout: 300 });
     });
 
-    test('pivot mode switched on with nothing to pivot draws none of the columns it hides, and switched off draws them all again', async () => {
+    test('columns redefined with others are told of their new definitions, in a call adding a column too', async () => {
         const api = gridsManager.createGrid('myGrid', {
-            columnDefs: [{ field: 'a' }, { field: 'b' }],
-            rowData: [{ a: 1, b: 2 }],
-            suppressColumnVirtualisation: false,
+            columnDefs: [{ field: 'a' }, { field: 'b' }, { field: 'c' }],
+            rowData: [{ a: 1, b: 2, c: 3 }],
         });
-        const drawn = () => {
-            const ids = (selector: string) =>
-                Array.from(getGridElement(api)!.querySelectorAll(selector), (el) => el.getAttribute('col-id')).join();
-            return { headers: ids('.ag-header-cell'), cells: ids('.ag-row[row-index="0"] .ag-cell') };
-        };
-        await waitFor(() => expect(drawn()).toEqual({ headers: 'a,b', cells: 'a,b' }));
-
-        api.setGridOption('pivotMode', true);
-        await asyncSetTimeout(0);
-        const pivoted = { displayed: api.getAllDisplayedColumns().length, ...drawn() };
-        api.setGridOption('pivotMode', false);
-        await asyncSetTimeout(0);
-
-        expect([pivoted, drawn()]).toEqual([
-            { displayed: 0, headers: '', cells: '' },
-            { headers: 'a,b', cells: 'a,b' },
-        ]);
-    });
-});
-
-describe('the rows a column update refreshes', () => {
-    const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, RowGroupingModule, PivotModule, TextFilterModule],
-    });
-
-    afterEach(() => {
-        gridsManager.reset();
-    });
-
-    const rowData = [
-        { id: '1', country: 'Ireland', sport: 'Rowing', gold: 1 },
-        { id: '2', country: 'Ireland', sport: 'Boxing', gold: 3 },
-        { id: '3', country: 'France', sport: 'Rowing', gold: 2 },
-    ];
-
-    function countRefreshes(api: GridApi): () => number {
-        let refreshes = 0;
-        api.addEventListener('modelUpdated', () => ++refreshes);
-        return () => refreshes;
-    }
-
-    test('new column definitions that group and sort the rows refresh them once', async () => {
-        const api = gridsManager.createGrid('groupAndSort', {
-            columnDefs: [{ field: 'country' }, { field: 'sport' }, { field: 'gold' }],
-            rowData,
-            getRowId: ({ data }) => data.id,
-        });
-        await asyncSetTimeout(0);
-        const refreshes = countRefreshes(api);
+        const cellText = (colId: string) =>
+            api.getGridElement()?.querySelector(`.ag-row[row-index="0"] [col-id="${colId}"]`)?.textContent;
+        const heard: { on: string; a: string | null | undefined; b: string | null | undefined }[] = [];
+        for (const on of ['a', 'b']) {
+            api.getColumn(on)!.addEventListener('colDefChanged', () =>
+                heard.push({ on, a: cellText('a'), b: cellText('b') })
+            );
+        }
+        expect({ a: cellText('a'), b: cellText('b') }).toEqual({ a: '1', b: '2' });
 
         api.setGridOption('columnDefs', [
-            { field: 'country', rowGroup: true, hide: true },
-            { field: 'sport' },
-            { field: 'gold', sort: 'desc' },
+            { field: 'a', valueFormatter: (p) => 'x' + p.value },
+            { field: 'b', valueFormatter: (p) => 'x' + p.value },
+            { field: 'c' },
         ]);
-        await asyncSetTimeout(0);
+        await waitFor(() => expect(heard.length).toBeGreaterThanOrEqual(2), { timeout: 300 });
 
-        expect(refreshes()).toBe(1);
-        await new GridRows(api, 'grouped and sorted').check(`
-            ROOT id:ROOT_NODE_ID
-            ├─┬ LEAF_GROUP collapsed id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
-            │ ├── LEAF hidden id:2 country:"Ireland" sport:"Boxing" gold:3
-            │ └── LEAF hidden id:1 country:"Ireland" sport:"Rowing" gold:1
-            └─┬ LEAF_GROUP collapsed id:row-group-country-France ag-Grid-AutoColumn:"France"
-            · └── LEAF hidden id:3 country:"France" sport:"Rowing" gold:2
-        `);
-    });
-
-    test('a filtered pivot result column that is replaced lets its rows back and draws no cell once gone', async () => {
-        const drawn: string[] = [];
-        const cellRenderer = (params: ICellRendererParams) => {
-            drawn.push(params.column!.getColId());
-            return String(params.value ?? '');
-        };
-        const api = gridsManager.createGrid('myGrid', {
-            columnDefs: [
-                { field: 'country', rowGroup: true },
-                { field: 'gold', aggFunc: 'sum' },
-            ],
-            rowData,
-            pivotMode: true,
-        });
-        api.setPivotResultColumns([{ colId: 'r1', field: 'gold', filter: 'agTextColumnFilter', cellRenderer }]);
-        await asyncSetTimeout(0);
-        const unfiltered = api.getDisplayedRowCount();
-        expect(unfiltered).toBe(2);
-        api.setFilterModel({ r1: { filterType: 'text', type: 'equals', filter: 'none' } });
-        await asyncSetTimeout(0);
-        expect(api.getDisplayedRowCount()).toBe(0);
-        drawn.length = 0;
-
-        api.setPivotResultColumns([{ colId: 'r2', field: 'gold', cellRenderer }]);
-        await asyncSetTimeout(0);
-
-        expect({ model: api.getFilterModel(), rows: api.getDisplayedRowCount(), drawn: [...new Set(drawn)] }).toEqual({
-            model: {},
-            rows: unfiltered,
-            drawn: ['r2'],
-        });
-    });
-
-    test('a filter on a column the update removes, as it groups the rows, lets its rows back in the same refresh', async () => {
-        const api = gridsManager.createGrid('filterRemoved', {
-            columnDefs: [{ field: 'country' }, { field: 'sport', filter: 'agTextColumnFilter' }, { field: 'gold' }],
-            rowData,
-            getRowId: ({ data }) => data.id,
-        });
-        api.setFilterModel({ sport: { filterType: 'text', type: 'equals', filter: 'Rowing' } });
-        await asyncSetTimeout(0);
-        expect(api.getDisplayedRowCount()).toBe(2);
-        const refreshes = countRefreshes(api);
-        let filterChanges = 0;
-        api.addEventListener('filterChanged', () => ++filterChanges);
-
-        api.setGridOption('columnDefs', [{ field: 'country', rowGroup: true, hide: true }, { field: 'gold' }]);
-        // releasing the removed column's filter does not refresh the rows a second time
-        await waitFor(() => expect(filterChanges).toBe(1));
-
-        expect(refreshes()).toBe(1);
-        await new GridRows(api, 'filter released and grouped').check(`
-            ROOT id:ROOT_NODE_ID
-            ├─┬ LEAF_GROUP collapsed id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
-            │ ├── LEAF hidden id:1 country:"Ireland" gold:1
-            │ └── LEAF hidden id:2 country:"Ireland" gold:3
-            └─┬ LEAF_GROUP collapsed id:row-group-country-France ag-Grid-AutoColumn:"France"
-            · └── LEAF hidden id:3 country:"France" gold:2
-        `);
-    });
-});
-
-describe('the column animations a column call leaves on', () => {
-    const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, ColumnApiModule, ColumnAutoSizeModule],
-    });
-
-    afterEach(() => {
-        gridsManager.reset();
-    });
-
-    const hasClass = (api: GridApi, cssClass: string) => {
-        const grid = getGridElement(api)!;
-        return grid.classList.contains(cssClass) || grid.querySelector(`.${cssClass}`) !== null;
-    };
-    const resizeAnimating = (api: GridApi) => hasClass(api, 'ag-animate-autosize');
-    const moving = (api: GridApi) => hasClass(api, 'ag-column-moving');
-    const cellLeft = (api: GridApi, colId: string) =>
-        getGridElement(api)!.querySelector<HTMLElement>(`.ag-cell[col-id="${colId}"]`)!.style.left;
-    const order = (api: GridApi) =>
-        api
-            .getAllDisplayedColumns()
-            .map((column) => column.getColId())
-            .join();
-
-    const createFittingGrid = () =>
-        gridsManager.createGrid('myGrid', {
-            columnDefs: [{ colId: 'a' }, { colId: 'b' }],
-            defaultColDef: { width: 300 },
-            animateColumnResizing: true,
-            rowData: [{}],
-        });
-
-    test('a fit to the width the columns already fill does not cut short the animation of the width change before it', async () => {
-        const api = createFittingGrid();
-
-        api.applyColumnState({ state: [{ colId: 'a', width: 400 }] });
-        expect(resizeAnimating(api)).toBe(true);
-
-        api.sizeColumnsToFit(700);
-
-        expect(api.getAllDisplayedColumns().map((column) => column.getActualWidth())).toEqual([400, 300]);
-        expect(resizeAnimating(api)).toBe(true);
-        await waitFor(() => expect(resizeAnimating(api)).toBe(false));
-    });
-
-    const createGroupGrid = async () => {
-        const api = gridsManager.createGrid('myGrid', {
-            columnDefs: [
-                {
-                    groupId: 'g',
-                    headerName: 'Group',
-                    children: [{ colId: 'a' }, { colId: 'b', columnGroupShow: 'open' }],
-                },
-                { colId: 'c' },
-                { colId: 'd' },
-            ],
-            defaultColDef: { width: 100 },
-            rowData: [{}],
-        });
-        await waitFor(() => expect(moving(api)).toBe(false));
-        return api;
-    };
-
-    /** Widens the group's first column, the next column change after the call under test. */
-    const widenFirstGroupColumn = (api: GridApi) => {
-        api.setColumnWidths([{ key: 'a', newWidth: 150 }]);
-        expect(api.getColumn('a')!.getActualWidth()).toBe(150);
-    };
-
-    test('opening a group makes the next column change slide', async () => {
-        const api = await createGroupGrid();
-
-        api.setColumnGroupOpened('g', true);
-        expect(order(api)).toBe('a,b,c,d');
-        expect(cellLeft(api, 'c')).toBe('200px');
-
-        widenFirstGroupColumn(api);
-        expect({ moving: moving(api), cLeft: cellLeft(api, 'c') }).toEqual({ moving: true, cLeft: '250px' });
-    });
-
-    const createLockedGrid = async () => {
-        const api = gridsManager.createGrid('myGrid', {
-            columnDefs: [
-                { colId: 'year', lockPosition: 'left' },
-                { colId: 'athlete' },
-                { colId: 'country' },
-                { colId: 'sport' },
-            ],
-            defaultColDef: { width: 100 },
-            rowData: [{}],
-        });
-        await waitFor(() => expect(moving(api)).toBe(false));
-        return api;
-    };
-
-    /** Widens athlete, the next column change after the call under test. */
-    const widenAthlete = (api: GridApi) => {
-        api.setColumnWidths([{ key: 'athlete', newWidth: 150 }]);
-        expect(api.getColumn('athlete')!.getActualWidth()).toBe(150);
-    };
-
-    test('moving a column that is allowed to move makes the next column change slide', async () => {
-        const api = await createLockedGrid();
-
-        api.moveColumns(['sport'], 1);
-
-        expect(order(api)).toBe('year,sport,athlete,country');
-        expect(cellLeft(api, 'country')).toBe('300px');
-        widenAthlete(api);
-        expect({ moving: moving(api), countryLeft: cellLeft(api, 'country') }).toEqual({
-            moving: true,
-            countryLeft: '350px',
-        });
+        heard.length = 0;
+        api.setGridOption('columnDefs', [
+            { field: 'a', valueFormatter: (p) => 'y' + p.value },
+            { field: 'b', valueFormatter: (p) => 'y' + p.value },
+            { field: 'c' },
+            { field: 'd' },
+        ]);
+        await waitFor(() => expect(heard.length).toBeGreaterThanOrEqual(2), { timeout: 300 });
     });
 });

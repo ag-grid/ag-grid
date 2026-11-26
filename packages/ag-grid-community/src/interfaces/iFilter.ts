@@ -5,10 +5,11 @@ import type { IFloatingFilterComp } from '../filter/floating/floatingFilter';
 import type { Column } from '../interfaces/iColumn';
 import type { IAfterGuiAttachedParams } from './iAfterGuiAttachedParams';
 import type { AgGridCommon } from './iCommon';
-import type { IRowModel } from './iRowModel';
 import type { IRowNode } from './iRowNode';
 
+/** @deprecated v37 Use `enableFilterHandlers` with a `ColumnFilter` and a `FilterDisplayComp` component instead. See [Migrating to Filter Handlers](https://www.ag-grid.com/javascript-data-grid/enable-filter-handlers-migration/). */
 export type IFilterType = string | (new () => IFilterComp) | boolean;
+/** @deprecated v37 Use `enableFilterHandlers` with a `FloatingFilterDisplayComp` component instead. See [Migrating to Filter Handlers](https://www.ag-grid.com/javascript-data-grid/enable-filter-handlers-migration/). */
 export type IFloatingFilterType = string | (new () => IFloatingFilterComp);
 
 export interface DoesFilterPassParams<
@@ -290,6 +291,7 @@ export interface FilterDisplay<TData = any, TContext = any, TModel = any, TState
     refresh(newParams: FilterDisplayParams<TData, TContext, TModel, TState>): boolean;
 }
 
+/** @deprecated v37 Use `enableFilterHandlers` with a filter `handler` or `doesFilterPass` and a `FilterDisplayComp` component instead. See [Migrating to Filter Handlers](https://www.ag-grid.com/javascript-data-grid/enable-filter-handlers-migration/). */
 export interface IFilterComp<TData = any> extends IComponent<IFilterParams<TData>>, IFilter {}
 
 export interface FilterDisplayComp<TData = any, TContext = any, TModel = any>
@@ -373,12 +375,7 @@ export interface SharedFilterParams<TData = any, TContext = any> extends AgGridC
     doesRowPassOtherFilter: (rowNode: IRowNode<TData>) => boolean; // TODO: this method should be "doesRowPassOtherFilters"
 }
 
-export interface BaseFilterParams<TData = any, TContext = any> extends SharedFilterParams<TData, TContext> {
-    /**
-     * @deprecated 33.1 Use the corresponding methods on the grid API (`api`) instead.
-     */
-    rowModel: IRowModel;
-}
+export interface BaseFilterParams<TData = any, TContext = any> extends SharedFilterParams<TData, TContext> {}
 
 /**
  * Parameters provided by the grid to the `init` method of an `IFilterComp`
@@ -391,6 +388,8 @@ export interface IFilterParams<TData = any, TContext = any> extends BaseFilterPa
      * to the FilterChangedEvent object (useful for passing additional
      * information to anyone listening to this event, however such extra
      * attributes are not used by the grid).
+     *
+     * @deprecated v37 Use `enableFilterHandlers` and call `onModelChange` from a `FilterDisplayComp` component instead. See [Migrating to Filter Handlers](https://www.ag-grid.com/javascript-data-grid/enable-filter-handlers-migration/).
      */
     filterChangedCallback: (additionalEventAttributes?: any) => void;
 
@@ -400,6 +399,8 @@ export interface IFilterParams<TData = any, TContext = any> extends BaseFilterPa
      * Apart from emitting the event, the grid takes no further action.
      * The callback takes one optional parameter which, if included,
      * will get merged to the FilterModifiedEvent object.
+     *
+     * @deprecated v37 Use `enableFilterHandlers` and call `onUiChange` from a `FilterDisplayComp` component instead. See [Migrating to Filter Handlers](https://www.ag-grid.com/javascript-data-grid/enable-filter-handlers-migration/).
      */
     filterModifiedCallback: (additionalEventAttributes?: any) => void;
 }

@@ -215,6 +215,7 @@ export type UserComponentName =
     | 'agFileInputOverlay'
     | 'agErrorOverlay'
     | 'agTooltipComponent'
+    | 'agBuiltInTooltipComponent'
     | 'agReadOnlyFloatingFilter'
     | 'agTextColumnFilter'
     | 'agNumberColumnFilter'
@@ -452,6 +453,7 @@ export type BeanName = keyof BeanCollection;
 
 /** Things used in enterprise or elsewhere that we haven't created interfaces for */
 type UntypedBeanNames =
+    | 'viewSubSvc'
     | 'advFilterExpSvc'
     | 'advFilterSetSvc'
     | 'advSettingsMenuFactory'

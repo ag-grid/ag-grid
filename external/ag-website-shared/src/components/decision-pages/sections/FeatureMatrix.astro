@@ -1,0 +1,70 @@
+---
+import styles from '../DecisionPage.module.scss';
+import { FEATURE_STATUS, featureCellLabel, featureCellTone } from '../decisionPageText';
+import type { FeatureMatrixGroup } from '../featureMatrix';
+import ProductHeading from './ProductHeading.astro';
+import TonePill from './TonePill.astro';
+
+interface Props {
+    groups: FeatureMatrixGroup[];
+    /** The two column headings; the first carries the brand highlight. */
+    columns: [{ name: string; logo?: string }, { name: string; logo?: string }];
+    resolveUrl: (url: string) => string;
+}
+
+const { groups, columns, resolveUrl } = Astro.props;
+const [first, second] = columns;
+---
+
+<div class={styles.tableWrapper}>
+    <table class:list={[styles.table, styles.featureTable]}>
+        <colgroup>
+            <col class={styles.featureColumn} />
+            <col class={styles.productColumn} />
+            <col class={styles.competitorColumn} />
+        </colgroup>
+        <thead>
+            <tr>
+                <th scope="col">Feature</th>
+                <th scope="col" class={styles.productColumnHeading}>
+                    <ProductHeading name={first.name} logo={first.logo} />
+                </th>
+                <th scope="col">
+                    <ProductHeading name={second.name} logo={second.logo} />
+                </th>
+            </tr>
+        </thead>
+        {groups.map((group) => (
+            <tbody>
+                <tr class={styles.groupRow}>
+                    <th scope="rowgroup" colspan="3">
+                        {group.name}
+                    </th>
+                </tr>
+                {group.rows.map((row) => (
+                    <tr>
+                        <th scope="row">
+                            {row.docsUrl ? (
+                                <a class={styles.featureLink} href={resolveUrl(row.docsUrl)}>
+                                    {row.feature}
+                                </a>
+                            ) : (
+                                row.feature
+                            )}
+                        </th>
+                        {row.cells.map((value, index) => (
+                            <td class:list={[index === 0 && styles.productCell]}>
+                                <TonePill
+                                    tone={featureCellTone(value)}
+                                    symbol={FEATURE_STATUS[value.status].symbol}
+                                    label={featureCellLabel(value)}
+                                />
+                                {value.detail && <div class={styles.cellDetail}>{value.detail}</div>}
+                            </td>
+                        ))}
+                    </tr>
+                ))}
+            </tbody>
+        ))}
+    </table>
+</div>
