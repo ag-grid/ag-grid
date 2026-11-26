@@ -80,6 +80,8 @@ test.agExample(import.meta, () => {
             await expect(streamed).toHaveText('0');
             await expectStopped(updates);
             // the price streams for the stocks only, as group rows leave it blank
+            // move off the Volume checkbox so its tooltip no longer covers the Price checkbox
+            await page.mouse.move(0, 0);
             await agIdFor.columnSelectListItemCheckbox('Price Column').click();
             await expect(streamed).not.toHaveText('0');
             await expectStreaming(updates);
