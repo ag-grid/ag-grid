@@ -20,14 +20,15 @@
                 "subDebounce": 50,
                 "feed": false
             },
+            "version": "36.3.0-beta.20261126.1116",
             "snapshot": {
                 "seconds": 10.01,
-                "fps": 59.85,
+                "fps": 59.96,
                 "frameMs": {
-                    "n": 599,
+                    "n": 600,
                     "avg": 16.67,
                     "p50": 16.7,
-                    "p95": 16.7,
+                    "p95": 16.8,
                     "max": 16.8
                 },
                 "longFrames": 0,
@@ -39,21 +40,21 @@
                     "first": 100,
                     "last": 100,
                     "max": 100,
-                    "slopePerS": 0
+                    "slopePerSSecondHalf": 0
                 },
                 "gridsAttached": 1,
                 "grids": [
                     {
                         "contentRefreshPerS": 0,
                         "perCellRenderedRate": {
-                            "n": 340,
+                            "n": 285,
                             "avg": 0,
                             "p50": 0,
                             "p95": 0,
                             "max": 0,
                             "p10": 0
                         },
-                        "rowsObserved": 68,
+                        "rowsObserved": 57,
                         "pctRowsChangedAtLeast1PerS": 0,
                         "domRowsAddedPerS": 0,
                         "domRowsRemovedPerS": 0,
@@ -81,7 +82,7 @@
                         },
                         "txStatuses": {},
                         "subscribedRows": 58,
-                        "rows": 58,
+                        "rows": 57,
                         "cols": 58,
                         "feed": {
                             "insertsEmitted": 0,
@@ -100,7 +101,7 @@
             "consoleErrors": [],
             "title": "Control: feed off",
             "query": "cols=200&rowHeight=36&colWidth=64&feed=0",
-            "measuredAt": "2026-11-26T22:10:41.566Z",
+            "measuredAt": "2026-11-26T22:32:58.701Z",
             "repeats": []
         },
         "S1": {
@@ -123,53 +124,54 @@
                 "subDebounce": 50,
                 "feed": true
             },
+            "version": "36.3.0-beta.20261126.1116",
             "snapshot": {
-                "seconds": 10.05,
-                "fps": 42.37,
+                "seconds": 10.01,
+                "fps": 43.58,
                 "frameMs": {
-                    "n": 426,
-                    "avg": 23.39,
+                    "n": 436,
+                    "avg": 22.9,
                     "p50": 16.7,
                     "p95": 66.7,
                     "max": 83.4
                 },
                 "longFrames": 50,
                 "framesOver1000ms": 0,
-                "longTasks": 49,
-                "longTaskMs": 2577,
-                "cellUpdatesSentPerS": 16729.49,
+                "longTasks": 51,
+                "longTaskMs": 2716,
+                "cellUpdatesSentPerS": 16811.09,
                 "loadedNodes": {
-                    "first": 152,
-                    "last": 263,
-                    "max": 263,
-                    "slopePerS": 13.29
+                    "first": 150,
+                    "last": 257,
+                    "max": 257,
+                    "slopePerSSecondHalf": 13.41
                 },
                 "gridsAttached": 1,
                 "grids": [
                     {
-                        "contentRefreshPerS": 4.97,
+                        "contentRefreshPerS": 5,
                         "perCellRenderedRate": {
-                            "n": 865,
-                            "avg": 4.28,
-                            "p50": 4.27,
-                            "p95": 5.14,
-                            "max": 5.54,
-                            "p10": 3.53
+                            "n": 805,
+                            "avg": 4.82,
+                            "p50": 4.82,
+                            "p95": 5,
+                            "max": 5.19,
+                            "p10": 4.69
                         },
-                        "rowsObserved": 146,
+                        "rowsObserved": 134,
                         "pctRowsChangedAtLeast1PerS": 100,
-                        "domRowsAddedPerS": 13.23,
-                        "domRowsRemovedPerS": 13.23,
+                        "domRowsAddedPerS": 12.99,
+                        "domRowsRemovedPerS": 12.99,
                         "rowIdAttributeChanges": 0,
-                        "insertsAppliedPerS": 13.23,
-                        "orderChecks": 28,
+                        "insertsAppliedPerS": 13.19,
+                        "orderChecks": 29,
                         "orderMismatches": 0,
                         "headRenderLagMs": {
-                            "n": 131,
-                            "avg": 1.61,
+                            "n": 132,
+                            "avg": 2.14,
                             "p50": 1,
-                            "p95": 6.5,
-                            "max": 8.2
+                            "p95": 8.6,
+                            "max": 10.9
                         },
                         "aggLagMs": {
                             "group": {
@@ -184,27 +186,27 @@
                             "n": 0
                         },
                         "txAsyncQueueMs": {
-                            "n": 184,
-                            "avg": 100.91,
-                            "p50": 109.7,
-                            "p95": 137.8,
-                            "max": 147.1
+                            "n": 183,
+                            "avg": 100.95,
+                            "p50": 106.2,
+                            "p95": 137.9,
+                            "max": 154.9
                         },
                         "txStatuses": {
-                            "Applied": 184
+                            "Applied": 183
                         },
                         "subscribedRows": 58,
-                        "rows": 58,
+                        "rows": 57,
                         "cols": 58,
                         "feed": {
-                            "insertsEmitted": 132,
+                            "insertsEmitted": 131,
                             "updateTicks": 50,
-                            "backendMs": 61.3,
+                            "backendMs": 56.5,
                             "refreshInserts": 0,
                             "refetches": 0,
-                            "insertsEmittedPerS": 13.13,
-                            "updateTicksPerS": 4.97,
-                            "backendMsPerS": 6.1
+                            "insertsEmittedPerS": 13.09,
+                            "updateTicksPerS": 5,
+                            "backendMsPerS": 5.65
                         }
                     }
                 ]
@@ -213,7 +215,7 @@
             "consoleErrors": [],
             "title": "Baseline: 75 ms top inserts, 5 updates/s per cell, async",
             "query": "cols=200&rowHeight=36&colWidth=64",
-            "measuredAt": "2026-11-26T22:11:09.411Z",
+            "measuredAt": "2026-11-26T22:33:26.374Z",
             "repeats": [
                 {
                     "config": {
@@ -235,53 +237,54 @@
                         "subDebounce": 50,
                         "feed": true
                     },
+                    "version": "36.3.0-beta.20261126.1116",
                     "snapshot": {
-                        "seconds": 10.06,
-                        "fps": 43.53,
+                        "seconds": 10,
+                        "fps": 43.59,
                         "frameMs": {
-                            "n": 438,
-                            "avg": 22.83,
+                            "n": 436,
+                            "avg": 22.9,
                             "p50": 16.7,
                             "p95": 66.7,
-                            "max": 116.7
+                            "max": 100
                         },
-                        "longFrames": 44,
+                        "longFrames": 50,
                         "framesOver1000ms": 0,
-                        "longTasks": 44,
-                        "longTaskMs": 2336,
-                        "cellUpdatesSentPerS": 16717.19,
+                        "longTasks": 50,
+                        "longTaskMs": 2639,
+                        "cellUpdatesSentPerS": 16816.64,
                         "loadedNodes": {
-                            "first": 154,
-                            "last": 256,
-                            "max": 256,
-                            "slopePerS": 12.44
+                            "first": 157,
+                            "last": 263,
+                            "max": 263,
+                            "slopePerSSecondHalf": 12.98
                         },
                         "gridsAttached": 1,
                         "grids": [
                             {
-                                "contentRefreshPerS": 4.97,
+                                "contentRefreshPerS": 5,
                                 "perCellRenderedRate": {
-                                    "n": 830,
-                                    "avg": 4.25,
-                                    "p50": 4.33,
-                                    "p95": 4.98,
-                                    "max": 5.16,
-                                    "p10": 3.31
+                                    "n": 795,
+                                    "avg": 4.83,
+                                    "p50": 4.83,
+                                    "p95": 5.17,
+                                    "max": 5.32,
+                                    "p10": 4.59
                                 },
-                                "rowsObserved": 145,
+                                "rowsObserved": 135,
                                 "pctRowsChangedAtLeast1PerS": 100,
-                                "domRowsAddedPerS": 12.32,
-                                "domRowsRemovedPerS": 12.32,
+                                "domRowsAddedPerS": 13,
+                                "domRowsRemovedPerS": 13,
                                 "rowIdAttributeChanges": 0,
-                                "insertsAppliedPerS": 12.42,
+                                "insertsAppliedPerS": 13,
                                 "orderChecks": 29,
                                 "orderMismatches": 0,
                                 "headRenderLagMs": {
-                                    "n": 125,
-                                    "avg": 1.76,
+                                    "n": 130,
+                                    "avg": 2.02,
                                     "p50": 1,
-                                    "p95": 7.1,
-                                    "max": 8.3
+                                    "p95": 8.8,
+                                    "max": 9.2
                                 },
                                 "aggLagMs": {
                                     "group": {
@@ -296,27 +299,27 @@
                                     "n": 0
                                 },
                                 "txAsyncQueueMs": {
-                                    "n": 175,
-                                    "avg": 102.12,
-                                    "p50": 106.9,
-                                    "p95": 147.2,
-                                    "max": 180.5
+                                    "n": 180,
+                                    "avg": 99.22,
+                                    "p50": 108.1,
+                                    "p95": 137.5,
+                                    "max": 146.8
                                 },
                                 "txStatuses": {
-                                    "Applied": 175
+                                    "Applied": 180
                                 },
                                 "subscribedRows": 58,
-                                "rows": 58,
+                                "rows": 57,
                                 "cols": 58,
                                 "feed": {
-                                    "insertsEmitted": 124,
+                                    "insertsEmitted": 129,
                                     "updateTicks": 50,
-                                    "backendMs": 59.1,
+                                    "backendMs": 58.2,
                                     "refreshInserts": 0,
                                     "refetches": 0,
-                                    "insertsEmittedPerS": 12.32,
-                                    "updateTicksPerS": 4.97,
-                                    "backendMsPerS": 5.87
+                                    "insertsEmittedPerS": 12.9,
+                                    "updateTicksPerS": 5,
+                                    "backendMsPerS": 5.82
                                 }
                             }
                         ]
@@ -346,53 +349,54 @@
                 "subDebounce": 50,
                 "feed": true
             },
+            "version": "36.3.0-beta.20261126.1116",
             "snapshot": {
-                "seconds": 10.01,
-                "fps": 20.08,
+                "seconds": 10.05,
+                "fps": 20.1,
                 "frameMs": {
-                    "n": 201,
-                    "avg": 50,
+                    "n": 202,
+                    "avg": 49.01,
                     "p50": 16.7,
                     "p95": 183.3,
-                    "max": 250.1
+                    "max": 233.4
                 },
-                "longFrames": 43,
+                "longFrames": 42,
                 "framesOver1000ms": 0,
                 "longTasks": 86,
-                "longTaskMs": 7809,
-                "cellUpdatesSentPerS": 35651.84,
+                "longTaskMs": 7789,
+                "cellUpdatesSentPerS": 34496.12,
                 "loadedNodes": {
                     "first": 241,
-                    "last": 282,
-                    "max": 282,
-                    "slopePerS": 7.01
+                    "last": 288,
+                    "max": 288,
+                    "slopePerSSecondHalf": 8.52
                 },
                 "gridsAttached": 1,
                 "grids": [
                     {
-                        "contentRefreshPerS": 4.2,
+                        "contentRefreshPerS": 4.28,
                         "perCellRenderedRate": {
-                            "n": 920,
-                            "avg": 3.64,
-                            "p50": 3.96,
-                            "p95": 4.18,
-                            "max": 4.18,
-                            "p10": 2.57
+                            "n": 885,
+                            "avg": 4.22,
+                            "p50": 4.26,
+                            "p95": 4.34,
+                            "max": 4.34,
+                            "p10": 4
                         },
-                        "rowsObserved": 169,
+                        "rowsObserved": 163,
                         "pctRowsChangedAtLeast1PerS": 100,
-                        "domRowsAddedPerS": 7.09,
-                        "domRowsRemovedPerS": 7.09,
+                        "domRowsAddedPerS": 7.56,
+                        "domRowsRemovedPerS": 7.56,
                         "rowIdAttributeChanges": 0,
-                        "insertsAppliedPerS": 7.29,
+                        "insertsAppliedPerS": 7.56,
                         "orderChecks": 13,
                         "orderMismatches": 0,
                         "headRenderLagMs": {
-                            "n": 73,
-                            "avg": 4.44,
-                            "p50": 1.8,
-                            "p95": 15.7,
-                            "max": 16.7
+                            "n": 75,
+                            "avg": 3.24,
+                            "p50": 2.2,
+                            "p95": 11.9,
+                            "max": 14
                         },
                         "aggLagMs": {
                             "group": {
@@ -407,27 +411,27 @@
                             "n": 0
                         },
                         "txAsyncQueueMs": {
-                            "n": 123,
-                            "avg": 227.4,
-                            "p50": 221.2,
-                            "p95": 282.1,
-                            "max": 307.3
+                            "n": 125,
+                            "avg": 223.02,
+                            "p50": 220,
+                            "p95": 269.5,
+                            "max": 291.3
                         },
                         "txStatuses": {
-                            "Applied": 123
+                            "Applied": 125
                         },
-                        "subscribedRows": 117,
-                        "rows": 117,
+                        "subscribedRows": 116,
+                        "rows": 116,
                         "cols": 62,
                         "feed": {
-                            "insertsEmitted": 73,
-                            "updateTicks": 50,
-                            "backendMs": 140.4,
+                            "insertsEmitted": 76,
+                            "updateTicks": 49,
+                            "backendMs": 105.8,
                             "refreshInserts": 0,
                             "refetches": 0,
-                            "insertsEmittedPerS": 7.29,
-                            "updateTicksPerS": 5,
-                            "backendMsPerS": 14.03
+                            "insertsEmittedPerS": 7.56,
+                            "updateTicksPerS": 4.88,
+                            "backendMsPerS": 10.53
                         }
                     }
                 ]
@@ -436,7 +440,7 @@
             "consoleErrors": [],
             "title": "S1 with about 117 rows x 62 columns visible",
             "query": "cols=200",
-            "measuredAt": "2026-11-26T22:11:23.625Z",
+            "measuredAt": "2026-11-26T22:33:40.589Z",
             "repeats": []
         },
         "S1i": {
@@ -459,15 +463,16 @@
                 "subDebounce": 50,
                 "feed": true
             },
+            "version": "36.3.0-beta.20261126.1116",
             "snapshot": {
-                "seconds": 10.01,
-                "fps": 58.66,
+                "seconds": 10.03,
+                "fps": 58.75,
                 "frameMs": {
-                    "n": 587,
-                    "avg": 17.04,
+                    "n": 589,
+                    "avg": 16.98,
                     "p50": 16.7,
                     "p95": 16.8,
-                    "max": 50
+                    "max": 33.4
                 },
                 "longFrames": 0,
                 "framesOver1000ms": 0,
@@ -475,37 +480,37 @@
                 "longTaskMs": 0,
                 "cellUpdatesSentPerS": 0,
                 "loadedNodes": {
-                    "first": 152,
+                    "first": 154,
                     "last": 262,
                     "max": 262,
-                    "slopePerS": 13.39
+                    "slopePerSSecondHalf": 13.39
                 },
                 "gridsAttached": 1,
                 "grids": [
                     {
                         "contentRefreshPerS": 0,
                         "perCellRenderedRate": {
-                            "n": 875,
+                            "n": 820,
                             "avg": 0,
                             "p50": 0,
                             "p95": 0,
                             "max": 0,
                             "p10": 0
                         },
-                        "rowsObserved": 148,
+                        "rowsObserved": 137,
                         "pctRowsChangedAtLeast1PerS": 0,
-                        "domRowsAddedPerS": 13.19,
-                        "domRowsRemovedPerS": 13.19,
+                        "domRowsAddedPerS": 13.37,
+                        "domRowsRemovedPerS": 13.37,
                         "rowIdAttributeChanges": 0,
-                        "insertsAppliedPerS": 13.19,
+                        "insertsAppliedPerS": 13.37,
                         "orderChecks": 39,
                         "orderMismatches": 0,
                         "headRenderLagMs": {
-                            "n": 132,
-                            "avg": 2.05,
-                            "p50": 1,
-                            "p95": 6.2,
-                            "max": 9
+                            "n": 133,
+                            "avg": 3.13,
+                            "p50": 1.1,
+                            "p95": 8.8,
+                            "max": 13.4
                         },
                         "aggLagMs": {
                             "group": {
@@ -520,27 +525,27 @@
                             "n": 0
                         },
                         "txAsyncQueueMs": {
-                            "n": 132,
-                            "avg": 67.18,
-                            "p50": 78.4,
-                            "p95": 84,
-                            "max": 104.6
+                            "n": 134,
+                            "avg": 67.15,
+                            "p50": 78.9,
+                            "p95": 86.5,
+                            "max": 99.3
                         },
                         "txStatuses": {
-                            "Applied": 132
+                            "Applied": 134
                         },
                         "subscribedRows": 58,
-                        "rows": 58,
+                        "rows": 57,
                         "cols": 58,
                         "feed": {
                             "insertsEmitted": 133,
                             "updateTicks": 0,
-                            "backendMs": 5.9,
+                            "backendMs": 5.8,
                             "refreshInserts": 0,
                             "refetches": 0,
-                            "insertsEmittedPerS": 13.29,
+                            "insertsEmittedPerS": 13.27,
                             "updateTicksPerS": 0,
-                            "backendMsPerS": 0.59
+                            "backendMsPerS": 0.58
                         }
                     }
                 ]
@@ -549,7 +554,7 @@
             "consoleErrors": [],
             "title": "S1 inserts only (no cell updates)",
             "query": "cols=200&rowHeight=36&colWidth=64&rate=0",
-            "measuredAt": "2026-11-26T22:11:37.431Z",
+            "measuredAt": "2026-11-26T22:33:54.428Z",
             "repeats": []
         },
         "S1u": {
@@ -572,41 +577,42 @@
                 "subDebounce": 50,
                 "feed": true
             },
+            "version": "36.3.0-beta.20261126.1116",
             "snapshot": {
                 "seconds": 10,
-                "fps": 49.28,
+                "fps": 48.78,
                 "frameMs": {
-                    "n": 493,
-                    "avg": 20.25,
+                    "n": 488,
+                    "avg": 20.46,
                     "p50": 16.7,
                     "p95": 50,
-                    "max": 66.6
+                    "max": 83.2
                 },
-                "longFrames": 9,
+                "longFrames": 12,
                 "framesOver1000ms": 0,
                 "longTasks": 9,
-                "longTaskMs": 474,
-                "cellUpdatesSentPerS": 16813.11,
+                "longTaskMs": 477,
+                "cellUpdatesSentPerS": 16813.44,
                 "loadedNodes": {
                     "first": 100,
                     "last": 100,
                     "max": 100,
-                    "slopePerS": 0
+                    "slopePerSSecondHalf": 0
                 },
                 "gridsAttached": 1,
                 "grids": [
                     {
                         "contentRefreshPerS": 5,
                         "perCellRenderedRate": {
-                            "n": 340,
-                            "avg": 4.27,
+                            "n": 285,
+                            "avg": 5.01,
                             "p50": 5.01,
                             "p95": 5.01,
                             "max": 5.01,
-                            "p10": 0
+                            "p10": 5.01
                         },
-                        "rowsObserved": 68,
-                        "pctRowsChangedAtLeast1PerS": 85.29,
+                        "rowsObserved": 57,
+                        "pctRowsChangedAtLeast1PerS": 100,
                         "domRowsAddedPerS": 0,
                         "domRowsRemovedPerS": 0,
                         "rowIdAttributeChanges": 0,
@@ -630,26 +636,26 @@
                         },
                         "txAsyncQueueMs": {
                             "n": 50,
-                            "avg": 121.47,
-                            "p50": 120.4,
-                            "p95": 127.6,
-                            "max": 136
+                            "avg": 122.7,
+                            "p50": 121.3,
+                            "p95": 128,
+                            "max": 148.9
                         },
                         "txStatuses": {
                             "Applied": 50
                         },
                         "subscribedRows": 58,
-                        "rows": 58,
+                        "rows": 57,
                         "cols": 58,
                         "feed": {
                             "insertsEmitted": 0,
                             "updateTicks": 50,
-                            "backendMs": 44.8,
+                            "backendMs": 49.8,
                             "refreshInserts": 0,
                             "refetches": 0,
                             "insertsEmittedPerS": 0,
                             "updateTicksPerS": 5,
-                            "backendMsPerS": 4.48
+                            "backendMsPerS": 4.98
                         }
                     }
                 ]
@@ -658,7 +664,7 @@
             "consoleErrors": [],
             "title": "S1 cell updates only (no inserts)",
             "query": "cols=200&rowHeight=36&colWidth=64&insertMs=0",
-            "measuredAt": "2026-11-26T22:11:51.204Z",
+            "measuredAt": "2026-11-26T22:34:08.240Z",
             "repeats": []
         },
         "S4": {
@@ -681,53 +687,54 @@
                 "subDebounce": 50,
                 "feed": true
             },
+            "version": "36.3.0-beta.20261126.1116",
             "snapshot": {
-                "seconds": 10,
-                "fps": 13.09,
+                "seconds": 10.02,
+                "fps": 13.88,
                 "frameMs": {
-                    "n": 131,
-                    "avg": 75.19,
-                    "p50": 66.7,
+                    "n": 139,
+                    "avg": 71.46,
+                    "p50": 66.6,
                     "p95": 116.7,
-                    "max": 200
+                    "max": 166.6
                 },
-                "longFrames": 80,
+                "longFrames": 84,
                 "framesOver1000ms": 0,
-                "longTasks": 53,
-                "longTaskMs": 3584,
-                "cellUpdatesSentPerS": 16812.6,
+                "longTasks": 48,
+                "longTaskMs": 3115,
+                "cellUpdatesSentPerS": 16793.3,
                 "loadedNodes": {
-                    "first": 188,
-                    "last": 245,
-                    "max": 245,
-                    "slopePerS": 11.52
+                    "first": 182,
+                    "last": 232,
+                    "max": 232,
+                    "slopePerSSecondHalf": null
                 },
                 "gridsAttached": 1,
                 "grids": [
                     {
-                        "contentRefreshPerS": 5,
+                        "contentRefreshPerS": 4.99,
                         "perCellRenderedRate": {
-                            "n": 825,
-                            "avg": 4.08,
-                            "p50": 4.07,
-                            "p95": 5.22,
+                            "n": 750,
+                            "avg": 5,
+                            "p50": 5,
+                            "p95": 5.33,
                             "max": 5.6,
-                            "p10": 2.98
+                            "p10": 4.81
                         },
-                        "rowsObserved": 139,
+                        "rowsObserved": 126,
                         "pctRowsChangedAtLeast1PerS": 100,
-                        "domRowsAddedPerS": 11.89,
-                        "domRowsRemovedPerS": 12.09,
+                        "domRowsAddedPerS": 11.38,
+                        "domRowsRemovedPerS": 11.38,
                         "rowIdAttributeChanges": 0,
-                        "insertsAppliedPerS": 11.89,
-                        "orderChecks": 8,
-                        "orderMismatches": 8,
+                        "insertsAppliedPerS": 11.48,
+                        "orderChecks": 9,
+                        "orderMismatches": 9,
                         "headRenderLagMs": {
-                            "n": 119,
-                            "avg": 25.48,
-                            "p50": 24.5,
-                            "p95": 51.4,
-                            "max": 59.8
+                            "n": 113,
+                            "avg": 35.98,
+                            "p50": 32.6,
+                            "p95": 77,
+                            "max": 117.1
                         },
                         "aggLagMs": {
                             "group": {
@@ -742,27 +749,27 @@
                             "n": 0
                         },
                         "txAsyncQueueMs": {
-                            "n": 169,
-                            "avg": 99.78,
-                            "p50": 84.4,
-                            "p95": 191.2,
-                            "max": 244.5
+                            "n": 166,
+                            "avg": 101.79,
+                            "p50": 103.3,
+                            "p95": 155.5,
+                            "max": 193.9
                         },
                         "txStatuses": {
-                            "Applied": 169
+                            "Applied": 166
                         },
                         "subscribedRows": 58,
                         "rows": 60,
                         "cols": 58,
                         "feed": {
-                            "insertsEmitted": 120,
+                            "insertsEmitted": 114,
                             "updateTicks": 50,
-                            "backendMs": 62.9,
+                            "backendMs": 57.5,
                             "refreshInserts": 0,
                             "refetches": 0,
-                            "insertsEmittedPerS": 11.99,
-                            "updateTicksPerS": 5,
-                            "backendMsPerS": 6.29
+                            "insertsEmittedPerS": 11.38,
+                            "updateTicksPerS": 4.99,
+                            "backendMsPerS": 5.74
                         }
                     }
                 ]
@@ -771,7 +778,7 @@
             "consoleErrors": [],
             "title": "S1 with animateRows on",
             "query": "cols=200&rowHeight=36&colWidth=64&animate=1",
-            "measuredAt": "2026-11-26T22:12:19.038Z",
+            "measuredAt": "2026-11-26T22:34:36.068Z",
             "repeats": [
                 {
                     "config": {
@@ -793,53 +800,54 @@
                         "subDebounce": 50,
                         "feed": true
                     },
+                    "version": "36.3.0-beta.20261126.1116",
                     "snapshot": {
-                        "seconds": 10.01,
-                        "fps": 13.89,
+                        "seconds": 10.02,
+                        "fps": 12.48,
                         "frameMs": {
-                            "n": 139,
-                            "avg": 70.98,
-                            "p50": 66.6,
+                            "n": 125,
+                            "avg": 78.66,
+                            "p50": 83.3,
                             "p95": 116.7,
-                            "max": 199.9
+                            "max": 166.7
                         },
-                        "longFrames": 81,
+                        "longFrames": 83,
                         "framesOver1000ms": 0,
-                        "longTasks": 52,
-                        "longTaskMs": 3243,
-                        "cellUpdatesSentPerS": 16806.05,
+                        "longTasks": 51,
+                        "longTaskMs": 3291,
+                        "cellUpdatesSentPerS": 16793.47,
                         "loadedNodes": {
-                            "first": 187,
-                            "last": 241,
-                            "max": 241,
-                            "slopePerS": 12.46
+                            "first": 188,
+                            "last": 244,
+                            "max": 244,
+                            "slopePerSSecondHalf": null
                         },
                         "gridsAttached": 1,
                         "grids": [
                             {
-                                "contentRefreshPerS": 5,
+                                "contentRefreshPerS": 4.99,
                                 "perCellRenderedRate": {
-                                    "n": 855,
-                                    "avg": 4.01,
-                                    "p50": 4.07,
-                                    "p95": 5.25,
-                                    "max": 5.81,
-                                    "p10": 2.93
+                                    "n": 755,
+                                    "avg": 5.05,
+                                    "p50": 5.02,
+                                    "p95": 5.35,
+                                    "max": 5.75,
+                                    "p10": 4.89
                                 },
-                                "rowsObserved": 146,
+                                "rowsObserved": 128,
                                 "pctRowsChangedAtLeast1PerS": 100,
-                                "domRowsAddedPerS": 12.39,
-                                "domRowsRemovedPerS": 12.59,
+                                "domRowsAddedPerS": 11.78,
+                                "domRowsRemovedPerS": 11.78,
                                 "rowIdAttributeChanges": 0,
-                                "insertsAppliedPerS": 12.49,
-                                "orderChecks": 9,
-                                "orderMismatches": 9,
+                                "insertsAppliedPerS": 11.78,
+                                "orderChecks": 8,
+                                "orderMismatches": 8,
                                 "headRenderLagMs": {
-                                    "n": 124,
-                                    "avg": 25.73,
-                                    "p50": 24,
-                                    "p95": 51.2,
-                                    "max": 91.9
+                                    "n": 116,
+                                    "avg": 43.12,
+                                    "p50": 36.7,
+                                    "p95": 120.8,
+                                    "max": 164.6
                                 },
                                 "aggLagMs": {
                                     "group": {
@@ -854,27 +862,27 @@
                                     "n": 0
                                 },
                                 "txAsyncQueueMs": {
-                                    "n": 176,
-                                    "avg": 92.31,
-                                    "p50": 86.2,
-                                    "p95": 149.6,
-                                    "max": 195.8
+                                    "n": 168,
+                                    "avg": 99.01,
+                                    "p50": 90.9,
+                                    "p95": 158.8,
+                                    "max": 199.7
                                 },
                                 "txStatuses": {
-                                    "Applied": 176
+                                    "Applied": 168
                                 },
                                 "subscribedRows": 58,
                                 "rows": 60,
                                 "cols": 58,
                                 "feed": {
-                                    "insertsEmitted": 126,
+                                    "insertsEmitted": 118,
                                     "updateTicks": 50,
-                                    "backendMs": 54.8,
+                                    "backendMs": 62.8,
                                     "refreshInserts": 0,
                                     "refetches": 0,
-                                    "insertsEmittedPerS": 12.59,
-                                    "updateTicksPerS": 5,
-                                    "backendMsPerS": 5.48
+                                    "insertsEmittedPerS": 11.78,
+                                    "updateTicksPerS": 4.99,
+                                    "backendMsPerS": 6.27
                                 }
                             }
                         ]
@@ -904,94 +912,95 @@
                 "subDebounce": 50,
                 "feed": true
             },
+            "version": "36.3.0-beta.20261126.1116",
             "action": {
                 "before": {
-                    "ids": ["50019", "50018", "50017", "50016", "50015"],
+                    "ids": ["50018", "50017", "50016", "50015", "50014"],
                     "indexes": [5, 6, 7, 8, 9]
                 },
                 "rows": [
                     {
-                        "id": "50019",
-                        "selected": true,
-                        "index": 56
-                    },
-                    {
                         "id": "50018",
                         "selected": true,
-                        "index": 57
+                        "index": 55
                     },
                     {
                         "id": "50017",
                         "selected": true,
-                        "index": 58
+                        "index": 56
                     },
                     {
                         "id": "50016",
                         "selected": true,
-                        "index": 59
+                        "index": 57
                     },
                     {
                         "id": "50015",
                         "selected": true,
-                        "index": 60
+                        "index": 58
+                    },
+                    {
+                        "id": "50014",
+                        "selected": true,
+                        "index": 59
                     }
                 ],
                 "allRowsStillSelected": true,
                 "selectionStateIds": 5,
-                "rangeRowIdsAfter": ["50070", "50069", "50068", "50067", "50066"],
+                "rangeRowIdsAfter": ["50068", "50067", "50066", "50065", "50064"],
                 "rangeStillCoversSameRows": false,
                 "resume": {
-                    "applied": 56,
-                    "ms": 879
+                    "applied": 55,
+                    "ms": 534
                 }
             },
             "snapshot": {
-                "seconds": 5.09,
-                "fps": 40.89,
+                "seconds": 4.74,
+                "fps": 44.11,
                 "frameMs": {
-                    "n": 208,
-                    "avg": 24.68,
+                    "n": 209,
+                    "avg": 22.65,
                     "p50": 16.7,
                     "p95": 16.8,
-                    "max": 1016.6
+                    "max": 666.6
                 },
-                "longFrames": 7,
-                "framesOver1000ms": 1,
-                "longTasks": 12,
-                "longTaskMs": 1763,
-                "cellUpdatesSentPerS": 21734.81,
+                "longFrames": 8,
+                "framesOver1000ms": 0,
+                "longTasks": 10,
+                "longTaskMs": 1279,
+                "cellUpdatesSentPerS": 23137.32,
                 "loadedNodes": {
-                    "first": 227,
-                    "last": 227,
-                    "max": 227,
-                    "slopePerS": 0
+                    "first": 225,
+                    "last": 265,
+                    "max": 265,
+                    "slopePerSSecondHalf": 24.24
                 },
                 "gridsAttached": 1,
                 "grids": [
                     {
-                        "contentRefreshPerS": 1.18,
+                        "contentRefreshPerS": 1.48,
                         "perCellRenderedRate": {
-                            "n": 835,
-                            "avg": 1.14,
-                            "p50": 1.17,
-                            "p95": 2.52,
-                            "max": 2.52,
-                            "p10": 0
+                            "n": 780,
+                            "avg": 1.39,
+                            "p50": 1.48,
+                            "p95": 2.4,
+                            "max": 2.4,
+                            "p10": 0.33
                         },
-                        "rowsObserved": 127,
-                        "pctRowsChangedAtLeast1PerS": 55.91,
-                        "domRowsAddedPerS": 9.63,
-                        "domRowsRemovedPerS": 9.63,
+                        "rowsObserved": 116,
+                        "pctRowsChangedAtLeast1PerS": 62.07,
+                        "domRowsAddedPerS": 10.55,
+                        "domRowsRemovedPerS": 10.55,
                         "rowIdAttributeChanges": 0,
-                        "insertsAppliedPerS": 10.03,
-                        "orderChecks": 13,
+                        "insertsAppliedPerS": 10.55,
+                        "orderChecks": 14,
                         "orderMismatches": 0,
                         "headRenderLagMs": {
-                            "n": 51,
-                            "avg": 402.55,
-                            "p50": 404.9,
-                            "p95": 865.8,
-                            "max": 887.8
+                            "n": 50,
+                            "avg": 3.04,
+                            "p50": 3.3,
+                            "p95": 3.3,
+                            "max": 3.4
                         },
                         "aggLagMs": {
                             "group": {
@@ -1006,27 +1015,27 @@
                             "n": 0
                         },
                         "txAsyncQueueMs": {
-                            "n": 17,
-                            "avg": 180.23,
-                            "p50": 188.6,
-                            "p95": 217.2,
-                            "max": 217.2
+                            "n": 71,
+                            "avg": 569.15,
+                            "p50": 686.1,
+                            "p95": 686.1,
+                            "max": 686.1
                         },
                         "txStatuses": {
-                            "Applied": 73
+                            "Applied": 71
                         },
-                        "subscribedRows": 117,
-                        "rows": 117,
+                        "subscribedRows": 116,
+                        "rows": 116,
                         "cols": 50,
                         "feed": {
                             "insertsEmitted": 50,
                             "updateTicks": 21,
-                            "backendMs": 13.7,
+                            "backendMs": 13.3,
                             "refreshInserts": 0,
                             "refetches": 0,
-                            "insertsEmittedPerS": 9.83,
-                            "updateTicksPerS": 4.13,
-                            "backendMsPerS": 2.69
+                            "insertsEmittedPerS": 10.55,
+                            "updateTicksPerS": 4.43,
+                            "backendMsPerS": 2.81
                         }
                     }
                 ]
@@ -1035,7 +1044,7 @@
             "consoleErrors": [],
             "title": "Selection across pause/resume with inserts",
             "query": "cols=50",
-            "measuredAt": "2026-11-26T22:12:28.069Z",
+            "measuredAt": "2026-11-26T22:34:44.693Z",
             "repeats": []
         },
         "S5a": {
@@ -1058,53 +1067,54 @@
                 "subDebounce": 50,
                 "feed": true
             },
+            "version": "36.3.0-beta.20261126.1116",
             "snapshot": {
-                "seconds": 10.11,
-                "fps": 27.61,
+                "seconds": 40.09,
+                "fps": 27.52,
                 "frameMs": {
-                    "n": 279,
-                    "avg": 35.78,
+                    "n": 1103,
+                    "avg": 36.23,
                     "p50": 16.7,
                     "p95": 116.7,
                     "max": 166.7
                 },
-                "longFrames": 50,
+                "longFrames": 201,
                 "framesOver1000ms": 0,
-                "longTasks": 61,
-                "longTaskMs": 4798,
-                "cellUpdatesSentPerS": 26048.37,
+                "longTasks": 229,
+                "longTaskMs": 18981,
+                "cellUpdatesSentPerS": 26044.66,
                 "loadedNodes": {
-                    "first": 241,
-                    "last": 303,
-                    "max": 303,
-                    "slopePerS": 9.23
+                    "first": 246,
+                    "last": 581,
+                    "max": 581,
+                    "slopePerSSecondHalf": 8.86
                 },
                 "gridsAttached": 1,
                 "grids": [
                     {
-                        "contentRefreshPerS": 5.05,
+                        "contentRefreshPerS": 5.01,
                         "perCellRenderedRate": {
-                            "n": 1000,
-                            "avg": 4.54,
-                            "p50": 5,
-                            "p95": 5.11,
-                            "max": 5.18,
-                            "p10": 3.73
+                            "n": 2315,
+                            "avg": 4.97,
+                            "p50": 4.95,
+                            "p95": 5.07,
+                            "max": 5.22,
+                            "p10": 4.91
                         },
-                        "rowsObserved": 183,
+                        "rowsObserved": 443,
                         "pctRowsChangedAtLeast1PerS": 100,
-                        "domRowsAddedPerS": 9.3,
-                        "domRowsRemovedPerS": 9.3,
+                        "domRowsAddedPerS": 9.06,
+                        "domRowsRemovedPerS": 9.06,
                         "rowIdAttributeChanges": 0,
-                        "insertsAppliedPerS": 9.1,
-                        "orderChecks": 18,
+                        "insertsAppliedPerS": 9.06,
+                        "orderChecks": 73,
                         "orderMismatches": 0,
                         "headRenderLagMs": {
-                            "n": 92,
-                            "avg": 2.32,
-                            "p50": 1.7,
-                            "p95": 6.4,
-                            "max": 15.7
+                            "n": 361,
+                            "avg": 2.6,
+                            "p50": 2.1,
+                            "p95": 6.3,
+                            "max": 14.1
                         },
                         "aggLagMs": {
                             "group": {
@@ -1119,27 +1129,27 @@
                             "n": 0
                         },
                         "txAsyncQueueMs": {
-                            "n": 142,
-                            "avg": 160.03,
-                            "p50": 173.3,
-                            "p95": 205.7,
-                            "max": 225.7
+                            "n": 564,
+                            "avg": 166.44,
+                            "p50": 177.3,
+                            "p95": 198,
+                            "max": 240.6
                         },
                         "txStatuses": {
-                            "Applied": 142
+                            "Applied": 564
                         },
-                        "subscribedRows": 117,
-                        "rows": 117,
+                        "subscribedRows": 116,
+                        "rows": 116,
                         "cols": 50,
                         "feed": {
-                            "insertsEmitted": 93,
-                            "updateTicks": 50,
-                            "backendMs": 47.6,
+                            "insertsEmitted": 363,
+                            "updateTicks": 200,
+                            "backendMs": 168,
                             "refreshInserts": 0,
                             "refetches": 0,
-                            "insertsEmittedPerS": 9.2,
-                            "updateTicksPerS": 4.95,
-                            "backendMsPerS": 4.71
+                            "insertsEmittedPerS": 9.06,
+                            "updateTicksPerS": 4.99,
+                            "backendMsPerS": 4.19
                         }
                     }
                 ]
@@ -1148,7 +1158,7 @@
             "consoleErrors": [],
             "title": "Window: cacheBlockSize 100, maxBlocksInCache -1",
             "query": "cols=50&block=100&maxBlocks=-1",
-            "measuredAt": "2026-11-26T22:12:42.054Z",
+            "measuredAt": "2026-11-26T22:35:28.634Z",
             "repeats": []
         },
         "S5b": {
@@ -1171,53 +1181,54 @@
                 "subDebounce": 50,
                 "feed": true
             },
+            "version": "36.3.0-beta.20261126.1116",
             "snapshot": {
-                "seconds": 10,
-                "fps": 28.69,
+                "seconds": 40.17,
+                "fps": 27.14,
                 "frameMs": {
-                    "n": 287,
-                    "avg": 34.78,
+                    "n": 1090,
+                    "avg": 36.7,
                     "p50": 16.7,
                     "p95": 116.7,
                     "max": 166.7
                 },
-                "longFrames": 51,
+                "longFrames": 200,
                 "framesOver1000ms": 0,
-                "longTasks": 60,
-                "longTaskMs": 4743,
-                "cellUpdatesSentPerS": 26319.47,
+                "longTasks": 236,
+                "longTaskMs": 19265,
+                "cellUpdatesSentPerS": 25991.29,
                 "loadedNodes": {
                     "first": 243,
-                    "last": 299,
-                    "max": 299,
-                    "slopePerS": 9.06
+                    "last": 500,
+                    "max": 500,
+                    "slopePerSSecondHalf": 4.03
                 },
                 "gridsAttached": 1,
                 "grids": [
                     {
-                        "contentRefreshPerS": 5,
+                        "contentRefreshPerS": 4.98,
                         "perCellRenderedRate": {
-                            "n": 1005,
-                            "avg": 4.4,
-                            "p50": 4.69,
-                            "p95": 5.01,
-                            "max": 5.01,
-                            "p10": 3.48
+                            "n": 2335,
+                            "avg": 4.91,
+                            "p50": 4.93,
+                            "p95": 5.02,
+                            "max": 5.1,
+                            "p10": 4.85
                         },
-                        "rowsObserved": 182,
+                        "rowsObserved": 448,
                         "pctRowsChangedAtLeast1PerS": 100,
-                        "domRowsAddedPerS": 9.2,
-                        "domRowsRemovedPerS": 9.2,
+                        "domRowsAddedPerS": 9.19,
+                        "domRowsRemovedPerS": 9.19,
                         "rowIdAttributeChanges": 0,
-                        "insertsAppliedPerS": 9.2,
-                        "orderChecks": 19,
+                        "insertsAppliedPerS": 9.16,
+                        "orderChecks": 72,
                         "orderMismatches": 0,
                         "headRenderLagMs": {
-                            "n": 92,
-                            "avg": 2.49,
-                            "p50": 1.7,
-                            "p95": 12.2,
-                            "max": 22.7
+                            "n": 368,
+                            "avg": 3.17,
+                            "p50": 2.2,
+                            "p95": 11.7,
+                            "max": 22
                         },
                         "aggLagMs": {
                             "group": {
@@ -1232,27 +1243,27 @@
                             "n": 0
                         },
                         "txAsyncQueueMs": {
-                            "n": 142,
-                            "avg": 159.95,
-                            "p50": 173.1,
-                            "p95": 195.5,
-                            "max": 219.2
+                            "n": 568,
+                            "avg": 167.29,
+                            "p50": 177.8,
+                            "p95": 207,
+                            "max": 229.3
                         },
                         "txStatuses": {
-                            "Applied": 142
+                            "Applied": 568
                         },
-                        "subscribedRows": 117,
-                        "rows": 117,
+                        "subscribedRows": 116,
+                        "rows": 116,
                         "cols": 50,
                         "feed": {
-                            "insertsEmitted": 91,
-                            "updateTicks": 50,
-                            "backendMs": 37.1,
+                            "insertsEmitted": 368,
+                            "updateTicks": 200,
+                            "backendMs": 144,
                             "refreshInserts": 0,
                             "refetches": 0,
-                            "insertsEmittedPerS": 9.1,
-                            "updateTicksPerS": 5,
-                            "backendMsPerS": 3.71
+                            "insertsEmittedPerS": 9.16,
+                            "updateTicksPerS": 4.98,
+                            "backendMsPerS": 3.59
                         }
                     }
                 ]
@@ -1261,7 +1272,7 @@
             "consoleErrors": [],
             "title": "Window: cacheBlockSize 100, maxBlocksInCache 5",
             "query": "cols=50&block=100&maxBlocks=5",
-            "measuredAt": "2026-11-26T22:12:55.899Z",
+            "measuredAt": "2026-11-26T22:36:12.672Z",
             "repeats": []
         },
         "S5c": {
@@ -1284,53 +1295,54 @@
                 "subDebounce": 50,
                 "feed": true
             },
+            "version": "36.3.0-beta.20261126.1116",
             "snapshot": {
-                "seconds": 10.08,
-                "fps": 28.08,
+                "seconds": 40.17,
+                "fps": 27.48,
                 "frameMs": {
-                    "n": 283,
-                    "avg": 35.22,
+                    "n": 1104,
+                    "avg": 36.25,
                     "p50": 16.7,
                     "p95": 116.7,
                     "max": 166.7
                 },
-                "longFrames": 50,
+                "longFrames": 201,
                 "framesOver1000ms": 0,
-                "longTasks": 59,
-                "longTaskMs": 4694,
-                "cellUpdatesSentPerS": 26124.62,
+                "longTasks": 235,
+                "longTaskMs": 19352,
+                "cellUpdatesSentPerS": 26118.45,
                 "loadedNodes": {
                     "first": 500,
                     "last": 500,
                     "max": 500,
-                    "slopePerS": 0
+                    "slopePerSSecondHalf": 0
                 },
                 "gridsAttached": 1,
                 "grids": [
                     {
-                        "contentRefreshPerS": 4.96,
+                        "contentRefreshPerS": 5,
                         "perCellRenderedRate": {
-                            "n": 1010,
-                            "avg": 4.46,
-                            "p50": 4.78,
-                            "p95": 5.02,
-                            "max": 5.02,
-                            "p10": 3.73
+                            "n": 2260,
+                            "avg": 4.96,
+                            "p50": 4.95,
+                            "p95": 5.04,
+                            "max": 5.19,
+                            "p10": 4.91
                         },
-                        "rowsObserved": 185,
+                        "rowsObserved": 432,
                         "pctRowsChangedAtLeast1PerS": 100,
-                        "domRowsAddedPerS": 9.43,
-                        "domRowsRemovedPerS": 9.43,
+                        "domRowsAddedPerS": 8.79,
+                        "domRowsRemovedPerS": 8.79,
                         "rowIdAttributeChanges": 0,
-                        "insertsAppliedPerS": 9.63,
-                        "orderChecks": 18,
+                        "insertsAppliedPerS": 8.76,
+                        "orderChecks": 73,
                         "orderMismatches": 0,
                         "headRenderLagMs": {
-                            "n": 96,
-                            "avg": 1.98,
-                            "p50": 1.7,
-                            "p95": 2.9,
-                            "max": 13.7
+                            "n": 352,
+                            "avg": 2.82,
+                            "p50": 2.1,
+                            "p95": 7.9,
+                            "max": 20.2
                         },
                         "aggLagMs": {
                             "group": {
@@ -1345,27 +1357,27 @@
                             "n": 0
                         },
                         "txAsyncQueueMs": {
-                            "n": 148,
-                            "avg": 159.78,
-                            "p50": 174,
-                            "p95": 199.7,
-                            "max": 235.2
+                            "n": 552,
+                            "avg": 168.03,
+                            "p50": 177.4,
+                            "p95": 207.1,
+                            "max": 247.1
                         },
                         "txStatuses": {
-                            "Applied": 148
+                            "Applied": 552
                         },
-                        "subscribedRows": 117,
-                        "rows": 117,
+                        "subscribedRows": 116,
+                        "rows": 116,
                         "cols": 50,
                         "feed": {
-                            "insertsEmitted": 96,
-                            "updateTicks": 50,
-                            "backendMs": 47.1,
+                            "insertsEmitted": 352,
+                            "updateTicks": 201,
+                            "backendMs": 161.5,
                             "refreshInserts": 0,
                             "refetches": 0,
-                            "insertsEmittedPerS": 9.53,
-                            "updateTicksPerS": 4.96,
-                            "backendMsPerS": 4.67
+                            "insertsEmittedPerS": 8.76,
+                            "updateTicksPerS": 5,
+                            "backendMsPerS": 4.02
                         }
                     }
                 ]
@@ -1374,7 +1386,7 @@
             "consoleErrors": [],
             "title": "Window: cacheBlockSize 500, maxBlocksInCache 1",
             "query": "cols=50&block=500&maxBlocks=1",
-            "measuredAt": "2026-11-26T22:13:10.016Z",
+            "measuredAt": "2026-11-26T22:36:56.845Z",
             "repeats": []
         },
         "S5d": {
@@ -1397,53 +1409,54 @@
                 "subDebounce": 50,
                 "feed": true
             },
+            "version": "36.3.0-beta.20261126.1116",
             "snapshot": {
-                "seconds": 10,
-                "fps": 28.69,
+                "seconds": 40.02,
+                "fps": 26.81,
                 "frameMs": {
-                    "n": 287,
-                    "avg": 34.84,
+                    "n": 1073,
+                    "avg": 37.14,
                     "p50": 16.7,
-                    "p95": 116.7,
-                    "max": 166.7
+                    "p95": 133.3,
+                    "max": 183.4
                 },
-                "longFrames": 51,
+                "longFrames": 201,
                 "framesOver1000ms": 0,
-                "longTasks": 58,
-                "longTaskMs": 4676,
-                "cellUpdatesSentPerS": 26319.21,
+                "longTasks": 241,
+                "longTaskMs": 20053,
+                "cellUpdatesSentPerS": 26085.07,
                 "loadedNodes": {
-                    "first": 546,
-                    "last": 601,
-                    "max": 601,
-                    "slopePerS": 9.02
+                    "first": 545,
+                    "last": 861,
+                    "max": 861,
+                    "slopePerSSecondHalf": 8.93
                 },
                 "gridsAttached": 1,
                 "grids": [
                     {
                         "contentRefreshPerS": 5,
                         "perCellRenderedRate": {
-                            "n": 1005,
-                            "avg": 4.41,
-                            "p50": 4.78,
-                            "p95": 5,
-                            "max": 5,
-                            "p10": 3.5
+                            "n": 2265,
+                            "avg": 4.96,
+                            "p50": 4.95,
+                            "p95": 5.02,
+                            "max": 5.08,
+                            "p10": 4.91
                         },
-                        "rowsObserved": 182,
+                        "rowsObserved": 435,
                         "pctRowsChangedAtLeast1PerS": 100,
-                        "domRowsAddedPerS": 9.1,
-                        "domRowsRemovedPerS": 9.1,
+                        "domRowsAddedPerS": 8.82,
+                        "domRowsRemovedPerS": 8.82,
                         "rowIdAttributeChanges": 0,
-                        "insertsAppliedPerS": 9.3,
-                        "orderChecks": 19,
+                        "insertsAppliedPerS": 8.84,
+                        "orderChecks": 71,
                         "orderMismatches": 0,
                         "headRenderLagMs": {
-                            "n": 93,
-                            "avg": 2.04,
-                            "p50": 1.6,
-                            "p95": 2.7,
-                            "max": 18.1
+                            "n": 352,
+                            "avg": 2.93,
+                            "p50": 2.2,
+                            "p95": 8.8,
+                            "max": 19.3
                         },
                         "aggLagMs": {
                             "group": {
@@ -1458,27 +1471,27 @@
                             "n": 0
                         },
                         "txAsyncQueueMs": {
-                            "n": 144,
-                            "avg": 159.72,
-                            "p50": 174.2,
-                            "p95": 192.3,
-                            "max": 215.4
+                            "n": 555,
+                            "avg": 168.83,
+                            "p50": 179,
+                            "p95": 207.9,
+                            "max": 240.9
                         },
                         "txStatuses": {
-                            "Applied": 144
+                            "Applied": 555
                         },
-                        "subscribedRows": 117,
-                        "rows": 117,
+                        "subscribedRows": 116,
+                        "rows": 116,
                         "cols": 50,
                         "feed": {
-                            "insertsEmitted": 92,
-                            "updateTicks": 50,
-                            "backendMs": 55.5,
+                            "insertsEmitted": 353,
+                            "updateTicks": 200,
+                            "backendMs": 156.3,
                             "refreshInserts": 0,
                             "refetches": 0,
-                            "insertsEmittedPerS": 9.2,
+                            "insertsEmittedPerS": 8.82,
                             "updateTicksPerS": 5,
-                            "backendMsPerS": 5.55
+                            "backendMsPerS": 3.91
                         }
                     }
                 ]
@@ -1487,7 +1500,7 @@
             "consoleErrors": [],
             "title": "Window: cacheBlockSize 500, maxBlocksInCache -1",
             "query": "cols=50&block=500&maxBlocks=-1",
-            "measuredAt": "2026-11-26T22:13:24.024Z",
+            "measuredAt": "2026-11-26T22:37:40.976Z",
             "repeats": []
         },
         "S6": {
@@ -1510,44 +1523,45 @@
                 "subDebounce": 50,
                 "feed": true
             },
+            "version": "36.3.0-beta.20261126.1116",
             "groupsLoaded": 50,
             "snapshot": {
-                "seconds": 10.02,
-                "fps": 33.14,
+                "seconds": 10.01,
+                "fps": 33.96,
                 "frameMs": {
-                    "n": 332,
-                    "avg": 30.07,
+                    "n": 340,
+                    "avg": 29.46,
                     "p50": 16.7,
                     "p95": 100,
-                    "max": 133.4
+                    "max": 133.3
                 },
                 "longFrames": 50,
                 "framesOver1000ms": 0,
-                "longTasks": 56,
-                "longTaskMs": 4142,
-                "cellUpdatesSentPerS": 25826.96,
+                "longTasks": 55,
+                "longTaskMs": 4138,
+                "cellUpdatesSentPerS": 25616.44,
                 "loadedNodes": {
-                    "first": 353,
+                    "first": 352,
                     "last": 357,
                     "max": 357,
-                    "slopePerS": 0.57
+                    "slopePerSSecondHalf": 0.87
                 },
                 "gridsAttached": 1,
                 "grids": [
                     {
-                        "contentRefreshPerS": 4.99,
+                        "contentRefreshPerS": 5.19,
                         "perCellRenderedRate": {
-                            "n": 384,
-                            "avg": 4.52,
-                            "p50": 5.01,
-                            "p95": 5.01,
-                            "max": 5.01,
-                            "p10": 4.61
+                            "n": 351,
+                            "avg": 4.89,
+                            "p50": 4.99,
+                            "p95": 4.99,
+                            "max": 5.19,
+                            "p10": 4.99
                         },
-                        "rowsObserved": 128,
-                        "pctRowsChangedAtLeast1PerS": 91.41,
-                        "domRowsAddedPerS": 0.3,
-                        "domRowsRemovedPerS": 0.3,
+                        "rowsObserved": 117,
+                        "pctRowsChangedAtLeast1PerS": 99.15,
+                        "domRowsAddedPerS": 0.2,
+                        "domRowsRemovedPerS": 0.2,
                         "rowIdAttributeChanges": 0,
                         "insertsAppliedPerS": 0.6,
                         "orderChecks": 0,
@@ -1557,46 +1571,46 @@
                         },
                         "aggLagMs": {
                             "group": {
-                                "n": 50,
-                                "avg": 74.88,
-                                "p50": 76.6,
-                                "p95": 104.6,
-                                "max": 123.6
+                                "n": 54,
+                                "avg": 101.56,
+                                "p50": 106.3,
+                                "p95": 131.2,
+                                "max": 143.7
                             },
                             "total": {
-                                "n": 67,
-                                "avg": 59.05,
-                                "p50": 57.3,
-                                "p95": 90.9,
-                                "max": 104.7
+                                "n": 153,
+                                "avg": 93.39,
+                                "p50": 99.3,
+                                "p95": 131.6,
+                                "max": 151.4
                             },
-                            "superseded": 88
+                            "superseded": 83
                         },
                         "txSyncApplyMs": {
                             "n": 0
                         },
                         "txAsyncQueueMs": {
-                            "n": 214,
-                            "avg": 132.56,
-                            "p50": 145.2,
-                            "p95": 175.8,
-                            "max": 206.3
+                            "n": 218,
+                            "avg": 131.59,
+                            "p50": 145.3,
+                            "p95": 181.4,
+                            "max": 194.9
                         },
                         "txStatuses": {
-                            "Applied": 214
+                            "Applied": 218
                         },
-                        "subscribedRows": 117,
-                        "rows": 117,
+                        "subscribedRows": 116,
+                        "rows": 116,
                         "cols": 50,
                         "feed": {
-                            "insertsEmitted": 102,
+                            "insertsEmitted": 104,
                             "updateTicks": 50,
-                            "backendMs": 35.4,
+                            "backendMs": 33,
                             "refreshInserts": 0,
                             "refetches": 0,
-                            "insertsEmittedPerS": 10.18,
+                            "insertsEmittedPerS": 10.39,
                             "updateTicksPerS": 4.99,
-                            "backendMsPerS": 3.53
+                            "backendMsPerS": 3.3
                         }
                     }
                 ]
@@ -1605,7 +1619,7 @@
             "consoleErrors": [],
             "title": "Grouped by sym, SUM + grand total, 3 groups expanded",
             "query": "cols=50&group=1",
-            "measuredAt": "2026-11-26T22:13:38.905Z",
+            "measuredAt": "2026-11-26T22:37:55.820Z",
             "repeats": []
         },
         "S11": {
@@ -1628,9 +1642,10 @@
                 "subDebounce": 50,
                 "feed": false
             },
+            "version": "36.3.0-beta.20261126.1116",
             "action": {
                 "sort": {
-                    "renderedImmediatelyAfterClick": "unchanged or loading",
+                    "renderedBeforeResponse": "unchanged or loading",
                     "backendReceived": [
                         [
                             {
@@ -1683,7 +1698,7 @@
             "consoleErrors": [],
             "title": "Server-side sort, filters, grouping (500 ms latency, feed off)",
             "query": "cols=50&feed=0&latency=500",
-            "measuredAt": "2026-11-26T22:13:46.872Z",
+            "measuredAt": "2026-11-26T22:38:04.121Z",
             "repeats": []
         },
         "S3": {
@@ -1706,53 +1721,54 @@
                 "subDebounce": 50,
                 "feed": true
             },
+            "version": "36.3.0-beta.20261126.1116",
             "snapshot": {
-                "seconds": 10.05,
-                "fps": 34.42,
+                "seconds": 10.02,
+                "fps": 32.43,
                 "frameMs": {
-                    "n": 346,
-                    "avg": 28.71,
+                    "n": 325,
+                    "avg": 30.56,
                     "p50": 16.7,
                     "p95": 83.3,
-                    "max": 116.6
+                    "max": 116.7
                 },
-                "longFrames": 40,
+                "longFrames": 44,
                 "framesOver1000ms": 0,
-                "longTasks": 27,
-                "longTaskMs": 1443,
-                "cellUpdatesSentPerS": 16732.66,
+                "longTasks": 35,
+                "longTaskMs": 1876,
+                "cellUpdatesSentPerS": 16781.57,
                 "loadedNodes": {
-                    "first": 158,
-                    "last": 247,
-                    "max": 247,
-                    "slopePerS": 13.06
+                    "first": 159,
+                    "last": 253,
+                    "max": 253,
+                    "slopePerSSecondHalf": 12.9
                 },
                 "gridsAttached": 1,
                 "grids": [
                     {
-                        "contentRefreshPerS": 4.97,
+                        "contentRefreshPerS": 4.99,
                         "perCellRenderedRate": {
-                            "n": 860,
-                            "avg": 4.29,
-                            "p50": 4.3,
-                            "p95": 5.22,
-                            "max": 5.54,
-                            "p10": 3.44
+                            "n": 800,
+                            "avg": 4.99,
+                            "p50": 4.98,
+                            "p95": 5.24,
+                            "max": 5.63,
+                            "p10": 4.8
                         },
-                        "rowsObserved": 145,
+                        "rowsObserved": 133,
                         "pctRowsChangedAtLeast1PerS": 100,
-                        "domRowsAddedPerS": 12.83,
-                        "domRowsRemovedPerS": 12.83,
+                        "domRowsAddedPerS": 12.97,
+                        "domRowsRemovedPerS": 12.97,
                         "rowIdAttributeChanges": 0,
-                        "insertsAppliedPerS": 12.83,
-                        "orderChecks": 23,
+                        "insertsAppliedPerS": 12.97,
+                        "orderChecks": 21,
                         "orderMismatches": 0,
                         "headRenderLagMs": {
-                            "n": 128,
-                            "avg": 5.98,
-                            "p50": 0.9,
-                            "p95": 25.8,
-                            "max": 58.6
+                            "n": 129,
+                            "avg": 12.52,
+                            "p50": 4.9,
+                            "p95": 52.8,
+                            "max": 87.4
                         },
                         "aggLagMs": {
                             "group": {
@@ -1764,30 +1780,30 @@
                             "superseded": 0
                         },
                         "txSyncApplyMs": {
-                            "n": 179,
-                            "avg": 15.48,
+                            "n": 180,
+                            "avg": 15.96,
                             "p50": 14.3,
-                            "p95": 29.5,
-                            "max": 52
+                            "p95": 31.2,
+                            "max": 55
                         },
                         "txAsyncQueueMs": {
                             "n": 0
                         },
                         "txStatuses": {
-                            "Applied": 179
+                            "Applied": 180
                         },
                         "subscribedRows": 58,
-                        "rows": 58,
+                        "rows": 57,
                         "cols": 58,
                         "feed": {
-                            "insertsEmitted": 129,
+                            "insertsEmitted": 130,
                             "updateTicks": 50,
-                            "backendMs": 56.4,
+                            "backendMs": 56.3,
                             "refreshInserts": 0,
                             "refetches": 0,
-                            "insertsEmittedPerS": 12.83,
-                            "updateTicksPerS": 4.97,
-                            "backendMsPerS": 5.61
+                            "insertsEmittedPerS": 12.97,
+                            "updateTicksPerS": 4.99,
+                            "backendMsPerS": 5.62
                         }
                     }
                 ]
@@ -1796,7 +1812,7 @@
             "consoleErrors": [],
             "title": "S1 with sync transactions",
             "query": "cols=200&rowHeight=36&colWidth=64&sync=1",
-            "measuredAt": "2026-11-26T22:14:00.845Z",
+            "measuredAt": "2026-11-26T22:38:18.119Z",
             "repeats": []
         },
         "S2": {
@@ -1819,53 +1835,54 @@
                 "subDebounce": 50,
                 "feed": true
             },
+            "version": "36.3.0-beta.20261126.1116",
             "snapshot": {
-                "seconds": 10,
-                "fps": 33.49,
+                "seconds": 10.03,
+                "fps": 33.7,
                 "frameMs": {
-                    "n": 335,
-                    "avg": 29.9,
+                    "n": 338,
+                    "avg": 29.44,
                     "p50": 16.7,
                     "p95": 83.4,
-                    "max": 116.7
+                    "max": 100.1
                 },
-                "longFrames": 69,
+                "longFrames": 66,
                 "framesOver1000ms": 0,
-                "longTasks": 70,
-                "longTaskMs": 3692,
-                "cellUpdatesSentPerS": 33633.61,
+                "longTasks": 74,
+                "longTaskMs": 3958,
+                "cellUpdatesSentPerS": 33536.71,
                 "loadedNodes": {
-                    "first": 152,
-                    "last": 227,
-                    "max": 227,
-                    "slopePerS": 10.47
+                    "first": 147,
+                    "last": 231,
+                    "max": 231,
+                    "slopePerSSecondHalf": 11.83
                 },
                 "gridsAttached": 1,
                 "grids": [
                     {
-                        "contentRefreshPerS": 7,
+                        "contentRefreshPerS": 6.98,
                         "perCellRenderedRate": {
-                            "n": 755,
-                            "avg": 5.93,
-                            "p50": 6.13,
-                            "p95": 6.82,
-                            "max": 6.9,
-                            "p10": 4.77
+                            "n": 750,
+                            "avg": 6.78,
+                            "p50": 6.8,
+                            "p95": 7.03,
+                            "max": 7.06,
+                            "p10": 6.55
                         },
-                        "rowsObserved": 133,
+                        "rowsObserved": 128,
                         "pctRowsChangedAtLeast1PerS": 100,
-                        "domRowsAddedPerS": 10.6,
-                        "domRowsRemovedPerS": 10.6,
+                        "domRowsAddedPerS": 11.56,
+                        "domRowsRemovedPerS": 11.56,
                         "rowIdAttributeChanges": 0,
-                        "insertsAppliedPerS": 10.8,
+                        "insertsAppliedPerS": 11.66,
                         "orderChecks": 22,
                         "orderMismatches": 0,
                         "headRenderLagMs": {
-                            "n": 108,
-                            "avg": 1.48,
+                            "n": 115,
+                            "avg": 1.51,
                             "p50": 1,
-                            "p95": 2.7,
-                            "max": 13.3
+                            "p95": 2.5,
+                            "max": 13.1
                         },
                         "aggLagMs": {
                             "group": {
@@ -1880,27 +1897,27 @@
                             "n": 0
                         },
                         "txAsyncQueueMs": {
-                            "n": 209,
-                            "avg": 131.42,
-                            "p50": 132.9,
-                            "p95": 154.3,
-                            "max": 161.9
+                            "n": 219,
+                            "avg": 132.67,
+                            "p50": 133.5,
+                            "p95": 156.7,
+                            "max": 166
                         },
                         "txStatuses": {
-                            "Applied": 209
+                            "Applied": 219
                         },
                         "subscribedRows": 58,
-                        "rows": 58,
+                        "rows": 57,
                         "cols": 58,
                         "feed": {
-                            "insertsEmitted": 108,
+                            "insertsEmitted": 116,
                             "updateTicks": 100,
-                            "backendMs": 120.7,
+                            "backendMs": 110.6,
                             "refreshInserts": 0,
                             "refetches": 0,
-                            "insertsEmittedPerS": 10.8,
-                            "updateTicksPerS": 10,
-                            "backendMsPerS": 12.07
+                            "insertsEmittedPerS": 11.56,
+                            "updateTicksPerS": 9.97,
+                            "backendMsPerS": 11.03
                         }
                     }
                 ]
@@ -1909,7 +1926,7 @@
             "consoleErrors": [],
             "title": "S1 at 10 updates/s per cell",
             "query": "cols=200&rowHeight=36&colWidth=64&rate=10",
-            "measuredAt": "2026-11-26T22:14:14.797Z",
+            "measuredAt": "2026-11-26T22:38:32.000Z",
             "repeats": []
         },
         "S8a": {
@@ -1932,53 +1949,54 @@
                 "subDebounce": 50,
                 "feed": true
             },
+            "version": "36.3.0-beta.20261126.1116",
             "snapshot": {
-                "seconds": 10.01,
-                "fps": 20.08,
+                "seconds": 10.06,
+                "fps": 19.19,
                 "frameMs": {
-                    "n": 201,
-                    "avg": 49.75,
+                    "n": 193,
+                    "avg": 51.21,
                     "p50": 16.7,
-                    "p95": 183.3,
-                    "max": 216.5
+                    "p95": 183.4,
+                    "max": 250
                 },
-                "longFrames": 44,
+                "longFrames": 42,
                 "framesOver1000ms": 0,
-                "longTasks": 86,
-                "longTaskMs": 7773,
-                "cellUpdatesSentPerS": 34220.98,
+                "longTasks": 84,
+                "longTaskMs": 7805,
+                "cellUpdatesSentPerS": 34470.06,
                 "loadedNodes": {
                     "first": 238,
-                    "last": 281,
-                    "max": 281,
-                    "slopePerS": 7.25
+                    "last": 279,
+                    "max": 279,
+                    "slopePerSSecondHalf": 6.35
                 },
                 "gridsAttached": 1,
                 "grids": [
                     {
-                        "contentRefreshPerS": 4.3,
+                        "contentRefreshPerS": 4.18,
                         "perCellRenderedRate": {
-                            "n": 930,
-                            "avg": 3.76,
-                            "p50": 3.96,
-                            "p95": 4.3,
-                            "max": 4.3,
-                            "p10": 3.16
+                            "n": 835,
+                            "avg": 4.13,
+                            "p50": 4.16,
+                            "p95": 4.25,
+                            "max": 4.25,
+                            "p10": 3.97
                         },
-                        "rowsObserved": 174,
+                        "rowsObserved": 154,
                         "pctRowsChangedAtLeast1PerS": 100,
-                        "domRowsAddedPerS": 6.99,
-                        "domRowsRemovedPerS": 6.99,
+                        "domRowsAddedPerS": 6.96,
+                        "domRowsRemovedPerS": 6.96,
                         "rowIdAttributeChanges": 0,
-                        "insertsAppliedPerS": 6.99,
-                        "orderChecks": 13,
+                        "insertsAppliedPerS": 6.96,
+                        "orderChecks": 12,
                         "orderMismatches": 0,
                         "headRenderLagMs": {
-                            "n": 70,
-                            "avg": 5.47,
-                            "p50": 1.9,
-                            "p95": 15.4,
-                            "max": 17.9
+                            "n": 68,
+                            "avg": 5.19,
+                            "p50": 2.2,
+                            "p95": 13.4,
+                            "max": 24.4
                         },
                         "aggLagMs": {
                             "group": {
@@ -1993,27 +2011,27 @@
                             "n": 0
                         },
                         "txAsyncQueueMs": {
-                            "n": 118,
-                            "avg": 226.15,
-                            "p50": 221.9,
-                            "p95": 265.8,
-                            "max": 282.2
+                            "n": 120,
+                            "avg": 230.74,
+                            "p50": 227.7,
+                            "p95": 294.4,
+                            "max": 331.3
                         },
                         "txStatuses": {
-                            "Applied": 118
+                            "Applied": 120
                         },
-                        "subscribedRows": 117,
-                        "rows": 117,
+                        "subscribedRows": 116,
+                        "rows": 116,
                         "cols": 62,
                         "feed": {
                             "insertsEmitted": 70,
-                            "updateTicks": 48,
-                            "backendMs": 113.9,
+                            "updateTicks": 49,
+                            "backendMs": 136.7,
                             "refreshInserts": 0,
                             "refetches": 0,
-                            "insertsEmittedPerS": 6.99,
-                            "updateTicksPerS": 4.79,
-                            "backendMsPerS": 11.38
+                            "insertsEmittedPerS": 6.96,
+                            "updateTicksPerS": 4.87,
+                            "backendMsPerS": 13.59
                         }
                     }
                 ]
@@ -2022,7 +2040,7 @@
             "hscroll": {
                 "immediately": {
                     "blank": 0,
-                    "total": 9144
+                    "total": 9072
                 },
                 "msUntilNoBlankCells": 4,
                 "refetches": 0
@@ -2030,7 +2048,7 @@
             "consoleErrors": [],
             "title": "200 columns, send all fields",
             "query": "cols=200&colWidth=60",
-            "measuredAt": "2026-11-26T22:14:29.508Z",
+            "measuredAt": "2026-11-26T22:38:46.794Z",
             "repeats": []
         },
         "S8b": {
@@ -2053,53 +2071,54 @@
                 "subDebounce": 50,
                 "feed": true
             },
+            "version": "36.3.0-beta.20261126.1116",
             "snapshot": {
-                "seconds": 10.08,
-                "fps": 19.64,
+                "seconds": 10.01,
+                "fps": 19.79,
                 "frameMs": {
                     "n": 198,
-                    "avg": 49.91,
+                    "avg": 50.42,
                     "p50": 16.7,
-                    "p95": 166.7,
-                    "max": 216.6
+                    "p95": 183.4,
+                    "max": 216.8
                 },
                 "longFrames": 43,
                 "framesOver1000ms": 0,
                 "longTasks": 86,
-                "longTaskMs": 7854,
-                "cellUpdatesSentPerS": 33266.46,
+                "longTaskMs": 7996,
+                "cellUpdatesSentPerS": 35354.54,
                 "loadedNodes": {
                     "first": 239,
                     "last": 280,
                     "max": 280,
-                    "slopePerS": 7.01
+                    "slopePerSSecondHalf": 7.54
                 },
                 "gridsAttached": 1,
                 "grids": [
                     {
-                        "contentRefreshPerS": 4.26,
+                        "contentRefreshPerS": 4.2,
                         "perCellRenderedRate": {
-                            "n": 895,
-                            "avg": 3.84,
-                            "p50": 4.14,
-                            "p95": 4.35,
-                            "max": 4.35,
-                            "p10": 3.06
+                            "n": 850,
+                            "avg": 4.06,
+                            "p50": 4.21,
+                            "p95": 4.26,
+                            "max": 4.29,
+                            "p10": 3.69
                         },
-                        "rowsObserved": 170,
+                        "rowsObserved": 155,
                         "pctRowsChangedAtLeast1PerS": 100,
-                        "domRowsAddedPerS": 7.04,
-                        "domRowsRemovedPerS": 7.04,
+                        "domRowsAddedPerS": 6.8,
+                        "domRowsRemovedPerS": 6.8,
                         "rowIdAttributeChanges": 0,
-                        "insertsAppliedPerS": 7.04,
+                        "insertsAppliedPerS": 6.99,
                         "orderChecks": 13,
                         "orderMismatches": 0,
                         "headRenderLagMs": {
-                            "n": 69,
-                            "avg": 4.54,
-                            "p50": 1.8,
-                            "p95": 15.7,
-                            "max": 21.5
+                            "n": 70,
+                            "avg": 4.07,
+                            "p50": 2.1,
+                            "p95": 13.8,
+                            "max": 22.7
                         },
                         "aggLagMs": {
                             "group": {
@@ -2114,27 +2133,27 @@
                             "n": 0
                         },
                         "txAsyncQueueMs": {
-                            "n": 119,
-                            "avg": 229.99,
+                            "n": 120,
+                            "avg": 232.06,
                             "p50": 224.2,
-                            "p95": 265.2,
-                            "max": 277.9
+                            "p95": 279.9,
+                            "max": 285.5
                         },
                         "txStatuses": {
-                            "Applied": 119
+                            "Applied": 120
                         },
-                        "subscribedRows": 117,
-                        "rows": 117,
+                        "subscribedRows": 116,
+                        "rows": 116,
                         "cols": 62,
                         "feed": {
-                            "insertsEmitted": 71,
-                            "updateTicks": 47,
-                            "backendMs": 62,
+                            "insertsEmitted": 70,
+                            "updateTicks": 50,
+                            "backendMs": 53.2,
                             "refreshInserts": 0,
                             "refetches": 0,
-                            "insertsEmittedPerS": 7.04,
-                            "updateTicksPerS": 4.66,
-                            "backendMsPerS": 6.15
+                            "insertsEmittedPerS": 6.99,
+                            "updateTicksPerS": 5,
+                            "backendMsPerS": 5.32
                         }
                     }
                 ]
@@ -2142,16 +2161,16 @@
             "bytesPerRow": 791,
             "hscroll": {
                 "immediately": {
-                    "blank": 9144,
-                    "total": 9144
+                    "blank": 9000,
+                    "total": 9072
                 },
-                "msUntilNoBlankCells": 160,
+                "msUntilNoBlankCells": 164,
                 "refetches": 1
             },
             "consoleErrors": [],
             "title": "200 columns, trim to visible",
             "query": "cols=200&colWidth=60&trim=1",
-            "measuredAt": "2026-11-26T22:14:44.301Z",
+            "measuredAt": "2026-11-26T22:39:02.119Z",
             "repeats": []
         },
         "S8c": {
@@ -2174,53 +2193,54 @@
                 "subDebounce": 50,
                 "feed": true
             },
+            "version": "36.3.0-beta.20261126.1116",
             "snapshot": {
-                "seconds": 10.06,
-                "fps": 18.4,
+                "seconds": 10.04,
+                "fps": 17.24,
                 "frameMs": {
-                    "n": 185,
-                    "avg": 53.33,
+                    "n": 173,
+                    "avg": 56.74,
                     "p50": 16.7,
                     "p95": 200,
-                    "max": 216.7
+                    "max": 250
                 },
-                "longFrames": 41,
+                "longFrames": 42,
                 "framesOver1000ms": 0,
-                "longTasks": 82,
-                "longTaskMs": 7698,
-                "cellUpdatesSentPerS": 36195.28,
+                "longTasks": 81,
+                "longTaskMs": 7730,
+                "cellUpdatesSentPerS": 35953.85,
                 "loadedNodes": {
-                    "first": 245,
-                    "last": 287,
-                    "max": 287,
-                    "slopePerS": 6.68
+                    "first": 237,
+                    "last": 259,
+                    "max": 259,
+                    "slopePerSSecondHalf": null
                 },
                 "gridsAttached": 1,
                 "grids": [
                     {
-                        "contentRefreshPerS": 4.08,
+                        "contentRefreshPerS": 3.99,
                         "perCellRenderedRate": {
-                            "n": 920,
-                            "avg": 3.62,
-                            "p50": 3.97,
-                            "p95": 4.16,
-                            "max": 4.16,
-                            "p10": 2.86
+                            "n": 800,
+                            "avg": 3.97,
+                            "p50": 4,
+                            "p95": 4.1,
+                            "max": 4.14,
+                            "p10": 3.82
                         },
-                        "rowsObserved": 168,
+                        "rowsObserved": 148,
                         "pctRowsChangedAtLeast1PerS": 100,
-                        "domRowsAddedPerS": 6.86,
-                        "domRowsRemovedPerS": 6.86,
+                        "domRowsAddedPerS": 5.98,
+                        "domRowsRemovedPerS": 5.98,
                         "rowIdAttributeChanges": 0,
-                        "insertsAppliedPerS": 6.86,
-                        "orderChecks": 12,
+                        "insertsAppliedPerS": 5.78,
+                        "orderChecks": 11,
                         "orderMismatches": 0,
                         "headRenderLagMs": {
-                            "n": 67,
-                            "avg": 7.14,
-                            "p50": 1.9,
-                            "p95": 27.7,
-                            "max": 31
+                            "n": 58,
+                            "avg": 10.46,
+                            "p50": 2.3,
+                            "p95": 34.5,
+                            "max": 34.6
                         },
                         "aggLagMs": {
                             "group": {
@@ -2235,27 +2255,27 @@
                             "n": 0
                         },
                         "txAsyncQueueMs": {
-                            "n": 119,
-                            "avg": 231.61,
-                            "p50": 228.1,
-                            "p95": 279.7,
-                            "max": 315.7
+                            "n": 107,
+                            "avg": 238.57,
+                            "p50": 234.6,
+                            "p95": 296,
+                            "max": 341.1
                         },
                         "txStatuses": {
-                            "Applied": 119
+                            "Applied": 107
                         },
-                        "subscribedRows": 117,
-                        "rows": 117,
+                        "subscribedRows": 116,
+                        "rows": 116,
                         "cols": 62,
                         "feed": {
-                            "insertsEmitted": 68,
+                            "insertsEmitted": 60,
                             "updateTicks": 51,
-                            "backendMs": 1115.7,
+                            "backendMs": 1186.9,
                             "refreshInserts": 0,
                             "refetches": 0,
-                            "insertsEmittedPerS": 6.76,
-                            "updateTicksPerS": 5.07,
-                            "backendMsPerS": 110.95
+                            "insertsEmittedPerS": 5.98,
+                            "updateTicksPerS": 5.08,
+                            "backendMsPerS": 118.25
                         }
                     }
                 ]
@@ -2264,7 +2284,7 @@
             "hscroll": {
                 "immediately": {
                     "blank": 0,
-                    "total": 9144
+                    "total": 9072
                 },
                 "msUntilNoBlankCells": 4,
                 "refetches": 0
@@ -2272,7 +2292,7 @@
             "consoleErrors": [],
             "title": "2,000 columns, send all fields",
             "query": "cols=2000&colWidth=60",
-            "measuredAt": "2026-11-26T22:14:59.376Z",
+            "measuredAt": "2026-11-26T22:39:17.112Z",
             "repeats": []
         },
         "S8d": {
@@ -2295,53 +2315,54 @@
                 "subDebounce": 50,
                 "feed": true
             },
+            "version": "36.3.0-beta.20261126.1116",
             "snapshot": {
-                "seconds": 10.03,
-                "fps": 19.85,
+                "seconds": 10.07,
+                "fps": 19.76,
                 "frameMs": {
                     "n": 199,
-                    "avg": 49.58,
+                    "avg": 50.25,
                     "p50": 16.7,
                     "p95": 183.3,
-                    "max": 250
+                    "max": 216.6
                 },
-                "longFrames": 43,
+                "longFrames": 42,
                 "framesOver1000ms": 0,
-                "longTasks": 86,
-                "longTaskMs": 7986,
-                "cellUpdatesSentPerS": 34170.47,
+                "longTasks": 84,
+                "longTaskMs": 7761,
+                "cellUpdatesSentPerS": 34435.48,
                 "loadedNodes": {
-                    "first": 236,
-                    "last": 277,
-                    "max": 277,
-                    "slopePerS": 6.87
+                    "first": 237,
+                    "last": 282,
+                    "max": 282,
+                    "slopePerSSecondHalf": 7
                 },
                 "gridsAttached": 1,
                 "grids": [
                     {
-                        "contentRefreshPerS": 4.19,
+                        "contentRefreshPerS": 4.17,
                         "perCellRenderedRate": {
-                            "n": 895,
-                            "avg": 3.73,
-                            "p50": 4.05,
-                            "p95": 4.26,
-                            "max": 4.26,
-                            "p10": 2.63
+                            "n": 865,
+                            "avg": 4.05,
+                            "p50": 4.19,
+                            "p95": 4.23,
+                            "max": 4.25,
+                            "p10": 3.69
                         },
-                        "rowsObserved": 166,
+                        "rowsObserved": 159,
                         "pctRowsChangedAtLeast1PerS": 100,
-                        "domRowsAddedPerS": 6.68,
-                        "domRowsRemovedPerS": 6.68,
+                        "domRowsAddedPerS": 7.15,
+                        "domRowsRemovedPerS": 7.15,
                         "rowIdAttributeChanges": 0,
-                        "insertsAppliedPerS": 6.88,
+                        "insertsAppliedPerS": 6.95,
                         "orderChecks": 13,
                         "orderMismatches": 0,
                         "headRenderLagMs": {
-                            "n": 67,
-                            "avg": 3.24,
-                            "p50": 1.8,
-                            "p95": 9.3,
-                            "max": 19
+                            "n": 70,
+                            "avg": 4.11,
+                            "p50": 2.2,
+                            "p95": 13.5,
+                            "max": 16.6
                         },
                         "aggLagMs": {
                             "group": {
@@ -2357,26 +2378,26 @@
                         },
                         "txAsyncQueueMs": {
                             "n": 119,
-                            "avg": 233.52,
-                            "p50": 226.4,
-                            "p95": 292.1,
-                            "max": 323.8
+                            "avg": 229.28,
+                            "p50": 226.3,
+                            "p95": 275.4,
+                            "max": 307.2
                         },
                         "txStatuses": {
                             "Applied": 119
                         },
-                        "subscribedRows": 117,
-                        "rows": 117,
+                        "subscribedRows": 116,
+                        "rows": 116,
                         "cols": 62,
                         "feed": {
-                            "insertsEmitted": 68,
-                            "updateTicks": 48,
-                            "backendMs": 177.6,
+                            "insertsEmitted": 71,
+                            "updateTicks": 49,
+                            "backendMs": 168.1,
                             "refreshInserts": 0,
                             "refetches": 0,
-                            "insertsEmittedPerS": 6.78,
-                            "updateTicksPerS": 4.79,
-                            "backendMsPerS": 17.71
+                            "insertsEmittedPerS": 7.05,
+                            "updateTicksPerS": 4.87,
+                            "backendMsPerS": 16.7
                         }
                     }
                 ]
@@ -2384,16 +2405,16 @@
             "bytesPerRow": 791,
             "hscroll": {
                 "immediately": {
-                    "blank": 9072,
-                    "total": 9144
+                    "blank": 9000,
+                    "total": 9072
                 },
-                "msUntilNoBlankCells": 317,
+                "msUntilNoBlankCells": 159,
                 "refetches": 1
             },
             "consoleErrors": [],
             "title": "2,000 columns, trim to visible",
             "query": "cols=2000&colWidth=60&trim=1",
-            "measuredAt": "2026-11-26T22:15:14.387Z",
+            "measuredAt": "2026-11-26T22:39:32.041Z",
             "repeats": []
         },
         "S9a": {
@@ -2416,53 +2437,54 @@
                 "subDebounce": 50,
                 "feed": true
             },
+            "version": "36.3.0-beta.20261126.1116",
             "snapshot": {
-                "seconds": 10.11,
-                "fps": 18.01,
+                "seconds": 10.02,
+                "fps": 17.17,
                 "frameMs": {
-                    "n": 182,
-                    "avg": 54.67,
+                    "n": 172,
+                    "avg": 57.85,
                     "p50": 16.7,
-                    "p95": 183.4,
-                    "max": 250
+                    "p95": 166.8,
+                    "max": 216.7
                 },
-                "longFrames": 58,
+                "longFrames": 67,
                 "framesOver1000ms": 0,
-                "longTasks": 45,
-                "longTaskMs": 4182,
-                "cellUpdatesSentPerS": 30787.88,
+                "longTasks": 47,
+                "longTaskMs": 4159,
+                "cellUpdatesSentPerS": 29723.84,
                 "loadedNodes": {
-                    "first": 135,
-                    "last": 177,
-                    "max": 177,
-                    "slopePerS": 6.41
+                    "first": 142,
+                    "last": 162,
+                    "max": 162,
+                    "slopePerSSecondHalf": null
                 },
                 "gridsAttached": 4,
                 "grids": [
                     {
-                        "contentRefreshPerS": 3.56,
+                        "contentRefreshPerS": 3.89,
                         "perCellRenderedRate": {
-                            "n": 115,
-                            "avg": 2.91,
-                            "p50": 3.19,
-                            "p95": 3.65,
-                            "max": 3.67,
-                            "p10": 1.33
+                            "n": 108,
+                            "avg": 3.73,
+                            "p50": 3.75,
+                            "p95": 3.96,
+                            "max": 4.09,
+                            "p10": 3.49
                         },
-                        "rowsObserved": 105,
-                        "pctRowsChangedAtLeast1PerS": 97.14,
-                        "domRowsAddedPerS": 6.33,
-                        "domRowsRemovedPerS": 6.33,
+                        "rowsObserved": 92,
+                        "pctRowsChangedAtLeast1PerS": 100,
+                        "domRowsAddedPerS": 6.39,
+                        "domRowsRemovedPerS": 6.39,
                         "rowIdAttributeChanges": 0,
-                        "insertsAppliedPerS": 6.13,
-                        "orderChecks": 12,
+                        "insertsAppliedPerS": 6.49,
+                        "orderChecks": 11,
                         "orderMismatches": 0,
                         "headRenderLagMs": {
-                            "n": 62,
-                            "avg": 0.91,
-                            "p50": 0.5,
-                            "p95": 1.6,
-                            "max": 12.2
+                            "n": 65,
+                            "avg": 11.04,
+                            "p50": 0.9,
+                            "p95": 59.8,
+                            "max": 88.9
                         },
                         "aggLagMs": {
                             "group": {
@@ -2477,46 +2499,45 @@
                             "n": 0
                         },
                         "txAsyncQueueMs": {
-                            "n": 111,
-                            "avg": 238.83,
-                            "p50": 240.9,
-                            "p95": 299,
-                            "max": 333.2
+                            "n": 110,
+                            "avg": 227.74,
+                            "p50": 236.3,
+                            "p95": 335.3,
+                            "max": 382.5
                         },
                         "txStatuses": {
-                            "Applied": 111
+                            "Applied": 110
                         },
                         "subscribedRows": 58,
                         "rows": 57,
                         "cols": 30,
                         "feed": {
-                            "insertsEmitted": 62,
-                            "updateTicks": 47,
-                            "backendMs": 14.3,
+                            "insertsEmitted": 64,
+                            "updateTicks": 45,
+                            "backendMs": 14.8,
                             "refreshInserts": 0,
                             "refetches": 0,
-                            "insertsEmittedPerS": 6.13,
-                            "updateTicksPerS": 4.65,
-                            "backendMsPerS": 1.41
+                            "insertsEmittedPerS": 6.39,
+                            "updateTicksPerS": 4.49,
+                            "backendMsPerS": 1.48
                         }
                     },
                     {
-                        "contentRefreshPerS": 3.66
+                        "contentRefreshPerS": 3.79
                     },
                     {
-                        "contentRefreshPerS": 3.66
+                        "contentRefreshPerS": 3.69
                     },
                     {
-                        "contentRefreshPerS": 3.66
+                        "contentRefreshPerS": 3.69
                     }
-                ],
-                "perGridRefreshPerS": [3.56, 3.66, 3.66, 3.66]
+                ]
             },
             "bytesPerRow": 601,
             "consoleErrors": [],
             "title": "4 grids, all live",
             "query": "cols=50&grids=4",
-            "measuredAt": "2026-11-26T22:15:28.843Z",
+            "measuredAt": "2026-11-26T22:39:46.649Z",
             "repeats": []
         },
         "S9b": {
@@ -2539,53 +2560,54 @@
                 "subDebounce": 50,
                 "feed": true
             },
+            "version": "36.3.0-beta.20261126.1116",
             "snapshot": {
-                "seconds": 10.14,
-                "fps": 17.06,
+                "seconds": 10.04,
+                "fps": 18.83,
                 "frameMs": {
-                    "n": 173,
-                    "avg": 57.71,
-                    "p50": 50,
-                    "p95": 150,
-                    "max": 216.6
+                    "n": 189,
+                    "avg": 52.47,
+                    "p50": 49.9,
+                    "p95": 133.3,
+                    "max": 200.1
                 },
-                "longFrames": 79,
+                "longFrames": 78,
                 "framesOver1000ms": 0,
-                "longTasks": 63,
-                "longTaskMs": 4632,
-                "cellUpdatesSentPerS": 17848.97,
+                "longTasks": 64,
+                "longTaskMs": 4353,
+                "cellUpdatesSentPerS": 16359.14,
                 "loadedNodes": {
-                    "first": 133,
-                    "last": 148,
-                    "max": 148,
-                    "slopePerS": 4.41
+                    "first": 130,
+                    "last": 156,
+                    "max": 156,
+                    "slopePerSSecondHalf": 4.19
                 },
                 "gridsAttached": 16,
                 "grids": [
                     {
-                        "contentRefreshPerS": 2.66,
+                        "contentRefreshPerS": 2.59,
                         "perCellRenderedRate": {
-                            "n": 78,
-                            "avg": 1.87,
-                            "p50": 2.09,
-                            "p95": 2.64,
-                            "max": 2.69,
-                            "p10": 0.39
+                            "n": 63,
+                            "avg": 2.41,
+                            "p50": 2.41,
+                            "p95": 2.62,
+                            "max": 2.79,
+                            "p10": 2.19
                         },
-                        "rowsObserved": 67,
-                        "pctRowsChangedAtLeast1PerS": 94.03,
-                        "domRowsAddedPerS": 4.73,
-                        "domRowsRemovedPerS": 4.73,
+                        "rowsObserved": 54,
+                        "pctRowsChangedAtLeast1PerS": 100,
+                        "domRowsAddedPerS": 4.48,
+                        "domRowsRemovedPerS": 4.48,
                         "rowIdAttributeChanges": 0,
-                        "insertsAppliedPerS": 4.73,
-                        "orderChecks": 11,
+                        "insertsAppliedPerS": 4.68,
+                        "orderChecks": 12,
                         "orderMismatches": 0,
                         "headRenderLagMs": {
-                            "n": 48,
-                            "avg": 16.73,
-                            "p50": 1.9,
-                            "p95": 63.1,
-                            "max": 77.1
+                            "n": 47,
+                            "avg": 21.15,
+                            "p50": 13.4,
+                            "p95": 52.2,
+                            "max": 93.9
                         },
                         "aggLagMs": {
                             "group": {
@@ -2600,84 +2622,81 @@
                             "n": 0
                         },
                         "txAsyncQueueMs": {
-                            "n": 78,
-                            "avg": 248.11,
-                            "p50": 236.9,
-                            "p95": 441.1,
-                            "max": 612.6
+                            "n": 77,
+                            "avg": 283.26,
+                            "p50": 271.7,
+                            "p95": 549.9,
+                            "max": 568.2
                         },
                         "txStatuses": {
-                            "Applied": 78
+                            "Applied": 77
                         },
-                        "subscribedRows": 29,
-                        "rows": 28,
+                        "subscribedRows": 28,
+                        "rows": 27,
                         "cols": 14,
                         "feed": {
-                            "insertsEmitted": 49,
-                            "updateTicks": 30,
-                            "backendMs": 18.9,
+                            "insertsEmitted": 46,
+                            "updateTicks": 29,
+                            "backendMs": 4.3,
                             "refreshInserts": 0,
                             "refetches": 0,
-                            "insertsEmittedPerS": 4.83,
-                            "updateTicksPerS": 2.96,
-                            "backendMsPerS": 1.86
+                            "insertsEmittedPerS": 4.58,
+                            "updateTicksPerS": 2.89,
+                            "backendMsPerS": 0.43
                         }
                     },
                     {
-                        "contentRefreshPerS": 2.66
+                        "contentRefreshPerS": 2.69
                     },
                     {
-                        "contentRefreshPerS": 2.76
+                        "contentRefreshPerS": 2.69
                     },
                     {
-                        "contentRefreshPerS": 2.76
+                        "contentRefreshPerS": 2.69
                     },
                     {
-                        "contentRefreshPerS": 2.76
+                        "contentRefreshPerS": 2.69
                     },
                     {
-                        "contentRefreshPerS": 2.76
+                        "contentRefreshPerS": 2.69
                     },
                     {
-                        "contentRefreshPerS": 2.66
+                        "contentRefreshPerS": 2.69
                     },
                     {
-                        "contentRefreshPerS": 2.66
+                        "contentRefreshPerS": 2.69
                     },
                     {
-                        "contentRefreshPerS": 2.66
+                        "contentRefreshPerS": 2.59
                     },
                     {
-                        "contentRefreshPerS": 2.66
+                        "contentRefreshPerS": 2.59
                     },
                     {
-                        "contentRefreshPerS": 2.66
+                        "contentRefreshPerS": 2.59
                     },
                     {
-                        "contentRefreshPerS": 2.66
+                        "contentRefreshPerS": 2.59
                     },
                     {
-                        "contentRefreshPerS": 2.66
+                        "contentRefreshPerS": 2.59
                     },
                     {
-                        "contentRefreshPerS": 2.66
+                        "contentRefreshPerS": 2.69
                     },
                     {
-                        "contentRefreshPerS": 2.66
+                        "contentRefreshPerS": 2.59
                     },
                     {
-                        "contentRefreshPerS": 2.66
+                        "contentRefreshPerS": 2.59
                     }
-                ],
-                "perGridRefreshPerS": [
-                    2.66, 2.66, 2.76, 2.76, 2.76, 2.76, 2.66, 2.66, 2.66, 2.66, 2.66, 2.66, 2.66, 2.66, 2.66, 2.66
                 ]
             },
             "bytesPerRow": 601,
             "consoleErrors": [],
             "title": "16 grids, all live",
             "query": "cols=50&grids=16",
-            "measuredAt": "2026-11-26T22:15:43.934Z",
+            "measuredAt": "2026-11-26T22:40:01.595Z",
             "repeats": []
         },
         "S9c": {
@@ -2700,53 +2719,54 @@
                 "subDebounce": 50,
                 "feed": true
             },
+            "version": "36.3.0-beta.20261126.1116",
             "snapshot": {
-                "seconds": 10.04,
-                "fps": 13.25,
+                "seconds": 10.01,
+                "fps": 16.08,
                 "frameMs": {
-                    "n": 133,
-                    "avg": 75.06,
-                    "p50": 66.7,
-                    "p95": 150.1,
-                    "max": 183.4
+                    "n": 161,
+                    "avg": 62.11,
+                    "p50": 66.6,
+                    "p95": 133.3,
+                    "max": 166.7
                 },
-                "longFrames": 87,
+                "longFrames": 88,
                 "framesOver1000ms": 0,
-                "longTasks": 92,
-                "longTaskMs": 7570,
-                "cellUpdatesSentPerS": 3957.88,
+                "longTasks": 91,
+                "longTaskMs": 7482,
+                "cellUpdatesSentPerS": 2952.99,
                 "loadedNodes": {
-                    "first": 109,
-                    "last": 115,
-                    "max": 115,
-                    "slopePerS": 1.27
+                    "first": 108,
+                    "last": 111,
+                    "max": 111,
+                    "slopePerSSecondHalf": null
                 },
                 "gridsAttached": 100,
                 "grids": [
                     {
-                        "contentRefreshPerS": 0.8,
+                        "contentRefreshPerS": 0.6,
                         "perCellRenderedRate": {
-                            "n": 30,
-                            "avg": 0.38,
-                            "p50": 0.36,
-                            "p95": 0.77,
-                            "max": 0.77,
-                            "p10": 0
+                            "n": 17,
+                            "avg": 0.45,
+                            "p50": 0.49,
+                            "p95": 0.6,
+                            "max": 0.6,
+                            "p10": 0.22
                         },
-                        "rowsObserved": 27,
+                        "rowsObserved": 16,
                         "pctRowsChangedAtLeast1PerS": 0,
-                        "domRowsAddedPerS": 1.2,
-                        "domRowsRemovedPerS": 1.2,
+                        "domRowsAddedPerS": 0.9,
+                        "domRowsRemovedPerS": 0.9,
                         "rowIdAttributeChanges": 0,
-                        "insertsAppliedPerS": 1.2,
-                        "orderChecks": 8,
+                        "insertsAppliedPerS": 0.9,
+                        "orderChecks": 10,
                         "orderMismatches": 0,
                         "headRenderLagMs": {
-                            "n": 12,
-                            "avg": 8.24,
-                            "p50": 9.2,
-                            "p95": 13,
-                            "max": 13
+                            "n": 9,
+                            "avg": 13.21,
+                            "p50": 13.4,
+                            "p95": 39.3,
+                            "max": 39.3
                         },
                         "aggLagMs": {
                             "group": {
@@ -2761,121 +2781,118 @@
                             "n": 0
                         },
                         "txAsyncQueueMs": {
-                            "n": 21,
-                            "avg": 1178.1,
-                            "p50": 1263.3,
-                            "p95": 1521.4,
-                            "max": 1545.4
+                            "n": 16,
+                            "avg": 1661.16,
+                            "p50": 1711.3,
+                            "p95": 2750.9,
+                            "max": 2750.9
                         },
                         "txStatuses": {
-                            "Applied": 21
+                            "Applied": 16
                         },
                         "subscribedRows": 11,
                         "rows": 10,
                         "cols": 4,
                         "feed": {
-                            "insertsEmitted": 12,
-                            "updateTicks": 10,
-                            "backendMs": 0.8,
+                            "insertsEmitted": 8,
+                            "updateTicks": 8,
+                            "backendMs": 0.5,
                             "refreshInserts": 0,
                             "refetches": 0,
-                            "insertsEmittedPerS": 1.2,
-                            "updateTicksPerS": 1,
-                            "backendMsPerS": 0.08
+                            "insertsEmittedPerS": 0.8,
+                            "updateTicksPerS": 0.8,
+                            "backendMsPerS": 0.05
                         }
                     },
                     {
-                        "contentRefreshPerS": 0.8
+                        "contentRefreshPerS": 0.6
                     },
                     {
-                        "contentRefreshPerS": 0.8
+                        "contentRefreshPerS": 0.6
                     },
                     {
-                        "contentRefreshPerS": 0.7
+                        "contentRefreshPerS": 0.6
                     },
                     {
-                        "contentRefreshPerS": 0.7
+                        "contentRefreshPerS": 0.6
                     },
                     {
-                        "contentRefreshPerS": 0.8
+                        "contentRefreshPerS": 0.6
                     },
                     {
-                        "contentRefreshPerS": 0.8
+                        "contentRefreshPerS": 0.6
                     },
                     {
-                        "contentRefreshPerS": 0.8
+                        "contentRefreshPerS": 0.5
                     },
                     {
-                        "contentRefreshPerS": 0.8
+                        "contentRefreshPerS": 0.5
                     },
                     {
-                        "contentRefreshPerS": 0.8
+                        "contentRefreshPerS": 0.5
                     },
                     {
-                        "contentRefreshPerS": 0.8
+                        "contentRefreshPerS": 0.5
                     },
                     {
-                        "contentRefreshPerS": 0.8
+                        "contentRefreshPerS": 0.5
                     },
                     {
-                        "contentRefreshPerS": 0.8
+                        "contentRefreshPerS": 0.6
                     },
                     {
-                        "contentRefreshPerS": 0.8
+                        "contentRefreshPerS": 0.6
                     },
                     {
-                        "contentRefreshPerS": 0.8
+                        "contentRefreshPerS": 0.6
                     },
                     {
-                        "contentRefreshPerS": 0.8
+                        "contentRefreshPerS": 0.6
                     },
                     {
-                        "contentRefreshPerS": 0.8
+                        "contentRefreshPerS": 0.6
                     },
                     {
-                        "contentRefreshPerS": 0.8
+                        "contentRefreshPerS": 0.6
                     },
                     {
-                        "contentRefreshPerS": 0.8
+                        "contentRefreshPerS": 0.6
                     },
                     {
-                        "contentRefreshPerS": 0.8
+                        "contentRefreshPerS": 0.6
                     },
                     {
-                        "contentRefreshPerS": 0.8
+                        "contentRefreshPerS": 0.6
                     },
                     {
-                        "contentRefreshPerS": 0.8
+                        "contentRefreshPerS": 0.6
                     },
                     {
-                        "contentRefreshPerS": 0.8
+                        "contentRefreshPerS": 0.6
                     },
                     {
-                        "contentRefreshPerS": 0.8
+                        "contentRefreshPerS": 0.6
                     },
                     {
-                        "contentRefreshPerS": 0.8
+                        "contentRefreshPerS": 0.6
                     },
                     {
-                        "contentRefreshPerS": 0.8
+                        "contentRefreshPerS": 0.6
                     },
                     {
-                        "contentRefreshPerS": 0.8
+                        "contentRefreshPerS": 0.6
                     },
                     {
-                        "contentRefreshPerS": 0.8
+                        "contentRefreshPerS": 0.6
                     },
                     {
-                        "contentRefreshPerS": 0.7
+                        "contentRefreshPerS": 0.6
                     },
                     {
-                        "contentRefreshPerS": 0.7
+                        "contentRefreshPerS": 0.6
                     },
                     {
-                        "contentRefreshPerS": 0.7
-                    },
-                    {
-                        "contentRefreshPerS": 0.7
+                        "contentRefreshPerS": 0.6
                     },
                     {
                         "contentRefreshPerS": 0.7
@@ -2905,7 +2922,40 @@
                         "contentRefreshPerS": 0.7
                     },
                     {
-                        "contentRefreshPerS": 0.7
+                        "contentRefreshPerS": 0.6
+                    },
+                    {
+                        "contentRefreshPerS": 0.6
+                    },
+                    {
+                        "contentRefreshPerS": 0.6
+                    },
+                    {
+                        "contentRefreshPerS": 0.6
+                    },
+                    {
+                        "contentRefreshPerS": 0.6
+                    },
+                    {
+                        "contentRefreshPerS": 0.6
+                    },
+                    {
+                        "contentRefreshPerS": 0.6
+                    },
+                    {
+                        "contentRefreshPerS": 0.6
+                    },
+                    {
+                        "contentRefreshPerS": 0.6
+                    },
+                    {
+                        "contentRefreshPerS": 0.6
+                    },
+                    {
+                        "contentRefreshPerS": 0.6
+                    },
+                    {
+                        "contentRefreshPerS": 0.6
                     },
                     {
                         "contentRefreshPerS": 0.7
@@ -2932,169 +2982,132 @@
                         "contentRefreshPerS": 0.7
                     },
                     {
-                        "contentRefreshPerS": 0.7
+                        "contentRefreshPerS": 0.6
                     },
                     {
-                        "contentRefreshPerS": 0.7
+                        "contentRefreshPerS": 0.6
                     },
                     {
-                        "contentRefreshPerS": 0.7
+                        "contentRefreshPerS": 0.6
                     },
                     {
-                        "contentRefreshPerS": 0.7
+                        "contentRefreshPerS": 0.6
                     },
                     {
-                        "contentRefreshPerS": 0.7
+                        "contentRefreshPerS": 0.6
                     },
                     {
-                        "contentRefreshPerS": 0.7
+                        "contentRefreshPerS": 0.6
                     },
                     {
-                        "contentRefreshPerS": 0.7
+                        "contentRefreshPerS": 0.6
                     },
                     {
-                        "contentRefreshPerS": 0.7
+                        "contentRefreshPerS": 0.6
                     },
                     {
-                        "contentRefreshPerS": 0.7
+                        "contentRefreshPerS": 0.6
                     },
                     {
-                        "contentRefreshPerS": 0.7
+                        "contentRefreshPerS": 0.6
                     },
                     {
-                        "contentRefreshPerS": 0.7
+                        "contentRefreshPerS": 0.6
                     },
                     {
-                        "contentRefreshPerS": 0.7
+                        "contentRefreshPerS": 0.6
                     },
                     {
-                        "contentRefreshPerS": 0.7
+                        "contentRefreshPerS": 0.6
                     },
                     {
-                        "contentRefreshPerS": 0.7
+                        "contentRefreshPerS": 0.6
                     },
                     {
-                        "contentRefreshPerS": 0.7
+                        "contentRefreshPerS": 0.6
                     },
                     {
-                        "contentRefreshPerS": 0.7
+                        "contentRefreshPerS": 0.6
                     },
                     {
-                        "contentRefreshPerS": 0.7
+                        "contentRefreshPerS": 0.6
                     },
                     {
-                        "contentRefreshPerS": 0.7
+                        "contentRefreshPerS": 0.6
                     },
                     {
-                        "contentRefreshPerS": 0.7
+                        "contentRefreshPerS": 0.6
                     },
                     {
-                        "contentRefreshPerS": 0.7
+                        "contentRefreshPerS": 0.6
                     },
                     {
-                        "contentRefreshPerS": 0.8
+                        "contentRefreshPerS": 0.6
                     },
                     {
-                        "contentRefreshPerS": 0.8
+                        "contentRefreshPerS": 0.6
                     },
                     {
-                        "contentRefreshPerS": 0.8
+                        "contentRefreshPerS": 0.6
                     },
                     {
-                        "contentRefreshPerS": 0.8
+                        "contentRefreshPerS": 0.6
                     },
                     {
-                        "contentRefreshPerS": 0.8
+                        "contentRefreshPerS": 0.6
                     },
                     {
-                        "contentRefreshPerS": 0.8
+                        "contentRefreshPerS": 0.6
                     },
                     {
-                        "contentRefreshPerS": 0.8
+                        "contentRefreshPerS": 0.6
                     },
                     {
-                        "contentRefreshPerS": 0.8
+                        "contentRefreshPerS": 0.6
                     },
                     {
-                        "contentRefreshPerS": 0.8
+                        "contentRefreshPerS": 0.6
                     },
                     {
-                        "contentRefreshPerS": 0.8
+                        "contentRefreshPerS": 0.6
                     },
                     {
-                        "contentRefreshPerS": 0.8
+                        "contentRefreshPerS": 0.6
                     },
                     {
-                        "contentRefreshPerS": 0.8
+                        "contentRefreshPerS": 0.6
                     },
                     {
-                        "contentRefreshPerS": 0.8
+                        "contentRefreshPerS": 0.6
                     },
                     {
-                        "contentRefreshPerS": 0.8
+                        "contentRefreshPerS": 0.6
                     },
                     {
-                        "contentRefreshPerS": 0.8
+                        "contentRefreshPerS": 0.6
                     },
                     {
-                        "contentRefreshPerS": 0.8
+                        "contentRefreshPerS": 0.6
                     },
                     {
-                        "contentRefreshPerS": 0.8
+                        "contentRefreshPerS": 0.6
                     },
                     {
-                        "contentRefreshPerS": 0.8
+                        "contentRefreshPerS": 0.6
                     },
                     {
-                        "contentRefreshPerS": 0.8
+                        "contentRefreshPerS": 0.6
                     },
                     {
-                        "contentRefreshPerS": 0.8
-                    },
-                    {
-                        "contentRefreshPerS": 0.8
-                    },
-                    {
-                        "contentRefreshPerS": 0.8
-                    },
-                    {
-                        "contentRefreshPerS": 0.8
-                    },
-                    {
-                        "contentRefreshPerS": 0.8
-                    },
-                    {
-                        "contentRefreshPerS": 0.8
-                    },
-                    {
-                        "contentRefreshPerS": 0.8
-                    },
-                    {
-                        "contentRefreshPerS": 0.8
-                    },
-                    {
-                        "contentRefreshPerS": 0.8
-                    },
-                    {
-                        "contentRefreshPerS": 0.8
-                    },
-                    {
-                        "contentRefreshPerS": 0.8
+                        "contentRefreshPerS": 0.6
                     }
-                ],
-                "perGridRefreshPerS": [
-                    0.8, 0.8, 0.8, 0.7, 0.7, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8,
-                    0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7,
-                    0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7,
-                    0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8,
-                    0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8
                 ]
             },
             "bytesPerRow": 601,
             "consoleErrors": [],
             "title": "100 grids, all live",
             "query": "cols=50&grids=100",
-            "measuredAt": "2026-11-26T22:16:02.136Z",
+            "measuredAt": "2026-11-26T22:40:19.790Z",
             "repeats": []
         },
         "S9d": {
@@ -3117,53 +3130,54 @@
                 "subDebounce": 50,
                 "feed": true
             },
+            "version": "36.3.0-beta.20261126.1116",
             "snapshot": {
-                "seconds": 10.05,
-                "fps": 12.63,
+                "seconds": 10.09,
+                "fps": 12.69,
                 "frameMs": {
-                    "n": 127,
-                    "avg": 78.08,
-                    "p50": 83.4,
+                    "n": 128,
+                    "avg": 77.73,
+                    "p50": 83.3,
                     "p95": 150,
-                    "max": 166.7
+                    "max": 183.3
                 },
-                "longFrames": 77,
+                "longFrames": 73,
                 "framesOver1000ms": 0,
-                "longTasks": 81,
-                "longTaskMs": 7198,
-                "cellUpdatesSentPerS": 3987.15,
+                "longTasks": 75,
+                "longTaskMs": 6941,
+                "cellUpdatesSentPerS": 3925.42,
                 "loadedNodes": {
-                    "first": 108,
-                    "last": 112,
-                    "max": 112,
-                    "slopePerS": 0.81
+                    "first": 107,
+                    "last": 111,
+                    "max": 111,
+                    "slopePerSSecondHalf": null
                 },
                 "gridsAttached": 100,
                 "grids": [
                     {
-                        "contentRefreshPerS": 0.99,
+                        "contentRefreshPerS": 0.89,
                         "perCellRenderedRate": {
-                            "n": 29,
-                            "avg": 0.49,
-                            "p50": 0.5,
-                            "p95": 1.01,
-                            "max": 1.01,
-                            "p10": 0
+                            "n": 17,
+                            "avg": 0.76,
+                            "p50": 0.79,
+                            "p95": 0.9,
+                            "max": 0.9,
+                            "p10": 0.5
                         },
-                        "rowsObserved": 27,
-                        "pctRowsChangedAtLeast1PerS": 7.41,
-                        "domRowsAddedPerS": 0.99,
-                        "domRowsRemovedPerS": 0.99,
+                        "rowsObserved": 16,
+                        "pctRowsChangedAtLeast1PerS": 0,
+                        "domRowsAddedPerS": 0.89,
+                        "domRowsRemovedPerS": 0.89,
                         "rowIdAttributeChanges": 0,
-                        "insertsAppliedPerS": 0.9,
+                        "insertsAppliedPerS": 0.99,
                         "orderChecks": 8,
                         "orderMismatches": 0,
                         "headRenderLagMs": {
                             "n": 9,
-                            "avg": 2.68,
-                            "p50": 0.2,
-                            "p95": 12.3,
-                            "max": 12.3
+                            "avg": 15.28,
+                            "p50": 15.2,
+                            "p95": 22.3,
+                            "max": 22.3
                         },
                         "aggLagMs": {
                             "group": {
@@ -3178,341 +3192,333 @@
                             "n": 0
                         },
                         "txAsyncQueueMs": {
-                            "n": 18,
-                            "avg": 922.45,
-                            "p50": 956.9,
-                            "p95": 1111,
-                            "max": 1111
+                            "n": 20,
+                            "avg": 892.66,
+                            "p50": 990,
+                            "p95": 1439.5,
+                            "max": 1439.5
                         },
                         "txStatuses": {
-                            "Applied": 18
+                            "Applied": 20
                         },
                         "subscribedRows": 11,
                         "rows": 10,
                         "cols": 4,
                         "feed": {
-                            "insertsEmitted": 10,
-                            "updateTicks": 10,
-                            "backendMs": 0.6,
+                            "insertsEmitted": 9,
+                            "updateTicks": 9,
+                            "backendMs": 0.3,
                             "refreshInserts": 0,
                             "refetches": 0,
-                            "insertsEmittedPerS": 0.99,
-                            "updateTicksPerS": 0.99,
-                            "backendMsPerS": 0.06
+                            "insertsEmittedPerS": 0.89,
+                            "updateTicksPerS": 0.89,
+                            "backendMsPerS": 0.03
                         }
                     },
                     {
-                        "contentRefreshPerS": 0.99
+                        "contentRefreshPerS": 0.89
                     },
                     {
-                        "contentRefreshPerS": 0.99
+                        "contentRefreshPerS": 0.89
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.89
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.89
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.89
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.89
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.89
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.89
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.89
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.89
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.89
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.79
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.79
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.79
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.79
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.79
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.79
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.79
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.79
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.79
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.79
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.79
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.79
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.79
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.79
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.79
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.89
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.89
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.89
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.89
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.89
                     },
                     {
-                        "contentRefreshPerS": 0.8
+                        "contentRefreshPerS": 0.89
                     },
                     {
-                        "contentRefreshPerS": 0.8
+                        "contentRefreshPerS": 0.89
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.89
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.89
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.89
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.89
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.89
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.89
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.89
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.89
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.89
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.89
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.89
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.89
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.89
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.89
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.89
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.89
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.89
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.89
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.89
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.89
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.89
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.89
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.89
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.89
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.89
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.89
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.89
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.89
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.89
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.89
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.89
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.89
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.89
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.89
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.89
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.89
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.89
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.89
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.89
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.89
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.89
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.89
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.89
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.89
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.89
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.89
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.89
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.89
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.89
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.89
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.89
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.89
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.89
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.89
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.79
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.79
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.79
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.79
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.79
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.79
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.79
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.79
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.79
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.79
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.79
                     },
                     {
-                        "contentRefreshPerS": 0.9
+                        "contentRefreshPerS": 0.79
                     }
-                ],
-                "perGridRefreshPerS": [
-                    0.99, 0.99, 0.99, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9,
-                    0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.8, 0.8, 0.9, 0.9, 0.9, 0.9, 0.9,
-                    0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9,
-                    0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9,
-                    0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9,
-                    0.9
                 ]
             },
             "bytesPerRow": 601,
             "consoleErrors": [],
             "title": "100 grids, reduced feed (2 inserts/s, 2 updates/s per cell)",
             "query": "cols=50&grids=100&insertMs=500&rate=2",
-            "measuredAt": "2026-11-26T22:16:20.416Z",
+            "measuredAt": "2026-11-26T22:40:37.994Z",
             "repeats": []
         },
         "S10a": {
@@ -3535,13 +3541,14 @@
                 "subDebounce": 50,
                 "feed": false
             },
+            "version": "36.3.0-beta.20261126.1116",
             "action": [
                 {
                     "index": 0,
                     "loaded": true,
-                    "renderedRows": 127,
+                    "renderedRows": 126,
                     "firstIndex": 0,
-                    "lastIndex": 126,
+                    "lastIndex": 125,
                     "mismatches": 0,
                     "displayedRowCount": 100000,
                     "scrollHeight": 1000023,
@@ -3561,8 +3568,8 @@
                 {
                     "index": 99940,
                     "loaded": true,
-                    "renderedRows": 127,
-                    "firstIndex": 99873,
+                    "renderedRows": 126,
+                    "firstIndex": 99874,
                     "lastIndex": 99999,
                     "mismatches": 0,
                     "displayedRowCount": 100000,
@@ -3573,7 +3580,7 @@
             "consoleErrors": [],
             "title": "100,000 backend rows: scroll top/middle/end",
             "query": "cols=50&feed=0&total=100000",
-            "measuredAt": "2026-11-26T22:16:23.503Z",
+            "measuredAt": "2026-11-26T22:40:41.119Z",
             "repeats": []
         },
         "S10b": {
@@ -3596,13 +3603,14 @@
                 "subDebounce": 50,
                 "feed": false
             },
+            "version": "36.3.0-beta.20261126.1116",
             "action": [
                 {
                     "index": 0,
                     "loaded": true,
-                    "renderedRows": 127,
+                    "renderedRows": 126,
                     "firstIndex": 0,
-                    "lastIndex": 126,
+                    "lastIndex": 125,
                     "mismatches": 0,
                     "displayedRowCount": 100000000,
                     "scrollHeight": 1000023,
@@ -3611,8 +3619,8 @@
                 {
                     "index": 50000000,
                     "loaded": true,
-                    "renderedRows": 119,
-                    "firstIndex": 49999981,
+                    "renderedRows": 118,
+                    "firstIndex": 49999982,
                     "lastIndex": 50000099,
                     "mismatches": 0,
                     "displayedRowCount": 100000000,
@@ -3622,8 +3630,8 @@
                 {
                     "index": 99999940,
                     "loaded": true,
-                    "renderedRows": 127,
-                    "firstIndex": 99999873,
+                    "renderedRows": 126,
+                    "firstIndex": 99999874,
                     "lastIndex": 99999999,
                     "mismatches": 0,
                     "displayedRowCount": 100000000,
@@ -3634,7 +3642,7 @@
             "consoleErrors": [],
             "title": "100,000,000 backend rows: scroll top/middle/end",
             "query": "cols=50&feed=0&total=100000000",
-            "measuredAt": "2026-11-26T22:16:26.595Z",
+            "measuredAt": "2026-11-26T22:40:44.219Z",
             "repeats": []
         },
         "S12-5": {
@@ -3657,53 +3665,54 @@
                 "subDebounce": 50,
                 "feed": true
             },
+            "version": "36.3.0-beta.20261126.1116",
             "snapshot": {
-                "seconds": 10.05,
-                "fps": 42.5,
+                "seconds": 10.01,
+                "fps": 42.26,
                 "frameMs": {
-                    "n": 427,
-                    "avg": 23.34,
+                    "n": 423,
+                    "avg": 23.64,
                     "p50": 16.7,
                     "p95": 66.7,
-                    "max": 100
+                    "max": 100.1
                 },
                 "longFrames": 48,
                 "framesOver1000ms": 0,
-                "longTasks": 47,
-                "longTaskMs": 2479,
-                "cellUpdatesSentPerS": 16739.98,
+                "longTasks": 50,
+                "longTaskMs": 2695,
+                "cellUpdatesSentPerS": 16803.87,
                 "loadedNodes": {
-                    "first": 155,
-                    "last": 263,
-                    "max": 263,
-                    "slopePerS": 12.78
+                    "first": 149,
+                    "last": 257,
+                    "max": 257,
+                    "slopePerSSecondHalf": 12.38
                 },
                 "gridsAttached": 1,
                 "grids": [
                     {
-                        "contentRefreshPerS": 5.08,
+                        "contentRefreshPerS": 5,
                         "perCellRenderedRate": {
-                            "n": 840,
-                            "avg": 4.39,
-                            "p50": 4.32,
-                            "p95": 5.14,
-                            "max": 5.45,
-                            "p10": 3.89
+                            "n": 790,
+                            "avg": 4.82,
+                            "p50": 4.8,
+                            "p95": 5.16,
+                            "max": 5.37,
+                            "p10": 4.52
                         },
-                        "rowsObserved": 141,
+                        "rowsObserved": 133,
                         "pctRowsChangedAtLeast1PerS": 100,
-                        "domRowsAddedPerS": 12.74,
-                        "domRowsRemovedPerS": 12.74,
+                        "domRowsAddedPerS": 12.89,
+                        "domRowsRemovedPerS": 12.89,
                         "rowIdAttributeChanges": 0,
-                        "insertsAppliedPerS": 12.74,
+                        "insertsAppliedPerS": 12.89,
                         "orderChecks": 28,
                         "orderMismatches": 0,
                         "headRenderLagMs": {
-                            "n": 126,
-                            "avg": 1.95,
-                            "p50": 0.9,
-                            "p95": 6.5,
-                            "max": 31.2
+                            "n": 129,
+                            "avg": 1.75,
+                            "p50": 1,
+                            "p95": 7.9,
+                            "max": 10.5
                         },
                         "aggLagMs": {
                             "group": {
@@ -3719,26 +3728,26 @@
                         },
                         "txAsyncQueueMs": {
                             "n": 179,
-                            "avg": 102.55,
-                            "p50": 109.1,
-                            "p95": 141.8,
-                            "max": 177.9
+                            "avg": 102.58,
+                            "p50": 108.6,
+                            "p95": 140.3,
+                            "max": 159.2
                         },
                         "txStatuses": {
                             "Applied": 179
                         },
                         "subscribedRows": 58,
-                        "rows": 58,
+                        "rows": 57,
                         "cols": 58,
                         "feed": {
-                            "insertsEmitted": 127,
+                            "insertsEmitted": 128,
                             "updateTicks": 50,
-                            "backendMs": 63.4,
+                            "backendMs": 59.8,
                             "refreshInserts": 0,
                             "refetches": 0,
-                            "insertsEmittedPerS": 12.64,
-                            "updateTicksPerS": 4.98,
-                            "backendMsPerS": 6.31
+                            "insertsEmittedPerS": 12.79,
+                            "updateTicksPerS": 5,
+                            "backendMsPerS": 5.97
                         }
                     }
                 ]
@@ -3747,7 +3756,7 @@
             "consoleErrors": [],
             "title": "Ceiling sweep: 5 updates/s per cell with 75 ms inserts",
             "query": "cols=200&rowHeight=36&colWidth=64&rate=5",
-            "measuredAt": "2026-11-26T22:16:40.469Z",
+            "measuredAt": "2026-11-26T22:40:58.050Z",
             "repeats": []
         },
         "S12-10": {
@@ -3770,53 +3779,54 @@
                 "subDebounce": 50,
                 "feed": true
             },
+            "version": "36.3.0-beta.20261126.1116",
             "snapshot": {
-                "seconds": 10.01,
-                "fps": 34.97,
+                "seconds": 10.03,
+                "fps": 33.71,
                 "frameMs": {
-                    "n": 350,
-                    "avg": 28.57,
+                    "n": 338,
+                    "avg": 29.49,
                     "p50": 16.7,
                     "p95": 83.3,
                     "max": 116.7
                 },
-                "longFrames": 64,
+                "longFrames": 68,
                 "framesOver1000ms": 0,
-                "longTasks": 64,
-                "longTaskMs": 3330,
-                "cellUpdatesSentPerS": 33950.6,
+                "longTasks": 74,
+                "longTaskMs": 3994,
+                "cellUpdatesSentPerS": 33546.41,
                 "loadedNodes": {
-                    "first": 152,
-                    "last": 233,
-                    "max": 233,
-                    "slopePerS": 11.88
+                    "first": 157,
+                    "last": 238,
+                    "max": 238,
+                    "slopePerSSecondHalf": 11.72
                 },
                 "gridsAttached": 1,
                 "grids": [
                     {
-                        "contentRefreshPerS": 7.09,
+                        "contentRefreshPerS": 6.88,
                         "perCellRenderedRate": {
-                            "n": 830,
-                            "avg": 6.09,
-                            "p50": 6.21,
-                            "p95": 6.87,
-                            "max": 6.94,
-                            "p10": 5.41
+                            "n": 750,
+                            "avg": 6.64,
+                            "p50": 6.67,
+                            "p95": 6.92,
+                            "max": 6.96,
+                            "p10": 6.43
                         },
-                        "rowsObserved": 138,
+                        "rowsObserved": 125,
                         "pctRowsChangedAtLeast1PerS": 100,
-                        "domRowsAddedPerS": 12.19,
-                        "domRowsRemovedPerS": 12.19,
+                        "domRowsAddedPerS": 12.07,
+                        "domRowsRemovedPerS": 12.07,
                         "rowIdAttributeChanges": 0,
-                        "insertsAppliedPerS": 12.19,
-                        "orderChecks": 23,
+                        "insertsAppliedPerS": 12.27,
+                        "orderChecks": 22,
                         "orderMismatches": 0,
                         "headRenderLagMs": {
-                            "n": 122,
-                            "avg": 1.48,
-                            "p50": 0.9,
-                            "p95": 2.6,
-                            "max": 15.4
+                            "n": 121,
+                            "avg": 1.57,
+                            "p50": 1.1,
+                            "p95": 2.5,
+                            "max": 16.8
                         },
                         "aggLagMs": {
                             "group": {
@@ -3831,27 +3841,27 @@
                             "n": 0
                         },
                         "txAsyncQueueMs": {
-                            "n": 222,
-                            "avg": 129.79,
-                            "p50": 131.1,
-                            "p95": 151.5,
-                            "max": 161.2
+                            "n": 225,
+                            "avg": 132.82,
+                            "p50": 135.7,
+                            "p95": 155.1,
+                            "max": 171.4
                         },
                         "txStatuses": {
-                            "Applied": 222
+                            "Applied": 225
                         },
                         "subscribedRows": 58,
-                        "rows": 58,
+                        "rows": 57,
                         "cols": 58,
                         "feed": {
-                            "insertsEmitted": 122,
-                            "updateTicks": 101,
-                            "backendMs": 101.7,
+                            "insertsEmitted": 121,
+                            "updateTicks": 100,
+                            "backendMs": 110.8,
                             "refreshInserts": 0,
                             "refetches": 0,
-                            "insertsEmittedPerS": 12.19,
-                            "updateTicksPerS": 10.09,
-                            "backendMsPerS": 10.16
+                            "insertsEmittedPerS": 12.07,
+                            "updateTicksPerS": 9.97,
+                            "backendMsPerS": 11.05
                         }
                     }
                 ]
@@ -3860,7 +3870,7 @@
             "consoleErrors": [],
             "title": "Ceiling sweep: 10 updates/s per cell with 75 ms inserts",
             "query": "cols=200&rowHeight=36&colWidth=64&rate=10",
-            "measuredAt": "2026-11-26T22:16:54.286Z",
+            "measuredAt": "2026-11-26T22:41:11.980Z",
             "repeats": []
         },
         "S12-20": {
@@ -3883,53 +3893,54 @@
                 "subDebounce": 50,
                 "feed": true
             },
+            "version": "36.3.0-beta.20261126.1116",
             "snapshot": {
-                "seconds": 10,
-                "fps": 31.59,
+                "seconds": 10.1,
+                "fps": 31.99,
                 "frameMs": {
-                    "n": 316,
-                    "avg": 31.75,
+                    "n": 323,
+                    "avg": 30.96,
                     "p50": 16.7,
                     "p95": 83.4,
-                    "max": 150
+                    "max": 116.5
                 },
-                "longFrames": 66,
+                "longFrames": 65,
                 "framesOver1000ms": 0,
-                "longTasks": 78,
-                "longTaskMs": 4182,
-                "cellUpdatesSentPerS": 43377.38,
+                "longTasks": 73,
+                "longTaskMs": 3972,
+                "cellUpdatesSentPerS": 42979.56,
                 "loadedNodes": {
-                    "first": 155,
-                    "last": 227,
-                    "max": 227,
-                    "slopePerS": 9.49
+                    "first": 150,
+                    "last": 217,
+                    "max": 217,
+                    "slopePerSSecondHalf": 8.04
                 },
                 "gridsAttached": 1,
                 "grids": [
                     {
-                        "contentRefreshPerS": 6.5,
+                        "contentRefreshPerS": 6.54,
                         "perCellRenderedRate": {
-                            "n": 730,
-                            "avg": 5.6,
-                            "p50": 5.67,
-                            "p95": 6.49,
-                            "max": 6.5,
-                            "p10": 4.48
+                            "n": 645,
+                            "avg": 6.47,
+                            "p50": 6.46,
+                            "p95": 6.67,
+                            "max": 6.74,
+                            "p10": 6.32
                         },
-                        "rowsObserved": 126,
+                        "rowsObserved": 114,
                         "pctRowsChangedAtLeast1PerS": 100,
-                        "domRowsAddedPerS": 9.9,
-                        "domRowsRemovedPerS": 9.9,
+                        "domRowsAddedPerS": 9.21,
+                        "domRowsRemovedPerS": 9.21,
                         "rowIdAttributeChanges": 0,
-                        "insertsAppliedPerS": 10.1,
+                        "insertsAppliedPerS": 9.11,
                         "orderChecks": 21,
                         "orderMismatches": 0,
                         "headRenderLagMs": {
-                            "n": 101,
-                            "avg": 4.36,
-                            "p50": 1,
-                            "p95": 14.8,
-                            "max": 30.5
+                            "n": 92,
+                            "avg": 5.7,
+                            "p50": 2.2,
+                            "p95": 15.3,
+                            "max": 30.3
                         },
                         "aggLagMs": {
                             "group": {
@@ -3944,27 +3955,27 @@
                             "n": 0
                         },
                         "txAsyncQueueMs": {
-                            "n": 231,
-                            "avg": 141.28,
-                            "p50": 147.3,
-                            "p95": 163,
-                            "max": 208.8
+                            "n": 220,
+                            "avg": 144.53,
+                            "p50": 149.6,
+                            "p95": 162.1,
+                            "max": 172.2
                         },
                         "txStatuses": {
-                            "Applied": 231
+                            "Applied": 220
                         },
                         "subscribedRows": 58,
-                        "rows": 58,
+                        "rows": 57,
                         "cols": 58,
                         "feed": {
-                            "insertsEmitted": 100,
+                            "insertsEmitted": 92,
                             "updateTicks": 129,
-                            "backendMs": 148,
+                            "backendMs": 153.1,
                             "refreshInserts": 0,
                             "refetches": 0,
-                            "insertsEmittedPerS": 10,
-                            "updateTicksPerS": 12.89,
-                            "backendMsPerS": 14.79
+                            "insertsEmittedPerS": 9.11,
+                            "updateTicksPerS": 12.78,
+                            "backendMsPerS": 15.16
                         }
                     }
                 ]
@@ -3973,7 +3984,7 @@
             "consoleErrors": [],
             "title": "Ceiling sweep: 20 updates/s per cell with 75 ms inserts",
             "query": "cols=200&rowHeight=36&colWidth=64&rate=20",
-            "measuredAt": "2026-11-26T22:17:08.129Z",
+            "measuredAt": "2026-11-26T22:41:25.888Z",
             "repeats": []
         },
         "S12-40": {
@@ -3996,53 +4007,54 @@
                 "subDebounce": 50,
                 "feed": true
             },
+            "version": "36.3.0-beta.20261126.1116",
             "snapshot": {
-                "seconds": 10.01,
-                "fps": 27.38,
+                "seconds": 10.02,
+                "fps": 27.23,
                 "frameMs": {
-                    "n": 274,
-                    "avg": 36.5,
+                    "n": 273,
+                    "avg": 36.45,
                     "p50": 16.7,
                     "p95": 116.7,
-                    "max": 150
+                    "max": 133.4
                 },
                 "longFrames": 59,
                 "framesOver1000ms": 0,
-                "longTasks": 113,
-                "longTaskMs": 6937,
-                "cellUpdatesSentPerS": 61852.45,
+                "longTasks": 116,
+                "longTaskMs": 6917,
+                "cellUpdatesSentPerS": 63761.06,
                 "loadedNodes": {
-                    "first": 144,
-                    "last": 199,
-                    "max": 199,
-                    "slopePerS": 8.29
+                    "first": 146,
+                    "last": 205,
+                    "max": 205,
+                    "slopePerSSecondHalf": 8.57
                 },
                 "gridsAttached": 1,
                 "grids": [
                     {
-                        "contentRefreshPerS": 5.9,
+                        "contentRefreshPerS": 5.99,
                         "perCellRenderedRate": {
-                            "n": 675,
-                            "avg": 5.05,
-                            "p50": 5.19,
-                            "p95": 5.93,
-                            "max": 5.94,
-                            "p10": 3.95
+                            "n": 645,
+                            "avg": 5.89,
+                            "p50": 5.9,
+                            "p95": 6.04,
+                            "max": 6.1,
+                            "p10": 5.75
                         },
-                        "rowsObserved": 118,
+                        "rowsObserved": 110,
                         "pctRowsChangedAtLeast1PerS": 100,
-                        "domRowsAddedPerS": 8.49,
-                        "domRowsRemovedPerS": 8.49,
+                        "domRowsAddedPerS": 9.18,
+                        "domRowsRemovedPerS": 9.18,
                         "rowIdAttributeChanges": 0,
-                        "insertsAppliedPerS": 8.69,
+                        "insertsAppliedPerS": 9.38,
                         "orderChecks": 18,
                         "orderMismatches": 0,
                         "headRenderLagMs": {
-                            "n": 87,
-                            "avg": 5.88,
-                            "p50": 2,
-                            "p95": 15.5,
-                            "max": 30.9
+                            "n": 93,
+                            "avg": 6.76,
+                            "p50": 5.4,
+                            "p95": 14.2,
+                            "max": 63.3
                         },
                         "aggLagMs": {
                             "group": {
@@ -4057,27 +4069,27 @@
                             "n": 0
                         },
                         "txAsyncQueueMs": {
-                            "n": 273,
-                            "avg": 159.62,
-                            "p50": 164,
-                            "p95": 200.9,
-                            "max": 213.7
+                            "n": 287,
+                            "avg": 156.07,
+                            "p50": 160.6,
+                            "p95": 189.7,
+                            "max": 202.7
                         },
                         "txStatuses": {
-                            "Applied": 273
+                            "Applied": 287
                         },
                         "subscribedRows": 58,
-                        "rows": 58,
+                        "rows": 57,
                         "cols": 58,
                         "feed": {
-                            "insertsEmitted": 86,
-                            "updateTicks": 184,
-                            "backendMs": 210.9,
+                            "insertsEmitted": 93,
+                            "updateTicks": 190,
+                            "backendMs": 231.9,
                             "refreshInserts": 0,
                             "refetches": 0,
-                            "insertsEmittedPerS": 8.59,
-                            "updateTicksPerS": 18.39,
-                            "backendMsPerS": 21.07
+                            "insertsEmittedPerS": 9.28,
+                            "updateTicksPerS": 18.95,
+                            "backendMsPerS": 23.13
                         }
                     }
                 ]
@@ -4086,7 +4098,7 @@
             "consoleErrors": [],
             "title": "Ceiling sweep: 40 updates/s per cell with 75 ms inserts",
             "query": "cols=200&rowHeight=36&colWidth=64&rate=40",
-            "measuredAt": "2026-11-26T22:17:22.011Z",
+            "measuredAt": "2026-11-26T22:41:39.799Z",
             "repeats": []
         },
         "S12-80": {
@@ -4109,53 +4121,54 @@
                 "subDebounce": 50,
                 "feed": true
             },
+            "version": "36.3.0-beta.20261126.1116",
             "snapshot": {
-                "seconds": 10.03,
-                "fps": 23.03,
+                "seconds": 10.01,
+                "fps": 22.98,
                 "frameMs": {
-                    "n": 231,
-                    "avg": 42.86,
+                    "n": 230,
+                    "avg": 43.48,
                     "p50": 16.7,
-                    "p95": 150.1,
-                    "max": 183.3
+                    "p95": 150,
+                    "max": 166.7
                 },
-                "longFrames": 46,
+                "longFrames": 48,
                 "framesOver1000ms": 0,
-                "longTasks": 96,
-                "longTaskMs": 7577,
-                "cellUpdatesSentPerS": 92217.67,
+                "longTasks": 94,
+                "longTaskMs": 7354,
+                "cellUpdatesSentPerS": 90083.13,
                 "loadedNodes": {
-                    "first": 135,
-                    "last": 174,
-                    "max": 174,
-                    "slopePerS": 7.34
+                    "first": 136,
+                    "last": 178,
+                    "max": 178,
+                    "slopePerSSecondHalf": 7.6
                 },
                 "gridsAttached": 1,
                 "grids": [
                     {
-                        "contentRefreshPerS": 4.69,
+                        "contentRefreshPerS": 4.8,
                         "perCellRenderedRate": {
-                            "n": 625,
-                            "avg": 4.04,
-                            "p50": 4.23,
-                            "p95": 4.67,
-                            "max": 4.68,
-                            "p10": 2.84
+                            "n": 590,
+                            "avg": 4.7,
+                            "p50": 4.7,
+                            "p95": 4.91,
+                            "max": 4.93,
+                            "p10": 4.55
                         },
-                        "rowsObserved": 111,
+                        "rowsObserved": 104,
                         "pctRowsChangedAtLeast1PerS": 100,
-                        "domRowsAddedPerS": 7.38,
-                        "domRowsRemovedPerS": 7.38,
+                        "domRowsAddedPerS": 7.69,
+                        "domRowsRemovedPerS": 7.69,
                         "rowIdAttributeChanges": 0,
-                        "insertsAppliedPerS": 7.38,
+                        "insertsAppliedPerS": 7.69,
                         "orderChecks": 15,
                         "orderMismatches": 0,
                         "headRenderLagMs": {
-                            "n": 74,
-                            "avg": 8.14,
-                            "p50": 8.3,
-                            "p95": 17.6,
-                            "max": 32.2
+                            "n": 77,
+                            "avg": 9,
+                            "p50": 8.9,
+                            "p95": 18.2,
+                            "max": 30.1
                         },
                         "aggLagMs": {
                             "group": {
@@ -4170,27 +4183,27 @@
                             "n": 0
                         },
                         "txAsyncQueueMs": {
-                            "n": 348,
-                            "avg": 192.78,
-                            "p50": 194.1,
-                            "p95": 228.1,
-                            "max": 258
+                            "n": 346,
+                            "avg": 191.61,
+                            "p50": 193.1,
+                            "p95": 229,
+                            "max": 246.6
                         },
                         "txStatuses": {
-                            "Applied": 348
+                            "Applied": 346
                         },
                         "subscribedRows": 58,
-                        "rows": 58,
+                        "rows": 57,
                         "cols": 58,
                         "feed": {
-                            "insertsEmitted": 74,
-                            "updateTicks": 275,
-                            "backendMs": 318.5,
+                            "insertsEmitted": 77,
+                            "updateTicks": 268,
+                            "backendMs": 360.7,
                             "refreshInserts": 0,
                             "refetches": 0,
-                            "insertsEmittedPerS": 7.38,
-                            "updateTicksPerS": 27.41,
-                            "backendMsPerS": 31.75
+                            "insertsEmittedPerS": 7.69,
+                            "updateTicksPerS": 26.78,
+                            "backendMsPerS": 36.04
                         }
                     }
                 ]
@@ -4199,7 +4212,7 @@
             "consoleErrors": [],
             "title": "Ceiling sweep: 80 updates/s per cell with 75 ms inserts",
             "query": "cols=200&rowHeight=36&colWidth=64&rate=80",
-            "measuredAt": "2026-11-26T22:17:35.983Z",
+            "measuredAt": "2026-11-26T22:41:53.608Z",
             "repeats": []
         }
     },
@@ -4214,65 +4227,65 @@
         "viewport": "3840x2160",
         "ci": true
     },
-    "startedAt": "2026-11-26T22:10:27.740Z",
-    "gitSha": "16c1d61e8f564cc780aabff529dd581402b73074",
+    "startedAt": "2026-11-26T22:32:44.850Z",
+    "gitSha": "9b2a32a54cf97bbd57337194449edaa9a190117a",
     "warmupS": 3,
     "measureS": 10,
-    "finishedAt": "2026-11-26T22:17:35.983Z",
+    "finishedAt": "2026-11-26T22:41:53.608Z",
     "verdicts": {
         "R1": {
             "verdict": "pass",
-            "number": "sort sent true, filters sent true/true, group sent true; after header click: unchanged or loading; rendered matches backend: sort true, number true, text true, groups 50",
+            "number": "sort sent true, filters sent true/true, group sent true; before the 500 ms response: unchanged or loading; rendered matches backend: sort true, number true, text true, groups 50",
             "scenarios": ["S11"]
         },
         "R2": {
             "verdict": "fail",
-            "number": "requested 5/s (feed managed 4.97 update ticks/s): rendered per-cell p50 4.27/s (p10 3.53); 100 % of 146 visible rows changed >= 1/s; sweep (requested -> rendered p50): 5 -> 4.32, 10 -> 6.21, 20 -> 5.67, 40 -> 5.19, 80 -> 4.23; highest rate tracked within 90 %: none",
+            "number": "requested 5/s (feed managed 5 update ticks/s): rendered per-cell p50 4.82/s (p10 4.69); 100 % of 134 rows observed in view for >= 2 s changed >= 1/s; sweep (requested -> rendered p50): 5 -> 4.8, 10 -> 6.67, 20 -> 6.46, 40 -> 5.9, 80 -> 4.7; highest rate tracked within 90 %: 5",
             "scenarios": ["S1", "S2", "S12"]
         },
         "R3": {
             "verdict": "pass",
-            "number": "58 rows x 58 cols visible; 4.97 content refreshes/s; 42.37 fps; max frame 83.4 ms",
+            "number": "57 rows x 58 cols visible; 5 content refreshes/s; 43.58 fps; max frame 83.4 ms",
             "scenarios": ["S1"]
         },
         "R4": {
             "verdict": "partial",
-            "number": "13.23 inserts/s applied (13.3 requested, 13.13 emitted; mock backend 6.1 ms/s); inserts alone (S1i): 13.19/s at 58.66 fps; DOM rows +13.23/s -13.23/s; row elements re-keyed: 0; async queue p95 137.8 ms",
+            "number": "13.19 inserts/s applied (13.3 requested, 13.09 emitted; mock backend 5.65 ms/s); inserts alone (S1i): 13.37/s at 58.75 fps; DOM rows +12.99/s -12.99/s; row elements re-keyed: 0; async queue p95 137.9 ms",
             "scenarios": ["S1", "S1i", "S3", "S4"]
         },
         "R5": {
             "verdict": "pass",
-            "number": "0 mismatches in 28 order checks; new top row rendered p95 6.5 ms after apply",
+            "number": "0 mismatches in 29 order checks; new top row rendered p95 8.6 ms after apply",
             "scenarios": ["S1"]
         },
         "R6": {
             "verdict": "pass",
-            "number": "group lag p95 104.6 ms (n 50), grand total p95 90.9 ms (n 67); superseded before render 88",
+            "number": "group lag p95 131.2 ms (n 54), grand total p95 131.6 ms (n 153); superseded before render 83",
             "scenarios": ["S6"]
         },
         "R7": {
             "verdict": "partial",
-            "number": "loaded nodes: S5a max 303 (slope 9.23/s); S5b max 299 (slope 9.06/s); S5c max 500 (slope 0/s); S5d max 601 (slope 9.02/s)",
+            "number": "loaded nodes: S5a max 581 (growth in the last 20 s 8.86/s); S5b max 500 (growth in the last 20 s 4.03/s); S5c max 500 (growth in the last 20 s 0/s); S5d max 861 (growth in the last 20 s 8.93/s)",
             "scenarios": ["S5a", "S5b", "S5c", "S5d"]
         },
         "R8": {
             "verdict": "partial",
-            "number": "rows still selected: true (indexes 5,6,7,8,9 -> 56,57,58,59,60); cell range still on the same row ids: false; 56 buffered transactions applied on resume in 879 ms",
+            "number": "rows still selected: true (indexes 5,6,7,8,9 -> 55,56,57,58,59); cell range still on the same row ids: false; 55 buffered transactions applied on resume in 534 ms",
             "scenarios": ["S7"]
         },
         "R9": {
             "verdict": "pass",
-            "number": "100k: 0: 127 rows, 0 wrong; 50000: 110 rows, 0 wrong; 99940: 127 rows, 0 wrong | 100m: 0: 127 rows, 0 wrong; 50000000: 119 rows, 0 wrong; 99999940: 127 rows, 0 wrong",
+            "number": "100k: 0: 126 rows, 0 wrong; 50000: 110 rows, 0 wrong; 99940: 126 rows, 0 wrong. 100m: 0: 126 rows, 0 wrong; 50000000: 118 rows, 0 wrong; 99999940: 126 rows, 0 wrong",
             "scenarios": ["S10a", "S10b"]
         },
         "R10a": {
             "verdict": "fail",
-            "number": "100 grids (100 rendered data): slowest grid 0.7 refreshes/s, 13.25 fps; reduced feed: slowest 0.8 refreshes/s",
+            "number": "100 grids (100 rendered data): slowest grid 0.5 refreshes/s, 16.08 fps, grid 1 feed delivered 0.8 inserts/s + 0.8 update ticks/s; reduced feed: slowest 0.79 refreshes/s, grid 1 feed delivered 0.89 inserts/s + 0.89 update ticks/s",
             "scenarios": ["S9a", "S9b", "S9c", "S9d"]
         },
         "R10b": {
             "verdict": "pass",
-            "number": "send all: 4.08 refreshes/s, 18.4 fps, 26673 bytes/row | trim: 4.19 refreshes/s, 19.85 fps, 791 bytes/row",
+            "number": "send all: 3.99 refreshes/s, 17.24 fps, 26673 bytes/row. Trim: 4.17 refreshes/s, 19.76 fps, 791 bytes/row",
             "scenarios": ["S8c", "S8d"]
         }
     },
