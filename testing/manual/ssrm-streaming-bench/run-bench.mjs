@@ -144,21 +144,16 @@ async function measure(page, scenario, errors) {
             result.action = { ...(await page.evaluate(() => window.__bench.checkSelection())), resume };
         } else {
             await page.evaluate(() => window.__bench.reset());
-            await page.waitForTimeout(measureMs);
+            await page.waitForTimeout(scenario.measureS ? scenario.measureS * 1000 : measureMs);
         }
         result.snapshot = await page.evaluate(() => window.__bench.snapshot());
-        if (scenario.id === 'S10a' || scenario.id === 'S10b') {
-            result.snapshot.grids = [];
-        }
         result.bytesPerRow = await page.evaluate(() => window.__bench.bytesPerRow()[0]);
         if (scenario.action === 'hscroll') {
             result.hscroll = await page.evaluate(() => window.__bench.horizontalScrollCheck());
         }
         if (config.grids > 1) {
-            const grids = result.snapshot.grids;
-            result.snapshot.grids = grids.slice(0, 1);
-            result.snapshot.perGridRefreshPerS = grids.map((x) => x.contentRefreshPerS);
-            result.snapshot.grids.push(...grids.slice(1).map((x) => ({ contentRefreshPerS: x.contentRefreshPerS })));
+            const [first, ...rest] = result.snapshot.grids;
+            result.snapshot.grids = [first, ...rest.map((x) => ({ contentRefreshPerS: x.contentRefreshPerS }))];
         }
     }
     result.consoleErrors = errors;
@@ -256,7 +251,7 @@ function writeReports(data) {
         '',
         BANNER,
         '',
-        `Run ${data.startedAt} to ${data.finishedAt ?? '-'}, git ${data.gitSha}, AG Grid ${data.gridVersion ?? '-'}, ${data.warmupS} s warm-up + ${data.measureS} s measured per scenario.`,
+        `Run ${data.startedAt} to ${data.finishedAt ?? '-'}, git ${data.gitSha}, AG Grid ${data.gridVersion ?? '-'}, ${data.warmupS} s warm-up + ${data.measureS} s measured per scenario (S5: 40 s).`,
         `Machine: ${data.machine.cpu} x ${data.machine.cores}, ${data.machine.memoryGb} GB, ${data.machine.os}, Node ${data.machine.node}, ${data.machine.browser} (headless), viewport ${data.machine.viewport}.`,
         '',
         '## Per requirement',
@@ -298,7 +293,7 @@ function verdictTable(data) {
         '|---|---|---|---|---|---|',
         ...REQUIREMENTS.map(({ id, text, threshold }) => {
             const r = data.verdicts[id];
-            return `| ${id} | ${text} | **${r.verdict}** | ${r.number} | ${threshold} | ${r.scenarios.join(', ')} |`;
+            return `| ${id} | ${text} | **${r.verdict}** | ${r.number.replaceAll('|', '\\|')} | ${threshold} | ${r.scenarios.join(', ')} |`;
         }),
     ].join('\n');
 }

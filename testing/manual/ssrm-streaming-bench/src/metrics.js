@@ -78,11 +78,18 @@ class GridTracker {
 
     sampleFrame(now, checkOrder) {
         let changed = false;
-        const rowEls = this.centre.children;
         const ordered = checkOrder ? [] : null;
-        for (const rowEl of rowEls) {
+        const { top, bottom } = this.visibleBand();
+        for (const rowEl of this.centre.children) {
             const rowId = rowEl.getAttribute('row-id');
             if (!rowId || rowEl.classList.contains('ag-opacity-zero')) {
+                continue;
+            }
+            if (ordered && /^\d+$/.test(rowId)) {
+                ordered.push([+rowEl.getAttribute('row-index'), +rowId]);
+            }
+            const rect = rowEl.getBoundingClientRect();
+            if (rect.top < top - 1 || rect.bottom > bottom + 1) {
                 continue;
             }
             let rowChanged = false;
@@ -113,9 +120,6 @@ class GridTracker {
                 row.changes += rowChanged ? 1 : 0;
             }
             changed ||= rowChanged;
-            if (ordered && /^\d+$/.test(rowId)) {
-                ordered.push([+rowEl.getAttribute('row-index'), +rowId]);
-            }
         }
         if (changed) {
             this.refreshFrames++;
@@ -146,25 +150,37 @@ class GridTracker {
         }
     }
 
+    /** Each expected value's lag runs until it, or a later value for the same row, is on screen. */
     resolveAgg(now) {
-        for (const [rowId, p] of this.pendingAgg) {
+        for (const [rowId, queue] of this.pendingAgg) {
             const cell = this.root.querySelector(`.ag-row[row-id="${rowId}"] [col-id="px"]`);
-            if (cell && cell.textContent === p.text) {
-                this.aggLag[p.total ? 'total' : 'group'].push(now - p.t);
+            if (!cell) {
                 this.pendingAgg.delete(rowId);
-            } else if (!cell) {
-                this.pendingAgg.delete(rowId);
+                continue;
             }
+            const shown = queue.findLastIndex((p) => p.text === cell.textContent);
+            for (const p of queue.splice(0, shown + 1)) {
+                this.aggLag[p.total ? 'total' : 'group'].push(now - p.t);
+            }
+            this.aggSuperseded += Math.max(0, shown);
         }
+    }
+
+    /** Rows wholly between the header and the bottom of the viewport; rendered buffer rows outside it are not in view. */
+    visibleBand() {
+        return {
+            top: this.header.getBoundingClientRect().bottom,
+            bottom: this.viewport.getBoundingClientRect().bottom,
+        };
     }
 
     visibleCounts() {
         const vp = this.viewport.getBoundingClientRect();
-        const top = this.header.getBoundingClientRect().bottom;
+        const { top, bottom } = this.visibleBand();
         let rows = 0;
         for (const rowEl of this.centre.children) {
             const r = rowEl.getBoundingClientRect();
-            rows += r.top >= top - 1 && r.bottom <= vp.bottom + 1 && r.height > 0 ? 1 : 0;
+            rows += r.top >= top - 1 && r.bottom <= bottom + 1 && r.height > 0 ? 1 : 0;
         }
         let cols = 0;
         for (const h of this.header.querySelectorAll('.ag-header-row-column .ag-header-cell')) {
@@ -326,15 +342,13 @@ export class Metrics {
         }
     }
 
-    expectAgg(grid, rowId, text, t) {
+    expectAgg(grid, rowId, text, t, total) {
         const tracker = this.trackers.get(grid.index);
         if (!tracker) {
             return;
         }
-        if (tracker.pendingAgg.has(rowId)) {
-            tracker.aggSuperseded++;
-        }
-        tracker.pendingAgg.set(rowId, { text, t, total: !rowId.startsWith('g-') });
+        const queue = tracker.pendingAgg.get(rowId) ?? tracker.pendingAgg.set(rowId, []).get(rowId);
+        queue.push({ text, t, total });
     }
 
     snapshot() {
@@ -342,8 +356,8 @@ export class Metrics {
         const seconds = (now - this.startedAt) / 1000;
         const frameStats = stats(this.frames);
         const nodes = this.nodeCounts;
-        const slope =
-            nodes.length >= 2 ? r2((nodes.at(-1).n - nodes[0].n) / ((nodes.at(-1).t - nodes[0].t) / 1000)) : null;
+        const tail = nodes.slice(Math.floor(nodes.length / 2));
+        const slope = tail.length >= 2 ? r2((tail.at(-1).n - tail[0].n) / ((tail.at(-1).t - tail[0].t) / 1000)) : null;
         const grids = [...this.trackers.values()].map((t) => t.summary(seconds));
         return {
             seconds: r2(seconds),
@@ -358,7 +372,7 @@ export class Metrics {
                 first: nodes[0]?.n ?? null,
                 last: nodes.at(-1)?.n ?? null,
                 max: Math.max(0, ...nodes.map((x) => x.n)),
-                slopePerS: slope,
+                slopePerSSecondHalf: slope,
             },
             gridsAttached: grids.length,
             grids,

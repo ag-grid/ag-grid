@@ -211,6 +211,24 @@ async function scrollCheck(index) {
     };
 }
 
+/** Rendered leaf rows, by row index, are exactly the backend's rows for that sort and filter. */
+function matchesBackend(grid, sortModel, filterModel) {
+    const rows = renderedRows(grid, []).filter((r) => /^\d+$/.test(r.id));
+    if (rows.length < 5) {
+        return null;
+    }
+    const request = {
+        startRow: 0,
+        endRow: rows.at(-1).index + 1,
+        rowGroupCols: [],
+        groupKeys: [],
+        sortModel,
+        filterModel,
+    };
+    const expected = grid.backend.query(request).rowData;
+    return rows.every((r) => expected[r.index]?.id === r.id) ? rows : null;
+}
+
 /** Header sort, number + text filters and grouping, each checked against what the backend received and rendered. */
 async function serverOpsTest() {
     const grid = grids[0];
@@ -220,32 +238,23 @@ async function serverOpsTest() {
     const reqs = backend.requests.length;
 
     grid.el.querySelector('.ag-header-cell[col-id="qty"] .ag-header-cell-label').click();
-    await nextFrame();
-    const afterFrame = renderedRows(grid, ['qty']).map((r) => r.id);
-    const sameSet = afterFrame.length === before.length && afterFrame.every((id) => before.includes(id));
-    out.sort = {
-        renderedImmediatelyAfterClick:
-            sameSet && JSON.stringify(afterFrame) !== JSON.stringify(before)
-                ? 'reordered locally'
-                : 'unchanged or loading',
-    };
-    const sorted = await until(() => {
-        const rows = renderedRows(grid, ['qty']).filter((r) => r.qty != null);
-        const last = backend.requests.at(-1);
-        const nums = rows.map((r) => +r.qty);
-        return rows.length > 10 && last?.sortModel?.[0]?.colId === 'qty' && nums.every((v, i) => !i || v >= nums[i - 1])
-            ? rows
-            : null;
-    });
+    let reorderedLocally = false;
+    const responseDue = performance.now() + cfg.latency - 50;
+    while (performance.now() < responseDue) {
+        await nextFrame();
+        const ids = renderedRows(grid, []).map((r) => r.id);
+        const sameSet = ids.length === before.length && ids.every((id) => before.includes(id));
+        reorderedLocally ||= sameSet && JSON.stringify(ids) !== JSON.stringify(before);
+    }
+    out.sort = { renderedBeforeResponse: reorderedLocally ? 'reordered locally' : 'unchanged or loading' };
+    const byQty = [{ colId: 'qty', sort: 'asc' }];
+    const sorted = await until(() => matchesBackend(grid, byQty, {}));
     out.sort.backendReceived = backend.requests.slice(reqs).map((r) => r.sortModel);
     out.sort.renderedInBackendOrder = !!sorted;
 
     const reqs2 = backend.requests.length;
     api.setFilterModel({ qty: { filterType: 'number', type: 'greaterThan', filter: 900 } });
-    const filtered = await until(() => {
-        const rows = renderedRows(grid, ['qty']).filter((r) => r.qty != null);
-        return rows.length > 5 && rows.every((r) => +r.qty > 900) ? rows : null;
-    });
+    const filtered = await until(() => matchesBackend(grid, byQty, api.getFilterModel()));
     out.numberFilter = {
         backendReceived: backend.requests.slice(reqs2).map((r) => r.filterModel),
         renderedMatches: !!filtered,
@@ -253,10 +262,7 @@ async function serverOpsTest() {
 
     const reqs3 = backend.requests.length;
     api.setFilterModel({ sym: { filterType: 'text', type: 'equals', filter: 'SYM07' } });
-    const textFiltered = await until(() => {
-        const rows = renderedRows(grid, ['sym']).filter((r) => r.sym != null);
-        return rows.length > 5 && rows.every((r) => r.sym === 'SYM07') ? rows : null;
-    });
+    const textFiltered = await until(() => matchesBackend(grid, byQty, api.getFilterModel()));
     out.textFilter = {
         backendReceived: backend.requests.slice(reqs3).map((r) => r.filterModel),
         renderedMatches: !!textFiltered,

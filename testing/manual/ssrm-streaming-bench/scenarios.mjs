@@ -13,10 +13,30 @@ export const SCENARIOS = [
     { id: 'S1u', title: 'S1 cell updates only (no inserts)', query: `${R3_COLS}&insertMs=0` },
     { id: 'S4', title: 'S1 with animateRows on', query: `${R3_COLS}&animate=1`, repeat: 2 },
     { id: 'S7', title: 'Selection across pause/resume with inserts', query: 'cols=50', action: 'selection' },
-    { id: 'S5a', title: 'Window: cacheBlockSize 100, maxBlocksInCache -1', query: 'cols=50&block=100&maxBlocks=-1' },
-    { id: 'S5b', title: 'Window: cacheBlockSize 100, maxBlocksInCache 5', query: 'cols=50&block=100&maxBlocks=5' },
-    { id: 'S5c', title: 'Window: cacheBlockSize 500, maxBlocksInCache 1', query: 'cols=50&block=500&maxBlocks=1' },
-    { id: 'S5d', title: 'Window: cacheBlockSize 500, maxBlocksInCache -1', query: 'cols=50&block=500&maxBlocks=-1' },
+    {
+        id: 'S5a',
+        title: 'Window: cacheBlockSize 100, maxBlocksInCache -1',
+        query: 'cols=50&block=100&maxBlocks=-1',
+        measureS: 40,
+    },
+    {
+        id: 'S5b',
+        title: 'Window: cacheBlockSize 100, maxBlocksInCache 5',
+        query: 'cols=50&block=100&maxBlocks=5',
+        measureS: 40,
+    },
+    {
+        id: 'S5c',
+        title: 'Window: cacheBlockSize 500, maxBlocksInCache 1',
+        query: 'cols=50&block=500&maxBlocks=1',
+        measureS: 40,
+    },
+    {
+        id: 'S5d',
+        title: 'Window: cacheBlockSize 500, maxBlocksInCache -1',
+        query: 'cols=50&block=500&maxBlocks=-1',
+        measureS: 40,
+    },
     {
         id: 'S6',
         title: 'Grouped by sym, SUM + grand total, 3 groups expanded',
@@ -88,7 +108,7 @@ export const REQUIREMENTS = [
     },
     {
         id: 'R5',
-        text: 'Backend order incl. arrival sort; rows shift at refresh rate',
+        text: 'Backend order (measured for arrival time, newest first); rows shift at refresh rate',
         threshold: 'rendered order matches backend order on every check, fps >= 1',
     },
     {
@@ -145,7 +165,7 @@ export function evaluate(results) {
             numSent &&
             textSent &&
             groupSent &&
-            s11.sort.renderedImmediatelyAfterClick === 'unchanged or loading' &&
+            s11.sort.renderedBeforeResponse === 'unchanged or loading' &&
             s11.sort.renderedInBackendOrder &&
             s11.numberFilter.renderedMatches &&
             s11.textFilter.renderedMatches &&
@@ -153,7 +173,7 @@ export function evaluate(results) {
             s11.serverSideEnableClientSideSort === false;
         out.R1 = v(
             all ? 'pass' : 'fail',
-            `sort sent ${sortSent}, filters sent ${numSent}/${textSent}, group sent ${groupSent}; after header click: ${s11.sort.renderedImmediatelyAfterClick}; rendered matches backend: sort ${s11.sort.renderedInBackendOrder}, number ${s11.numberFilter.renderedMatches}, text ${s11.textFilter.renderedMatches}, groups ${s11.group.renderedGroupRows}`,
+            `sort sent ${sortSent}, filters sent ${numSent}/${textSent}, group sent ${groupSent}; before the 500 ms response: ${s11.sort.renderedBeforeResponse}; rendered matches backend: sort ${s11.sort.renderedInBackendOrder}, number ${s11.numberFilter.renderedMatches}, text ${s11.textFilter.renderedMatches}, groups ${s11.group.renderedGroupRows}`,
             ['S11']
         );
     } else {
@@ -175,7 +195,7 @@ export function evaluate(results) {
             : '';
         out.R2 = v(
             verdict,
-            `requested 5/s (feed managed ${g1.feed.updateTicksPerS} update ticks/s): rendered per-cell p50 ${p50}/s (p10 ${g1.perCellRenderedRate.p10}); ${pct} % of ${g1.rowsObserved} visible rows changed >= 1/s${ceiling}`,
+            `requested 5/s (feed managed ${g1.feed.updateTicksPerS} update ticks/s): rendered per-cell p50 ${p50}/s (p10 ${g1.perCellRenderedRate.p10}); ${pct} % of ${g1.rowsObserved} rows observed in view for >= 2 s changed >= 1/s${ceiling}`,
             ['S1', 'S2', 'S12']
         );
 
@@ -230,13 +250,13 @@ export function evaluate(results) {
         const bounded = combos.filter(
             (id) =>
                 results[id].snapshot.loadedNodes.max <= 500 + results[id].config.block &&
-                results[id].snapshot.loadedNodes.slopePerS != null &&
-                results[id].snapshot.loadedNodes.slopePerS <= 0.5
+                results[id].snapshot.loadedNodes.slopePerSSecondHalf != null &&
+                results[id].snapshot.loadedNodes.slopePerSSecondHalf <= 0.5
         );
         const text = combos
             .map(
                 (id) =>
-                    `${id} max ${results[id].snapshot.loadedNodes.max} (slope ${results[id].snapshot.loadedNodes.slopePerS}/s)`
+                    `${id} max ${results[id].snapshot.loadedNodes.max} (growth in the last 20 s ${results[id].snapshot.loadedNodes.slopePerSSecondHalf}/s)`
             )
             .join('; ');
         out.R7 = v(
@@ -271,13 +291,15 @@ export function evaluate(results) {
                 .join('; ') ?? r?.error;
         out.R9 = v(
             a && b ? 'pass' : a ? 'partial' : 'fail',
-            `100k: ${desc(results.S10a)} | 100m: ${desc(results.S10b)}`,
+            `100k: ${desc(results.S10a)}. 100m: ${desc(results.S10b)}`,
             ['S10a', 'S10b']
         );
     } else {
         out.R9 = unmeasured(results.S10a?.error ?? results.S10b?.error ?? 'not run', ['S10a', 'S10b']);
     }
 
+    const feed = (r) =>
+        ok(r) ? `${g0(r).feed.insertsEmittedPerS} inserts/s + ${g0(r).feed.updateTicksPerS} update ticks/s` : '-';
     const minRefresh = (r) => (ok(r) ? Math.min(...r.snapshot.grids.map((x) => x.contentRefreshPerS)) : null);
     if (ok(results.S9c)) {
         const full = minRefresh(results.S9c);
@@ -285,7 +307,7 @@ export function evaluate(results) {
         const attached = results.S9c.snapshot.gridsAttached;
         out.R10a = v(
             full > 1 && attached === 100 ? 'pass' : reduced > 1 ? 'partial' : 'fail',
-            `100 grids (${attached} rendered data): slowest grid ${full} refreshes/s, ${results.S9c.snapshot.fps} fps; reduced feed: slowest ${reduced ?? '-'} refreshes/s`,
+            `100 grids (${attached} rendered data): slowest grid ${full} refreshes/s, ${results.S9c.snapshot.fps} fps, grid 1 feed delivered ${feed(results.S9c)}; reduced feed: slowest ${reduced ?? '-'} refreshes/s, grid 1 feed delivered ${feed(results.S9d)}`,
             ['S9a', 'S9b', 'S9c', 'S9d']
         );
     } else {
@@ -302,7 +324,7 @@ export function evaluate(results) {
                 : r?.error;
         out.R10b = v(
             all ? 'pass' : trim ? 'partial' : 'fail',
-            `send all: ${desc(results.S8c)} | trim: ${desc(results.S8d)}`,
+            `send all: ${desc(results.S8c)}. Trim: ${desc(results.S8d)}`,
             ['S8c', 'S8d']
         );
     } else {

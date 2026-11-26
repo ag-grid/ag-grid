@@ -185,7 +185,7 @@ export class LiveGrid {
         const t = performance.now();
         for (const g of update) {
             const id = g[GRAND_TOTAL_KEY] ? GRAND_TOTAL_ROW_ID : g.id;
-            this.metrics.expectAgg(this, id, g.px.toFixed(2), t);
+            this.metrics.expectAgg(this, id, g.px.toFixed(2), t, id === GRAND_TOTAL_ROW_ID);
         }
         this.apply({ route: [], update });
     }
@@ -210,15 +210,17 @@ export class LiveGrid {
         this.paused = true;
     }
 
-    /** Applies every buffered transaction, in order, in one task. */
+    /** Applies every buffered transaction in order, through the same sync or async path as live updates. */
     resume() {
         this.paused = false;
         const buffered = this.buffer;
         this.buffer = [];
         const t0 = performance.now();
         for (const { tx, insertedId } of buffered) {
-            const res = this.api.applyServerSideTransaction(tx);
-            this.metrics.txApplied(this, null, res?.status, insertedId);
+            this.apply(tx, insertedId);
+        }
+        if (!this.cfg.sync) {
+            this.api.flushServerSideAsyncTransactions();
         }
         return { applied: buffered.length, ms: Math.round(performance.now() - t0) };
     }
