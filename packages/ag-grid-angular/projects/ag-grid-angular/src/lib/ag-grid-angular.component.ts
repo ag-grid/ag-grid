@@ -1939,7 +1939,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * Provide an object to sort using a specific locale and collator options, such as `{ locales: 'de', options: { sensitivity: 'accent' } }`.
      * Only applies when both values are strings. Also orders the values in the Set Filter list.
      *
-     * Can be overridden per column with `colDef.accentedSort`.
+     * Equivalent to setting `accentedSort` on the `defaultColDef`, which is the recommended approach. Can be overridden per column with `colDef.accentedSort`.
      * @default false
      */
     @Input() public accentedSort: boolean | AccentedSortOptions | undefined = undefined;
