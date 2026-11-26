@@ -62,6 +62,7 @@ try {
             ...runs[0],
             title: scenario.title,
             query: scenario.query,
+            measuredAt: new Date().toISOString(),
             repeats: runs.slice(1),
         };
         run.finishedAt = new Date().toISOString();
