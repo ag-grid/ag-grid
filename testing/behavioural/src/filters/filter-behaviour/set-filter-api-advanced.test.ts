@@ -33,7 +33,7 @@ import {
 } from 'ag-grid-community';
 import { SetFilterModule } from 'ag-grid-enterprise';
 
-/** Set-filter handler (non-deprecated public path). Warns nothing, unlike the ISetFilter instance methods. */
+/** Set-filter handler (public path). Warns nothing. */
 function handler(api: GridApi, colId: string): SetFilterHandler {
     const h = api.getColumnFilterHandler<SetFilterHandler>(colId);
     if (!h) {

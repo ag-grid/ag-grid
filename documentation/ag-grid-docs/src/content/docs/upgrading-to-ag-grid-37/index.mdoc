@@ -131,6 +131,24 @@ The following deprecated APIs have now been removed.
 - `rowGroupingHierarchy` - removed, use `groupHierarchy` instead.
 - Rich Select Cell Editor: `colDef.keyCreator` is no longer used to build the search strings for object values - removed, please use `cellEditorParams.formatValue` (or a `valueFormatter`) instead. Columns with object values that only define a `keyCreator` no longer support typeahead search in the Rich Select Cell Editor. `colDef.keyCreator` itself is unchanged and is still used for grouping and the Set Filter.
 
+### Filtering
+
+- Set Filter instance methods `setFilterValues()`, `resetFilterValues()`, `refreshFilterValues()`, `getFilterKeys()` and `getFilterValues()` - removed, call them on the Set Filter handler instead, via `api.getColumnFilterHandler<SetFilterHandler>(colKey)`. For a Set Filter inside a Multi Filter, use `getChildFilterInstance<SetFilterUi>(index).getFilterHandler()`.
+- `ISetFilter` - removed, use `SetFilterUi` for the instance from `api.getColumnFilterInstance()` and `SetFilterHandler` for the handler from `api.getColumnFilterHandler()`. Its typed `getModel()` and `setModel()` go with it. For `getModelFromUi()`, use `api.getColumnFilterModel(key, true)` instead (requires `enableFilterHandlers`; in legacy filter mode the instance methods are still available on `IProvidedFilter`).
+- `onNewRowsLoaded()` on grid-provided filter instances and `onAnyFilterChanged()` on the Set Filter instance - removed, they were internal no-ops with no replacement. Custom legacy filters that implement them are still called.
+- `suppressAdvancedFilterEval` - removed, it had no effect.
+- `ScalarFilterParams` - removed, use `IScalarFilterParams & IFilterParams` instead.
+- `rowModel` in filter params (`IFilterParams`, `filterParams` functions and the React `CustomFilterProps`) - removed. Filter params were the only place the grid exposed its row model, so the row model is no longer available. Use the grid API via `params.api` instead.
+
+| Removed                  | Replacement                    |
+| ------------------------ | ------------------------------ |
+| `rowModel.forEachNode()` | `api.forEachNode()`            |
+| `rowModel.getRow()`      | `api.getDisplayedRowAtIndex()` |
+| `rowModel.getRowNode()`  | `api.getRowNode()`             |
+| `rowModel.getRowCount()` | `api.getDisplayedRowCount()`   |
+
+`api.forEachLeafNode()`, `api.forEachNodeAfterFilter()` and `api.forEachNodeAfterFilterAndSort()` are also available. `getRowBounds`, `getRowIndexAtPixel`, `isRowPresent`, `getTopLevelRowCount`, `getNodesInRangeForSelection`, `getOverlayType`, `isRowsToRender` and Client-Side Row Model internals have no API equivalent; raise an issue if you rely on them.
+
 ### Row Node
 
 - `firstChild` - removed. With the Client-Side Row Model, use `rowNode.parent?.childrenAfterSort?.[0] === rowNode` instead.
@@ -145,6 +163,7 @@ In the Server-Side Row Model only `firstChild` was ever set, and it has no direc
 - `ChartType`, `CrossFilterChartType`: `'doughnut'` - removed, please use `'donut'` instead. This applies to `createRangeChart`, `createPivotChart`, `createCrossFilterChart`, `updateChart` and `chartGroupsDef.pieGroup`. Calling `createRangeChart`, `createPivotChart` or `createCrossFilterChart` with `chartType: 'doughnut'` now logs a warning and does not create a chart, and `updateChart` with `chartType: 'doughnut'` also logs a warning. Chart models saved before v37 with `'doughnut'` can still be restored with `restoreChart`.
 - `EditingCellPosition`: `column` and `colKey` - removed, please use `colId` instead. This affects the results of `api.getEditingCells()` and the `editorsState` entries passed to the `getFullRowEditValidationErrors` callback. `startEditingCell({ colKey })` is unchanged.
 - `ChartCreated`, `ChartRangeSelectionChanged`, `ChartOptionsChanged`, `ChartDestroyed` and `AsyncTransactionsFlushed` - removed, use `ChartCreatedEvent`, `ChartRangeSelectionChangedEvent`, `ChartOptionsChangedEvent`, `ChartDestroyedEvent` and `AsyncTransactionsFlushedEvent` instead.
+- `IRowModel`, `IClientSideRowModel` and `IServerSideRowModel` - now internal. They are still exported, but can change without notice.
 - `ExpandCollapseAllEvent` - removed, use `ExpandOrCollapseAllEvent` instead.
 - `ServerSideStoreParams` - removed, use `ServerSideGroupLevelParams` instead.
 - `IDetailCellRendererParams`: `agGridReact` and `frameworkComponentWrapper` - removed, they were not used.

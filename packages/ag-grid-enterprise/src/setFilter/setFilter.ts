@@ -16,7 +16,6 @@ import type {
     FilterDisplayParams,
     GridInputTextField,
     IAfterGuiAttachedParams,
-    ISetFilter,
     SetFilterHandler as ISetFilterHandler,
     ISetFilterParams,
     SetFilterModel,
@@ -62,7 +61,7 @@ type MiniFilterInputSource = 'ui' | 'api' | 'state';
 /** @param V type of value in the Set Filter */
 export class SetFilter<V = string>
     extends ProvidedFilter<SetFilterModel, V, ISetFilterParams<any, V> & FilterDisplayParams<any, any, SetFilterModel>>
-    implements ISetFilter<V>, SetFilterUi<V>
+    implements SetFilterUi<V>
 {
     public readonly filterType = 'set' as const;
 
@@ -713,46 +712,8 @@ export class SetFilter<V = string>
         return this.params.excelMode ? model == null || model.values.length > 0 : true;
     }
 
-    /**
-     * @deprecated v34 Internal method - should only be called by the grid.
-     */
-    public override onNewRowsLoaded(): void {
-        // we don't warn here because the multi filter can call this
-    }
-
-    /**
-     * @deprecated v34 Use the same method on the filter handler (`api.getColumnFilterHandler()`) instead.
-     */
-    public setFilterValues(values: (V | null)[]): void {
-        this.beans.log.warn(283);
-        this.handler.setFilterValues(values);
-    }
-
-    /**
-     * @deprecated v34 Use the same method on the filter handler (`api.getColumnFilterHandler()`) instead.
-     */
-    public resetFilterValues(): void {
-        this.beans.log.warn(283);
-        this.handler.resetFilterValues();
-    }
-
-    /**
-     * @deprecated v34 Use the same method on the filter handler (`api.getColumnFilterHandler()`) instead.
-     */
-    public refreshFilterValues(): void {
-        this.beans.log.warn(283);
-        this.doRefreshFilterValues();
-    }
-
     private doRefreshFilterValues(): void {
         this.handler.refreshFilterValues();
-    }
-
-    /**
-     * @deprecated v34 Internal method - should only be called by the grid.
-     */
-    public onAnyFilterChanged(): void {
-        // we don't warn here because the multi filter can call this
     }
 
     private onMiniFilterInput(forceImmediate = false, source: MiniFilterInputSource = 'ui') {
@@ -962,22 +923,6 @@ export class SetFilter<V = string>
         if (this.hardRefreshVirtualList) {
             this.hardRefreshVirtualList = false;
         }
-    }
-
-    /**
-     * @deprecated v34 Use the same method on the filter handler (`api.getColumnFilterHandler()`) instead.
-     */
-    public getFilterKeys(): SetFilterModelValue {
-        this.beans.log.warn(283);
-        return this.handler.getFilterKeys();
-    }
-
-    /**
-     * @deprecated v34 Use the same method on the filter handler (`api.getColumnFilterHandler()`) instead.
-     */
-    public getFilterValues(): (V | null)[] {
-        this.beans.log.warn(283);
-        return this.handler.getFilterValues();
     }
 
     private refreshVirtualList(): void {

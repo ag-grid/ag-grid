@@ -233,7 +233,7 @@ export type {
     ProvidedFilterModel,
     ProvidedFilterParams,
 } from './filter/provided/iProvidedFilter';
-export type { IScalarFilterParams, ScalarFilterParams } from './filter/provided/iScalarFilter';
+export type { IScalarFilterParams } from './filter/provided/iScalarFilter';
 export { isCombinedFilterModel } from './filter/provided/iSimpleFilter';
 export type {
     CommonFilterOptionKey,
@@ -359,7 +359,6 @@ export type {
     MultiFilterParams,
 } from './interfaces/iMultiFilter';
 export type {
-    ISetFilter,
     ISetFilterParams,
     ISetFilterTreeListTooltipParams,
     SetFilterHandler,
@@ -584,13 +583,12 @@ export type { RedrawRowsParams } from './interfaces/iRedrawRowsParams';
 export type { ICheckboxCellRendererParams } from './rendering/cellRenderers/checkboxCellRenderer';
 
 // Row Model
-export type { IRowModel, RowBounds, RowModelType } from './interfaces/iRowModel';
+export type { RowBounds, RowModelType } from './interfaces/iRowModel';
 
 // Client Side Row Model (CSRM)
 export type {
     ClientSideRowModelStage,
     ClientSideRowModelStep,
-    IClientSideRowModel,
     RefreshModelParams,
 } from './interfaces/iClientSideRowModel';
 export type { RowDataTransaction } from './interfaces/rowDataTransaction';
@@ -605,7 +603,6 @@ export type {
     IServerSideGetRowsRequest,
 } from './interfaces/iServerSideDatasource';
 export type {
-    IServerSideRowModel,
     IServerSideTransactionManager,
     LoadSuccessParams,
     RefreshServerSideParams,

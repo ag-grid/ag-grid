@@ -238,13 +238,6 @@ export abstract class ProvidedFilter<
     }
 
     /**
-     * @deprecated v34 Internal method - should only be called by the grid.
-     */
-    public onNewRowsLoaded(): void {
-        // we don't warn here because the multi filter can call this
-    }
-
-    /**
      * By default, if the change came from a floating filter it will be applied immediately, otherwise if there is no
      * apply button it will be applied after a debounce, otherwise it will not be applied at all. This behaviour can
      * be adjusted by using the apply parameter.

@@ -842,12 +842,6 @@ export interface GridOptions<TData = any> {
      */
     advancedFilterParams?: IAdvancedFilterParams;
     /**
-     * @deprecated As of v34, advanced filter no longer uses function evaluation, so this option has no effect.
-     * @default true
-     * @agModule `AdvancedFilterModule`
-     */
-    suppressAdvancedFilterEval?: boolean;
-    /**
      * When using AG Grid Enterprise, the Set Filter is used by default when `filter: true` is set on column definitions.
      * Set to `true` to prevent this and instead use the Text Filter, Number Filter or Date Filter based on the cell data type,
      * the same as when using AG Grid Community.

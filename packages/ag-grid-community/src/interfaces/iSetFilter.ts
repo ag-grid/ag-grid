@@ -1,8 +1,6 @@
-import type { AgPromise } from 'ag-stack';
-
 import type { ColDef, KeyCreatorParams, ValueFormatterParams } from '../entities/colDef';
 import type { FilterUiChangedEvent } from '../events';
-import type { IProvidedFilter, IProvidedFilterParams, ProvidedFilterModel } from '../filter/provided/iProvidedFilter';
+import type { IProvidedFilterParams, ProvidedFilterModel } from '../filter/provided/iProvidedFilter';
 import type { Column } from '../interfaces/iColumn';
 import type { ITooltipParams } from '../tooltip/tooltipComponent';
 import type { IAutoCompleteComponentParams } from './iAutoComplete';
@@ -13,64 +11,6 @@ export type SetFilterModelValue = (string | null)[];
 export interface SetFilterModel extends ProvidedFilterModel {
     filterType?: 'set';
     values: SetFilterModelValue;
-}
-
-/**
- * @deprecated v34 Use `SetFilterUi` for the filter UI component, and `SetFilterHandler` for the filter handler.
- */
-export interface ISetFilter<V = string> extends IProvidedFilter {
-    readonly filterType: 'set';
-
-    /**
-     * Returns a model representing the current state of the filter, or `null` if the filter is
-     * not active.
-     */
-    getModel(): SetFilterModel | null;
-
-    /**
-     * Sets the state of the filter using the supplied model. Providing `null` as the model will
-     * de-activate the filter.
-     *
-     * **Note:** if you are [providing values asynchronously](/filter-set-filter-list/#asynchronous-values)
-     * to the Set Filter, you need to wait for these changes to be applied before performing any further
-     * actions by waiting on the returned grid promise, e.g.
-     * `filter.setModel({ values: ['a', 'b'] }).then(function() { gridApi.onFilterChanged(); });`
-     */
-    setModel(model: SetFilterModel | null): AgPromise<void>;
-
-    /** Returns the full list of unique keys used by the Set Filter. */
-    getFilterKeys(): SetFilterModelValue;
-
-    /**
-     * Returns the full list of unique values used by the Set Filter.
-     * With `preservePreviousValues`, a model value never seen in the data is `null`.
-     */
-    getFilterValues(): (V | null)[];
-
-    /**
-     * Sets the values used in the Set Filter on the fly. They stay until `filterParams.values` changes or a
-     * parameter update resets the filter.
-     */
-    setFilterValues(values: (V | null)[]): void;
-    /**
-     * Refreshes the values shown in the filter from their source: values set with `setFilterValues`, the
-     * rows after `resetFilterValues`, else the provided `values` or the rows. For example, if a callback was
-     * provided, the callback will be executed again and the filter will refresh using the values returned.
-     */
-    refreshFilterValues(): void;
-    /**
-     * Resets the Set Filter to use values from the grid, rather than any values that have been
-     * provided directly, until `filterParams.values` changes.
-     */
-    resetFilterValues(): void;
-
-    /** Returns the current mini-filter text. */
-    getMiniFilter(): string | null;
-    /** Sets the text in the Mini Filter at the top of the filter (the 'quick search' in the popup). */
-    setMiniFilter(newMiniFilter: string | null): void;
-
-    /** Returns the current UI state (potentially un-applied). */
-    getModelFromUi(): SetFilterModel | null;
 }
 
 export interface SetFilterHandler<TValue = string> {

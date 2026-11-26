@@ -303,6 +303,7 @@ export type { IAggFuncService } from './interfaces/iAggFuncService';
 export type { IAggregatedChildrenSvc as _IAggregatedChildrenSvc } from './interfaces/iAggregatedChildrenSvc';
 export type { ICellRangeFeature } from './interfaces/iCellRangeFeature';
 export type { IAutoColService } from './interfaces/iAutoColService';
+export type { IClientSideRowModel } from './interfaces/iClientSideRowModel';
 export type { IClipboardService } from './interfaces/iClipboardService';
 export type {
     ColumnChangedEventType as _ColumnChangedEventType,
@@ -347,6 +348,7 @@ export type { IPivotColDefService } from './interfaces/iPivotColDefService';
 export type { IPivotResultColsService } from './interfaces/iPivotResultColsService';
 export type { IRangeService } from './interfaces/IRangeService';
 export type { IRowChildrenService } from './interfaces/iRowChildrenService';
+export type { IRowModel } from './interfaces/iRowModel';
 
 export type {
     IRowNodeAggregationStage as _IRowNodeAggregationStage,
@@ -359,6 +361,7 @@ export type {
     NestedDataGetter,
 } from './interfaces/iRowNodeStage';
 export type { ISelectionService, ISetNodesSelectedParams } from './interfaces/iSelectionService';
+export type { IServerSideRowModel } from './interfaces/iServerSideRowModel';
 export type { IShowRowGroupColsService } from './interfaces/iShowRowGroupColsService';
 export type { GroupValueResult, IShowRowGroupColsValueService } from './interfaces/iShowRowGroupColsValueService';
 export type { IShowValuesAsService } from './interfaces/iShowValuesAsService';

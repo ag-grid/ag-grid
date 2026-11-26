@@ -5,7 +5,6 @@ import type { IFloatingFilterComp } from '../filter/floating/floatingFilter';
 import type { Column } from '../interfaces/iColumn';
 import type { IAfterGuiAttachedParams } from './iAfterGuiAttachedParams';
 import type { AgGridCommon } from './iCommon';
-import type { IRowModel } from './iRowModel';
 import type { IRowNode } from './iRowNode';
 
 /** @deprecated v37 Use `enableFilterHandlers` with a `ColumnFilter` and a `FilterDisplayComp` component instead. See [Migrating to Filter Handlers](https://www.ag-grid.com/javascript-data-grid/enable-filter-handlers-migration/). */
@@ -376,12 +375,7 @@ export interface SharedFilterParams<TData = any, TContext = any> extends AgGridC
     doesRowPassOtherFilter: (rowNode: IRowNode<TData>) => boolean; // TODO: this method should be "doesRowPassOtherFilters"
 }
 
-export interface BaseFilterParams<TData = any, TContext = any> extends SharedFilterParams<TData, TContext> {
-    /**
-     * @deprecated 33.1 Use the corresponding methods on the grid API (`api`) instead.
-     */
-    rowModel: IRowModel;
-}
+export interface BaseFilterParams<TData = any, TContext = any> extends SharedFilterParams<TData, TContext> {}
 
 /**
  * Parameters provided by the grid to the `init` method of an `IFilterComp`
