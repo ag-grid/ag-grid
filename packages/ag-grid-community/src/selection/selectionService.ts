@@ -480,6 +480,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         }
     }
 
+    /** Copies the node's old id and data so `syncInRowNode` can keep that id selected when the node is reused. Returns `undefined` when nothing is selected, as there is then nothing to keep. */
     public createDaemonNode(rowNode: RowNode): RowNode | undefined {
         if (!rowNode.id || this.selectedNodes.size === 0) {
             return undefined;

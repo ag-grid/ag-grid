@@ -71,7 +71,6 @@ export interface ISelectionService {
     updateGroupsSelectable?(changedPath: ChangedPath | undefined): void;
     updateRowSelectable(rowNode: RowNode, suppressSelectionUpdate?: boolean): boolean;
     selectRowNode(rowNode: RowNode, newValue?: boolean, e?: Event, source?: SelectionEventSourceType): boolean;
-    /** Copies the node's old id and data so `syncInRowNode` can keep that id selected when the node is reused. Returns `undefined` when nothing is selected, as there is then nothing to keep. */
     createDaemonNode?(rowNode: RowNode): RowNode | undefined;
     handleSelectionEvent(
         event: MouseEvent | KeyboardEvent,
