@@ -3,7 +3,8 @@ import { expect, test } from '@playwright/test';
 
 import { mountGrid } from '../src/mountGrid';
 
-test.use({ launchOptions: { ignoreDefaultArgs: ['--hide-scrollbars'] } });
+// Replaces the project's launchOptions rather than merging, so the sandbox setting has to be repeated here.
+test.use({ launchOptions: { ignoreDefaultArgs: ['--hide-scrollbars'], chromiumSandbox: !process.env.CI } });
 test.skip(({ browserName }) => browserName === 'firefox', 'Firefox scrollbar coverage is deferred.');
 
 declare global {
