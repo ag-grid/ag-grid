@@ -227,7 +227,7 @@ const highContrastParams = () =>
         selectedRowRangeSelectionBorderColor: accentColor,
         selectedRowDragIndicatorColor: accentColor,
         selectedRowDragHandleColor: accentColor,
-        selectedRowCellEditingBorder: { width: highContrastBorderWidth, color: { ref: 'selectedRowTextColor' } },
+        selectedRowCellEditingBorder: { width: highContrastBorderWidth, color: { ref: 'cellTextColor' } },
         selectedRowCheckboxCheckedBackgroundColor: accentColor,
         selectedRowCheckboxCheckedBorderColor: accentColor,
         selectedRowCheckboxCheckedShapeColor: backgroundColor,
