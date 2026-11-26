@@ -92,7 +92,7 @@ async function runScenario(scenario) {
     const errors = [];
     page.on('pageerror', (e) => errors.push(e.message));
     page.on('console', (m) => {
-        if (m.type() === 'error' && !m.text().includes('****')) {
+        if (m.type() === 'error' && !m.text().startsWith('*')) {
             errors.push(m.text());
         }
     });

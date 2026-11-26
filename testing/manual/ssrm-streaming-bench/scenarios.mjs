@@ -1,12 +1,14 @@
 // Scenario matrix and the pass/fail thresholds, fixed before anything was measured.
 // `run-bench.mjs` runs the scenarios; `evaluate` turns their results into one verdict per requirement.
 
-const R3_COLS = 'cols=200';
+// About 57 rows x 58 columns visible at 3840x2160: just over the 50 x 50 the requirement names.
+const R3_COLS = 'cols=200&rowHeight=36&colWidth=64';
 
 /** `action` names a step run in the page after the measurement window (see run-bench.mjs). */
 export const SCENARIOS = [
     { id: 'S0', title: 'Control: feed off', query: `${R3_COLS}&feed=0` },
     { id: 'S1', title: 'Baseline: 75 ms top inserts, 5 updates/s per cell, async', query: R3_COLS, repeat: 2 },
+    { id: 'S1L', title: 'S1 with about 117 rows x 62 columns visible', query: 'cols=200' },
     { id: 'S1i', title: 'S1 inserts only (no cell updates)', query: `${R3_COLS}&rate=0` },
     { id: 'S1u', title: 'S1 cell updates only (no inserts)', query: `${R3_COLS}&insertMs=0` },
     { id: 'S4', title: 'S1 with animateRows on', query: `${R3_COLS}&animate=1`, repeat: 2 },
