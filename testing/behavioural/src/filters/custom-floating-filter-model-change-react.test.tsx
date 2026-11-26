@@ -12,9 +12,9 @@ import {
     TextFilterModule,
     enableDevValidations,
 } from 'ag-grid-community';
+import { MultiFilterModule } from 'ag-grid-enterprise';
 import type { CustomFilterProps, CustomFloatingFilterProps } from 'ag-grid-react';
 import { AgGridReact, useGridFilter } from 'ag-grid-react';
-import { MultiFilterModule } from 'ag-grid-enterprise';
 
 const rowData = [{ athlete: 'Michael Phelps' }, { athlete: 'Aleksey Nemov' }];
 

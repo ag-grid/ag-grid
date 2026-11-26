@@ -10,12 +10,7 @@ import {
 import type { GridApi, IFilterComp } from 'ag-grid-community';
 import { enableDevValidations } from 'ag-grid-community';
 
-import {
-    ROWS,
-    setupMultiFilterSuite,
-    visibleFloatingChild,
-    visibleFloatingKind,
-} from './multiFilterHarness';
+import { ROWS, setupMultiFilterSuite, visibleFloatingChild, visibleFloatingKind } from './multiFilterHarness';
 
 /**
  * agMultiColumnFilter's text+set default, combined model and AND across children; siblings multi-filter-children
