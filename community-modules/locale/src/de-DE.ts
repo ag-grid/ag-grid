@@ -910,6 +910,15 @@ export const AG_GRID_LOCALE_DE_DE = {
     ariaLabelClose: 'Schließen',
     ariaLabelMaximize: 'Maximieren',
     ariaLabelRestore: 'Wiederherstellen',
+    ariaLabelMoveAndResize: 'Verschieben und Größe ändern',
+    ariaLabelNarrower: 'Schmaler',
+    ariaLabelWider: 'Breiter',
+    ariaLabelShorter: 'Niedriger',
+    ariaLabelTaller: 'Höher',
+    ariaDialogMoveInstructions:
+        'Die Pfeiltasten verschieben den Dialog. Drücken Sie die Eingabetaste zum Beenden oder Esc zum Abbrechen.',
+    ariaDialogMoveResizeInstructions:
+        'Die Pfeiltasten verschieben den Dialog, mit gedrückter Umschalttaste ändern sie seine Größe. Drücken Sie die Eingabetaste zum Beenden oder Esc zum Abbrechen.',
     ariaLabelColorPickerSpectrum: 'Sättigung und Helligkeit',
     ariaValueColorPickerSpectrum: 'Sättigung ${saturation} %, Helligkeit ${brightness} %',
     ariaLabelColorPickerHue: 'Farbton',

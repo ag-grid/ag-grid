@@ -921,6 +921,15 @@ export const AG_GRID_LOCALE_SR_RS = {
     ariaLabelMaximize: 'Максимизуј',
 
     ariaLabelRestore: 'Врати',
+    ariaLabelMoveAndResize: 'Помери и промени величину',
+    ariaLabelNarrower: 'Ужи',
+    ariaLabelWider: 'Шири',
+    ariaLabelShorter: 'Нижи',
+    ariaLabelTaller: 'Виши',
+    ariaDialogMoveInstructions:
+        'Тастерима са стрелицама померате дијалог. Притисните ENTER за завршетак или ESC за отказивање.',
+    ariaDialogMoveResizeInstructions:
+        'Тастерима са стрелицама померате дијалог, а тастером SHIFT са стрелицама мењате му величину. Притисните ENTER за завршетак или ESC за отказивање.',
     ariaLabelColorPickerSpectrum: 'Засићеност и осветљеност',
     ariaValueColorPickerSpectrum: 'Засићеност ${saturation}%, осветљеност ${brightness}%',
     ariaLabelColorPickerHue: 'Нијанса',

@@ -903,6 +903,15 @@ export const AG_GRID_LOCALE_FA_IR = {
     ariaLabelClose: 'بستن',
     ariaLabelMaximize: 'بزرگ کردن',
     ariaLabelRestore: 'بازگرداندن',
+    ariaLabelMoveAndResize: 'انتقال و تغییر اندازه',
+    ariaLabelNarrower: 'باریک‌تر',
+    ariaLabelWider: 'پهن‌تر',
+    ariaLabelShorter: 'کوتاه‌تر',
+    ariaLabelTaller: 'بلندتر',
+    ariaDialogMoveInstructions:
+        'کلیدهای جهت‌نما کادر گفتگو را جابه‌جا می‌کنند. برای پایان Enter و برای لغو Esc را فشار دهید.',
+    ariaDialogMoveResizeInstructions:
+        'کلیدهای جهت‌نما کادر گفتگو را جابه‌جا می‌کنند و همراه با Shift اندازه آن را تغییر می‌دهند. برای پایان Enter و برای لغو Esc را فشار دهید.',
     ariaLabelColorPickerSpectrum: 'اشباع و روشنایی',
     ariaValueColorPickerSpectrum: 'اشباع ${saturation}%، روشنایی ${brightness}%',
     ariaLabelColorPickerHue: 'فام',

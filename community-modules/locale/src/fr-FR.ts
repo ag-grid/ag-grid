@@ -911,6 +911,15 @@ export const AG_GRID_LOCALE_FR_FR = {
     ariaLabelClose: 'Fermer',
     ariaLabelMaximize: 'Agrandir',
     ariaLabelRestore: 'Restaurer',
+    ariaLabelMoveAndResize: 'Déplacer et redimensionner',
+    ariaLabelNarrower: 'Plus étroit',
+    ariaLabelWider: 'Plus large',
+    ariaLabelShorter: 'Moins haut',
+    ariaLabelTaller: 'Plus haut',
+    ariaDialogMoveInstructions:
+        'Les touches fléchées déplacent la boîte de dialogue. Appuyez sur Entrée pour terminer ou sur Échap pour annuler.',
+    ariaDialogMoveResizeInstructions:
+        'Les touches fléchées déplacent la boîte de dialogue et, avec Maj, la redimensionnent. Appuyez sur Entrée pour terminer ou sur Échap pour annuler.',
     ariaLabelColorPickerSpectrum: 'Saturation et luminosité',
     ariaValueColorPickerSpectrum: 'Saturation ${saturation} %, luminosité ${brightness} %',
     ariaLabelColorPickerHue: 'Teinte',

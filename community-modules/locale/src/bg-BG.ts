@@ -906,6 +906,15 @@ export const AG_GRID_LOCALE_BG_BG = {
     ariaLabelClose: 'Затвори',
     ariaLabelMaximize: 'Увеличи',
     ariaLabelRestore: 'Възстанови',
+    ariaLabelMoveAndResize: 'Преместване и преоразмеряване',
+    ariaLabelNarrower: 'По-тесен',
+    ariaLabelWider: 'По-широк',
+    ariaLabelShorter: 'По-нисък',
+    ariaLabelTaller: 'По-висок',
+    ariaDialogMoveInstructions:
+        'Клавишите със стрелки преместват диалоговия прозорец. Натиснете Enter, за да завършите, или Esc, за да отмените.',
+    ariaDialogMoveResizeInstructions:
+        'Клавишите със стрелки преместват диалоговия прозорец, а заедно с Shift променят размера му. Натиснете Enter, за да завършите, или Esc, за да отмените.',
     ariaLabelColorPickerSpectrum: 'Наситеност и яркост',
     ariaValueColorPickerSpectrum: 'Наситеност ${saturation}%, яркост ${brightness}%',
     ariaLabelColorPickerHue: 'Нюанс',

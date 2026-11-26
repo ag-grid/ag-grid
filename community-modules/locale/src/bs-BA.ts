@@ -924,6 +924,15 @@ export const AG_GRID_LOCALE_BS_BA = {
     ariaLabelMaximize: 'Maksimiziraj',
 
     ariaLabelRestore: 'Vrati',
+    ariaLabelMoveAndResize: 'Pomjeri i promijeni veličinu',
+    ariaLabelNarrower: 'Uži',
+    ariaLabelWider: 'Širi',
+    ariaLabelShorter: 'Niži',
+    ariaLabelTaller: 'Viši',
+    ariaDialogMoveInstructions:
+        'Tasterima sa strelicama pomjerate dijalog. Pritisnite Enter za završetak ili Esc za otkazivanje.',
+    ariaDialogMoveResizeInstructions:
+        'Tasterima sa strelicama pomjerate dijalog, a tasterom Shift sa strelicama mijenjate mu veličinu. Pritisnite Enter za završetak ili Esc za otkazivanje.',
     ariaLabelColorPickerSpectrum: 'Zasićenost i svjetlina',
     ariaValueColorPickerSpectrum: 'Zasićenost ${saturation}%, svjetlina ${brightness}%',
     ariaLabelColorPickerHue: 'Nijansa',

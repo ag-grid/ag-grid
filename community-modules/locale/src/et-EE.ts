@@ -921,6 +921,14 @@ export const AG_GRID_LOCALE_ET_EE = {
     ariaLabelMaximize: 'Maksimeeri',
 
     ariaLabelRestore: 'Taasta',
+    ariaLabelMoveAndResize: 'Liiguta ja muuda suurust',
+    ariaLabelNarrower: 'Kitsam',
+    ariaLabelWider: 'Laiem',
+    ariaLabelShorter: 'Madalam',
+    ariaLabelTaller: 'Kõrgem',
+    ariaDialogMoveInstructions: 'Nooleklahvid liigutavad dialoogi. Vajuta lõpetamiseks Enter või tühistamiseks Esc.',
+    ariaDialogMoveResizeInstructions:
+        'Nooleklahvid liigutavad dialoogi ning Shift koos nooleklahvidega muudab selle suurust. Vajuta lõpetamiseks Enter või tühistamiseks Esc.',
     ariaLabelColorPickerSpectrum: 'Küllastus ja heledus',
     ariaValueColorPickerSpectrum: 'Küllastus ${saturation}%, heledus ${brightness}%',
     ariaLabelColorPickerHue: 'Toon',

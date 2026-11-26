@@ -902,6 +902,15 @@ export const AG_GRID_LOCALE_KO_KR = {
     ariaLabelClose: '닫기',
     ariaLabelMaximize: '최대화',
     ariaLabelRestore: '복원',
+    ariaLabelMoveAndResize: '이동 및 크기 조정',
+    ariaLabelNarrower: '더 좁게',
+    ariaLabelWider: '더 넓게',
+    ariaLabelShorter: '더 낮게',
+    ariaLabelTaller: '더 높게',
+    ariaDialogMoveInstructions:
+        '화살표 키로 대화상자를 이동합니다. 완료하려면 Enter 키를, 취소하려면 Esc 키를 누르세요.',
+    ariaDialogMoveResizeInstructions:
+        '화살표 키로 대화상자를 이동하고, Shift 키를 누른 채 화살표 키로 크기를 조정합니다. 완료하려면 Enter 키를, 취소하려면 Esc 키를 누르세요.',
     ariaLabelColorPickerSpectrum: '채도 및 명도',
     ariaValueColorPickerSpectrum: '채도 ${saturation}%, 명도 ${brightness}%',
     ariaLabelColorPickerHue: '색조',

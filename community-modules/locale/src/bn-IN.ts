@@ -921,6 +921,14 @@ export const AG_GRID_LOCALE_BN_IN = {
     ariaLabelMaximize: 'বড় করুন',
 
     ariaLabelRestore: 'পুনরুদ্ধার করুন',
+    ariaLabelMoveAndResize: 'সরান ও আকার পরিবর্তন করুন',
+    ariaLabelNarrower: 'আরও সরু',
+    ariaLabelWider: 'আরও চওড়া',
+    ariaLabelShorter: 'আরও খাটো',
+    ariaLabelTaller: 'আরও লম্বা',
+    ariaDialogMoveInstructions: 'অ্যারো কী দিয়ে ডায়ালগ সরানো যায়। শেষ করতে Enter বা বাতিল করতে Esc চাপুন।',
+    ariaDialogMoveResizeInstructions:
+        'অ্যারো কী দিয়ে ডায়ালগ সরানো যায়, আর Shift সহ অ্যারো কী দিয়ে এর আকার পরিবর্তন করা যায়। শেষ করতে Enter বা বাতিল করতে Esc চাপুন।',
     ariaLabelColorPickerSpectrum: 'স্যাচুরেশন ও উজ্জ্বলতা',
     ariaValueColorPickerSpectrum: 'স্যাচুরেশন ${saturation}%, উজ্জ্বলতা ${brightness}%',
     ariaLabelColorPickerHue: 'হিউ',

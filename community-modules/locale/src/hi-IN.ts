@@ -922,6 +922,15 @@ export const AG_GRID_LOCALE_HI_IN = {
     ariaLabelMaximize: 'बड़ा करें',
 
     ariaLabelRestore: 'पुनर्स्थापित करें',
+    ariaLabelMoveAndResize: 'ले जाएँ और आकार बदलें',
+    ariaLabelNarrower: 'कम चौड़ा',
+    ariaLabelWider: 'अधिक चौड़ा',
+    ariaLabelShorter: 'कम ऊंचा',
+    ariaLabelTaller: 'अधिक ऊंचा',
+    ariaDialogMoveInstructions:
+        'ऐरो कुंजियाँ डायलॉग को खिसकाती हैं। पूरा करने के लिए Enter या रद्द करने के लिए Esc दबाएं।',
+    ariaDialogMoveResizeInstructions:
+        'ऐरो कुंजियाँ डायलॉग को खिसकाती हैं, और Shift के साथ ऐरो कुंजियाँ उसका आकार बदलती हैं। पूरा करने के लिए Enter या रद्द करने के लिए Esc दबाएं।',
     ariaLabelColorPickerSpectrum: 'संतृप्ति और चमक',
     ariaValueColorPickerSpectrum: 'संतृप्ति ${saturation}%, चमक ${brightness}%',
     ariaLabelColorPickerHue: 'ह्यू',

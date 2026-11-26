@@ -906,6 +906,15 @@ export const AG_GRID_LOCALE_SV_SE = {
     ariaLabelClose: 'Stäng',
     ariaLabelMaximize: 'Maximera',
     ariaLabelRestore: 'Återställ',
+    ariaLabelMoveAndResize: 'Flytta och ändra storlek',
+    ariaLabelNarrower: 'Smalare',
+    ariaLabelWider: 'Bredare',
+    ariaLabelShorter: 'Lägre',
+    ariaLabelTaller: 'Högre',
+    ariaDialogMoveInstructions:
+        'Piltangenterna flyttar dialogrutan. Tryck på Enter för att slutföra eller Esc för att avbryta.',
+    ariaDialogMoveResizeInstructions:
+        'Piltangenterna flyttar dialogrutan, och Skift med piltangenterna ändrar dess storlek. Tryck på Enter för att slutföra eller Esc för att avbryta.',
     ariaLabelColorPickerSpectrum: 'Mättnad och ljusstyrka',
     ariaValueColorPickerSpectrum: 'Mättnad ${saturation} %, ljusstyrka ${brightness} %',
     ariaLabelColorPickerHue: 'Nyans',

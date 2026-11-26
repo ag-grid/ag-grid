@@ -903,6 +903,15 @@ export const AG_GRID_LOCALE_NB_NO = {
     ariaLabelClose: 'Lukk',
     ariaLabelMaximize: 'Maksimer',
     ariaLabelRestore: 'Gjenopprett',
+    ariaLabelMoveAndResize: 'Flytt og endre størrelse',
+    ariaLabelNarrower: 'Smalere',
+    ariaLabelWider: 'Bredere',
+    ariaLabelShorter: 'Lavere',
+    ariaLabelTaller: 'Høyere',
+    ariaDialogMoveInstructions:
+        'Piltastene flytter dialogboksen. Trykk på Enter for å fullføre eller Esc for å avbryte.',
+    ariaDialogMoveResizeInstructions:
+        'Piltastene flytter dialogboksen, og Skift med piltastene endrer størrelsen. Trykk på Enter for å fullføre eller Esc for å avbryte.',
     ariaLabelColorPickerSpectrum: 'Metning og lysstyrke',
     ariaValueColorPickerSpectrum: 'Metning ${saturation} %, lysstyrke ${brightness} %',
     ariaLabelColorPickerHue: 'Fargetone',

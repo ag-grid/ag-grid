@@ -922,6 +922,15 @@ export const AG_GRID_LOCALE_LV_LV = {
     ariaLabelMaximize: 'Maksimizēt',
 
     ariaLabelRestore: 'Atjaunot',
+    ariaLabelMoveAndResize: 'Pārvietot un mainīt izmēru',
+    ariaLabelNarrower: 'Šaurāks',
+    ariaLabelWider: 'Platāks',
+    ariaLabelShorter: 'Zemāks',
+    ariaLabelTaller: 'Augstāks',
+    ariaDialogMoveInstructions:
+        'Bulttaustiņi pārvieto dialoglodziņu. Nospiediet Enter, lai pabeigtu, vai Esc, lai atceltu.',
+    ariaDialogMoveResizeInstructions:
+        'Bulttaustiņi pārvieto dialoglodziņu, bet Shift kopā ar bulttaustiņiem maina tā izmēru. Nospiediet Enter, lai pabeigtu, vai Esc, lai atceltu.',
     ariaLabelColorPickerSpectrum: 'Piesātinājums un spilgtums',
     ariaValueColorPickerSpectrum: 'Piesātinājums ${saturation}%, spilgtums ${brightness}%',
     ariaLabelColorPickerHue: 'Nokrāsa',

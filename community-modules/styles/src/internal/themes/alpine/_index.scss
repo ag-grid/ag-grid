@@ -220,6 +220,8 @@
     .ag-side-button-button,
     .ag-tab,
     .ag-panel-title-bar-button,
+    .ag-dialog-title-bar-button,
+    .ag-dialog-step-button,
     .ag-header-expand-icon,
     .ag-column-group-icons,
     .ag-set-filter-group-icons,
@@ -244,6 +246,8 @@
     .ag-header-cell-filter-button.ag-has-menu-open .ag-icon,
     .ag-side-button-button:hover .ag-icon,
     .ag-panel-title-bar-button:hover .ag-icon,
+    .ag-dialog-title-bar-button:hover .ag-icon,
+    .ag-dialog-step-button:hover .ag-icon,
     .ag-floating-filter-button-button:hover .ag-icon,
     .ag-floating-filter-button-button.ag-has-menu-open .ag-icon {
         color: inherit;
@@ -257,7 +261,8 @@
         opacity: 0.35;
     }
 
-    .ag-panel-title-bar-button {
+    .ag-panel-title-bar-button,
+    .ag-dialog-title-bar-button {
         @include ag.theme-rtl(
             (
                 margin-left: calc(var(--ag-grid-size) * 1.5),

@@ -908,6 +908,17 @@ export const AG_GRID_LOCALE_EN_US = {
     // dialog title bar toggle: enlarges the dialog to fill the grid, then returns it to its previous size
     ariaLabelMaximize: 'Maximize',
     ariaLabelRestore: 'Restore',
+    // dialog title bar toggle: starts and ends moving and resizing the dialog with the arrow keys or step buttons
+    ariaLabelMoveAndResize: 'Move and Resize',
+    // dialog step buttons on its right and bottom edges, shown while moving and resizing it
+    ariaLabelNarrower: 'Narrower',
+    ariaLabelWider: 'Wider',
+    ariaLabelShorter: 'Shorter',
+    ariaLabelTaller: 'Taller',
+    // read out by screen readers as moving and resizing a dialog starts
+    ariaDialogMoveInstructions: 'Arrow keys move the dialog. Press Enter to finish or Escape to cancel.',
+    ariaDialogMoveResizeInstructions:
+        'Arrow keys move the dialog, and Shift with the arrow keys resizes it. Press Enter to finish or Escape to cancel.',
     // colour picker dialog: the 2-D saturation/brightness area, the hue and opacity sliders, and the hex text input
     ariaLabelColorPickerSpectrum: 'Saturation and Brightness',
     // screen reader value of the saturation/brightness area, format: Saturation {percent}%, Brightness {percent}%

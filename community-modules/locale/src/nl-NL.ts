@@ -905,6 +905,15 @@ export const AG_GRID_LOCALE_NL_NL = {
     ariaLabelClose: 'Sluiten',
     ariaLabelMaximize: 'Maximaliseren',
     ariaLabelRestore: 'Herstellen',
+    ariaLabelMoveAndResize: 'Verplaatsen en formaat wijzigen',
+    ariaLabelNarrower: 'Smaller',
+    ariaLabelWider: 'Breder',
+    ariaLabelShorter: 'Lager',
+    ariaLabelTaller: 'Hoger',
+    ariaDialogMoveInstructions:
+        'Met de pijltoetsen verplaatst u het dialoogvenster. Druk op Enter om te voltooien of op Esc om te annuleren.',
+    ariaDialogMoveResizeInstructions:
+        'Met de pijltoetsen verplaatst u het dialoogvenster en met Shift en de pijltoetsen wijzigt u het formaat. Druk op Enter om te voltooien of op Esc om te annuleren.',
     ariaLabelColorPickerSpectrum: 'Verzadiging en helderheid',
     ariaValueColorPickerSpectrum: 'Verzadiging ${saturation}%, helderheid ${brightness}%',
     ariaLabelColorPickerHue: 'Tint',

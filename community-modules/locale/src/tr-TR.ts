@@ -906,6 +906,15 @@ export const AG_GRID_LOCALE_TR_TR = {
     ariaLabelClose: 'Kapat',
     ariaLabelMaximize: 'Büyüt',
     ariaLabelRestore: 'Geri yükle',
+    ariaLabelMoveAndResize: 'Taşı ve Yeniden Boyutlandır',
+    ariaLabelNarrower: 'Daha Dar',
+    ariaLabelWider: 'Daha Geniş',
+    ariaLabelShorter: 'Daha Kısa',
+    ariaLabelTaller: 'Daha Uzun',
+    ariaDialogMoveInstructions:
+        'Ok tuşları iletişim kutusunu taşır. Bitirmek için Enter, iptal etmek için Esc tuşuna basın.',
+    ariaDialogMoveResizeInstructions:
+        'Ok tuşları iletişim kutusunu taşır, Shift ile birlikte ok tuşları ise boyutunu değiştirir. Bitirmek için Enter, iptal etmek için Esc tuşuna basın.',
     ariaLabelColorPickerSpectrum: 'Doygunluk ve Parlaklık',
     ariaValueColorPickerSpectrum: 'Doygunluk %${saturation}, Parlaklık %${brightness}',
     ariaLabelColorPickerHue: 'Ton',
