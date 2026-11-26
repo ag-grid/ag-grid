@@ -149,6 +149,23 @@ The following deprecated APIs have now been removed.
 
 `api.forEachLeafNode()`, `api.forEachNodeAfterFilter()` and `api.forEachNodeAfterFilterAndSort()` are also available. `getRowBounds`, `getRowIndexAtPixel`, `isRowPresent`, `getTopLevelRowCount`, `getNodesInRangeForSelection`, `getOverlayType`, `isRowsToRender` and Client-Side Row Model internals have no API equivalent; raise an issue if you rely on them.
 
+- `getModel()`, `setModel()`, `isFilterActive()` and `doesFilterPass()` on grid-provided filter instances (Text, Number, BigInt, Date and Set Filters, including as Multi Filter children) - removed, use the grid's filter model API instead. Custom legacy filter components and the legacy Multi Filter keep their own methods.
+- `IProvidedFilter` - no longer extends `IFilter`, so it and `ISimpleFilter` no longer declare `getModel()`, `setModel()`, `isFilterActive()`, `doesFilterPass()`, `getModelAsString()` or `refresh()`. `IMultiFilter` still extends `IFilter`.
+- `FilterModifiedEvent.filterInstance` - now typed `IFilterComp | IProvidedFilter`.
+
+| Removed                                                                             | Replacement                                                                                                                                                          |
+| ----------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `api.getColumnFilterInstance(col).then((f) => f.getModel())`                        | `api.getColumnFilterModel(col)`                                                                                                                                      |
+| `f.isFilterActive()`                                                                | `api.getColumnFilterModel(col) != null`                                                                                                                              |
+| `f.setModel(model)`                                                                 | `api.setColumnFilterModel(col, model).then(() => api.onFilterChanged())`                                                                                             |
+| `event.filterInstance.getModel()` in a `filterModified` handler                     | `api.getColumnFilterModel(event.column)`                                                                                                                             |
+| `params.parentFilterInstance((p) => p.setModel(model))` in a legacy floating filter | `params.api.setColumnFilterModel(params.column, model).then(() => params.filterParams.filterChangedCallback())`                                                      |
+| `f.doesFilterPass({ node, data })`                                                  | `api.getColumnFilterHandler<FilterHandler>(col)?.doesFilterPass({ node, data, model: api.getColumnFilterModel(col), handlerParams: {} as FilterHandlerBaseParams })` |
+
+`api.setColumnFilterModel()` takes a column key, returns a native `Promise`, waits for data type inference to finish, and does nothing while the Advanced Filter is enabled. The grid-provided filter handlers do not read `handlerParams`, hence the cast.
+
+For a Multi Filter child, these replacements act on the whole Multi Filter, whose model is `{ filterType: 'multi', filterModels }`: read the child's model from `filterModels[index]`, and set it by setting the whole Multi Filter model. `api.getColumnFilterInstance()` still returns `IFilter` by default, so TypeScript does not flag calls to the removed methods; pass a type such as `getColumnFilterInstance<ISimpleFilter>()` to find them.
+
 ### Row Node
 
 - `firstChild` - removed. With the Client-Side Row Model, use `rowNode.parent?.childrenAfterSort?.[0] === rowNode` instead.

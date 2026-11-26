@@ -14,7 +14,7 @@ import type {
 } from './iFilter';
 
 /** Interface contract for the public aspects of the ProvidedFilter implementation(s). */
-export interface IMultiFilter extends IProvidedFilter {
+export interface IMultiFilter extends IProvidedFilter, IFilter {
     readonly filterType: 'multi';
 
     /**

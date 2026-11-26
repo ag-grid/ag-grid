@@ -1809,7 +1809,7 @@ export class ColumnFilterService
         return gridColumns.some((col) => col.getColDef().floatingFilter);
     }
 
-    public getFilterInstance<TFilter extends IFilter>(key: string | AgColumn): Promise<TFilter | null | undefined> {
+    public getFilterInstance<TFilter = IFilter>(key: string | AgColumn): Promise<TFilter | null | undefined> {
         const column = this.beans.colModel.getCol(key);
 
         if (!column) {
@@ -1892,7 +1892,7 @@ export class ColumnFilterService
         );
     }
 
-    public setModelForColumnLegacy(key: string | AgColumn, model: any): AgPromise<void> {
+    private setModelForColumnLegacy(key: string | AgColumn, model: any): AgPromise<void> {
         const column = this.beans.colModel.getNonPivotCol(key);
         const filterWrapper = column ? this.getOrCreateFilterWrapper(column, true) : null;
         return filterWrapper ? this.setModelOnFilterWrapper(filterWrapper, model) : AgPromise.resolve();

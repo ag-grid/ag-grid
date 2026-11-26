@@ -1,14 +1,8 @@
 import type { AgPromise } from 'ag-stack';
 import { _debounce } from 'ag-stack';
 
-import type { AgColumn } from '../../entities/agColumn';
 import type { ContainerType, IAfterGuiAttachedParams } from '../../interfaces/iAfterGuiAttachedParams';
-import type {
-    FilterDisplayParams,
-    FilterDisplayState,
-    IDoesFilterPassParams,
-    IFilterComp,
-} from '../../interfaces/iFilter';
+import type { FilterDisplayParams, FilterDisplayState } from '../../interfaces/iFilter';
 import { PositionableFeature } from '../../rendering/features/positionableFeature';
 import type { ElementParams } from '../../utils/element';
 import type { ComponentSelector } from '../../widgets/component';
@@ -42,7 +36,7 @@ export abstract class ProvidedFilter<
     P extends ProvidedFilterDisplayParams<M> = ProvidedFilterDisplayParams<M>,
 >
     extends Component
-    implements IProvidedFilter, IFilterComp
+    implements IProvidedFilter
 {
     protected params: P;
 
@@ -144,29 +138,8 @@ export abstract class ProvidedFilter<
         this.setupApplyDebounced();
     }
 
-    /**
-     * @deprecated v34 Use the same method on the filter handler (`api.getColumnFilterHandler()`) instead.
-     */
-    public doesFilterPass(params: IDoesFilterPassParams): boolean {
-        this.beans.log.warn(283);
-        const { getHandler, model, column } = this.params;
-        return getHandler().doesFilterPass({
-            ...params,
-            model: model!,
-            handlerParams: this.beans.colFilter!.getHandlerParams(column)!,
-        });
-    }
-
     public getFilterTitle(): string {
         return this.translate(this.filterNameKey);
-    }
-
-    /**
-     * @deprecated v34 Filters are active when they have a model. Use `api.getColumnFilterModel()` instead.
-     */
-    public isFilterActive(): boolean {
-        this.beans.log.warn(284);
-        return this.params.model != null;
     }
 
     // subclasses can override this to provide alternative debounce defaults
@@ -187,25 +160,6 @@ export abstract class ProvidedFilter<
             this.debouncePending = false;
             this.doApplyModel();
         }
-    }
-
-    /**
-     * @deprecated v34 Use (`api.getColumnFilterModel()`) instead.
-     */
-    public getModel(): M | null {
-        this.beans.log.warn(285);
-        return this.params.model;
-    }
-
-    /**
-     * @deprecated v34 Use (`api.setColumnFilterModel()`) instead.
-     */
-    public setModel(model: M | null, suppressDeprecationWarning?: boolean): AgPromise<void> {
-        if (!suppressDeprecationWarning) {
-            this.beans.log.warn(286);
-        }
-        const { beans, params } = this;
-        return beans.colFilter!.setModelForColumnLegacy(params.column as AgColumn, model);
     }
 
     /**

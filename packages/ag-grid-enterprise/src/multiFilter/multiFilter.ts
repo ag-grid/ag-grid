@@ -16,7 +16,7 @@ import type {
     IMultiFilter,
     IMultiFilterDef,
     IMultiFilterModel,
-    IMultiFilterParams,
+    IProvidedFilter,
     IRowNode,
     LegacyFilterMethods,
     MultiFilterParams,
@@ -60,9 +60,6 @@ interface MultiFilterWrapper {
     /** A ui rebuilt for new params, installed only if nothing newer took its place while it loaded. */
     pendingUi: AgPromise<IFilterComp> | undefined;
 }
-
-/** temporary type until `MultiFilterParams` is updated as breaking change */
-type MultiFilterDisplayParams = IMultiFilterParams & FilterDisplayParams<any, any, IMultiFilterModel>;
 
 // This version of multi filter is only used when `enableFilterHandlers = false`
 export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements IFilterComp, IMultiFilter {
@@ -290,14 +287,10 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
                 if (!wrapper) {
                     return null;
                 }
-                const providedFilter = wrapper.filter as ProvidedFilter<
-                    IMultiFilterModel,
-                    unknown,
-                    MultiFilterDisplayParams
-                >;
+                const filter = wrapper.filter as IFilterComp & Pick<IProvidedFilter, 'getModelFromUi'>;
 
-                if (typeof providedFilter.getModelFromUi === 'function') {
-                    return _legacyFilterMethods(providedFilter).getModelFromUi();
+                if (typeof filter.getModelFromUi === 'function') {
+                    return _legacyFilterMethods(filter).getModelFromUi();
                 }
 
                 return null;

@@ -537,17 +537,6 @@ const multiEntries: Entry[] = [
 
 const instanceEntries: Entry[] = [
     {
-        name: 'app calls setModel and onFilterChanged on a text filter instance',
-        options: { columnDefs: [col({ filter: 'agTextColumnFilter' })] },
-        act: async (api) => {
-            const instance: any = await api.getColumnFilterInstance('name');
-            await instance.setModel(text('alp'));
-            api.onFilterChanged();
-            return [api.getDisplayedRowCount(), instance.getModel?.()];
-        },
-        warn: [],
-    },
-    {
         name: 'app calls getModel on a set filter instance',
         options: {
             columnDefs: [{ field: 'country', filter: 'agSetColumnFilter' }],

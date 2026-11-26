@@ -1,4 +1,4 @@
-import type { FilterAction, IFilter, IFilterParams } from '../../interfaces/iFilter';
+import type { FilterAction, IFilterParams, SharedFilterUi } from '../../interfaces/iFilter';
 
 /**
  * Parameters provided by the grid to the `init` method of a `ProvidedFilter`.
@@ -43,11 +43,11 @@ export interface IProvidedFilterParams {
 }
 /** Interface contract for the public aspects of the ProvidedFilter implementation(s). */
 
-export interface IProvidedFilter extends IFilter {
+export interface IProvidedFilter extends SharedFilterUi {
     /** The type of filter. Matches the `filterType` property in the filter model */
     readonly filterType: 'text' | 'number' | 'bigint' | 'date' | 'set' | 'multi';
     /**
-     * Applies the model shown in the UI (so that `getModel()` will now return what was in the UI
+     * Applies the model shown in the UI (so that `api.getColumnFilterModel()` will now return what was in the UI
      * when `applyModel()` was called).
      * @param source The source of the method call. Default 'api'.
      *

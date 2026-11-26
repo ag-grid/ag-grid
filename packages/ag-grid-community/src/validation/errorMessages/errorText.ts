@@ -779,12 +779,7 @@ export const AG_GRID_ERRORS = {
     281: ({ colId }: { colId: string }) =>
         `Filter for column \`${colId}\` does not have \`filterParams.buttons\`, but the new Filters Tool Panel has buttons configured. Either configure buttons for the filter, or disable buttons on the Filters Tool Panel.` as const,
     282: () => 'New filter tool panel requires `enableFilterHandlers: true`.' as const,
-    283: () =>
-        'As of v34, use the same method on the filter handler (`api.getColumnFilterHandler(colKey)`) instead.' as const,
-    284: () =>
-        'As of v34, filters are active when they have a model. Use `api.getColumnFilterModel()` instead.' as const,
-    285: () => 'As of v34, use (`api.getColumnFilterModel()`) instead.' as const,
-    286: () => 'As of v34, use (`api.setColumnFilterModel()`) instead.' as const,
+    // 283-286: retired (deprecated grid-provided filter instance method warnings)
     287: () => '`api.doFilterAction()` requires `enableFilterHandlers = true' as const,
     288: () => '`api.getColumnFilterModel(key, true)` requires `enableFilterHandlers = true' as const,
     289: ({ rowModelType }: { rowModelType: string }) =>

@@ -3,10 +3,13 @@ import type { IComponent } from 'ag-stack';
 import type { BeanCollection } from '../../context/context';
 import type { IDragAndDropImageComponent, IDragAndDropImageParams } from '../../dragAndDrop/dragAndDropImageComponent';
 import type { ColDef, ColGroupDef } from '../../entities/colDef';
-import type { IFloatingFilterComp, IFloatingFilterParams } from '../../filter/floating/floatingFilter';
+import type {
+    IFloatingFilterComp,
+    IFloatingFilterParams,
+    IFloatingFilterParent,
+} from '../../filter/floating/floatingFilter';
 import { _isAuthorFloatingFilter } from '../../filter/floating/floatingFilterMapper';
 import { _warnLegacyFilterMode } from '../../filter/legacyFilterMode';
-import type { ISimpleFilter } from '../../filter/provided/iSimpleFilter';
 import type {
     IHeaderGroupComp,
     IHeaderGroupParams,
@@ -94,7 +97,7 @@ const CellEditorComponent: ComponentType<ICellEditorComp> = {
 const TooltipComponent: ComponentType = { name: 'tooltipComponent', requiresBlockWrapper: true };
 const BuiltInTooltipComponent: ComponentType = { name: 'builtInTooltipComponent', requiresBlockWrapper: true };
 
-const FilterComponent: ComponentType<ISimpleFilter> = {
+const FilterComponent: ComponentType<IFilterComp & IFloatingFilterParent> = {
     name: 'filter',
     mandatoryMethods: ['isFilterActive', 'doesFilterPass', 'getModel', 'setModel'],
     optionalMethods: [
