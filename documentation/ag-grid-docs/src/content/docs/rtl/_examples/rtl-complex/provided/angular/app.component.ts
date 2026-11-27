@@ -25,7 +25,6 @@ import { AllEnterpriseModule } from 'ag-grid-enterprise';
 import { CountryCellRenderer } from './country-cell-renderer.component';
 import { COUNTRY_CODES, LANGUAGES, createRowData } from './data';
 import type { LanguageConfig } from './data';
-import './styles.css';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development

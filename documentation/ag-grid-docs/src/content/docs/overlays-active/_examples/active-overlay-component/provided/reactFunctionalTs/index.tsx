@@ -50,14 +50,12 @@ const GridExample = () => {
                     </div>
                 </div>
 
-                <div className="grid-wrapper">
-                    <AgGridReact<IAthlete>
-                        rowData={rowData}
-                        columnDefs={columnDefs}
-                        activeOverlay={activeOverlay}
-                        activeOverlayParams={activeOverlayParams}
-                    />
-                </div>
+                <AgGridReact<IAthlete>
+                    rowData={rowData}
+                    columnDefs={columnDefs}
+                    activeOverlay={activeOverlay}
+                    activeOverlayParams={activeOverlayParams}
+                />
             </div>
         </AgGridProvider>
     );

@@ -12,8 +12,6 @@ import {
 } from 'ag-grid-community';
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
-import './styles.css';
-
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
     enableDevValidations();
@@ -63,7 +61,7 @@ const GridExample = () => {
             <div style={{ width: '100%', height: '100%' }}>
                 <div className="example-wrapper">
                     <div className="example-controls">
-                        <div className="form-container controls-row">
+                        <div className="controls-row">
                             <label>Input Above</label>
                             <input type="text" />
                         </div>
@@ -76,7 +74,7 @@ const GridExample = () => {
                             defaultColDef={defaultColDef}
                         />
                     </div>
-                    <div className="form-container example-controls">
+                    <div className="example-controls">
                         <div className="controls-row">
                             <label>Input Below</label>
                             <input type="text" />

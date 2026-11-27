@@ -200,7 +200,7 @@ const GridExample = () => {
     );
 
     const getInnerGridCol = (side: string) => (
-        <div className="inner-col">
+        <div className="inner-col example-wrapper">
             <div className="toolbar example-controls">
                 <div className="controls-row">
                     {['Red', 'Green', 'Blue'].map((color) => getAddRecordButton(side, color))}
