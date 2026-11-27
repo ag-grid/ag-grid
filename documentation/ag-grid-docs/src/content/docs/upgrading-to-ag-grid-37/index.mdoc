@@ -85,6 +85,10 @@ This does not reproduce the exact previous appearance. Focus and built-in contro
 - A `headerClass` callback is now also called for every floating filter cell (every column has one when any column has a floating filter), including on pin and column definition changes, so callbacks with side effects run more often. See [Column Headers Styling](./column-headers-styling/#header-class).
 - In a multi-column sort, the sort index now shows on the far side of the sort icon from the header text, for example `Athlete ↑ 1`, where v36 showed `Athlete 1 ↑`. Right-aligned headers are unchanged. Set its colour with the `headerSortIndexTextColor` [theme parameter](./theming-parameters/). Custom header templates copied from the previous [Default Template](./column-headers-components/#default-template) keep the old order; move `eSortOrder` after the sort icons to match.
 
+### Column Sizing
+
+- When auto-sizing with `scaleUpToFitGridWidth`, columns without a `width` or `initialWidth` now scale up in proportion to their auto-sized widths, instead of all ending up the same width. Columns with a `width` or `initialWidth` still scale from that width. See [Auto-Size Columns to Fit Cell Contents](./column-sizing/#auto-size-columns-to-fit-cell-contents).
+
 ### Validation
 
 - With [Development Validation](./dev-validation/) enabled, apps that set `suppressPropertyNamesCheck` now see unknown-property warnings for their custom keys. Move custom data into `context` and delete the flag.
