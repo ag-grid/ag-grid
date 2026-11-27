@@ -147,7 +147,7 @@ Note the following:
 
 `exportDataAsCsv()`, `exportDataAsExcel()`, `exportDataAsPdf()` and `exportMultipleSheetsAsExcel()` return a Promise that resolves once the file download has been triggered. Await it before work that must not start until the export has been generated, such as destroying the grid:
 
-```{% frameworkTransform=true %}
+```js
 await api.exportDataAsCsv();
 api.destroy();
 ```
