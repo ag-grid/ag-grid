@@ -29,14 +29,14 @@ export interface BigIntFilterModel extends ISimpleFilterModel {
 
 /**
  * Parameters provided by the grid to the `init` and `refresh` methods of a `BigIntFilter`.
- * Do not use in `colDef.filterParams` - see `IBigIntFilterParams` instead.
+ * For the properties you configure in `colDef.filterParams`, use `IBigIntFilterParams`.
  */
 export type BigIntFilterDisplayParams<TData = any, TContext = any> = IBigIntFilterParams<TData, TContext> &
     FilterDisplayParams<TData, TContext, BigIntFilterModel | ICombinedSimpleModel<BigIntFilterModel>>;
 
 /**
  * Parameters provided by the grid to the `init` method of a `BigIntFilter`.
- * Do not use in `colDef.filterParams` - see `IBigIntFilterParams` instead.
+ * For the properties you configure in `colDef.filterParams`, use `IBigIntFilterParams`.
  * @deprecated v37 Use `BigIntFilterDisplayParams` instead.
  */
 export type BigIntFilterParams<TData = any, TContext = any> = IBigIntFilterParams<TData, TContext> &

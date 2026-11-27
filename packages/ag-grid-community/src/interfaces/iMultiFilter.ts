@@ -80,14 +80,14 @@ export interface IMultiFilterDef extends IFilterDef {
 
 /**
  * Parameters provided by the grid to the `init` and `refresh` methods of a `MultiFilter` when `enableFilterHandlers = true`.
- * Do not use in `colDef.filterParams` - see `IMultiFilterParams` instead.
+ * For the properties you configure in `colDef.filterParams`, use `IMultiFilterParams`.
  */
 export type MultiFilterDisplayParams<TData = any> = IMultiFilterParams &
     FilterDisplayParams<TData, any, IMultiFilterModel>;
 
 /**
  * Parameters provided by the grid to the `init` method of a `MultiFilter` in legacy filter mode.
- * Do not use in `colDef.filterParams` - see `IMultiFilterParams` instead.
+ * For the properties you configure in `colDef.filterParams`, use `IMultiFilterParams`.
  * @deprecated v37 Use `enableFilterHandlers` and `MultiFilterDisplayParams` instead. See [Migrating to Filter Handlers](https://www.ag-grid.com/javascript-data-grid/enable-filter-handlers-migration/).
  */
 export type MultiFilterParams<TData = any> = IMultiFilterParams & IFilterParams<TData>;

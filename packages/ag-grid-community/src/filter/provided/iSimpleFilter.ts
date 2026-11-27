@@ -41,7 +41,7 @@ export type FilterPlaceholderFunction = (params: IFilterPlaceholderFunctionParam
 
 /**
  * Parameters provided by the grid to the `init` and `refresh` methods of a `SimpleFilter`.
- * Do not use in `colDef.filterParams` - see `ISimpleFilterParams` instead.
+ * For the properties you configure in `colDef.filterParams`, use `ISimpleFilterParams`.
  */
 export type SimpleFilterDisplayParams<
     TData = any,
@@ -50,7 +50,7 @@ export type SimpleFilterDisplayParams<
 
 /**
  * Parameters provided by the grid to the `init` method of a `SimpleFilter`.
- * Do not use in `colDef.filterParams` - see `ISimpleFilterParams` instead.
+ * For the properties you configure in `colDef.filterParams`, use `ISimpleFilterParams`.
  * @deprecated v37 Use `SimpleFilterDisplayParams` instead.
  */
 export type SimpleFilterParams<TData = any> = ISimpleFilterParams & IFilterParams<TData>;

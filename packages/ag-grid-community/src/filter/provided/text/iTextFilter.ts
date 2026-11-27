@@ -69,14 +69,14 @@ export type TextFormatter = (from?: string | null, params?: FilterInputCallbackP
 
 /**
  * Parameters provided by the grid to the `init` and `refresh` methods of a `TextFilter`.
- * Do not use in `colDef.filterParams` - see `ITextFilterParams` instead.
+ * For the properties you configure in `colDef.filterParams`, use `ITextFilterParams`.
  */
 export type TextFilterDisplayParams<TData = any> = ITextFilterParams &
     FilterDisplayParams<TData, any, TextFilterModel | ICombinedSimpleModel<TextFilterModel>>;
 
 /**
  * Parameters provided by the grid to the `init` method of a `TextFilter`.
- * Do not use in `colDef.filterParams` - see `ITextFilterParams` instead.
+ * For the properties you configure in `colDef.filterParams`, use `ITextFilterParams`.
  * @deprecated v37 Use `TextFilterDisplayParams` instead.
  */
 export type TextFilterParams<TData = any> = ITextFilterParams & IFilterParams<TData>;

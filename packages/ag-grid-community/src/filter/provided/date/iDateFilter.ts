@@ -53,14 +53,14 @@ export interface PresetDateRangeFilterModel extends DateFilterModel {
 
 /**
  * Parameters provided by the grid to the `init` and `refresh` methods of a `DateFilter`.
- * Do not use in `colDef.filterParams` - see `IDateFilterParams` instead.
+ * For the properties you configure in `colDef.filterParams`, use `IDateFilterParams`.
  */
 export type DateFilterDisplayParams<TData = any> = IDateFilterParams &
     FilterDisplayParams<TData, any, DateFilterModel | ICombinedSimpleModel<DateFilterModel>>;
 
 /**
  * Parameters provided by the grid to the `init` method of a `DateFilter`.
- * Do not use in `colDef.filterParams` - see `IDateFilterParams` instead.
+ * For the properties you configure in `colDef.filterParams`, use `IDateFilterParams`.
  * @deprecated v37 Use `DateFilterDisplayParams` instead.
  */
 export type DateFilterParams<TData = any> = IDateFilterParams & IFilterParams<TData>;

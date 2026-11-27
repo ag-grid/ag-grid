@@ -78,14 +78,14 @@ export type SetFilterValues<TData = any, V = string> = SetFilterValuesFunc<TData
 
 /**
  * Parameters provided by the grid to the `init` and `refresh` methods of a `SetFilter`.
- * Do not use in `colDef.filterParams` - see `ISetFilterParams` instead.
+ * For the properties you configure in `colDef.filterParams`, use `ISetFilterParams`.
  */
 export type SetFilterDisplayParams<TData = any, V = string> = ISetFilterParams<TData, V> &
     FilterDisplayParams<TData, any, SetFilterModel>;
 
 /**
  * Parameters provided by the grid to the `init` method of a `SetFilter`.
- * Do not use in `colDef.filterParams` - see `ISetFilterParams` instead.
+ * For the properties you configure in `colDef.filterParams`, use `ISetFilterParams`.
  * @deprecated v37 Use `SetFilterDisplayParams` instead.
  */
 export type SetFilterParams<TData = any, V = string> = ISetFilterParams<TData, V> & IFilterParams<TData>;
