@@ -88,3 +88,33 @@ export async function open(api: GridApi, zone: Zone, horizontal = false, name = 
     fireEvent.contextMenu(item);
     return findByRole(getGridElement(api) as HTMLElement, 'menu');
 }
+
+/** The menu's items in order: item names, with each separator as `'separator'`. */
+export const menuEntries = (menu: HTMLElement) =>
+    Array.from(menu.querySelectorAll('[role="menuitem"], .ag-menu-separator'), (el) =>
+        el.classList.contains('ag-menu-separator') ? 'separator' : el.textContent!
+    );
+
+/** The names of the menu's disabled items. */
+export const disabledEntries = (menu: HTMLElement) =>
+    Array.from(menu.querySelectorAll('[role="menuitem"][aria-disabled="true"]'), (el) => el.textContent!);
+
+const SORT_ENTRIES: Record<Zone, string[]> = {
+    rowGroup: ['Sort Ascending', 'Sort Descending'],
+    pivot: ['Sort Ascending', 'Sort Descending', 'Clear Sort'],
+    aggregation: ['Sort Ascending', 'Sort Descending'],
+};
+const MOVE_TO_ENTRIES: Record<Zone, string[]> = {
+    rowGroup: ['Move to Values'],
+    pivot: ['Move to Row Groups', 'Move to Values'],
+    aggregation: ['Move to Row Groups'],
+};
+
+export const moveLabels = (horizontal: boolean) =>
+    horizontal ? ['Move Left', 'Move Right'] : ['Move Up', 'Move Down'];
+
+/** The default menu of a chip in the `create` fixture, optionally without its Move to items (as for a read-only chip). */
+export const defaultMenuEntries = (zone: Zone, horizontal = false, withMoveTo = true) =>
+    [SORT_ENTRIES[zone], withMoveTo ? MOVE_TO_ENTRIES[zone] : [], moveLabels(horizontal), ['Remove Field']]
+        .filter((section) => section.length)
+        .flatMap((section, index) => (index ? ['separator', ...section] : section));

@@ -4,20 +4,39 @@ import userEvent from '@testing-library/user-event';
 import { getGridElement } from 'ag-grid-community';
 
 import type { Zone } from './dropZoneMoveMenuHarness';
-import { open, order, panel, pill, setupDropZoneMoveMenuSuite } from './dropZoneMoveMenuHarness';
+import {
+    defaultMenuEntries,
+    disabledEntries,
+    menuEntries,
+    moveLabels,
+    open,
+    order,
+    panel,
+    pill,
+    setupDropZoneMoveMenuSuite,
+} from './dropZoneMoveMenuHarness';
 import { openToolPanelContextMenu } from './toolPanelContextMenuHarness';
 
 describe('drop zone move menu options, deferred panels and layout', () => {
     const { headerGrids, create, createDeferred } = setupDropZoneMoveMenuSuite();
 
-    test('reorders the default movement tokens', async () => {
+    test('reorders the default items', async () => {
         const api = await create('rowGroup', {
             getColumnDropZoneMenuItems: ({ defaultItems }) => defaultItems.slice().reverse(),
         });
         const menu = await open(api, 'rowGroup');
-        const items = menu.querySelectorAll('[role="menuitem"]');
-        expect(Array.from(items, (item) => item.textContent)).toEqual(['Move Down', 'Move Up']);
-        await userEvent.click(items[0]);
+        expect(menuEntries(menu)).toEqual([
+            'Remove Field',
+            'separator',
+            'Move Down',
+            'Move Up',
+            'separator',
+            'Move to Values',
+            'separator',
+            'Sort Descending',
+            'Sort Ascending',
+        ]);
+        await userEvent.click(getByRole(menu, 'menuitem', { name: 'Move Down' }));
         expect(order(api, 'rowGroup')).toEqual(['a', 'c', 'b']);
     });
 
@@ -147,7 +166,7 @@ describe('drop zone move menu options, deferred panels and layout', () => {
     });
 
     test.each([1, -1])(
-        'hides moves for newly staged locked row groups before Apply, lock=%s',
+        'disables moves and Remove Field for newly staged locked row groups before Apply, lock=%s',
         async (groupLockGroupColumns) => {
             const api = await createDeferred('rowGroup', {
                 groupLockGroupColumns,
@@ -159,15 +178,17 @@ describe('drop zone move menu options, deferred panels and layout', () => {
                 await userEvent.click(getByRole(grid, 'menuitem', { name: `Group by ${name}` }));
             }
             expect(order(api, 'rowGroup')).toEqual([]);
+            const locked = ['Move Up', 'Move Down', 'Remove Field'];
             for (const name of groupLockGroupColumns === -1 ? ['A', 'B'] : ['A']) {
-                const item = pill(api, 'rowGroup', false, name);
-                fireEvent.contextMenu(item);
-                expect(queryByRole(grid, 'menu')).toBeNull();
-                expect(item.hasAttribute('aria-haspopup')).toBe(false);
+                expect(pill(api, 'rowGroup', false, name).getAttribute('aria-haspopup')).toBe('menu');
+                const menu = await open(api, 'rowGroup', false, name);
+                expect(menuEntries(menu)).toEqual(defaultMenuEntries('rowGroup', false, false));
+                expect(disabledEntries(menu)).toEqual(locked);
+                await userEvent.keyboard('{Escape}');
             }
             if (groupLockGroupColumns === 1) {
                 const menu = await open(api, 'rowGroup');
-                expect(getByRole(menu, 'menuitem', { name: 'Move Up' }).getAttribute('aria-disabled')).toBe('true');
+                expect(disabledEntries(menu)).toEqual(['Move Up', 'Move Down']);
                 await userEvent.keyboard('{Escape}');
             }
             await userEvent.click(getByRole(grid, 'button', { name: 'Cancel' }));
@@ -196,30 +217,30 @@ describe('drop zone move menu options, deferred panels and layout', () => {
     );
 
     describe.each([false, true])('row-group locking, horizontal=%s', (horizontal) => {
-        test.each([1, -1])('hides moves only for locked row groups, lock=%s', async (groupLockGroupColumns) => {
-            const api = await create('rowGroup', {
-                groupLockGroupColumns,
-                getColumnDropZoneMenuItems: () => ['moveUp', 'moveDown', 'moveLeft', 'moveRight'],
-            });
-            for (const name of groupLockGroupColumns === -1 ? ['A', 'B', 'C'] : ['A']) {
-                const item = pill(api, 'rowGroup', horizontal, name);
-                fireEvent.contextMenu(item);
-                expect(getGridElement(api)!.querySelector('[role="menu"]')).toBeNull();
-                expect(item.hasAttribute('aria-haspopup')).toBe(false);
+        test.each([1, -1])('disables moves and Remove Field only for locked row groups, lock=%s', async (lock) => {
+            const api = await create('rowGroup', { groupLockGroupColumns: lock });
+            const [previousLabel, nextLabel] = moveLabels(horizontal);
+            for (const name of lock === -1 ? ['A', 'B', 'C'] : ['A']) {
+                expect(pill(api, 'rowGroup', horizontal, name).getAttribute('aria-haspopup')).toBe('menu');
+                const menu = await open(api, 'rowGroup', horizontal, name);
+                expect(menuEntries(menu)).toEqual(defaultMenuEntries('rowGroup', horizontal, false));
+                expect(disabledEntries(menu)).toEqual([previousLabel, nextLabel, 'Remove Field']);
+                await userEvent.keyboard('{Escape}');
             }
-            if (groupLockGroupColumns === 1) {
+            if (lock === 1) {
                 const menu = await open(api, 'rowGroup', horizontal);
-                const previous = getByRole(menu, 'menuitem', { name: horizontal ? 'Move Left' : 'Move Up' });
-                const next = getByRole(menu, 'menuitem', { name: horizontal ? 'Move Right' : 'Move Down' });
-                expect(previous.getAttribute('aria-disabled')).toBe('true');
-                expect(next.getAttribute('aria-disabled')).not.toBe('true');
-                await userEvent.click(next);
+                expect(menuEntries(menu)).toEqual(defaultMenuEntries('rowGroup', horizontal));
+                expect(disabledEntries(menu)).toEqual([previousLabel]);
+                await userEvent.click(getByRole(menu, 'menuitem', { name: nextLabel }));
                 expect(order(api, 'rowGroup')).toEqual(['a', 'c', 'b']);
 
                 api.setRowGroupColumns(['b', 'a', 'c']);
-                expect(pill(api, 'rowGroup', horizontal, 'B').hasAttribute('aria-haspopup')).toBe(false);
+                const lockedMenu = await open(api, 'rowGroup', horizontal, 'B');
+                expect(disabledEntries(lockedMenu)).toEqual([previousLabel, nextLabel, 'Remove Field']);
+                await userEvent.keyboard('{Escape}');
                 const updatedMenu = await open(api, 'rowGroup', horizontal, 'A');
-                expect(updatedMenu.querySelectorAll('[role="menuitem"]')).toHaveLength(2);
+                expect(menuEntries(updatedMenu)).toEqual(defaultMenuEntries('rowGroup', horizontal));
+                expect(disabledEntries(updatedMenu)).toEqual([previousLabel]);
             }
         });
     });
@@ -293,6 +314,9 @@ describe('drop zone move menu options, deferred panels and layout', () => {
         item.focus();
         fireEvent.keyDown(item, { key: 'ContextMenu' });
         await findByRole(getGridElement(api) as HTMLElement, 'menu');
+        expect(document.activeElement!.textContent).toBe('Sort Ascending');
+        await userEvent.keyboard('{ArrowDown}{ArrowDown}{ArrowDown}');
+        expect(document.activeElement!.textContent).toBe('Move Up');
         await userEvent.keyboard('{Enter}');
         expect(order(api, 'rowGroup')).toEqual(['b', 'a', 'c']);
         expect(document.activeElement).toBe(pill(api, 'rowGroup'));

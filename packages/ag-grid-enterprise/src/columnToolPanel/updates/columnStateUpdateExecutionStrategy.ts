@@ -370,6 +370,8 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
                     (patch.hide !== undefined && patch.hide !== !column.visible) ||
                     (patch.rowGroup !== undefined && !!patch.rowGroup !== column.rowGroupActive) ||
                     (patch.pivot !== undefined && !!patch.pivot !== column.pivotActive) ||
+                    (patch.pivotSort !== undefined &&
+                        _resolvePivotSort(beans, patch.pivotSort) !== _resolvePivotSort(beans, column.pivotSort)) ||
                     (patch.aggFunc !== undefined &&
                         ((patch.aggFunc ?? null) !== (column.aggFunc ?? null) ||
                             (patch.aggFunc != null) !== column.isValueActive()))
