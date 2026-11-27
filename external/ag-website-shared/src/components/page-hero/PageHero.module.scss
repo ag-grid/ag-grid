@@ -43,6 +43,7 @@
 }
 
 .pageHeroHeadline {
+    max-width: 28ch;
     margin: $spacing-size-2 auto;
     font-size: var(--text-fs-3xl);
     font-weight: var(--text-bold);

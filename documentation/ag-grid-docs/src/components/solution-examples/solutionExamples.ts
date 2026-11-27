@@ -25,7 +25,7 @@ import {
 } from 'ag-grid-enterprise';
 
 export type ToolbarControl =
-    | { kind: 'button'; label: string; onClick: (api: GridApi) => void }
+    | { kind: 'button'; label: string; onClick: (api: GridApi) => void; isEnabled?: (api: GridApi) => boolean }
     | { kind: 'search'; placeholder: string; onInput: (api: GridApi, value: string) => void };
 
 export interface SolutionExampleDefinition {
@@ -33,6 +33,8 @@ export interface SolutionExampleDefinition {
     modules: Module[];
     gridOptions: GridOptions;
     toolbar?: ToolbarControl[];
+    /** Grid height in pixels, when the default is too short for the example's panels. */
+    height?: number;
     /** Starts live updates once the grid is ready; returns the function that stops them. */
     start?: (api: GridApi) => () => void;
 }
@@ -233,6 +235,7 @@ const pivotTables = (): SolutionExampleDefinition => {
                 { field: 'revenue', aggFunc: 'sum', valueFormatter: moneyWhole },
             ],
         },
+        height: 640,
     };
 };
 
@@ -374,8 +377,18 @@ const spreadsheetEditing = (): SolutionExampleDefinition => {
             statusBar: { statusPanels: [{ statusPanel: 'agAggregationComponent' }] },
         },
         toolbar: [
-            { kind: 'button', label: 'Undo', onClick: (api) => api.undoCellEditing() },
-            { kind: 'button', label: 'Redo', onClick: (api) => api.redoCellEditing() },
+            {
+                kind: 'button',
+                label: 'Undo',
+                onClick: (api) => api.undoCellEditing(),
+                isEnabled: (api) => api.getCurrentUndoSize() > 0,
+            },
+            {
+                kind: 'button',
+                label: 'Redo',
+                onClick: (api) => api.redoCellEditing(),
+                isEnabled: (api) => api.getCurrentRedoSize() > 0,
+            },
         ],
     };
 };

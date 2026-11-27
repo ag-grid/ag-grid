@@ -15,7 +15,7 @@
         "heading": "The data grid for trading and financial dashboards",
         "subHeading": "Stream live prices into a grid that updates rows in place, highlights changes and recalculates derived values, in React, Angular, Vue or JavaScript."
     },
-    "shortAnswer": "AG Grid updates rows in place with transactions, batches high-frequency updates with `applyTransactionAsync`, flashes or animates cells when values change, and keeps grouping and aggregation current as data streams in. Transactions, async batching, row IDs and cell flashing are in the free AG Grid Community edition. Sparklines, aggregation, grouping, pivoting, cell range selection, clipboard, Excel export and the Server-Side Row Model are in AG Grid Enterprise.",
+    "shortAnswer": "AG Grid updates rows in place with [transactions](./data-update-transactions/), [batches high-frequency updates](./data-update-high-frequency/) with `applyTransactionAsync`, [flashes or animates cells](./change-cell-renderers/) when values change, and keeps [grouping](./grouping/) and [aggregation](./aggregation/) current as data streams in. Transactions, async batching, [row IDs](./row-ids/) and cell flashing are in the free AG Grid Community edition. [Sparklines](./sparklines-overview/), aggregation, grouping, [pivoting](./pivoting/), [cell range selection](./cell-selection/), [clipboard](./clipboard/), [Excel export](./excel-export/) and the [Server-Side Row Model](./server-side-model/) are in AG Grid Enterprise.",
     "example": {
         "id": "trading",
         "intro": "Prices update every 400 ms through `applyTransactionAsync`. Changed cells flash and the Change column shows each move.",

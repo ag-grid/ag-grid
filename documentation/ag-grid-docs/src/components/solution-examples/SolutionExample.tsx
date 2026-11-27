@@ -25,6 +25,20 @@ export const SolutionExample: FunctionComponent<Props> = ({ id }) => {
 
     useEffect(() => (api && example?.start ? example.start(api) : undefined), [api, example]);
 
+    // Re-render when any grid event, such as an edit or an undo, changes which buttons are enabled
+    const [, setEnabledKey] = useState('');
+    useEffect(() => {
+        const toolbar = example?.toolbar;
+        if (!api || !toolbar?.some((control) => control.kind === 'button' && control.isEnabled)) {
+            return;
+        }
+        const update = () =>
+            setEnabledKey(toolbar.map((control) => control.kind === 'button' && control.isEnabled?.(api)).join());
+        update();
+        api.addGlobalListener(update);
+        return () => api.removeGlobalListener(update);
+    }, [api, example]);
+
     if (!example) {
         throw new Error(`No solution example named ${id}: add it to SOLUTION_EXAMPLES`);
     }
@@ -39,7 +53,7 @@ export const SolutionExample: FunctionComponent<Props> = ({ id }) => {
                                 key={control.label}
                                 type="button"
                                 className="button-secondary"
-                                disabled={!api}
+                                disabled={!api || control.isEnabled?.(api) === false}
                                 onClick={() => api && control.onClick(api)}
                             >
                                 {control.label}
@@ -57,7 +71,7 @@ export const SolutionExample: FunctionComponent<Props> = ({ id }) => {
                     )}
                 </div>
             )}
-            <div className={styles.grid}>
+            <div className={styles.grid} style={example.height ? { height: example.height } : undefined}>
                 <AgGridReact
                     {...example.gridOptions}
                     theme={isDarkMode ? darkTheme : lightTheme}
