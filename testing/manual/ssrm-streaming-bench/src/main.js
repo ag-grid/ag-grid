@@ -214,18 +214,30 @@ function checkSelection() {
     return result;
 }
 
-/** Scrolls to a row index and checks the rendered rows are the backend's rows for those indexes (feed off). */
+/**
+ * Scrolls to a row index and checks the requested row is loaded and inside the viewport, and that the rendered rows are
+ * the backend's rows for those indexes (feed off).
+ */
 async function scrollCheck(index) {
     const grid = grids[0];
     grid.api.ensureIndexVisible(index, 'top');
+    const vp = grid.el.querySelector('.ag-grid-viewport');
+    const targetVisible = () => {
+        const el = grid.el.querySelector(`.ag-grid-scrolling-rows .ag-row[row-index="${index}"]`);
+        if (!el || !/^\d+$/.test(el.getAttribute('row-id') ?? '')) {
+            return false;
+        }
+        const row = el.getBoundingClientRect();
+        const view = vp.getBoundingClientRect();
+        return row.top >= view.top - 1 && row.bottom <= view.bottom + 1;
+    };
     const ok = await until(() => {
         const rows = renderedRows(grid, []).filter((r) => Math.abs(r.index - index) < 20);
-        return rows.length > 5 && rows.every((r) => /^\d+$/.test(r.id)) ? rows : null;
+        return targetVisible() && rows.length > 5 && rows.every((r) => /^\d+$/.test(r.id)) ? rows : null;
     });
     await nextFrame();
     const rows = renderedRows(grid, []).filter((r) => /^\d+$/.test(r.id));
     const mismatches = rows.filter((r) => +r.id !== grid.backend.headId - r.index).length;
-    const vp = grid.el.querySelector('.ag-grid-viewport');
     return {
         index,
         loaded: !!ok,
