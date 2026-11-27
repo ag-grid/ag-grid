@@ -154,6 +154,7 @@ api.destroy();
 
 - The Promise resolves when the download is started, not when the browser has finished saving the file.
 - The Promise rejects if the export fails.
+- The Promise rejects if the grid is destroyed before a deferred export has run, as no file is produced.
 
 {% note %}
 While the [exporting overlay](./overlays-provided/#exporting) is enabled, the export runs after the overlay has been painted, so the file has not been generated when the call returns. To read the grid data inside the call, set `suppressOverlays: ['exporting']`.
@@ -161,12 +162,12 @@ While the [exporting overlay](./overlays-provided/#exporting) is enabled, the ex
 
 ## Export Events
 
-The following events are shared by CSV, Excel and PDF exports, whether the export is started from the API or from the context menu:
+The following events are shared by CSV, Excel and PDF exports, whether the export is started from the API or from a built-in menu:
 
 {% apiDocumentation source="grid-events/events.json" section="export" names=["exportStart","exportEnd"] /%}
 
 - `format` is `'csv'`, `'excel'` or `'pdf'`.
-- `source` is `'api'` for a call to an export API method, or `'contextMenu'` for one of the built-in context menu export items.
+- `source` is `'api'` for a call to an export API method. For a built-in export menu item it names the menu: `'contextMenu'`, `'columnMenu'`, `'columnToolPanel'` or `'toolbar'`.
 - `exportEnd` has `success: false` if the export failed or produced no file, and `fileName` is set when a file was downloaded.
 - Neither event is fired when the export is suppressed, or by the `getDataAs...` methods, as they do not download a file.
 
@@ -175,7 +176,7 @@ For example, to track how often the built-in export menu items are used:
 ```{% frameworkTransform=true %}
 const gridOptions = {
     onExportEnd: (event) => {
-        if (event.success && event.source === 'contextMenu') {
+        if (event.success && event.source !== 'api') {
             trackUsage('export', event.format);
         }
     },

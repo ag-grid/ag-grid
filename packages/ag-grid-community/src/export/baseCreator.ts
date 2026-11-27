@@ -38,18 +38,18 @@ export abstract class BaseCreator<T, S extends GridSerializingSession<T>, P exte
     protected runExport(format: ExportEventFormat, source: ExportEventSource, exportFunc: ExportFunc): Promise<void> {
         const tracked = this.trackExport(format, source, exportFunc);
         const { overlays } = this.beans;
-        if (overlays) {
-            return overlays.showExportOverlay(tracked);
-        }
-        return Promise.resolve(tracked());
+        return overlays ? overlays.showExportOverlay(tracked) : tracked();
     }
 
-    /** Dispatches `exportStart` now, and returns a function that runs the export then dispatches `exportEnd`. */
+    /**
+     * Dispatches `exportStart` now, and returns a function that runs the export then dispatches `exportEnd`.
+     * A synchronous throw from `exportFunc` is rethrown synchronously rather than turned into a rejection.
+     */
     protected trackExport(
         format: ExportEventFormat,
         source: ExportEventSource,
         exportFunc: ExportFunc
-    ): () => void | Promise<void> {
+    ): () => Promise<void> {
         const { eventSvc } = this.beans;
         eventSvc.dispatchEvent({ type: 'exportStart', format, source });
 
@@ -57,7 +57,7 @@ export abstract class BaseCreator<T, S extends GridSerializingSession<T>, P exte
             eventSvc.dispatchEvent({ type: 'exportEnd', format, source, success, fileName });
 
         return () => {
-            let result: string | undefined | Promise<string | undefined>;
+            let result: ReturnType<ExportFunc>;
             try {
                 result = exportFunc();
             } catch (error) {
@@ -65,16 +65,13 @@ export abstract class BaseCreator<T, S extends GridSerializingSession<T>, P exte
                 throw error;
             }
 
-            if (result instanceof Promise) {
-                return result.then(
-                    (fileName) => end(fileName != null, fileName),
-                    (error) => {
-                        end(false);
-                        throw error;
-                    }
-                );
-            }
-            end(result != null, result);
+            return Promise.resolve(result).then(
+                (fileName) => end(fileName != null, fileName),
+                (error) => {
+                    end(false);
+                    throw error;
+                }
+            );
         };
     }
 

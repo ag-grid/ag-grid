@@ -7,6 +7,7 @@ import type {
     ColumnEventType,
     DefaultColumnMenuItem,
     DefaultMenuItem,
+    ExportEventSource,
     GetNoteParams,
     IAggFuncService,
     IMenuActionParams,
@@ -59,6 +60,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
         noteParams: GetNoteParams | undefined,
         sourceElement: () => HTMLElement,
         source: ColumnEventType,
+        exportSource: ExportEventSource,
         columnGroup: AgProvidedColumnGroup | null = null
     ): (MenuItemDef | 'separator')[] {
         if (!originalList) {
@@ -510,7 +512,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                         ? {
                               name: localeTextFunc('csvExport', 'CSV Export'),
                               icon: _createIconNoSpan('csvExport', beans, null),
-                              action: () => csvCreator.exportDataAsCsv(undefined, 'contextMenu'),
+                              action: () => csvCreator.exportDataAsCsv(undefined, exportSource),
                           }
                         : null;
                 case 'excelExport':
@@ -518,7 +520,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                         ? {
                               name: localeTextFunc('excelExport', 'Excel Export'),
                               icon: _createIconNoSpan('excelExport', beans, null),
-                              action: () => excelCreator.exportDataAsExcel(undefined, 'contextMenu'),
+                              action: () => excelCreator.exportDataAsExcel(undefined, exportSource),
                           }
                         : null;
                 case 'pdfExport':
@@ -526,7 +528,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                         ? {
                               name: localeTextFunc('pdfExport', 'PDF Export'),
                               icon: _createIconNoSpan('pdfExport', beans, null),
-                              action: () => pdfCreator.exportDataAsPdf(undefined, 'contextMenu'),
+                              action: () => pdfCreator.exportDataAsPdf(undefined, exportSource),
                           }
                         : null;
                 case 'separator':
@@ -675,6 +677,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                     noteParams,
                     sourceElement,
                     source,
+                    exportSource,
                     columnGroup
                 );
             }

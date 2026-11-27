@@ -968,6 +968,8 @@ export const AG_GRID_ERRORS = {
         `A legacy Multi Filter method (\`getModel\`, \`setModel\`, \`isFilterActive\`, \`doesFilterPass\`, \`applyModel\` or \`getModelFromUi\`) was called without \`enableFilterHandlers\` set. With filter handlers, the Multi Filter instance does not have these methods; use the grid's filter model API instead. ${legacyFilterModeAdvice()}` as const,
     348: () =>
         `\`enableFilterHandlers: false\` is deprecated. Legacy filter mode will be removed in a major version after v38. See ${legacyFilterMigrationLink()}` as const,
+    349: () =>
+        'The grid was destroyed before the export ran, so no file was produced. Await the export call before destroying the grid.' as const,
     // When adding a code above this line, raise `MAX_ERROR_ID` below to match.
 };
 
@@ -983,7 +985,7 @@ export type ErrorId = keyof ErrorMap;
  *
  * @knipIgnore Read by the docs site's error-page route
  */
-export const MAX_ERROR_ID = 348;
+export const MAX_ERROR_ID = 349;
 
 type ErrorValue<TId extends ErrorId | null> = TId extends ErrorId ? ErrorMap[TId] : never;
 export type GetErrorParams<TId extends ErrorId> =

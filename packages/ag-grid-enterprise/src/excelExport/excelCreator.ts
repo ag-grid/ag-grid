@@ -454,7 +454,7 @@ export class ExcelCreator
     }
 
     public exportMultipleSheetsAsExcel(params: ExcelExportMultipleSheetParams): Promise<void> {
-        const tracked = this.trackExport('excel', 'api', () =>
+        const exportFile = this.trackExport('excel', 'api', () =>
             getMultipleSheetsAsExcelCompressed(params, this.workbook, this.beans.context.getId()).then((contents) => {
                 if (!contents) {
                     return undefined;
@@ -466,7 +466,7 @@ export class ExcelCreator
                 return downloadFileName;
             })
         );
-        return Promise.resolve(tracked());
+        return exportFile();
     }
 
     public getDefaultFileExtension(): 'xlsx' {

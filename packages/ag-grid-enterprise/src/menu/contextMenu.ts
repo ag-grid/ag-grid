@@ -394,6 +394,7 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
             node as RowNode | null,
             menuActionParams.noteParams,
             getGui,
+            'contextMenu',
             'contextMenu'
         );
     }

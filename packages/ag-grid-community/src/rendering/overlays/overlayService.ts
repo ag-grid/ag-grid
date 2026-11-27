@@ -262,7 +262,7 @@ export class OverlayService extends BeanStub implements NamedBean {
         this.userForcedNoRows = true;
         this.doShowOverlay(NoRowsOverlayDef);
     }
-    public showExportOverlay(heavyOperation: () => void | Promise<void>): Promise<void> {
+    public showExportOverlay(heavyOperation: () => Promise<void>): Promise<void> {
         const gos = this.gos;
         if (
             !this.eWrapper ||
@@ -272,21 +272,18 @@ export class OverlayService extends BeanStub implements NamedBean {
             this.devErrorOverlayActive ||
             (this.userForcedNoRows && this.currentDef === NoRowsOverlayDef)
         ) {
-            return Promise.resolve(heavyOperation());
+            return heavyOperation();
         }
 
         const desiredDef = this.getDesiredDefWithOverride(ExportingOverlayDef);
         if (!desiredDef) {
-            return Promise.resolve(heavyOperation());
+            return heavyOperation();
         }
 
         return this.runWithExportOverlay(desiredDef, heavyOperation);
     }
 
-    private async runWithExportOverlay(
-        desiredDef: OverlayDef,
-        heavyOperation: () => void | Promise<void>
-    ): Promise<void> {
+    private async runWithExportOverlay(desiredDef: OverlayDef, heavyOperation: () => Promise<void>): Promise<void> {
         const beans = this.beans;
 
         // Make sure if multiple export calls are run we don't clear until the last one.
@@ -300,8 +297,13 @@ export class OverlayService extends BeanStub implements NamedBean {
         // ensure the overlay has a chance to be painted
         await new Promise<void>((resolve) => setTimeout(() => resolve()));
 
+        if (!this.isAlive()) {
+            // The grid was destroyed while the overlay was being shown, so there is no data left to export.
+            this.exportsInProgress--;
+            throw beans.log.errorToThrow(349);
+        }
+
         const shownAt = Date.now();
-        // start the heavy operation (allow sync or promise)
         try {
             await heavyOperation();
         } finally {

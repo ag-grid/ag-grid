@@ -547,6 +547,19 @@ describe('ag-grid export overlay', () => {
             expect(URL.createObjectURL).toHaveBeenCalledTimes(1);
             await exported;
         });
+
+        test('destroying the grid before the deferred export runs rejects the export without a download', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs,
+                rowData: [{ athlete: 'John', sport: 'Tennis', age: 25 }],
+            });
+
+            const exported = api.exportDataAsCsv();
+            api.destroy();
+
+            await expect(exported).rejects.toThrow('#349');
+            expect(URL.createObjectURL).not.toHaveBeenCalled();
+        });
     });
 });
 

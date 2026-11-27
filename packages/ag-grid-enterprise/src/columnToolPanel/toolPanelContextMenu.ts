@@ -175,7 +175,15 @@ export class ToolPanelContextMenu extends Component {
         // Without the menu module (which provides the mapper) any remaining stock string tokens (e.g. pin)
         // cannot be resolved, so keep the built definitions and drop the tokens.
         const mapped: (MenuItemDef | 'separator')[] = menuItemMapper
-            ? menuItemMapper.mapWithStockItems(expanded, column, null, undefined, () => this.getGui(), this.eventType)
+            ? menuItemMapper.mapWithStockItems(
+                  expanded,
+                  column,
+                  null,
+                  undefined,
+                  () => this.getGui(),
+                  this.eventType,
+                  'columnToolPanel'
+              )
             : expanded.filter(
                   (item): item is MenuItemDef | 'separator' => typeof item !== 'string' || item === MENU_ITEM_SEPARATOR
               );
