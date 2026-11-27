@@ -1,5 +1,5 @@
 import type { AgBeanCollection, BaseEvents, BaseProperties, ICommonSource, IPropertiesService } from 'ag-stack';
-import { AgTabGuardComp } from 'ag-stack';
+import { AgTabGuardComp, _getActiveDomElement, _getTabOrderedElements } from 'ag-stack';
 
 import type { IComponent } from 'ag-grid-community';
 import { KeyCode } from 'ag-grid-community';
@@ -45,8 +45,22 @@ export class AgMenuPanel<
             return;
         }
 
-        this.closePanel();
-        e.preventDefault();
+        const activeEl = _getActiveDomElement(this.beans) as HTMLElement;
+        const tabStops = _getTabOrderedElements(this.getFocusableElement(), activeEl);
+        const activeIndex = tabStops.indexOf(activeEl);
+        const next = activeIndex === -1 ? undefined : tabStops[activeIndex + (e.shiftKey ? -1 : 1)];
+
+        if (!next) {
+            this.closePanel();
+            e.preventDefault();
+            return;
+        }
+
+        // Native Tab only stays inside the panel between stops that share a tabIndex.
+        if (next.tabIndex !== activeEl.tabIndex) {
+            next.focus();
+            e.preventDefault();
+        }
     }
 
     private closePanel(): void {

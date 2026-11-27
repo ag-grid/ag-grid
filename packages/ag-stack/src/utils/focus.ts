@@ -129,6 +129,18 @@ export function _removeNonTabStopRadios(
         : elements;
 }
 
+/**
+ * The tabbable elements in `root`, in native Tab order.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export function _getTabOrderedElements(root: HTMLElement, activeEl?: Element | null): HTMLElement[] {
+    return _removeNonTabStopRadios(
+        root,
+        _findFocusableElements(root).filter((element) => element.tabIndex >= 0),
+        activeEl
+    ).sort((a, b) => (a.tabIndex || Number.MAX_SAFE_INTEGER) - (b.tabIndex || Number.MAX_SAFE_INTEGER));
+}
+
 function isNamedRadio(element: HTMLElement): element is HTMLInputElement {
     // avoid instanceof so radios from another window are recognised too.
     return (

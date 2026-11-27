@@ -378,3 +378,99 @@ test.describe('native tab navigation in provided filters', () => {
         await expect(miniFilter).toBeFocused();
     });
 });
+
+test.describe('native tab navigation in a multi filter sub-menu', () => {
+    async function openSubMenu(page: Page, child: { filter: string; filterParams?: object }, positiveTabIndex = false) {
+        await mountGrid(page, {
+            enterprise: true,
+            options: positiveTabIndex ? () => ({ tabIndex: 3, rowData: [] }) : () => ({ rowData: [] }),
+        });
+        await page.evaluate((child) => {
+            const api = window.gridApi;
+            api.setGridOption('columnDefs', [
+                {
+                    field: 'value',
+                    filter: 'agMultiColumnFilter',
+                    filterParams: {
+                        filters: [{ ...child, display: 'subMenu' }, { filter: 'agSetColumnFilter' }],
+                    },
+                },
+            ]);
+            api.showColumnFilter('value');
+        }, child);
+        const menuItem = page.locator('.ag-multi-filter-menu-item');
+        await menuItem.focus();
+        await page.keyboard.press('Enter');
+        const subMenu = page.locator('.ag-menu[role="dialog"]:not(.ag-filter-menu)');
+        const input = subMenu.locator('.ag-filter-body input').first();
+        await expect(input).toBeFocused();
+        return { menuItem, subMenu, input };
+    }
+
+    for (const positiveTabIndex of [false, true]) {
+        test(`text filter controls are reachable with Tab and Shift+Tab${positiveTabIndex ? ' with a positive grid tabIndex' : ''}`, async ({
+            page,
+        }) => {
+            const { menuItem, subMenu, input } = await openSubMenu(
+                page,
+                { filter: 'agTextColumnFilter' },
+                positiveTabIndex
+            );
+            const operator = subMenu.getByRole('combobox').first();
+
+            await page.keyboard.press('Shift+Tab');
+            await expect(operator).toBeFocused();
+            await page.keyboard.press('Tab');
+            await expect(input).toBeFocused();
+
+            await input.fill('sw');
+            const visited: string[] = [];
+            for (let i = 0; i < 10; i++) {
+                await page.keyboard.press('Tab');
+                if (!(await subMenu.count())) {
+                    break;
+                }
+                visited.push(
+                    await subMenu.evaluate((element) => {
+                        const active = document.activeElement!;
+                        return element.contains(active) ? active.className : 'outside';
+                    })
+                );
+            }
+            expect(visited).not.toContain('outside');
+            expect(visited[0]).toContain(positiveTabIndex ? 'ag-radio-button-input' : 'ag-input-field-clear-button');
+            expect(visited.some((stop) => stop.includes('ag-input-field-clear-button'))).toBe(true);
+            expect(visited.some((stop) => stop.includes('ag-radio-button-input'))).toBe(true);
+            expect(visited.filter((stop) => stop.includes('ag-picker-field-wrapper'))).toHaveLength(1);
+            await expect(subMenu).toHaveCount(0);
+            await expect(menuItem).toBeFocused();
+        });
+    }
+
+    for (const includeTime of [false, true]) {
+        test(`${includeTime ? 'date-time' : 'date'} segments keep native Tab behaviour`, async ({ page }) => {
+            const { subMenu, input } = await openSubMenu(page, {
+                filter: 'agDateColumnFilter',
+                filterParams: { includeTime },
+            });
+            await input.fill(includeTime ? '2026-10-12T12:34:56' : '2026-10-12');
+            await expect(subMenu.getByRole('radio', { name: 'AND', exact: true })).toBeVisible();
+
+            await input.evaluate((element: HTMLInputElement) => {
+                const reference = document.createElement('input');
+                reference.id = 'native-date';
+                reference.type = element.type;
+                reference.step = element.step;
+                reference.value = element.value;
+                const after = document.createElement('button');
+                document.body.append(reference, after);
+            });
+            const reference = page.locator('#native-date');
+            await reference.focus();
+            const expected = await tabOutOfInput(page, reference);
+            await input.focus();
+            expect(await tabOutOfInput(page, input)).toEqual(expected);
+            expect(await subMenu.evaluate((element) => element.contains(document.activeElement))).toBe(true);
+        });
+    }
+});

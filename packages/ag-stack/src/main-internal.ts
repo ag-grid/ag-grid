@@ -279,6 +279,7 @@ export {
     _findTabbableParent,
     _focusInto,
     _focusIntoTabbableFirst,
+    _getTabOrderedElements,
     _isKeyboardMode,
     _registerKeyboardFocusEvents,
     _resetKeyboardMode,
