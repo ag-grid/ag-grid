@@ -187,27 +187,23 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
     }
 
     protected getAriaDisplayName(): string {
-        const translate = this.getLocaleTextFunc();
+        if (this.isAggregationZone()) {
+            // WCAG 2.5.3 Label in Name: the accessible name must contain the visible text.
+            return this.getDisplayValue();
+        }
 
-        const { name, aggFuncName } = this.getColumnAndAggFuncName();
-        const aggSeparator = translate('ariaDropZoneColumnComponentAggFuncSeparator', ' of ');
+        const translate = this.getLocaleTextFunc();
+        const name = this.displayName as string;
         const sortDirection = {
             asc: translate('ariaDropZoneColumnComponentSortAscending', 'ascending'),
             desc: translate('ariaDropZoneColumnComponentSortDescending', 'descending'),
         };
         const columnSort = this.getCurrentSortDirection(this.column);
         const isSortSuppressed = this.gos.get('rowGroupPanelSuppressSort');
-        // Built from the existing separator so a localeText without this key reads as before.
-        const label = aggFuncName
-            ? _translateTokens(translate, 'ariaDropZoneColumnAggFunc', `\${aggFunc}${aggSeparator}\${column}`, {
-                  aggFunc: aggFuncName,
-                  column: name,
-              })
-            : name;
         const sort = this.isGroupingZone() && !isSortSuppressed && columnSort ? sortDirection[columnSort] : null;
         return sort
-            ? _translateTokens(translate, 'ariaDropZoneColumnSorted', '${column}, ${sort}', { column: label, sort })
-            : label;
+            ? _translateTokens(translate, 'ariaDropZoneColumnSorted', '${column}, ${sort}', { column: name, sort })
+            : name;
     }
 
     private getColumnAndAggFuncName(): { name: string; aggFuncName: string } {

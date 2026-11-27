@@ -79,7 +79,7 @@ describe('deferred column tool panel pivot mode - removing and reordering pills'
             { field: 'bronze', enableValue: true },
         ]);
 
-        removeDropZonePill(toolPanelGui, 'sum of Silver');
+        removeDropZonePill(toolPanelGui, 'sum(Silver)');
 
         expect(gridApi.getValueColumns().map((col) => col.getColId())).toEqual(['gold', 'silver']);
 
@@ -91,7 +91,7 @@ describe('deferred column tool panel pivot mode - removing and reordering pills'
     test('removing a value pill in pivot mode can be cancelled', async () => {
         const { gridApi, toolPanelGui } = await createDeferredPivotModeGrid();
 
-        removeDropZonePill(toolPanelGui, 'sum of Bronze');
+        removeDropZonePill(toolPanelGui, 'sum(Bronze)');
         getCancelButton(toolPanelGui).click();
         await waitForNoLoadingRows(gridApi);
 
@@ -105,7 +105,7 @@ describe('deferred column tool panel pivot mode - removing and reordering pills'
         expect(gridApi.getValueColumns().map((col) => col.getColId())).toEqual(['silver', 'bronze']);
         expect(createPrimaryColumnComp(toolPanel, 'Bronze').isSelected()).toBe(true);
 
-        removeDropZonePill(toolPanelGui, 'sum of Bronze');
+        removeDropZonePill(toolPanelGui, 'sum(Bronze)');
 
         expect(gridApi.getValueColumns().map((col) => col.getColId())).toEqual(['silver', 'bronze']);
         expect(refreshDeferredUiSpy).toHaveBeenCalled();
