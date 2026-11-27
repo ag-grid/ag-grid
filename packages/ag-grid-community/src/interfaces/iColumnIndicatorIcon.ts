@@ -9,7 +9,11 @@ export interface ColumnIndicatorIcon {
     iconName: IconName;
     cls: string;
     /** Calls `refresh` whenever the icon may change for `column`, with listeners owned by `bean`. */
-    addRefreshListeners(bean: BeanStub, column: AgColumn, refresh: () => void): void;
+    addRefreshListeners(
+        bean: Pick<BeanStub, 'addManagedListeners' | 'addManagedEventListeners'>,
+        column: AgColumn,
+        refresh: () => void
+    ): void;
     /** Updates `eIcon` for `column` and returns whether it shows. */
     refresh(column: AgColumn, eIcon: HTMLElement): boolean;
 }

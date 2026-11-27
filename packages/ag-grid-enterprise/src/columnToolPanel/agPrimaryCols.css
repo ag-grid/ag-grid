@@ -107,7 +107,7 @@
 }
 
 /* The trailing icon sits next to the name and takes the rest of the row, so the whole row stays clickable. */
-.ag-column-indicator-name {
+:where(.ag-column-select-column) .ag-column-indicator-name {
     flex-grow: 0;
 }
 

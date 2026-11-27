@@ -26,9 +26,7 @@ export interface IShowValuesAsService {
     toColState(column: AgColumn): ShowValuesAsStateValue;
     /** Whether the column's mode is currently applying (not dormant in the current view). */
     isApplying(column: AgColumn): boolean;
-    /** Whether the column shows its Show Values As indicator icon. */
-    isIndicatorShown(column: AgColumn): boolean;
-    /** The indicator icon shown after the column name outside the header. */
+    /** The indicator icon shown after the column name. */
     readonly indicatorIcon: ColumnIndicatorIcon;
     /** Transforms a column's raw value at a node into the value to display, or `null` for a blank cell. Call only when {@link isApplying} is true. */
     transform(column: AgColumn, rowNode: IRowNode, rawValue: any): ShowValuesAsResult | null;

@@ -294,7 +294,7 @@ export class ShowValuesAsService extends BeanStub implements NamedBean, IShowVal
         position: 'after',
         iconName: 'showValuesAs',
         cls: 'ag-show-values-as-icon',
-        // Dormancy flips on grouping/pivot change without a column-state event.
+        // Dormant (selected but not applying in this view) flips on grouping/pivot change without a column-state event.
         addRefreshListeners: (bean, column, refresh) => {
             bean.addManagedListeners(column, { columnStateUpdated: refresh, colDefChanged: refresh });
             bean.addManagedEventListeners({
@@ -304,7 +304,7 @@ export class ShowValuesAsService extends BeanStub implements NamedBean, IShowVal
             });
         },
         refresh: (column, eIcon) => {
-            const show = this.isIndicatorShown(column);
+            const show = column.showValuesAs != null && !column.showValuesAsDef?.suppressHeaderIndicator;
             if (show) {
                 eIcon.classList.toggle('ag-show-values-as-dormant', !this.isApplying(column));
                 // The icon can fill the rest of a list row, so the tooltip goes on the glyph alone.
@@ -313,10 +313,6 @@ export class ShowValuesAsService extends BeanStub implements NamedBean, IShowVal
             return show;
         },
     };
-
-    public isIndicatorShown(column: AgColumn): boolean {
-        return column.showValuesAs != null && !column.showValuesAsDef?.suppressHeaderIndicator;
-    }
 
     public isApplying(column: AgColumn): boolean {
         const resolved = column.showValuesAs;

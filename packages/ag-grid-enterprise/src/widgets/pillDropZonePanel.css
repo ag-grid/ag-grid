@@ -55,11 +55,8 @@
 }
 
 :where(.ag-column-drop-cell) .ag-column-indicator-name {
-    margin-inline-end: calc(var(--ag-spacing) / 2);
-}
-
-.ag-column-indicator-name {
     flex-grow: 0;
+    margin-inline-end: calc(var(--ag-spacing) / 2);
 }
 
 .ag-column-drop-vertical {
