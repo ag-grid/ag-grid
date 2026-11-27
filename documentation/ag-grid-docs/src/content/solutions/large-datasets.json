@@ -121,7 +121,7 @@
             },
             {
                 "title": "Load in blocks when the data is too big to send",
-                "body": "Set `rowModelType='infinite'` and a datasource whose `getRows(params)` fetches `params.startRow` to `params.endRow` and calls `params.successCallback(rows, lastRow)`. With Enterprise, use `rowModelType='serverSide'` instead to keep grouping and aggregation on the server."
+                "body": "Set `rowModelType='infinite'` and a datasource whose `getRows(params)` fetches `params.startRow` to `params.endRow`, sorted on the server by `params.sortModel`, and calls `params.successCallback(rows, lastRow)`. With Enterprise, use `rowModelType='serverSide'` instead to keep grouping and aggregation on the server."
             },
             {
                 "title": "Update rows with transactions",
@@ -132,7 +132,7 @@
                 "body": "Past the browser's maximum div height the grid stretches rows and scrolling feels faster. If that does not suit your users, the docs suggest showing fewer rows or turning on `pagination`."
             }
         ],
-        "code": "// AG Grid v36. Infinite Row Model: Community. Loads rows from the server in blocks as the user scrolls.\nimport { useMemo } from \"react\";\nimport { AgGridProvider, AgGridReact } from \"ag-grid-react\";\nimport { AllCommunityModule } from \"ag-grid-community\";\nimport type { ColDef, IDatasource, IGetRowsParams } from \"ag-grid-community\";\n\nconst modules = [AllCommunityModule];\n\ninterface Order { id: number; customer: string; status: string; total: number }\n\nexport function LargeOrdersGrid() {\n  const columnDefs = useMemo<ColDef<Order>[]>(() => [\n    { field: \"id\" }, { field: \"customer\" }, { field: \"status\" }, { field: \"total\" },\n  ], []);\n\n  // Hypothetical endpoint: returns { rows, lastRow } for the requested range\n  const datasource = useMemo<IDatasource>(() => ({\n    getRows: async (params: IGetRowsParams) => {\n      try {\n        const res = await fetch(`/api/orders?start=${params.startRow}&end=${params.endRow}`);\n        const { rows, lastRow } = await res.json();\n        params.successCallback(rows, lastRow);\n      } catch {\n        params.failCallback();\n      }\n    },\n  }), []);\n\n  return (\n    <AgGridProvider modules={modules}>\n      <div style={{ height: 600 }}>\n        <AgGridReact<Order>\n          columnDefs={columnDefs}\n          rowModelType=\"infinite\"\n          datasource={datasource}\n          cacheBlockSize={100}\n          maxBlocksInCache={10}\n          rowBuffer={10}\n        />\n      </div>\n    </AgGridProvider>\n  );\n}",
+        "code": "// AG Grid v36. Infinite Row Model: Community. Loads rows from the server in blocks as the user scrolls.\nimport { useMemo } from \"react\";\nimport { AgGridProvider, AgGridReact } from \"ag-grid-react\";\nimport { AllCommunityModule } from \"ag-grid-community\";\nimport type { ColDef, IDatasource, IGetRowsParams } from \"ag-grid-community\";\n\nconst modules = [AllCommunityModule];\n\ninterface Order { id: number; customer: string; status: string; total: number }\n\nexport function LargeOrdersGrid() {\n  const columnDefs = useMemo<ColDef<Order>[]>(() => [\n    { field: \"id\" }, { field: \"customer\" }, { field: \"status\" }, { field: \"total\" },\n  ], []);\n\n  // Hypothetical endpoint: returns { rows, lastRow } for the requested range\n  const datasource = useMemo<IDatasource>(() => ({\n    getRows: async (params: IGetRowsParams) => {\n      try {\n        // The grid cannot sort rows it has not loaded, so the server applies the sort model\n        const sort = encodeURIComponent(JSON.stringify(params.sortModel));\n        const res = await fetch(`/api/orders?start=${params.startRow}&end=${params.endRow}&sort=${sort}`);\n        const { rows, lastRow } = await res.json();\n        params.successCallback(rows, lastRow);\n      } catch {\n        params.failCallback();\n      }\n    },\n  }), []);\n\n  return (\n    <AgGridProvider modules={modules}>\n      <div style={{ height: 600 }}>\n        <AgGridReact<Order>\n          columnDefs={columnDefs}\n          rowModelType=\"infinite\"\n          datasource={datasource}\n          cacheBlockSize={100}\n          maxBlocksInCache={10}\n          rowBuffer={10}\n        />\n      </div>\n    </AgGridProvider>\n  );\n}",
         "outro": "See the [performance demo](/example/): pick a data size up to 100,000 rows while scrolling, sorting and filtering, with React, JavaScript, Angular and Vue source on GitHub."
     },
     "faq": [
@@ -216,6 +216,11 @@
             "claim": "The Infinite Row Model datasource getRows() receives startRow, endRow, sortModel and filterModel, and blocks are configured with cacheBlockSize, maxBlocksInCache and blockLoadDebounceMillis.",
             "sourceUrl": "https://www.ag-grid.com/react-data-grid/infinite-scrolling/",
             "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "With the Infinite Row Model the grid cannot sort or filter rows itself, so sorting and filtering must be done on the server.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/infinite-scrolling/",
+            "checkedOn": "2026-11-27"
         },
         {
             "claim": "The Server-Side Row Model is an Enterprise feature that lazy-loads rows in blocks and loads group children when a group is expanded, with server-side grouping, pivoting and aggregation.",
