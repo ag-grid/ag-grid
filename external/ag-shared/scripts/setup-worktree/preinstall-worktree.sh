@@ -328,8 +328,7 @@ try_cow_clone_nx_cache() {
     fi
 }
 
-# The clone carries the source checkout's daemon address (d/) and its running continuous tasks,
-# whose PIDs are alive, so the worktree's Nx would talk to that daemon and attach to its `nx dev`.
+# Otherwise the worktree's Nx uses the source checkout's daemon and attaches to its running tasks.
 reset_cloned_nx_state() {
     local data="$REPO_ROOT/.nx/workspace-data"
     local db
@@ -345,7 +344,6 @@ reset_cloned_nx_state() {
     done
 }
 
-# Keeps the cache records: Nx trusts no cached output without them.
 clear_running_nx_tasks() {
     local db="$1"
     local statements
