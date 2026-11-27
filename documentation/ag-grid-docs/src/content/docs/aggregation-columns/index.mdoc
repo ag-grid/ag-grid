@@ -174,7 +174,8 @@ With `groupRowEditable` or `groupRowValueSetter` set but no function `groupRowVa
 column are not editable while it is aggregated, `setDataValue` on a group row leaves the data unchanged, and the grid
 logs a warning. Leaf rows stay editable. With neither set, `setDataValue` writes the cell's field as it does for a
 column with a `valueGetter`, but `editable` does not open an editor on group or tree data parent cells the getter
-computes.
+computes. Server-Side Row Model tree data parents and grand total rows are not group rows, so they stay read-only
+even with a function `groupRowValueSetter`.
 
 `aggValueGetter` is not called for leaf rows, group columns or pivot result columns. An open group whose aggregate is
 shown on its total row displays no value, so the getter is not called to display it.
