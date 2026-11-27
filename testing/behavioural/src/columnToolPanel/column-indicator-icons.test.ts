@@ -62,27 +62,34 @@ describe('column indicator icons in the Columns Tool Panel and chips', () => {
         return host.querySelector<HTMLElement>('.ag-column-select-column-label, .ag-column-drop-cell-text')!;
     }
 
-    function expectCalcIconBeforeName(host: HTMLElement): void {
-        const icon = host.querySelector('.ag-calculated-column-icon');
-        expect(icon).not.toBeNull();
-        expect(icon!.nextElementSibling).toBe(nameEl(host));
+    function calcIcon(host: HTMLElement): HTMLElement | null {
+        return visibleIcon(host, 'ag-calculated-column-icon');
     }
 
     function showValuesAsIcon(host: HTMLElement): HTMLElement | null {
-        return host.querySelector<HTMLElement>('.ag-show-values-as-icon');
+        return visibleIcon(host, 'ag-show-values-as-icon');
+    }
+
+    function visibleIcon(host: HTMLElement, cls: string): HTMLElement | null {
+        const icon = host.querySelector<HTMLElement>(`.${cls}`);
+        return icon && !icon.classList.contains('ag-hidden') ? icon : null;
+    }
+
+    function expectCalcIconBeforeName(host: HTMLElement): void {
+        const icon = calcIcon(host);
+        expect(icon).not.toBeNull();
+        expect(icon!.nextElementSibling).toBe(nameEl(host));
     }
 
     function expectShowValuesAsIconAfterName(host: HTMLElement, dormant = false): void {
         const icon = showValuesAsIcon(host);
         expect(icon).not.toBeNull();
-        expect(icon!.classList.contains('ag-hidden')).toBe(false);
         expect(icon!.classList.contains('ag-show-values-as-dormant')).toBe(dormant);
         expect(icon!.previousElementSibling).toBe(nameEl(host));
     }
 
     function expectNoVisibleShowValuesAsIcon(host: HTMLElement): void {
-        const icon = showValuesAsIcon(host);
-        expect(icon == null || icon.classList.contains('ag-hidden')).toBe(true);
+        expect(showValuesAsIcon(host)).toBeNull();
     }
 
     const calcDef: ColDef = { colId: 'profit', headerName: 'Profit', calculatedExpression: '[gold] * 2' };
@@ -92,7 +99,7 @@ describe('column indicator icons in the Columns Tool Panel and chips', () => {
 
         await waitFor(() => expectCalcIconBeforeName(listItem(api, 'Profit')));
         const country = listItem(api, 'Country');
-        expect(country.querySelector('.ag-calculated-column-icon')).toBeNull();
+        expect(calcIcon(country)).toBeNull();
         expectNoVisibleShowValuesAsIcon(country);
     });
 
@@ -125,7 +132,7 @@ describe('column indicator icons in the Columns Tool Panel and chips', () => {
             expectCalcIconBeforeName(chipIn(api, 'toolPanel', 'Profit Pivot'));
             expectCalcIconBeforeName(chipIn(api, 'toolPanel', 'sum(Profit)'));
         });
-        expect(chipIn(api, 'header', 'Country').querySelector('.ag-calculated-column-icon')).toBeNull();
+        expect(calcIcon(chipIn(api, 'header', 'Country'))).toBeNull();
     });
 
     test('Show Values As icon shows after the name in the list and Values chip, and not when the header hides it', async () => {
@@ -188,7 +195,7 @@ describe('column indicator icons in the Columns Tool Panel and chips', () => {
         ]);
 
         await waitFor(() => expectShowValuesAsIconAfterName(listItem(api, 'Gold')));
-        listItem(api, 'Profit').querySelector<HTMLElement>('.ag-calculated-column-icon')!.click();
+        calcIcon(listItem(api, 'Profit'))!.click();
         showValuesAsIcon(listItem(api, 'Gold'))!.click();
 
         await waitFor(() => {
@@ -205,7 +212,7 @@ describe('column indicator icons in the Columns Tool Panel and chips', () => {
         await waitFor(() => {
             item = listItem(api, 'Profit');
         });
-        expect(item.querySelector('.ag-calculated-column-icon')).toBeNull();
+        expect(calcIcon(item)).toBeNull();
 
         api.setGridOption('columnDefs', [{ field: 'country' }, calcDef]);
         await waitFor(() => expectCalcIconBeforeName(listItem(api, 'Profit')));
@@ -214,7 +221,7 @@ describe('column indicator icons in the Columns Tool Panel and chips', () => {
             { field: 'country' },
             { colId: 'profit', headerName: 'Profit', field: 'gold' },
         ]);
-        await waitFor(() => expect(listItem(api, 'Profit').querySelector('.ag-calculated-column-icon')).toBeNull());
+        await waitFor(() => expect(calcIcon(listItem(api, 'Profit'))).toBeNull());
     });
 
     test('ƒx follows the calculatedColumns grid option', async () => {
@@ -226,8 +233,8 @@ describe('column indicator icons in the Columns Tool Panel and chips', () => {
         enableDevValidations({ suppress: [319] });
         api.setGridOption('calculatedColumns', false);
         await waitFor(() => {
-            expect(listItem(api, 'Profit').querySelector('.ag-calculated-column-icon')).toBeNull();
-            expect(chipIn(api, 'toolPanel', 'sum(Profit)').querySelector('.ag-calculated-column-icon')).toBeNull();
+            expect(calcIcon(listItem(api, 'Profit'))).toBeNull();
+            expect(calcIcon(chipIn(api, 'toolPanel', 'sum(Profit)'))).toBeNull();
         });
     });
 

@@ -1,71 +1,57 @@
 import { _setDisplayed } from 'ag-stack';
 
-import type { AgColumn, IconName } from 'ag-grid-community';
+import type { AgColumn, ColumnIndicatorIcon } from 'ag-grid-community';
 import { BeanStub, _createElement, _createIconNoSpan } from 'ag-grid-community';
 
-/** Shows the column header's type indicators next to a column's name outside the header: ƒx before it, Show Values As after it. */
+/** Shows the indicator icons that modules supply for a column, before and after its name, outside the header. */
 export class ColumnIndicatorIconsFeature extends BeanStub {
-    private eCalculatedColumn: HTMLElement | null = null;
-    private eShowValuesAs: HTMLElement | null = null;
+    private eLastAfter: Element;
+    private readonly shownAfter = new Set<HTMLElement>();
 
     constructor(
         private readonly column: AgColumn,
         private readonly eName: HTMLElement
     ) {
         super();
+        this.eLastAfter = eName;
     }
 
     public postConstruct(): void {
+        const { calculatedColsSvc, showValuesAsSvc } = this.beans;
+        for (const icon of [calculatedColsSvc?.indicatorIcon, showValuesAsSvc?.indicatorIcon]) {
+            if (icon) {
+                this.addIcon(icon);
+            }
+        }
+    }
+
+    private addIcon(icon: ColumnIndicatorIcon): void {
         const { column, eName } = this;
-        if (this.beans.showValuesAsSvc) {
-            this.eShowValuesAs = this.createIcon('showValuesAs', 'ag-show-values-as-icon');
-            eName.after(this.eShowValuesAs);
-            const refresh = this.refreshShowValuesAs.bind(this);
-            this.addManagedListeners(column, { columnStateUpdated: refresh });
-            this.addManagedEventListeners({
-                columnRowGroupChanged: refresh,
-                columnPivotChanged: refresh,
-                columnPivotModeChanged: refresh,
-            });
+        const eIcon = this.createIcon(icon);
+        if (icon.position === 'before') {
+            eName.before(eIcon);
+        } else {
+            this.eLastAfter.after(eIcon);
+            this.eLastAfter = eIcon;
         }
-        this.addManagedListeners(column, { colDefChanged: this.refresh.bind(this) });
-        this.refresh();
+
+        const refresh = () => {
+            const show = icon.refresh(column, eIcon);
+            _setDisplayed(eIcon, show, { skipAriaHidden: true });
+            if (icon.position === 'after') {
+                if (show) {
+                    this.shownAfter.add(eIcon);
+                } else {
+                    this.shownAfter.delete(eIcon);
+                }
+                eName.classList.toggle('ag-column-indicator-name', this.shownAfter.size > 0);
+            }
+        };
+        icon.addRefreshListeners(this, column, refresh);
+        refresh();
     }
 
-    private refresh(): void {
-        this.refreshCalculatedColumn();
-        this.refreshShowValuesAs();
-    }
-
-    private refreshCalculatedColumn(): void {
-        const show = this.column.isCalculatedCol;
-        if (show && !this.eCalculatedColumn) {
-            this.eCalculatedColumn = this.createIcon('calculatedColumnsHeader', 'ag-calculated-column-icon');
-            this.eName.before(this.eCalculatedColumn);
-        } else if (!show && this.eCalculatedColumn) {
-            this.eCalculatedColumn.remove();
-            this.eCalculatedColumn = null;
-        }
-    }
-
-    private refreshShowValuesAs(): void {
-        const { eShowValuesAs, column } = this;
-        const showValuesAsSvc = this.beans.showValuesAsSvc;
-        if (!eShowValuesAs || !showValuesAsSvc) {
-            return;
-        }
-        const show = showValuesAsSvc.isIndicatorShown(column);
-        _setDisplayed(eShowValuesAs, show, { skipAriaHidden: true });
-        this.eName.classList.toggle('ag-column-indicator-name', show);
-        if (show) {
-            eShowValuesAs.classList.toggle('ag-show-values-as-dormant', !showValuesAsSvc.isApplying(column));
-            // The icon can fill the rest of a list row, so the tooltip goes on the glyph alone.
-            const eTooltipTarget = eShowValuesAs.firstElementChild ?? eShowValuesAs;
-            eTooltipTarget.setAttribute('title', showValuesAsSvc.getActiveModeTooltip(column) ?? '');
-        }
-    }
-
-    private createIcon(iconName: IconName, cls: string): HTMLElement {
+    private createIcon({ iconName, cls }: ColumnIndicatorIcon): HTMLElement {
         const eIcon = _createElement({
             tag: 'span',
             cls: `ag-column-indicator-icon ${cls}`,
