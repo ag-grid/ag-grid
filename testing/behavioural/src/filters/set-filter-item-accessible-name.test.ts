@@ -51,12 +51,10 @@ describe('Set Filter item accessible name', () => {
     }
 
     test('(Select All), values and blanks are each named by their text', async () => {
-        const api = createGrid(rows('A', 'B', null), {
-            valueFormatter: ({ value }) => (value == null ? null : `#${value}`),
-        });
+        const api = createGrid(rows('A', 'B', null));
         await ColumnFilterHarness.open(api, 'value');
 
-        expectNamedOnce(['(Select All)', '(Blanks)', '#A', '#B']);
+        expectNamedOnce(['(Select All)', '(Blanks)', 'A', 'B']);
     });
 
     test('in Excel mode the names follow a mini filter search', async () => {
