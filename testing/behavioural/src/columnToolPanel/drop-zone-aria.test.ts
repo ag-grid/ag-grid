@@ -172,7 +172,8 @@ describe('Values pill accessible name contains its visible text (WCAG 2.5.3 Labe
         });
 
         for (const { text, label } of getValuePills(api)) {
-            expect(normalise(label).startsWith(normalise(text)), label).toBe(true);
+            const visibleWords = normalise(text);
+            expect(normalise(label).slice(0, visibleWords.length)).toBe(visibleWords);
         }
     }
 
