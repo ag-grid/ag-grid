@@ -3,7 +3,3 @@
         overflow: visible;
     }
 }
-
-.example-controls {
-    margin-bottom: var(--controls-gap);
-}

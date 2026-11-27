@@ -168,14 +168,39 @@ Put the controls in `.example-controls`, one `.controls-row` per line of control
 </div>
 ```
 
-The shared example stylesheet, linked into every example, styles these classes. The controls sit at the top, the grid fills the remaining height, and the gap between them is standard. Don't add layout CSS or inline spacing for them.
+The shared example stylesheet, linked into every example, styles these classes. The controls keep their natural height at the top, the grid fills the rest, and the gap between them is standard. A layout like this needs no `styles.css`. Don't add:
 
-When the grid sizes itself to its rows (`domLayout: 'autoHeight'` or `'print'`), leave out `.example-wrapper`: it would hold the grid at a fixed height. Give the controls their gap in `styles.css` instead:
+- a wrapper div around the grid, such as `.grid-wrapper`, or layout CSS for `.example-wrapper` or `#myGrid`
+- inline spacing between the controls and the grid
+- a font override, such as `font-family: Verdana`
+- a width for a text input in the controls: the shared stylesheet makes them 200px. If an input needs another width, give it a class and size that.
 
-```css
-.example-controls {
-    margin-bottom: var(--controls-gap);
-}
+### Grid that sets its own height
+
+When the grid sizes itself to its rows (`domLayout: 'autoHeight'` or `'print'`), add `example-wrapper--auto-height`. The wrapper then takes its content's height instead of holding the grid at the iframe's height, and the controls keep their gap:
+
+```html
+<div class="example-wrapper example-wrapper--auto-height">
+    <div class="example-controls">...</div>
+    <div id="myGrid"></div>
+</div>
+```
+
+### Grids side by side
+
+Add `example-wrapper--row` to the root and make each column its own `.example-wrapper`, so each column stacks its controls above its grid. The row doesn't size its columns, so give them a width in `styles.css`, such as `flex: 1 1 auto; min-width: 0`:
+
+```html
+<div class="example-wrapper example-wrapper--row">
+    <div class="grid-col example-wrapper">
+        <div class="example-controls">...</div>
+        <div id="eLeftGrid"></div>
+    </div>
+    <div class="grid-col example-wrapper">
+        <div class="example-controls">...</div>
+        <div id="eRightGrid"></div>
+    </div>
+</div>
 ```
 
 ## Example Spec File (Required)

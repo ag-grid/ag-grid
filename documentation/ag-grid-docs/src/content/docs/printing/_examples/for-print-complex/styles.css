@@ -17,7 +17,3 @@
         color: black !important;
     }
 }
-
-.example-controls {
-    margin-bottom: var(--controls-gap);
-}

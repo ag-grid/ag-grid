@@ -13,7 +13,6 @@ import {
 import { ColumnMenuModule, ContextMenuModule, ExcelExportModule } from 'ag-grid-enterprise';
 
 import type { IOlympicData } from './interfaces';
-import './styles.css';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
@@ -106,16 +105,14 @@ ModuleRegistry.registerModules([
                 <input type="submit" class="primary" value="Export to Excel" />
             </div>
         </form>
-        <div class="grid-wrapper">
-            <ag-grid-angular
-                style="width: 100%; height: 100%;"
-                [columnDefs]="columnDefs"
-                [defaultColDef]="defaultColDef"
-                [popupParent]="popupParent"
-                [rowData]="rowData"
-                (gridReady)="onGridReady($event)"
-            />
-        </div>
+        <ag-grid-angular
+            style="width: 100%; height: 100%;"
+            [columnDefs]="columnDefs"
+            [defaultColDef]="defaultColDef"
+            [popupParent]="popupParent"
+            [rowData]="rowData"
+            (gridReady)="onGridReady($event)"
+        />
     </div>`,
 })
 export class AppComponent {

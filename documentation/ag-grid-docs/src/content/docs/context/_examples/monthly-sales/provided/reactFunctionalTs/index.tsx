@@ -202,7 +202,6 @@ const GridExample = () => {
                             <input
                                 type="text"
                                 id="filter-text-box"
-                                style={{ width: '100px' }}
                                 onChange={(e) => onQuickFilterChanged(e.target.value)}
                                 placeholder="Filter..."
                             />
