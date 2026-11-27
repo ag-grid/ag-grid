@@ -210,8 +210,25 @@ export type DefaultMenuItem =
  */
 export type DefaultToolPanelItem = 'scrollIntoView' | 'rowGroup' | 'value' | 'pivot' | 'moveUp' | 'moveDown';
 
-/** Built-in menu items for column drop-zone pills. */
-export type DefaultColumnDropZoneMenuItem = 'moveUp' | 'moveDown' | 'moveLeft' | 'moveRight' | 'separator';
+/**
+ * Built-in menu items for column drop-zone pills. A token that does not apply to the pill is dropped from the menu.
+ * `valueAggSubMenu` and `showValuesAsSubMenu` are reserved and currently always dropped.
+ */
+export type DefaultColumnDropZoneMenuItem =
+    | 'sortAscending'
+    | 'sortDescending'
+    | 'sortUnSort'
+    | 'valueAggSubMenu'
+    | 'showValuesAsSubMenu'
+    | 'moveToRowGroups'
+    | 'moveToValues'
+    | 'moveToColumnLabels'
+    | 'moveUp'
+    | 'moveDown'
+    | 'moveLeft'
+    | 'moveRight'
+    | 'removeField'
+    | 'separator';
 
 /**
  * The complete set of built-in menu item tokens usable with `columnMenuItems` / `getColumnMenuItems`

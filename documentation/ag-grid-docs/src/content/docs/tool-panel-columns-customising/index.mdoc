@@ -142,15 +142,60 @@ The example below shows both the built-in items and this customisation. Note the
 
 ### Drop Zone Menus
 
-Move Up and Move Down reorder pills within Row Groups, Values and Column Labels, not grid columns. Horizontal panels use Move Left and Move Right.
+Right-click a pill in the Row Groups, Values or Column Labels sections, or in a [Row Group Panel](./grouping-group-panel/) or [Pivot Panel](./pivoting/#enabling-the-pivot-panel) above the grid, to open its menu. With a pill focused, {% kbd "⇧ Shift" /%}+{% kbd "F10" /%} or the context-menu key opens the same menu.
 
-Right-click a pill to open its menu. With a pill focused, {% kbd "⇧ Shift" /%}+{% kbd "F10" /%} or the context-menu key opens the same menu.
+The menu shows only the items that apply to the pill, in this order:
 
-Move items follow drag-and-drop eligibility and [group locking](./grouping-group-panel/#prevent-changes-to-group-order). They are hidden with `functionsReadOnly`, but pivot mode and column-layout restrictions do not block them.
+1. **Sort Ascending**, **Sort Descending** and **Clear Sort** (only when the column is sorted).
+2. **Move to Row Groups**, **Move to Values** and **Move to Column Labels**.
+3. **Move Up** and **Move Down**, or **Move Left** and **Move Right** in horizontal panels.
+4. **Remove Field**.
 
-Labels use the `moveUp`, `moveDown`, `moveLeft`, `moveRight` [locale keys](./localisation/); arrows use the `menuMoveUp`, `menuMoveDown`, `menuMoveLeft`, `menuMoveRight` [icon keys](./custom-icons/).
+A separator divides each group. Separators are never doubled, leading or trailing.
 
-Use `getColumnDropZoneMenuItems` to filter `defaultItems`, add custom items or return `[]` to hide a menu. Its `source` is `'rowGroup'`, `'pivot'` or `'aggregation'`. For example, hide the Values menu and keep the others:
+#### Sort Items
+
+Sort items are shown when the column is sortable and sorting is available. They are not shown on:
+
+- Row Groups pills when `rowGroupPanelSuppressSort` is enabled.
+- Column Labels pills when `pivotPanelSuppressSort` is enabled.
+- Values pills in pivot mode.
+
+Sort Ascending and Sort Descending replace any other sorts, as in the column menu. On Column Labels pills the items set the column's [pivot sort](./pivoting-column-groups/#sorting-pivot-columns), so **Clear Sort** is shown by default as pivot sort defaults to ascending. On other pills they set the column's sort.
+
+Values pills also show their sort direction indicator, except in pivot mode. Clicking a Values pill still opens the aggregation menu.
+
+#### Move To Items
+
+**Move to** items move the column as if its pill had been dragged to that section: the default aggregation function is applied when moving to Values, and column visibility is updated as it is for dragging (see [Prevent User Grouping from Hiding Columns](./grouping-group-panel/#prevent-user-grouping-from-hiding-columns)). Each item is shown only when:
+
+- the pill is not in that section, and the column is not already in it;
+- the column is a primary column that allows the section: `enableRowGroup`, `enableValue` or `enablePivot`;
+- for **Move to Column Labels**, pivot mode is on.
+
+#### Move And Remove Items
+
+Move Up and Move Down reorder pills within a section, not grid columns. Both are always shown and are disabled when the pill cannot move, such as the first or last pill, a lone pill, or a pill that would cross a [locked group column](./grouping-group-panel/#prevent-changes-to-group-order). Horizontal panels use Move Left and Move Right.
+
+**Remove Field** removes the column from the section, like the pill's remove button or the {% kbd "Delete" /%} key. It is disabled when the pill cannot be removed.
+
+#### Read Only And Locked Pills
+
+With [Read Only Functions](./tool-panel-columns-configuration/#read-only-functions), or for a locked group column (`groupLockGroupColumns`), the menu still opens. Its sort items remain available, Move Up, Move Down and Remove Field are disabled, and the Move to items are not shown.
+
+#### Deferred Updates
+
+With [Deferred Updates](./tool-panel-columns-deferred-updates/), every menu action is staged until **Apply** is clicked.
+
+#### Customising Drop Zone Menus
+
+Use `getColumnDropZoneMenuItems` to filter `defaultItems`, add custom items or return `[]` to hide a menu. It receives:
+
+- `column`: the column of the pill.
+- `source`: the function of the drop zone, `'rowGroup'`, `'pivot'` or `'aggregation'`.
+- `defaultItems`: the applicable items listed above.
+
+The callback runs for every pill when it is created, to determine whether it has a menu, and again when the menu opens. The menu shows what it returns, including custom items defined with a [`MenuItemDef`](./context-menu/#configuring-the-context-menu). For example, hide the Values menu and keep the others:
 
 ```javascript
 const gridOptions = {
@@ -159,7 +204,15 @@ const gridOptions = {
 };
 ```
 
-Keep the callback free of side effects; it may run before the menu opens. Column-menu callbacks do not configure drop-zone menus.
+Built-in items are referenced by these tokens: `sortAscending`, `sortDescending`, `sortUnSort`, `moveToRowGroups`, `moveToValues`, `moveToColumnLabels`, `moveUp`, `moveDown`, `moveLeft`, `moveRight`, `removeField` and `separator`. A token that does not apply to the pill is dropped, for example `moveToValues` on a Values pill or `moveLeft` in a vertical panel. The `valueAggSubMenu` and `showValuesAsSubMenu` tokens are reserved and are currently always dropped.
+
+Keep the callback free of side effects. Column menu items (`colDef.columnMenuItems`, `getColumnMenuItems`, `mainMenuItems` and `getMainMenuItems`) never appear in drop zone menus.
+
+#### Locale And Icon Keys
+
+Labels use the `sortAscending`, `sortDescending`, `sortUnSort`, `moveToRowGroups`, `moveToValues`, `moveToColumnLabels`, `removeField`, `moveUp`, `moveDown`, `moveLeft` and `moveRight` [locale keys](./localisation/).
+
+Icons use the `sortAscending`, `sortDescending`, `sortUnSort`, `rowGroupPanel`, `valuePanel`, `pivotPanel`, `menuMoveUp`, `menuMoveDown`, `menuMoveLeft`, `menuMoveRight` and `cancel` [icon keys](./custom-icons/).
 
 {% apiDocumentation source="grid-options/properties.json" section="accessories" names=["getColumnDropZoneMenuItems"] /%}
 

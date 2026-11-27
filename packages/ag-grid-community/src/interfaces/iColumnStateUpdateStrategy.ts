@@ -30,6 +30,7 @@ export interface IColumnStateUpdateStrategy {
     isColumnSelectedInPivotModeToolPanel(deferMode: boolean, column: AgColumn): boolean;
     progressSortFromEvent(deferMode: boolean, column: AgColumn, event: MouseEvent | KeyboardEvent): void;
     getSortDef(deferMode: boolean, column: AgColumn): SortDef | null;
+    setColumnSort(deferMode: boolean, column: AgColumn, direction: SortDirection, eventType: ColumnEventType): void;
     progressPivotSortFromEvent(deferMode: boolean, column: AgColumn): void;
     getPivotSort(deferMode: boolean, column: AgColumn): SortDirection | undefined;
 }

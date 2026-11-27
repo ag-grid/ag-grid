@@ -186,6 +186,19 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
         return !this.isGroupingAndLocked() && !this.gos.get('functionsReadOnly');
     }
 
+    /** Whether the chip can be moved or removed: not under `functionsReadOnly` and not a locked group column. */
+    public isEditable(): boolean {
+        return this.isReadOnly();
+    }
+
+    /** The sort direction the chip's sort indicator shows: the pivot sort on Column Labels chips, else the sort. */
+    public getSortDirection(): SortDirection {
+        if (this.isPivotZone()) {
+            return this.getPivotSortDefOverride()?.direction ?? null;
+        }
+        return this.getCurrentSortDirection(this.column);
+    }
+
     protected getAriaDisplayName(): string {
         const translate = this.getLocaleTextFunc();
 
@@ -196,7 +209,7 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
             desc: translate('ariaDropZoneColumnComponentSortDescending', 'descending'),
         };
         const columnSort = this.getCurrentSortDirection(this.column);
-        const isSortSuppressed = this.gos.get('rowGroupPanelSuppressSort');
+        const isGroupSortShown = this.isGroupingZone() && !this.gos.get('rowGroupPanelSuppressSort');
         // Built from the existing separator so a localeText without this key reads as before.
         const label = aggFuncName
             ? _translateTokens(translate, 'ariaDropZoneColumnAggFunc', `\${aggFunc}${aggSeparator}\${column}`, {
@@ -204,7 +217,8 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
                   column: name,
               })
             : name;
-        const sort = this.isGroupingZone() && !isSortSuppressed && columnSort ? sortDirection[columnSort] : null;
+        const isSortShown = isGroupSortShown || (this.isAggregationZone() && this.isValueSortShown());
+        const sort = isSortShown && columnSort ? sortDirection[columnSort] : null;
         return sort
             ? _translateTokens(translate, 'ariaDropZoneColumnSorted', '${column}, ${sort}', { column: label, sort })
             : label;
@@ -233,7 +247,20 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
             this.setupGroupSort();
         } else if (this.isPivotZone()) {
             this.setupPivotSort();
+        } else if (this.isAggregationZone() && this.isValueSortShown()) {
+            // Not `bindSort`: click and ENTER on a Values chip open the aggregation function popup.
+            this.eSortIndicator.setupSort(
+                this.column,
+                true,
+                this.getSortDefOverride.bind(this),
+                this.getTooltipLocation()
+            );
         }
+    }
+
+    private isValueSortShown(): boolean {
+        const { sortSvc, columnStateUpdateStrategy } = this.beans;
+        return !!sortSvc && this.column.isSortable() && !columnStateUpdateStrategy.getPivotMode(this.deferApply);
     }
 
     private setupGroupSort(): void {

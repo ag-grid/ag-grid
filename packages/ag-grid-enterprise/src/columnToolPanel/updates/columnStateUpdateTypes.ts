@@ -38,6 +38,8 @@ export interface ColumnStateConcreteUpdateStrategy {
     isColumnSelectedInPivotModeToolPanel(column: AgColumn): boolean;
     progressSortFromEvent(column: AgColumn, event: MouseEvent | KeyboardEvent): void;
     getSortDef(column: AgColumn): SortDef | null;
+    /** Sets `column`'s default sort as the column menu does; `null` clears it. */
+    setColumnSort(column: AgColumn, direction: SortDirection, eventType: ColumnEventType): void;
     progressPivotSortFromEvent(column: AgColumn): void;
     getPivotSort(column: AgColumn): SortDirection | undefined;
 }

@@ -59,7 +59,10 @@ export interface GetColumnDropZoneMenuItemsParams<TData = any, TContext = any> e
     column: Column;
     /** The function of the drop zone, regardless of its orientation or location. */
     source: 'rowGroup' | 'pivot' | 'aggregation';
-    /** Default movement tokens, including disabled directions: up/down for vertical panels, left/right for horizontal panels. */
+    /**
+     * The built-in items that apply to this pill, in default order: sort, Move to, move (up/down for vertical panels,
+     * left/right for horizontal panels, disabled when the pill cannot move) and Remove Field, with separators between groups.
+     */
     defaultItems: DefaultColumnDropZoneMenuItem[];
 }
 

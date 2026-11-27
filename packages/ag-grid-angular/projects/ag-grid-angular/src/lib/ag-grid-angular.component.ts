@@ -2097,8 +2097,9 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      */
     @Input() public getColumnMenuItems: GetColumnMenuItems<TData> | undefined = undefined;
     /** Customise the context menu for pills in Row Group, Pivot and Values drop zones. Return `[]` to hide it.
-     * Called when pills are created to determine menu availability for accessibility, and when opening a menu.
-     * Independent of `columnMenuItems` and `getColumnMenuItems`.
+     * By default the menu holds the applicable sort, Move to, move and Remove Field items, which are passed as `defaultItems`.
+     * Called for every pill when it is created to determine menu availability for accessibility, and when opening a menu.
+     * Independent of `columnMenuItems`, `getColumnMenuItems`, `mainMenuItems` and `getMainMenuItems`, which never apply to this menu.
      * @agModule `RowGroupingPanelModule` / `ColumnsToolPanelModule`
      */
     @Input() public getColumnDropZoneMenuItems: GetColumnDropZoneMenuItems<TData> | undefined = undefined;

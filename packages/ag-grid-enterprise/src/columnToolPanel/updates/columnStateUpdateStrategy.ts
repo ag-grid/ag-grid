@@ -121,6 +121,15 @@ export class ColumnStateUpdateStrategy extends BeanStub implements IColumnStateU
         return this.delegate('getSortDef', deferMode, column);
     }
 
+    public setColumnSort(
+        deferMode: boolean,
+        column: AgColumn,
+        direction: SortDirection,
+        eventType: ColumnEventType
+    ): void {
+        this.delegate('setColumnSort', deferMode, column, direction, eventType);
+    }
+
     public progressPivotSortFromEvent(deferMode: boolean, column: AgColumn): void {
         this.delegate('progressPivotSortFromEvent', deferMode, column);
     }

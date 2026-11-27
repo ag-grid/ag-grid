@@ -175,6 +175,14 @@ export class ColumnStateUpdateExecutionStrategy extends BeanStub implements ICol
     public getSortDef(deferMode: boolean, column: AgColumn): SortDef | null {
         return this.getUpdateStrategy(deferMode).getSortDef(column);
     }
+    public setColumnSort(
+        deferMode: boolean,
+        column: AgColumn,
+        direction: SortDirection,
+        eventType: ColumnEventType
+    ): void {
+        this.getUpdateStrategy(deferMode).setColumnSort(column, direction, eventType);
+    }
     public progressPivotSortFromEvent(deferMode: boolean, column: AgColumn): void {
         this.getUpdateStrategy(deferMode).progressPivotSortFromEvent(column);
     }
@@ -317,6 +325,10 @@ class SynchronousColumnStateUpdateStrategy implements ColumnStateConcreteUpdateS
 
     public getSortDef(column: AgColumn): SortDef | null {
         return column.getSortDef();
+    }
+
+    public setColumnSort(column: AgColumn, direction: SortDirection, eventType: ColumnEventType): void {
+        this.beans.sortSvc?.setSortForColumn(column, { type: 'default', direction }, false, eventType);
     }
 
     public progressPivotSortFromEvent(column: AgColumn): void {
@@ -637,6 +649,13 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
         clearDeferredFunctionPatches(this.state, 'aggFunc');
         const liveValueColIds = new Set((this.beans.valueColsSvc?.columns ?? []).map((col) => col.colId));
         const aggFuncs = ensureAggFuncsDraft(this.state);
+        const draftColIds = new Set(columns.map((col) => col.colId));
+        for (const colId of aggFuncs.values.keys()) {
+            // Commit replays each entry through `setColumnAggFunc`, which would make the column a value again.
+            if (!draftColIds.has(colId) && !liveValueColIds.has(colId)) {
+                aggFuncs.values.delete(colId);
+            }
+        }
         for (const col of columns) {
             if (!liveValueColIds.has(col.colId) && !aggFuncs.values.has(col.colId)) {
                 const existingAggFunc = col.aggFunc;
@@ -830,12 +849,7 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
     }
 
     public progressSortFromEvent(column: AgColumn, event: MouseEvent | KeyboardEvent): void {
-        const currentDraft = this.state.sort ?? {
-            sortDefsByColId: new Map<string, SortDef | null>(),
-            baselineCleared: false,
-            seq: 0,
-            eventType: 'toolPanelUi',
-        };
+        const currentDraft = this.getSortDraft();
         const { sortSvc } = this.beans;
         const colId = column.colId;
         let currentSortDef: SortDef | null | undefined;
@@ -851,20 +865,47 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
             return;
         }
 
-        const { gos } = this.beans;
-        const sortUsingCtrl = gos.get('multiSortKey') === 'ctrl';
+        const sortUsingCtrl = this.beans.gos.get('multiSortKey') === 'ctrl';
         const multiSort = sortUsingCtrl ? event.ctrlKey || event.metaKey : event.shiftKey;
+        this.stageSort(currentDraft, colId, nextSortDef.direction ? nextSortDef : null, multiSort);
+    }
+
+    public setColumnSort(column: AgColumn, direction: SortDirection, eventType: ColumnEventType): void {
+        const draft = this.getSortDraft();
+        draft.eventType = eventType;
+        this.stageSort(draft, column.colId, direction ? { type: 'default', direction } : null, false);
+    }
+
+    private getSortDraft(): NonNullable<DeferredState['sort']> {
+        return (
+            this.state.sort ?? {
+                sortDefsByColId: new Map<string, SortDef | null>(),
+                baselineCleared: false,
+                seq: 0,
+                eventType: 'toolPanelUi',
+            }
+        );
+    }
+
+    /** Mirrors `SortService.setSortForColumn`: other sorts are replaced unless multi-sorting applies. */
+    private stageSort(
+        draft: NonNullable<DeferredState['sort']>,
+        colId: string,
+        sortDef: SortDef | null,
+        multiSort: boolean
+    ): void {
+        const { gos } = this.beans;
         const doingMultiSort = (multiSort || gos.get('alwaysMultiSort')) && !gos.get('suppressMultiSort');
 
         if (!doingMultiSort) {
-            currentDraft.sortDefsByColId.clear();
-            currentDraft.baselineCleared = true;
+            draft.sortDefsByColId.clear();
+            draft.baselineCleared = true;
         }
 
-        currentDraft.sortDefsByColId.set(colId, nextSortDef.direction ? nextSortDef : null);
-        currentDraft.seq = nextSeq(this.sequence);
-        this.sequence = currentDraft.seq;
-        this.state.sort = currentDraft;
+        draft.sortDefsByColId.set(colId, sortDef);
+        draft.seq = nextSeq(this.sequence);
+        this.sequence = draft.seq;
+        this.state.sort = draft;
     }
 }
 
