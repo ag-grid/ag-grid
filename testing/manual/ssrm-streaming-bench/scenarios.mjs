@@ -330,7 +330,7 @@ export function evaluate(results) {
         const cells = s7.rangeStillCoversSameRows;
         out.R8 = v(
             rows && cells ? 'pass' : rows ? 'partial' : 'fail',
-            `rows still selected: ${rows} (indexes ${s7.before.indexes.join(',')} -> ${s7.rows.map((r) => r.index).join(',')}); cell range still on the same row ids: ${cells}; range re-created from the row ids (workaround) in ${s7.restored?.ms ?? '-'} ms, still on those rows 1 s later with the feed running: ${s7.restored?.oneSecondLater ?? 'not run'}; ${s7.resume.applied} buffered transactions applied on resume in ${s7.resume.ms} ms`,
+            `rows still selected: ${rows} (indexes ${s7.before.indexes.join(',')} -> ${s7.rows.map((r) => r.index).join(',')}); cell range still on the same row ids: ${cells}; range re-created from the row ids (workaround) in ${s7.restored?.ms ?? '-'} ms, on those rows at once: ${s7.restored?.atOnce ?? 'not run'}, still on them 1 s later with the feed running: ${s7.restored?.oneSecondLater ?? 'not run'}; ${s7.resume.applied} buffered transactions applied on resume in ${s7.resume.ms} ms`,
             ['S7']
         );
     } else {
