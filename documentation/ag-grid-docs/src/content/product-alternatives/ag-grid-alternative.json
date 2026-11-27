@@ -17,9 +17,10 @@
         "heading": "When a lighter library is enough",
         "reasons": [
             "Your table shows a small set of rows that users only read, so a plain HTML table styled to match your app does the job.",
-            "Sorting and pagination are all users need, with no editing, filtering or export.",
+            "Users do not need sorting, pagination, editing, filtering or export.",
             "You want to own every element of the markup, and are happy to build the table's interface yourself on a headless table library.",
-            "You are adding one simple table to a page where a small JavaScript bundle matters more than grid features."
+            "You are adding one simple table to a page where a small JavaScript bundle matters more than grid features.",
+            "Your users' needs will not change, and you are confident they will never need sorting, pagination, filtering, export or more data, because adding those later means replacing the basic table with a fully featured grid."
         ]
     },
     "whyProduct": [
@@ -43,6 +44,24 @@
     "editions": {
         "subHeading": "AG Grid Community is free under the MIT licence, including commercial use. AG Grid Enterprise adds advanced features under a commercial licence.",
         "groups": [
+            {
+                "name": "Server-side data",
+                "rows": [
+                    {
+                        "feature": "Server-side data",
+                        "docsUrl": "./row-models/",
+                        "community": {
+                            "status": "yes",
+                            "detail": "Infinite Row Model with support for sorting, filtering and pagination"
+                        },
+                        "enterprise": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "Server-Side Row Model with support for sorting, filtering, pagination, grouping, aggregation, pivoting, transactions, selection, tree data and master/detail"
+                        }
+                    }
+                ]
+            },
             {
                 "name": "Filtering and editing",
                 "rows": [
@@ -96,6 +115,19 @@
                         },
                         "enterprise": {
                             "status": "yes"
+                        }
+                    },
+                    {
+                        "feature": "Select editor",
+                        "docsUrl": "./provided-cell-editors-select/",
+                        "community": {
+                            "status": "yes",
+                            "detail": "Select Editor with support for selecting values from a list"
+                        },
+                        "enterprise": {
+                            "status": "yes",
+                            "plan": "Enterprise",
+                            "detail": "Rich Select Editor with support for selecting values from a list, filtering, multi-selection and async values"
                         }
                     },
                     {
@@ -167,6 +199,28 @@
                             "status": "yes",
                             "plan": "Enterprise"
                         }
+                    },
+                    {
+                        "feature": "Master/detail",
+                        "docsUrl": "./master-detail/",
+                        "community": {
+                            "status": "no"
+                        },
+                        "enterprise": {
+                            "status": "yes",
+                            "plan": "Enterprise"
+                        }
+                    },
+                    {
+                        "feature": "Formulas and calculated columns",
+                        "docsUrl": "./formulas/",
+                        "community": {
+                            "status": "no"
+                        },
+                        "enterprise": {
+                            "status": "yes",
+                            "plan": "Enterprise"
+                        }
                     }
                 ]
             },
@@ -186,6 +240,17 @@
                     {
                         "feature": "Excel export",
                         "docsUrl": "./excel-export/",
+                        "community": {
+                            "status": "no"
+                        },
+                        "enterprise": {
+                            "status": "yes",
+                            "plan": "Enterprise"
+                        }
+                    },
+                    {
+                        "feature": "PDF export",
+                        "docsUrl": "./pdf-export/",
                         "community": {
                             "status": "no"
                         },
@@ -231,6 +296,16 @@
                         }
                     },
                     {
+                        "feature": "Row pagination",
+                        "docsUrl": "./row-pagination/",
+                        "community": {
+                            "status": "yes"
+                        },
+                        "enterprise": {
+                            "status": "yes"
+                        }
+                    },
+                    {
                         "feature": "Cell range selection",
                         "docsUrl": "./cell-selection/",
                         "community": {
@@ -244,6 +319,17 @@
                     {
                         "feature": "Context menu",
                         "docsUrl": "./context-menu/",
+                        "community": {
+                            "status": "no"
+                        },
+                        "enterprise": {
+                            "status": "yes",
+                            "plan": "Enterprise"
+                        }
+                    },
+                    {
+                        "feature": "Quick Access Toolbar",
+                        "docsUrl": "./toolbar/",
                         "community": {
                             "status": "no"
                         },
