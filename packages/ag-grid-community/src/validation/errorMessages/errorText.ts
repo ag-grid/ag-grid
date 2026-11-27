@@ -229,14 +229,36 @@ ModuleRegistry.registerModules([${gridModule}.with(AgChartsEnterpriseModule)]);
     ` as const;
 };
 
-type RemovedFilterInstanceMethodParams = { colId: string; filterInstanceType: string };
+type RemovedFilterInstanceMethodParams = {
+    colId: string;
+    filterInstanceType: string;
+    /** Set only for a Multi Filter child, as the error page reads every param it is sent as a string. */
+    multiFilterMode?: 'handlers' | 'legacy';
+};
 
 const removedFilterInstanceMethod = (
     method: string,
     replacement: string,
-    { colId, filterInstanceType }: RemovedFilterInstanceMethodParams
-) =>
-    `\`${method}()\` was removed from grid-provided filter instances in v37, so this call does nothing. Use ${replacement} instead. To have TypeScript flag these calls, pass the filter type: \`api.getColumnFilterInstance<${filterInstanceType}>('${colId}')\`.`;
+    { colId, filterInstanceType, multiFilterMode }: RemovedFilterInstanceMethodParams
+) => {
+    const typedCall = multiFilterMode
+        ? `\`getChildFilterInstance<${filterInstanceType}>(index)\` on the Multi Filter instance`
+        : `\`api.getColumnFilterInstance<${filterInstanceType}>('${colId}')\``;
+    return `\`${method}()\` was removed from grid-provided filter instances in v37, so this call does nothing. Use ${replacement} instead. To have TypeScript flag these calls, pass the filter type: ${typedCall}.`;
+};
+
+const removedFilterModelReplacement = ({ colId, multiFilterMode }: RemovedFilterInstanceMethodParams) =>
+    multiFilterMode
+        ? `api.getColumnFilterModel('${colId}')?.filterModels?.[index]`
+        : `api.getColumnFilterModel('${colId}')`;
+
+const removedDoesFilterPassReplacement = ({ colId, multiFilterMode }: RemovedFilterInstanceMethodParams) => {
+    if (multiFilterMode === 'legacy') {
+        return `\`doesFilterPass()\` on the Multi Filter instance from \`api.getColumnFilterInstance('${colId}')\`, which tests the whole Multi Filter`;
+    }
+    const handlerCall = `\`doesFilterPass()\` on the handler from \`api.getColumnFilterHandler('${colId}')\``;
+    return multiFilterMode ? `${handlerCall}, which tests the whole Multi Filter` : handlerCall;
+};
 
 const clipboardApiError = (method: string) =>
     `Unable to use the Clipboard API (\`navigator.clipboard.${method}()\`). ` +
@@ -990,21 +1012,19 @@ export const AG_GRID_ERRORS = {
     354: ({ linked }: { linked: boolean }) =>
         `The grid's static CSS theme ${linked ? 'sets' : 'does not set'} \`useLinkedImages\`, but \`${_staticCssGridFile(!linked)}.css\` is loaded. Load \`ag-grid-community/css/${_staticCssGridFile(linked)}.css\` instead, and the matching icon set file. See ${getValidationDocLink()}/theming-static-css/#linked-images` as const,
     355: (params: RemovedFilterInstanceMethodParams) =>
-        removedFilterInstanceMethod('getModel', `\`api.getColumnFilterModel('${params.colId}')\``, params),
+        removedFilterInstanceMethod('getModel', `\`${removedFilterModelReplacement(params)}\``, params),
     356: (params: RemovedFilterInstanceMethodParams) =>
-        removedFilterInstanceMethod('setModel', `\`api.setColumnFilterModel('${params.colId}', model)\``, params),
+        removedFilterInstanceMethod(
+            'setModel',
+            params.multiFilterMode
+                ? `\`api.setColumnFilterModel('${params.colId}', { filterType: 'multi', filterModels })\`, with this filter's model at its index in \`filterModels\``
+                : `\`api.setColumnFilterModel('${params.colId}', model)\``,
+            params
+        ),
     357: (params: RemovedFilterInstanceMethodParams) =>
-        removedFilterInstanceMethod(
-            'isFilterActive',
-            `\`api.getColumnFilterModel('${params.colId}') != null\``,
-            params
-        ),
+        removedFilterInstanceMethod('isFilterActive', `\`${removedFilterModelReplacement(params)} != null\``, params),
     358: (params: RemovedFilterInstanceMethodParams) =>
-        removedFilterInstanceMethod(
-            'doesFilterPass',
-            `\`doesFilterPass()\` on the handler from \`api.getColumnFilterHandler('${params.colId}')\``,
-            params
-        ),
+        removedFilterInstanceMethod('doesFilterPass', removedDoesFilterPassReplacement(params), params),
     // When adding a code above this line, raise `MAX_ERROR_ID` below to match.
 };
 

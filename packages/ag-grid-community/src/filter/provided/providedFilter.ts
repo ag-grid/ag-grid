@@ -1,11 +1,13 @@
 import { AgPromise, _debounce } from 'ag-stack';
 
+import type { AgColumn } from '../../entities/agColumn';
 import type { ContainerType, IAfterGuiAttachedParams } from '../../interfaces/iAfterGuiAttachedParams';
 import type { FilterDisplayState, IDoesFilterPassParams } from '../../interfaces/iFilter';
 import { PositionableFeature } from '../../rendering/features/positionableFeature';
 import type { ElementParams } from '../../utils/element';
 import type { ComponentSelector } from '../../widgets/component';
 import { Component } from '../../widgets/component';
+import { _resolveFilter } from '../filterDefResolver';
 import type { FilterLocaleTextKey } from '../filterLocaleText';
 import { translateForFilter } from '../filterLocaleText';
 import type { IProvidedFilter, ProvidedFilterDisplayParams, ProvidedFilterModel } from './iProvidedFilter';
@@ -183,8 +185,18 @@ export abstract class ProvidedFilter<
         return true;
     }
 
-    private getRemovedMethodParams(): { colId: string; filterInstanceType: string } {
-        return { colId: this.params.column.getColId(), filterInstanceType: this.filterInstanceType };
+    private getRemovedMethodParams(): {
+        colId: string;
+        filterInstanceType: string;
+        multiFilterMode?: 'handlers' | 'legacy';
+    } {
+        const beans = this.beans;
+        const column = this.params.column as AgColumn;
+        const params = { colId: column.getColId(), filterInstanceType: this.filterInstanceType };
+        if (_resolveFilter(beans, column).key !== 'agMultiColumnFilter') {
+            return params;
+        }
+        return { ...params, multiFilterMode: beans.gos.get('enableFilterHandlers') ? 'handlers' : 'legacy' };
     }
 
     protected canApply(_model: M | null): boolean {

@@ -10,7 +10,7 @@ import {
     uninstallFilterLayoutMock,
 } from 'ag-test-utils';
 
-import type { FilterChangedEvent, GridApi, IRowNode, IssueRaisedEvent } from 'ag-grid-community';
+import type { FilterChangedEvent, GridApi, IMultiFilter, IRowNode, IssueRaisedEvent } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     ExternalFilterModule,
@@ -232,6 +232,36 @@ describe('Filter Manager API — whole-grid model & external filters', () => {
         expect(logged).toContain("api.getColumnFilterInstance<ISimpleFilter>('age')");
         expect(logged).toContain("api.getColumnFilterInstance<SetFilterUi>('country')");
     });
+
+    test.each([
+        {
+            enableFilterHandlers: false,
+            doesFilterPassVia: "on the Multi Filter instance from `api.getColumnFilterInstance('age')`",
+        },
+        { enableFilterHandlers: true, doesFilterPassVia: "on the handler from `api.getColumnFilterHandler('age')`" },
+    ])(
+        'removed instance methods on a Multi Filter child point at the Multi Filter (enableFilterHandlers: $enableFilterHandlers)',
+        async ({ enableFilterHandlers, doesFilterPassVia }) => {
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [348, 355, 358] });
+            const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+                columnDefs: [{ field: 'age', filter: 'agMultiColumnFilter' }],
+                rowData: PEOPLE,
+                enableFilterHandlers,
+            });
+
+            const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+            const multi = (await api.getColumnFilterInstance<IMultiFilter>('age'))!;
+            const child = multi.getChildFilterInstance(0)!;
+            child.getModel();
+            child.doesFilterPass({ node: api.getRowNode('0')!, data: PEOPLE[0] });
+
+            const logged = errorSpy.mock.calls.flat().join(' ');
+            expect(logged).toContain("api.getColumnFilterModel('age')?.filterModels?.[index]");
+            expect(logged).toContain('`getChildFilterInstance<ISimpleFilter>(index)` on the Multi Filter instance');
+            expect(logged).toContain(doesFilterPassVia);
+        }
+    );
 
     test('destroyFilter removes a single column filter and restores the rows it hid', async () => {
         const api: GridApi = await gridsManager.createGridAndWait('grid1', {
