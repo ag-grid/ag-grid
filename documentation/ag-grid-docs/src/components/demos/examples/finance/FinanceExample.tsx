@@ -341,6 +341,7 @@ export const FinanceExample: React.FC<Props> = ({
                     suppressAggFuncInHeader
                     groupDefaultExpanded={-1}
                     statusBar={statusBar}
+                    tooltipShowMode="auto"
                     onGridSizeChanged={onGridSizeChanged}
                 />
             </div>

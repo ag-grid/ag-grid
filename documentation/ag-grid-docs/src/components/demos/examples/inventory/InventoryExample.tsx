@@ -268,6 +268,7 @@ export const InventoryExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
                             keepDetailRows
                             detailCellRendererParams={detailCellRendererParams}
                             quickFilterText={quickFilterText}
+                            tooltipShowMode="auto"
                             detailRowAutoHeight
                             onGridSizeChanged={onGridSizeChanged}
                         />
