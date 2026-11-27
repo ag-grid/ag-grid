@@ -915,7 +915,6 @@ export const AG_GRID_LOCALE_MS_MY = {
     ariaDropZoneColumnComponentSortDescending: 'menurun',
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'mutlak menaik',
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'mutlak menurun',
-    ariaDropZoneColumnAggFunc: '${aggFunc} bagi ${column}',
     ariaDropZoneColumnSorted: '${column}, ${sort}',
 
     ariaLabelDialog: 'Dialog',

@@ -909,7 +909,6 @@ export const AG_GRID_LOCALE_BN_BD = {
     ariaDropZoneColumnComponentSortDescending: 'অধঃক্রম',
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'পরম ঊর্ধ্বক্রম',
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'পরম অধঃক্রম',
-    ariaDropZoneColumnAggFunc: '${column} এর ${aggFunc}',
     ariaDropZoneColumnSorted: '${column}, ${sort}',
 
     ariaLabelDialog: 'ডায়ালগ',

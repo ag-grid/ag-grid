@@ -913,7 +913,6 @@ export const AG_GRID_LOCALE_ID_ID = {
     ariaDropZoneColumnComponentSortDescending: 'menurun',
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'menaik absolut',
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'menurun absolut',
-    ariaDropZoneColumnAggFunc: '${aggFunc} dari ${column}',
     ariaDropZoneColumnSorted: '${column}, ${sort}',
 
     ariaLabelDialog: 'Dialog',

@@ -900,7 +900,6 @@ export const AG_GRID_LOCALE_EN_US = {
     ariaDropZoneColumnComponentSortDescending: 'descending',
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'absolute ascending',
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'absolute descending',
-    ariaDropZoneColumnAggFunc: '${aggFunc} of ${column}',
     ariaDropZoneColumnSorted: '${column}, ${sort}',
 
     ariaLabelDialog: 'Dialog',

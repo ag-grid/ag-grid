@@ -911,7 +911,6 @@ export const AG_GRID_LOCALE_ET_EE = {
     ariaDropZoneColumnComponentSortDescending: 'kahanevalt',
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'absoluutväärtuse järgi kasvavalt',
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'absoluutväärtuse järgi kahanevalt',
-    ariaDropZoneColumnAggFunc: '${aggFunc}, veerg ${column}',
     ariaDropZoneColumnSorted: '${column}, ${sort}',
 
     ariaLabelDialog: 'Dialoog',

@@ -900,7 +900,6 @@ export const AG_GRID_LOCALE_SV_SE = {
     ariaDropZoneColumnComponentSortDescending: 'fallande',
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'absolut stigande',
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'absolut fallande',
-    ariaDropZoneColumnAggFunc: '${aggFunc} av ${column}',
     ariaDropZoneColumnSorted: '${column}, ${sort}',
     ariaLabelDialog: 'Dialogruta',
     ariaLabelClose: 'Stäng',

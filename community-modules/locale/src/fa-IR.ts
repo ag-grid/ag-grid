@@ -897,7 +897,6 @@ export const AG_GRID_LOCALE_FA_IR = {
     ariaDropZoneColumnComponentSortDescending: 'نزولی',
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'صعودی مطلق',
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'نزولی مطلق',
-    ariaDropZoneColumnAggFunc: '${aggFunc} ${column}',
     ariaDropZoneColumnSorted: '${column}، ${sort}',
     ariaLabelDialog: 'گفتگو',
     ariaLabelClose: 'بستن',

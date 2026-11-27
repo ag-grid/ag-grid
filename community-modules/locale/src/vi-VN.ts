@@ -897,7 +897,6 @@ export const AG_GRID_LOCALE_VI_VN = {
     ariaDropZoneColumnComponentSortDescending: 'giảm dần',
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'tăng dần tuyệt đối',
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'giảm dần tuyệt đối',
-    ariaDropZoneColumnAggFunc: '${aggFunc} của ${column}',
     ariaDropZoneColumnSorted: '${column}, ${sort}',
     ariaLabelDialog: 'Hộp thoại',
     ariaLabelClose: 'Đóng',

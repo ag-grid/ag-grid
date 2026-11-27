@@ -156,12 +156,13 @@ describe('Values pill accessible name contains its visible text (WCAG 2.5.3 Labe
     }
 
     function getValuePills(api: ReturnType<typeof createValuesGrid>): { text: string; label: string }[] {
-        return Array.from(getGridElement(api)!.querySelectorAll<HTMLElement>('.ag-column-drop-cell'))
-            .map((pill) => ({
-                text: pill.querySelector('.ag-column-drop-cell-text')!.textContent!,
-                label: pill.getAttribute('aria-label')!,
-            }))
-            .filter(({ text }) => text.includes('('));
+        const pills = getGridElement(api)!.querySelectorAll<HTMLElement>(
+            '.ag-column-drop-aggregation .ag-column-drop-cell'
+        );
+        return Array.from(pills).map((pill) => ({
+            text: pill.querySelector('.ag-column-drop-cell-text')!.textContent!,
+            label: pill.getAttribute('aria-label')!,
+        }));
     }
 
     async function expectValuePillsNamedByVisibleText(api: ReturnType<typeof createValuesGrid>, visibleText: string) {
@@ -186,10 +187,10 @@ describe('Values pill accessible name contains its visible text (WCAG 2.5.3 Labe
         );
     });
 
-    test('a localised aggregation separator does not split the visible text', async () => {
-        const api = createValuesGrid({ localeText: { ariaDropZoneColumnComponentAggFuncSeparator: ' von ' } });
+    test('localised pill text: the accessible name starts with the localised visible text', async () => {
+        const api = createValuesGrid({ localeText: { sum: 'Summe', aggFuncColumnName: '${column} [${aggFunc}]' } });
 
-        await expectValuePillsNamedByVisibleText(api, 'sum(Gold)');
+        await expectValuePillsNamedByVisibleText(api, 'Gold [Summe]');
     });
 
     test('functionsReadOnly: the accessible name is exactly the visible text', async () => {

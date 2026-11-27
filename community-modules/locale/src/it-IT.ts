@@ -904,7 +904,6 @@ export const AG_GRID_LOCALE_IT_IT = {
     ariaDropZoneColumnComponentSortDescending: 'decrescendo',
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'crescente assoluto',
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'decrescente assoluto',
-    ariaDropZoneColumnAggFunc: '${aggFunc} di ${column}',
     ariaDropZoneColumnSorted: '${column}, ${sort}',
     ariaLabelDialog: 'Dialogo',
     ariaLabelClose: 'Chiudi',

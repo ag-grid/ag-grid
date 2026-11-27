@@ -915,7 +915,6 @@ export const AG_GRID_LOCALE_LT_LT = {
     ariaDropZoneColumnComponentSortDescending: 'mažėjančiai',
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'absoliučiai didėjančiai',
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'absoliučiai mažėjančiai',
-    ariaDropZoneColumnAggFunc: '${aggFunc} iš ${column}',
     ariaDropZoneColumnSorted: '${column}, ${sort}',
 
     ariaLabelDialog: 'Dialogas',

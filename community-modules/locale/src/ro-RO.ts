@@ -900,7 +900,6 @@ export const AG_GRID_LOCALE_RO_RO = {
     ariaDropZoneColumnComponentSortDescending: 'descrescător',
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'ascendent absolut',
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'descendent absolut',
-    ariaDropZoneColumnAggFunc: '${aggFunc} din ${column}',
     ariaDropZoneColumnSorted: '${column}, ${sort}',
     ariaLabelDialog: 'Dialog',
     ariaLabelClose: 'Închide',

@@ -897,7 +897,6 @@ export const AG_GRID_LOCALE_CS_CZ = {
     ariaDropZoneColumnComponentSortDescending: 'sestupně',
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'absolutně stoupající',
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'absolutně klesající',
-    ariaDropZoneColumnAggFunc: '${aggFunc} z ${column}',
     ariaDropZoneColumnSorted: '${column}, ${sort}',
     ariaLabelDialog: 'Dialog',
     ariaLabelClose: 'Zavřít',

@@ -910,7 +910,6 @@ export const AG_GRID_LOCALE_TH_TH = {
     ariaDropZoneColumnComponentSortDescending: 'จากมากไปน้อย',
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'ค่าสัมบูรณ์จากน้อยไปมาก',
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'ค่าสัมบูรณ์จากมากไปน้อย',
-    ariaDropZoneColumnAggFunc: '${aggFunc} ของ ${column}',
     ariaDropZoneColumnSorted: '${column}, ${sort}',
 
     ariaLabelDialog: 'กล่องโต้ตอบ',

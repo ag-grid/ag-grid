@@ -900,7 +900,6 @@ export const AG_GRID_LOCALE_TR_TR = {
     ariaDropZoneColumnComponentSortDescending: 'azalan',
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'mutlak artan',
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'mutlak azalan',
-    ariaDropZoneColumnAggFunc: '${column} için ${aggFunc}',
     ariaDropZoneColumnSorted: '${column}, ${sort}',
     ariaLabelDialog: 'Diyalog',
     ariaLabelClose: 'Kapat',

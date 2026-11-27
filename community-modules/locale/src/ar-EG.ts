@@ -895,7 +895,6 @@ export const AG_GRID_LOCALE_AR_EG = {
     ariaDropZoneColumnComponentSortDescending: 'تنازلي',
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'تصاعدي مطلق',
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'تنازلي مطلق',
-    ariaDropZoneColumnAggFunc: '${aggFunc} من ${column}',
     ariaDropZoneColumnSorted: '${column}، ${sort}',
     ariaLabelDialog: 'حوار',
     ariaLabelClose: 'إغلاق',

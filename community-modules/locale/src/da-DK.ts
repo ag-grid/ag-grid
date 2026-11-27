@@ -898,7 +898,6 @@ export const AG_GRID_LOCALE_DA_DK = {
     ariaDropZoneColumnComponentSortDescending: 'faldende',
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'absolut stigende',
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'absolut faldende',
-    ariaDropZoneColumnAggFunc: '${aggFunc} af ${column}',
     ariaDropZoneColumnSorted: '${column}, ${sort}',
     ariaLabelDialog: 'Dialog',
     ariaLabelClose: 'Luk',

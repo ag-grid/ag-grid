@@ -912,7 +912,6 @@ export const AG_GRID_LOCALE_HI_IN = {
     ariaDropZoneColumnComponentSortDescending: 'अवरोही',
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'एब्सोल्यूट आरोही',
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'एब्सोल्यूट अवरोही',
-    ariaDropZoneColumnAggFunc: '${column} का ${aggFunc}',
     ariaDropZoneColumnSorted: '${column}, ${sort}',
 
     ariaLabelDialog: 'डायलॉग',

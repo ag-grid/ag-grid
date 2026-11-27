@@ -897,7 +897,6 @@ export const AG_GRID_LOCALE_NB_NO = {
     ariaDropZoneColumnComponentSortDescending: 'synkende',
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'absolutt stigende',
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'absolutt synkende',
-    ariaDropZoneColumnAggFunc: '${aggFunc} av ${column}',
     ariaDropZoneColumnSorted: '${column}, ${sort}',
     ariaLabelDialog: 'Dialog',
     ariaLabelClose: 'Lukk',

@@ -911,7 +911,6 @@ export const AG_GRID_LOCALE_SL_SI = {
     ariaDropZoneColumnComponentSortDescending: 'padajoče',
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'absolutno naraščajoče',
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'absolutno padajoče',
-    ariaDropZoneColumnAggFunc: '${aggFunc} od ${column}',
     ariaDropZoneColumnSorted: '${column}, ${sort}',
 
     ariaLabelDialog: 'Pogovorno okno',

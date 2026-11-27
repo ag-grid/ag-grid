@@ -914,7 +914,6 @@ export const AG_GRID_LOCALE_BS_BA = {
     ariaDropZoneColumnComponentSortDescending: 'opadajuće',
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'apsolutno rastuće',
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'apsolutno opadajuće',
-    ariaDropZoneColumnAggFunc: '${aggFunc} od ${column}',
     ariaDropZoneColumnSorted: '${column}, ${sort}',
 
     ariaLabelDialog: 'Dijalog',

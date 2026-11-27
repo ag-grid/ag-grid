@@ -911,7 +911,6 @@ export const AG_GRID_LOCALE_BN_IN = {
     ariaDropZoneColumnComponentSortDescending: 'নিম্নক্রম',
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'অ্যাবসোলিউট ঊর্ধ্বক্রম',
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'অ্যাবসোলিউট নিম্নক্রম',
-    ariaDropZoneColumnAggFunc: '${column} এর ${aggFunc}',
     ariaDropZoneColumnSorted: '${column}, ${sort}',
 
     ariaLabelDialog: 'ডায়ালগ',

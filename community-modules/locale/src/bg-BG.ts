@@ -900,7 +900,6 @@ export const AG_GRID_LOCALE_BG_BG = {
     ariaDropZoneColumnComponentSortDescending: 'низходящо',
     ariaDropZoneColumnComponentSortAbsoluteAscending: '„абсолютно възходящо“',
     ariaDropZoneColumnComponentSortAbsoluteDescending: '„абсолютно низходящо“',
-    ariaDropZoneColumnAggFunc: '${aggFunc} от ${column}',
     ariaDropZoneColumnSorted: '${column}, ${sort}',
     ariaLabelDialog: 'Диалог',
     ariaLabelClose: 'Затвори',

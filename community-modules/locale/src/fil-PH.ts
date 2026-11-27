@@ -919,7 +919,6 @@ export const AG_GRID_LOCALE_FIL_PH = {
     ariaDropZoneColumnComponentSortDescending: 'pababa',
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'absolute pataas',
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'absolute pababa',
-    ariaDropZoneColumnAggFunc: '${aggFunc} ng ${column}',
     ariaDropZoneColumnSorted: '${column}, ${sort}',
 
     ariaLabelDialog: 'Dialog',

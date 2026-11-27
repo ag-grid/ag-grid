@@ -911,7 +911,6 @@ export const AG_GRID_LOCALE_SR_LATN_RS = {
     ariaDropZoneColumnComponentSortDescending: 'opadajuće',
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'apsolutno rastuće',
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'apsolutno opadajuće',
-    ariaDropZoneColumnAggFunc: '${aggFunc} od ${column}',
     ariaDropZoneColumnSorted: '${column}, ${sort}',
 
     ariaLabelDialog: 'Dijalog',

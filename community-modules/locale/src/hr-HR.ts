@@ -898,7 +898,6 @@ export const AG_GRID_LOCALE_HR_HR = {
     ariaDropZoneColumnComponentSortDescending: 'silazno',
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'apsolutni uzlazno',
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'apsolutni silazno',
-    ariaDropZoneColumnAggFunc: '${aggFunc} od ${column}',
     ariaDropZoneColumnSorted: '${column}, ${sort}',
     ariaLabelDialog: 'Dijalog',
     ariaLabelClose: 'Zatvori',

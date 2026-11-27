@@ -896,7 +896,6 @@ export const AG_GRID_LOCALE_JA_JP = {
     ariaDropZoneColumnComponentSortDescending: '降順',
     ariaDropZoneColumnComponentSortAbsoluteAscending: '「絶対昇順」',
     ariaDropZoneColumnComponentSortAbsoluteDescending: '「絶対降順」',
-    ariaDropZoneColumnAggFunc: '${column} の ${aggFunc}',
     ariaDropZoneColumnSorted: '${column}, ${sort}',
     ariaLabelDialog: 'ダイアログ',
     ariaLabelClose: '閉じる',

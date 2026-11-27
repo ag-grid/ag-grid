@@ -901,7 +901,6 @@ export const AG_GRID_LOCALE_EL_GR = {
     ariaDropZoneColumnComponentSortDescending: 'φθίνουσα',
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'απόλυτη αύξουσα σειρά',
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'απόλυτη φθίνουσα σειρά',
-    ariaDropZoneColumnAggFunc: '${aggFunc} για ${column}',
     ariaDropZoneColumnSorted: '${column}, ${sort}',
     ariaLabelDialog: 'Διαλογή',
     ariaLabelClose: 'Κλείσιμο',

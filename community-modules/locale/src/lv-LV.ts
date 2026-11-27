@@ -912,7 +912,6 @@ export const AG_GRID_LOCALE_LV_LV = {
     ariaDropZoneColumnComponentSortDescending: 'dilstoša secība',
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'absolūti augoša secība',
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'absolūti dilstoša secība',
-    ariaDropZoneColumnAggFunc: '${aggFunc} no ${column}',
     ariaDropZoneColumnSorted: '${column}, ${sort}',
 
     ariaLabelDialog: 'Dialogs',

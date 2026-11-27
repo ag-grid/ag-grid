@@ -904,7 +904,6 @@ export const AG_GRID_LOCALE_HU_HU = {
     ariaDropZoneColumnComponentSortDescending: 'csökkenő',
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'abszolút növekvő',
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'abszolút csökkenő',
-    ariaDropZoneColumnAggFunc: '${aggFunc} (${column})',
     ariaDropZoneColumnSorted: '${column}, ${sort}',
     ariaLabelDialog: 'Párbeszédpanel',
     ariaLabelClose: 'Bezárás',

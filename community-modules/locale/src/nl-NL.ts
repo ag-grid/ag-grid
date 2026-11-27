@@ -899,7 +899,6 @@ export const AG_GRID_LOCALE_NL_NL = {
     ariaDropZoneColumnComponentSortDescending: 'aflopend',
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'absoluut oplopend',
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'absoluut aflopend',
-    ariaDropZoneColumnAggFunc: '${aggFunc} van ${column}',
     ariaDropZoneColumnSorted: '${column}, ${sort}',
     ariaLabelDialog: 'Dialoog',
     ariaLabelClose: 'Sluiten',

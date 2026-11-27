@@ -895,7 +895,6 @@ export const AG_GRID_LOCALE_HE_IL = {
     ariaDropZoneColumnComponentSortDescending: 'יורד',
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'עלייה מוחלטת',
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'ירידה מוחלטת',
-    ariaDropZoneColumnAggFunc: '${aggFunc} של ${column}',
     ariaDropZoneColumnSorted: '${column}, ${sort}',
     ariaLabelDialog: 'דיאלוג',
     ariaLabelClose: 'סגור',

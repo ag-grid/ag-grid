@@ -897,7 +897,6 @@ export const AG_GRID_LOCALE_SK_SK = {
     ariaDropZoneColumnComponentSortDescending: 'zostupne',
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'absolútne vzostupne',
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'absolútne zostupne',
-    ariaDropZoneColumnAggFunc: '${aggFunc} z ${column}',
     ariaDropZoneColumnSorted: '${column}, ${sort}',
     ariaLabelDialog: 'Dialóg',
     ariaLabelClose: 'Zavrieť',

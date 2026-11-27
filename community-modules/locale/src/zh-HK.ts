@@ -895,7 +895,6 @@ export const AG_GRID_LOCALE_ZH_HK = {
     ariaDropZoneColumnComponentSortDescending: '降序',
     ariaDropZoneColumnComponentSortAbsoluteAscending: '「絕對升序」',
     ariaDropZoneColumnComponentSortAbsoluteDescending: '「絕對降序」',
-    ariaDropZoneColumnAggFunc: '${column} 的 ${aggFunc}',
     ariaDropZoneColumnSorted: '${column}, ${sort}',
     ariaLabelDialog: '對話框',
     ariaLabelClose: '關閉',

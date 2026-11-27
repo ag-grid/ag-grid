@@ -901,7 +901,6 @@ export const AG_GRID_LOCALE_PT_PT = {
     ariaDropZoneColumnComponentSortDescending: 'descendente',
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'ascendente absoluto',
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'descendente absoluto',
-    ariaDropZoneColumnAggFunc: '${aggFunc} de ${column}',
     ariaDropZoneColumnSorted: '${column}, ${sort}',
     ariaLabelDialog: 'Diálogo',
     ariaLabelClose: 'Fechar',

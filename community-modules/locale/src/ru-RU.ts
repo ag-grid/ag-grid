@@ -913,7 +913,6 @@ export const AG_GRID_LOCALE_RU_RU = {
     ariaDropZoneColumnComponentSortDescending: 'по убыванию',
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'по абсолютному возрастанию',
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'по абсолютному убыванию',
-    ariaDropZoneColumnAggFunc: '${aggFunc} от ${column}',
     ariaDropZoneColumnSorted: '${column}, ${sort}',
 
     ariaLabelDialog: 'Диалог',

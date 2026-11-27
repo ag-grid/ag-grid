@@ -896,7 +896,6 @@ export const AG_GRID_LOCALE_UR_PK = {
     ariaDropZoneColumnComponentSortDescending: 'گرتے ہوئے ترتیب',
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'مکمل اوپر کی طرف',
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'مکمل نیچے کی طرف',
-    ariaDropZoneColumnAggFunc: '${column} کا ${aggFunc}',
     ariaDropZoneColumnSorted: '${column}, ${sort}',
     ariaLabelDialog: 'ڈائیلاگ',
     ariaLabelClose: 'بند کریں',

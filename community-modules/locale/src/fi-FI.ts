@@ -901,7 +901,6 @@ export const AG_GRID_LOCALE_FI_FI = {
     ariaDropZoneColumnComponentSortDescending: 'laskeva',
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'absoluuttinen nouseva',
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'absoluuttinen laskeva',
-    ariaDropZoneColumnAggFunc: '${aggFunc}, sarake ${column}',
     ariaDropZoneColumnSorted: '${column}, ${sort}',
     ariaLabelDialog: 'Dialogi',
     ariaLabelClose: 'Sulje',
