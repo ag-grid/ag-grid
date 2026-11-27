@@ -53,6 +53,10 @@ When `filter = true`, the Set Filter is used for AG Grid Enterprise by default. 
 
 Since the column is then no longer a Set Filter, it also stops offering `is any of` and `is none of` in the [Advanced Filter](./filter-advanced-columns/#set-filters) unless its [`filterOptions`](./filter-advanced-columns/#enabling-and-disabling-the-set-options) name them.
 
+## Custom Filter Logic
+
+To keep the Set Filter UI and decide yourself which rows pass, supply a `doesFilterPass` callback or a filter handler. See [Custom Logic with Provided Filters](./component-filter/#custom-logic-with-provided-filters).
+
 ## Set Filter Parameters
 
 Set Filters are configured through the `filterParams` attribute of the column definition (`ISetFilterParams` interface):

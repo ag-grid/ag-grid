@@ -161,7 +161,83 @@ Filter logic given with `component` requires `enableFilterHandlers`. Without it,
 
 ### Custom Logic with Provided Filters
 
-`component` can also name a filter the grid provides, so that its UI is kept while `doesFilterPass` or the handler decides which rows pass. The [Set](./filter-set/), [Multi](./filter-multi/) and [Group](./grouping-single-group-column/#inherit-row-grouped-columns-filters) Filters keep their own handler for their UI, and `api.getColumnFilterHandler` returns the handler supplied, or for `doesFilterPass` the one the grid builds around it. Logic given to a Multi Filter leaves its children narrowing each other's values with their own filters, while logic given to a child narrows its siblings.
+Use a filter the grid provides for its UI, and supply your own logic to decide which rows pass. For example, keep the [Set Filter](./filter-set/) list of values, but decide yourself which rows match the selected values.
+
+This is the opposite of [Using Custom Filters with Grid-Provided Filter Logic](#using-custom-filters-with-grid-provided-filter-logic), which pairs your own filter UI with a provided filter's logic. That does not support the Set Filter and Multi Filter, but custom logic with provided filters does.
+
+Set `component` to the provided filter's name, such as `'agSetColumnFilter'`, `'agMultiColumnFilter'` or `'agTextColumnFilter'`, and supply the logic as a `doesFilterPass` callback or a filter handler. This requires the `enableFilterHandlers` grid option.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    enableFilterHandlers: true,
+    columnDefs: [
+        {
+            field: 'age',
+            filter: {
+                component: 'agSetColumnFilter',
+                doesFilterPass: (params) => {
+                    // params.model is the Set Filter Model, e.g. { filterType: 'set', values: ['Under 20'] }
+                    const age = params.handlerParams.getValue(params.node);
+                    return age != null && params.model.values.includes(getAgeBand(age));
+                },
+            },
+            filterParams: {
+                values: ['Under 20', '20 to 29', '30 and over'],
+                suppressSorting: true,
+            },
+        }
+    ],
+}
+```
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    enableFilterHandlers: true,
+    columnDefs: [
+        {
+            field: 'age',
+            filter: {
+                component: 'agSetColumnFilter',
+                handler: (params) => ({
+                    doesFilterPass: (params) => {
+                        // evaluate filter for row here
+                        return passes;
+                    },
+                }),
+            },
+        }
+    ],
+}
+```
+
+The logic receives the same parameters as the [doesFilterPass Callback](#doesfilterpass-callback). `params.model` is the model the provided filter's UI produces, and `params.node` and `params.data` are the row being filtered. The logic is only called while the filter has a model, apart from the [Group Filter](#group-filter). See the model of each provided filter:
+
+- [Set Filter Model](./filter-set-api/#set-filter-model). The values are the Set Filter keys (strings, or `null` for blank cells), so convert the cell value before comparing it.
+- [Multi Filter Model](./filter-multi/#multi-filter-model).
+- [Text Filter Model](./filter-text/#text-filter-model), [Number Filter Model](./filter-number/#number-filter-model) and [Date Filter Model](./filter-date/#filter-model).
+
+For the Set Filter and Multi Filter, the filter UI keeps working as normal: the list of values, the Mini Filter, Select All and the floating filter. Only the decision on which rows pass is replaced, so the provided filter's own row matching (such as case sensitivity) no longer applies.
+
+`api.getColumnFilterHandler(colId)` returns the handler you supplied. For `doesFilterPass`, it returns a handler the grid builds around your callback.
+
+The example below uses the Set Filter on the **Age** column to list age bands instead of ages:
+
+- The Set Filter shows the values `Under 20`, `20 to 29` and `30 and over`, supplied with `filterParams.values` and kept in that order with `filterParams.suppressSorting`.
+- `doesFilterPass` works out the age band of each row and checks that it is selected.
+- The list of values, the Mini Filter and the floating filter work as they do with any Set Filter.
+
+{% gridExampleRunner title="Custom Logic with the Set Filter" name="provided-filter-custom-logic" /%}
+
+#### Multi Filter
+
+Custom logic can be given to the [Multi Filter](./filter-multi/) itself, or to one of its child filters:
+
+- **On the Multi Filter** (`filter: { component: 'agMultiColumnFilter', doesFilterPass }`): your logic alone decides which rows pass, and receives the [Multi Filter Model](./filter-multi/#multi-filter-model) with every child's model. The child filters still narrow each other's values using their own logic.
+- **On a child filter** (`filterParams: { filters: [{ filter: { component: 'agSetColumnFilter', doesFilterPass } }] }`): your logic decides which rows pass that child, and receives that child's model. A row passes the Multi Filter when it passes every active child, as usual. Your logic also narrows the values shown in the other child filters.
+
+#### Group Filter
+
+Custom logic can also be given to the [Group Filter](./grouping-single-group-column/#inherit-row-grouped-columns-filters) with `autoGroupColumnDef.filter = { component: 'agGroupColumnFilter', doesFilterPass }`. Its UI is unchanged: it shows the filters of the grouped columns. The Group Filter has no model of its own, so your logic receives a `null` model. It is called while a grouped column's filter is active, and rows must pass both your logic and the grouped columns' own filters.
 
 ## Using Buttons
 
@@ -228,7 +304,7 @@ The grid-provided handlers are:
 - `'agDateColumnFilterHandler'` - [Date Filter](./filter-date/) handler.
 
 {% note %}
-[Set Filter](./filter-set/) and [Multi Filter](./filter-multi/) are not supported when using custom filters with grid-provided filter logic.
+[Set Filter](./filter-set/) and [Multi Filter](./filter-multi/) are not supported when using custom filters with grid-provided filter logic. To keep the Set Filter or Multi Filter UI and supply your own logic instead, see [Custom Logic with Provided Filters](#custom-logic-with-provided-filters).
 {% /note %}
 
 The example below demonstrates using the Number Filter handler with a custom filter component:
