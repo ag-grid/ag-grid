@@ -184,16 +184,16 @@ describe('export start and end events', () => {
         { item: 'csvExport', name: 'CSV Export', format: 'csv' },
         { item: 'excelExport', name: 'Excel Export', format: 'excel' },
         { item: 'pdfExport', name: 'PDF Export', format: 'pdf' },
-    ] as const)('the $item context menu item reports source contextMenu', async ({ item, name, format }) => {
+    ] as const)('the $item context menu item reports source ui', async ({ item, name, format }) => {
         const { api, events } = await createGrid({ getContextMenuItems: () => [item] });
 
         api.showContextMenu();
         await clickMenuItem(name);
 
-        await expectMenuExportEvents(events, format, 'contextMenu');
+        await expectMenuExportEvents(events, format, 'ui');
     });
 
-    test('an export item in the column menu reports source columnMenu', async () => {
+    test('an export item in the column menu reports source ui', async () => {
         const { api, events } = await createGrid({
             columnDefs: [{ field: 'athlete', mainMenuItems: ['csvExport'] }],
         });
@@ -201,10 +201,10 @@ describe('export start and end events', () => {
         api.showColumnMenu('athlete');
         await clickMenuItem('CSV Export');
 
-        await expectMenuExportEvents(events, 'csv', 'columnMenu');
+        await expectMenuExportEvents(events, 'csv', 'ui');
     });
 
-    test('an export item in the columns tool panel menu reports source columnToolPanel', async () => {
+    test('an export item in the columns tool panel menu reports source ui', async () => {
         const { api, events } = await createGrid({
             columnDefs: [{ field: 'athlete', columnMenuItems: ['csvExport'] }],
             sideBar: { toolPanels: ['columns'], defaultToolPanel: 'columns' },
@@ -217,10 +217,10 @@ describe('export start and end events', () => {
         );
         await clickMenuItem('CSV Export');
 
-        await expectMenuExportEvents(events, 'csv', 'columnToolPanel');
+        await expectMenuExportEvents(events, 'csv', 'ui');
     });
 
-    test('an export item in a toolbar menu reports source contextMenu', async () => {
+    test('an export item in a toolbar menu reports source ui', async () => {
         const { api, events } = await createGrid({
             toolbar: {
                 items: [
@@ -236,6 +236,6 @@ describe('export start and end events', () => {
         getGridElement(api)!.querySelector<HTMLButtonElement>('.ag-toolbar-button')!.click();
         await clickMenuItem('Excel Export');
 
-        await expectMenuExportEvents(events, 'excel', 'contextMenu');
+        await expectMenuExportEvents(events, 'excel', 'ui');
     });
 });

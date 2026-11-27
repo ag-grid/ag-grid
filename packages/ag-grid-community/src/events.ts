@@ -714,8 +714,8 @@ export interface PasteEndEvent<TData = any, TContext = any> extends AgGlobalEven
 /** The file format of an export. */
 export type ExportEventFormat = 'csv' | 'excel' | 'pdf';
 
-/** What triggered an export: a grid API call, or a built-in export item in that menu (toolbar menus report `'contextMenu'`). */
-export type ExportEventSource = 'api' | 'contextMenu' | 'columnMenu' | 'columnToolPanel';
+/** What triggered an export: a grid API call, or a built-in export menu item. */
+export type ExportEventSource = 'api' | 'ui';
 
 export interface ExportStartEvent<TData = any, TContext = any> extends AgGlobalEvent<'exportStart', TData, TContext> {
     /** The format being exported. */

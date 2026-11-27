@@ -53,7 +53,6 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
             undefined,
             sourceElement,
             'columnMenu',
-            'columnMenu',
             columnGroup ?? null
         );
 
