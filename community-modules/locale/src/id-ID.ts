@@ -907,8 +907,6 @@ export const AG_GRID_LOCALE_ID_ID = {
     ariaDropZoneColumnComponentDescription: 'Tekan DELETE untuk menghapus',
     ariaDropZoneColumnValueItemDescription: 'Tekan ENTER untuk mengubah tipe agregasi',
     ariaDropZoneColumnGroupItemDescription: 'Tekan ENTER untuk mengurutkan',
-    // used for aggregate drop zone, format: {aggregation}{ariaDropZoneColumnComponentAggFuncSeparator}{column name}
-    ariaDropZoneColumnComponentAggFuncSeparator: ' dari ',
     ariaDropZoneColumnComponentSortAscending: 'menaik',
     ariaDropZoneColumnComponentSortDescending: 'menurun',
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'menaik absolut',

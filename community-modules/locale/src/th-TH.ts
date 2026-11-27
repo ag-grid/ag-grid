@@ -904,8 +904,6 @@ export const AG_GRID_LOCALE_TH_TH = {
     ariaDropZoneColumnComponentDescription: 'กด DELETE เพื่อลบ',
     ariaDropZoneColumnValueItemDescription: 'กด ENTER เพื่อเปลี่ยนชนิดการรวมยอด',
     ariaDropZoneColumnGroupItemDescription: 'กด ENTER เพื่อเรียงลำดับ',
-    // used for aggregate drop zone, format: {aggregation}{ariaDropZoneColumnComponentAggFuncSeparator}{column name}
-    ariaDropZoneColumnComponentAggFuncSeparator: ' ของ ',
     ariaDropZoneColumnComponentSortAscending: 'จากน้อยไปมาก',
     ariaDropZoneColumnComponentSortDescending: 'จากมากไปน้อย',
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'ค่าสัมบูรณ์จากน้อยไปมาก',

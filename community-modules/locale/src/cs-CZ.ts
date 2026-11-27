@@ -891,8 +891,6 @@ export const AG_GRID_LOCALE_CS_CZ = {
     ariaDropZoneColumnValueItemDescription: 'Stiskněte ENTER pro změnu typu agregace',
     ariaDropZoneColumnGroupItemDescription: 'Stiskněte ENTER pro seřazení',
 
-    // used for aggregate drop zone, format: {aggregation}{ariaDropZoneColumnComponentAggFuncSeparator}{column name}
-    ariaDropZoneColumnComponentAggFuncSeparator: ' z ',
     ariaDropZoneColumnComponentSortAscending: 'vzestupně',
     ariaDropZoneColumnComponentSortDescending: 'sestupně',
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'absolutně stoupající',

@@ -899,8 +899,6 @@ export const AG_GRID_LOCALE_FR_FR = {
     ariaDropZoneColumnValueItemDescription: "Appuyez sur ENTRÉE pour changer le type d'agrégation",
     ariaDropZoneColumnGroupItemDescription: 'Appuyez sur ENTRÉE pour trier',
 
-    // used for aggregate drop zone, format: {aggregation}{ariaDropZoneColumnComponentAggFuncSeparator}{column name}
-    ariaDropZoneColumnComponentAggFuncSeparator: ' de ',
     ariaDropZoneColumnComponentSortAscending: 'ascendant',
     ariaDropZoneColumnComponentSortDescending: 'descendant',
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'ascendant absolu',

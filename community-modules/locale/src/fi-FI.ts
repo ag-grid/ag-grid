@@ -895,8 +895,6 @@ export const AG_GRID_LOCALE_FI_FI = {
     ariaDropZoneColumnValueItemDescription: 'Vaihda aggregaatiotyyppiä painamalla ENTER',
     ariaDropZoneColumnGroupItemDescription: 'Järjestä painamalla ENTER',
 
-    // used for aggregate drop zone, format: {aggregation}{ariaDropZoneColumnComponentAggFuncSeparator}{column name}
-    ariaDropZoneColumnComponentAggFuncSeparator: ' kohta ',
     ariaDropZoneColumnComponentSortAscending: 'nouseva',
     ariaDropZoneColumnComponentSortDescending: 'laskeva',
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'absoluuttinen nouseva',

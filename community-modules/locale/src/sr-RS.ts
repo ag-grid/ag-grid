@@ -905,8 +905,6 @@ export const AG_GRID_LOCALE_SR_RS = {
     ariaDropZoneColumnComponentDescription: 'Притисните DELETE за уклањање',
     ariaDropZoneColumnValueItemDescription: 'Притисните ENTER за промену типа агрегације',
     ariaDropZoneColumnGroupItemDescription: 'Притисните ENTER за сортирање',
-    // used for aggregate drop zone, format: {aggregation}{ariaDropZoneColumnComponentAggFuncSeparator}{column name}
-    ariaDropZoneColumnComponentAggFuncSeparator: ' од ',
     ariaDropZoneColumnComponentSortAscending: 'растуће',
     ariaDropZoneColumnComponentSortDescending: 'опадајуће',
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'апсолутно растуће',

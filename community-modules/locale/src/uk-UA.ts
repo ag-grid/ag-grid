@@ -892,8 +892,6 @@ export const AG_GRID_LOCALE_UK_UA = {
     ariaDropZoneColumnValueItemDescription: 'Натисніть ENTER, щоб змінити тип агрегації',
     ariaDropZoneColumnGroupItemDescription: 'Натисніть ENTER, щоб сортувати',
 
-    // used for aggregate drop zone, format: {aggregation}{ariaDropZoneColumnComponentAggFuncSeparator}{column name}
-    ariaDropZoneColumnComponentAggFuncSeparator: ' з ',
     ariaDropZoneColumnComponentSortAscending: 'спадання',
     ariaDropZoneColumnComponentSortDescending: 'зростання',
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'абсолютне зростання',

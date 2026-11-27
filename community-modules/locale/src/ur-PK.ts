@@ -890,8 +890,6 @@ export const AG_GRID_LOCALE_UR_PK = {
     ariaDropZoneColumnValueItemDescription: 'جمع کے انداز کو تبدیل کرنے کیلئے ENTER دبائیں',
     ariaDropZoneColumnGroupItemDescription: 'ترتیب دینے کیلئے ENTER دبائیں',
 
-    // used for aggregate drop zone, format: {aggregation}{ariaDropZoneColumnComponentAggFuncSeparator}{column name}
-    ariaDropZoneColumnComponentAggFuncSeparator: ' کا ',
     ariaDropZoneColumnComponentSortAscending: 'بڑھتے ہوئے ترتیب',
     ariaDropZoneColumnComponentSortDescending: 'گرتے ہوئے ترتیب',
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'مکمل اوپر کی طرف',

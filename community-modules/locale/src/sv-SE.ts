@@ -894,8 +894,6 @@ export const AG_GRID_LOCALE_SV_SE = {
     ariaDropZoneColumnValueItemDescription: 'Tryck på ENTER för att ändra aggregeringstyp',
     ariaDropZoneColumnGroupItemDescription: 'Tryck på ENTER för att sortera',
 
-    // used for aggregate drop zone, format: {aggregation}{ariaDropZoneColumnComponentAggFuncSeparator}{column name}
-    ariaDropZoneColumnComponentAggFuncSeparator: ' av ',
     ariaDropZoneColumnComponentSortAscending: 'stigande',
     ariaDropZoneColumnComponentSortDescending: 'fallande',
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'absolut stigande',

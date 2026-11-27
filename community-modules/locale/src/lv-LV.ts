@@ -906,8 +906,6 @@ export const AG_GRID_LOCALE_LV_LV = {
     ariaDropZoneColumnComponentDescription: 'Nospiediet DELETE, lai noņemtu',
     ariaDropZoneColumnValueItemDescription: 'Nospiediet ENTER, lai mainītu apkopošanas tipu',
     ariaDropZoneColumnGroupItemDescription: 'Nospiediet ENTER, lai kārtotu',
-    // used for aggregate drop zone, format: {aggregation}{ariaDropZoneColumnComponentAggFuncSeparator}{column name}
-    ariaDropZoneColumnComponentAggFuncSeparator: ' no ',
     ariaDropZoneColumnComponentSortAscending: 'augoša secība',
     ariaDropZoneColumnComponentSortDescending: 'dilstoša secība',
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'absolūti augoša secība',

@@ -891,8 +891,6 @@ export const AG_GRID_LOCALE_FA_IR = {
     ariaDropZoneColumnValueItemDescription: 'برای تغییر نوع تجمع کلید ENTER را فشار دهید',
     ariaDropZoneColumnGroupItemDescription: 'برای مرتب‌سازی کلید ENTER را فشار دهید',
 
-    // used for aggregate drop zone, format: {aggregation}{ariaDropZoneColumnComponentAggFuncSeparator}{column name}
-    ariaDropZoneColumnComponentAggFuncSeparator: ' از ',
     ariaDropZoneColumnComponentSortAscending: 'صعودی',
     ariaDropZoneColumnComponentSortDescending: 'نزولی',
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'صعودی مطلق',

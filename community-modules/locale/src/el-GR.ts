@@ -895,8 +895,6 @@ export const AG_GRID_LOCALE_EL_GR = {
     ariaDropZoneColumnValueItemDescription: 'Πιέστε ENTER για να αλλάξετε τον τύπο συνάθροισης',
     ariaDropZoneColumnGroupItemDescription: 'Πιέστε ENTER για να ταξινομήσετε',
 
-    // used for aggregate drop zone, format: {aggregation}{ariaDropZoneColumnComponentAggFuncSeparator}{column name}
-    ariaDropZoneColumnComponentAggFuncSeparator: ' από ',
     ariaDropZoneColumnComponentSortAscending: 'αύξουσα',
     ariaDropZoneColumnComponentSortDescending: 'φθίνουσα',
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'απόλυτη αύξουσα σειρά',

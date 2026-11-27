@@ -894,8 +894,6 @@ export const AG_GRID_LOCALE_RO_RO = {
     ariaDropZoneColumnValueItemDescription: 'Apăsați ENTER pentru a schimba tipul de agregare',
     ariaDropZoneColumnGroupItemDescription: 'Apăsați ENTER pentru a sorta',
 
-    // used for aggregate drop zone, format: {aggregation}{ariaDropZoneColumnComponentAggFuncSeparator}{column name}
-    ariaDropZoneColumnComponentAggFuncSeparator: ' din ',
     ariaDropZoneColumnComponentSortAscending: 'crescător',
     ariaDropZoneColumnComponentSortDescending: 'descrescător',
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'ascendent absolut',

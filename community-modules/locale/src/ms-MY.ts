@@ -909,8 +909,6 @@ export const AG_GRID_LOCALE_MS_MY = {
     ariaDropZoneColumnComponentDescription: 'Tekan DELETE untuk membuang',
     ariaDropZoneColumnValueItemDescription: 'Tekan ENTER untuk menukar jenis pengagregatan',
     ariaDropZoneColumnGroupItemDescription: 'Tekan ENTER untuk isih',
-    // used for aggregate drop zone, format: {aggregation}{ariaDropZoneColumnComponentAggFuncSeparator}{column name}
-    ariaDropZoneColumnComponentAggFuncSeparator: ' bagi ',
     ariaDropZoneColumnComponentSortAscending: 'menaik',
     ariaDropZoneColumnComponentSortDescending: 'menurun',
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'mutlak menaik',

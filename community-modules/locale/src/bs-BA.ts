@@ -908,8 +908,6 @@ export const AG_GRID_LOCALE_BS_BA = {
     ariaDropZoneColumnComponentDescription: 'Pritisnite DELETE za uklanjanje',
     ariaDropZoneColumnValueItemDescription: 'Pritisnite ENTER za promjenu tipa agregacije',
     ariaDropZoneColumnGroupItemDescription: 'Pritisnite ENTER za sortiranje',
-    // used for aggregate drop zone, format: {aggregation}{ariaDropZoneColumnComponentAggFuncSeparator}{column name}
-    ariaDropZoneColumnComponentAggFuncSeparator: ' od ',
     ariaDropZoneColumnComponentSortAscending: 'rastuće',
     ariaDropZoneColumnComponentSortDescending: 'opadajuće',
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'apsolutno rastuće',

@@ -890,8 +890,6 @@ export const AG_GRID_LOCALE_KO_KR = {
     ariaDropZoneColumnValueItemDescription: '집계 유형을 변경하려면 ENTER를 누르세요',
     ariaDropZoneColumnGroupItemDescription: '정렬하려면 ENTER를 누르세요',
 
-    // used for aggregate drop zone, format: {aggregation}{ariaDropZoneColumnComponentAggFuncSeparator}{column name}
-    ariaDropZoneColumnComponentAggFuncSeparator: ' 의 ',
     ariaDropZoneColumnComponentSortAscending: '오름차순',
     ariaDropZoneColumnComponentSortDescending: '내림차순',
     ariaDropZoneColumnComponentSortAbsoluteAscending: '절대 오름차순',

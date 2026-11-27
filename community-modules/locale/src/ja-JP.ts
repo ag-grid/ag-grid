@@ -890,8 +890,6 @@ export const AG_GRID_LOCALE_JA_JP = {
     ariaDropZoneColumnValueItemDescription: '集計タイプを変更するには ENTER を押してください',
     ariaDropZoneColumnGroupItemDescription: 'ソートするには ENTER を押してください',
 
-    // used for aggregate drop zone, format: {aggregation}{ariaDropZoneColumnComponentAggFuncSeparator}{column name}
-    ariaDropZoneColumnComponentAggFuncSeparator: ' の ',
     ariaDropZoneColumnComponentSortAscending: '昇順',
     ariaDropZoneColumnComponentSortDescending: '降順',
     ariaDropZoneColumnComponentSortAbsoluteAscending: '「絶対昇順」',
