@@ -26,13 +26,13 @@
 }
 
 .ag-row-grand-total-border-bottom::before {
-    bottom: 0;
+    bottom: calc(-1 * var(--ag-internal-row-border-width));
     border-bottom: var(--ag-grand-total-row-border);
 }
 
 /* Special case: when the grand total row is in the sticky bottom container, it needs to draw the border along its top edge because that's where the existing border is  */
 :where(.ag-grid-sticky-bottom-rows-container) .ag-row-grand-total-border-top::before {
-    top: 0;
+    top: calc(-1 * var(--ag-internal-row-border-width));
 }
 
 /* Special case: when the grand total row is in the pinned top container, it needs to draw the border just outside itself because that's where the existing border is drawn  */
