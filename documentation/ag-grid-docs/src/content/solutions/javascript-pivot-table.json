@@ -1,6 +1,6 @@
 {
     "meta": {
-        "title": "JavaScript Pivot Table for React and Angular | AG Grid",
+        "title": "JavaScript Pivot Table for React, Angular and Vue | AG Grid",
         "description": "Pivot, group and aggregate data in a JavaScript data grid. AG Grid pivot mode, pivot panel, server-side pivoting, pivot charts and Excel export.",
         "targetTerm": "javascript pivot table",
         "monthlySearches": 140,
@@ -17,11 +17,11 @@
         "heading": "JavaScript pivot tables with AG Grid",
         "subHeading": "AG Grid has a pivot mode built into the data grid. Users drag columns into row groups, values and column labels, and the grid generates the pivot result columns."
     },
-    "shortAnswer": "AG Grid turns a data grid into a pivot table when you set `pivotMode=true`, group rows with `rowGroup`, aggregate a value column with `aggFunc` and set `pivot: true` on the column whose values become column headers. Users can change the layout themselves from the Side Bar or the Pivot Panel. Pivoting, aggregation, row grouping, pivot totals, server-side pivoting and Excel export are AG Grid Enterprise features, which need a paid licence. AG Grid Community, which is free, does not pivot. Pivot Charts come from Integrated Charts, built on AG Charts; enterprise chart types need the Enterprise Bundle. The same API works in React, Angular, Vue and plain JavaScript.",
+    "shortAnswer": "AG Grid turns a data grid into a pivot table when you set `pivotMode=true`, group rows with `rowGroup`, aggregate a value column with `aggFunc` and set `pivot: true` on the column whose values become column headers. Users can change the layout themselves from the Side Bar or the Pivot Panel. Pivoting, aggregation, row grouping, pivot totals, server-side pivoting and Excel export are AG Grid Enterprise features, which need a commercial licence in production. AG Grid Community, which is free, does not pivot. Pivot Charts come from Integrated Charts, built on AG Charts; Enterprise chart types need AG Charts Enterprise, included in the Enterprise Bundle licence. The same API works in React, Angular, Vue and plain JavaScript.",
     "example": {
         "id": "pivot-tables",
         "intro": "Revenue by region, pivoted by quarter. Drag columns in the side bar or pivot panel to change the layout.",
-        "note": "Sample data. Uses AG Grid Enterprise features; deployed without a licence key, these show a watermark and console warnings."
+        "note": "Sample data. Uses AG Grid Enterprise features; deployed without a licence key, the grid shows a watermark and console warnings."
     },
     "keyFigures": {
         "heading": "Key figures",
@@ -34,12 +34,12 @@
             {
                 "value": "2",
                 "label": "Pivot controls for users",
-                "detail": "The Side Bar's Columns Tool Panel and the Pivot Panel above the grid"
+                "detail": "The Side Bar's Columns Tool Panel and the Pivot Panel"
             },
             {
                 "value": "5",
                 "label": "Show Values As modes",
-                "detail": "For example percent of grand total or of row total; client-side row model only"
+                "detail": "For example percent of grand total or of row total; Client-Side Row Model only"
             }
         ]
     },
@@ -146,15 +146,15 @@
         },
         {
             "question": "Where can I see a JavaScript pivot table example?",
-            "answer": "Each pivoting docs page includes runnable live examples, and the main demo at ag-grid.com/example supports pivot mode and Pivot Charts."
+            "answer": "Each pivoting docs page includes runnable live examples, and the [main demo](/example/) supports pivot mode and Pivot Charts."
         },
         {
             "question": "Is pivoting free in AG Grid Community?",
-            "answer": "No. Pivoting, aggregation and row grouping are marked Enterprise on the AG Grid pricing page. Community includes sorting, filtering, editing and CSV export."
+            "answer": "No. Pivoting, aggregation and row grouping are marked Enterprise on the AG Grid pricing page. Community includes sorting, the Text, Number and Date filters, the Quick Filter, editing and CSV export."
         },
         {
             "question": "Can AG Grid pivot large data sets on the server?",
-            "answer": "Yes, with the Server-Side Row Model. The grid sends the pivot columns and pivot mode in each request, your server runs the query, and the grid builds result columns from the `pivotResultFields` you return."
+            "answer": "Yes, with the Server-Side Row Model. The grid sends the pivot columns and pivot mode in each request, your server runs the query, and the grid builds result columns from the `pivotResultFields` you return, or from columns you set with `setPivotResultColumns`."
         },
         {
             "question": "How do I limit the number of pivot columns?",
@@ -243,7 +243,7 @@
             "checkedOn": "2026-11-24"
         },
         {
-            "claim": "AG Grid Community is MIT licensed; AG Grid Enterprise is open source but needs a commercial licence for production and can be tested locally without a key; deployed without one, it shows a watermark.",
+            "claim": "AG Grid Community is MIT licensed; AG Grid Enterprise needs a commercial licence for production. It can be tested locally without a licence key; deployed without one, it shows a watermark and console warnings.",
             "sourceUrl": "https://www.ag-grid.com/react-data-grid/community-vs-enterprise/",
             "checkedOn": "2026-11-26"
         },

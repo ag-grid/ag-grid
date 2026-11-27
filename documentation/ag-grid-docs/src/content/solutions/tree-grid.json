@@ -21,7 +21,7 @@
     "example": {
         "id": "tree-data",
         "intro": "An organisation chart as tree data, with a filter on each column.",
-        "note": "Sample data. Uses AG Grid Enterprise features; deployed without a licence key, these show a watermark and console warnings."
+        "note": "Sample data. Uses AG Grid Enterprise features; deployed without a licence key, the grid shows a watermark and console warnings."
     },
     "keyFigures": {
         "heading": "Key figures",

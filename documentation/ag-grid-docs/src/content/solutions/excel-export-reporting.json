@@ -17,11 +17,11 @@
         "heading": "Export a React data grid to Excel and CSV",
         "subHeading": "AG Grid writes .xlsx files itself, with no third-party library, and exports CSV in the free Community edition."
     },
-    "shortAnswer": "AG Grid has export built in. CSV export is in Community (free): `api.exportDataAsCsv()` writes the rows as displayed, using value getters and value formatters. Excel export is an Enterprise feature: `api.exportDataAsExcel()` or the context menu produces an .xlsx file with no third-party library. On top of the default export you can add Excel styles, formulas, number and date types, images, multiple sheets, Excel tables, frozen rows and columns, and master/detail rows. Row groups and pivot result columns are exported as shown in the grid. PDF export (Enterprise) arrived in v36.2. For charts in reports, Integrated Charts builds charts from grid data and downloads them as PNG images.",
+    "shortAnswer": "AG Grid has export built in. CSV export is in Community (free): `api.exportDataAsCsv()` writes the rows as displayed, using value getters and value formatters. Excel export is an Enterprise feature: `api.exportDataAsExcel()` or the context menu produces an .xlsx file with no third-party library. On top of the default export you can add Excel styles, formulas, number and date types, images, multiple sheets, Excel tables, frozen rows and columns, and master/detail rows. Grouped rows export as an Excel outline (expanded by default), and only visible pivot result columns are exported. PDF export (Enterprise) arrived in v36.2. For charts in reports, Integrated Charts builds charts from grid data and downloads them as PNG images (or JPEG through the API).",
     "example": {
         "id": "excel-export",
         "intro": "Export the grid to Excel with currency formatting, or to CSV. Excel export is Enterprise; CSV export is Community.",
-        "note": "Sample data. Uses AG Grid Enterprise features; deployed without a licence key, these show a watermark and console warnings."
+        "note": "Sample data. Uses AG Grid Enterprise features; deployed without a licence key, the grid shows a watermark and console warnings."
     },
     "keyFigures": {
         "heading": "Key figures",
@@ -86,7 +86,7 @@
                 "title": "Grouped and pivoted data",
                 "docsUrl": "./excel-export-customising-content/",
                 "plan": "Enterprise",
-                "body": "Row groups export as shown in the grid, with names like '-> Parent -> Child' by default; `processRowGroupCallback` changes them. With pivoting, only visible pivot result columns export, and collapsed ones are left out even with `allColumns: true`. Excel tables are not supported for pivot or master/detail grids."
+                "body": "Grouped rows export as an Excel outline (expanded by default), with names like '-> Parent -> Child' by default; `processRowGroupCallback` changes them. With pivoting, only visible pivot result columns export, and collapsed ones are left out even with `allColumns: true`. Excel tables are not supported for pivot or master/detail grids."
             },
             {
                 "title": "Value formatters in export",
@@ -104,7 +104,7 @@
                 "title": "Integrated Charts",
                 "docsUrl": "./integrated-charts/",
                 "plan": "Enterprise",
-                "body": "`enableCharts=true` lets users chart grid data, built on AG Charts; charts follow the grid's sorting and filtering. Charts download as PNG from the chart menu or with `downloadChart()`, and `getChartImageDataURL()` returns a base64 image. Integrated Enterprise chart types need the Enterprise Bundle."
+                "body": "`enableCharts=true` lets users chart grid data, built on AG Charts; charts follow the grid's sorting and filtering. Charts download as PNG from the chart menu, or as PNG or JPEG with `downloadChart()`, and `getChartImageDataURL()` returns a base64 image. Integrated Enterprise chart types need the Enterprise Bundle."
             }
         ]
     },
@@ -146,7 +146,7 @@
         },
         {
             "question": "Should I export as CSV or XLSX?",
-            "answer": "In AG Grid, CSV export is free and writes plain values; Excel styles, cell types, formulas, images and multiple sheets need .xlsx export, which is Enterprise. If you use CSV, the docs recommend cleaning values that start with +, -, =, @, tab, carriage return or line feed, which spreadsheet apps run as formulas."
+            "answer": "In AG Grid, CSV export is free and writes text only (no styles or types); Excel styles, cell types, formulas, images and multiple sheets need .xlsx export, which is Enterprise. If you use CSV, set `sanitizeFormulas: true` so values starting with +, -, =, @, tab, carriage return or line feed are prefixed with a single quote; spreadsheet apps would otherwise run them as formulas."
         },
         {
             "question": "How can I export an AG Grid data grid as a PDF?",
@@ -154,7 +154,7 @@
         },
         {
             "question": "Does Excel export include server-side or paged data?",
-            "answer": "With the Client-Side Row Model, all rows after filtering and sorting are exported by default, or every row with `exportedRows: 'all'`. With the Infinite, Server-Side and Viewport Row Models, the row models comparison says export covers only the data loaded on screen."
+            "answer": "With the Client-Side Row Model, all rows after filtering and sorting are exported by default, including rows on other pages, or every row with `exportedRows: 'all'`. With the Infinite, Server-Side and Viewport Row Models, the [row models comparison](./row-models/#row-model-comparisons) says export covers only the data on screen."
         },
         {
             "question": "Can AG Grid import Excel files?",
@@ -178,7 +178,7 @@
             "checkedOn": "2026-11-24"
         },
         {
-            "claim": "Spreadsheet apps run CSV cells starting with +, -, =, @, tab, carriage return or line feed as formulas, and the docs recommend cleaning those values.",
+            "claim": "Spreadsheet apps run CSV cells starting with +, -, =, @, tab, carriage return or line feed as formulas; sanitizeFormulas: true prefixes those values with a single quote.",
             "sourceUrl": "https://www.ag-grid.com/react-data-grid/csv-export/",
             "checkedOn": "2026-11-24"
         },
@@ -214,13 +214,18 @@
         },
         {
             "claim": "processRowGroupCallback changes exported row group values; group names default to the '-> Parent -> Child' format.",
-            "sourceUrl": "https://www.ag-grid.com/react-data-grid/csv-export/",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/excel-export-customising-content/",
             "checkedOn": "2026-11-24"
         },
         {
             "claim": "Collapsed pivot result columns are not exported, even with allColumns: true.",
             "sourceUrl": "https://www.ag-grid.com/react-data-grid/excel-export-columns/",
             "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "Excel export adds an outline to expand and collapse row groups; rowGroupExpandState defaults to 'expanded'.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/excel-export-api/",
+            "checkedOn": "2026-11-26"
         },
         {
             "claim": "Excel tables are not supported for pivot or master/detail grids.",
@@ -233,7 +238,7 @@
             "checkedOn": "2026-11-24"
         },
         {
-            "claim": "Integrated Charts (enableCharts=true) download as PNG from the chart menu or downloadChart(), and getChartImageDataURL() returns a base64 image.",
+            "claim": "Integrated Charts (enableCharts=true) download as PNG from the chart menu, or as PNG or JPEG with downloadChart(); getChartImageDataURL() returns a base64 image.",
             "sourceUrl": "https://www.ag-grid.com/react-data-grid/integrated-charts-api-downloading-image/",
             "checkedOn": "2026-11-24"
         },

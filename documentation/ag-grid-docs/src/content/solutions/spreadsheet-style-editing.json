@@ -21,7 +21,7 @@
     "example": {
         "id": "spreadsheet-editing",
         "intro": "Select a range and drag the fill handle, edit cells, then use Undo and Redo. The status bar sums the selection.",
-        "note": "Sample data. Uses AG Grid Enterprise features; deployed without a licence key, these show a watermark and console warnings."
+        "note": "Sample data. Uses AG Grid Enterprise features; deployed without a licence key, the grid shows a watermark and console warnings."
     },
     "keyFigures": {
         "heading": "Key figures",

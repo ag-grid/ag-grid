@@ -17,11 +17,11 @@
         "heading": "Build a portfolio management dashboard with AG Grid",
         "subHeading": "AG Grid shows financial holdings with quantities, live prices, market value and P&L, grouped and totalled in one grid. The finance demo on ag-grid.com shows the pattern with live-updating prices and in-cell sparklines."
     },
-    "shortAnswer": "A portfolio management dashboard in AG Grid is a grid of holdings where prices update live, values are formatted as currency and positions roll up into group and grand totals. AG Grid Community, which is free, covers value formatters, cell change flashing, the animated show-change cell renderer, row IDs and async transactions for streaming prices, and CSV export. AG Grid Enterprise, a paid licence, adds row grouping, aggregation, sparklines, cell range selection, the status bar and Excel export. Integrated Charts, built on AG Charts, need Enterprise, and enterprise chart types need the Enterprise Bundle (AG Grid Enterprise with AG Charts Enterprise). The ag-grid.com finance demo combines most of these.",
+    "shortAnswer": "A portfolio management dashboard in AG Grid is a grid of holdings where prices update live, values are formatted as currency and positions roll up into group and grand totals. AG Grid Community, which is free, covers value formatters, cell change flashing, the animated show-change cell renderer, row IDs and async transactions for streaming prices, and CSV export. AG Grid Enterprise, which needs a commercial licence, adds row grouping, aggregation, sparklines, cell range selection, the status bar and Excel export. Integrated Charts, built on AG Charts, need Enterprise, and Enterprise chart types need AG Charts Enterprise, included in the Enterprise Bundle licence. The ag-grid.com finance demo combines most of these.",
     "example": {
         "id": "portfolio-management",
         "intro": "Holdings grouped by asset class, with totals and a sparkline of the last 20 days drawn by AG Charts.",
-        "note": "Sample data. Uses AG Grid Enterprise features; deployed without a licence key, these show a watermark and console warnings."
+        "note": "Sample data. Uses AG Grid Enterprise features; deployed without a licence key, the grid shows a watermark and console warnings."
     },
     "keyFigures": {
         "heading": "Key figures",
@@ -152,7 +152,7 @@
         },
         {
             "question": "Which portfolio dashboard features are free in AG Grid Community?",
-            "answer": "Value formatters, cell change flashing, the animated show-change renderer, row IDs, transactions and async transactions, sorting, filtering and CSV export. Row grouping, aggregation, sparklines, cell range selection, the status bar and Excel export are Enterprise."
+            "answer": "Value formatters, cell change flashing, the animated show-change renderer, row IDs, transactions and async transactions, sorting, the Text, Number and Date filters, the Quick Filter and CSV export. Row grouping, aggregation, sparklines, cell range selection, the status bar and Excel export are Enterprise."
         },
         {
             "question": "How do I update live prices without slowing the grid?",
@@ -215,9 +215,14 @@
             "checkedOn": "2026-11-24"
         },
         {
-            "claim": "Value formatters are used by default for copy and CSV export; Excel export ignores them for number values.",
+            "claim": "Value formatters are used by default for copy and CSV export.",
             "sourceUrl": "https://www.ag-grid.com/react-data-grid/value-formatters/#formatting-for-export",
-            "checkedOn": "2026-11-24"
+            "checkedOn": "2026-11-26"
+        },
+        {
+            "claim": "Excel export writes numbers as number cells; currency formats come from excelStyles numberFormat.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/excel-export-data-types/",
+            "checkedOn": "2026-11-26"
         },
         {
             "claim": "enableCellChangeFlash flashes a cell when its value changes, and the flashCells() API flashes chosen cells on demand.",

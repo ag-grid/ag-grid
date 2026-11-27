@@ -354,7 +354,8 @@ const spreadsheetEditing = (): SolutionExampleDefinition => {
                 flex: 1,
                 minWidth: 90,
                 valueFormatter: moneyWhole,
-                valueParser: ({ newValue }) => Number(newValue),
+                // Copy writes the formatted text ("$1,250"), so strip symbols and separators on paste
+                valueParser: ({ newValue }) => Number(String(newValue).replace(/[^0-9.-]/g, '')),
                 type: 'rightAligned',
             },
             columnDefs: [

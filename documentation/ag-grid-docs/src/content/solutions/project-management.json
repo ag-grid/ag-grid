@@ -17,11 +17,11 @@
         "heading": "Build a project management table with AG Grid",
         "subHeading": "Show tasks and subtasks in one grid, let people edit owner, status and due date in place, and export the plan to Excel."
     },
-    "shortAnswer": "A project management table in AG Grid is a grid of tasks with columns for owner, status, due date and estimate. Cell editing, the date and select editors, undo and redo, custom status cell renderers, row dragging, text, number and date filters, and CSV export are all in AG Grid Community, which is free under the MIT licence. Showing subtasks under parent tasks needs Tree Data or Row Grouping, and summing estimates up the tree needs Aggregation. Those are Enterprise features, as are the Rich Select dropdown editor, the Set Filter and Excel export. Enterprise is free to try locally without a licence key and needs a licence in production.",
+    "shortAnswer": "A project management table in AG Grid is a grid of tasks with columns for owner, status, due date and estimate. Cell editing, the date and select editors, undo and redo, custom status cell renderers, row dragging, text, number and date filters, and CSV export are all in AG Grid Community, which is free under the MIT licence. Showing subtasks under parent tasks needs Tree Data, grouping tasks by status or owner needs Row Grouping, and summing estimates up the tree needs Aggregation. Those are Enterprise features, as are the Rich Select dropdown editor, the Set Filter and Excel export. Enterprise is free to try locally without a licence key and needs a licence in production.",
     "example": {
         "id": "project-management",
         "intro": "Tasks and subtasks as tree data. Double-click an owner, status or due date to edit it.",
-        "note": "Sample data. Uses AG Grid Enterprise features; deployed without a licence key, these show a watermark and console warnings."
+        "note": "Sample data. Uses AG Grid Enterprise features; deployed without a licence key, the grid shows a watermark and console warnings."
     },
     "keyFigures": {
         "heading": "Key figures",
@@ -123,7 +123,7 @@
             },
             {
                 "title": "Make columns editable",
-                "body": "Set `editable: true` on owner, status, due date and estimate. Use `agRichSelectCellEditor` with a `values` list for owner and status, and `cellDataType: \"dateString\"` on the due date column for the date editor."
+                "body": "Set `editable: true` on owner, status and due date, and use an `editable` callback on estimate so only leaf tasks can be edited; parent rows show totals. Use `agRichSelectCellEditor` with a `values` list for owner and status, and `cellDataType: \"dateString\"` on the due date column for the date editor."
             },
             {
                 "title": "Add status cells, drag and totals",
@@ -152,7 +152,7 @@
         },
         {
             "question": "Can users drag tasks to reorder them or move them under another task?",
-            "answer": "Yes. Set `rowDrag` on the group column and `rowDragManaged` on the grid. With Tree Data the grid handles reordering, moving a task under a new parent and turning a task into a parent, and blocks drops that would create a cycle. The docs recommend `suppressMoveWhenRowDragging` for tree data. Outside Tree Data, managed dragging does not work while a sort or filter is applied."
+            "answer": "Yes. Set `rowDrag` on a column (the group column when using Tree Data), `rowDragManaged` on the grid, and provide `getRowId`. With Tree Data the grid handles reordering, moving a task under a new parent and turning a task into a parent, and blocks drops that would create a cycle. The docs recommend `suppressMoveWhenRowDragging` for tree data. Managed dragging pauses while a sort or filter is applied."
         },
         {
             "question": "Can AG Grid show a Gantt chart?",

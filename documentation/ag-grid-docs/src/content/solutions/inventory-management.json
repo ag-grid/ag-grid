@@ -15,9 +15,9 @@
     },
     "hero": {
         "heading": "Build an inventory management dashboard with AG Grid",
-        "subHeading": "AG Grid shows stock levels, prices and product status in one sortable, editable table. The inventory demo on ag-grid.com runs in React, JavaScript, Angular and Vue, with the source on GitHub."
+        "subHeading": "AG Grid shows stock levels, prices and product status in one sortable, editable table. The inventory demo on ag-grid.com is built in React, with JavaScript, Angular and Vue versions on GitHub."
     },
-    "shortAnswer": "An inventory management dashboard in AG Grid is a data grid of products where users search, filter by status, edit stock figures in place and page through results. AG Grid Community, which is free under the MIT licence, covers cell editing, the number editor, the Quick Filter, value formatters, conditional cell styles, custom cell components, pagination and CSV export. AG Grid Enterprise, a paid licence, adds the Set Filter, Master Detail for showing product variants under each row, and Excel (.xlsx) export. The ag-grid.com inventory demo combines these: status tabs drive a column filter, a search box drives the Quick Filter, and each album row expands to a detail grid of its variants.",
+    "shortAnswer": "An inventory management dashboard in AG Grid is a data grid of products where users search, filter by status, edit stock figures in place and page through results. AG Grid Community, which is free under the MIT licence, covers cell editing, the number editor, the Quick Filter, value formatters, conditional cell styles, custom cell components, pagination and CSV export. AG Grid Enterprise, which needs a commercial licence, adds the Set Filter, Master Detail for showing product variants under each row, and Excel (.xlsx) export. The ag-grid.com inventory demo combines these: status tabs drive a column filter, a search box drives the Quick Filter, and each album row expands to a detail grid of its variants.",
     "example": {
         "id": "inventory",
         "intro": "Edit a stock figure to see low-stock highlighting update. Search with the Quick Filter, filter columns and page through results.",
@@ -32,15 +32,14 @@
                 "detail": "React, with JavaScript, Angular and Vue versions on GitHub"
             },
             {
-                "value": "10,000",
-                "valueSuffix": "+",
-                "label": "Rows",
-                "detail": "The Quick Filter docs suggest turning on the cache above this size"
+                "value": "100k+",
+                "label": "Rows in the Client-Side Row Model",
+                "detail": "The row models guide says the default row model can handle 100k+ rows in the browser"
             },
             {
                 "value": "100",
                 "label": "Default page size",
-                "detail": "The `paginationPageSize` default; the page size selector offers 20, 50 and 100 unless you set your own list"
+                "detail": "The `paginationPageSize` default; the page size selector offers 20, 50 and 100 unless you set your own list; the demo uses 10"
             }
         ]
     },
@@ -147,19 +146,19 @@
         },
         {
             "question": "Is there a free inventory management dashboard template?",
-            "answer": "The AG Grid inventory demo is published on GitHub in the ag-grid/ag-grid-demos repository, with React, JavaScript (TypeScript), Angular and Vue versions. It registers Enterprise modules for the Set Filter, Multi Filter, Master Detail and Excel export; deployed without a licence key, these show a watermark and console warnings."
+            "answer": "The AG Grid inventory demo is published on GitHub in the ag-grid/ag-grid-demos repository, with React, JavaScript, Angular and Vue versions. It registers Enterprise modules for the Set Filter, Multi Filter, Master Detail and Excel export; deployed without a licence key, these show a watermark and console warnings."
         },
         {
             "question": "What does the inventory management dashboard UI in the demo include?",
-            "answer": "Status tabs (All, Active, On Hold, Out of Stock), a product search box, product rows with images, a stock and variants column, an editable Incoming column, price, units sold, an estimated profit column and row action buttons. Rows expand to a detail grid of variants, and the grid pages ten rows at a time."
+            "answer": "Status tabs (All, Active, On Hold, Out of Stock), a product search box, product rows with images, a stock and variants column, an editable Incoming column, price, units sold, an estimated profit column and row action buttons. Rows expand to a detail grid of variants, and the grid shows ten rows per page by default."
         },
         {
             "question": "Which inventory dashboard features need AG Grid Enterprise?",
-            "answer": "In this use case: the Set Filter, Master Detail, Excel export, row grouping and aggregation. Cell editing, the Quick Filter, value formatters, cell styles, custom cell components, pagination and CSV export are in Community."
+            "answer": "In this use case: the Set Filter, Multi Filter, Master Detail and Excel export. Row grouping and aggregation, for example stock totals by category, are also Enterprise. Cell editing, the Quick Filter, value formatters, cell styles, custom cell components, pagination and CSV export are in Community."
         },
         {
             "question": "How do I highlight low stock in the grid?",
-            "answer": "Use `cellClassRules` on the stock column. Each key is a CSS class name and each value a function that returns true when the class applies, for example (p) => p.value < 5."
+            "answer": "Use `cellClassRules` on the stock column. Each key is a CSS class name and each value a function that returns true when the class applies, for example `(p) => p.value < 5`."
         }
     ],
     "proseClaims": [
@@ -170,13 +169,18 @@
         },
         {
             "claim": "AG Grid Enterprise can be tested locally without a licence key; deployed without one, it shows a watermark and console warnings.",
-            "sourceUrl": "https://www.ag-grid.com/react-data-grid/community-vs-enterprise/",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/license-install/",
             "checkedOn": "2026-11-26"
         },
         {
-            "claim": "The Quick Filter, CSV export and pagination are Community features; the Set Filter, Excel export, row grouping and aggregation are Enterprise features.",
+            "claim": "The Quick Filter and CSV export are Community features; the Set Filter, Multi Filter, Excel export, row grouping and aggregation are Enterprise features.",
             "sourceUrl": "https://www.ag-grid.com/license-pricing/",
-            "checkedOn": "2026-11-24"
+            "checkedOn": "2026-11-26"
+        },
+        {
+            "claim": "Pagination (PaginationModule) is a Community module.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/modules/",
+            "checkedOn": "2026-11-26"
         },
         {
             "claim": "With editable set, the grid picks an editor from the column's cell data type, so number columns use a numeric input.",
@@ -204,9 +208,14 @@
             "checkedOn": "2026-11-24"
         },
         {
-            "claim": "Value formatters are used for copy, CSV export and Excel export by default (useValueFormatterForExport).",
+            "claim": "Value formatters are used for CSV export and, with Enterprise, clipboard copy by default (useValueFormatterForExport).",
             "sourceUrl": "https://www.ag-grid.com/react-data-grid/value-formatters/",
-            "checkedOn": "2026-11-24"
+            "checkedOn": "2026-11-26"
+        },
+        {
+            "claim": "Excel export keeps number values as numbers instead of using the value formatter; number formats come from Excel data types.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/value-formatters/#formatting-for-export",
+            "checkedOn": "2026-11-26"
         },
         {
             "claim": "cellRenderer sets a custom component to render a cell.",
@@ -217,6 +226,11 @@
             "claim": "Pagination is supported in all row models.",
             "sourceUrl": "https://www.ag-grid.com/react-data-grid/row-pagination/",
             "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "The row models guide says the default Client-Side Row Model can handle 100k+ rows.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/row-models/",
+            "checkedOn": "2026-11-26"
         },
         {
             "claim": "paginationPageSize defaults to 100 and the default page size selector offers 20, 50 and 100.",

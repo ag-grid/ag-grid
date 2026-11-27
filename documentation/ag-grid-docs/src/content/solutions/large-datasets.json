@@ -1,6 +1,6 @@
 {
     "meta": {
-        "title": "React Table for Large Data Sets | AG Grid",
+        "title": "React Table for Large Datasets | AG Grid",
         "description": "How AG Grid handles large data in React: row and column virtualisation, four row models, 100k+ rows client-side, pagination and transaction updates.",
         "targetTerm": "react table large data",
         "monthlySearches": 10,
@@ -14,10 +14,10 @@
         "mark": "Large datasets"
     },
     "hero": {
-        "heading": "Display large data sets in a React table",
+        "heading": "Display large datasets in a React table",
         "subHeading": "AG Grid only renders the rows and columns on screen, and gives you four row models to decide how much data is sent to the browser."
     },
-    "shortAnswer": "AG Grid handles large data in two ways. Row and column virtualisation is on by default in Community, so the grid only creates DOM for the cells in view plus a buffer of 10 rows above and below and 200px of columns either side. Then you choose a row model. The default Client-Side Row Model loads all rows into the browser, and the docs say it can handle 100k+ rows. When the data is too large to send, the free Infinite Row Model loads it in blocks as the user scrolls. Enterprise adds the Server-Side Row Model, which also groups and aggregates on the server, and the Viewport Row Model for live data streams.",
+    "shortAnswer": "AG Grid handles large data in two ways. Row and column virtualisation is on by default in every edition, including the free Community edition, so the grid only creates DOM for the cells in view plus a buffer of 10 rows above and below and 200px of columns either side. Then you choose a row model. The default Client-Side Row Model loads all rows into the browser, and the docs say it can handle 100k+ rows. When the data is too large to send, the free Infinite Row Model loads it in blocks as the user scrolls. Enterprise adds the Server-Side Row Model, which also groups and aggregates on the server, and the Viewport Row Model for live data streams.",
     "example": {
         "id": "large-datasets",
         "intro": "100,000 rows generated in the browser and rendered with row virtualisation. Sort any column, or filter by region, product or units.",
@@ -28,7 +28,7 @@
         "figures": [
             {
                 "value": "100k+",
-                "label": "Client-Side Row Model",
+                "label": "Rows in the Client-Side Row Model",
                 "detail": "The row models guide's advice when unsure: use the default Client-Side Row Model"
             },
             {
@@ -98,7 +98,7 @@
                 "title": "Transaction updates",
                 "docsUrl": "./data-update-transactions/",
                 "plan": "Free",
-                "body": "`applyTransaction()` adds, removes and updates specific rows instead of replacing all row data; with `getRowId` rows are matched by ID, which the docs describe as faster than object references for large data sets. `applyTransactionAsync()` batches updates, applied after 50ms by default. These are Client-Side Row Model APIs; the Server-Side Row Model has `applyServerSideTransaction()` and `applyServerSideTransactionAsync()` (Enterprise)."
+                "body": "`applyTransaction()` adds, removes and updates specific rows instead of replacing all row data; with `getRowId` rows are matched by ID, which the docs describe as faster than object references for large datasets. `applyTransactionAsync()` batches updates, applied after 50ms by default. These are Client-Side Row Model APIs; the Server-Side Row Model has `applyServerSideTransaction()` and `applyServerSideTransactionAsync()` (Enterprise)."
             },
             {
                 "title": "Scrolling performance options",
@@ -109,7 +109,7 @@
         ]
     },
     "howTo": {
-        "heading": "How to handle large data sets in a React table",
+        "heading": "How to handle large datasets in a React table",
         "steps": [
             {
                 "title": "Start with the default row model and a fixed height",
@@ -138,7 +138,7 @@
     "faq": [
         {
             "question": "How many rows can AG Grid handle in React?",
-            "answer": "There is no fixed row limit in the grid. The row models guide says the default Client-Side Row Model can handle 100k+ rows and that the browser runs out of memory first. Separately, browsers cap div height, so past roughly 320,000 rows at 100px each on Chrome v118 the grid stretches rows and scrolling speeds up."
+            "answer": "There is no fixed row limit in the grid. The row models guide says the default Client-Side Row Model can handle 100k+ rows and that the browser runs out of memory first. Separately, browsers cap div height, so past roughly 320,000 rows at 100px each on Chrome v118 the grid stretches rows, so scrolling appears faster."
         },
         {
             "question": "Does AG Grid virtualise rows and columns?",
@@ -150,7 +150,7 @@
         },
         {
             "question": "Is there a React table large data example?",
-            "answer": "Yes. The AG Grid performance demo renders up to 100,000 rows, or 10,000 rows by 100 columns, and lets you change the size while you scroll, sort and filter. The React source is on GitHub, along with JavaScript, Angular and Vue versions."
+            "answer": "Yes. The [AG Grid performance demo](/example/) renders up to 100,000 rows, or 10,000 rows by 100 columns, and lets you change the size while you scroll, sort and filter. The React source is on GitHub, along with JavaScript, Angular and Vue versions."
         },
         {
             "question": "Can a large table be editable?",
@@ -158,10 +158,15 @@
         },
         {
             "question": "Does the Quick Filter work on large server-side data?",
-            "answer": "No. The Quick Filter is supported only on the Client-Side Row Model. With the Infinite, Server-Side and Viewport Row Models, filtering runs on your server using the filter model the grid sends."
+            "answer": "No. The Quick Filter is supported only on the Client-Side Row Model. With the other row models you implement equivalent filtering on your server; the Infinite and Server-Side Row Models send column filter models with each request."
         }
     ],
     "proseClaims": [
+        {
+            "claim": "There is no fixed limit to the number of rows the grid can display.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/massive-row-count/",
+            "checkedOn": "2026-11-26"
+        },
         {
             "claim": "The grid only renders the rows and columns in the visible viewport, adding and removing DOM as the user scrolls; suppressRowVirtualisation and suppressColumnVirtualisation turn this off.",
             "sourceUrl": "https://www.ag-grid.com/react-data-grid/dom-virtualisation/",
@@ -243,7 +248,7 @@
             "checkedOn": "2026-11-24"
         },
         {
-            "claim": "Transactions matched by getRowId are faster than matching by object reference, which is slow for large data sets.",
+            "claim": "Transactions matched by getRowId are faster than matching by object reference, which is slow for large datasets.",
             "sourceUrl": "https://www.ag-grid.com/react-data-grid/data-update-transactions/",
             "checkedOn": "2026-11-24"
         },
