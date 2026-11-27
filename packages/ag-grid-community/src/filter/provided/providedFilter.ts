@@ -13,6 +13,12 @@ import { translateForFilter } from '../filterLocaleText';
 import type { IProvidedFilter, ProvidedFilterDisplayParams, ProvidedFilterModel } from './iProvidedFilter';
 import { _isUseApplyButton, getDebounceMs } from './providedFilterUtils';
 
+interface RemovedMethodParams {
+    colId: string;
+    filterInstanceType: string;
+    multiFilterMode?: 'handlers' | 'legacy';
+}
+
 /**
  * Contains common logic to all provided filters (apply button, clear button, etc).
  * All the filters that come with AG Grid extend this class. User filters do not
@@ -185,18 +191,17 @@ export abstract class ProvidedFilter<
         return true;
     }
 
-    private getRemovedMethodParams(): {
-        colId: string;
-        filterInstanceType: string;
-        multiFilterMode?: 'handlers' | 'legacy';
-    } {
+    private getRemovedMethodParams(): RemovedMethodParams {
         const beans = this.beans;
         const column = this.params.column as AgColumn;
-        const params = { colId: column.getColId(), filterInstanceType: this.filterInstanceType };
-        if (_resolveFilter(beans, column).key !== 'agMultiColumnFilter') {
-            return params;
+        const params: RemovedMethodParams = {
+            colId: column.getColId(),
+            filterInstanceType: this.filterInstanceType,
+        };
+        if (_resolveFilter(beans, column).key === 'agMultiColumnFilter') {
+            params.multiFilterMode = beans.gos.get('enableFilterHandlers') ? 'handlers' : 'legacy';
         }
-        return { ...params, multiFilterMode: beans.gos.get('enableFilterHandlers') ? 'handlers' : 'legacy' };
+        return params;
     }
 
     protected canApply(_model: M | null): boolean {
