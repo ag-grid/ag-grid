@@ -234,7 +234,7 @@ export type ShowValuesAsModesDef<TData = any, TValue = any> = {
 export interface ShowValuesAsDef<TData = any, TValue = any> {
     /** Default decimal places for the built-in formatters (default `2`); overridable per selection. */
     precision?: number;
-    /** Suppress the indicator shown while a mode is active, in the column header, the Columns Tool Panel column list and column chips. */
+    /** Suppress the indicator icon shown next to the column name while a mode is active. */
     suppressHeaderIndicator?: boolean;
     /** User-provided modes and overrides of the built-ins, deep-merged over them (grid-wide when set on
      *  `defaultColDef.showValuesAsDef`). */
@@ -264,7 +264,7 @@ export interface ShowValuesAsDefResolved<TData = any, TValue = any> {
     modes: { [type: string]: ShowValuesAsModeDefResolved<TData, TValue> };
     /** Default formatter precision (decimal places); `2` when unset. */
     precision: number;
-    /** Suppress the indicator (header, Columns Tool Panel list and column chips) while a mode is active. */
+    /** Suppress the indicator icon while a mode is active. */
     suppressHeaderIndicator: boolean | undefined;
 }
 

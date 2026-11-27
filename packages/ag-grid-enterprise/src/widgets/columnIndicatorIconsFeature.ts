@@ -18,14 +18,14 @@ export class ColumnIndicatorIconsFeature extends BeanStub {
     public postConstruct(): void {
         const { column, eName } = this;
         if (this.beans.showValuesAsSvc) {
-            const eShowValuesAs = this.createIcon('showValuesAs', 'ag-show-values-as-icon');
-            this.eShowValuesAs = eShowValuesAs;
-            eName.after(eShowValuesAs);
-            this.addManagedListeners(column, { columnStateUpdated: this.refreshShowValuesAs.bind(this) });
+            this.eShowValuesAs = this.createIcon('showValuesAs', 'ag-show-values-as-icon');
+            eName.after(this.eShowValuesAs);
+            const refresh = this.refreshShowValuesAs.bind(this);
+            this.addManagedListeners(column, { columnStateUpdated: refresh });
             this.addManagedEventListeners({
-                columnRowGroupChanged: this.refreshShowValuesAs.bind(this),
-                columnPivotChanged: this.refreshShowValuesAs.bind(this),
-                columnPivotModeChanged: this.refreshShowValuesAs.bind(this),
+                columnRowGroupChanged: refresh,
+                columnPivotChanged: refresh,
+                columnPivotModeChanged: refresh,
             });
         }
         this.addManagedListeners(column, { colDefChanged: this.refresh.bind(this) });

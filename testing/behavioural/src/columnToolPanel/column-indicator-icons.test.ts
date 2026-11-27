@@ -16,19 +16,6 @@ describe('column indicator icons in the Columns Tool Panel and chips', () => {
         gridMgr.reset();
     });
 
-    const sideBar = {
-        toolPanels: [
-            {
-                id: 'columns',
-                labelDefault: 'Columns',
-                labelKey: 'columns',
-                iconKey: 'columns',
-                toolPanel: 'agColumnsToolPanel',
-            },
-        ],
-        defaultToolPanel: 'columns',
-    };
-
     const rowData = [
         { country: 'Ireland', year: 2000, gold: 1, silver: 2 },
         { country: 'France', year: 2004, gold: 3, silver: 4 },
@@ -39,7 +26,7 @@ describe('column indicator icons in the Columns Tool Panel and chips', () => {
             columnDefs,
             rowData,
             calculatedColumns: true,
-            sideBar,
+            sideBar: 'columns',
             rowGroupPanelShow: 'always',
             pivotPanelShow: 'always',
             ...options,
@@ -62,16 +49,11 @@ describe('column indicator icons in the Columns Tool Panel and chips', () => {
         return label!.closest<HTMLElement>('.ag-column-select-column')!;
     }
 
-    function chips(api: GridApi, text: string): HTMLElement[] {
-        const root = getGridElement(api)!;
-        return Array.from(root.querySelectorAll<HTMLElement>('.ag-column-drop-cell')).filter(
-            (el) => el.querySelector('.ag-column-drop-cell-text')?.textContent === text
-        );
-    }
-
     function chipIn(api: GridApi, zone: 'header' | 'toolPanel', text: string): HTMLElement {
         const container = zone === 'header' ? '.ag-column-drop-wrapper' : '.ag-column-panel';
-        const chip = chips(api, text).find((el) => el.closest(container) != null);
+        const chip = Array.from(
+            getGridElement(api)!.querySelectorAll<HTMLElement>(`${container} .ag-column-drop-cell`)
+        ).find((el) => el.querySelector('.ag-column-drop-cell-text')?.textContent === text);
         expect(chip).toBeDefined();
         return chip!;
     }
@@ -126,7 +108,6 @@ describe('column indicator icons in the Columns Tool Panel and chips', () => {
             expectCalcIconBeforeName(chipIn(api, 'toolPanel', 'Profit Group'));
             expectCalcIconBeforeName(chipIn(api, 'toolPanel', 'sum(Profit)'));
         });
-        expect(chipIn(api, 'toolPanel', 'sum(Profit)').querySelector('.ag-calculated-column-icon')).not.toBeNull();
     });
 
     test('pivot mode: ƒx shows in Column Labels chips (tool panel + header) and Values chips', async () => {
