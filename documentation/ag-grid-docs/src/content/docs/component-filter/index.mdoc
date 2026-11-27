@@ -183,6 +183,7 @@ const gridOptions = {
             },
             filterParams: {
                 values: ['Under 20', '20 to 29', '30 and over'],
+                suppressSorting: true,
             },
         }
     ],
@@ -221,7 +222,7 @@ For the Set Filter and Multi Filter, the filter UI keeps working as normal: the 
 
 The example below uses the Set Filter on the **Age** column to list age bands instead of ages:
 
-- The Set Filter shows the values `Under 20`, `20 to 29` and `30 and over`, supplied with `filterParams.values`.
+- The Set Filter shows the values `Under 20`, `20 to 29` and `30 and over`, supplied with `filterParams.values` and kept in that order with `filterParams.suppressSorting`.
 - `doesFilterPass` works out the age band of each row and checks that it is selected.
 - The list of values, the Mini Filter and the floating filter work as they do with any Set Filter.
 

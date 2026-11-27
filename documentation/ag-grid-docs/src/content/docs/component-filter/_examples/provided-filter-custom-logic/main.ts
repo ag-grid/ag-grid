@@ -35,7 +35,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         {
             field: 'age',
             filter: { component: 'agSetColumnFilter', doesFilterPass: doesAgeBandPass },
-            filterParams: { values: ['Under 20', '20 to 29', '30 and over'] },
+            filterParams: { values: ['Under 20', '20 to 29', '30 and over'], suppressSorting: true },
             floatingFilter: true,
         },
         { field: 'country' },
