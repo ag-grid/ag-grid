@@ -1,0 +1,19 @@
+---
+import styles from '../DecisionPage.module.scss';
+import type { ProductReason } from '../types';
+
+interface Props {
+    reasons: ProductReason[];
+}
+
+const { reasons } = Astro.props;
+---
+
+<ul class={styles.productReasons}>
+    {reasons.map(({ title, body }) => (
+        <li class={styles.productReason}>
+            <h3>{title}</h3>
+            <p>{body}</p>
+        </li>
+    ))}
+</ul>

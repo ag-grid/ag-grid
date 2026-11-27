@@ -1,0 +1,65 @@
+---
+import ProductAlternativePage from '@ag-website-shared/components/decision-pages/ProductAlternativePage.astro';
+import { buildDecisionPageStructuredData } from '@ag-website-shared/components/decision-pages/decisionPageStructuredData';
+import { alternativePageName } from '@ag-website-shared/components/decision-pages/decisionPageText';
+import TechnicalReviewCredit from '@components/technical-review-credit/TechnicalReviewCredit.astro';
+import { DISABLE_MARKDOWN_DOCS } from '@constants';
+import Layout from '@layouts/Layout.astro';
+import { getDecisionPageCollections } from '@utils/decisionPageCollections';
+import {
+    ALTERNATIVES_HUB_LINK,
+    GRID_DECISION_SITE,
+    PRODUCT_ALTERNATIVE_SLUG,
+    productAlternativePageProps,
+} from '@utils/decisionPages';
+import { buildTechnicalReviewStructuredData } from '@utils/technicalReviewers';
+import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
+import { type CollectionEntry, getEntry } from 'astro:content';
+
+const { content, related } = productAlternativePageProps(await getDecisionPageCollections(), PRODUCT_ALTERNATIVE_SLUG);
+const markdownUrl = DISABLE_MARKDOWN_DOCS ? undefined : urlWithBaseUrl(`/alternatives/${PRODUCT_ALTERNATIVE_SLUG}.md`);
+const { data: metadata } = (await getEntry('metadata', 'metadata')) as CollectionEntry<'metadata'>;
+
+// Matches the canonical URL Layout emits, so the WebPage node describes the page being served.
+const pageUrl = new URL(Astro.url.pathname, metadata.canonicalUrlBase).href;
+
+const pageStructuredData = [
+    ...buildDecisionPageStructuredData({
+        canonicalUrlBase: metadata.canonicalUrlBase,
+        pageUrl,
+        title: content.meta.title,
+        description: content.meta.description,
+        lastUpdated: content.lastUpdated,
+        breadcrumbs: [
+            {
+                name: GRID_DECISION_SITE.productName,
+                url: new URL(GRID_DECISION_SITE.urls.home, metadata.canonicalUrlBase).href,
+            },
+            {
+                name: ALTERNATIVES_HUB_LINK.name,
+                url: new URL(ALTERNATIVES_HUB_LINK.url, metadata.canonicalUrlBase).href,
+            },
+            { name: alternativePageName({ name: GRID_DECISION_SITE.productName }), url: pageUrl },
+        ],
+        faq: content.faq,
+    }),
+    ...(content.technicalReviewer
+        ? buildTechnicalReviewStructuredData({ pageUrl, reviewer: content.technicalReviewer })
+        : []),
+];
+---
+
+<Layout
+    title={content.meta.title}
+    description={content.meta.description}
+    showDocsNav={false}
+    showSearchBar={true}
+    pageStructuredData={pageStructuredData}
+    markdownUrl={markdownUrl}
+>
+    <ProductAlternativePage content={content} site={GRID_DECISION_SITE} hub={ALTERNATIVES_HUB_LINK} related={related}>
+        {content.technicalReviewer && (
+            <TechnicalReviewCredit slot="review-credit" reviewer={content.technicalReviewer} />
+        )}
+    </ProductAlternativePage>
+</Layout>
