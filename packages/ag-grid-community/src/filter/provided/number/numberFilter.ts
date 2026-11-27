@@ -1,11 +1,9 @@
 import { AgInputNumberField } from '../../../agWidgets/agInputNumberField';
-import type { FilterDisplayParams } from '../../../interfaces/iFilter';
 import type { GridInputNumberField, GridInputTextField } from '../../../widgets/gridWidgetTypes';
-import type { ICombinedSimpleModel } from '../iSimpleFilter';
 import { _bindFilterCallback, getValidityMessageKey } from '../simpleFilterUtils';
 import type { RenderChange } from '../textInputSimpleFilter';
 import { TextInputSimpleFilter } from '../textInputSimpleFilter';
-import type { INumberFilterParams, NumberFilterModel } from './iNumberFilter';
+import type { NumberFilterDisplayParams, NumberFilterModel } from './iNumberFilter';
 import { DEFAULT_NUMBER_FILTER_OPTIONS } from './numberFilterConstants';
 import {
     getAllowedCharPattern,
@@ -14,10 +12,6 @@ import {
     stringToFloat,
     usesTextInput,
 } from './numberFilterUtils';
-
-/** temporary type until `NumberFilterParams` is updated as breaking change */
-type NumberFilterDisplayParams = INumberFilterParams &
-    FilterDisplayParams<any, any, NumberFilterModel | ICombinedSimpleModel<NumberFilterModel>>;
 
 type NumberInput = GridInputTextField | GridInputNumberField;
 

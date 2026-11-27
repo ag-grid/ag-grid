@@ -13,14 +13,12 @@ import type {
     AgPromise,
     ComponentSelector,
     ElementParams,
-    FilterDisplayParams,
     GridInputTextField,
     IAfterGuiAttachedParams,
     SetFilterHandler as ISetFilterHandler,
-    ISetFilterParams,
+    SetFilterDisplayParams,
     SetFilterModel,
     SetFilterModelValue,
-    SetFilterParams,
     SetFilterUi,
     TextFormatter,
 } from 'ag-grid-community';
@@ -60,7 +58,7 @@ type MiniFilterInputSource = 'ui' | 'api' | 'state';
 
 /** @param V type of value in the Set Filter */
 export class SetFilter<V = string>
-    extends ProvidedFilter<SetFilterModel, V, ISetFilterParams<any, V> & FilterDisplayParams<any, any, SetFilterModel>>
+    extends ProvidedFilter<SetFilterModel, V, SetFilterDisplayParams<any, V>>
     implements SetFilterUi<V>
 {
     public readonly filterType = 'set' as const;
@@ -94,9 +92,7 @@ export class SetFilter<V = string>
         super('setFilter', 'set-filter');
     }
 
-    protected override setParams(
-        params: ISetFilterParams<any, V> & FilterDisplayParams<any, any, SetFilterModel>
-    ): void {
+    protected override setParams(params: SetFilterDisplayParams<any, V>): void {
         super.setParams(params);
 
         const handler = this.updateHandler(params.getHandler() as unknown as SetFilterHandler<V>);
@@ -136,22 +132,18 @@ export class SetFilter<V = string>
         this.initialiseFilterBodyUi();
     }
 
-    public override refresh(legacyNewParams: SetFilterParams<any, V>): boolean {
-        if (this.params.treeList !== legacyNewParams.treeList) {
+    public override refresh(newParams: SetFilterDisplayParams<any, V>): boolean {
+        if (this.params.treeList !== newParams.treeList) {
             // too hard to refresh when tree list changes, just destroy
             return false;
         }
-        this.updateHandler(
-            (
-                legacyNewParams as unknown as ISetFilterParams<any, V> & FilterDisplayParams<any, any, SetFilterModel>
-            ).getHandler() as unknown as SetFilterHandler<V>
-        );
-        return super.refresh(legacyNewParams);
+        this.updateHandler(newParams.getHandler() as unknown as SetFilterHandler<V>);
+        return super.refresh(newParams);
     }
 
     protected override updateParams(
-        newParams: ISetFilterParams<any, V> & FilterDisplayParams<any, any, SetFilterModel>,
-        oldParams: ISetFilterParams<any, V> & FilterDisplayParams<any, any, SetFilterModel>
+        newParams: SetFilterDisplayParams<any, V>,
+        oldParams: SetFilterDisplayParams<any, V>
     ): void {
         super.updateParams(newParams, oldParams);
 
@@ -430,9 +422,7 @@ export class SetFilter<V = string>
         this.createVirtualListModel(this.params);
     }
 
-    private createVirtualListModel(
-        params: ISetFilterParams<any, V> & FilterDisplayParams<any, any, SetFilterModel>
-    ): void {
+    private createVirtualListModel(params: SetFilterDisplayParams<any, V>): void {
         let model: VirtualListModel;
         if (params.suppressSelectAll) {
             model = new ModelWrapper(this.displayValueModel);

@@ -4,6 +4,7 @@ import type { ValueGetterFunc } from '../entities/colDef';
 import type { IProvidedFilter, ProvidedFilterModel } from '../filter/provided/iProvidedFilter';
 import type {
     ColumnFilter,
+    FilterDisplayParams,
     IDoesFilterPassParams,
     IFilter,
     IFilterComp,
@@ -78,8 +79,16 @@ export interface IMultiFilterDef extends IFilterDef {
 }
 
 /**
- * Parameters provided by the grid to the `init` method of a `MultiFilter`.
+ * Parameters provided by the grid to the `init` and `refresh` methods of a `MultiFilter` when `enableFilterHandlers = true`.
  * Do not use in `colDef.filterParams` - see `IMultiFilterParams` instead.
+ */
+export type MultiFilterDisplayParams<TData = any> = IMultiFilterParams &
+    FilterDisplayParams<TData, any, IMultiFilterModel>;
+
+/**
+ * Parameters provided by the grid to the `init` method of a `MultiFilter` in legacy filter mode.
+ * Do not use in `colDef.filterParams` - see `IMultiFilterParams` instead.
+ * @deprecated v37 Use `enableFilterHandlers` and `MultiFilterDisplayParams` instead. See [Migrating to Filter Handlers](https://www.ag-grid.com/javascript-data-grid/enable-filter-handlers-migration/).
  */
 export type MultiFilterParams<TData = any> = IMultiFilterParams & IFilterParams<TData>;
 

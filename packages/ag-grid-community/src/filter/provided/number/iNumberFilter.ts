@@ -1,8 +1,9 @@
 import type { AdvancedFilterOnlyOptionKey } from '../../../interfaces/advancedFilterModel';
-import type { FilterInputCallbackParams, IFilterParams } from '../../../interfaces/iFilter';
+import type { FilterDisplayParams, FilterInputCallbackParams, IFilterParams } from '../../../interfaces/iFilter';
 import type { IScalarFilterParams } from '../iScalarFilter';
 import type {
     CustomFilterOptionKey,
+    ICombinedSimpleModel,
     IFilterOptionDef,
     ISimpleFilterModel,
     ScalarFilterOptionKey,
@@ -27,8 +28,16 @@ export interface NumberFilterModel extends ISimpleFilterModel {
 }
 
 /**
+ * Parameters provided by the grid to the `init` and `refresh` methods of a `NumberFilter`.
+ * Do not use in `colDef.filterParams` - see `INumberFilterParams` instead.
+ */
+export type NumberFilterDisplayParams<TData = any, TContext = any> = INumberFilterParams<TData, TContext> &
+    FilterDisplayParams<TData, TContext, NumberFilterModel | ICombinedSimpleModel<NumberFilterModel>>;
+
+/**
  * Parameters provided by the grid to the `init` method of a `NumberFilter`.
  * Do not use in `colDef.filterParams` - see `INumberFilterParams` instead.
+ * @deprecated v37 Use `NumberFilterDisplayParams` instead.
  */
 export type NumberFilterParams<TData = any, TContext = any> = INumberFilterParams<TData, TContext> &
     IFilterParams<TData, TContext>;

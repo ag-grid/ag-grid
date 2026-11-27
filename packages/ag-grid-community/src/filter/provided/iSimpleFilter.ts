@@ -1,6 +1,6 @@
 import type { AdvancedFilterOnlyOptionKey } from '../../interfaces/advancedFilterModel';
 import type { IAutoCompleteComponentParams } from '../../interfaces/iAutoComplete';
-import type { FilterInputCallbackParams, IFilterParams } from '../../interfaces/iFilter';
+import type { FilterDisplayParams, FilterInputCallbackParams, IFilterParams } from '../../interfaces/iFilter';
 import type { IFloatingFilterParent } from '../floating/floatingFilter';
 import type { IProvidedFilter, IProvidedFilterParams, ProvidedFilterModel } from './iProvidedFilter';
 import type { OptionsFactory } from './optionsFactory';
@@ -40,8 +40,18 @@ export interface IFilterPlaceholderFunctionParams {
 export type FilterPlaceholderFunction = (params: IFilterPlaceholderFunctionParams) => string;
 
 /**
+ * Parameters provided by the grid to the `init` and `refresh` methods of a `SimpleFilter`.
+ * Do not use in `colDef.filterParams` - see `ISimpleFilterParams` instead.
+ */
+export type SimpleFilterDisplayParams<
+    TData = any,
+    M extends ISimpleFilterModel = ISimpleFilterModel,
+> = ISimpleFilterParams & FilterDisplayParams<TData, any, M | ICombinedSimpleModel<M>>;
+
+/**
  * Parameters provided by the grid to the `init` method of a `SimpleFilter`.
  * Do not use in `colDef.filterParams` - see `ISimpleFilterParams` instead.
+ * @deprecated v37 Use `SimpleFilterDisplayParams` instead.
  */
 export type SimpleFilterParams<TData = any> = ISimpleFilterParams & IFilterParams<TData>;
 

@@ -1,8 +1,16 @@
-import type { FilterAction, IFilterParams, SharedFilterUi } from '../../interfaces/iFilter';
+import type { FilterAction, FilterDisplayParams, IFilterParams, SharedFilterUi } from '../../interfaces/iFilter';
+
+/**
+ * Parameters provided by the grid to the `init` and `refresh` methods of a `ProvidedFilter`.
+ * Do not use in `colDef.filterParams` - see `IProvidedFilterParams` instead.
+ */
+export type ProvidedFilterDisplayParams<TData = any, TModel = any> = IProvidedFilterParams &
+    FilterDisplayParams<TData, any, TModel>;
 
 /**
  * Parameters provided by the grid to the `init` method of a `ProvidedFilter`.
  * Do not use in `colDef.filterParams` - see `IProvidedFilterParams` instead.
+ * @deprecated v37 Use `ProvidedFilterDisplayParams` instead.
  */
 export type ProvidedFilterParams<TData = any> = IProvidedFilterParams & IFilterParams<TData>;
 /**

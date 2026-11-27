@@ -7,9 +7,9 @@ import type { FilterOptionKey, ISimpleFilterParams } from '../../provided/iSimpl
 import type { NumberFilterModel } from '../../provided/number/iNumberFilter';
 import { _isUseApplyButton, getDebounceMs, getPlaceholderText } from '../../provided/providedFilterUtils';
 import type {
+    ITextFilterParams,
     ITextInputFloatingFilterParams,
     TextFilterModel,
-    TextFilterParams,
 } from '../../provided/text/iTextFilter';
 import { trimInputForFilter } from '../../provided/text/textFilterUtils';
 import type { FloatingFilterDisplayParams } from '../floatingFilter';
@@ -89,14 +89,14 @@ export abstract class TextInputFloatingFilter<
 
         inputSvc.setParams({
             ariaLabel: this.getAriaLabel(column as AgColumn),
-            autoComplete: browserAutoComplete ?? (filterParams as TextFilterParams).browserAutoComplete,
+            autoComplete: browserAutoComplete ?? (filterParams as ITextFilterParams).browserAutoComplete,
             placeholder,
         });
 
-        this.applyActive = _isUseApplyButton(filterParams as TextFilterParams);
+        this.applyActive = _isUseApplyButton(filterParams as ITextFilterParams);
 
         if (!readOnly) {
-            const debounceMs = getDebounceMs(this.beans.log, filterParams as TextFilterParams, defaultDebounceMs);
+            const debounceMs = getDebounceMs(this.beans.log, filterParams as ITextFilterParams, defaultDebounceMs);
             const debouncedSync = _debounce(this, this.syncUpWithParentFilter.bind(this), debounceMs);
             let debounceTimeout: ReturnType<typeof setTimeout> | undefined;
             inputSvc.setValueChangedListener((e) => {
@@ -144,7 +144,7 @@ export abstract class TextInputFloatingFilter<
         const { inputSvc, params, lastType } = this;
         let value = inputSvc.getValue();
 
-        if ((params.filterParams as TextFilterParams).trimInput) {
+        if ((params.filterParams as ITextFilterParams).trimInput) {
             value = trimInputForFilter(value);
             inputSvc.setValue(value, true); // ensure visible value is trimmed
             this.refreshValueTooltip?.();

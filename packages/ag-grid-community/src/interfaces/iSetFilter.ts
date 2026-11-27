@@ -5,7 +5,7 @@ import type { Column } from '../interfaces/iColumn';
 import type { ITooltipParams } from '../tooltip/tooltipComponent';
 import type { IAutoCompleteComponentParams } from './iAutoComplete';
 import type { AgGridCommon } from './iCommon';
-import type { FilterInputCallbackParams, IFilterParams } from './iFilter';
+import type { FilterDisplayParams, FilterInputCallbackParams, IFilterParams } from './iFilter';
 
 export type SetFilterModelValue = (string | null)[];
 export interface SetFilterModel extends ProvidedFilterModel {
@@ -77,8 +77,16 @@ export type SetFilterValuesFunc<TData = any, V = string> = (params: SetFilterVal
 export type SetFilterValues<TData = any, V = string> = SetFilterValuesFunc<TData, V> | (V | null)[];
 
 /**
+ * Parameters provided by the grid to the `init` and `refresh` methods of a `SetFilter`.
+ * Do not use in `colDef.filterParams` - see `ISetFilterParams` instead.
+ */
+export type SetFilterDisplayParams<TData = any, V = string> = ISetFilterParams<TData, V> &
+    FilterDisplayParams<TData, any, SetFilterModel>;
+
+/**
  * Parameters provided by the grid to the `init` method of a `SetFilter`.
  * Do not use in `colDef.filterParams` - see `ISetFilterParams` instead.
+ * @deprecated v37 Use `SetFilterDisplayParams` instead.
  */
 export type SetFilterParams<TData = any, V = string> = ISetFilterParams<TData, V> & IFilterParams<TData>;
 

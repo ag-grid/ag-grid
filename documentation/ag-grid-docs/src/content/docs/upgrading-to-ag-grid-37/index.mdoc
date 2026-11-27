@@ -251,6 +251,19 @@ Apps that use `enableDevValidations({ throwOn: ['warning'] })` with legacy filte
 | `applyModel()`, `getModelFromUi()` on filter instances                                      | `api.setColumnFilterModel`, `api.getColumnFilterModel(column, true)`                                |
 | The `getModel`, `setModel`, `isFilterActive` and `doesFilterPass` methods of `IMultiFilter` | `api.getColumnFilterModel` and `api.setColumnFilterModel`                                           |
 
+The types for the params the grid passes to the provided filters are replaced by display params types, which include `model`, `state` and `onModelChange`:
+
+| Deprecated             | Replacement                   |
+| ---------------------- | ----------------------------- |
+| `ProvidedFilterParams` | `ProvidedFilterDisplayParams` |
+| `SimpleFilterParams`   | `SimpleFilterDisplayParams`   |
+| `TextFilterParams`     | `TextFilterDisplayParams`     |
+| `NumberFilterParams`   | `NumberFilterDisplayParams`   |
+| `BigIntFilterParams`   | `BigIntFilterDisplayParams`   |
+| `DateFilterParams`     | `DateFilterDisplayParams`     |
+| `SetFilterParams`      | `SetFilterDisplayParams`      |
+| `MultiFilterParams`    | `MultiFilterDisplayParams`    |
+
 {% if isFramework("react") %}
 
 | Deprecated                  | Replacement                        |
