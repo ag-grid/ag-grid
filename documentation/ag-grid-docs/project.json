@@ -64,6 +64,9 @@
       }
     },
     "dev": {
+      "continuous": true,
+      "readyWhen": { "port": "{env.PORT ?? 4610}" },
+      "dependsOn": [{ "projects": "all", "target": "dev:prepare" }],
       "command": "ASTRO_DEV_BACKGROUND=${ASTRO_DEV_BACKGROUND-0} astro dev --port=${PORT} --host",
       "cache": false,
       "options": {

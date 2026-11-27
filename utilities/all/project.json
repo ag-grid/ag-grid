@@ -145,7 +145,13 @@
       "command": "node scripts/buildTime.mjs start"
     },
     "dev": {
-      "executor": "nx:run-commands",
+      "continuous": true,
+      "dependsOn": ["dev:prepare", { "projects": "ag-grid-docs", "target": "dev" }],
+      "cache": false,
+      "command": "NX_DAEMON=true node external/ag-shared/scripts/watch/watch.js grid"
+    },
+    "dev:prepare": {
+      "executor": "nx:noop",
       "dependsOn": [
         "startElapsedBuildTime",
         "^build:types",
@@ -161,12 +167,7 @@
       ],
       "inputs": [],
       "outputs": [],
-      "cache": false,
-      "parallelism": false,
-      "options": {
-        "parallel": true,
-        "commands": ["node external/ag-shared/scripts/watch/watch.js grid", "nx run ag-grid-docs:dev"]
-      }
+      "cache": false
     },
     "dev:quick": {
       "executor": "nx:run-commands",
@@ -179,7 +180,10 @@
       "parallelism": false,
       "options": {
         "parallel": true,
-        "commands": ["node external/ag-shared/scripts/watch/watch.js grid", "nx run ag-grid-docs:dev"]
+        "commands": [
+          "NX_DAEMON=true node external/ag-shared/scripts/watch/watch.js grid",
+          "nx run ag-grid-docs:dev --exclude-task-dependencies"
+        ]
       }
     },
     "format-write": {
