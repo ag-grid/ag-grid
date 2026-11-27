@@ -166,15 +166,14 @@ async function measure(page, scenario, errors) {
             await page.waitForTimeout(1000);
             result.action = { ...(await page.evaluate(() => window.__bench.checkSelection())), resume };
             // The feed keeps running, so the re-created range is checked again a second later.
-            const restored = await page.evaluate(() => window.__bench.restoreRange());
-            const atOnce = await page.evaluate(() => window.__bench.checkSelection());
+            // Checked in the same task as the re-creation, so no transaction can land in between.
+            const restored = await page.evaluate(() => ({
+                ...window.__bench.restoreRange(),
+                atOnce: window.__bench.checkSelection().rangeStillCoversSameRows,
+            }));
             await page.waitForTimeout(1000);
             const after = await page.evaluate(() => window.__bench.checkSelection());
-            result.action.restored = {
-                ms: restored.ms,
-                atOnce: atOnce.rangeStillCoversSameRows,
-                oneSecondLater: after.rangeStillCoversSameRows,
-            };
+            result.action.restored = { ...restored, oneSecondLater: after.rangeStillCoversSameRows };
         } else {
             await page.evaluate(() => window.__bench.reset());
             await page.waitForTimeout(scenario.measureS ? scenario.measureS * 1000 : measureMs);
