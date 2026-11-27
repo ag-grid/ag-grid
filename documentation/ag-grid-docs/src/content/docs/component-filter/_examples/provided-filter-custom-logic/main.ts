@@ -23,7 +23,8 @@ function getAgeBand(age: number): string {
 }
 
 function doesAgeBandPass({ model, node, handlerParams }: DoesFilterPassParams<IOlympicData, unknown, SetFilterModel>) {
-    return model.values.includes(getAgeBand(handlerParams.getValue(node)));
+    const age = handlerParams.getValue(node);
+    return age != null && model.values.includes(getAgeBand(age));
 }
 
 let gridApi: GridApi<IOlympicData>;
