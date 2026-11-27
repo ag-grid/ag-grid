@@ -115,6 +115,7 @@ const valueEditors: Record<ParamType, FC<ValueEditorProps<any>>> = {
     fontWeight: FontWeightValueEditor,
     duration: LengthValueEditor,
     scrollbarWidth: ScrollbarWidthValueEditor,
+    backdropFilter: CssValueEditor,
 };
 
 const labelControls: Partial<Record<ParamType, FC<ValueEditorProps<any>>>> = {

@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import { Info } from 'lucide-react';
 
+import { CssValueEditor } from './CssValueEditor';
 import type { ValueEditorProps } from './ValueEditorProps';
 
 let imageValuesDocsUrl = '#';
@@ -13,7 +14,20 @@ export const setImageValuesDocsUrl = (url: string) => {
     imageValuesDocsUrl = url;
 };
 
-export const ImageValueEditor = (_: ValueEditorProps<unknown>) => {
+let cssTextImageParams = new Set<string>();
+
+/**
+ * Hosts name the image params that hold CSS images, such as a gradient or a `url()`, so they are edited as
+ * CSS text. Other image params are typically embedded SVG icons, which can't be edited here.
+ */
+export const setCssTextImageParams = (params: Iterable<string>) => {
+    cssTextImageParams = new Set(params);
+};
+
+export const ImageValueEditor = (props: ValueEditorProps<unknown>) => {
+    if (cssTextImageParams.has(props.param.property)) {
+        return <CssValueEditor {...props} />;
+    }
     return (
         <NotSupported>
             <InfoIcon data-lucide="align-center" width={14} /> Image values can't be edited in the theme builder, export
