@@ -1,7 +1,7 @@
 import { findByRole, fireEvent, getByText } from '@testing-library/dom';
 import { TestGridsManager } from 'ag-test-utils';
 
-import type { GridApi, GridOptions } from 'ag-grid-community';
+import type { Column, GridApi, GridOptions } from 'ag-grid-community';
 import { LocaleModule, getGridElement } from 'ag-grid-community';
 import { ColumnsToolPanelModule, PivotModule, RowGroupingModule, RowGroupingPanelModule } from 'ag-grid-enterprise';
 
@@ -82,6 +82,25 @@ export const pill = (api: GridApi, zone: Zone, horizontal = false, name = 'B') =
     getByText(panel(api, zone, horizontal), zone === 'aggregation' ? `sum(${name})` : name).closest<HTMLElement>(
         '.ag-column-drop-cell'
     )!;
+
+/** The part of a drop zone panel that tests call directly. */
+interface DropZonePanel {
+    openChipMenu(column: Column | null): boolean;
+}
+const TOOL_PANEL_DROP_ZONE_FIELDS: Record<Zone, string> = {
+    rowGroup: 'rowGroupDropZonePanel',
+    pivot: 'pivotDropZonePanel',
+    aggregation: 'valuesDropZonePanel',
+};
+/**
+ * The columns tool panel's drop zone panel for `zone`. No grid API opens a chip menu, so tests of
+ * `openChipMenu` reach the panel here, the one place that names the tool panel's private fields.
+ */
+export const toolPanelDropZone = (api: GridApi, zone: Zone) =>
+    (api.getToolPanelInstance('columns') as unknown as Record<string, DropZonePanel>)[
+        TOOL_PANEL_DROP_ZONE_FIELDS[zone]
+    ];
+
 export async function open(api: GridApi, zone: Zone, horizontal = false, name = 'B') {
     const item = pill(api, zone, horizontal, name);
     item.focus();

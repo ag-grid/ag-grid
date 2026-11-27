@@ -14,7 +14,7 @@ import {
 } from 'ag-grid-enterprise';
 
 import type { Zone } from './dropZoneMoveMenuHarness';
-import { menuEntries, open, pill, setupDropZoneMoveMenuSuite } from './dropZoneMoveMenuHarness';
+import { menuEntries, open, pill, setupDropZoneMoveMenuSuite, toolPanelDropZone } from './dropZoneMoveMenuHarness';
 
 const queryMenu = (api: Parameters<typeof getGridElement>[0]) =>
     queryByRole(getGridElement(api) as HTMLElement, 'menu');
@@ -247,11 +247,10 @@ describe('drop zone chip menu callback, modules and refresh', () => {
 
     test('openChipMenu opens the menu of a chip in the panel', async () => {
         const api = await create('rowGroup');
-        const toolPanel = api.getToolPanelInstance('columns') as any;
-        expect(toolPanel.valuesDropZonePanel.openChipMenu(api.getColumn('b'))).toBe(false);
+        expect(toolPanelDropZone(api, 'aggregation').openChipMenu(api.getColumn('b'))).toBe(false);
         expect(queryMenu(api)).toBeNull();
 
-        expect(toolPanel.rowGroupDropZonePanel.openChipMenu(api.getColumn('b'))).toBe(true);
+        expect(toolPanelDropZone(api, 'rowGroup').openChipMenu(api.getColumn('b'))).toBe(true);
         await userEvent.click(getByRole(queryMenu(api)!, 'menuitem', { name: 'Sort Descending' }));
         expect(api.getColumnState().find(({ colId }) => colId === 'b')!.sort).toBe('desc');
     });
