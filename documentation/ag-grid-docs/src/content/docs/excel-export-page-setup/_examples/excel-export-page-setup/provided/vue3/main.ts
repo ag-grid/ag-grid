@@ -11,8 +11,6 @@ import {
 import { ColumnMenuModule, ContextMenuModule, ExcelExportModule } from 'ag-grid-enterprise';
 import { AgGridVue } from 'ag-grid-vue3';
 
-import './styles.css';
-
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
     enableDevValidations();
@@ -95,16 +93,13 @@ const VueExample = defineComponent({
                         <input type="submit" class="primary" value="Export to Excel">
                     </div>
                 </form>
-                <div class="grid-wrapper">
-                    <ag-grid-vue
-                
-                style="width: 100%; height: 100%;"
-                :columnDefs="columnDefs"
-                @grid-ready="onGridReady"
-                :defaultColDef="defaultColDef"
-                :popupParent="popupParent"
-                :rowData="rowData"></ag-grid-vue>
-                </div>
+                <ag-grid-vue
+                    style="width: 100%; height: 100%;"
+                    :columnDefs="columnDefs"
+                    @grid-ready="onGridReady"
+                    :defaultColDef="defaultColDef"
+                    :popupParent="popupParent"
+                    :rowData="rowData"></ag-grid-vue>
             </div>
         </div>
     `,

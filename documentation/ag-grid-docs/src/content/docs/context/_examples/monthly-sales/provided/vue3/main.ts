@@ -46,7 +46,7 @@ const VueExample = defineComponent({
             <div class="example-wrapper">
                 <div class="example-controls">
                     <div class="controls-row">
-                        <input type="text" id="filter-text-box" style="width: 100px;" v-on:input="onQuickFilterChanged()" placeholder="Filter...">
+                        <input type="text" id="filter-text-box" v-on:input="onQuickFilterChanged()" placeholder="Filter...">
                         <span class="gap-left">Period:</span>
                         <button v-on:click="onChangeMonth(-1)"><i class="fa fa-chevron-left"></i></button>
                         <button v-on:click="onChangeMonth(1)"><i class="fa fa-chevron-right"></i></button>

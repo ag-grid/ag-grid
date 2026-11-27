@@ -93,7 +93,8 @@
 }
 
 /* Zero specificity, so an example that sizes its own element by class or tag keeps that size */
-:where(.example-wrapper:not(.example-wrapper--row)) > :where(:not(.example-controls, .example-header)) {
+:where(.example-wrapper:not(.example-wrapper--row, .example-wrapper--auto-height))
+    > :where(:not(.example-controls, .example-header)) {
     flex: 1 1 0;
     min-height: 0;
 }
@@ -102,6 +103,12 @@
    skips its children, so the example's own `flex` values govern them. */
 .example-wrapper--row {
     flex-direction: row;
+}
+
+/* For a grid that sets its own height, such as with auto-height or print layout. The wrapper takes
+   its content's height and the grow rule above skips its children, so the controls keep their gap. */
+.example-wrapper--auto-height {
+    height: auto;
 }
 
 /* Hide codesandbox highlighter */
@@ -178,6 +185,17 @@ body > #highlighter {
 .example-controls textarea {
     height: auto;
     padding: 7px 14px;
+}
+
+/* A browser sizes a number input for about twenty characters. This fits four, such as 0.75, beside the spinner. */
+.example-controls input[type='number'] {
+    width: 80px;
+}
+
+/* A browser sizes a text input from its font, so its default width differs between browsers.
+   Zero-specificity `:where()` lets an example's own class still size its input. */
+.example-controls :where(input[type='text']) {
+    width: 200px;
 }
 
 .example-controls pre,
@@ -485,8 +503,9 @@ body > #highlighter {
     min-width: 0;
 }
 
-/* Each switch's label text would otherwise sit as close to the next control as to its own switch */
-.controls-row > label:has(> input[role='switch']):not(:last-child) {
+/* Each checkbox's or switch's label text would otherwise sit as close to the next control as to its
+   own box. A `gap-left` neighbour already brings its own wider gap. */
+.controls-row > label:has(> input[type='checkbox']):not(:last-child, :has(+ .gap-left)) {
     margin-right: calc(var(--row-gap) * 2);
 }
 
@@ -515,6 +534,10 @@ body > #highlighter {
     margin-right: calc(var(--row-gap) * 6);
 }
 
-.controls-row .gap-left {
-    margin-left: calc(var(--row-gap) * 6);
+/* The gap goes on the end of the control before, so a row that wraps here starts its new line flush.
+   A control-group fieldset is `display: contents` and takes no margin, so the gap goes on the box beside it. */
+.controls-row > :has(+ .gap-left),
+.controls-row > :has(+ .control-group > .gap-left:first-child),
+.controls-row > .control-group:has(+ .gap-left) > :last-child {
+    margin-right: calc(var(--row-gap) * 6);
 }

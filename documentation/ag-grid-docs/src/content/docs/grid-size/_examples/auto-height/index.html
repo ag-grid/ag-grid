@@ -1,19 +1,20 @@
-<div class="example-controls">
-    <div class="controls-row">
-        <button onclick="updateRowData(0)">0 Rows</button>
-        <button onclick="updateRowData(5)">5 Rows</button>
-        <button onclick="updateRowData(50)">50 Rows</button>
-        <button class="gap-left" onclick="setDomLayoutAutoHeight()">Auto Height</button>
-        <button onclick="setDomLayoutNormal()">Fixed Height</button>
-        <label class="gap-left" for="floating-rows"
-            ><input name="pinned-rows" type="checkbox" id="floating-rows" onclick="toggleFloatingRows()" />Pinned
-            Rows</label
-        >
-        <span class="gap-left">Row Count = <span id="currentRowCount"></span></span>
+<div class="example-wrapper example-wrapper--auto-height">
+    <div class="example-controls">
+        <div class="controls-row">
+            <button onclick="updateRowData(0)">0 Rows</button>
+            <button onclick="updateRowData(5)">5 Rows</button>
+            <button onclick="updateRowData(50)">50 Rows</button>
+            <button class="gap-left" onclick="setDomLayoutAutoHeight()">Auto Height</button>
+            <button onclick="setDomLayoutNormal()">Fixed Height</button>
+            <label class="gap-left" for="floating-rows"
+                ><input name="pinned-rows" type="checkbox" id="floating-rows" onclick="toggleFloatingRows()" />Pinned
+                Rows</label
+            >
+            <span class="gap-left">Row Count = <span id="currentRowCount"></span></span>
+        </div>
     </div>
+    <div id="myGrid"></div>
 </div>
-
-<div id="myGrid"></div>
 
 <div style="border: 10px solid #eee; padding: 10px; margin-top: 20px">
     <p style="text-align: center">

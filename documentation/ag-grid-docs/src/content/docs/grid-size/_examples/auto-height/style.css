@@ -3,10 +3,6 @@ html[data-color-scheme='dark'] body {
     color-scheme: dark;
 }
 
-.example-controls {
-    margin-bottom: var(--controls-gap);
-}
-
 .ag-grid-pinned-top-rows-container .ag-row {
     background-color: #2244cc44;
 }

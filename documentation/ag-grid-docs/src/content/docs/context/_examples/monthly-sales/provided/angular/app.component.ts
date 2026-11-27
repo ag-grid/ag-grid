@@ -48,13 +48,7 @@ ModuleRegistry.registerModules([
     template: `<div class="example-wrapper">
         <div class="example-controls">
             <div class="controls-row">
-                <input
-                    type="text"
-                    id="filter-text-box"
-                    style="width: 100px;"
-                    (input)="onQuickFilterChanged()"
-                    placeholder="Filter..."
-                />
+                <input type="text" id="filter-text-box" (input)="onQuickFilterChanged()" placeholder="Filter..." />
 
                 <span class="gap-left">Period:</span>
                 <button (click)="onChangeMonth(-1)">

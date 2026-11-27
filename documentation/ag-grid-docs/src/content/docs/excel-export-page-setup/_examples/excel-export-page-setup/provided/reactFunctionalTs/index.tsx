@@ -12,7 +12,6 @@ import { ColumnMenuModule, ContextMenuModule, ExcelExportModule } from 'ag-grid-
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import type { IOlympicData } from './interfaces';
-import './styles.css';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
@@ -184,16 +183,14 @@ const GridExample = () => {
                             <input type="submit" className="primary" value="Export to Excel" />
                         </div>
                     </form>
-                    <div className="grid-wrapper">
-                        <div style={gridStyle}>
-                            <AgGridReact<IOlympicData>
-                                rowData={rowData}
-                                columnDefs={columnDefs}
-                                defaultColDef={defaultColDef}
-                                popupParent={popupParent}
-                                onGridReady={onGridReady}
-                            />
-                        </div>
+                    <div style={gridStyle}>
+                        <AgGridReact<IOlympicData>
+                            rowData={rowData}
+                            columnDefs={columnDefs}
+                            defaultColDef={defaultColDef}
+                            popupParent={popupParent}
+                            onGridReady={onGridReady}
+                        />
                     </div>
                 </div>
             </div>

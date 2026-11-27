@@ -3,10 +3,6 @@ html[data-color-scheme='dark'] body {
     color-scheme: dark;
 }
 
-.example-controls {
-    margin-bottom: var(--controls-gap);
-}
-
 .under-grid {
     border: 10px solid #eee;
     padding: 10px;
