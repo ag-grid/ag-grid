@@ -96,6 +96,7 @@ This does not reproduce the exact previous appearance. Focus and built-in contro
 ### Server-Side Row Model
 
 - When rows are grouped, the provided full width loading row is now indented to the level of the rows being loaded, so its spinner lines up with the expand and collapse icons of the rows around it. To display loading rows without indentation, add `.ag-row-loading .ag-loading { padding-inline-start: var(--ag-cell-horizontal-padding); }` to your CSS. See [Full Width Loading Row](./server-side-model-loading-rows/#full-width-loading-row).
+- A grand total row with `grandTotalRow: 'top'` now sticks to the top of the viewport when scrolling, as it does with the Client-Side Row Model. To let it scroll with the rows as before, set `suppressStickyTotalRow: 'grand'`. See [Suppress Sticky Rows](./aggregation-total-rows/#suppress-sticky-rows).
 
 {% if isFramework("react") %}
 
