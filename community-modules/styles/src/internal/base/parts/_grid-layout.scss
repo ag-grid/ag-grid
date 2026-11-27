@@ -452,13 +452,10 @@
     }
 
     .ag-loading {
-        @include ag.unthemed-rtl(
-            (
-                padding-left: calc(
-                        var(--ag-cell-horizontal-padding) + var(--ag-internal-loading-row-offset, 0px) +
-                            var(--ag-internal-loading-row-level, 0) * var(--ag-row-group-indent-size)
-                    ),
-            )
+        // logical property, not .ag-ltr/.ag-rtl rules: stays 0,1,0 so the documented opt-out wins wherever the grid CSS loads
+        padding-inline-start: calc(
+            var(--ag-cell-horizontal-padding) + var(--ag-internal-loading-row-offset, 0px) +
+                var(--ag-internal-loading-row-level, 0) * var(--ag-row-group-indent-size)
         );
         display: flex;
         height: 100%;
