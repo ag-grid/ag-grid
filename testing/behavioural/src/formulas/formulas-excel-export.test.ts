@@ -62,7 +62,7 @@ describe('ag-grid formulas excel export', () => {
         `);
         await asyncSetTimeout(rowNumberRefreshBufferMs);
 
-        api.exportDataAsExcel({ fileName: 'test.xlsx' });
+        void api.exportDataAsExcel({ fileName: 'test.xlsx' });
 
         const sheet = await getExcelSheet(await objectUrls.pullBlob());
 
@@ -145,7 +145,7 @@ describe('ag-grid formulas excel export', () => {
         );
         await asyncSetTimeout(rowNumberRefreshBufferMs);
 
-        api.exportDataAsExcel({ fileName: 'test.xlsx' });
+        void api.exportDataAsExcel({ fileName: 'test.xlsx' });
 
         const sheet = await getExcelSheet(await objectUrls.pullBlob());
 
@@ -230,7 +230,7 @@ describe('ag-grid formulas excel export', () => {
         );
         await asyncSetTimeout(rowNumberRefreshBufferMs);
 
-        api.exportDataAsExcel({ fileName: 'test.xlsx' });
+        void api.exportDataAsExcel({ fileName: 'test.xlsx' });
 
         const sheet = await getExcelSheet(await objectUrls.pullBlob());
 
@@ -287,7 +287,7 @@ describe('ag-grid formulas excel export', () => {
             └── LEAF id:row-2 text:"=Not a formula"
         `);
 
-        api.exportDataAsExcel({ fileName: 'test.xlsx' });
+        void api.exportDataAsExcel({ fileName: 'test.xlsx' });
 
         const sheet = await getExcelSheet(await objectUrls.pullBlob());
 
@@ -343,7 +343,7 @@ describe('ag-grid formulas excel export', () => {
         );
         await asyncSetTimeout(rowNumberRefreshBufferMs);
 
-        api.exportDataAsExcel({ fileName: 'test.xlsx' });
+        void api.exportDataAsExcel({ fileName: 'test.xlsx' });
 
         const sheet = await getExcelSheet(await objectUrls.pullBlob());
 
@@ -406,7 +406,7 @@ describe('ag-grid formulas excel export', () => {
             └── LEAF id:row-3 price:"£-42.50"
         `);
 
-        api.exportDataAsExcel({ fileName: 'test.xlsx' });
+        void api.exportDataAsExcel({ fileName: 'test.xlsx' });
 
         const sheet = await getExcelSheet(await objectUrls.pullBlob());
 
@@ -484,7 +484,7 @@ describe('ag-grid formulas excel export', () => {
             `);
         await asyncSetTimeout(rowNumberRefreshBufferMs);
 
-        api.exportDataAsExcel({ fileName: 'test.xlsx' });
+        void api.exportDataAsExcel({ fileName: 'test.xlsx' });
 
         const sheet = await getExcelSheet(await objectUrls.pullBlob());
 

@@ -1,3 +1,4 @@
+import type { ExportEventSource } from '../events';
 import type { ExportFileNameGetter, ExportParams } from './exportParams';
 import type { Column, ColumnGroup } from './iColumn';
 import type { AgGridCommon } from './iCommon';
@@ -597,5 +598,5 @@ export interface PdfExportParams extends ExportParams<PdfCustomContent>, PdfFile
 
 export interface IPdfCreator {
     getDataAsPdf(params?: PdfExportParams): Blob | undefined;
-    exportDataAsPdf(params?: PdfExportParams): void;
+    exportDataAsPdf(params?: PdfExportParams, source?: ExportEventSource): Promise<void>;
 }

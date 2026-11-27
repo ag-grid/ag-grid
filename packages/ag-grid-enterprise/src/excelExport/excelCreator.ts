@@ -9,6 +9,7 @@ import type {
     ExcelFactoryMode,
     ExcelRow,
     ExcelStyle,
+    ExportEventSource,
     IExcelCreator,
     NamedBean,
 } from 'ag-grid-community';
@@ -381,13 +382,13 @@ export class ExcelCreator
         return { ...baseParams, ...params };
     }
 
-    protected export(userParams?: ExcelExportParams): void {
+    protected export(userParams: ExcelExportParams | undefined, source: ExportEventSource): Promise<void> {
         if (this.isExportSuppressed()) {
             this.warn(160);
-            return;
+            return Promise.resolve();
         }
 
-        this.runExport(() => {
+        return this.runExport('excel', source, () => {
             const mergedParams = this.getMergedParams(userParams);
             const data = this.getData(mergedParams);
 
@@ -402,16 +403,19 @@ export class ExcelCreator
                 suppressPrependAuthorToNotes,
             };
 
-            void this.packageCompressedFile(exportParams).then((packageFile) => {
-                if (packageFile) {
-                    _downloadFile(this.resolveFileName(mergedParams), packageFile);
+            return this.packageCompressedFile(exportParams).then((packageFile) => {
+                if (!packageFile) {
+                    return undefined;
                 }
+                const fileName = this.resolveFileName(mergedParams);
+                _downloadFile(fileName, packageFile);
+                return fileName;
             });
         });
     }
 
-    public exportDataAsExcel(params?: ExcelExportParams): void {
-        this.export(params);
+    public exportDataAsExcel(params?: ExcelExportParams, source: ExportEventSource = 'api'): Promise<void> {
+        return this.export(params, source);
     }
 
     public getDataAsExcel(params?: ExcelExportParams): Blob | string | undefined {
@@ -449,15 +453,20 @@ export class ExcelCreator
         return getMultipleSheetsAsExcel(params, this.workbook, this.beans.context.getId());
     }
 
-    public exportMultipleSheetsAsExcel(params: ExcelExportMultipleSheetParams): void {
-        void getMultipleSheetsAsExcelCompressed(params, this.workbook, this.beans.context.getId()).then((contents) => {
-            const { fileName = 'export.xlsx' } = params;
-            if (contents) {
+    public exportMultipleSheetsAsExcel(params: ExcelExportMultipleSheetParams): Promise<void> {
+        const exportFile = this.trackExport('excel', 'api', () =>
+            getMultipleSheetsAsExcelCompressed(params, this.workbook, this.beans.context.getId()).then((contents) => {
+                if (!contents) {
+                    return undefined;
+                }
+                const { fileName = 'export.xlsx' } = params;
                 const downloadFileName = typeof fileName === 'function' ? fileName() : fileName;
 
                 _downloadFile(downloadFileName, contents);
-            }
-        });
+                return downloadFileName;
+            })
+        );
+        return exportFile();
     }
 
     public getDefaultFileExtension(): 'xlsx' {

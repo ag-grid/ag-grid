@@ -86,7 +86,7 @@ describe('showValuesAs exports the transformed value', () => {
             └── LEAF id:2 country:"B" amount:"75.00%"
         `);
 
-        api.exportDataAsExcel({ fileName: 'sva.xlsx' });
+        void api.exportDataAsExcel({ fileName: 'sva.xlsx' });
         const sheet = await getExcelSheet(await objectUrls.pullBlob());
 
         // Row 1 is the header; the amount column (B) holds the transformed percentage as text — the displayed
@@ -113,7 +113,7 @@ describe('showValuesAs exports the transformed value', () => {
         // CSV exports the displayed #N/A; Excel must match (not fall through to the raw numeric value).
         expect(api.getDataAsCsv()).toContain('#N/A');
 
-        api.exportDataAsExcel({ fileName: 'sva.xlsx' });
+        void api.exportDataAsExcel({ fileName: 'sva.xlsx' });
         const sheet = await getExcelSheet(await objectUrls.pullBlob());
         expect(sheet['B2']?.t).toBe('s');
         expect(sheet['B2']?.v).toBe('#N/A');
@@ -135,7 +135,7 @@ describe('showValuesAs exports the transformed value', () => {
 
         // A non-'transformed' base (the committed value) with transformValues still applies the transform and,
         // crucially, writes it as text ('s') — not the raw fraction with a numeric type.
-        api.exportDataAsExcel({ fileName: 'sva.xlsx', valueFrom: 'batch', transformValues: true });
+        void api.exportDataAsExcel({ fileName: 'sva.xlsx', valueFrom: 'batch', transformValues: true });
         const sheet = await getExcelSheet(await objectUrls.pullBlob());
 
         expect(sheet['B2']?.t).toBe('s');
@@ -157,7 +157,7 @@ describe('showValuesAs exports the transformed value', () => {
             ],
         });
 
-        api.exportDataAsExcel({ fileName: 'sva.xlsx' });
+        void api.exportDataAsExcel({ fileName: 'sva.xlsx' });
         const sheet = await getExcelSheet(await objectUrls.pullBlob());
 
         // The style sets a dataType, but the cell still holds the displayed percentage text — not the raw fraction

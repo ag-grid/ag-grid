@@ -65,6 +65,8 @@ import type {
     DragStartedEvent,
     DragStoppedEvent,
     ExpandOrCollapseAllEvent,
+    ExportEndEvent,
+    ExportStartEvent,
     FillEndEvent,
     FillStartEvent,
     FilterChangedEvent,
@@ -2687,6 +2689,16 @@ export interface GridOptions<TData = any> {
      * Paste operation has ended.
      */
     onPasteEnd?(event: PasteEndEvent<TData>): void;
+
+    // *** Export *** //
+    /**
+     * A CSV, Excel or PDF export has started. Not fired when the export is suppressed.
+     */
+    onExportStart?(event: ExportStartEvent<TData>): void;
+    /**
+     * A CSV, Excel or PDF export has ended, successfully or not.
+     */
+    onExportEnd?(event: ExportEndEvent<TData>): void;
 
     // *** Calculated Columns *** //
     /**

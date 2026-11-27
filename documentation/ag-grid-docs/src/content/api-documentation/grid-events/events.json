@@ -67,6 +67,27 @@
             }
         }
     },
+    "export": {
+        "meta": {
+            "displayName": "Export",
+            "page": {
+                "name": "CSV Export",
+                "url": "./csv-export/"
+            }
+        },
+        "exportStart": {
+            "more": {
+                "name": "Export Events",
+                "url": "./csv-export/#export-events"
+            }
+        },
+        "exportEnd": {
+            "more": {
+                "name": "Export Events",
+                "url": "./csv-export/#export-events"
+            }
+        }
+    },
     "calculatedColumns": {
         "meta": {
             "displayName": "Calculated Columns",

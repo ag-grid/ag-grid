@@ -42,7 +42,7 @@ describe.skip('Excel prependContent cell data type', () => {
             columnDefs: [{ field: 'a' }],
             rowData: [{ a: 'x' }],
         });
-        api.exportDataAsExcel({
+        void api.exportDataAsExcel({
             prependContent: [{ cells: [{ data: { type: 'String', value: '123' } }] }],
         });
         const zip = XLSX.CFB.read(new Uint8Array(await (await objectUrls.pullBlob()).arrayBuffer()), { type: 'array' });

@@ -19,6 +19,8 @@ api.exportDataAsPdf();
 
 Set `suppressPdfExport=true` to disable both `exportDataAsPdf()` and `getDataAsPdf()`.
 
+`exportDataAsPdf()` returns a Promise, see [Awaiting an Export](./csv-export/#awaiting-an-export). The grid also fires [Export Events](./csv-export/#export-events) when an export starts and ends.
+
 ## Default PDF Export
 
 The export uses the current column order and visibility, together with the filtered, sorted, and grouped row data. Exported values are produced independently of the rendered grid cells, using Value Getters and, by default, [Value Formatters](./value-formatters/#formatting-for-export).

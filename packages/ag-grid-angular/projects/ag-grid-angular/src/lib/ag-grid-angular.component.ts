@@ -99,6 +99,8 @@ import type {
     ExcelExportParams,
     ExcelStyle,
     ExpandOrCollapseAllEvent,
+    ExportEndEvent,
+    ExportStartEvent,
     FillEndEvent,
     FillOperation,
     FillStartEvent,
@@ -2375,6 +2377,12 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Paste operation has ended.
      */
     @Output() public pasteEnd: EventEmitter<PasteEndEvent<TData>> = new EventEmitter<PasteEndEvent<TData>>();
+    /** A CSV, Excel or PDF export has started. Not fired when the export is suppressed.
+     */
+    @Output() public exportStart: EventEmitter<ExportStartEvent<TData>> = new EventEmitter<ExportStartEvent<TData>>();
+    /** A CSV, Excel or PDF export has ended, successfully or not.
+     */
+    @Output() public exportEnd: EventEmitter<ExportEndEvent<TData>> = new EventEmitter<ExportEndEvent<TData>>();
     /** A calculated column has been created.
      */
     @Output() public calculatedColumnCreated: EventEmitter<CalculatedColumnCreatedEvent<TData>> = new EventEmitter<

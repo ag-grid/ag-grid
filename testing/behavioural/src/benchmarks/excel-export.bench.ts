@@ -94,7 +94,7 @@ suite('Excel export (demo data and styles)', () => {
                     ? async function exportCompressedWorkbook() {
                           output = await new Promise<Blob>((resolve) => {
                               resolveDownload = resolve;
-                              api.exportDataAsExcel(params);
+                              void api.exportDataAsExcel(params);
                           });
                       }
                     : function exportWorkbook() {

@@ -20,7 +20,7 @@ describe('Excel export', () => {
     });
 
     const exportSheet = async (api: GridApi, params?: ExcelExportParams) => {
-        api.exportDataAsExcel(params);
+        void api.exportDataAsExcel(params);
         const workbook = XLSX.read(new Uint8Array(await (await objectUrls.pullBlob()).arrayBuffer()), {
             type: 'array',
         });
@@ -32,7 +32,7 @@ describe('Excel export', () => {
     };
 
     const exportFrozenColumnCount = async (api: GridApi, params: ExcelExportParams) => {
-        api.exportDataAsExcel(params);
+        void api.exportDataAsExcel(params);
         const zip = XLSX.CFB.read(new Uint8Array(await (await objectUrls.pullBlob()).arrayBuffer()), { type: 'array' });
         const sheetXml = new TextDecoder().decode(XLSX.CFB.find(zip, '/xl/worksheets/sheet1.xml').content);
         return Number(/<pane\b[^>]*xSplit="(\d+)"/.exec(sheetXml)?.[1] ?? 0);
@@ -57,7 +57,7 @@ describe('Excel export', () => {
         };
         let blob: Blob | string | undefined;
         if (compressed) {
-            api.exportDataAsExcel(params);
+            void api.exportDataAsExcel(params);
             blob = await objectUrls.pullBlob();
         } else {
             blob = api.getDataAsExcel(params);
@@ -94,7 +94,7 @@ describe('Excel export', () => {
             ],
         });
 
-        api.exportDataAsExcel();
+        void api.exportDataAsExcel();
         const zip = XLSX.CFB.read(new Uint8Array(await (await objectUrls.pullBlob()).arrayBuffer()), { type: 'array' });
         const stylesXml = new TextDecoder().decode(XLSX.CFB.find(zip, '/xl/styles.xml').content);
         const formatCodes = [...stylesXml.matchAll(/<numFmt\b[^>]*formatCode="([^"]*)"/g)].map((match) => match[1]);
@@ -195,5 +195,28 @@ describe('Excel export', () => {
                 ['a0', undefined, 'c0', 'd0'],
             ],
         });
+    });
+
+    test('awaiting exportDataAsExcel lets the grid be destroyed without losing row data', async () => {
+        const api = gridsManager.createGrid('excel-await-destroy', {
+            columnDefs: [{ field: 'athlete' }, { field: 'age' }],
+            rowData: [
+                { athlete: 'John', age: 25 },
+                { athlete: 'Jane', age: 31 },
+            ],
+        });
+
+        await api.exportDataAsExcel();
+        api.destroy();
+
+        const workbook = XLSX.read(new Uint8Array(await (await objectUrls.pullBlob()).arrayBuffer()), {
+            type: 'array',
+        });
+        const rows = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], { header: 1 });
+        expect(rows).toEqual([
+            ['Athlete', 'Age'],
+            ['John', 25],
+            ['Jane', 31],
+        ]);
     });
 });

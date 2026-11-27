@@ -1005,6 +1005,8 @@ export const AG_GRID_ERRORS = {
             `\`doesFilterPass()\` on the handler from \`api.getColumnFilterHandler('${params.colId}')\``,
             params
         ),
+    359: () =>
+        'The grid was destroyed before the export ran, so no file was produced. Await the export call before destroying the grid.' as const,
     // When adding a code above this line, raise `MAX_ERROR_ID` below to match.
 };
 
@@ -1020,7 +1022,7 @@ export type ErrorId = keyof ErrorMap;
  *
  * @knipIgnore Read by the docs site's error-page route
  */
-export const MAX_ERROR_ID = 358;
+export const MAX_ERROR_ID = 359;
 
 type ErrorValue<TId extends ErrorId | null> = TId extends ErrorId ? ErrorMap[TId] : never;
 export type GetErrorParams<TId extends ErrorId> =

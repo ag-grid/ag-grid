@@ -19,6 +19,8 @@ Excel export is also possible via the [Grid API](./grid-api/) using the followin
  api.exportDataAsExcel();
 ```
 
+The method returns a Promise, see [Awaiting an Export](./csv-export/#awaiting-an-export). The grid also fires [Export Events](./csv-export/#export-events) when an export starts and ends.
+
 No special configurations or third party libraries are required for either approach.
 
 ## Default Excel Export

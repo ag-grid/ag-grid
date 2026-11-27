@@ -1,3 +1,4 @@
+import type { ExportEventSource } from '../events';
 import type { Column } from '../interfaces/iColumn';
 import type { ExportFileNameGetter, ExportParams, ProcessCellForExportParams } from './exportParams';
 import type { AgGridCommon } from './iCommon';
@@ -708,8 +709,8 @@ export interface IExcelCreator {
     getSheetDataForExcel(params?: ExcelExportParams): string;
     getMultipleSheetsAsExcel(params: ExcelExportMultipleSheetParams): Blob | undefined;
 
-    exportDataAsExcel(params?: ExcelExportParams): void;
-    exportMultipleSheetsAsExcel(params: ExcelExportMultipleSheetParams): void;
+    exportDataAsExcel(params?: ExcelExportParams, source?: ExportEventSource): Promise<void>;
+    exportMultipleSheetsAsExcel(params: ExcelExportMultipleSheetParams): Promise<void>;
 
     /** private methods */
     setFactoryMode(factoryMode: ExcelFactoryMode): void;

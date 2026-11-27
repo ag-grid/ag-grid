@@ -262,7 +262,7 @@ export class OverlayService extends BeanStub implements NamedBean {
         this.userForcedNoRows = true;
         this.doShowOverlay(NoRowsOverlayDef);
     }
-    public showExportOverlay(heavyOperation: () => void): void {
+    public showExportOverlay(heavyOperation: () => Promise<void>): Promise<void> {
         const gos = this.gos;
         if (
             !this.eWrapper ||
@@ -272,20 +272,18 @@ export class OverlayService extends BeanStub implements NamedBean {
             this.devErrorOverlayActive ||
             (this.userForcedNoRows && this.currentDef === NoRowsOverlayDef)
         ) {
-            heavyOperation();
-            return;
+            return heavyOperation();
         }
 
         const desiredDef = this.getDesiredDefWithOverride(ExportingOverlayDef);
         if (!desiredDef) {
-            heavyOperation();
-            return;
+            return heavyOperation();
         }
 
-        void this.runWithExportOverlay(desiredDef, heavyOperation);
+        return this.runWithExportOverlay(desiredDef, heavyOperation);
     }
 
-    private async runWithExportOverlay(desiredDef: OverlayDef, heavyOperation: () => void): Promise<void> {
+    private async runWithExportOverlay(desiredDef: OverlayDef, heavyOperation: () => Promise<void>): Promise<void> {
         const beans = this.beans;
 
         // Make sure if multiple export calls are run we don't clear until the last one.
@@ -299,10 +297,15 @@ export class OverlayService extends BeanStub implements NamedBean {
         // ensure the overlay has a chance to be painted
         await new Promise<void>((resolve) => setTimeout(() => resolve()));
 
+        if (!this.isAlive()) {
+            // The grid was destroyed while the overlay was being shown, so there is no data left to export.
+            this.exportsInProgress--;
+            throw beans.log.errorToThrow(359);
+        }
+
         const shownAt = Date.now();
-        // start the heavy operation (allow sync or promise)
         try {
-            heavyOperation();
+            await heavyOperation();
         } finally {
             const elapsed = Date.now() - shownAt;
             const remaining = Math.max(0, MIN_EXPORT_OVERLAY_SHOW_TIME - elapsed);

@@ -46,7 +46,7 @@ describe('Excel export header layout', () => {
                 ],
             });
 
-            api.exportDataAsExcel();
+            void api.exportDataAsExcel();
             const data = new Uint8Array(await (await objectUrls.pullBlob()).arrayBuffer());
             const workbook = XLSX.read(data, { type: 'array' });
             const worksheet = workbook.Sheets[workbook.SheetNames[0]];
@@ -64,7 +64,7 @@ describe('Excel export header layout', () => {
                 Array.from(tableXml.querySelectorAll('tableColumn'), (column) => column.getAttribute('name'))
             ).toEqual(rows[1]);
 
-            api.exportDataAsExcel({ exportAsExcelTable: false });
+            void api.exportDataAsExcel({ exportAsExcelTable: false });
             const ordinaryWorkbook = XLSX.read(new Uint8Array(await (await objectUrls.pullBlob()).arrayBuffer()), {
                 type: 'array',
             });
@@ -97,7 +97,7 @@ describe('Excel export header layout', () => {
             rowData: [{ athlete: 'Michael Phelps', country: 'United States', gold: 8 }],
         });
 
-        api.exportDataAsExcel({
+        void api.exportDataAsExcel({
             exportAsExcelTable: true,
             columnKeys: ['athlete', 'gold'],
             prependContent: [{ cells: [{ data: { type: 'String', value: 'Report' } }] }],
@@ -133,7 +133,7 @@ describe('Excel export header layout', () => {
                 ],
                 rowData: [],
             });
-            api.exportDataAsExcel();
+            void api.exportDataAsExcel();
             const workbook = XLSX.read(new Uint8Array(await (await objectUrls.pullBlob()).arrayBuffer()), {
                 type: 'array',
             });
@@ -161,7 +161,7 @@ describe('Excel export header layout', () => {
             ],
             rowData: [],
         });
-        api.exportDataAsExcel();
+        void api.exportDataAsExcel();
         const workbook = XLSX.read(new Uint8Array(await (await objectUrls.pullBlob()).arrayBuffer()), {
             type: 'array',
         });
@@ -194,7 +194,7 @@ describe('Excel export header layout', () => {
                 hidePaddedHeaderRows,
                 rowData: [],
             });
-            api.exportDataAsExcel();
+            void api.exportDataAsExcel();
             const workbook = XLSX.read(new Uint8Array(await (await objectUrls.pullBlob()).arrayBuffer()), {
                 type: 'array',
             });
