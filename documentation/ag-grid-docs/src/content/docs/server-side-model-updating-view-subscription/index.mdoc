@@ -73,7 +73,8 @@ A row's values come from its block, which can have loaded before the row came in
 - A [refresh](./server-side-model-updating-refresh/) without a purge keeps the rows whose IDs are unchanged. A kept row stays subscribed, even when its data changes.
 - A refresh with `purge: true` unsubscribes every row, then subscribes them again as they reload.
 - Rows removed by a refresh or a [transaction](./server-side-model-updating-transactions/) are unsubscribed, and added rows in view are subscribed once loaded.
-- A sort or filter that the server applies reloads the rows, so every row is unsubscribed, then the rows in view are subscribed again as they reload. With `serverSideEnableClientSideSort`, a sort moves rows out of and into the view instead, and only those rows are unsubscribed or subscribed.
+- A sort or filter that the server applies reloads the rows, so they are unsubscribed, then the rows in view are subscribed again as they reload. With row grouping, a sort reloads only the [levels it affects](./server-side-model-sorting/#sorting-all-levels), and so does a filter with [`serverSideOnlyRefreshFilteredGroups`](./server-side-model-grouping/#filtering-with-row-groups). The group rows above them stay subscribed.
+- With `serverSideEnableClientSideSort`, once every row of a level is [loaded](./server-side-model-sorting/#client-side-sorting), a sort of that level moves rows out of and into the view instead of reloading them. Only the rows that move are unsubscribed or subscribed.
 
 ### Late Updates
 
