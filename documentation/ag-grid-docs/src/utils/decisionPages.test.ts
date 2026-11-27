@@ -40,13 +40,22 @@ interface MatrixItem {
     chartsGrid?: MatrixValue;
 }
 
-/** The pricing page's licence features matrix, keyed by docs link, e.g. `./pivoting/`. */
+/** A docs link without its trailing slash, so `./formulas` and `./formulas/` match. */
+const docsLinkKey = (link: string) => link.replace(/\/$/, '');
+
+/** The pricing page's licence features matrix, keyed by docs link, e.g. `./pivoting`. */
 const LICENCE_FEATURES = new Map(
     (gridFeaturesMatrix as Array<{ items: MatrixItem[] }>)
         .flatMap(({ items }) => items.flatMap((item) => item.items ?? [item]))
         .filter((item) => item.label?.link.startsWith('grid:'))
-        .map((item) => [item.label!.link.replace(/^grid:/, ''), item])
+        .map((item) => [docsLinkKey(item.label!.link.replace(/^grid:/, '')), item])
 );
+
+/**
+ * Alternative page rows the licence matrix has no single entry for. The matrix lists server-side data by
+ * operation and links Master Detail to its server-side page, and it does not list pagination or the toolbar.
+ */
+const NOT_IN_LICENCE_MATRIX = new Set(['./row-models/', './master-detail/', './row-pagination/', './toolbar/']);
 const included = (value?: MatrixValue) => (typeof value === 'object' ? value.value : value === true);
 
 describe('comparison page content', () => {
@@ -156,10 +165,12 @@ describe('AG Grid alternative page content', () => {
         });
 
         test('shows each edition as the pricing page licence matrix does', () => {
-            const rows = content.editions.groups.flatMap(({ rows }) => rows).filter(({ docsUrl }) => docsUrl);
+            const rows = content.editions.groups
+                .flatMap(({ rows }) => rows)
+                .filter(({ docsUrl }) => docsUrl && !NOT_IN_LICENCE_MATRIX.has(docsUrl));
 
             for (const { feature, docsUrl, community, enterprise } of rows) {
-                const licence = LICENCE_FEATURES.get(docsUrl!);
+                const licence = LICENCE_FEATURES.get(docsLinkKey(docsUrl!));
                 expect(licence, `${feature}: ${docsUrl} is not in the licence matrix`).toBeDefined();
                 expect(community.status, feature).toBe(included(licence!.community) ? 'yes' : 'no');
                 expect(enterprise.plan === 'Enterprise Bundle', feature).toBe(!included(licence!.enterprise));
