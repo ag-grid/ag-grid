@@ -18,6 +18,9 @@ const ALL_THEMES = [
 // Every theme still gets the cheap structural check.
 const PAINT_CHECKED_THEMES = ['Quartz', 'Quartz Dark'];
 
+// The example uses the deprecated `theme: 'legacy'`, which logs warning #306.
+const LEGACY_THEME_DEPRECATION_WARNING = 'warning #306';
+
 const HIDE_ICON_STYLE_ID = 'ag-18347-hide-toolbar-input-icon';
 
 async function useTheme(page: Page, theme: string) {
@@ -115,13 +118,15 @@ test.agExample(import.meta, () => {
         'quick filter toolbar icon is present in every legacy theme and painted in quartz',
         async ({ page }) => {
             await checkLegacyThemes(page);
-        }
+        },
+        { allowedConsoleMessages: [LEGACY_THEME_DEPRECATION_WARNING] }
     );
 
     test.vanilla(
         'quick filter toolbar icon is present in every legacy theme and painted in quartz',
         async ({ page }) => {
             await checkLegacyThemes(page);
-        }
+        },
+        { allowedConsoleMessages: [LEGACY_THEME_DEPRECATION_WARNING] }
     );
 });
