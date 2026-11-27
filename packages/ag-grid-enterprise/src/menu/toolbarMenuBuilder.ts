@@ -34,7 +34,7 @@ export class ToolbarMenuBuilder extends BeanStub implements NamedBean {
                 undefined,
                 () => anchorElement,
                 'contextMenu',
-                'toolbar'
+                'contextMenu'
             )
         );
 

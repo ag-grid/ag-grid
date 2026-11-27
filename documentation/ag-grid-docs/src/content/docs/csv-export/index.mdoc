@@ -167,7 +167,7 @@ The following events are shared by CSV, Excel and PDF exports, whether the expor
 {% apiDocumentation source="grid-events/events.json" section="export" names=["exportStart","exportEnd"] /%}
 
 - `format` is `'csv'`, `'excel'` or `'pdf'`.
-- `source` is `'api'` for a call to an export API method. For a built-in export menu item it names the menu: `'contextMenu'`, `'columnMenu'`, `'columnToolPanel'` or `'toolbar'`.
+- `source` is `'api'` for a call to an export API method. For a built-in export menu item it names the menu: `'contextMenu'` (also used for toolbar menus), `'columnMenu'` or `'columnToolPanel'`.
 - `exportEnd` has `success: false` if the export failed or produced no file, and `fileName` is set when a file was downloaded.
 - Neither event is fired when the export is suppressed, or by the `getDataAs...` methods, as they do not download a file.
 

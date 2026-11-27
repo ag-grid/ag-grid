@@ -220,7 +220,7 @@ describe('export start and end events', () => {
         await expectMenuExportEvents(events, 'csv', 'columnToolPanel');
     });
 
-    test('an export item in a toolbar menu reports source toolbar', async () => {
+    test('an export item in a toolbar menu reports source contextMenu', async () => {
         const { api, events } = await createGrid({
             toolbar: {
                 items: [
@@ -236,6 +236,6 @@ describe('export start and end events', () => {
         getGridElement(api)!.querySelector<HTMLButtonElement>('.ag-toolbar-button')!.click();
         await clickMenuItem('Excel Export');
 
-        await expectMenuExportEvents(events, 'excel', 'toolbar');
+        await expectMenuExportEvents(events, 'excel', 'contextMenu');
     });
 });
