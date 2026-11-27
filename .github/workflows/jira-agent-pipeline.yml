@@ -69,6 +69,10 @@ env:
     DEV_PROMPTS_CHANNEL: latest
     NX_NO_CLOUD: 'true'
     CHROMEDRIVER_SKIP_DOWNLOAD: 'true'
+    # On a node_modules/yarn cache miss setup-nx runs a fresh `yarn install`; the pinned
+    # ag-charts beta packages exist only on the AG registry, so the public one 404s.
+    # npm installs (install-ag-dev-prompts) ignore this and keep their @ag-grid scope registry.
+    YARN_NPM_REGISTRY_SERVER: 'https://registry.ag-grid.com'
 
 jobs:
     # -------------------------------------------------- concurrency key
