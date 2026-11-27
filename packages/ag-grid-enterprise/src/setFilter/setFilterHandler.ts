@@ -361,7 +361,10 @@ export class SetFilterHandler<TValue = string>
         if (forToolPanel) {
             const valueList = formattedValues.join(translateForSetFilter(this, 'filterSummaryListSeparator'));
             if (numValues > 3) {
-                return translateForSetFilter(this, 'filterSummaryListLong', [valueList, String(numValues - 3)]);
+                return translateForSetFilter(this, 'filterSummaryListLong', {
+                    values: valueList,
+                    count: String(numValues - 3),
+                });
             } else {
                 return translateForSetFilter(this, 'filterSummaryListShort', [valueList]);
             }

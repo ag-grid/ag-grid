@@ -185,7 +185,7 @@ $product-bar-width: 3px;
 
 .keyFigures {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
     gap: $spacing-size-4;
     margin: 0;
     padding: 0;
@@ -217,6 +217,7 @@ $product-bar-width: 3px;
 
 .keyFigureText {
     display: flex;
+    min-width: 0;
     flex-direction: column;
     gap: $spacing-size-1;
 }
@@ -427,7 +428,7 @@ $product-bar-width: 3px;
 
 .chooseIf {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
     gap: $spacing-size-6;
 }
 
@@ -664,7 +665,7 @@ $product-bar-width: 3px;
 
 .hubCards {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
     gap: $spacing-size-4;
     margin: 0;
     padding: 0;

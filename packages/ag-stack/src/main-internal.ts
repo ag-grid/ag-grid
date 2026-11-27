@@ -86,7 +86,20 @@ export { AgPositionableFeature } from './rendering/agPositionableFeature';
 export type { PositionableOptions, ResizableSides, ResizableStructure } from './rendering/agPositionableFeature';
 export { AutoScrollService } from './rendering/autoScrollService';
 export { CssClassManager } from './rendering/cssClassManager';
+export {
+    _STATIC_CSS_INHERIT_CLASS,
+    _STATIC_CSS_THEME_CLASS,
+    _STATIC_CSS_THEME_DEFAULT_PARTS,
+    _staticCssGridFile,
+    _staticCssIconSetFile,
+    _staticCssPartName,
+    _themePartClass,
+    _themePartOverrideClass,
+} from './theming/staticCssTheme';
+export { _isStaticCssTheme } from './theming/staticCssThemeTypes';
+export type { StaticCssThemePart } from './theming/staticCssThemeTypes';
 export { _setStyleInjectionEnabledForTesting } from './theming/inject';
+export { PartImpl } from './theming/partImpl';
 export { defaultFontFamily, defaultLightColorSchemeParams, sharedDefaults } from './theming/shared/shared-css';
 export type { SharedThemeParams } from './theming/shared/shared-css';
 export {
@@ -95,6 +108,7 @@ export {
     _initStyledRoot,
     _initStyledRootFromInnerOfThreeElements,
 } from './theming/styledRoot';
+export type { _ThemeHooks } from './theming/themeHooks';
 export { _asThemeImpl, createSharedTheme, ThemeImpl } from './theming/themeImpl';
 export type { ThemeLogger } from './theming/themeLogger';
 export {
@@ -106,6 +120,7 @@ export {
     paramValueToCss,
 } from './theming/themeTypeUtils';
 export type { ParamType } from './theming/themeTypeUtils';
+export { _themePartFeatures } from './theming/themeTypes';
 export {
     accentColor,
     accentMix,
@@ -125,6 +140,7 @@ export type { BaseTooltipParams } from './tooltip/baseTooltipStateManager';
 export {
     _getAriaCheckboxStateName,
     _getAriaDescribedBy,
+    _getAriaLabelWithState,
     _getAriaLabel,
     _getAriaPosInSet,
     _removeAriaExpanded,
@@ -284,7 +300,16 @@ export {
 } from './utils/generic';
 export type { StringComparator } from './utils/generic';
 export { _isEventFromPrintableCharacter } from './utils/keyboard';
-export { _getLocaleTextFromFunc, _getLocaleTextFromMap, _getLocaleTextFunc, _translate } from './utils/locale';
+export {
+    _fillLocaleTokens,
+    _getLocaleTextFromFunc,
+    _getLocaleTextFromMap,
+    _getLocaleTextFunc,
+    _getLocaleTokenTemplate,
+    _translate,
+    _translateTokens,
+} from './utils/locale';
+export type { LocaleTokenValues } from './utils/locale';
 export { _isPromise } from './utils/promise';
 export {
     _camelCaseToHumanText,

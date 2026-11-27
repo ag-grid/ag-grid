@@ -1,14 +1,9 @@
-import { RefPlaceholder } from 'ag-stack';
+import { RefPlaceholder, _getLocaleTokenTemplate, _translateTokens } from 'ag-stack';
 
 import type { BeanCollection } from '../context/context';
 import { Component } from '../widgets/component';
 import type { PaginationService } from './paginationService';
-import {
-    _formatPaginationNumber,
-    _getPaginationTemplate,
-    _getPaginationText,
-    _splitPaginationTokens,
-} from './paginationUtils';
+import { _formatPaginationNumber, _renderPaginationPhrase, _splitPaginationTokens } from './paginationUtils';
 
 export class RowSummaryComp extends Component {
     private pagination: PaginationService;
@@ -110,14 +105,23 @@ export class RowSummaryComp extends Component {
 
         // Built from the existing words so a localeText without these keys reads as before.
         const defaultTemplate = `\${first} ${localeTextFunc('to', 'to')} \${last} ${localeTextFunc('of', 'of')} \${count}`;
-        const template = _getPaginationTemplate(
+        const template = _getLocaleTokenTemplate(
             localeTextFunc,
             lastPageFound ? 'paginationRowSummary' : 'paginationRowSummaryUnknownTotal',
             defaultTemplate,
             { first, last, count }
         );
         const parts = _splitPaginationTokens(template);
-        this.renderSummary(parts, { first, last, count });
+        const { lbFirstRowOnPage, lbLastRowOnPage, lbRecordCount } = this;
+        lbFirstRowOnPage.textContent = first;
+        lbLastRowOnPage.textContent = last;
+        lbRecordCount.textContent = count;
+        _renderPaginationPhrase(
+            this.eSummaryContent,
+            parts,
+            { first: lbFirstRowOnPage, last: lbLastRowOnPage, count: lbRecordCount },
+            { first, last, count }
+        );
 
         this.ariaStatus = this.getAriaStatus(first, last, count, { lastPageFound, isLoadingPageSize });
 
@@ -132,32 +136,6 @@ export class RowSummaryComp extends Component {
         this.getGui().style.setProperty('--ag-internal-pagination-width-string', `'${widthString}'`);
     }
 
-    /**
-     * Places the number spans where the phrase has their tokens. A token's first occurrence gets its span, a repeat is
-     * plain text, and a span whose token is missing is left out.
-     */
-    private renderSummary(parts: string[], values: { first: string; last: string; count: string }): void {
-        const spans: Record<string, HTMLElement> = {
-            first: this.lbFirstRowOnPage,
-            last: this.lbLastRowOnPage,
-            count: this.lbRecordCount,
-        };
-        const children = parts.map((part, i) => {
-            if (i % 2 === 0) {
-                return part;
-            }
-            const name = part as keyof typeof values;
-            const span = spans[name];
-            if (!span) {
-                return values[name] ?? '';
-            }
-            delete spans[name];
-            span.textContent = values[name];
-            return span;
-        });
-        this.eSummaryContent.replaceChildren(...children.filter((child) => child !== ''));
-    }
-
     /** Builds a self-contained screen reader sentence; the unknown-total cases avoid announcing the visible `?` / `more`. */
     private getAriaStatus(
         first: string,
@@ -167,7 +145,7 @@ export class RowSummaryComp extends Component {
     ): string {
         const localeTextFunc = this.getLocaleTextFunc();
         if (isLoadingPageSize) {
-            return _getPaginationText(
+            return _translateTokens(
                 localeTextFunc,
                 'ariaPaginationRowSummaryLoading',
                 'Loading records from ${first}',
@@ -177,14 +155,14 @@ export class RowSummaryComp extends Component {
             );
         }
         if (!lastPageFound) {
-            return _getPaginationText(
+            return _translateTokens(
                 localeTextFunc,
                 'ariaPaginationRowSummaryUnknownTotal',
                 'Showing records ${first} to ${last}, total unknown',
                 { first, last }
             );
         }
-        return _getPaginationText(
+        return _translateTokens(
             localeTextFunc,
             'ariaPaginationRowSummary',
             'Showing records ${first} to ${last} of ${count}',

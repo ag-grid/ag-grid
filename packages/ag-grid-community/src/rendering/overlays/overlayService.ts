@@ -300,7 +300,7 @@ export class OverlayService extends BeanStub implements NamedBean {
         if (!this.isAlive()) {
             // The grid was destroyed while the overlay was being shown, so there is no data left to export.
             this.exportsInProgress--;
-            throw beans.log.errorToThrow(349);
+            throw beans.log.errorToThrow(359);
         }
 
         const shownAt = Date.now();

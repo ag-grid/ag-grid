@@ -15,6 +15,18 @@ import {
 const COLUMN_DEFS = [{ field: 'name' }];
 const ROW_DATA = Array.from({ length: 50 }, (_, i) => ({ name: `Row ${i + 1}` }));
 
+const getPageSummary = (api: GridApi) =>
+    getGridElement(api)!.querySelector<HTMLElement>('.ag-paging-page-summary-panel .ag-paging-description')!;
+
+/** The page input's wrapper holds whitespace of its own, so runs of whitespace are collapsed. */
+const getPageSummaryText = (api: GridApi) => getPageSummary(api).textContent!.replace(/\s+/g, ' ').trim();
+
+const getPageInput = (api: GridApi) => getPageSummary(api).querySelector<HTMLInputElement>('input')!;
+
+/** The page number input and total, in DOM order. */
+const getPageSummaryRefs = (api: GridApi) =>
+    Array.from(getPageSummary(api).querySelectorAll<HTMLElement>(':scope > .ag-paging-number'), (el) => el.dataset.ref);
+
 const getRowSummary = (api: GridApi) =>
     getGridElement(api)!.querySelector<HTMLElement>('.ag-paging-row-summary-content')!;
 
@@ -162,6 +174,74 @@ describe('pagination localisation', () => {
             expect(getRowSummary(api).textContent).toBe('1 TO 10 OF 50');
             await waitForAnnouncement(api, 'PAGE 1 OF 5');
             expect(getLiveRegionText(api)).not.toContain('${');
+        });
+    });
+
+    describe('visible page summary', () => {
+        test('en-US is unchanged', () => {
+            const api = createGrid();
+
+            expect(getPageSummaryText(api)).toBe('Page of 5');
+            expect(getPageSummaryRefs(api)).toEqual(['lbCurrentInput', 'lbTotal']);
+            expect(getPageInput(api).getAttribute('aria-label')).toBe('Page number, 1 of 5');
+        });
+
+        test('a translation can put the total before the page input, and phrase the input label', () => {
+            const api = createGrid({
+                localeText: {
+                    paginationPageSummary: '全${total}ページ中 ${page}ページ目',
+                    ariaPaginationPageInputLabel: 'ページ番号、${total}ページ中${page}ページ目',
+                },
+            });
+
+            expect(getPageSummaryText(api)).toBe('全5ページ中 ページ目');
+            expect(getPageSummaryRefs(api)).toEqual(['lbTotal', 'lbCurrentInput']);
+            expect(getPageInput(api).getAttribute('aria-label')).toBe('ページ番号、5ページ中1ページ目');
+        });
+
+        test('a repeated token is filled with the current value as the page changes', async () => {
+            const api = createGrid({
+                localeText: { paginationPageSummary: 'Page ${page} of ${total} (page ${page})' },
+            });
+
+            expect(getPageSummaryText(api)).toBe('Page of 5 (page 1)');
+            expect(getPageSummaryRefs(api)).toEqual(['lbCurrentInput', 'lbTotal']);
+
+            api.paginationGoToNextPage();
+
+            await waitFor(() => expect(getPageSummaryText(api)).toBe('Page of 5 (page 2)'));
+        });
+
+        test.each([
+            {
+                order: 'the total moves before the input',
+                unknownTotal: 'Page ${page} of ${total}',
+                known: '${total} pages, page ${page}',
+                before: 'Page of more',
+                after: '5 pages, page',
+            },
+            {
+                order: 'the input moves before the total',
+                unknownTotal: '${total}: page ${page}',
+                known: 'Page ${page} of ${total}',
+                before: 'more: page',
+                after: 'Page of 5',
+            },
+        ])('the page input keeps focus when the total becomes known and $order', async (phrases) => {
+            const api = createInfiniteGrid(unknownTotalDatasource, {
+                localeText: {
+                    paginationPageSummaryUnknownTotal: phrases.unknownTotal,
+                    paginationPageSummary: phrases.known,
+                },
+            });
+            await waitFor(() => expect(getPageSummaryText(api)).toBe(phrases.before));
+            const input = getPageInput(api);
+            input.focus();
+
+            api.setRowCount(50, true);
+
+            await waitFor(() => expect(getPageSummaryText(api)).toBe(phrases.after));
+            expect(document.activeElement).toBe(input);
         });
     });
 

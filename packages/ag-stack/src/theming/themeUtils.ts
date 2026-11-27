@@ -1,6 +1,6 @@
 import type { ColorValue } from './themeTypes';
 
-const kebabCase = (str: string) => str.replace(/[A-Z]|\d+/g, (m) => `-${m}`).toLowerCase();
+export const kebabCase = (str: string) => str.replace(/[A-Z]|\d+/g, (m) => `-${m}`).toLowerCase();
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export const paramToVariableName = (paramName: string) => `--ag-${kebabCase(paramName)}`;

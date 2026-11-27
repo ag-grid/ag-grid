@@ -2,11 +2,13 @@ import type { ITooltipFeature } from 'ag-stack';
 import {
     RefPlaceholder,
     _addManagedElementListeners,
+    _getAriaLabelWithState,
     _setAriaChecked,
     _setAriaDescribedBy,
     _setAriaExpanded,
     _setAriaLabel,
     _setDisplayed,
+    _translateTokens,
 } from 'ag-stack';
 
 import type {
@@ -473,8 +475,12 @@ export class ToolPanelColumnGroupComp extends Component {
                   : translate('ariaHidden', 'hidden');
         const visibilityLabel = translate('ariaToggleVisibility', 'Press SPACE to toggle visibility');
 
-        _setAriaLabel(focusWrapper, `${displayName} ${columnLabel}`);
-        cbSelect.setInputAriaLabel(`${visibilityLabel} (${state})`);
+        _setAriaLabel(
+            focusWrapper,
+            // Built from the existing word so a localeText without this key reads as before.
+            _translateTokens(translate, 'ariaColumnGroupItem', `\${name} ${columnLabel}`, { name: displayName ?? '' })
+        );
+        cbSelect.setInputAriaLabel(_getAriaLabelWithState(translate, visibilityLabel, state));
         _setAriaDescribedBy(focusWrapper, cbSelect.getInputElement().id);
     }
 

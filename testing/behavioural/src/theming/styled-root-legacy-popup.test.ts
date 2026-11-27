@@ -1,6 +1,7 @@
 import { waitFor } from '@testing-library/dom';
-import { TestGridsManager } from 'ag-test-utils';
+import { ALL_SEVERITIES, TestGridsManager } from 'ag-test-utils';
 
+import { enableDevValidations } from 'ag-grid-community';
 import { ColumnMenuModule } from 'ag-grid-enterprise';
 
 describe('styled root legacy theme classes on popups', () => {
@@ -8,6 +9,8 @@ describe('styled root legacy theme classes on popups', () => {
     let eGridDiv: HTMLElement;
 
     beforeEach(() => {
+        // suppress the deprecation warning that theme: 'legacy' logs
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [306] });
         eGridDiv = document.createElement('div');
         eGridDiv.className = 'ag-theme-sas';
         document.body.appendChild(eGridDiv);

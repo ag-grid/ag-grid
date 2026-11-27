@@ -557,7 +557,7 @@ describe('ag-grid export overlay', () => {
             const exported = api.exportDataAsCsv();
             api.destroy();
 
-            await expect(exported).rejects.toThrow('#349');
+            await expect(exported).rejects.toThrow('#359');
             expect(URL.createObjectURL).not.toHaveBeenCalled();
         });
     });

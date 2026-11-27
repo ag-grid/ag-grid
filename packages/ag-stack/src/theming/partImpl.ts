@@ -60,6 +60,7 @@ export const createPart = <T = unknown>(args: CreatePartArgs<T>): Part<ExpandTyp
 
 export const defaultModeName = '$default';
 let partCounter = 0;
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class PartImpl implements Part {
     feature?: string;
     modeParams: Record<string, Record<string, unknown>>;

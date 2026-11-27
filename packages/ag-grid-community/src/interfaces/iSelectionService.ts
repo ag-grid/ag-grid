@@ -46,7 +46,7 @@ export interface ISelectionService {
         changedPath?: ChangedPath,
         event?: Event
     ): boolean;
-    syncInRowNode(rowNode: RowNode, oldNode?: RowNode): void;
+    syncInRowNode(rowNode: RowNode, oldId?: string, oldData?: any): void;
     reset(source: SelectionEventSourceType): void;
     getBestCostNodeSelection(): RowNode[] | undefined;
     isEmpty(): boolean;
@@ -71,7 +71,6 @@ export interface ISelectionService {
     updateGroupsSelectable?(changedPath: ChangedPath | undefined): void;
     updateRowSelectable(rowNode: RowNode, suppressSelectionUpdate?: boolean): boolean;
     selectRowNode(rowNode: RowNode, newValue?: boolean, e?: Event, source?: SelectionEventSourceType): boolean;
-    createDaemonNode?(rowNode: RowNode): RowNode | undefined;
     handleSelectionEvent(
         event: MouseEvent | KeyboardEvent,
         rowNode: RowNode,

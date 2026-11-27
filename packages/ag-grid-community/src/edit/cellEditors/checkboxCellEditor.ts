@@ -1,4 +1,4 @@
-import { RefPlaceholder, _getAriaCheckboxStateName } from 'ag-stack';
+import { RefPlaceholder, _getAriaCheckboxStateName, _getAriaLabelWithState } from 'ag-stack';
 
 import { AgCheckboxSelector } from '../../agWidgets/agCheckbox';
 import type { ICellEditorParams } from '../../interfaces/iCellEditor';
@@ -68,7 +68,7 @@ export class CheckboxCellEditor extends AgAbstractCellEditor<ICellEditorParams<a
         const translate = this.getLocaleTextFunc();
         const stateName = _getAriaCheckboxStateName(translate, isSelected);
         const ariaLabel = translate('ariaToggleCellValue', 'Press SPACE to toggle cell value');
-        this.eEditor.setInputAriaLabel(`${ariaLabel} (${stateName})`);
+        this.eEditor.setInputAriaLabel(_getAriaLabelWithState(translate, ariaLabel, stateName));
     }
 
     public getValidationElement(tooltip: boolean): HTMLElement | HTMLInputElement {

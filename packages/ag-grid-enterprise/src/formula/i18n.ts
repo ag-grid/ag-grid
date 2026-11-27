@@ -1,3 +1,6 @@
+import type { LocaleTokenValues } from 'ag-stack';
+import { _fillLocaleTokens } from 'ag-stack';
+
 export type FormulaErrorType = '#REF!' | '#NAME?' | '#CIRCREF!' | '#PARSE!' | '#VALUE!' | '#DIV/0!' | '#ERROR!';
 
 type FormulaErrorDefinition = readonly [localeKey: string, defaultMessage: string, type?: FormulaErrorType];
@@ -50,9 +53,9 @@ const FORMULA_ERRORS: Record<number, FormulaErrorDefinition> = {
     32: ['formulaEvalUnrecognisedRowInRange', 'Unrecognised row in range.', '#REF!'],
     33: ['formulaEvalUnrecognisedReferenceToCell', 'Unrecognised reference to cell.', '#REF!'],
     34: ['formulaEvalIncompleteRangeReference', 'Incomplete range reference.', '#REF!'],
-    35: ['formulaFunctionExpectedExactlyArguments', '${variable}: expected exactly ${variable} arguments.'],
-    36: ['formulaFunctionExpectedAtMostArguments', '${variable}: expected at most ${variable} arguments.'],
-    37: ['formulaFunctionExpectedAtLeastArguments', '${variable}: expected at least ${variable} arguments.'],
+    35: ['formulaFunctionExpectedExactlyArguments', '${function}: expected exactly ${count} arguments.'],
+    36: ['formulaFunctionExpectedAtMostArguments', '${function}: expected at most ${count} arguments.'],
+    37: ['formulaFunctionExpectedAtLeastArguments', '${function}: expected at least ${count} arguments.'],
     38: [
         'formulaFunctionInvalidCriteriaWildcardsWithComparator',
         'Invalid criteria: wildcards with comparator.',
@@ -68,8 +71,8 @@ const FORMULA_ERRORS: Record<number, FormulaErrorDefinition> = {
     ],
     43: ['formulaFunctionRequiresAtLeastOneValue', '${variable}: requires at least one value.'],
     44: ['formulaFunctionAllValuesMustBeNumbers', '${variable}: all values must be numbers.', '#VALUE!'],
-    45: ['formulaFunctionArgumentMustBeRange', '${variable}: ${variable} argument must be a range.', '#VALUE!'],
-    46: ['formulaFunctionArgumentMustBeValue', '${variable}: ${variable} argument must be a value.', '#VALUE!'],
+    45: ['formulaFunctionArgumentMustBeRange', '${function}: ${argument} argument must be a range.', '#VALUE!'],
+    46: ['formulaFunctionArgumentMustBeValue', '${function}: ${argument} argument must be a value.', '#VALUE!'],
     47: ['formulaFunctionRangesHaveDifferentSizes', '${variable}: ranges have different sizes.', '#VALUE!'],
     48: ['formulaFunctionValuesMustBeNumeric', '${variable}: values must be numeric.', '#VALUE!'],
     49: ['formulaFunctionValuesMustBeIntegers', '${variable}: values must be integers.', '#VALUE!'],
@@ -111,7 +114,26 @@ const FORMULA_ERRORS: Record<number, FormulaErrorDefinition> = {
 
 export type FormulaErrorId = keyof typeof FORMULA_ERRORS;
 
-const interpolateVariables = (template: string, variableValues?: string[]): string => {
+const POSITIONAL_TOKEN = '${variable}';
+
+/** Pairs the named `${token}` placeholders of a default message, in order, with the stored values. */
+const getTokenValues = (defaultMessage: string, variableValues: string[]): LocaleTokenValues => {
+    const tokenValues: Record<string, string> = {};
+    const tokenNames = defaultMessage.match(/\$\{\w+\}/g) ?? [];
+    for (let i = 0, len = Math.min(tokenNames.length, variableValues.length); i < len; ++i) {
+        const token = tokenNames[i];
+        if (token !== POSITIONAL_TOKEN) {
+            tokenValues[token.slice(2, -1).toLowerCase()] = variableValues[i];
+        }
+    }
+    return tokenValues;
+};
+
+/**
+ * Fills `${variable}` placeholders by position, then any named `${token}` that `defaultMessage` declares, so a
+ * translation can reorder them.
+ */
+const interpolateVariables = (template: string, defaultMessage: string, variableValues?: string[]): string => {
     if (!variableValues?.length) {
         return template;
     }
@@ -120,14 +142,14 @@ const interpolateVariables = (template: string, variableValues?: string[]): stri
     let found = 0;
 
     while (found < variableValues.length) {
-        const idx = localisedText.indexOf('${variable}');
+        const idx = localisedText.indexOf(POSITIONAL_TOKEN);
         if (idx === -1) {
             break;
         }
-        localisedText = localisedText.replace('${variable}', variableValues[found++]);
+        localisedText = localisedText.replace(POSITIONAL_TOKEN, variableValues[found++]);
     }
 
-    return localisedText;
+    return _fillLocaleTokens(localisedText, getTokenValues(defaultMessage, variableValues));
 };
 
 const normaliseVariableValues = (values?: readonly unknown[]): string[] | undefined => {
@@ -143,9 +165,13 @@ export const getFormulaErrorDefinition = (errorId: FormulaErrorId): FormulaError
 
 export const getFormulaErrorDefaultMessage = (errorId: FormulaErrorId, variableValues?: readonly unknown[]): string => {
     const [, defaultMessage] = getFormulaErrorDefinition(errorId);
-    return interpolateVariables(defaultMessage, normaliseVariableValues(variableValues));
+    return interpolateVariables(defaultMessage, defaultMessage, normaliseVariableValues(variableValues));
 };
 
-export const interpolateFormulaErrorMessage = (message: string, variableValues?: readonly unknown[]): string => {
-    return interpolateVariables(message, normaliseVariableValues(variableValues));
+export const interpolateFormulaErrorMessage = (
+    message: string,
+    defaultMessage: string,
+    variableValues?: readonly unknown[]
+): string => {
+    return interpolateVariables(message, defaultMessage, normaliseVariableValues(variableValues));
 };

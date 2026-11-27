@@ -216,6 +216,7 @@ export type { BigIntFilter } from './filter/provided/bigInt/bigIntFilter';
 export type {
     BigIntFilterModel,
     BigIntFilterParams,
+    BigIntFilterDisplayParams,
     IBigIntFilterParams,
     IBigIntFloatingFilterParams,
 } from './filter/provided/bigInt/iBigIntFilter';
@@ -223,6 +224,7 @@ export type { DateFilter } from './filter/provided/date/dateFilter';
 export type {
     DateFilterModel,
     DateFilterParams,
+    DateFilterDisplayParams,
     IDateComparatorFunc,
     IDateFilterParams,
     PresetDateRangeFilterModel,
@@ -232,6 +234,7 @@ export type {
     IProvidedFilterParams,
     ProvidedFilterModel,
     ProvidedFilterParams,
+    ProvidedFilterDisplayParams,
 } from './filter/provided/iProvidedFilter';
 export type { IScalarFilterParams } from './filter/provided/iScalarFilter';
 export { isCombinedFilterModel } from './filter/provided/iSimpleFilter';
@@ -252,6 +255,7 @@ export type {
     JoinOperator,
     ScalarFilterOptionKey,
     SimpleFilterParams,
+    SimpleFilterDisplayParams,
     TextFilterOptionKey,
 } from './filter/provided/iSimpleFilter';
 export type {
@@ -259,6 +263,7 @@ export type {
     INumberFloatingFilterParams,
     NumberFilterModel,
     NumberFilterParams,
+    NumberFilterDisplayParams,
 } from './filter/provided/number/iNumberFilter';
 export type { NumberFilter } from './filter/provided/number/numberFilter';
 export { ProvidedFilter } from './filter/provided/providedFilter';
@@ -267,6 +272,7 @@ export type {
     ITextFloatingFilterParams,
     TextFilterModel,
     TextFilterParams,
+    TextFilterDisplayParams,
     TextFormatter,
     TextMatcher,
     TextMatcherParams,
@@ -357,6 +363,7 @@ export type {
     IMultiFilterParams,
     MultiFilterHandler,
     MultiFilterParams,
+    MultiFilterDisplayParams,
 } from './interfaces/iMultiFilter';
 export type {
     ISetFilterParams,
@@ -365,6 +372,7 @@ export type {
     SetFilterModel,
     SetFilterModelValue,
     SetFilterParams,
+    SetFilterDisplayParams,
     SetFilterUi,
     SetFilterUiChangedEvent,
     SetFilterValues,
@@ -1218,7 +1226,7 @@ export * from './events';
 export type { AgEventType, AgPublicEventType } from './eventTypes';
 
 // AG Stack Theming
-export { createPart } from 'ag-stack';
+export { createPart, staticCssTheme } from 'ag-stack';
 export type {
     BorderStyleValue,
     BorderValue,
@@ -1234,6 +1242,9 @@ export type {
     ScrollbarWidthValue,
     ShadowValue,
     ShadowValueParams,
+    StaticCssTheme,
+    StaticCssThemeName,
+    StaticCssThemeOptions,
     Theme,
     WithParamTypes,
 } from 'ag-stack';

@@ -1,5 +1,5 @@
 import type { LocaleTextFunc } from 'ag-stack';
-import { _getLocaleTextFunc } from 'ag-stack';
+import { _getLocaleTextFunc, _translateTokens } from 'ag-stack';
 
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
@@ -121,6 +121,28 @@ const getValidationAriaRowIndex = (beans: BeanCollection, rowNode: IRowNode): nu
 const formatValidationRowLabel = (translate: LocaleTextFunc, ariaRowIndex: number): string =>
     translate('ariaRowIndex', `Row ${ariaRowIndex}`, [String(ariaRowIndex)]);
 
+const formatCellValidationAnnouncement = (
+    translate: LocaleTextFunc,
+    column: string,
+    message: string,
+    ariaRowIndex: number | undefined
+): string => {
+    if (ariaRowIndex == null) {
+        return _translateTokens(translate, 'ariaValidationCellError', '${column}: ${message}', { column, message });
+    }
+    return _translateTokens(translate, 'ariaValidationRowCellError', '${row}, ${column}: ${message}', {
+        row: formatValidationRowLabel(translate, ariaRowIndex),
+        column,
+        message,
+    });
+};
+
+/** The space after each sentence, matching the locale's validation message separator. */
+const getValidationSentenceSpacing = (translate: LocaleTextFunc): string => {
+    const separator = translate('tooltipValidationErrorSeparator', '. ');
+    return separator.slice(separator.trimEnd().length);
+};
+
 const formatValidationDetails = (
     beans: BeanCollection,
     translate: LocaleTextFunc,
@@ -137,13 +159,16 @@ const formatValidationDetails = (
     const details: { rowNode: IRowNode; columnOrder: number; rowError: boolean; message: string }[] = [];
     for (let i = 0, len = cells.length; i < len; ++i) {
         const { rowNode, column, message } = cells[i];
-        const ariaRowIndex = rowIndices?.get(rowNode);
-        const rowLabel = ariaRowIndex == null ? '' : `${formatValidationRowLabel(translate, ariaRowIndex)}, `;
         details.push({
             rowNode,
             columnOrder: visibleColumnOrder.get(column) ?? Number.MAX_SAFE_INTEGER,
             rowError: false,
-            message: `${rowLabel}${getColumnValidationLabel(beans, column)}: ${message}`,
+            message: formatCellValidationAnnouncement(
+                translate,
+                getColumnValidationLabel(beans, column),
+                message,
+                rowIndices?.get(rowNode)
+            ),
         });
     }
     for (let i = 0, len = rows.length; i < len; ++i) {
@@ -171,11 +196,14 @@ const formatValidationDetails = (
     if (cellPrefix) {
         const firstCell = details.find(({ rowError }) => !rowError);
         if (firstCell) {
-            firstCell.message = `${cellPrefix} ${firstCell.message}`;
+            firstCell.message = _translateTokens(translate, 'ariaValidationErrorWithPrefix', '${prefix} ${message}', {
+                prefix: cellPrefix,
+                message: firstCell.message,
+            });
         }
     }
 
-    return details.map(({ message }) => message).join(' ');
+    return details.map(({ message }) => message).join(getValidationSentenceSpacing(translate));
 };
 
 const formatFullRowValidationAnnouncement = (
@@ -185,7 +213,13 @@ const formatFullRowValidationAnnouncement = (
 ): string => {
     const detail = translate('ariaFullRowValidationError', `Full Row Validation: ${message}`, [message]);
     const ariaRowIndex = rowIndices?.get(rowNode);
-    return ariaRowIndex == null ? detail : `${formatValidationRowLabel(translate, ariaRowIndex)}, ${detail}`;
+    if (ariaRowIndex == null) {
+        return detail;
+    }
+    return _translateTokens(translate, 'ariaValidationRowError', '${row}, ${message}', {
+        row: formatValidationRowLabel(translate, ariaRowIndex),
+        message: detail,
+    });
 };
 
 const getContributingRowIndices = (

@@ -1,4 +1,4 @@
-import { _fuzzySuggestions } from 'ag-stack';
+import { _fuzzySuggestions, _staticCssGridFile } from 'ag-stack';
 
 import type { DynamicBeanName, UserComponentName } from '../../context/context';
 import type { Column } from '../../interfaces/iColumn';
@@ -224,10 +224,19 @@ const missingChartsWithModule = (gridModule: 'IntegratedChartsModule' | 'Sparkli
 import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';
 import { ModuleRegistry } from 'ag-grid-community';
 import { ${gridModule} } from 'ag-grid-enterprise';
-    
+
 ModuleRegistry.registerModules([${gridModule}.with(AgChartsEnterpriseModule)]);
     ` as const;
 };
+
+type RemovedFilterInstanceMethodParams = { colId: string; filterInstanceType: string };
+
+const removedFilterInstanceMethod = (
+    method: string,
+    replacement: string,
+    { colId, filterInstanceType }: RemovedFilterInstanceMethodParams
+) =>
+    `\`${method}()\` was removed from grid-provided filter instances in v37, so this call does nothing. Use ${replacement} instead. To have TypeScript flag these calls, pass the filter type: \`api.getColumnFilterInstance<${filterInstanceType}>('${colId}')\`.`;
 
 const clipboardApiError = (method: string) =>
     `Unable to use the Clipboard API (\`navigator.clipboard.${method}()\`). ` +
@@ -700,9 +709,9 @@ export const AG_GRID_ERRORS = {
         'Group Column Filter does not work with Tree Data enabled. Please disable Tree Data, or use a different filter.' as const,
     238: () => '`setRowCount` can only accept a positive row count.' as const,
     239: () =>
-        'Theming API and CSS File Themes are both used in the same page. In v33 we released the Theming API as the new default method of styling the grid. See the migration docs https://www.ag-grid.com/react-data-grid/theming-migration/. Because no value was provided to the `theme` grid option it defaulted to themeQuartz. But the file (`ag-grid.css`) is also included and will cause styling issues. Either pass the string `legacy` to the theme grid option to use v32 style themes, or remove `ag-grid.css` from the page to use Theming API.' as const,
+        'Theming API and Legacy Themes are both used in the same page. In v33 we released the Theming API as the new default method of styling the grid. See the migration docs https://www.ag-grid.com/react-data-grid/theming-migration/. Because no value was provided to the `theme` grid option it defaulted to themeQuartz. But the file (`ag-grid.css`) is also included and will cause styling issues. Use a Theming API theme like `themeQuartz`, or `staticCssTheme` to load its CSS from static files, e.g. for a strict Content Security Policy.' as const,
     240: ({ theme }: { theme: any }) =>
-        `theme grid option must be a Theming API theme object or the string \`legacy\`, received: ${theme}` as const,
+        `theme grid option must be a Theming API theme object, a theme created with \`staticCssTheme\`, or the deprecated string \`legacy\`, received: ${theme}` as const,
     // 241: () => `cannot select multiple rows when rowSelection.mode is set to 'singleRow'` as const,
     // 242: () => 'cannot select multiple rows when using rangeSelect' as const,
     243: () => 'Failed to deserialize state - each provided state object must be an object.' as const,
@@ -937,7 +946,7 @@ export const AG_GRID_ERRORS = {
     331: ({ rowId }: { rowId: string }) =>
         `Row ID \`${rowId}\` is reserved by AG Grid and should not be returned from \`getRowId\`.` as const,
     332: ({ replacements }: { replacements: string[] }) =>
-        `Legacy theme CSS variables are set on the grid, but the Theming API is in use and ignores them, so they have no effect: ${(replacements ?? []).join(', ')}. Either set the equivalent Theming API variable, or pass the string \`legacy\` to the \`theme\` grid option to keep using v32 style themes. See the migration guide: ${getValidationDocLink()}/theming-migration/` as const,
+        `Legacy theme CSS variables are set on the grid, but Theming API themes (including static CSS themes) ignore them, so they have no effect: ${(replacements ?? []).join(', ')}. Set the equivalent Theming API variable where there is one. See the migration guide: ${getValidationDocLink()}/theming-migration/` as const,
     333: ({ callback, error }: { callback: string; error: unknown }) => [`\`${callback}\` threw:`, error],
     // 334: retired (`GridChartsModule` warning)
     335: ({ colId }: { colId: string }) =>
@@ -969,6 +978,34 @@ export const AG_GRID_ERRORS = {
     348: () =>
         `\`enableFilterHandlers: false\` is deprecated. Legacy filter mode will be removed in a major version after v38. See ${legacyFilterMigrationLink()}` as const,
     349: () =>
+        `The \`theme\` grid option is a static CSS theme, but legacy theme CSS from \`ag-grid-community/styles\` is loaded. Static CSS themes use the CSS files in \`ag-grid-community/css\`, which cannot be combined with the legacy files. See ${getValidationDocLink()}/theming-static-css/` as const,
+    350: ({ linked }: { linked: boolean }) =>
+        `The \`theme\` grid option is a static CSS theme, but \`ag-grid-community/css/${_staticCssGridFile(linked)}.css\` has not loaded, so the grid is unstyled. Load it before creating the grid. See ${getValidationDocLink()}/theming-static-css/` as const,
+    351: ({ iconSet, linked, file }: { iconSet: string; linked: boolean; file: string }) =>
+        `The grid's static CSS theme uses the \`${iconSet}\`${linked ? ' (linked)' : ''} icon set, but its CSS has not loaded, so the grid has no icons. Load \`ag-grid-community/css/${file}.css\` after \`${_staticCssGridFile(linked)}.css\`. See ${getValidationDocLink()}/theming-static-css/#loading-icon-sets` as const,
+    352: ({ options }: { options: string[] }) =>
+        `\`${(options ?? []).join('`, `')}\` have no effect with a static CSS theme, because the grid injects no styles. See ${getValidationDocLink()}/theming-static-css/` as const,
+    353: ({ option, value, valid }: { option: string; value: string; valid: string }) =>
+        `\`staticCssTheme\` was given an unknown ${option}: \`${value}\`, so it has no effect. Valid values are ${valid}. See ${getValidationDocLink()}/theming-static-css/` as const,
+    354: ({ linked }: { linked: boolean }) =>
+        `The grid's static CSS theme ${linked ? 'sets' : 'does not set'} \`useLinkedImages\`, but \`${_staticCssGridFile(!linked)}.css\` is loaded. Load \`ag-grid-community/css/${_staticCssGridFile(linked)}.css\` instead, and the matching icon set file. See ${getValidationDocLink()}/theming-static-css/#linked-images` as const,
+    355: (params: RemovedFilterInstanceMethodParams) =>
+        removedFilterInstanceMethod('getModel', `\`api.getColumnFilterModel('${params.colId}')\``, params),
+    356: (params: RemovedFilterInstanceMethodParams) =>
+        removedFilterInstanceMethod('setModel', `\`api.setColumnFilterModel('${params.colId}', model)\``, params),
+    357: (params: RemovedFilterInstanceMethodParams) =>
+        removedFilterInstanceMethod(
+            'isFilterActive',
+            `\`api.getColumnFilterModel('${params.colId}') != null\``,
+            params
+        ),
+    358: (params: RemovedFilterInstanceMethodParams) =>
+        removedFilterInstanceMethod(
+            'doesFilterPass',
+            `\`doesFilterPass()\` on the handler from \`api.getColumnFilterHandler('${params.colId}')\``,
+            params
+        ),
+    359: () =>
         'The grid was destroyed before the export ran, so no file was produced. Await the export call before destroying the grid.' as const,
     // When adding a code above this line, raise `MAX_ERROR_ID` below to match.
 };
@@ -985,7 +1022,7 @@ export type ErrorId = keyof ErrorMap;
  *
  * @knipIgnore Read by the docs site's error-page route
  */
-export const MAX_ERROR_ID = 349;
+export const MAX_ERROR_ID = 359;
 
 type ErrorValue<TId extends ErrorId | null> = TId extends ErrorId ? ErrorMap[TId] : never;
 export type GetErrorParams<TId extends ErrorId> =

@@ -31,7 +31,14 @@ export class AgNameValue extends Component {
         // we want to hide until the first value comes in
         this.setDisplayed(false);
 
-        this.eLabel.textContent = this.getLocaleTextFunc()(key, defaultValue);
+        const translate = this.getLocaleTextFunc();
+        this.eLabel.textContent = translate(key, defaultValue);
+        // The separator is the text node the template puts before the value.
+        const eSeparator = this.eValue.previousSibling;
+        if (!eSeparator) {
+            return;
+        }
+        eSeparator.textContent = translate('statusBarLabelSeparator', ':\u00A0');
     }
 
     public setValue(value: number | bigint | null, totalRows: number): void {

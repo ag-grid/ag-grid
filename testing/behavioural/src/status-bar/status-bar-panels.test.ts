@@ -170,6 +170,23 @@ describe('Status bar panels', () => {
         expect(getStatusBarValue(gridDiv, 'Rows')).toBe('2 of 4');
     });
 
+    test('a locale phrases the filtered count and the label separator', async () => {
+        const api = await gridMgr.createGridAndWait('status-bar-total-and-filtered-locale', {
+            columnDefs: [{ field: 'value', filter: 'agNumberColumnFilter' }],
+            rowData,
+            getRowId: (params) => params.data?.id,
+            localeText: { totalAndFilteredRowsValue: '全${total}件中${count}件', statusBarLabelSeparator: '：' },
+            statusBar: { statusPanels: [{ statusPanel: 'agTotalAndFilteredRowCountComponent' }] },
+        });
+
+        const filterApplied = waitForEvent('filterChanged', api);
+        api.setFilterModel({ value: { filterType: 'number', type: 'lessThan', filter: 25 } });
+        await filterApplied;
+
+        const gridDiv = TestGridsManager.getHTMLElement(api)!;
+        expect(gridDiv.querySelector('.ag-status-name-value')!.textContent!.trim()).toBe('Rows ：全4件中2件');
+    });
+
     test('agSelectedRowCountComponent updates on single, multi, select-all and deselect', async () => {
         const api = await gridMgr.createGridAndWait('status-bar-selected', {
             columnDefs: [{ field: 'value' }],

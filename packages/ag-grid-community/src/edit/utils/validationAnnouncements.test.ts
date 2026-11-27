@@ -1,3 +1,5 @@
+import { _getLocaleTextFromMap } from 'ag-stack';
+
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import type { IRowNode } from '../../interfaces/iRowNode';
@@ -97,6 +99,40 @@ describe('_announceChangedValidationErrors', () => {
         expect(announceValue).toHaveBeenCalledWith(
             'Cell Editor Validation Row 2, Height: Too tall. Row 3, Weight: Too heavy. ' +
                 'Row 3, Full Row Validation: BMI is invalid.',
+            'editorValidation'
+        );
+    });
+
+    test('lets a locale phrase and punctuate each part of the announcement', () => {
+        const cellRow = createRowNode(1);
+        const fullRow = createRowNode(2);
+        const weight = createColumn('weight');
+        const cellValidationModel = new EditCellValidationModel();
+        const rowValidationModel = new EditRowValidationModel();
+        cellValidationModel.setCellValidation({ rowNode: cellRow, column: weight }, { errorMessages: ['重すぎます'] });
+        rowValidationModel.setRowValidation({ rowNode: fullRow }, { errorMessages: ['BMIが無効です'] });
+        const { beans, announceValue } = createBeans(cellValidationModel, rowValidationModel, [weight]);
+        beans.localeSvc = {
+            getLocaleTextFunc: () =>
+                _getLocaleTextFromMap({
+                    tooltipValidationErrorSeparator: '。',
+                    ariaValidationErrorPrefix: 'セルエディタの検証',
+                    ariaValidationErrorWithPrefix: '${prefix}：${message}',
+                    ariaValidationRowCellError: '${row}の${column}：${message}',
+                    ariaValidationRowError: '${row}：${message}',
+                    ariaFullRowValidationError: '行全体の検証 ${variable}',
+                    ariaRowIndex: '${variable}行目',
+                }),
+        } as BeanCollection['localeSvc'];
+
+        _announceChangedValidationErrors(
+            beans,
+            { cell: new EditCellValidationModel(), row: new EditRowValidationModel() },
+            { cell: cellValidationModel, row: rowValidationModel }
+        );
+
+        expect(announceValue).toHaveBeenCalledWith(
+            'セルエディタの検証：3行目のWeight：重すぎます。4行目：行全体の検証 BMIが無効です。',
             'editorValidation'
         );
     });

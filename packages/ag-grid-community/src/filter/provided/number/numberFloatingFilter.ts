@@ -10,12 +10,7 @@ import type { FloatingFilterInputService } from '../../floating/provided/iFloati
 import { TextInputFloatingFilter } from '../../floating/provided/textInputFloatingFilter';
 import { installAllowedCharPattern } from '../allowedCharPattern';
 import type { OptionsFactory } from '../optionsFactory';
-import type {
-    INumberFilterParams,
-    INumberFloatingFilterParams,
-    NumberFilterModel,
-    NumberFilterParams,
-} from './iNumberFilter';
+import type { INumberFilterParams, INumberFloatingFilterParams, NumberFilterModel } from './iNumberFilter';
 import { DEFAULT_NUMBER_FILTER_OPTIONS } from './numberFilterConstants';
 import { NumberFilterModelFormatter } from './numberFilterModelFormatter';
 import { getAllowedCharPattern, processNumberFilterValue, stringToFloat, usesTextInput } from './numberFilterUtils';
@@ -153,7 +148,7 @@ export class NumberFloatingFilter extends TextInputFloatingFilter<INumberFloatin
     }
 
     protected override updateParams(params: INumberFloatingFilterParams): void {
-        const filterParams = params.filterParams as NumberFilterParams;
+        const filterParams = params.filterParams as INumberFilterParams;
         const allowedCharPattern = getAllowedCharPattern(filterParams);
         if (allowedCharPattern !== this.allowedCharPattern || usesTextInput(filterParams) !== this.isTextInput) {
             this.recreateFloatingFilterInputService(params);
@@ -162,7 +157,7 @@ export class NumberFloatingFilter extends TextInputFloatingFilter<INumberFloatin
     }
 
     protected createFloatingFilterInputService(params: INumberFloatingFilterParams): FloatingFilterInputService {
-        const filterParams = params.filterParams as NumberFilterParams;
+        const filterParams = params.filterParams as INumberFilterParams;
         const allowedCharPattern = getAllowedCharPattern(filterParams);
         this.allowedCharPattern = allowedCharPattern;
         const isTextInput = usesTextInput(filterParams);
@@ -177,7 +172,7 @@ export class NumberFloatingFilter extends TextInputFloatingFilter<INumberFloatin
     /** Read back through `numberParser`, which is the only thing that can read what a `numberFormatter` wrote. */
     protected override convertValue<TValue>(value: string | null | undefined): TValue | null {
         const { gos, params } = this;
-        const numberParser = (params.filterParams as NumberFilterParams | undefined)?.numberParser;
+        const numberParser = (params.filterParams as INumberFilterParams | undefined)?.numberParser;
         return processNumberFilterValue(stringToFloat(numberParser, value, gos, params.column)) as TValue | null;
     }
 }

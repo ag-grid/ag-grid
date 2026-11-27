@@ -1,8 +1,6 @@
 export const ADVANCED_FILTER_LOCALE_TEXT = {
-    ariaAdvancedFilterBuilderItem: (variableValues: string[]) =>
-        `${variableValues[0]}. Level ${variableValues[1]}. Press ENTER to edit`,
-    ariaAdvancedFilterBuilderItemValidation: (variableValues: string[]) =>
-        `${variableValues[0]}. Level ${variableValues[1]}. ${variableValues[2]} Press ENTER to edit`,
+    ariaAdvancedFilterBuilderItem: '${label}. Level ${level}. Press ENTER to edit',
+    ariaAdvancedFilterBuilderItemValidation: '${label}. Level ${level}. ${error} Press ENTER to edit',
     ariaAdvancedFilterBuilderList: 'Advanced Filter Builder List',
     ariaAdvancedFilterBuilderFilterItem: 'Filter Condition',
     ariaAdvancedFilterBuilderGroupItem: 'Filter Group',
@@ -80,19 +78,14 @@ export const ADVANCED_FILTER_LOCALE_TEXT = {
     advancedFilterValidationMissingListEndBracket: 'Missing closing square bracket',
     advancedFilterValidationMissingEndBracket: 'Missing end bracket',
     advancedFilterValidationExtraEndBracket: 'Too many end brackets',
-    advancedFilterValidationMessage: (variableValues: string[]) =>
-        `Expression has an error. ${variableValues[0]} - ${variableValues[1]}.`,
+    advancedFilterValidationMessage: 'Expression has an error. ${error} - ${expression}.',
     advancedFilterValidationMessageAtEnd: (variableValues: string[]) =>
         `Expression has an error. ${variableValues[0]} at end of expression.`,
     advancedFilterValidationMessageOnly: (variableValues: string[]) => `Expression has an error. ${variableValues[0]}.`,
-    advancedFilterValidationMustBeGreaterThan: (variableValues: string[]) =>
-        `${variableValues[0]} must be greater than ${variableValues[1]}`,
-    advancedFilterValidationMustBeGreaterThanOrEqualTo: (variableValues: string[]) =>
-        `${variableValues[0]} must be greater than or equal to ${variableValues[1]}`,
-    advancedFilterValidationMustBeAfter: (variableValues: string[]) =>
-        `${variableValues[0]} must be after ${variableValues[1]}`,
-    advancedFilterValidationMustBeOnOrAfter: (variableValues: string[]) =>
-        `${variableValues[0]} must be on or after ${variableValues[1]}`,
+    advancedFilterValidationMustBeGreaterThan: '${column} must be greater than ${value}',
+    advancedFilterValidationMustBeGreaterThanOrEqualTo: '${column} must be greater than or equal to ${value}',
+    advancedFilterValidationMustBeAfter: '${column} must be after ${value}',
+    advancedFilterValidationMustBeOnOrAfter: '${column} must be on or after ${value}',
     advancedFilterBuilderTitle: 'Advanced Filter',
     advancedFilterBuilderApply: 'Apply',
     advancedFilterBuilderCancel: 'Cancel',
