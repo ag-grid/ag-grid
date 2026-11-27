@@ -62,6 +62,7 @@ export class SetFilter<V = string>
     implements SetFilterUi<V>
 {
     public readonly filterType = 'set' as const;
+    protected readonly filterInstanceType = 'SetFilterUi';
 
     private readonly eMiniFilter: GridInputTextField = RefPlaceholder;
     private readonly eFilterLoading: HTMLElement = RefPlaceholder;

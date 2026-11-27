@@ -1,8 +1,7 @@
-import type { AgPromise } from 'ag-stack';
-import { _debounce } from 'ag-stack';
+import { AgPromise, _debounce } from 'ag-stack';
 
 import type { ContainerType, IAfterGuiAttachedParams } from '../../interfaces/iAfterGuiAttachedParams';
-import type { FilterDisplayState } from '../../interfaces/iFilter';
+import type { FilterDisplayState, IDoesFilterPassParams } from '../../interfaces/iFilter';
 import { PositionableFeature } from '../../rendering/features/positionableFeature';
 import type { ElementParams } from '../../utils/element';
 import type { ComponentSelector } from '../../widgets/component';
@@ -56,6 +55,8 @@ export abstract class ProvidedFilter<
 
     /** Used to get the filter type for filter models. */
     public abstract readonly filterType: 'text' | 'number' | 'bigint' | 'date' | 'set' | 'multi';
+    /** The public type to pass to `api.getColumnFilterInstance()` for this filter. */
+    protected abstract readonly filterInstanceType: 'ISimpleFilter' | 'SetFilterUi';
 
     public postConstruct(): void {
         const element: ElementParams = {
@@ -156,6 +157,34 @@ export abstract class ProvidedFilter<
      */
     public applyModel(_source: 'api' | 'ui' | 'rowDataUpdated' = 'api'): boolean {
         return this.doApplyModel();
+    }
+
+    /** @deprecated v37 Does nothing. Use `api.getColumnFilterModel()` instead. */
+    public getModel(): null {
+        this.beans.log.error(355, this.getRemovedMethodParams());
+        return null;
+    }
+
+    /** @deprecated v37 Does nothing. Use `api.setColumnFilterModel()` instead. */
+    public setModel(_model: unknown): AgPromise<void> {
+        this.beans.log.error(356, this.getRemovedMethodParams());
+        return AgPromise.resolve();
+    }
+
+    /** @deprecated v37 Does nothing. Use `api.getColumnFilterModel()` instead. */
+    public isFilterActive(): boolean {
+        this.beans.log.error(357, this.getRemovedMethodParams());
+        return false;
+    }
+
+    /** @deprecated v37 Does nothing. Use `doesFilterPass()` on the handler from `api.getColumnFilterHandler()` instead. */
+    public doesFilterPass(_params: IDoesFilterPassParams): boolean {
+        this.beans.log.error(358, this.getRemovedMethodParams());
+        return true;
+    }
+
+    private getRemovedMethodParams(): { colId: string; filterInstanceType: string } {
+        return { colId: this.params.column.getColId(), filterInstanceType: this.filterInstanceType };
     }
 
     protected canApply(_model: M | null): boolean {

@@ -54,7 +54,7 @@ The following behave the same with `enableFilterHandlers` unset and `true`, and 
 - Grid API calls for filtering, such as `setFilterModel`, `getFilterModel`, `setColumnFilterModel`, `getColumnFilterModel`, `onFilterChanged` and `showColumnFilter`.
 - The `filterChanged`, `filterOpened`, `filterUiChanged` and `floatingFilterUiChanged` events, and `addGlobalListener`.
 - The external filter, row grouping with the group filter, and `initialState` filter models.
-- `api.getColumnFilterModel()` and `api.setColumnFilterModel()` in place of `getModel` and `setModel` on the instance of a Text, Number or Set Filter, which were removed in AG Grid 37.
+- `api.getColumnFilterModel()` and `api.setColumnFilterModel()` in place of `getModel` and `setModel` on grid-provided filter instances (Text, Number, BigInt, Date and Set Filters), which were removed in AG Grid 37.
 
 A column with a custom floating filter but `floatingFilter` off does not log a warning, because the component is never created. Migrate it anyway, or it will warn when floating filters are turned on.
 

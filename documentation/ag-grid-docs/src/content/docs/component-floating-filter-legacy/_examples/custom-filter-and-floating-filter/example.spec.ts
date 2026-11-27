@@ -15,7 +15,7 @@ test.agExample(import.meta, () => {
         async ({ agIdFor, page, agFramework }) => {
             test.fixme(
                 agFramework.startsWith('reactFunctionalTs'),
-                'AG-17785: with a React custom parent filter, the floating filter change leaves all rows displayed'
+                'AG-19495: with a React custom parent filter, the first floating filter change leaves all rows displayed'
             );
 
             await dismissValidationOverlay(page);

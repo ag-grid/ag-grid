@@ -427,6 +427,11 @@
         "url": "./grouping-data/#grouping-on-object-data"
     },
     {
+        "errorIds": [355, 356, 357, 358],
+        "text": "Upgrading to AG Grid 37 - Removal of Deprecated APIs",
+        "url": "./upgrading-to-ag-grid-37/#removal-of-deprecated-apis"
+    },
+    {
         "errorIds": [291],
         "text": "Installing Your Licence Key",
         "url": "./license-install/"

@@ -36,6 +36,7 @@ To automate the upgrade, use the [`ag-update` AI skill](./skills), which reads t
 ### TypeScript
 
 - The minimum TypeScript version is now 5.9.3.
+- Error ids for warnings retired in AG Grid 37 are no longer part of the `ErrorId` type. Remove them from any `suppress` list passed to `enableDevValidations()` or `ValidationModule.with()`.
 
 ### Filtering
 
@@ -147,9 +148,9 @@ The following deprecated APIs have now been removed.
 | `rowModel.getRowNode()`  | `api.getRowNode()`             |
 | `rowModel.getRowCount()` | `api.getDisplayedRowCount()`   |
 
-`api.forEachLeafNode()`, `api.forEachNodeAfterFilter()` and `api.forEachNodeAfterFilterAndSort()` are also available. `getRowBounds`, `getRowIndexAtPixel`, `isRowPresent`, `getTopLevelRowCount`, `getNodesInRangeForSelection`, `getOverlayType`, `isRowsToRender` and Client-Side Row Model internals have no API equivalent; raise an issue if you rely on them.
+`api.forEachLeafNode()`, `api.forEachNodeAfterFilter()` and `api.forEachNodeAfterFilterAndSort()` are also available. Other `IRowModel` members have no API equivalent; raise an issue if you rely on one.
 
-- `getModel()`, `setModel()`, `isFilterActive()` and `doesFilterPass()` on grid-provided filter instances (Text, Number, BigInt, Date and Set Filters, including as Multi Filter children) - removed, use the grid's filter model API instead. Custom legacy filter components and the legacy Multi Filter keep their own methods.
+- `getModel()`, `setModel()`, `isFilterActive()` and `doesFilterPass()` on grid-provided filter instances (Text, Number, BigInt, Date and Set Filters, including as Multi Filter children) - removed. Calling one does nothing and logs an error naming its replacement. Use the grid's filter model API instead. Custom legacy filter components and the legacy Multi Filter keep their own methods. The `ProvidedFilter`, `TextFilter`, `NumberFilter`, `BigIntFilter` and `DateFilter` classes no longer satisfy `IFilterComp`; type instances as `ISimpleFilter`, or `SetFilterUi` for the Set Filter.
 - `IProvidedFilter` - no longer extends `IFilter`, so it and `ISimpleFilter` no longer declare `getModel()`, `setModel()`, `isFilterActive()`, `doesFilterPass()`, `getModelAsString()` or `refresh()`. `IMultiFilter` still extends `IFilter`.
 - `FilterModifiedEvent.filterInstance` - now typed `IFilterComp | IProvidedFilter`.
 
@@ -164,7 +165,9 @@ The following deprecated APIs have now been removed.
 
 `api.setColumnFilterModel()` takes a column key, returns a native `Promise`, waits for data type inference to finish, and does nothing while the Advanced Filter is enabled. The grid-provided filter handlers do not read `handlerParams`, hence the cast.
 
-For a Multi Filter child, these replacements act on the whole Multi Filter, whose model is `{ filterType: 'multi', filterModels }`: read the child's model from `filterModels[index]`, and set it by setting the whole Multi Filter model. `api.getColumnFilterInstance()` still returns `IFilter` by default, so TypeScript does not flag calls to the removed methods; pass a type such as `getColumnFilterInstance<ISimpleFilter>()` to find them.
+For a Multi Filter child, these replacements act on the whole Multi Filter, whose model is `{ filterType: 'multi', filterModels }`: read the child's model from `filterModels[index]`, and set it by setting the whole Multi Filter model. In legacy filter mode the Multi Filter has no handler, so call `doesFilterPass()` on the Multi Filter instance instead.
+
+`api.getColumnFilterInstance()`, `getChildFilterInstance()` and a floating filter's `parentFilterInstance` default to the deprecated `IFilter` type, so these calls still compile. On grid-provided filters they do nothing and log an error. Pass a type such as `getColumnFilterInstance<ISimpleFilter>()` to find them.
 
 ### Row Node
 
@@ -240,7 +243,7 @@ Apps that use `enableDevValidations({ throwOn: ['warning'] })` with legacy filte
 | ------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
 | `enableFilterHandlers: false` (legacy filter mode)                                          | `enableFilterHandlers: true`                                                                        |
 | `onFilterModified` / `filterModified` event                                                 | `onFilterUiChanged` / `filterUiChanged` and `onFloatingFilterUiChanged` / `floatingFilterUiChanged` |
-| `IFilterComp`                                                                               | `FilterDisplayComp`, with the filter logic as a `doesFilterPass` callback or `handler`              |
+| `IFilter`, `IFilterComp`                                                                    | `FilterDisplayComp`, with the filter logic as a `doesFilterPass` callback or `handler`              |
 | `IFilterType`                                                                               | `ColumnFilter`                                                                                      |
 | `IFloatingFilter`, `IFloatingFilterComp`, `IFloatingFilterType`                             | `FloatingFilterDisplay`, `FloatingFilterDisplayComp`                                                |
 | `IFilterParams.filterChangedCallback`                                                       | `FilterDisplayParams.onModelChange`                                                                 |
