@@ -16,7 +16,7 @@ import type { Column } from '../../../interfaces/iColumn';
 import type { ElementParams } from '../../../utils/element';
 import type { GridInputTextField } from '../../../widgets/gridWidgetTypes';
 import type { FloatingFilterDisplayParams, IFloatingFilterParams } from '../../floating/floatingFilter';
-import { _clearFloatingFilterModel } from '../../floating/floatingFilterUtils';
+import { _clearFloatingFilterModel, _openFilterOnReadOnlyInputClick } from '../../floating/floatingFilterUtils';
 import { _addFloatingFilterValueTooltip } from '../../floating/provided/floatingFilterValueTooltip';
 import { SimpleFloatingFilter } from '../../floating/provided/simpleFloatingFilter';
 import type { ISimpleFilterModel } from '../iSimpleFilter';
@@ -73,6 +73,7 @@ export class DateFloatingFilter extends SimpleFloatingFilter<IFloatingFilterPara
             .setInputAriaLabel(translate('ariaDateFilterInput', 'Date Filter Input'))
             .setClearButtonEnabled(!this.readOnly)
             .onValueClear(() => _clearFloatingFilterModel(this.beans, this.params.column as AgColumn));
+        _openFilterOnReadOnlyInputClick(this, this.eReadOnlyText.getGui(), () => this.params.showParentFilter());
         this.refreshValueTooltip = _addFloatingFilterValueTooltip(
             this,
             this.beans,

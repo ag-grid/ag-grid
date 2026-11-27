@@ -17,6 +17,7 @@ import {
     _addFloatingFilterValueTooltip,
     _clearFloatingFilterModel,
     _getFloatingFilterAriaLabel,
+    _openFilterOnReadOnlyInputClick,
 } from 'ag-grid-community';
 
 import { SetFilter } from './setFilter';
@@ -50,6 +51,7 @@ export class SetFloatingFilterComp<V = string> extends Component implements IFlo
         this.eFloatingFilterText
             .setReadOnly(true)
             .onValueClear(() => _clearFloatingFilterModel(this.beans, this.params.column as AgColumn));
+        _openFilterOnReadOnlyInputClick(this, this.eFloatingFilterText.getGui(), () => this.params.showParentFilter());
 
         this.setParams(params);
         this.addManagedListeners(params.column as AgColumn, { headerNameChanged: () => this.refreshAriaLabel() });

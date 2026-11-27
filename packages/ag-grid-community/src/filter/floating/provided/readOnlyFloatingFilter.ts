@@ -12,7 +12,11 @@ import type {
     IFloatingFilterParams,
     IFloatingFilterParent,
 } from '../floatingFilter';
-import { _clearFloatingFilterModel, _getFloatingFilterAriaLabel } from '../floatingFilterUtils';
+import {
+    _clearFloatingFilterModel,
+    _getFloatingFilterAriaLabel,
+    _openFilterOnReadOnlyInputClick,
+} from '../floatingFilterUtils';
 import { _addFloatingFilterValueTooltip } from './floatingFilterValueTooltip';
 
 const ReadOnlyFloatingFilterElement: ElementParams = {
@@ -49,6 +53,9 @@ export class ReadOnlyFloatingFilter extends Component implements IFloatingFilter
                 .setReadOnly(true)
                 .setClearButtonEnabled(true)
                 .onValueClear(() => _clearFloatingFilterModel(this.beans, this.params.column as AgColumn));
+            _openFilterOnReadOnlyInputClick(this, this.eFloatingFilterText.getGui(), () =>
+                this.params.showParentFilter()
+            );
         }
         this.params = params;
         this.refreshAriaLabel();

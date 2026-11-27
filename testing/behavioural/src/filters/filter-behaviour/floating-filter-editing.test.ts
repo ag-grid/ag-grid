@@ -636,7 +636,7 @@ describe('Floating filter editing', () => {
             return api;
         };
 
-        test.each<[string, ColDef, object]>([
+        const readOnlyCases: [string, ColDef, object][] = [
             ['a Set Filter', setFilter, { filterType: 'set', values: ['Italy'] }],
             [
                 'two conditions',
@@ -660,29 +660,37 @@ describe('Floating filter editing', () => {
                 { field: 'date', filter: 'agDateColumnFilter' },
                 { filterType: 'date', type: 'inRange', dateFrom: '2024-03-15', dateTo: '2024-06-30' },
             ],
-        ])('%s: the input can be focused and its clear button removes the filter', async (_, colDef, model) => {
-            const colId = colDef.field!;
-            const api = await gridsManager.createGridAndWait('grid1', {
-                columnDefs: [{ ...colDef, floatingFilter: true }],
-                rowData,
-            });
-            await api.setColumnFilterModel(colId, model);
-            await api.onFilterChanged();
-            await asyncSetTimeout(0);
-            expect(api.getDisplayedRowCount()).toBe(1);
+        ];
 
-            const floating = FloatingFilterHarness.get(api, colId);
-            const input = floating.input();
-            expect({ readOnly: input.readOnly, disabled: input.disabled }).toEqual({ readOnly: true, disabled: false });
-            input.focus();
-            expect(input).toHaveFocus();
+        test.each(readOnlyCases)(
+            '%s: the input can be focused and its clear button removes the filter',
+            async (_, colDef, model) => {
+                const colId = colDef.field!;
+                const api = await gridsManager.createGridAndWait('grid1', {
+                    columnDefs: [{ ...colDef, floatingFilter: true }],
+                    rowData,
+                });
+                await api.setColumnFilterModel(colId, model);
+                await api.onFilterChanged();
+                await asyncSetTimeout(0);
+                expect(api.getDisplayedRowCount()).toBe(1);
 
-            floating.clearButton()!.click();
-            await waitFor(() => expect(api.getColumnFilterModel(colId)).toBeNull());
-            expect(floating.input().value).toBe('');
-            expect(floating.clearButton()).toBeNull();
-            expect(api.getDisplayedRowCount()).toBe(2);
-        });
+                const floating = FloatingFilterHarness.get(api, colId);
+                const input = floating.input();
+                expect({ readOnly: input.readOnly, disabled: input.disabled }).toEqual({
+                    readOnly: true,
+                    disabled: false,
+                });
+                input.focus();
+                expect(input).toHaveFocus();
+
+                floating.clearButton()!.click();
+                await waitFor(() => expect(api.getColumnFilterModel(colId)).toBeNull());
+                expect(floating.input().value).toBe('');
+                expect(floating.clearButton()).toBeNull();
+                expect(api.getDisplayedRowCount()).toBe(2);
+            }
+        );
 
         test.each<[string, ColDef, object]>([
             ['text', readOnlyText, { filterType: 'text', type: 'contains', filter: 'ita' }],
@@ -734,16 +742,36 @@ describe('Floating filter editing', () => {
             expect(floating.clearButton()).toBeNull();
         });
 
-        test('clicking a read-only input focuses it and leaves the filter popup to the filter button', async () => {
-            const api = await createWithSetFilterApplied();
+        test.each<[string, ColDef, object]>([
+            ...readOnlyCases,
+            ['a readOnly: true filter', readOnlyText, { filterType: 'text', type: 'contains', filter: 'ita' }],
+        ])('%s: clicking the input opens the filter popup without focusing the input', async (_, colDef, model) => {
+            const colId = colDef.field!;
+            const api = await gridsManager.createGridAndWait('grid1', {
+                columnDefs: [{ ...colDef, floatingFilter: true }],
+                rowData,
+            });
+            await api.setColumnFilterModel(colId, model);
+            await api.onFilterChanged();
+            await asyncSetTimeout(0);
+
+            const input = FloatingFilterHarness.get(api, colId).input();
+            await userEvent.setup().click(input);
+            await waitFor(() => expect(document.querySelector('.ag-filter-menu')).not.toBeNull());
+            expect(input).not.toHaveFocus();
+        });
+
+        test('clicking an editable input focuses it and does not open the filter popup', async () => {
+            const api = await gridsManager.createGridAndWait('grid1', {
+                columnDefs: [{ field: 'country', filter: 'agTextColumnFilter', floatingFilter: true }],
+                rowData,
+            });
             const input = FloatingFilterHarness.get(api, 'country').input();
 
             await userEvent.setup().click(input);
             expect(input).toHaveFocus();
+            await asyncSetTimeout(0);
             expect(document.querySelector('.ag-filter-menu')).toBeNull();
-
-            await ColumnFilterHarness.open(api, 'country', 'floatingFilter');
-            expect(document.querySelector('.ag-filter-menu')).not.toBeNull();
         });
 
         test('Tab moves from a read-only input to its clear button, then the filter button', async () => {

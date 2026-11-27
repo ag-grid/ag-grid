@@ -13,7 +13,7 @@ import type {
 } from '../../provided/text/iTextFilter';
 import { trimInputForFilter } from '../../provided/text/textFilterUtils';
 import type { FloatingFilterDisplayParams } from '../floatingFilter';
-import { _clearFloatingFilterModel } from '../floatingFilterUtils';
+import { _clearFloatingFilterModel, _openFilterOnReadOnlyInputClick } from '../floatingFilterUtils';
 import { _addFloatingFilterValueTooltip } from './floatingFilterValueTooltip';
 import type { FloatingFilterInputService } from './iFloatingFilterInputService';
 import { SimpleFloatingFilter } from './simpleFloatingFilter';
@@ -43,6 +43,7 @@ export abstract class TextInputFloatingFilter<
 
     public postConstruct(): void {
         this.setTemplate(TextInputFloatingFilterElement);
+        _openFilterOnReadOnlyInputClick(this, this.eFloatingFilterInputContainer, () => this.params.showParentFilter());
     }
     protected override defaultDebounceMs: number = 500;
 

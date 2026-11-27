@@ -20,6 +20,7 @@ import {
     _getDisplayHandler,
     _getFloatingFilterAriaLabel,
     _isGroupMultiAutoColumn,
+    _openFilterOnReadOnlyInputClick,
 } from 'ag-grid-community';
 
 import type { GroupFilter } from './groupFilter';
@@ -122,6 +123,9 @@ export class GroupFloatingFilterComp extends Component implements IFloatingFilte
             this.eFloatingFilterText = this.createManagedBean(new AgInputTextField());
 
             this.eFloatingFilterText.setReadOnly(true).onValueClear(() => this.clearSelectedColumnFilter());
+            _openFilterOnReadOnlyInputClick(this, this.eFloatingFilterText.getGui(), () =>
+                this.params.showParentFilter()
+            );
 
             this.setParams();
             this.refreshValueTooltip = _addFloatingFilterValueTooltip(
