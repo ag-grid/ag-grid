@@ -13,16 +13,16 @@ const CONTENT: SolutionPageContent = {
     topic: { name: 'Inventory management', mark: 'Inventory management' },
     hero: { heading: 'Build an inventory management dashboard with AG Grid', subHeading: 'Edit stock in place.' },
     shortAnswer: 'AG Grid shows stock levels in one editable table.',
-    example: { id: 'inventory', intro: 'Edit a stock level.', note: 'Sample data.' },
+    example: { id: 'inventory', intro: 'Edit a [stock level](./cell-editing/).', note: 'Sample data.' },
     keyFigures: {
         heading: 'Key figures',
-        figures: [{ value: '100k+', label: 'Rows', detail: 'In the Client-Side Row Model.' }],
+        figures: [{ value: '100k+', label: 'Rows', detail: 'In the [Client-Side Row Model](./row-models/).' }],
     },
     capabilities: {
         heading: 'Capabilities',
         items: [
             { title: 'Cell editing', docsUrl: './cell-editing/', plan: 'Free', body: 'Edit cells in place.' },
-            { title: 'Excel export', plan: 'Enterprise', body: 'Export to .xlsx.' },
+            { title: 'Excel export', plan: 'Enterprise', body: 'Export to [.xlsx](./excel-export/).' },
         ],
     },
     howTo: {
@@ -107,5 +107,16 @@ describe('buildSolutionPageMarkdown', () => {
         expect(markdown).toContain(
             '- <https://www.ag-grid.com/react-data-grid/row-models/> (checked 24 November 2026)'
         );
+    });
+
+    test('resolves authored links in the example, key figures and capabilities', () => {
+        const markdown = build();
+
+        expect(markdown).toContain('Edit a [stock level](https://www.ag-grid.com/react-data-grid/cell-editing/).');
+        expect(markdown).toContain(
+            '**100k+** Rows: In the [Client-Side Row Model](https://www.ag-grid.com/react-data-grid/row-models/).'
+        );
+        expect(markdown).toContain('Export to [.xlsx](https://www.ag-grid.com/react-data-grid/excel-export/).');
+        expect(markdown).not.toContain('](./');
     });
 });

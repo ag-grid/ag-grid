@@ -51,13 +51,13 @@ export function buildSolutionPageMarkdown({
         ],
         heroMarkdown({ hero: content.hero, lastUpdated: content.lastUpdated, site, absolute }),
         [`*${content.topic.name}*`, `## ${COMPARISON_SECTIONS.shortAnswer}`, markdoc(content.shortAnswer)],
-        [`## ${SOLUTION_SECTIONS.liveExample}`, content.example.intro, content.example.note],
+        [`## ${SOLUTION_SECTIONS.liveExample}`, markdoc(content.example.intro), markdoc(content.example.note)],
         [
             `## ${keyFigures.heading}`,
             keyFigures.figures
                 .map(
                     ({ value, valueSuffix, label, detail }) =>
-                        `- **${[value, valueSuffix].filter(Boolean).join(' ')}** ${label}: ${detail}`
+                        `- **${[value, valueSuffix].filter(Boolean).join(' ')}** ${label}: ${markdoc(detail)}`
                 )
                 .join('\n'),
         ],
@@ -65,7 +65,7 @@ export function buildSolutionPageMarkdown({
             `## ${capabilities.heading}`,
             ...capabilities.items.flatMap(({ title, docsUrl, plan, body }) => [
                 `### ${docsUrl ? `[${title}](${absolute(docsUrl)})` : title} (${FEATURE_STATUS.yes.symbol} ${plan})`,
-                body,
+                markdoc(body),
             ]),
         ],
         [
