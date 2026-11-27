@@ -567,4 +567,5 @@ export { SharedMenuModule as _SharedMenuModule } from './misc/menu/sharedMenuMod
 export { KeyboardNavigationModule as _KeyboardNavigationModule } from './navigation/navigationModule';
 export { SharedRowSelectionModule as _SharedRowSelectionModule } from './selection/rowSelectionModule';
 export { SortModule as _SortModule } from './sort/sortModule';
+export { TooltipCoreModule as _TooltipCoreModule } from './tooltip/tooltipModule';
 export { PopupModule as _PopupModule } from './widgets/popupModule';

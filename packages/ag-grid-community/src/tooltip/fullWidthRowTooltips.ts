@@ -242,7 +242,7 @@ export class FullWidthRowTooltips extends BeanStub {
                 return getGroupTooltipTextElement(eGui);
             },
         };
-        const feature = beans.tooltipSvc!.registerTooltip(this, source, tooltipFeatures.get(eGui)?.feature);
+        const feature = beans.tooltipCoreSvc!.registerTooltip(this, source, tooltipFeatures.get(eGui)?.feature);
         if (feature) {
             tooltipFeatures.set(eGui, { feature, fromRenderer });
         } else {

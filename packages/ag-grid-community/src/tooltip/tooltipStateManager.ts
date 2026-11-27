@@ -38,7 +38,7 @@ export class TooltipStateManager extends BaseTooltipStateManager<
     protected override isTooltipAllowed(): boolean {
         return (
             !(this.tooltipCtrl.control && this.gos.get('suppressBuiltInTooltips')) &&
-            (!this.beans.tooltipSvc?.isContextMenuOpen || this.tooltipCtrl.getLocation?.() === 'menu')
+            (!this.beans.tooltipCoreSvc?.isContextMenuOpen || this.tooltipCtrl.getLocation?.() === 'menu')
         );
     }
 

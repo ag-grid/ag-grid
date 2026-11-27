@@ -50,6 +50,7 @@ import {
     ScrollApiModule,
     TextEditorModule,
     TextFilterModule,
+    TooltipModule,
     enableDevValidations,
     getGridElement,
 } from 'ag-grid-community';
@@ -94,6 +95,7 @@ describe('Column Features', () => {
             RowGroupingModule,
             ScrollApiModule,
             TextEditorModule,
+            TooltipModule,
         ],
     });
 

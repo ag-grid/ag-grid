@@ -73,13 +73,13 @@ const gridsManager = new TestGridsManager({
 });
 
 /** `eGridDiv`: an element id, created under the body when absent, or the element to mount the grid in. */
-export function createGrid(eGridDiv: string | HTMLElement, opts: Partial<GridOptions>) {
+export function createGrid(eGridDiv: string | HTMLElement, opts: Partial<GridOptions>, modules?: Module[]) {
     const options: GridOptions = {
         getRowId: (params) => params.data?.id,
         calculatedColumns: true,
         ...opts,
     };
-    return gridsManager.createGrid(eGridDiv, options);
+    return gridsManager.createGrid(eGridDiv, options, { modules });
 }
 
 export function addCalculatedColumnDef(api: GridApi, colDef: ColDef): void {
