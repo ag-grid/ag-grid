@@ -229,6 +229,15 @@ ModuleRegistry.registerModules([${gridModule}.with(AgChartsEnterpriseModule)]);
     ` as const;
 };
 
+type RemovedFilterInstanceMethodParams = { colId: string; filterInstanceType: string };
+
+const removedFilterInstanceMethod = (
+    method: string,
+    replacement: string,
+    { colId, filterInstanceType }: RemovedFilterInstanceMethodParams
+) =>
+    `\`${method}()\` was removed from grid-provided filter instances in v37, so this call does nothing. Use ${replacement} instead. To have TypeScript flag these calls, pass the filter type: \`api.getColumnFilterInstance<${filterInstanceType}>('${colId}')\`.`;
+
 const clipboardApiError = (method: string) =>
     `Unable to use the Clipboard API (\`navigator.clipboard.${method}()\`). ` +
     'The reason why it could not be used has been logged on the web development console. ' +
@@ -980,6 +989,22 @@ export const AG_GRID_ERRORS = {
         `\`staticCssTheme\` was given an unknown ${option}: \`${value}\`, so it has no effect. Valid values are ${valid}. See ${getValidationDocLink()}/theming-static-css/` as const,
     354: ({ linked }: { linked: boolean }) =>
         `The grid's static CSS theme ${linked ? 'sets' : 'does not set'} \`useLinkedImages\`, but \`${_staticCssGridFile(!linked)}.css\` is loaded. Load \`ag-grid-community/css/${_staticCssGridFile(linked)}.css\` instead, and the matching icon set file. See ${getValidationDocLink()}/theming-static-css/#linked-images` as const,
+    355: (params: RemovedFilterInstanceMethodParams) =>
+        removedFilterInstanceMethod('getModel', `\`api.getColumnFilterModel('${params.colId}')\``, params),
+    356: (params: RemovedFilterInstanceMethodParams) =>
+        removedFilterInstanceMethod('setModel', `\`api.setColumnFilterModel('${params.colId}', model)\``, params),
+    357: (params: RemovedFilterInstanceMethodParams) =>
+        removedFilterInstanceMethod(
+            'isFilterActive',
+            `\`api.getColumnFilterModel('${params.colId}') != null\``,
+            params
+        ),
+    358: (params: RemovedFilterInstanceMethodParams) =>
+        removedFilterInstanceMethod(
+            'doesFilterPass',
+            `\`doesFilterPass()\` on the handler from \`api.getColumnFilterHandler('${params.colId}')\``,
+            params
+        ),
     // When adding a code above this line, raise `MAX_ERROR_ID` below to match.
 };
 
@@ -995,7 +1020,7 @@ export type ErrorId = keyof ErrorMap;
  *
  * @knipIgnore Read by the docs site's error-page route
  */
-export const MAX_ERROR_ID = 354;
+export const MAX_ERROR_ID = 358;
 
 type ErrorValue<TId extends ErrorId | null> = TId extends ErrorId ? ErrorMap[TId] : never;
 export type GetErrorParams<TId extends ErrorId> =

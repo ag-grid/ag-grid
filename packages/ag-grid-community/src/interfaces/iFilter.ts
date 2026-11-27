@@ -236,27 +236,32 @@ export interface BaseFilter extends SharedFilterUi, ReadOnlyFloatingFilterParent
      * params object with attributes node (the rodNode the grid creates that wraps the data) and data
      * (the data object that you provided to the grid for that row). Note that this is only called for the
      * Client-Side Row Model, and can just return `true` if being used exclusively with other row models.
+     * @deprecated v37 Use `enableFilterHandlers` and call `doesFilterPass()` on the handler from `api.getColumnFilterHandler()` instead. See [Migrating to Filter Handlers](https://www.ag-grid.com/javascript-data-grid/enable-filter-handlers-migration/).
      */
     doesFilterPass(params: IDoesFilterPassParams): boolean;
 }
 
+/** @deprecated v37 Use `enableFilterHandlers` with a `FilterDisplayComp` component instead. See [Migrating to Filter Handlers](https://www.ag-grid.com/javascript-data-grid/enable-filter-handlers-migration/). */
 export interface IFilter extends BaseFilter {
     /**
      * Returns `true` if the filter is currently active, otherwise `false`.
      * If active then 1) the grid will show the filter icon in the column header
      * and 2) the filter will be included in the filtering of the data.
+     * @deprecated v37 Use `enableFilterHandlers` and `api.getColumnFilterModel()` instead. See [Migrating to Filter Handlers](https://www.ag-grid.com/javascript-data-grid/enable-filter-handlers-migration/).
      */
     isFilterActive(): boolean;
 
     /**
      * Returns a model representing the current state of the filter, or `null` if the filter is
      * not active. The grid calls `getModel()` on all active filters when `gridApi.getFilterModel()` is called.
+     * @deprecated v37 Use `enableFilterHandlers` and `api.getColumnFilterModel()` instead. See [Migrating to Filter Handlers](https://www.ag-grid.com/javascript-data-grid/enable-filter-handlers-migration/).
      */
     getModel(): any;
 
     /**
      * Sets the state of the filter using the supplied model. Providing `null` as the model will
      * de-activate the filter.
+     * @deprecated v37 Use `enableFilterHandlers` and `api.setColumnFilterModel()` instead. See [Migrating to Filter Handlers](https://www.ag-grid.com/javascript-data-grid/enable-filter-handlers-migration/).
      */
     setModel(model: any): void | AgPromise<void>;
 
