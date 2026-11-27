@@ -1171,99 +1171,100 @@
             "version": "36.3.0-beta.20261126.1116",
             "action": {
                 "before": {
-                    "ids": ["50023", "50022", "50021", "50020", "50019"],
+                    "ids": ["50024", "50023", "50022", "50021", "50020"],
                     "indexes": [5, 6, 7, 8, 9]
                 },
                 "rows": [
                     {
-                        "id": "50023",
-                        "selected": true,
-                        "index": 54
-                    },
-                    {
-                        "id": "50022",
-                        "selected": true,
-                        "index": 55
-                    },
-                    {
-                        "id": "50021",
-                        "selected": true,
-                        "index": 56
-                    },
-                    {
-                        "id": "50020",
+                        "id": "50024",
                         "selected": true,
                         "index": 57
                     },
                     {
-                        "id": "50019",
+                        "id": "50023",
                         "selected": true,
                         "index": 58
+                    },
+                    {
+                        "id": "50022",
+                        "selected": true,
+                        "index": 59
+                    },
+                    {
+                        "id": "50021",
+                        "selected": true,
+                        "index": 60
+                    },
+                    {
+                        "id": "50020",
+                        "selected": true,
+                        "index": 61
                     }
                 ],
                 "allRowsStillSelected": true,
                 "selectionStateIds": 5,
-                "rangeRowIdsAfter": ["50072", "50071", "50070", "50069", "50068"],
+                "rangeRowIdsAfter": ["50076", "50075", "50074", "50073", "50072"],
                 "rangeStillCoversSameRows": false,
                 "resume": {
                     "applied": 55,
-                    "ms": 391
+                    "ms": 408
                 },
                 "restored": {
-                    "ms": 13.1,
+                    "ms": 19.4,
+                    "atOnce": true,
                     "oneSecondLater": false
                 }
             },
             "snapshot": {
-                "seconds": 5.49,
-                "fps": 44.42,
+                "seconds": 5.6,
+                "fps": 44.14,
                 "frameMs": {
-                    "n": 244,
-                    "avg": 22.47,
+                    "n": 247,
+                    "avg": 22.6,
                     "p50": 16.7,
-                    "p95": 33.4,
-                    "max": 500
+                    "p95": 33.3,
+                    "max": 516.7
                 },
                 "longFrames": 12,
                 "framesOver1000ms": 0,
                 "longTasks": 13,
-                "longTaskMs": 1334,
-                "cellUpdatesSentPerS": 23757.94,
+                "longTaskMs": 1393,
+                "cellUpdatesSentPerS": 24251.74,
                 "loadedNodes": {
-                    "first": 229,
+                    "first": 230,
                     "last": 287,
                     "max": 287,
-                    "slopePerSSecondHalf": 7.94
+                    "slopePerSSecondHalf": 25.15
                 },
                 "gridsAttached": 1,
                 "grids": [
                     {
                         "index": 0,
-                        "contentRefreshPerS": 2.73,
-                        "cellRefreshPerS": 2.18,
-                        "rowMoveRefreshPerS": 2.73,
+                        "contentRefreshPerS": 2.68,
+                        "cellRefreshPerS": 2.14,
+                        "rowMoveRefreshPerS": 2.68,
                         "perCellRenderedRate": {
-                            "n": 815,
-                            "avg": 2.13,
-                            "p50": 2.19,
-                            "p95": 3.7,
-                            "max": 4.78,
-                            "p10": 0.33
+                            "n": 835,
+                            "avg": 2.12,
+                            "p50": 2.15,
+                            "p95": 4.36,
+                            "max": 4.8,
+                            "p10": 0
                         },
                         "rowsObserved": 155,
-                        "pctRowsChangedAtLeast1PerS": 72.9,
-                        "domRowsAddedPerS": 11.11,
-                        "domRowsRemovedPerS": 11.11,
+                        "pctRowsChangedAtLeast1PerS": 69.68,
+                        "domRowsAddedPerS": 10.9,
+                        "domRowsRemovedPerS": 10.9,
                         "rowIdAttributeChanges": 0,
-                        "insertsAppliedPerS": 11.11,
+                        "insertsAppliedPerS": 10.9,
                         "orderChecks": 16,
                         "orderMismatches": 0,
                         "headRenderLagMs": {
                             "n": 61,
                             "avg": 2.35,
                             "p50": 2.3,
-                            "p95": 2.3,
-                            "max": 11
+                            "p95": 2.4,
+                            "max": 9.3
                         },
                         "aggLagMs": {
                             "group": {
@@ -1287,10 +1288,10 @@
                         },
                         "txAsyncQueueMs": {
                             "n": 87,
-                            "avg": 377.89,
-                            "p50": 517.3,
-                            "p95": 517.3,
-                            "max": 517.3
+                            "avg": 393.4,
+                            "p50": 536.7,
+                            "p95": 536.7,
+                            "max": 536.7
                         },
                         "txStatuses": {
                             "Applied": 87
@@ -1300,16 +1301,16 @@
                         "rows": 115,
                         "cols": 50,
                         "feed": {
-                            "insertsEmitted": 62,
-                            "updateTicks": 25,
-                            "backendMs": 13,
+                            "insertsEmitted": 61,
+                            "updateTicks": 26,
+                            "backendMs": 12.5,
                             "refreshInserts": 0,
                             "refreshes": 0,
                             "refetches": 0,
-                            "insertsEmittedPerS": 11.29,
-                            "updateTicksPerS": 4.55,
+                            "insertsEmittedPerS": 10.9,
+                            "updateTicksPerS": 4.65,
                             "refreshesPerS": 0,
-                            "backendMsPerS": 2.37
+                            "backendMsPerS": 2.23
                         }
                     }
                 ]
@@ -1318,9 +1319,9 @@
             "consoleErrors": [],
             "title": "Selection across pause/resume with inserts",
             "query": "cols=50",
-            "measuredAt": "2026-11-27T00:14:50.318Z",
+            "measuredAt": "2026-11-27T00:30:39.709Z",
             "provenance": {
-                "gitSha": "6ae36da1d65aea82b1c766755fc7a65150b41e1e",
+                "gitSha": "6065a7d8c630875410a426ef9d1720499f94cd28",
                 "uncommittedChanges": false,
                 "gridVersion": "36.3.0-beta.20261126.1116",
                 "machine": {
@@ -10673,11 +10674,11 @@
         "viewport": "3840x2160",
         "ci": true
     },
-    "startedAt": "2026-11-27T00:12:42.950Z",
-    "gitSha": "6ae36da1d65aea82b1c766755fc7a65150b41e1e",
+    "startedAt": "2026-11-27T00:30:30.162Z",
+    "gitSha": "6065a7d8c630875410a426ef9d1720499f94cd28",
     "warmupS": 3,
     "measureS": 10,
-    "finishedAt": "2026-11-27T00:24:44.349Z",
+    "finishedAt": "2026-11-27T00:30:39.709Z",
     "verdicts": {
         "R1": {
             "verdict": "pass",
@@ -10716,7 +10717,7 @@
         },
         "R8": {
             "verdict": "partial",
-            "number": "rows still selected: true (indexes 5,6,7,8,9 -> 54,55,56,57,58); cell range still on the same row ids: false; range re-created from the row ids (workaround) in 13.1 ms, still on those rows 1 s later with the feed running: false; 55 buffered transactions applied on resume in 391 ms",
+            "number": "rows still selected: true (indexes 5,6,7,8,9 -> 57,58,59,60,61); cell range still on the same row ids: false; range re-created from the row ids (workaround) in 19.4 ms, on those rows at once: true, still on them 1 s later with the feed running: false; 55 buffered transactions applied on resume in 408 ms",
             "scenarios": ["S7"]
         },
         "R9": {
