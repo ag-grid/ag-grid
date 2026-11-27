@@ -43,7 +43,7 @@ export abstract class BaseCreator<T, S extends GridSerializingSession<T>, P exte
 
     /**
      * Dispatches `exportStart` now, and returns a function that runs the export then dispatches `exportEnd`.
-     * A synchronous throw from `exportFunc` is rethrown synchronously rather than turned into a rejection.
+     * `exportFunc` still runs synchronously, but a throw from it rejects the returned promise.
      */
     protected trackExport(
         format: ExportEventFormat,
@@ -61,8 +61,7 @@ export abstract class BaseCreator<T, S extends GridSerializingSession<T>, P exte
             try {
                 result = exportFunc();
             } catch (error) {
-                end(false);
-                throw error;
+                result = Promise.reject(error);
             }
 
             return Promise.resolve(result).then(

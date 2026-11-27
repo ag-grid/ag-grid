@@ -161,18 +161,18 @@ describe('export start and end events', () => {
         expect(events[1].fileName).toBeUndefined();
     });
 
-    test('a failing export with the overlay suppressed throws synchronously and fires end with success false', async () => {
+    test('a failing export with the overlay suppressed rejects and fires end with success false', async () => {
         const { api, calls, events } = await createGrid({ suppressOverlays: ['exporting'] });
 
-        expect(() =>
+        await expect(
             api.exportDataAsCsv({
                 processCellCallback: () => {
                     throw new Error('processCellCallback failed');
                 },
             })
-        ).toThrow('processCellCallback failed');
+        ).rejects.toThrow('processCellCallback failed');
 
-        await waitFor(() => expect(calls).toEqual(['start', 'end']));
+        expect(calls).toEqual(['start', 'end']);
         expect(events[1]).toMatchObject({ success: false });
     });
 

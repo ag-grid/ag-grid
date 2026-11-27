@@ -215,20 +215,24 @@ describe('ag-grid export overlay', () => {
             `);
         });
 
-        test('csv export error reaches the caller when the export overlay is suppressed', () => {
+        test('csv export error rejects the returned promise when the export overlay is suppressed', async () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs,
                 rowData: [{ athlete: 'John', sport: 'Tennis', age: 25 }],
                 suppressOverlays: ['exporting'],
             });
 
-            expect(() =>
-                api.exportDataAsCsv({
-                    processCellCallback: () => {
-                        throw new Error('processCellCallback failed');
-                    },
-                })
-            ).toThrow('processCellCallback failed');
+            let callbackRan = false;
+            const exported = api.exportDataAsCsv({
+                processCellCallback: () => {
+                    callbackRan = true;
+                    throw new Error('processCellCallback failed');
+                },
+            });
+
+            // The data is still read synchronously; only the error is delivered through the promise.
+            expect(callbackRan).toBe(true);
+            await expect(exported).rejects.toThrow('processCellCallback failed');
             expect(URL.createObjectURL).not.toHaveBeenCalled();
         });
 
