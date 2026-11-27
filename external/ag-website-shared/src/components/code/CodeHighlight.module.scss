@@ -49,3 +49,22 @@
         }
     }
 }
+
+// `revealWhenHighlighted`: unhighlighted code keeps its space but is not shown.
+.held {
+    visibility: hidden;
+}
+
+.reveal {
+    animation: reveal 0.15s ease-out;
+
+    @media (prefers-reduced-motion: reduce) {
+        animation: none;
+    }
+}
+
+@keyframes reveal {
+    from {
+        opacity: 0;
+    }
+}

@@ -27,4 +27,5 @@ export type ParamType =
     | 'fontFamily'
     | 'fontWeight'
     | 'duration'
-    | 'scrollbarWidth';
+    | 'scrollbarWidth'
+    | 'backdropFilter';

@@ -433,8 +433,6 @@ $breakpoint-demo-phone-fits: 360px;
         // share one inset so the frame sits evenly, giving the demo the width the
         // page gutters would otherwise take.
         padding: $spacing-size-16 $spacing-size-6 $spacing-size-6;
-        // Below the site header (10002) and banner (10005).
-        z-index: 9999;
         background: var(--color-bg-primary);
     }
 }

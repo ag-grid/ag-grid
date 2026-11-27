@@ -204,4 +204,5 @@ const cssPropertyForParamType = {
     fontWeight: 'fontWeight',
     duration: 'transitionDuration',
     scrollbarWidth: 'scrollbarWidth',
+    backdropFilter: 'backdropFilter',
 } satisfies Record<ParamType, keyof CSSStyleDeclaration>;

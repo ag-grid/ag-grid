@@ -503,10 +503,16 @@ body > #highlighter {
     min-width: 0;
 }
 
-/* Each checkbox's or switch's label text would otherwise sit as close to the next control as to its
-   own box. A `gap-left` neighbour already brings its own wider gap. */
-.controls-row > label:has(> input[type='checkbox']):not(:last-child, :has(+ .gap-left)) {
+/* A checkbox's label text would otherwise sit as close to the next control as to its own box.
+   A `gap-left` neighbour already brings its own wider gap. */
+.controls-row > label:has(> input[type='checkbox']:not([role='switch'])):not(:last-child, :has(+ .gap-left)) {
     margin-right: calc(var(--row-gap) * 2);
+}
+
+/* A switch's label text comes first, so it would otherwise sit as close to the previous control as to
+   its own switch */
+.controls-row > label:has(> input[role='switch']):not(:first-child) {
+    margin-left: calc(var(--row-gap) * 2);
 }
 
 :is(.controls-row, .controls-section) + :is(.controls-row, .controls-section) {
