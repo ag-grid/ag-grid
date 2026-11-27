@@ -114,7 +114,7 @@ describe('Set Filter preservePreviousValues - filter list', () => {
         const labels = Array.from(popup().querySelectorAll<HTMLElement>('.ag-filter-virtual-list-item')).map((el) =>
             el.getAttribute('aria-label')
         );
-        expect(labels).toEqual([null, 'A, not in current data', 'B, not in current data', null, null]);
+        expect(labels).toEqual(['(Select All)', 'A, not in current data', 'B, not in current data', 'C', 'D']);
 
         await setRowData(api, rows('A', 'C', 'D'));
         expect(filter.setFilterItemLabels()).toEqual(['(Select All)', 'A', 'B', 'C', 'D']);
@@ -132,11 +132,11 @@ describe('Set Filter preservePreviousValues - filter list', () => {
         const labels = () =>
             Array.from(popup().querySelectorAll('.ag-set-filter-item-missing-label')).map((el) => el.textContent);
         expect(labels()).toEqual(['(not in rows)', '(not in rows)']);
-        expect(ariaLabels()).toEqual([null, null, 'B, (not in rows)', null, 'Z, (not in rows)']);
+        expect(ariaLabels()).toEqual(['(Select All)', 'A', 'B, (not in rows)', 'C', 'Z, (not in rows)']);
 
         await setRowData(api, rows('A', 'B'));
         expect(filter.setFilterItemLabels()).toEqual(['(Select All)', 'A', 'B', 'C (not in rows)', 'Z (not in rows)']);
-        expect(ariaLabels()).toEqual([null, null, null, 'C, (not in rows)', 'Z, (not in rows)']);
+        expect(ariaLabels()).toEqual(['(Select All)', 'A', 'B', 'C, (not in rows)', 'Z, (not in rows)']);
     });
 
     test.each([
@@ -156,7 +156,7 @@ describe('Set Filter preservePreviousValues - filter list', () => {
 
             const filter = await ColumnFilterHarness.open(api, 'value');
             expect(filter.setFilterItemLabels()).toEqual(['(Select All)', 'A', shown]);
-            expect(ariaLabels()).toEqual([null, null, name]);
+            expect(ariaLabels()).toEqual(['(Select All)', 'A', name]);
         }
     );
 
@@ -239,7 +239,7 @@ describe('Set Filter preservePreviousValues - filter list', () => {
         const labels = Array.from(popup().querySelectorAll<HTMLElement>('.ag-filter-virtual-list-item')).map((el) =>
             el.getAttribute('aria-label')
         );
-        expect(labels).toEqual([null, null, 'B, not in current data']);
+        expect(labels).toEqual(['(Select All)', 'A', 'B, not in current data']);
     });
 
     test('the default tooltip of a retained value says it is not in the current data', async () => {
