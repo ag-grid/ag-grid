@@ -30,7 +30,8 @@ const HEADER_ROW_BORDER_WIDTH = cssVariable('headerRowBorderWidth', 'border', 1)
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _addAdditionalCss(cssMap: Map<string, string[]>, modules: Module[]): void {
-    for (const module of modules.sort((a, b) => a.moduleName.localeCompare(b.moduleName))) {
+    // OPTIMIZATION: not localeCompare, whose first call in a page costs ~5ms of collator setup in Chrome.
+    for (const module of modules.sort((a, b) => (a.moduleName < b.moduleName ? -1 : 1))) {
         const moduleCss = module.css;
         if (moduleCss) {
             cssMap.set(`module-${module.moduleName}`, moduleCss);
