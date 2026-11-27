@@ -41,6 +41,37 @@
     }
 }
 
+.ag-cell-inline-editing
+    .ag-input-field-input:where(
+        input:not([type]),
+        input[type='text'],
+        input[type='number'],
+        input[type='tel'],
+        input[type='date'],
+        input[type='datetime-local'],
+        textarea
+    ):where(:not(.ag-large-text *, .ag-rich-select-typing-multi *)) {
+    padding-inline-start: calc(var(--ag-cell-horizontal-padding) - var(--ag-border-width) * 2);
+}
+
+.ag-cell-inline-editing .ag-picker-field-wrapper:where(:not(.ag-rich-select-typing-single)) {
+    padding-inline-start: calc(var(--ag-cell-horizontal-padding) - var(--ag-border-width) * 2);
+}
+
+:where(.ag-right-aligned-cell).ag-cell-inline-editing
+    .ag-input-field-input:where(
+        input:not([type]),
+        input[type='text'],
+        input[type='number'],
+        input[type='tel'],
+        input[type='date'],
+        input[type='datetime-local'],
+        textarea
+    ):where(:not(.ag-large-text *, .ag-rich-select-typing-multi *)) {
+    text-align: right;
+    padding-inline: var(--ag-input-padding-start) calc(var(--ag-cell-horizontal-padding) - var(--ag-border-width) * 2);
+}
+
 :where(.ag-popup-editor) .ag-large-text {
     border-radius: var(--ag-border-radius);
     box-shadow: var(--ag-dropdown-shadow);

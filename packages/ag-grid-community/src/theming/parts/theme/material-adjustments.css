@@ -50,6 +50,41 @@
     }
 }
 
+.ag-cell-inline-editing
+    .ag-input-field-input:where(
+        input:not([type]),
+        input[type='text'],
+        input[type='number'],
+        input[type='tel'],
+        input[type='date'],
+        input[type='datetime-local'],
+        textarea
+    ):where(:not(.ag-large-text *, .ag-rich-select-typing-multi *)) {
+    padding-inline-start: calc(var(--ag-cell-horizontal-padding) - var(--ag-spacing) - var(--ag-border-width));
+}
+
+.ag-cell-inline-editing .ag-picker-field-wrapper:where(:not(.ag-rich-select-typing-single)) {
+    padding-inline-start: calc(var(--ag-cell-horizontal-padding) - var(--ag-spacing) - var(--ag-border-width) * 2);
+}
+
+.ag-cell-inline-editing .ag-checkbox-edit {
+    padding-inline-start: calc(var(--ag-cell-horizontal-padding) - var(--ag-spacing) - var(--ag-border-width));
+}
+
+:where(.ag-right-aligned-cell).ag-cell-inline-editing
+    .ag-input-field-input:where(
+        input:not([type]),
+        input[type='text'],
+        input[type='number'],
+        input[type='tel'],
+        input[type='date'],
+        input[type='datetime-local'],
+        textarea
+    ):where(:not(.ag-large-text *, .ag-rich-select-typing-multi *)) {
+    padding-inline: var(--ag-input-padding-start)
+        calc(var(--ag-cell-horizontal-padding) - var(--ag-spacing) - var(--ag-border-width));
+}
+
 .ag-standard-button,
 .ag-advanced-filter-builder-button {
     text-transform: uppercase;

@@ -69,7 +69,7 @@ export interface CoreParams extends SharedThemeParams {
     bodyScrollbarBorder: BorderValue;
 
     /**
-     * Padding at the start and end of grid cells and header cells.
+     * Padding at the start and end of grid cells and header cells. It also sets where text starts in inline cell editors, so that it lines up with the values in other rows.
      */
     cellHorizontalPadding: LengthValue;
 
