@@ -346,7 +346,7 @@ describe('filter models set before rows load, applied once they do', () => {
         expect(api.getFilterModel()).toEqual({ age: AGE_LT_20 });
         expect(api.getDisplayedRowCount()).toBe(2);
         // the column's removal fires nothing, as no filter was built; the model set before it fires once the rows load
-        expect(events).toEqual(['after:columnFilter', 'after:api']);
+        expect(events).toEqual(['after:api']);
     });
 });
 
