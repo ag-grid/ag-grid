@@ -1,0 +1,55 @@
+---
+import DecisionHubPage from '@ag-website-shared/components/decision-pages/DecisionHubPage.astro';
+import { buildBreadcrumbList } from '@ag-website-shared/utils/structuredData';
+import { DISABLE_MARKDOWN_DOCS } from '@constants';
+import Layout from '@layouts/Layout.astro';
+import { getDecisionPageCollections } from '@utils/decisionPageCollections';
+import { SOLUTIONS_HUB, SOLUTIONS_HUB_LINK, GRID_DECISION_SITE, solutionsHubCards } from '@utils/decisionPages';
+import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
+import { type CollectionEntry, getEntry } from 'astro:content';
+
+const cards = solutionsHubCards(await getDecisionPageCollections());
+
+const { data: metadata } = (await getEntry('metadata', 'metadata')) as CollectionEntry<'metadata'>;
+const pageUrl = new URL(Astro.url.pathname, metadata.canonicalUrlBase).href;
+const markdownUrl = DISABLE_MARKDOWN_DOCS ? undefined : urlWithBaseUrl('/solutions.md');
+
+const pageStructuredData = [
+    {
+        '@type': 'CollectionPage',
+        '@id': pageUrl,
+        url: pageUrl,
+        name: SOLUTIONS_HUB.title,
+        description: SOLUTIONS_HUB.description,
+        hasPart: cards.map(({ url }) => ({ '@id': new URL(url, metadata.canonicalUrlBase).href })),
+    },
+    buildBreadcrumbList({
+        pageUrl,
+        items: [
+            {
+                name: GRID_DECISION_SITE.productName,
+                url: new URL(GRID_DECISION_SITE.urls.home, metadata.canonicalUrlBase).href,
+            },
+            { name: SOLUTIONS_HUB_LINK.name, url: pageUrl },
+        ],
+    }),
+];
+---
+
+<Layout
+    title={SOLUTIONS_HUB.title}
+    description={SOLUTIONS_HUB.description}
+    showDocsNav={false}
+    showSearchBar={true}
+    pageStructuredData={pageStructuredData}
+    markdownUrl={markdownUrl}
+>
+    <DecisionHubPage
+        site={GRID_DECISION_SITE}
+        heading={SOLUTIONS_HUB.heading}
+        subHeading={SOLUTIONS_HUB.subHeading}
+        listHeading={SOLUTIONS_HUB.listHeading}
+        cards={cards}
+        analyticsPrefix="solutions-hub"
+    />
+</Layout>

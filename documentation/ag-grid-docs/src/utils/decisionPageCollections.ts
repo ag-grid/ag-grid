@@ -10,4 +10,5 @@ export const getDecisionPageCollections = async (): Promise<DecisionPageCollecti
     comparePages: await getCollection('comparePages'),
     alternativePages: await getCollection('alternativePages'),
     productAlternativePages: await getCollection('productAlternativePages'),
+    solutionPages: await getCollection('solutionPages'),
 });

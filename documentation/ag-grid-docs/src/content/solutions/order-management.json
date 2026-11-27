@@ -1,0 +1,276 @@
+{
+    "meta": {
+        "title": "Order Management Dashboard Grid in React | AG Grid",
+        "description": "Build an order management dashboard with AG Grid: order lines in master/detail rows, status filters, grouping, inline editing and Excel export.",
+        "targetTerm": "order management dashboard",
+        "monthlySearches": 20,
+        "demandSource": "Google Ads search volume via DataForSEO (US, English, 12-month average), 2 October 2026"
+    },
+    "analyticsPrefix": "solution-order-management",
+    "technicalReviewer": "james",
+    "lastUpdated": "2026-11-24",
+    "topic": {
+        "name": "Order management",
+        "mark": "Order management"
+    },
+    "hero": {
+        "heading": "Build an order management dashboard with AG Grid",
+        "subHeading": "An orders screen has to show the lines inside each order, filter by status, group by customer and export to Excel. AG Grid has a built-in feature for each of these."
+    },
+    "shortAnswer": "AG Grid can be the main table of an order management dashboard. Community (free, MIT licence) covers the orders list itself: [sorting](./row-sorting/), [text](./filter-text/), [number](./filter-number/) and [date](./filter-date/) filters, a [Quick Filter](./filter-quick/) search box, [inline cell editing](./cell-editing/) with text, number, date and select editors, [pagination](./row-pagination/), [CSV export](./csv-export/) and the [Infinite Row Model](./infinite-scrolling/) for loading orders in blocks. Enterprise (commercial licence) adds the features most order screens need next: [master/detail rows](./master-detail/) that open a nested grid of order lines, the [Set Filter](./filter-set/) for picking statuses from a checklist, [row grouping](./grouping/) by status or customer, [Excel export](./excel-export/), and the [Server-Side Row Model](./server-side-model/), which loads, filters and groups orders on the server when there are too many to send to the browser.",
+    "example": {
+        "id": "order-management",
+        "intro": "Expand an order to see its order lines. Filter by customer or status, edit a status, or search.",
+        "note": "Sample data. Uses AG Grid Enterprise features; deployed without a licence key, the grid shows a watermark and console warnings."
+    },
+    "keyFigures": {
+        "heading": "Key figures",
+        "figures": [
+            {
+                "value": "100k+",
+                "label": "Rows in the Client-Side Row Model",
+                "detail": "The row models guide says the default row model can handle 100k+ rows in the browser"
+            },
+            {
+                "value": "2",
+                "label": "Row models support master/detail",
+                "detail": "The master grid must use the Client-Side or Server-Side Row Model"
+            },
+            {
+                "value": "30",
+                "valueSuffix": "-day",
+                "label": "Enterprise Bundle trial licence",
+                "detail": "Lets you test Enterprise features in production, without watermarks"
+            }
+        ]
+    },
+    "capabilities": {
+        "heading": "Capabilities",
+        "items": [
+            {
+                "title": "Master / Detail",
+                "docsUrl": "./master-detail/",
+                "plan": "Enterprise",
+                "body": "Set `masterDetail=true` and use `agGroupCellRenderer` on the first column. Expanding an order opens a Detail Grid, a full grid instance, filled from `getDetailRowData`, which can return the lines straight away or after a server call."
+            },
+            {
+                "title": "Set Filter",
+                "docsUrl": "./filter-set/",
+                "plan": "Enterprise",
+                "body": "A checklist of the values in a column, modelled on Excel's AutoFilter, with a mini filter to search the list. Use `filter='agSetColumnFilter'` on the status column; in Enterprise it is also the default when `filter=true`."
+            },
+            {
+                "title": "Row Grouping",
+                "docsUrl": "./grouping/",
+                "plan": "Enterprise",
+                "body": "`rowGroup=true` on a column groups rows under a parent row for each value, for example status and then customer. `rowGroupPanelShow='always'` shows a panel where users drag columns to change the grouping."
+            },
+            {
+                "title": "Cell Editing",
+                "docsUrl": "./cell-editing/",
+                "plan": "Free",
+                "body": "editable on a column definition turns on editing, and the grid picks an editor from the cell data type. The Select Editor (`agSelectCellEditor`) limits input to a fixed list such as order statuses. editable can also be a callback, so some rows can be locked."
+            },
+            {
+                "title": "Quick Filter",
+                "docsUrl": "./filter-quick/",
+                "plan": "Free",
+                "body": "`quickFilterText` filters rows against every column; each word typed must match. `cacheQuickFilter=true` caches the text per row for large data sets. It works with the Client-Side Row Model only."
+            },
+            {
+                "title": "Excel Export",
+                "docsUrl": "./excel-export/",
+                "plan": "Enterprise",
+                "body": "Exports an .xlsx file from the context menu or `api.exportDataAsExcel()`, with no third-party library. The file follows the grid's current sorting, filtering, grouping and visible columns."
+            },
+            {
+                "title": "Server-Side Row Model",
+                "docsUrl": "./server-side-model/",
+                "plan": "Enterprise",
+                "body": "`rowModelType='serverSide'` loads rows from your server in blocks as the user scrolls and loads group children when a group opens. Filtering, sorting and grouping are handed to the server. Master/detail is configured the same way as on the client side."
+            },
+            {
+                "title": "Transaction updates",
+                "docsUrl": "./data-update-transactions/",
+                "plan": "Free",
+                "body": "`api.applyTransaction()` adds, removes and updates individual rows, for example when an order changes status, without reloading all row data. With `getRowId` the grid matches updates to rows by ID. Transactions on the Server-Side Row Model are Enterprise."
+            },
+            {
+                "title": "CSV Export",
+                "docsUrl": "./csv-export/",
+                "plan": "Free",
+                "body": "`api.exportDataAsCsv()` downloads the displayed rows as CSV. The context menu item for CSV export is Enterprise only."
+            }
+        ]
+    },
+    "howTo": {
+        "heading": "How to build an order management dashboard with AG Grid",
+        "steps": [
+            {
+                "title": "Load orders and give each row an ID",
+                "body": "Pass the orders array to `rowData` and return the order number from `getRowId`. Stable IDs let later updates find the right row."
+            },
+            {
+                "title": "Show order lines as detail rows",
+                "body": "Set `masterDetail={true}`, put `cellRenderer: 'agGroupCellRenderer'` on the order ID column, and supply `detailCellRendererParams` with `detailGridOptions` for the line columns and `getDetailRowData` to return each order's lines."
+            },
+            {
+                "title": "Filter and group by status",
+                "body": "Give the status column `filter: 'agSetColumnFilter'` and `enableRowGroup: true`, then set `rowGroupPanelShow='always'` so users can drag status or customer into the grouping panel. Bind a search box to `quickFilterText`."
+            },
+            {
+                "title": "Edit statuses in the grid",
+                "body": "Mark the status column `editable` with `cellEditor: 'agSelectCellEditor'` and a list of allowed values. Listen to `onCellValueChanged` to save the change."
+            },
+            {
+                "title": "Export, then scale to the server",
+                "body": "Call `api.exportDataAsExcel()` from a button. When the order history is too large to send to the browser, switch to `rowModelType='serverSide'` and a server-side datasource. Master/detail keeps working; filtering, grouping and quick search then run on your server."
+            }
+        ],
+        "code": "// AG Grid v36. Master/Detail, Set Filter, Row Grouping and Excel Export are Enterprise features.\nimport { useCallback, useMemo, useRef, useState } from \"react\";\nimport { AgGridProvider, AgGridReact } from \"ag-grid-react\";\nimport type { CellValueChangedEvent, ColDef, GetRowIdParams } from \"ag-grid-community\";\nimport { AllEnterpriseModule } from \"ag-grid-enterprise\";\n\nconst modules = [AllEnterpriseModule];\n\ninterface OrderLine { sku: string; product: string; qty: number; unitPrice: number }\ninterface Order {\n  orderId: string;\n  customer: string;\n  status: \"New\" | \"Picking\" | \"Shipped\" | \"Cancelled\";\n  total: number;\n  lines: OrderLine[];\n}\n\nexport function OrdersGrid({ orders }: { orders: Order[] }) {\n  const gridRef = useRef<AgGridReact<Order>>(null);\n  const [search, setSearch] = useState(\"\");\n\n  const columnDefs = useMemo<ColDef<Order>[]>(() => [\n    { field: \"orderId\", cellRenderer: \"agGroupCellRenderer\" },\n    { field: \"customer\", enableRowGroup: true },\n    {\n      field: \"status\",\n      filter: \"agSetColumnFilter\",\n      enableRowGroup: true,\n      editable: true,\n      cellEditor: \"agSelectCellEditor\",\n      cellEditorParams: { values: [\"New\", \"Picking\", \"Shipped\", \"Cancelled\"] },\n    },\n    { field: \"total\", valueFormatter: (p) => (p.value == null ? \"\" : p.value.toFixed(2)) },\n  ], []);\n\n  const detailCellRendererParams = useMemo(() => ({\n    detailGridOptions: {\n      columnDefs: [{ field: \"sku\" }, { field: \"product\" }, { field: \"qty\" }, { field: \"unitPrice\" }],\n    },\n    getDetailRowData: (params: { data: Order; successCallback: (rows: OrderLine[]) => void }) =>\n      params.successCallback(params.data.lines),\n  }), []);\n\n  // Hypothetical endpoint: persist each status edit\n  const onCellValueChanged = useCallback((e: CellValueChangedEvent<Order>) => {\n    fetch(`/api/orders/${e.data.orderId}`, {\n      method: \"PATCH\",\n      headers: { \"Content-Type\": \"application/json\" },\n      body: JSON.stringify({ status: e.newValue }),\n    });\n  }, []);\n\n  return (\n    <AgGridProvider modules={modules}>\n      <input placeholder=\"Search orders\" value={search} onChange={(e) => setSearch(e.target.value)} />\n      <button onClick={() => gridRef.current?.api.exportDataAsExcel({ fileName: \"orders.xlsx\" })}>\n        Export to Excel\n      </button>\n      <div style={{ height: 500 }}>\n        <AgGridReact<Order>\n          ref={gridRef}\n          rowData={orders}\n          columnDefs={columnDefs}\n          getRowId={(p: GetRowIdParams<Order>) => p.data.orderId}\n          masterDetail={true}\n          detailCellRendererParams={detailCellRendererParams}\n          rowGroupPanelShow=\"always\"\n          quickFilterText={search}\n          onCellValueChanged={onCellValueChanged}\n        />\n      </div>\n    </AgGridProvider>\n  );\n}",
+        "outro": "AG Grid does not publish an order management demo. The nearest is the [Inventory Management Dashboard example](/example-inventory/), which uses master/detail rows, quick search, the Set Filter and inline editing, with React, JavaScript, Angular and Vue source on GitHub."
+    },
+    "faq": [
+        {
+            "question": "How do I create an order management dashboard?",
+            "answer": "Start with the orders table, since that is where staff spend their time. In AG Grid that means loading orders as `rowData`, adding a Set Filter and grouping on status, master/detail rows for order lines, and Excel export. Add KPI tiles or charts around the grid; Integrated Charts can chart grid data directly (Enterprise)."
+        },
+        {
+            "question": "Can I export an order management dashboard to Excel?",
+            "answer": "Yes, with AG Grid Enterprise. `api.exportDataAsExcel()` writes an .xlsx file of the grid as displayed, after sorting, filtering and grouping. Order lines in detail grids can be added below each order with `getCustomContentBelowRow` or exported to separate sheets. CSV export is free in Community."
+        },
+        {
+            "question": "Is there an order management dashboard template?",
+            "answer": "AG Grid does not ship an order management template. Its Inventory Management Dashboard example covers inline editing and status filtering and its source is on GitHub in React, JavaScript, Angular and Vue, so it can be adapted to orders."
+        },
+        {
+            "question": "Which order management features are free in AG Grid Community?",
+            "answer": "Sorting, text, number and date filters, the Quick Filter, cell editing with the provided text, number, date, checkbox and select editors, pagination, transactions, CSV export and the Infinite Row Model. Master/detail, the Set Filter, row grouping, Excel export and the Server-Side Row Model need Enterprise."
+        },
+        {
+            "question": "How many orders can the grid hold?",
+            "answer": "AG Grid's row models guide says the default Client-Side Row Model can handle 100k+ rows, and that the browser runs out of memory before the grid has problems. If the order history is too large to send to the browser, the Server-Side Row Model loads it in blocks from your server."
+        },
+        {
+            "question": "Can order lines load only when an order is expanded?",
+            "answer": "Yes. `getDetailRowData` is called for each detail grid when it opens, and its `successCallback` can be called after an asynchronous request, so lines are fetched on demand. The docs include a lazy-load detail rows example."
+        }
+    ],
+    "proseClaims": [
+        {
+            "claim": "The default Client-Side Row Model can handle 100k+ rows, and the browser runs out of memory before the grid gets into problems.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/row-models/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "AG Grid Community uses the Infinite Row Model to load data in blocks; AG Grid Enterprise uses the Server-Side Row Model.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/row-models/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "Master / Detail is an Enterprise feature enabled with masterDetail=true and agGroupCellRenderer on the first column, with rows supplied by getDetailRowData.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/master-detail/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "The master grid must use the Client-Side or Server-Side Row Model; Master / Detail is not supported with the Viewport or Infinite Row Models.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/master-detail/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "The Detail Grid is a fully fledged independent grid instance, and successCallback can be called synchronously or asynchronously; the docs include a Lazy Load Detail Rows example.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/master-detail-grids/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "Master / Detail is supported with Row Grouping.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/master-detail-other/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "Master / Detail is configured the same way for the Server-Side Row Model as for the Client-Side Row Model.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/server-side-model-master-detail/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "The Set Filter is an Enterprise filter inspired by Excel's AutoFilter, with a Mini Filter to narrow the list, and is the default filter in Enterprise when filter=true.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/filter-set/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "Row Grouping is an Enterprise feature enabled by setting rowGroup=true on a column, with a group row for each unique value.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/grouping/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "rowGroupPanelShow='always' shows the Row Group Panel, where users drag columns to group by them.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/grouping-group-panel/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "Editing is enabled with editable on the column definition, the default editor is chosen from the Cell Data Type, and editable can be a callback.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/cell-editing/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "The Select Cell Editor (agSelectCellEditor) limits input to a list of provided values and has no Enterprise marker.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/provided-cell-editors-select/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "Text, Number, Date, Checkbox and Select editors, Text, Number and Date filters, the Quick Filter and CSV Export are Community features; Set Filter, Row Grouping, Master Detail, Excel Export and Server-Side Transactions are Enterprise.",
+            "sourceUrl": "https://www.ag-grid.com/license-pricing/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "The Quick Filter splits text into words that must all match, can be cached with cacheQuickFilter=true, and is only supported with the Client-Side Row Model.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/filter-quick/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "Excel Export is an Enterprise feature that exports .xlsx from the context menu or api.exportDataAsExcel() without third-party libraries, following the current sorting, filtering, grouping and visible columns.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/excel-export/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "Master / Detail detail rows can be exported below master rows with getCustomContentBelowRow, or detail grids can be exported to separate sheets.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/excel-export-master-detail/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "The Server-Side Row Model is Enterprise; it lazy-loads group children and loads rows in blocks as the user scrolls, delegating filtering, sorting and grouping to the server.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/server-side-model/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "applyTransaction() adds, removes and updates rows on the Client-Side Row Model, matching rows by getRowId when provided.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/data-update-transactions/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "SSRM Transactions are an Enterprise feature.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/server-side-model-updating-transactions/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "CSV export through the API is available in Community; the CSV export context menu item is Enterprise only.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/csv-export/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "Integrated Charts is an Enterprise feature.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/integrated-charts/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "A free 30-day Enterprise Bundle trial licence allows testing in production and removes watermarks and console messages.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/community-vs-enterprise/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "The Inventory Management Dashboard example shows tracking stock levels, inline cell editing and filtering products by status, with source published for JavaScript, React, Angular and Vue.",
+            "sourceUrl": "https://www.ag-grid.com/example-inventory/",
+            "checkedOn": "2026-11-24"
+        }
+    ]
+}

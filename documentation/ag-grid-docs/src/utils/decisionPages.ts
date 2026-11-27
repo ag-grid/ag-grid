@@ -15,14 +15,15 @@ import type {
     ProductAlternativePageContent,
     RelatedPageGroup,
     RelatedPageLink,
+    SolutionPageContent,
 } from '@ag-website-shared/components/decision-pages/types';
 import { ENTERPRISE_TRIAL_PATH } from '@ag-website-shared/components/license-pricing/pricingContent';
 import agGridLogoMark from '@ag-website-shared/images/inline-svgs/ag-grid-logomark.svg?url';
 import { urlWithPrefix } from '@utils/urlWithPrefix';
 
 /**
- * AG Grid's binding of the shared decision page templates (comparison and alternative pages; the
- * solution and migration clusters join as they are built). Kept free of
+ * AG Grid's binding of the shared decision page templates (comparison, alternative and solution
+ * pages; the migration cluster joins when it is built). Kept free of
  * `astro:content`, so the page and its `.md` twin take the same values and stay unit-testable.
  */
 
@@ -53,6 +54,10 @@ export const GRID_DECISION_SITE: DecisionPageSite = {
 
 export const COMPARE_HUB_LINK: DecisionHubLink = { name: 'Compare', url: '/compare/' };
 export const ALTERNATIVES_HUB_LINK: DecisionHubLink = { name: 'Alternatives', url: '/alternatives/' };
+export const SOLUTIONS_HUB_LINK: DecisionHubLink = { name: 'Solutions', url: '/solutions/' };
+
+/** The related-pages group listing the solution pages. */
+const SOLUTIONS_RELATED_GROUP_NAME = 'Use cases';
 
 export const COMPARE_HUB: DecisionHubContent = {
     title: 'Compare AG Grid with Other Data Grids',
@@ -74,6 +79,16 @@ export const ALTERNATIVES_HUB: DecisionHubContent = {
     listHeading: 'Alternatives',
 };
 
+export const SOLUTIONS_HUB: DecisionHubContent = {
+    title: 'AG Grid Solutions: Data Grids for Every Use Case',
+    description:
+        'How AG Grid fits trading dashboards, pivot tables, inventory, portfolio, project and order management, spreadsheet-style editing, tree data, large data sets and Excel export.',
+    heading: 'AG Grid for every use case',
+    subHeading:
+        'How AG Grid fits the jobs teams build data grids for, each with a working example, the features it uses and how to build it.',
+    listHeading: 'Use cases',
+};
+
 const { urls } = GRID_DECISION_SITE;
 
 /** AG Grid's own alternative page, served by its own route rather than the competitor alternatives route. */
@@ -81,6 +96,7 @@ export const PRODUCT_ALTERNATIVE_SLUG = 'ag-grid-alternative';
 
 export const comparePageUrl = (slug: string): string => `${COMPARE_HUB_LINK.url}${slug}/`;
 export const alternativePageUrl = (slug: string): string => `${ALTERNATIVES_HUB_LINK.url}${slug}/`;
+export const solutionPageUrl = (slug: string): string => `${SOLUTIONS_HUB_LINK.url}${slug}/`;
 
 export const compareHubCard = (slug: string, content: ComparisonPageContent): DecisionHubCard => ({
     title: content.hero.heading,
@@ -111,6 +127,7 @@ export interface DecisionPageClusters {
     alternatives: Array<DecisionPageEntry<AlternativePageSource>>;
     /** AG Grid's own alternative page, listed with the other alternatives. */
     productAlternatives: Array<DecisionPageEntry<ProductAlternativePageContent>>;
+    solutions: Array<DecisionPageEntry<SolutionPageContent>>;
 }
 
 /** The decision page content collections, as `getDecisionPageCollections` loads them. */
@@ -118,6 +135,7 @@ export interface DecisionPageCollections {
     comparePages: Array<{ id: string; data: ComparisonPageContent }>;
     alternativePages: Array<{ id: string; data: AlternativePageSource }>;
     productAlternativePages: Array<{ id: string; data: ProductAlternativePageContent }>;
+    solutionPages: Array<{ id: string; data: SolutionPageContent }>;
 }
 
 const comparisonLink = ({ slug, content }: DecisionPageEntry<ComparisonPageContent>): RelatedPageLink => ({
@@ -134,6 +152,23 @@ const productAlternativeLink = ({ slug }: DecisionPageEntry<ProductAlternativePa
     title: alternativePageName({ name: GRID_DECISION_SITE.productName }),
     url: alternativePageUrl(slug),
 });
+
+const solutionLink = ({ slug, content }: DecisionPageEntry<SolutionPageContent>): RelatedPageLink => ({
+    title: content.topic.name,
+    url: solutionPageUrl(slug),
+});
+
+/** The /solutions/ hub's cards, by title. */
+export const solutionsHubCards = ({
+    solutionPages,
+}: Pick<DecisionPageCollections, 'solutionPages'>): DecisionHubCard[] =>
+    sortHubCards(
+        solutionPages.map(({ id, data }) => ({
+            title: data.topic.name,
+            description: data.meta.description,
+            url: solutionPageUrl(id),
+        }))
+    );
 
 /** The /alternatives/ hub's cards: AG Grid's own alternative page and every competitor's, by title. */
 export const alternativesHubCards = ({
@@ -156,9 +191,9 @@ const PRODUCT_LINKS: RelatedPageGroup = {
 };
 
 /**
- * The related-page links shown at the end of a decision page: every comparison and alternative
- * page except the current one, then where to go next on the site. The solution and migration
- * groups join here as those clusters are built.
+ * The related-page links shown at the end of a decision page: every comparison, alternative and
+ * solution page except the current one, then where to go next on the site. The migration group
+ * joins here when that cluster is built.
  */
 export function decisionRelatedPages({
     current,
@@ -177,6 +212,7 @@ export function decisionRelatedPages({
                 ...clusters.alternatives.map(alternativeLink),
             ]),
         },
+        { name: SOLUTIONS_RELATED_GROUP_NAME, links: sortHubCards(clusters.solutions.map(solutionLink)) },
     ]
         .map((group) => ({ ...group, links: group.links.filter(({ url }) => url !== current) }))
         .filter((group) => group.links.length > 0);
@@ -191,6 +227,7 @@ const toClusters = (collections: DecisionPageCollections): DecisionPageClusters 
     comparisons: toEntries(collections.comparePages),
     alternatives: toEntries(collections.alternativePages),
     productAlternatives: toEntries(collections.productAlternativePages),
+    solutions: toEntries(collections.solutionPages),
 });
 
 /**
@@ -230,6 +267,15 @@ export function alternativePagePaths(collections: DecisionPageCollections) {
             },
         };
     });
+}
+
+/** `getStaticPaths` for a solution page and its `.md` twin. */
+export function solutionPagePaths(collections: DecisionPageCollections) {
+    const clusters = toClusters(collections);
+    return clusters.solutions.map(({ slug, content }) => ({
+        params: { solutionPage: slug },
+        props: { content, related: decisionRelatedPages({ current: solutionPageUrl(slug), clusters }) },
+    }));
 }
 
 /** The props for AG Grid's own alternative page and its `.md` twin, which share one content entry. */

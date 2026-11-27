@@ -17,6 +17,7 @@ const DOCS_CONTENT_DIR = join(__dirname, '../content/docs');
 const CAMPAIGN_CONTENT_DIR = join(__dirname, '../content/campaigns/bryntum-products');
 const COMPARE_CONTENT_DIR = join(__dirname, '../content/compare');
 const ALTERNATIVES_CONTENT_DIR = join(__dirname, '../content/alternatives');
+const SOLUTIONS_CONTENT_DIR = join(__dirname, '../content/solutions');
 
 type Params = Record<string, string>;
 
@@ -44,6 +45,7 @@ const isBryntumCampaign = (product: string) =>
 const isComparePage = (comparePage: string) => existsSync(join(COMPARE_CONTENT_DIR, `${comparePage}.json`));
 const isAlternativePage = (alternativePage: string) =>
     existsSync(join(ALTERNATIVES_CONTENT_DIR, `${alternativePage}.json`));
+const isSolutionPage = (solutionPage: string) => existsSync(join(SOLUTIONS_CONTENT_DIR, `${solutionPage}.json`));
 const isRecordedSession = (slug: string) =>
     SESSIONS.some((session) => session.youtubeUrl && sessionSlug(session.title) === slug);
 
@@ -62,6 +64,8 @@ const DYNAMIC_ROUTE_PARAMS: Record<string, (params: Params) => boolean> = {
     'compare/[comparePage].md.ts': ({ comparePage }) => isComparePage(comparePage),
     'alternatives/[alternativePage].astro': ({ alternativePage }) => isAlternativePage(alternativePage),
     'alternatives/[alternativePage].md.ts': ({ alternativePage }) => isAlternativePage(alternativePage),
+    'solutions/[solutionPage].astro': ({ solutionPage }) => isSolutionPage(solutionPage),
+    'solutions/[solutionPage].md.ts': ({ solutionPage }) => isSolutionPage(solutionPage),
     'session/[slug].astro': ({ slug }) => isRecordedSession(slug),
     'session/[slug].md.ts': ({ slug }) => isRecordedSession(slug),
 };

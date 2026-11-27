@@ -34,6 +34,7 @@ export const LanguageMap = {
     shell: 'shellsession',
     html: 'html',
     jsx: 'jsx',
+    tsx: 'tsx',
     java: 'java',
     sql: 'sql',
     diff: 'diff',

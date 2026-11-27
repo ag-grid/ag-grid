@@ -1,0 +1,266 @@
+{
+    "meta": {
+        "title": "JavaScript Pivot Table for React, Angular and Vue | AG Grid",
+        "description": "Pivot, group and aggregate data in a JavaScript data grid. AG Grid pivot mode, pivot panel, server-side pivoting, pivot charts and Excel export.",
+        "targetTerm": "javascript pivot table",
+        "monthlySearches": 140,
+        "demandSource": "Google Ads search volume via DataForSEO (US, English, 12-month average), 2 October 2026"
+    },
+    "analyticsPrefix": "solution-javascript-pivot-table",
+    "technicalReviewer": "james",
+    "lastUpdated": "2026-11-24",
+    "topic": {
+        "name": "Pivot tables",
+        "mark": "Pivot tables"
+    },
+    "hero": {
+        "heading": "JavaScript pivot tables with AG Grid",
+        "subHeading": "AG Grid has a pivot mode built into the data grid. Users drag columns into row groups, values and column labels, and the grid generates the pivot result columns."
+    },
+    "shortAnswer": "AG Grid turns a data grid into a pivot table when you set `pivotMode=true`, group rows with `rowGroup`, aggregate a value column with `aggFunc` and set `pivot: true` on the column whose values become column headers. Users can change the layout themselves from the [Side Bar](./tool-panel-columns/) or the [Pivot Panel](./pivoting/#enabling-the-pivot-panel). [Pivoting](./pivoting/), [aggregation](./aggregation/), [row grouping](./grouping/), [pivot totals](./pivoting-totals/), [server-side pivoting](./server-side-model-pivoting/) and [Excel export](./excel-export/) are AG Grid Enterprise features, which need a commercial licence in production. AG Grid Community, which is free, does not pivot. [Pivot Charts](./integrated-charts-pivot-chart/) come from [Integrated Charts](./integrated-charts/), built on AG Charts; Enterprise chart types need AG Charts Enterprise, included in the Enterprise Bundle licence. The same API works in React, Angular, Vue and plain JavaScript.",
+    "example": {
+        "id": "pivot-tables",
+        "intro": "Revenue by region, pivoted by quarter. Drag columns in the side bar or pivot panel to change the layout.",
+        "note": "Sample data. Uses AG Grid Enterprise features; deployed without a licence key, the grid shows a watermark and console warnings."
+    },
+    "keyFigures": {
+        "heading": "Key figures",
+        "figures": [
+            {
+                "value": "7",
+                "label": "Built-in aggregation functions",
+                "detail": "sum, min, max, count, avg, first and last; custom functions can be added"
+            },
+            {
+                "value": "2",
+                "label": "Pivot controls for users",
+                "detail": "The Side Bar's Columns Tool Panel and the Pivot Panel"
+            },
+            {
+                "value": "5",
+                "label": "Show Values As modes",
+                "detail": "For example percent of grand total or of row total; Client-Side Row Model only"
+            }
+        ]
+    },
+    "capabilities": {
+        "heading": "Capabilities",
+        "items": [
+            {
+                "title": "Pivot mode",
+                "docsUrl": "./pivoting/",
+                "plan": "Enterprise",
+                "body": "`pivotMode=true` with pivot: true on a column turns that column's values into column headers. At least one aggregation column is required, as only aggregated rows are shown when pivoting."
+            },
+            {
+                "title": "Side Bar and Columns Tool Panel",
+                "docsUrl": "./tool-panel-columns/",
+                "plan": "Enterprise",
+                "body": "`sideBar='columns'` adds a panel with a Pivot Mode toggle and Row Groups, Values and Column Labels sections that users fill by drag and drop. Columns need `enableRowGroup`, `enableValue` or `enablePivot`."
+            },
+            {
+                "title": "Pivot Panel",
+                "docsUrl": "./pivoting/#enabling-the-pivot-panel",
+                "plan": "Enterprise",
+                "body": "`pivotPanelShow` (`'always'`, `'onlyWhenPivoting'` or `'never'`) shows a bar above the grid where users add, remove and reorder pivot columns by drag and drop."
+            },
+            {
+                "title": "Aggregation",
+                "docsUrl": "./aggregation/",
+                "plan": "Enterprise",
+                "body": "`aggFunc` on a column sets sum, min, max, count, avg, first, last or a custom function. Group and grand total rows can be added with `groupTotalRow` and `grandTotalRow`."
+            },
+            {
+                "title": "Pivot result columns",
+                "docsUrl": "./pivoting-result-columns/",
+                "plan": "Enterprise",
+                "body": "The grid generates a column for each unique combination of pivot values, per value column. They inherit the value column's definition and can be changed with `processPivotResultColDef`. `pivotMaxGeneratedColumns` sets a limit; past it the grid stops generating columns and fires `onPivotMaxColumnsExceeded`."
+            },
+            {
+                "title": "Pivot totals",
+                "docsUrl": "./pivoting-totals/",
+                "plan": "Enterprise",
+                "body": "Column group totals appear when a pivot column group is collapsed. `pivotRowTotals` set to `'before'` or `'after'` adds a total column for each aggregation."
+            },
+            {
+                "title": "Show Values As",
+                "docsUrl": "./aggregation-show-values-as/",
+                "plan": "Enterprise",
+                "body": "Displays aggregated values as a share of the grand, column, row or parent total without changing the data. Requires ShowValuesAsModule and the client-side row model."
+            },
+            {
+                "title": "Server-side pivoting",
+                "docsUrl": "./server-side-model-pivoting/",
+                "plan": "Enterprise",
+                "body": "With the Server-Side Row Model the grid sends `pivotCols` and `pivotMode` in each `getRows` request and your server does the pivot. Return `pivotResultFields`, or call `setPivotResultColumns`, to define the result columns."
+            },
+            {
+                "title": "Pivot Chart",
+                "docsUrl": "./integrated-charts-pivot-chart/",
+                "plan": "Enterprise",
+                "body": "In pivot mode the context menu gains a Pivot Chart item that charts all grouped and pivoted data with AG Charts. [`gridApi.createPivotChart()`](./integrated-charts-api-pivot-chart/) does the same from code. Enterprise chart types need AG Charts Enterprise, included in the Enterprise Bundle licence."
+            },
+            {
+                "title": "Excel export",
+                "docsUrl": "./excel-export/",
+                "plan": "Enterprise",
+                "body": "Exports the grid as rendered to .xlsx, including grouping and column header groups. [Collapsed pivot result columns](./excel-export-columns/#collapsible-columns) are not exported, even with `allColumns: true`."
+            }
+        ]
+    },
+    "howTo": {
+        "heading": "How to build a pivot table with AG Grid",
+        "steps": [
+            {
+                "title": "Install AG Grid Enterprise",
+                "body": "Install `ag-grid-react`, `ag-grid-enterprise` and, for Pivot Charts, `ag-charts-community`, then pass `[AllEnterpriseModule]`, or just `PivotModule` plus the modules you use, to `AgGridProvider`. You can try Enterprise features locally without a licence key; deployed without one, the grid shows a watermark and console warnings."
+            },
+            {
+                "title": "Group rows and set a value column",
+                "body": "Set `rowGroup: true` on the column that forms the rows and `aggFunc: 'sum'` (or another function) on at least one value column."
+            },
+            {
+                "title": "Turn on pivot mode",
+                "body": "Set `pivotMode` on the grid and `pivot: true` on the column whose values become column headers. The grid generates the pivot result columns."
+            },
+            {
+                "title": "Let users change the pivot",
+                "body": "Add `sideBar=\"columns\"` and `pivotPanelShow=\"always\"`, and set `enableRowGroup`, `enablePivot` and `enableValue` on the columns users may drag."
+            },
+            {
+                "title": "Add totals, charts and export",
+                "body": "Set `pivotRowTotals` and `grandTotalRow`, add `enableCharts` with `AllEnterpriseModule.with(AgChartsCommunityModule)` for Pivot Charts, and call `api.exportDataAsExcel()` to export."
+            }
+        ],
+        "code": "import { useMemo, useState } from \"react\";\nimport { AgGridProvider, AgGridReact } from \"ag-grid-react\";\nimport type { ColDef } from \"ag-grid-community\";\nimport { AllEnterpriseModule } from \"ag-grid-enterprise\";\nimport { AgChartsCommunityModule } from \"ag-charts-community\";\n\n// All Enterprise features, with Integrated Charts powered by AG Charts Community\nconst modules = [AllEnterpriseModule.with(AgChartsCommunityModule)];\n\ninterface Sale {\n  region: string;\n  product: string;\n  quarter: string;\n  revenue: number;\n  units: number;\n}\n\nexport function SalesPivot() {\n  const [rowData] = useState<Sale[]>([\n    { region: \"North\", product: \"Laptops\", quarter: \"Q1\", revenue: 120000, units: 140 },\n    { region: \"North\", product: \"Monitors\", quarter: \"Q2\", revenue: 48000, units: 210 },\n    { region: \"South\", product: \"Laptops\", quarter: \"Q1\", revenue: 95000, units: 110 },\n    { region: \"South\", product: \"Monitors\", quarter: \"Q2\", revenue: 52000, units: 230 },\n  ]);\n\n  const columnDefs = useMemo<ColDef<Sale>[]>(\n    () => [\n      { field: \"region\", rowGroup: true, enableRowGroup: true },\n      { field: \"product\", enableRowGroup: true, enablePivot: true },\n      { field: \"quarter\", pivot: true, enablePivot: true },\n      { field: \"revenue\", aggFunc: \"sum\", enableValue: true },\n      { field: \"units\", aggFunc: \"sum\", enableValue: true },\n    ],\n    [],\n  );\n\n  return (\n    <AgGridProvider modules={modules}>\n      <div style={{ height: 500 }}>\n        <AgGridReact<Sale>\n          rowData={rowData}\n          columnDefs={columnDefs}\n          pivotMode\n          sideBar=\"columns\"\n          pivotPanelShow=\"always\"\n          pivotRowTotals=\"after\"\n          grandTotalRow=\"bottom\"\n          enableCharts\n        />\n      </div>\n    </AgGridProvider>\n  );\n}",
+        "outro": "See the [main AG Grid demo](/example/), which registers pivoting and Integrated Charts: enter pivot mode, choose group, pivot and value columns, then open the context menu and pick a chart from the Pivot Chart sub menu."
+    },
+    "faq": [
+        {
+            "question": "Is there an open-source JavaScript pivot table?",
+            "answer": "AG Grid Community is MIT licensed but does not include pivoting. Pivoting is in AG Grid Enterprise, whose source is public on GitHub but which requires a commercial licence for production use. You can test Enterprise locally without a key; deployed without one, the grid shows a watermark and console warnings."
+        },
+        {
+            "question": "Can a JavaScript pivot table export to Excel?",
+            "answer": "AG Grid Enterprise exports the grid to .xlsx as it is rendered, including row grouping and column header groups. In pivot mode only visible pivot result columns are exported; collapsed ones are left out even with `allColumns: true`."
+        },
+        {
+            "question": "Where can I see a JavaScript pivot table example?",
+            "answer": "Each pivoting docs page includes runnable live examples, and the [main demo](/example/) supports pivot mode and Pivot Charts."
+        },
+        {
+            "question": "Is pivoting free in AG Grid Community?",
+            "answer": "No. Pivoting, aggregation and row grouping are marked Enterprise on the AG Grid pricing page. Community includes sorting, the Text, Number and Date filters, the Quick Filter, editing and CSV export."
+        },
+        {
+            "question": "Can AG Grid pivot large data sets on the server?",
+            "answer": "Yes, with the Server-Side Row Model. The grid sends the pivot columns and pivot mode in each request, your server runs the query, and the grid builds result columns from the `pivotResultFields` you return, or from columns you set with `setPivotResultColumns`."
+        },
+        {
+            "question": "How do I limit the number of pivot columns?",
+            "answer": "Set `pivotMaxGeneratedColumns`. When a pivot would generate more columns than that, the grid stops, clears the view and fires the `pivotMaxColumnsExceeded` event so your app can respond."
+        }
+    ],
+    "proseClaims": [
+        {
+            "claim": "Pivoting is an Enterprise feature enabled with pivotMode=true and pivot: true on a column, alongside rowGroup and aggFunc columns.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/pivoting/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "At least one aggregation column is required, as only aggregated rows are shown when pivoting.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/pivoting/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "Users can configure pivoting through the Side Bar or the Pivot Panel.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/pivoting/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "pivotPanelShow accepts 'always', 'onlyWhenPivoting' or 'never', and the Pivot Panel lets users reorder, remove or add pivot columns by drag and drop.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/pivoting/#enabling-the-pivot-panel",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "The Columns Tool Panel has a Pivot Mode toggle and Row Groups, Values and Column Labels sections; dragging into them needs enableRowGroup, enableValue or enablePivot.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/tool-panel-columns/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "There are seven built-in aggregation functions: sum, min, max, count, avg, first and last, and custom functions can be added.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/aggregation/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "Group and grand total rows are added with the groupTotalRow and grandTotalRow grid options.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/aggregation-total-rows/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "Pivot result columns are generated for each unique permutation of pivot values, inherit the value column definition and can be changed with processPivotResultColDef.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/pivoting-result-columns/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "When pivotMaxGeneratedColumns is exceeded the grid halts column generation, clears the view and fires the pivotMaxColumnsExceeded event.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/pivoting-result-columns/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "Column group totals are shown when a pivot column group is collapsed, and pivotRowTotals set to 'before' or 'after' adds a total column for each aggregation.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/pivoting-totals/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "Show Values As has five built-in modes, requires ShowValuesAsModule and is only supported with the Client-Side Row Model.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/aggregation-show-values-as/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "With the Server-Side Row Model, getRows requests include pivotCols and pivotMode, and result columns come from pivotResultFields or setPivotResultColumns.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/server-side-model-pivoting/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "Pivot Chart is an Enterprise feature: when pivot mode is active a Pivot Chart item appears in the context menu, and it charts all grouped and pivoted data.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/integrated-charts-pivot-chart/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "Pivot Charts can be created from code with gridApi.createPivotChart().",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/integrated-charts-api-pivot-chart/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "The Pivot Chart docs suggest trying it on the main demo page: enter pivot mode, choose group, pivot and value columns, then pick a chart from the Pivot Chart context menu.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/integrated-charts-pivot-chart/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "Without an Enterprise Bundle licence only Integrated Community charts, powered by AG Charts Community, are available.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/community-vs-enterprise/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "AG Grid Community is MIT licensed; AG Grid Enterprise needs a commercial licence for production. It can be tested locally without a licence key; deployed without one, it shows a watermark and console warnings.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/community-vs-enterprise/",
+            "checkedOn": "2026-11-26"
+        },
+        {
+            "claim": "Excel export follows the grid as rendered, including row grouping, and is an Enterprise feature.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/excel-export/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "Collapsed pivot result columns are not exported to Excel, even with allColumns: true.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/excel-export-columns/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "Pivoting, Aggregation and Row Grouping are marked Enterprise on the pricing page, while Text, Number and Date filters, the Quick Filter, basic cell editors and CSV Export are Community.",
+            "sourceUrl": "https://www.ag-grid.com/license-pricing/",
+            "checkedOn": "2026-11-24"
+        }
+    ]
+}

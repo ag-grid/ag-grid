@@ -65,6 +65,7 @@ export interface KeyFigure {
     /** Smaller text after the value, e.g. `vs 1` after `4`. */
     valueSuffix?: string;
     label: string;
+    /** Markdoc, inline. */
     detail: string;
 }
 
@@ -74,7 +75,7 @@ export interface DecisionPageFaqItem {
     answer: string;
 }
 
-/** A competitor claim made in prose (short answer, choose-if lists, FAQ answers). */
+/** A claim made in prose (short answer, choose-if lists, FAQ answers), with its source. */
 export interface ProseClaim extends ClaimSource {
     claim: string;
 }
@@ -228,6 +229,62 @@ export interface ProductAlternativePageContent extends DecisionPageCore {
         subHeading: string;
         product: PricingRow[];
     };
+}
+
+/** A product feature a solution page relies on, shown as a card with its edition pill. */
+export interface SolutionCapability {
+    title: string;
+    /** The product's own docs page for this feature, framework relative (e.g. `./pivoting/`). */
+    docsUrl?: string;
+    /** The edition that includes it: `Free` for Community, otherwise the paid edition's name. */
+    plan: string;
+    /** Markdoc, inline. */
+    body: string;
+}
+
+export interface SolutionStep {
+    title: string;
+    /** Markdoc. */
+    body: string;
+}
+
+/**
+ * A solution page (`/solutions/{topic}/`): how the product fits one job a buyer searches for, with a
+ * working example. It names no competitor; `proseClaims` sources the product facts it states.
+ */
+export interface SolutionPageContent extends DecisionPageCore {
+    topic: {
+        /** e.g. `Trading and financial dashboards`: the breadcrumb, the eyebrow and the hub card title. */
+        name: string;
+        /** Short label beside the product logo in the hero, e.g. `Trading dashboards`. */
+        mark: string;
+    };
+    /** Markdoc. The page's direct answer, written to be quotable on its own. */
+    shortAnswer: string;
+    example: {
+        /** The site's example to mount, keyed by this id. */
+        id: string;
+        /** Markdoc, inline. */
+        intro: string;
+        /** Markdoc, inline. */
+        note: string;
+    };
+    keyFigures: {
+        heading: string;
+        figures: KeyFigure[];
+    };
+    capabilities: {
+        heading: string;
+        items: SolutionCapability[];
+    };
+    howTo: {
+        heading: string;
+        steps: SolutionStep[];
+        code: string;
+        /** Markdoc, shown under the code. */
+        outro: string;
+    };
+    proseClaims: ProseClaim[];
 }
 
 /**

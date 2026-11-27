@@ -159,6 +159,11 @@ $product-bar-width: 3px;
     color: var(--color-fg-secondary);
 }
 
+.heroMarkLabel {
+    font-size: var(--text-fs-xl);
+    font-weight: var(--text-bold);
+}
+
 // Last updated and the reviewer credit, on one line separated by a dot when there is room
 .heroMeta {
     display: flex;
@@ -220,6 +225,8 @@ $product-bar-width: 3px;
     min-width: 0;
     flex-direction: column;
     gap: $spacing-size-1;
+    min-width: 0;
+    overflow-wrap: anywhere;
 }
 
 .keyFigureSuffix {
@@ -530,6 +537,8 @@ $product-bar-width: 3px;
 }
 
 .productReason {
+    min-width: 0;
+    overflow-wrap: anywhere;
     margin: 0;
     padding: $spacing-size-6;
     border: 1px solid var(--color-border-primary);
@@ -546,6 +555,44 @@ $product-bar-width: 3px;
         margin: 0;
         color: var(--color-fg-secondary);
     }
+}
+
+.capabilityHeading {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: $spacing-size-2;
+}
+
+.howToSteps {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-size-4;
+    margin: 0 0 $spacing-size-6;
+    padding-left: $spacing-size-6;
+
+    li::marker {
+        font-weight: var(--text-bold);
+        color: var(--color-util-brand-600);
+
+        #{$selector-darkmode} & {
+            color: var(--color-link);
+        }
+    }
+
+    h3 {
+        margin: 0 0 $spacing-size-1;
+        font-size: var(--text-fs-lg);
+    }
+
+    p {
+        margin: 0;
+        color: var(--color-fg-secondary);
+    }
+}
+
+.solutionExample {
+    margin: $spacing-size-4 0;
 }
 
 // A line of text under a section's content, e.g. the link to the full comparison

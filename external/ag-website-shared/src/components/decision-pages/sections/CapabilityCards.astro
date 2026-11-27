@@ -1,0 +1,39 @@
+---
+import type { Framework } from '@ag-grid-types';
+import { renderMarkdocHtml } from '@ag-website-shared/components/landing-pages/renderFAQAnswers';
+
+import styles from '../DecisionPage.module.scss';
+import { FEATURE_STATUS, featureCellTone } from '../decisionPageText';
+import type { SolutionCapability } from '../types';
+import TonePill from './TonePill.astro';
+
+interface Props {
+    items: SolutionCapability[];
+    resolveUrl: (url: string) => string;
+    framework: Framework;
+}
+
+const { items, resolveUrl, framework } = Astro.props;
+---
+
+<ul class={styles.productReasons}>
+    {items.map(({ title, docsUrl, plan, body }) => (
+        <li class={styles.productReason}>
+            <h3 class={styles.capabilityHeading}>
+                {docsUrl ? (
+                    <a class={styles.featureLink} href={resolveUrl(docsUrl)}>
+                        {title}
+                    </a>
+                ) : (
+                    title
+                )}
+                <TonePill
+                    tone={featureCellTone({ status: 'yes', plan })}
+                    symbol={FEATURE_STATUS.yes.symbol}
+                    label={plan}
+                />
+            </h3>
+            <p set:html={renderMarkdocHtml(body, framework)} />
+        </li>
+    ))}
+</ul>

@@ -1,0 +1,251 @@
+{
+    "meta": {
+        "title": "The Data Grid for Trading and Financial Dashboards | AG Grid",
+        "description": "Build real-time trading and financial dashboards with AG Grid: high-frequency transaction updates, cell flashing, sparklines, aggregation and Excel export.",
+        "targetTerm": "trading and financial dashboards"
+    },
+    "analyticsPrefix": "solution-trading-financial-dashboards",
+    "technicalReviewer": "james",
+    "lastUpdated": "2026-11-24",
+    "topic": {
+        "name": "Trading and financial dashboards",
+        "mark": "Trading dashboards"
+    },
+    "hero": {
+        "heading": "The data grid for trading and financial dashboards",
+        "subHeading": "Stream live prices into a grid that updates rows in place, highlights changes and recalculates derived values, in React, Angular, Vue or JavaScript."
+    },
+    "shortAnswer": "AG Grid updates rows in place with [transactions](./data-update-transactions/), [batches high-frequency updates](./data-update-high-frequency/) with `applyTransactionAsync`, [flashes or animates cells](./change-cell-renderers/) when values change, and keeps [grouping](./grouping/) and [aggregation](./aggregation/) current as data streams in. Transactions, async batching, [row IDs](./row-ids/) and cell flashing are in the free AG Grid Community edition. [Sparklines](./sparklines-overview/), aggregation, grouping, [pivoting](./pivoting/), [cell range selection](./cell-selection/), [clipboard](./clipboard/), [Excel export](./excel-export/) and the [Server-Side Row Model](./server-side-model/) are in AG Grid Enterprise.",
+    "example": {
+        "id": "trading",
+        "intro": "Prices update every 400 ms through `applyTransactionAsync`. Changed cells flash and the Change column shows each move.",
+        "note": "Sample data. Uses AG Grid Community features only."
+    },
+    "keyFigures": {
+        "heading": "Built for live data",
+        "figures": [
+            {
+                "value": "50",
+                "valueSuffix": "ms",
+                "label": "Default batch window",
+                "detail": "`applyTransactionAsync` applies queued updates together after 50ms; `asyncTransactionWaitMillis` changes it."
+            },
+            {
+                "value": "100k+",
+                "label": "Rows in the Client-Side Row Model",
+                "detail": "From AG Grid's row model guidance."
+            },
+            {
+                "value": "0",
+                "label": "Extra libraries for Excel export",
+                "detail": "Built-in .xlsx export in AG Grid Enterprise."
+            }
+        ]
+    },
+    "capabilities": {
+        "heading": "Capabilities for trading and financial dashboards",
+        "items": [
+            {
+                "title": "High-frequency updates",
+                "docsUrl": "./data-update-high-frequency/",
+                "plan": "Free",
+                "body": "`applyTransactionAsync()` queues transactions and applies them in one batch after a wait that defaults to 50ms; `asyncTransactionWaitMillis` changes the wait, `flushAsyncTransactions()` applies pending transactions immediately, and the `asyncTransactionsFlushed` event fires after each batch."
+            },
+            {
+                "title": "Row IDs",
+                "docsUrl": "./row-ids/",
+                "plan": "Free",
+                "body": "The `getRowId` grid option returns a unique, stable string ID per row. Transactions use it to match update and remove items by key; without it the grid compares object references, which [the docs describe as slower](./data-update-transactions/#identifying-rows-for-update-and-remove) for large data sets."
+            },
+            {
+                "title": "Cell change flashing",
+                "docsUrl": "./change-cell-renderers/",
+                "plan": "Free",
+                "body": "Column property `enableCellChangeFlash=true` flashes a cell when its value changes; the `flashCells(params)` API flashes chosen rows, columns or cells on demand. `cellFlashDuration` and `cellFadeDuration` set timing (defaults 500ms and 1,000ms via CSS classes ag-cell-data-changed and ag-cell-data-changed-animation)."
+            },
+            {
+                "title": "Animated change renderers",
+                "docsUrl": "./change-cell-renderers/",
+                "plan": "Free",
+                "body": "Built-in cell renderers that show the difference between old and new value in green or red with a direction arrow, or slide and fade the previous value out."
+            },
+            {
+                "title": "Sparklines",
+                "docsUrl": "./sparklines-overview/",
+                "plan": "Enterprise",
+                "body": "Mini line, area, bar and column charts rendered inside grid cells from array data, configured through `sparklineOptions`. Requires SparklinesModule from ag-grid-enterprise plus an AG Charts module (Community or Enterprise)."
+            },
+            {
+                "title": "Server-Side Row Model",
+                "docsUrl": "./server-side-model/",
+                "plan": "Enterprise",
+                "body": "Lazy-loads rows and group children from the server in blocks, with grouping, pivoting and aggregation delegated to the server. Supports `applyServerSideTransaction` and `applyServerSideTransactionAsync` (batched by `asyncTransactionWaitMillis`); SSRM transactions require row IDs."
+            },
+            {
+                "title": "Aggregation",
+                "docsUrl": "./aggregation/",
+                "plan": "Enterprise",
+                "body": "`aggFunc` on a column (sum, min, max, count, avg, first, last, or a custom function) calculates group values; group and grand total rows are available. Transactions on grouped data recompute aggregations only for changed groups and their parents."
+            },
+            {
+                "title": "Pivoting",
+                "docsUrl": "./pivoting/",
+                "plan": "Enterprise",
+                "body": "`pivotMode` with pivot columns generates pivot result columns from column values; at least one aggregation column is required. Configurable in column definitions, via the API, or by users through the Side Bar or Pivot Panel."
+            },
+            {
+                "title": "Cell range selection",
+                "docsUrl": "./cell-selection/",
+                "plan": "Enterprise",
+                "body": "`cellSelection=true` enables Excel-like selection of cell ranges by mouse drag, Shift+click and keyboard, used for highlighting, copying to the clipboard or showing aggregations in the Status Bar."
+            },
+            {
+                "title": "Excel export",
+                "docsUrl": "./excel-export/",
+                "plan": "Enterprise",
+                "body": "Built-in .xlsx export from the context menu or the Grid API, with no third-party library. By default it exports the grid as rendered (column order, filters, sort, grouping) using value getters, and value formatters for text cells, but not cell renderers or cell styles. Number cells are exported as numbers."
+            }
+        ]
+    },
+    "howTo": {
+        "heading": "How to stream prices into AG Grid",
+        "steps": [
+            {
+                "title": "Give every row a stable ID",
+                "body": "Set `getRowId` so updates match existing rows by key, such as the ticker symbol."
+            },
+            {
+                "title": "Send updates as transactions",
+                "body": "Call `api.applyTransactionAsync({ update })` from your WebSocket or message handler. The grid batches the updates and applies them together."
+            },
+            {
+                "title": "Show what changed",
+                "body": "Set `enableCellChangeFlash` on price columns, or use `agAnimateShowChangeCellRenderer` to show the change in green or red."
+            },
+            {
+                "title": "Format numbers for display",
+                "body": "Use a `valueFormatter` for currency. Formatted values are also used in CSV export, and in clipboard copy and Excel export with Enterprise."
+            }
+        ],
+        "code": "// AG Grid v36. Community modules only.\nimport { useCallback, useEffect, useMemo, useRef, useState } from \"react\";\nimport { AgGridProvider, AgGridReact } from \"ag-grid-react\";\nimport {\n  AllCommunityModule,\n  type ColDef,\n  type GetRowIdParams,\n  type GridReadyEvent,\n  type ValueFormatterParams,\n} from \"ag-grid-community\";\n\nconst modules = [AllCommunityModule];\n\ninterface Quote {\n  symbol: string;\n  price: number;\n  change: number;\n}\n\nconst usd = new Intl.NumberFormat(\"en-US\", { style: \"currency\", currency: \"USD\" });\n\n// Value formatters must handle null/undefined values\nconst currencyFormatter = (p: ValueFormatterParams<Quote, number>) =>\n  p.value == null ? \"\" : usd.format(p.value);\n\nexport function QuotesGrid() {\n  const timer = useRef<ReturnType<typeof setInterval> | null>(null);\n\n  const [rowData] = useState<Quote[]>([\n    { symbol: \"AAPL\", price: 190.12, change: 0 },\n    { symbol: \"MSFT\", price: 410.55, change: 0 },\n    { symbol: \"NVDA\", price: 120.3, change: 0 },\n  ]);\n  const latest = useRef<Quote[]>(rowData);\n\n  const columnDefs = useMemo<ColDef<Quote>[]>(\n    () => [\n      { field: \"symbol\" },\n      { field: \"price\", valueFormatter: currencyFormatter, enableCellChangeFlash: true },\n      { field: \"change\", enableCellChangeFlash: true },\n    ],\n    [],\n  );\n\n  // Stable row IDs let transactions match updates to existing rows by key\n  const getRowId = useCallback((params: GetRowIdParams<Quote>) => params.data.symbol, []);\n\n  // Hypothetical feed: replace with your WebSocket / message handler\n  const onGridReady = useCallback((e: GridReadyEvent<Quote>) => {\n    timer.current = setInterval(() => {\n      const update = latest.current.map((r) => {\n        const change = +(Math.random() * 2 - 1).toFixed(2);\n        return { ...r, price: +(r.price + change).toFixed(2), change };\n      });\n      latest.current = update;\n      // Batched: queued updates are applied together after asyncTransactionWaitMillis\n      e.api.applyTransactionAsync({ update });\n    }, 100);\n  }, []);\n\n  useEffect(() => () => { if (timer.current) clearInterval(timer.current); }, []);\n\n  return (\n    <AgGridProvider modules={modules}>\n      <div style={{ height: 400 }}>\n        <AgGridReact<Quote>\n          rowData={rowData}\n          columnDefs={columnDefs}\n          getRowId={getRowId}\n          asyncTransactionWaitMillis={50} // default; raise to batch more updates per frame\n          cellFlashDuration={500}\n          onGridReady={onGridReady}\n        />\n      </div>\n    </AgGridProvider>\n  );\n}",
+        "outro": "See the [finance dashboard demo](/example-finance/): live prices, sparklines, aggregation and Excel export in one grid."
+    },
+    "faq": [
+        {
+            "question": "Can AG Grid handle real-time streaming updates?",
+            "answer": "Yes. AG Grid updates rows with transactions. `applyTransactionAsync` queues updates and applies them in one batch, by default every 50ms, which the AG Grid docs describe as more efficient for high-frequency data. It is included in AG Grid Community."
+        },
+        {
+            "question": "How do I update row data in AG Grid?",
+            "answer": "Call api.applyTransaction or api.applyTransactionAsync with add, update and remove lists. Set `getRowId` so the grid matches updated rows by ID; without it the grid compares object references, which the docs describe as slower for large data sets."
+        },
+        {
+            "question": "What does applyTransactionAsync do?",
+            "answer": "It queues a transaction and applies it together with any other queued transactions after a short wait, 50ms by default. `asyncTransactionWaitMillis` changes the wait and `flushAsyncTransactions` applies pending transactions immediately."
+        },
+        {
+            "question": "How many rows can AG Grid handle?",
+            "answer": "AG Grid's row model guidance says the default Client-Side Row Model can handle 100k+ rows. For larger data sets, the Server-Side Row Model in AG Grid Enterprise loads rows from the server in blocks as users scroll."
+        },
+        {
+            "question": "Does AG Grid support sparklines?",
+            "answer": "Yes. Sparklines render small line, area, bar and column charts inside grid cells. They are an AG Grid Enterprise feature."
+        },
+        {
+            "question": "Can I use AG Grid for free?",
+            "answer": "Yes. AG Grid Community is free and open source under the MIT licence, including for commercial use. AG Grid Enterprise is a paid licence that adds features such as row grouping, pivoting, Excel export and the Server-Side Row Model."
+        }
+    ],
+    "proseClaims": [
+        {
+            "claim": "applyTransactionAsync() applies queued transactions together in one batch after 50ms by default, which the docs describe as more efficient.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/data-update-high-frequency/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "asyncTransactionWaitMillis changes the wait between async transaction batches, flushAsyncTransactions() applies pending transactions immediately, and asyncTransactionsFlushed fires after each batch.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/data-update-high-frequency/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "getRowId returns a string ID for each row that must always be the same for a given row and unique across rows.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/row-ids/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "Without row IDs, transactions match update and remove items by object reference, which is slower for large data sets.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/data-update-transactions/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "Transactions on grouped data re-apply grouping, sorting, filtering and aggregation only to changed groups and their parents (Changed Path Selection).",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/data-update-transactions/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "enableCellChangeFlash=true on a column flashes cells when their values change, and flashCells(params) flashes chosen rows, columns or cells.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/change-cell-renderers/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "cellFlashDuration defaults to 500ms and cellFadeDuration to 1,000ms, applied through the CSS classes ag-cell-data-changed and ag-cell-data-changed-animation.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/change-cell-renderers/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "agAnimateShowChangeCellRenderer shows the change in green or red with a direction arrow; agAnimateSlideCellRenderer slides and fades the previous value out.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/change-cell-renderers/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "Sparklines are an Enterprise feature that render line, area, bar and column charts in cells, configured with sparklineOptions, and need SparklinesModule plus an AG Charts module.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/sparklines-overview/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "The Server-Side Row Model is Enterprise, lazy-loads rows and group children in blocks, and delegates grouping, pivoting and aggregation to the server.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/server-side-model/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "Server-side transactions require row IDs, and applyServerSideTransactionAsync batches transactions using asyncTransactionWaitMillis.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/server-side-model-updating-transactions/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "Aggregation is Enterprise; built-in aggFunc values are sum, min, max, count, avg, first and last, with custom functions and group and grand total rows available.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/aggregation/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "Pivoting is Enterprise, needs at least one aggregation column, and can be set in column definitions, through the API, or by users through the Side Bar or Pivot Panel.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/pivoting/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "Cell selection (Enterprise) is enabled with cellSelection=true and supports mouse drag, Shift+click and keyboard ranges for highlighting, clipboard copy and Status Bar aggregation.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/cell-selection/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "Excel export (Enterprise) is built in with no third-party library, runs from the context menu or the Grid API, and by default uses value getters, and value formatters for text cells, but not cell renderers or cell styles.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/excel-export/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "The default Client-Side Row Model can handle 100k+ rows.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/row-models/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "AG Grid Community is available under the MIT licence; Enterprise requires a commercial licence and adds features such as row grouping, pivoting, Excel export and the Server-Side Row Model.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/community-vs-enterprise/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "Clipboard operations are an Enterprise feature; transactions, row IDs and cell flashing ship in AG Grid Community modules.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/community-vs-enterprise/",
+            "checkedOn": "2026-11-24"
+        }
+    ]
+}

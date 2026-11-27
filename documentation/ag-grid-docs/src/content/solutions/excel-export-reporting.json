@@ -1,0 +1,266 @@
+{
+    "meta": {
+        "title": "React Table Export to Excel and CSV | AG Grid",
+        "description": "Export a React data grid to Excel with styles, formulas, data types, images and multiple sheets, or to CSV for free. Covers grouped and pivoted data.",
+        "targetTerm": "react table export to excel",
+        "monthlySearches": 10,
+        "demandSource": "Google Ads search volume via DataForSEO (US, English, 12-month average), 2 October 2026"
+    },
+    "analyticsPrefix": "solution-excel-export-reporting",
+    "technicalReviewer": "james",
+    "lastUpdated": "2026-11-24",
+    "topic": {
+        "name": "Excel export",
+        "mark": "Excel export"
+    },
+    "hero": {
+        "heading": "Export a React data grid to Excel and CSV",
+        "subHeading": "AG Grid writes .xlsx files itself, with no third-party library, and exports CSV in the free Community edition."
+    },
+    "shortAnswer": "AG Grid has export built in. [CSV export](./csv-export/) is in Community (free): `api.exportDataAsCsv()` writes the rows as displayed, using [value getters](./value-getters/) and [value formatters](./value-formatters/). [Excel export](./excel-export/) is an Enterprise feature: `api.exportDataAsExcel()` or the context menu produces an .xlsx file with no third-party library. On top of the default export you can add [Excel styles](./excel-export-styles/), [formulas](./excel-export-formulas/), [number and date types](./excel-export-data-types/), [images](./excel-export-images/), [multiple sheets](./excel-export-multiple-sheets/), [Excel tables](./excel-export-tables/), frozen rows and columns, and [master/detail rows](./excel-export-master-detail/). [Grouped rows export as an Excel outline](./excel-export-customising-content/) (expanded by default), and only visible pivot result columns are exported. [PDF export](./pdf-export/) (Enterprise) arrived in v36.2. For charts in reports, [Integrated Charts](./integrated-charts/) builds charts from grid data and downloads them as PNG images (or JPEG through the API).",
+    "example": {
+        "id": "excel-export",
+        "intro": "Export the grid to Excel with currency formatting, or to CSV. Excel export is Enterprise; CSV export is Community.",
+        "note": "Sample data. Uses AG Grid Enterprise features; deployed without a licence key, the grid shows a watermark and console warnings."
+    },
+    "keyFigures": {
+        "heading": "Key figures",
+        "figures": [
+            {
+                "value": "0",
+                "label": "Third-party libraries needed",
+                "detail": "Excel (.xlsx) export is built into AG Grid Enterprise"
+            },
+            {
+                "value": "3",
+                "label": "Export formats built in",
+                "detail": "CSV in Community; Excel (.xlsx) and PDF in Enterprise"
+            },
+            {
+                "value": "3",
+                "label": "Image formats in Excel export",
+                "detail": "PNG, GIF or JPG, supplied as base64 strings"
+            }
+        ]
+    },
+    "capabilities": {
+        "heading": "Capabilities",
+        "items": [
+            {
+                "title": "Excel Export",
+                "docsUrl": "./excel-export/",
+                "plan": "Enterprise",
+                "body": "Exports .xlsx from the context menu or `api.exportDataAsExcel()`. By default the file matches the grid at the time of export: column order, visible columns, filters, sort and row grouping. Value getters and value formatters are used; cell renderers and cell styles are not."
+            },
+            {
+                "title": "Excel Styles",
+                "docsUrl": "./excel-export-styles/",
+                "plan": "Enterprise",
+                "body": "The `excelStyles` grid option defines Excel formatting by id, matched to cells through `cellClass`, `cellClassRules` and `headerClass`. Styles with the ids `'cell'`, `'header'` and `'headerGroup'` apply automatically."
+            },
+            {
+                "title": "Formulas",
+                "docsUrl": "./excel-export-formulas/",
+                "plan": "Enterprise",
+                "body": "Set `dataType: 'Formula'` in an Excel style, or `autoConvertFormulas=true` so any exported value starting with '=' becomes a formula. `processCellCallback` can turn a column's `valueGetter` logic into the matching Excel formula."
+            },
+            {
+                "title": "Data types",
+                "docsUrl": "./excel-export-data-types/",
+                "plan": "Enterprise",
+                "body": "Excel styles set a `dataType` or `numberFormat` so values arrive as numbers, booleans, strings or dates. Dates need `dataType: 'DateTime'`, ISO values (`yyyy-mm-ddThh:mm:ss`) and a `numberFormat`, otherwise Excel shows a serial number."
+            },
+            {
+                "title": "Multiple sheets",
+                "docsUrl": "./excel-export-multiple-sheets/",
+                "plan": "Enterprise",
+                "body": "Call `getSheetDataForExcel()` once per sheet, on one grid or several, then `exportMultipleSheetsAsExcel()` or `getMultipleSheetsAsExcel()` to build one workbook. The docs show sheets split by selection, by filter value and by grid."
+            },
+            {
+                "title": "Images",
+                "docsUrl": "./excel-export-images/",
+                "plan": "Enterprise",
+                "body": "`addImageToCell` exports images shown in cells, and `prependContent` or `appendContent` can add a logo above or below the data. Images must be base64 strings in PNG, GIF or JPG format."
+            },
+            {
+                "title": "Grouped and pivoted data",
+                "docsUrl": "./excel-export-customising-content/",
+                "plan": "Enterprise",
+                "body": "Grouped rows export as an Excel outline (expanded by default), with names like '-> Parent -> Child' by default; `processRowGroupCallback` changes them. With pivoting, only visible pivot result columns export, and collapsed ones are left out even with `allColumns: true`. Excel tables are not supported for pivot or master/detail grids."
+            },
+            {
+                "title": "Value formatters in export",
+                "docsUrl": "./value-formatters/",
+                "plan": "Free",
+                "body": "Formatted values are used for CSV export, and for Excel export, clipboard copy and the fill handle (Enterprise), by default. Set `useValueFormatterForExport=false` on a column to export raw values; providing `processCellCallback` or Excel data types also bypasses the formatter, and Excel export writes number values unformatted."
+            },
+            {
+                "title": "CSV Export",
+                "docsUrl": "./csv-export/",
+                "plan": "Free",
+                "body": "`api.exportDataAsCsv()` exports the grid's data with value getters and formatters; the context menu item is Enterprise only. When rows are grouped, all data is exported whether or not groups are open. Spreadsheet apps run cells starting with +, -, =, @, tab, carriage return or line feed as formulas; set `sanitizeFormulas: true` to prefix those values with a single quote."
+            },
+            {
+                "title": "Integrated Charts",
+                "docsUrl": "./integrated-charts/",
+                "plan": "Enterprise",
+                "body": "`enableCharts=true` lets users chart grid data, built on AG Charts; charts follow the grid's sorting and filtering. Charts download as PNG from the chart menu, or as PNG or JPEG with `downloadChart()`, and `getChartImageDataURL()` returns a base64 image. Integrated Enterprise chart types need the Enterprise Bundle."
+            }
+        ]
+    },
+    "howTo": {
+        "heading": "How to export a React data grid to Excel",
+        "steps": [
+            {
+                "title": "Provide the export modules",
+                "body": "Pass `CsvExportModule` (Community) and `ExcelExportModule` (Enterprise) to `AgGridProvider`, or use `AllEnterpriseModule`. You can try Enterprise features locally without a licence key; deployed without one, the grid shows a watermark and console warnings."
+            },
+            {
+                "title": "Trigger the export",
+                "body": "With `ContextMenuModule` (Enterprise) registered, the right-click menu gets an Export submenu with Excel and CSV items. From your own button, call `gridRef.current.api.exportDataAsExcel({ fileName, sheetName })`. Shared settings can go in the `defaultExcelExportParams` grid option."
+            },
+            {
+                "title": "Carry formatting into Excel",
+                "body": "Add `excelStyles`. The `header` id styles every header automatically; other ids link to body cells through `cellClass`. Use `numberFormat` for currency and `dataType: 'DateTime'` with ISO date strings for real Excel dates."
+            },
+            {
+                "title": "Choose rows and columns",
+                "body": "`onlySelected: true` exports selected rows, `exportedRows: 'all'` ignores filtering and sorting, and `allColumns: true` includes hidden columns. `skipPinnedTop` and `skipPinnedBottom` leave out pinned rows."
+            },
+            {
+                "title": "Build multi-sheet reports",
+                "body": "Collect sheets with `getSheetDataForExcel()` and pass them to `exportMultipleSheetsAsExcel({ data, fileName })`. For master/detail grids, use `getCustomContentBelowRow` to write order lines under each master row."
+            }
+        ],
+        "code": "// AG Grid v36. CSV export is Community; Excel export (ExcelExportModule) is Enterprise.\nimport { useMemo, useRef } from \"react\";\nimport { AgGridProvider, AgGridReact } from \"ag-grid-react\";\nimport { ClientSideRowModelModule, CsvExportModule } from \"ag-grid-community\";\nimport type { ColDef, ExcelStyle } from \"ag-grid-community\";\nimport { ContextMenuModule, ExcelExportModule } from \"ag-grid-enterprise\";\n\nconst modules = [ClientSideRowModelModule, CsvExportModule, ExcelExportModule, ContextMenuModule];\n\ninterface Sale { region: string; product: string; orderDate: string; revenue: number }\n\nexport function SalesReport({ rows }: { rows: Sale[] }) {\n  const gridRef = useRef<AgGridReact<Sale>>(null);\n\n  const columnDefs = useMemo<ColDef<Sale>[]>(() => [\n    { field: \"region\" },\n    { field: \"product\" },\n    // ISO strings (`yyyy-mm-ddThh:mm:ss`) export as Excel dates via the DateTime data type\n    { field: \"orderDate\", cellClass: \"isoDate\" },\n    { field: \"revenue\", cellClass: \"currency\" },\n  ], []);\n\n  // Excel Styles are matched to columns by cellClass id\n  const excelStyles = useMemo<ExcelStyle[]>(() => [\n    { id: \"header\", font: { bold: true } },\n    { id: \"isoDate\", dataType: \"DateTime\", numberFormat: { format: \"dd/mm/yyyy\" } },\n    { id: \"currency\", numberFormat: { format: \"£#,##0.00\" } },\n  ], []);\n\n  return (\n    <AgGridProvider modules={modules}>\n      <button onClick={() => gridRef.current?.api.exportDataAsExcel({ fileName: \"sales.xlsx\", sheetName: \"Sales\" })}>\n        Export to Excel\n      </button>\n      <button onClick={() => gridRef.current?.api.exportDataAsCsv({ fileName: \"sales.csv\" })}>\n        Export to CSV\n      </button>\n      <div style={{ height: 500 }}>\n        <AgGridReact<Sale>\n          ref={gridRef}\n          rowData={rows}\n          columnDefs={columnDefs}\n          excelStyles={excelStyles}\n        />\n      </div>\n    </AgGridProvider>\n  );\n}",
+        "outro": "See the [default Excel export example](./excel-export/): reorder, filter and sort the columns, export, then compare the file with the grid."
+    },
+    "faq": [
+        {
+            "question": "How do I export an AG Grid grid to Excel?",
+            "answer": "Register ExcelExportModule (Enterprise) and call `api.exportDataAsExcel()` from your own button, or also register ContextMenuModule so users can right-click and choose Export, then Excel Export. No third-party library is needed. Pass params such as `fileName`, `sheetName` or `onlySelected` to control the output."
+        },
+        {
+            "question": "Can I export AG Grid to Excel without Enterprise?",
+            "answer": "Excel (.xlsx) export is an Enterprise feature. Community includes CSV export through `api.exportDataAsCsv()`, which Excel can open. You can try Excel export locally without a licence key; deployed without one, the grid shows a watermark and console warnings."
+        },
+        {
+            "question": "Should I export as CSV or XLSX?",
+            "answer": "In AG Grid, CSV export is free and writes text only (no styles or types); Excel styles, cell types, formulas, images and multiple sheets need .xlsx export, which is Enterprise. If you use CSV, set `sanitizeFormulas: true` so values starting with +, -, =, @, tab, carriage return or line feed are prefixed with a single quote; spreadsheet apps would otherwise run them as formulas."
+        },
+        {
+            "question": "How can I export an AG Grid data grid as a PDF?",
+            "answer": "From v36.2, AG Grid Enterprise includes PDF export. Register PdfExportModule and use the PDF Export context menu item or `api.exportDataAsPdf()`. The PDF follows the current columns, filters, sort and grouping, is paginated with repeating headers, and needs no third-party library."
+        },
+        {
+            "question": "Does Excel export include server-side or paged data?",
+            "answer": "With the Client-Side Row Model, all rows after filtering and sorting are exported by default, including rows on other pages, or every row with `exportedRows: 'all'`. With the Infinite, Server-Side and Viewport Row Models, the [row models comparison](./row-models/#row-model-comparisons) says export covers only the data on screen."
+        },
+        {
+            "question": "Can AG Grid import Excel files?",
+            "answer": "AG Grid has no built-in Excel import. The Excel Import page shows how to read a .xlsx file with the third-party xlsx library and load the result into the grid as row data."
+        }
+    ],
+    "proseClaims": [
+        {
+            "claim": "Excel (.xlsx) export is an Enterprise feature built in with no third-party library, run from the context menu or api.exportDataAsExcel().",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/excel-export/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "By default the Excel file matches the grid at export time (column order, visible columns, filters, sort and row grouping), using value getters, and value formatters for text cells, but not cell renderers or cell styles.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/excel-export/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "CSV export is in AG Grid Community through api.exportDataAsCsv(); its context menu item is Enterprise only, and grouped data exports all rows whether or not groups are open.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/csv-export/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "Spreadsheet apps run CSV cells starting with +, -, =, @, tab, carriage return or line feed as formulas; sanitizeFormulas: true prefixes those values with a single quote.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/csv-export/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "PDF export is an Enterprise feature added in v36.2: register PdfExportModule and use the PDF Export context menu item or api.exportDataAsPdf(); output is paginated with repeated table headers and needs no third-party library.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/pdf-export/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "The excelStyles grid option matches Excel styles to cells through cellClass, cellClassRules and headerClass, and styles with ids 'cell', 'header' and 'headerGroup' apply automatically.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/excel-export-styles/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "Formulas export with dataType 'Formula' in an Excel style or autoConvertFormulas=true, which converts values starting with '=' into formulas; processCellCallback can supply the formula text.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/excel-export-formulas/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "Excel dates need dataType 'DateTime', ISO values (`yyyy-mm-ddThh:mm:ss`) and a numberFormat, otherwise Excel shows a number.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/excel-export-data-types/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "Multiple sheets are built by calling getSheetDataForExcel() per sheet on one or more grids, then exportMultipleSheetsAsExcel() or getMultipleSheetsAsExcel().",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/excel-export-multiple-sheets/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "Excel export images use addImageToCell or prepended/appended content and must be base64 strings in PNG, GIF or JPG format.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/excel-export-images/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "processRowGroupCallback changes exported row group values; group names default to the '-> Parent -> Child' format.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/excel-export-customising-content/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "Collapsed pivot result columns are not exported, even with allColumns: true.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/excel-export-columns/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "Excel export adds an outline to expand and collapse row groups; rowGroupExpandState defaults to 'expanded'.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/excel-export-api/",
+            "checkedOn": "2026-11-26"
+        },
+        {
+            "claim": "Excel tables are not supported for pivot or master/detail grids.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/excel-export-tables/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "useValueFormatterForExport=false exports raw values; processCellCallback, Excel data types and number values bypass the formatter in Excel export.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/value-formatters/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "Integrated Charts (enableCharts=true) download as PNG from the chart menu, or as PNG or JPEG with downloadChart(); getChartImageDataURL() returns a base64 image.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/integrated-charts-api-downloading-image/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "Without an Enterprise Bundle licence, Integrated Charts are limited to Integrated Community charts.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/community-vs-enterprise/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "With the Infinite, Server-Side and Viewport Row Models, CSV, Excel and PDF export cover only the data on screen.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/row-models/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "Excel Import uses the third-party xlsx library to read a file and load it as row data.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/excel-import/",
+            "checkedOn": "2026-11-24"
+        },
+        {
+            "claim": "AG Grid Enterprise can be tested locally without a licence key; deployed without one, it shows a watermark and console warnings.",
+            "sourceUrl": "https://www.ag-grid.com/react-data-grid/license-install/",
+            "checkedOn": "2026-11-26"
+        }
+    ]
+}

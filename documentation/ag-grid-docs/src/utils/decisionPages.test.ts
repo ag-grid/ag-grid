@@ -1,13 +1,15 @@
 import { createAlternativePageSchema } from '@ag-website-shared/components/decision-pages/alternativePageSchema';
 import { createComparisonPageSchema } from '@ag-website-shared/components/decision-pages/comparisonPageSchema';
 import { createProductAlternativePageSchema } from '@ag-website-shared/components/decision-pages/productAlternativePageSchema';
+import { createSolutionPageSchema } from '@ag-website-shared/components/decision-pages/solutionPageSchema';
 import type {
     AlternativePageSource,
     ComparisonPageContent,
     ProductAlternativePageContent,
+    SolutionPageContent,
 } from '@ag-website-shared/components/decision-pages/types';
 import gridFeaturesMatrix from '@ag-website-shared/content/license-features/gridFeaturesMatrix.json';
-import { readFileSync, readdirSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { PRODUCT_ALTERNATIVE_SLUG, alternativePagePaths, decisionRelatedPages } from './decisionPages';
@@ -26,10 +28,14 @@ const readPages = (dir: string) => {
 const COMPARE_PAGES = readPages('compare');
 const ALTERNATIVE_PAGES = readPages('alternatives');
 const PRODUCT_ALTERNATIVE_PAGES = readPages('product-alternatives');
+const SOLUTION_PAGES = readPages('solutions');
 
 const compareSchema = createComparisonPageSchema({ reviewerKeys: TECHNICAL_REVIEWER_KEYS });
 const alternativeSchema = createAlternativePageSchema({ reviewerKeys: TECHNICAL_REVIEWER_KEYS });
 const productAlternativeSchema = createProductAlternativePageSchema({ reviewerKeys: TECHNICAL_REVIEWER_KEYS });
+const solutionSchema = createSolutionPageSchema({ reviewerKeys: TECHNICAL_REVIEWER_KEYS });
+
+const DOCS_DIR = join(__dirname, '../content/docs');
 
 type MatrixValue = boolean | { value: boolean };
 interface MatrixItem {
@@ -120,6 +126,7 @@ describe('alternative page content', () => {
                 data: alternativeSchema.parse(json),
             })),
             productAlternativePages: [],
+            solutionPages: [],
         });
 
         expect(paths.map(({ params }) => params.alternativePage)).toEqual(ALTERNATIVE_PAGES.map(({ slug }) => slug));
@@ -179,6 +186,38 @@ describe('AG Grid alternative page content', () => {
     });
 });
 
+describe('solution page content', () => {
+    test('there is content to check', () => {
+        expect(SOLUTION_PAGES.length).toBeGreaterThan(0);
+    });
+
+    describe.each(SOLUTION_PAGES)('$slug', ({ json }) => {
+        const result = solutionSchema.safeParse(json);
+        const content = result.data as SolutionPageContent;
+
+        test('matches the schema, with its product claims sourced', () => {
+            expect(result.error?.issues ?? []).toEqual([]);
+        });
+
+        test('links each capability to a docs page that exists', () => {
+            const missing = content.capabilities.items
+                .map(({ docsUrl }) => docsUrl?.match(/^\.\/([^/#]+)\//)?.[1])
+                .filter((page) => !page || !existsSync(join(DOCS_DIR, page, 'index.mdoc')));
+
+            expect(missing).toEqual([]);
+        });
+
+        test('shows each capability in the edition the pricing page licence matrix does', () => {
+            for (const { title, docsUrl, plan } of content.capabilities.items) {
+                const licence = LICENCE_FEATURES.get(docsUrl!);
+                if (licence) {
+                    expect(plan, title).toBe(included(licence.community) ? 'Free' : 'Enterprise');
+                }
+            }
+        });
+    });
+});
+
 describe('decisionRelatedPages', () => {
     const comparison = (slug: string, heading: string) => ({
         slug,
@@ -200,12 +239,19 @@ describe('decisionRelatedPages', () => {
             alternative('syncfusion-alternative', 'Syncfusion Data Grid', 'Syncfusion'),
         ],
         productAlternatives: [{ slug: 'ag-grid-alternative', content: {} as ProductAlternativePageContent }],
+        solutions: [
+            { slug: 'tree-grid', content: { topic: { name: 'Tree data' } } as SolutionPageContent },
+            {
+                slug: 'inventory-management',
+                content: { topic: { name: 'Inventory management' } } as SolutionPageContent,
+            },
+        ],
     };
 
-    test('lists the other comparisons and every alternative alphabetically, then the AG Grid links', () => {
+    test('lists the other comparisons, every alternative and every use case alphabetically, then the AG Grid links', () => {
         const related = decisionRelatedPages({ current: '/compare/ag-grid-vs-tanstack-table/', clusters });
 
-        expect(related.map(({ name }) => name)).toEqual(['Compare', 'Alternatives', 'AG Grid']);
+        expect(related.map(({ name }) => name)).toEqual(['Compare', 'Alternatives', 'Use cases', 'AG Grid']);
         expect(related[0].links).toEqual([
             { title: 'AG Grid vs MUI X', url: '/compare/ag-grid-vs-mui-x/' },
             { title: 'AG Grid vs Syncfusion', url: '/compare/ag-grid-vs-syncfusion/' },
@@ -214,6 +260,10 @@ describe('decisionRelatedPages', () => {
             { title: 'AG Grid alternative', url: '/alternatives/ag-grid-alternative/' },
             { title: 'Syncfusion alternative', url: '/alternatives/syncfusion-alternative/' },
             { title: 'TanStack Table alternative', url: '/alternatives/tanstack-table-alternative/' },
+        ]);
+        expect(related[2].links).toEqual([
+            { title: 'Inventory management', url: '/solutions/inventory-management/' },
+            { title: 'Tree data', url: '/solutions/tree-grid/' },
         ]);
     });
 
@@ -229,7 +279,12 @@ describe('decisionRelatedPages', () => {
     test('omits a group with no other pages', () => {
         const related = decisionRelatedPages({
             current: '/compare/ag-grid-vs-tanstack-table/',
-            clusters: { comparisons: [clusters.comparisons[0]], alternatives: [], productAlternatives: [] },
+            clusters: {
+                comparisons: [clusters.comparisons[0]],
+                alternatives: [],
+                productAlternatives: [],
+                solutions: [],
+            },
         });
 
         expect(related.map(({ name }) => name)).toEqual(['AG Grid']);
@@ -254,6 +309,7 @@ describe('alternativePagePaths', () => {
         const [path] = alternativePagePaths({
             comparePages: [comparePage],
             productAlternativePages: [],
+            solutionPages: [],
             alternativePages: [
                 entry<AlternativePageSource>('syncfusion-alternative', {
                     competitor: { name: 'Syncfusion Data Grid', slug: 'syncfusion' },
@@ -278,6 +334,7 @@ describe('alternativePagePaths', () => {
             alternativePagePaths({
                 comparePages: [comparePage],
                 productAlternativePages: [],
+                solutionPages: [],
                 alternativePages: [
                     entry<AlternativePageSource>('handsontable-alternative', {
                         competitor: { name: 'Handsontable', slug: 'handsontable' },

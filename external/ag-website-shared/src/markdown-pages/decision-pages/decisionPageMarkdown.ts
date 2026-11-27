@@ -129,7 +129,10 @@ export const relatedMarkdown = (related: RelatedPageGroup[], absolute: (url: str
  * Each distinct source, in the order the page first cites it, with its oldest `checkedOn`: the date
  * every claim citing it has been checked since.
  */
-export const sourcesMarkdown = (content: ClaimBearingContent): Block => {
+export const sourcesMarkdown = (
+    content: ClaimBearingContent,
+    intro = 'Competitor claims on this page were checked against these sources:'
+): Block => {
     const oldestCheck = new Map<string, Date>();
     for (const { sourceUrl, checkedOn } of listClaims(content)) {
         const seen = oldestCheck.get(sourceUrl);
@@ -139,7 +142,7 @@ export const sourcesMarkdown = (content: ClaimBearingContent): Block => {
     }
     return [
         `## ${COMPARISON_SECTIONS.sources}`,
-        'Competitor claims on this page were checked against these sources:',
+        intro,
         [...oldestCheck]
             .map(([sourceUrl, checkedOn]) => `- <${sourceUrl}> (checked ${formatLastUpdated(checkedOn)})`)
             .join('\n'),

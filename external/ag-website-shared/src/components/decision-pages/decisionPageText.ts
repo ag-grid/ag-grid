@@ -45,6 +45,17 @@ export const PRODUCT_ALTERNATIVE_SECTIONS = {
     editionsLink: (productName: string): string => `${productName} Community vs Enterprise`,
 } as const;
 
+/**
+ * Solution page section labels; the short answer, FAQ, get started and related sections share
+ * `COMPARISON_SECTIONS`, and the key figures, capabilities and how-to headings are each page's own.
+ */
+export const SOLUTION_SECTIONS = {
+    liveExample: 'Live example',
+} as const;
+
+/** The word between the product logo and the topic in a solution page's hero, e.g. AG Grid `for` Trading dashboards. */
+export const SOLUTION_MARK_SEPARATOR = 'for';
+
 export const communityEditionName = (productName: string): string => `${productName} Community`;
 export const enterpriseEditionName = (productName: string): string => `${productName} Enterprise`;
 

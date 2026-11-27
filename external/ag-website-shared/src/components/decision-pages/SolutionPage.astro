@@ -1,0 +1,102 @@
+---
+/**
+ * The solution page template (`/solutions/{topic}/`), shared by AG Grid, AG Charts and AG Studio.
+ * It renders page content only: each site wraps it in its own Layout, passing the JSON-LD from
+ * `buildDecisionPageStructuredData` plus its reviewer nodes.
+ *
+ * Slots:
+ * - review-credit: the site's "Technically reviewed by" credit, rendered in the hero beside the last-updated date.
+ * - example: the site's live example for `content.example.id`.
+ *
+ * Section order and labels match `buildSolutionPageMarkdown`, the page's `.md` twin.
+ */
+import { LandingPageFAQ } from '@ag-website-shared/components/landing-pages/LandingPageFAQ';
+import {
+    renderFAQAnswers,
+    renderMarkdocBlocksHtml,
+    renderMarkdocHtml,
+} from '@ag-website-shared/components/landing-pages/renderFAQAnswers';
+
+import styles from './DecisionPage.module.scss';
+import { COMPARISON_SECTIONS, SOLUTION_MARK_SEPARATOR, SOLUTION_SECTIONS } from './decisionPageText';
+import CapabilityCards from './sections/CapabilityCards.astro';
+import DecisionHero from './sections/DecisionHero.astro';
+import DecisionSection from './sections/DecisionSection.astro';
+import GetStartedPanel from './sections/GetStartedPanel.astro';
+import HowToSteps from './sections/HowToSteps.astro';
+import KeyFigures from './sections/KeyFigures.astro';
+import RelatedPages from './sections/RelatedPages.astro';
+import type { DecisionHubLink, DecisionPageSite, RelatedPageGroup, SolutionPageContent } from './types';
+
+interface Props {
+    content: SolutionPageContent;
+    site: DecisionPageSite;
+    /** The solutions hub, the breadcrumb's parent. */
+    hub: DecisionHubLink;
+    related: RelatedPageGroup[];
+}
+
+const { content, site, hub, related } = Astro.props;
+---
+
+<DecisionHero
+    site={site}
+    hub={hub}
+    pageName={content.topic.name}
+    heading={content.hero.heading}
+    subHeading={content.hero.subHeading}
+    lastUpdated={content.lastUpdated}
+    analyticsPrefix={content.analyticsPrefix}
+    mark={{ separator: SOLUTION_MARK_SEPARATOR, label: content.topic.mark }}
+>
+    <slot name="review-credit" slot="review-credit" />
+</DecisionHero>
+
+<DecisionSection id="short-answer" eyebrow={content.topic.name} heading={COMPARISON_SECTIONS.shortAnswer}>
+    <div class={styles.shortAnswer} set:html={renderMarkdocBlocksHtml(content.shortAnswer, site.framework)} />
+</DecisionSection>
+
+<DecisionSection id="live-example" heading={SOLUTION_SECTIONS.liveExample}>
+    <p set:html={renderMarkdocHtml(content.example.intro, site.framework)} />
+    <div class={styles.solutionExample}>
+        <slot name="example" />
+    </div>
+    <p class={styles.sectionNote} set:html={renderMarkdocHtml(content.example.note, site.framework)} />
+</DecisionSection>
+
+<DecisionSection id="key-figures" heading={content.keyFigures.heading} tone="muted">
+    <KeyFigures figures={content.keyFigures.figures} framework={site.framework} />
+</DecisionSection>
+
+<DecisionSection id="capabilities" heading={content.capabilities.heading}>
+    <CapabilityCards items={content.capabilities.items} resolveUrl={site.resolveUrl} framework={site.framework} />
+</DecisionSection>
+
+<DecisionSection id="how-to" heading={content.howTo.heading} tone="muted">
+    <HowToSteps
+        steps={content.howTo.steps}
+        code={content.howTo.code}
+        outro={content.howTo.outro}
+        framework={site.framework}
+    />
+</DecisionSection>
+
+{content.faq.length > 0 && (
+    <DecisionSection id="faq" heading={COMPARISON_SECTIONS.faq}>
+        <LandingPageFAQ
+            client:load
+            FAQData={renderFAQAnswers(content.faq, site.framework)}
+            analyticsEventName={`${content.analyticsPrefix}-expand-faq`}
+        />
+    </DecisionSection>
+)}
+
+<DecisionSection id="get-started" heading={COMPARISON_SECTIONS.getStarted} headingHidden>
+    <GetStartedPanel site={site} analyticsPrefix={content.analyticsPrefix} />
+</DecisionSection>
+
+{related.length > 0 && (
+    <DecisionSection id="related" heading={COMPARISON_SECTIONS.related}>
+        <RelatedPages groups={related} resolveUrl={site.resolveUrl} />
+    </DecisionSection>
+)}
