@@ -393,7 +393,7 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
         }
     }
 
-    /** A flat option is named explicitly, as its name from content would repeat its checkbox's name. */
+    /** Named explicitly, as browsers differ on naming an option from content through its labelled checkbox. */
     private refreshFlatAriaLabel(): void {
         const content = this.labelContent;
         const textLabel = typeof content === 'string' && content !== '' ? content : null;
