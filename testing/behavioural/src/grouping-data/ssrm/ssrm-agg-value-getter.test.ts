@@ -107,7 +107,9 @@ describe('colDef.aggValueGetter with the Server-Side Row Model', () => {
             isServerSideGroup: (data: FileRow) => !!data.folder,
             getServerSideGroupKey: (data: FileRow) => data.name,
             getRowId: ({ data }) => data.name,
-            columnDefs: [{ field: 'size', aggFunc: 'sum', editable: true, aggValueGetter: (params) => params.value * 2 }],
+            columnDefs: [
+                { field: 'size', aggFunc: 'sum', editable: true, aggValueGetter: (params) => params.value * 2 },
+            ],
             autoGroupColumnDef: { field: 'name' },
             serverSideDatasource: {
                 getRows: (params) => {
