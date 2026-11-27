@@ -688,7 +688,6 @@ describe('calculated columns - custom dialog validation', () => {
         { applyMode: 'deferred', applyDebounce: 0 },
     ] as const)('accepts a saved rejection without editing in $applyMode mode ($applyDebounce ms)', async (options) => {
         const changed = vi.fn();
-        const expressionChanged = vi.fn();
         const getValidationErrors = vi.fn(() => null);
         const api = createGrid('custom-validation-reaccepted', {
             columnDefs,
@@ -709,7 +708,6 @@ describe('calculated columns - custom dialog validation', () => {
             calculatedColumns: { ...options, getValidationErrors },
             onCalculatedColumnChanged: changed,
         });
-        api.addEventListener('calculatedColumnExpressionChanged', expressionChanged);
         const read = (colKey: string) => api.getCellValue({ rowNode: api.getRowNode('r1')!, colKey });
         expect(read('profit')).toBe('#ERROR!');
         expect(read('dependent')).toBe('#ERROR!');
@@ -741,7 +739,6 @@ describe('calculated columns - custom dialog validation', () => {
             source: 'calculatedColumn',
         });
         expect(changed.mock.lastCall![0].changes).toEqual({});
-        expect(expressionChanged).not.toHaveBeenCalled();
 
         await openEditDialogViaMenu(api, 'profit');
         if (options.applyMode === 'live') {

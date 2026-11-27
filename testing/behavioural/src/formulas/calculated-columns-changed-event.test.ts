@@ -1,5 +1,5 @@
 import { waitFor } from '@testing-library/dom';
-import { asyncSetTimeout, clickMenuOption } from 'ag-test-utils';
+import { ALL_SEVERITIES, asyncSetTimeout, clickMenuOption } from 'ag-test-utils';
 import { vi } from 'vitest';
 
 import type {
@@ -8,7 +8,7 @@ import type {
     ColDef,
     GridApi,
 } from 'ag-grid-community';
-import { _processOnChange } from 'ag-grid-community';
+import { _processOnChange, enableDevValidations } from 'ag-grid-community';
 
 import {
     clickDialogButton,
@@ -21,6 +21,11 @@ import {
     setupCalculatedColumnsSuite,
     showColumnMenu,
 } from './calculatedColumnsHarness';
+
+// Listening to a deprecated event raises deprecation #306, which the global throw-on-validation setup would throw on.
+beforeEach(() => {
+    enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [306] });
+});
 
 const profit: ColDef = {
     colId: 'profit',

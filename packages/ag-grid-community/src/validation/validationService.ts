@@ -7,8 +7,10 @@ import { BeanStub } from '../context/beanStub';
 import type { BeanCollection, DynamicBeanName, UserComponentName } from '../context/context';
 import type { ColDef, ColGroupDef } from '../entities/colDef';
 import type { GridOptions } from '../entities/gridOptions';
+import type { AgPublicEventType } from '../eventTypes';
 import { INITIAL_GRID_OPTION_KEYS } from '../gridOptionsInitial';
 import type { AdvancedFilterModel } from '../interfaces/advancedFilterModel';
+import { _PUBLIC_EVENT_HANDLERS_MAP } from '../publicEventHandlersMap';
 import type { IconName } from '../utils/icon';
 import { ICON_NAME_TO_VALUE } from '../utils/iconNameToValue';
 import { validateApiFunction } from './apiFunctionValidator';
@@ -38,6 +40,8 @@ export class ValidationService extends BeanStub implements NamedBean {
      * Deprecation warnings and fuzzy suggestions are emitted once when first encountered.
      */
     private readonly propertyNameCache: Map<string, Map<string, boolean>> = new Map();
+    /** Event types already reported as deprecated via `api.addEventListener`, so each is reported once. */
+    private readonly deprecatedEventsReported = new Set<string>();
 
     public wireBeans(beans: BeanCollection): void {
         this.gridOptions = beans.gridOptions;
@@ -64,6 +68,27 @@ export class ValidationService extends BeanStub implements NamedBean {
             return;
         }
         this.beans.log.deprecated(348);
+    }
+
+    /**
+     * Warns once per event type when a listener is added via `api.addEventListener` for an event whose
+     * grid option (`on<Event>`) is deprecated. Reuses the grid option deprecation entries so the version
+     * and message are defined in one place, rewriting the `on<Event>` option names in the message to the
+     * event names `addEventListener` takes.
+     */
+    public validateEventListener(eventType: string): void {
+        const handlerName = _PUBLIC_EVENT_HANDLERS_MAP[eventType as AgPublicEventType];
+        const deprecation = handlerName && GRID_OPTIONS_VALIDATORS().deprecations[handlerName];
+        if (!deprecation || this.deprecatedEventsReported.has(eventType)) {
+            return;
+        }
+        this.deprecatedEventsReported.add(eventType);
+        const { version, message } = deprecation;
+        const eventMessage = message?.replace(
+            /\bon([A-Z]\w*)/g,
+            (_, name: string) => name[0].toLowerCase() + name.slice(1)
+        );
+        this.beans.log.deprecated(306, { version, name: eventType, message: eventMessage });
     }
 
     public validateApiFunction<TFunctionName extends ApiFunctionName>(
