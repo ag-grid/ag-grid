@@ -1,7 +1,7 @@
 import { waitFor } from '@testing-library/dom';
 import { ALL_SEVERITIES, TestGridsManager, asyncSetTimeout, objectUrls } from 'ag-test-utils';
 
-import type { GridOptions } from 'ag-grid-community';
+import type { GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, CsvExportModule, enableDevValidations, getGridElement } from 'ag-grid-community';
 import {
     ColumnMenuModule,
@@ -71,6 +71,23 @@ describe('export start and end events', () => {
         expect(events[0]).toMatchObject({ format, source });
         expect(events[1]).toMatchObject({ format, source, success: true });
     };
+
+    test.each([
+        { format: 'csv', run: (api: GridApi) => api.exportDataAsCsv() },
+        { format: 'excel', run: (api: GridApi) => api.exportDataAsExcel() },
+        { format: 'pdf', run: (api: GridApi) => api.exportDataAsPdf() },
+    ])(
+        '$format export delivers exportEnd before the awaited call returns, so the grid can be destroyed',
+        async ({ format, run }) => {
+            const { api, events } = await createGrid();
+
+            await run(api);
+            api.destroy();
+
+            expect(events.map((event) => event.type)).toEqual(['exportStart', 'exportEnd']);
+            expect(events[1]).toMatchObject({ format, success: true });
+        }
+    );
 
     test('csv export from the api fires start synchronously, then end with the file name', async () => {
         const { api, calls, events } = await createGrid();

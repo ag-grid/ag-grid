@@ -205,6 +205,7 @@ export const ALWAYS_SYNC_GLOBAL_EVENTS: Set<AgEventType> = new Set([
     'fillStart',
     'pasteStart',
     'exportStart',
+    'exportEnd',
     'issueRaised',
 ]);
 
