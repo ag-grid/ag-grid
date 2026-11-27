@@ -51,16 +51,14 @@ interface Athlete {
                 <button type="button" (click)="clearOverlay()">Hide activeOverlay</button>
             </div>
         </div>
-        <div class="grid-wrapper">
-            <ag-grid-angular
-                style="width: 100%; height: 100%;"
-                [columnDefs]="columnDefs"
-                [rowData]="rowData"
-                [components]="components"
-                [loading]="loading()"
-                [activeOverlay]="activeOverlay()"
-            />
-        </div>
+        <ag-grid-angular
+            style="width: 100%; height: 100%;"
+            [columnDefs]="columnDefs"
+            [rowData]="rowData"
+            [components]="components"
+            [loading]="loading()"
+            [activeOverlay]="activeOverlay()"
+        />
     </div>`,
 })
 export class AppComponent {

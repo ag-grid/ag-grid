@@ -29,7 +29,6 @@ const VueExample = defineComponent({
                 </div>
             </div>
             <ag-grid-vue
-                class="grid-wrapper"
                 :columnDefs="columnDefs"
                 :rowData="rowData"
                 :activeOverlay="activeOverlay"

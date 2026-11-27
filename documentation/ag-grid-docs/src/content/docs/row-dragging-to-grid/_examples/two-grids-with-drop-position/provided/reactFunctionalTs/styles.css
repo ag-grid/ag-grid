@@ -1,7 +1,4 @@
 .inner-col {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
     flex: 1 1 auto;
     min-width: 0;
 }
@@ -16,7 +13,6 @@
 
 .toolbar {
     white-space: nowrap;
-    margin-bottom: var(--controls-gap);
 }
 
 .vertical-toolbar > span {

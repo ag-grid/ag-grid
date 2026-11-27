@@ -20,7 +20,7 @@ const VueExample = defineComponent({
     template: `
         <div style="height: 100%; display: flex; flex-direction: column; gap: 1rem;">
             <div style="flex: 1 1 0; min-height: 0; display: flex; flex-direction: column;">
-                <div class="example-controls" style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; font-family: Verdana, Geneva, Tahoma, sans-serif; font-size: 13px;">
+                <div class="example-controls" style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
                     <div class="controls-row">
                         <span style="font-weight: bold;">Grid A</span>
                         <button type="button" @click="triggerWarning('a')">Trigger warning</button>
@@ -37,7 +37,7 @@ const VueExample = defineComponent({
                 </ag-grid-vue>
             </div>
             <div style="flex: 1 1 0; min-height: 0; display: flex; flex-direction: column;">
-                <div class="example-controls" style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; font-family: Verdana, Geneva, Tahoma, sans-serif; font-size: 13px;">
+                <div class="example-controls" style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
                     <div class="controls-row">
                         <span style="font-weight: bold;">Grid B</span>
                         <button type="button" @click="triggerWarning('b')">Trigger warning</button>

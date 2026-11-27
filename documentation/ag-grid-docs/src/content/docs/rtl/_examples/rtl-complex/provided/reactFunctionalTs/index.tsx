@@ -25,7 +25,6 @@ import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 import CountryCellRenderer from './countryCellRenderer';
 import { COUNTRY_CODES, LANGUAGES, createRowData } from './data';
 import type { LanguageConfig } from './data';
-import './styles.css';
 
 /** PROVIDED EXAMPLE DARK INTEGRATED **/
 
@@ -484,28 +483,26 @@ const GridExample = () => {
                         </select>
                     </div>
                 </div>
-                <div className="grid-wrapper">
-                    {gridVisible && (
-                        <AgGridReact
-                            columnDefs={columnDefs}
-                            rowData={rowData}
-                            context={{ COUNTRY_CODES }}
-                            defaultColDef={defaultColDef}
-                            sideBar={true}
-                            rowGroupPanelShow="always"
-                            pivotPanelShow="always"
-                            enableRtl={currentLang.enableRtl}
-                            localeText={currentLang.localeText}
-                            statusBar={statusBar}
-                            rowSelection={rowSelection}
-                            autoGroupColumnDef={autoGroupColumnDef}
-                            onRowSelected={rowSelected}
-                            onSelectionChanged={selectionChanged}
-                            getBusinessKeyForNode={getBusinessKeyForNode}
-                            getContextMenuItems={getContextMenuItems}
-                        />
-                    )}
-                </div>
+                {gridVisible && (
+                    <AgGridReact
+                        columnDefs={columnDefs}
+                        rowData={rowData}
+                        context={{ COUNTRY_CODES }}
+                        defaultColDef={defaultColDef}
+                        sideBar={true}
+                        rowGroupPanelShow="always"
+                        pivotPanelShow="always"
+                        enableRtl={currentLang.enableRtl}
+                        localeText={currentLang.localeText}
+                        statusBar={statusBar}
+                        rowSelection={rowSelection}
+                        autoGroupColumnDef={autoGroupColumnDef}
+                        onRowSelected={rowSelected}
+                        onSelectionChanged={selectionChanged}
+                        getBusinessKeyForNode={getBusinessKeyForNode}
+                        getContextMenuItems={getContextMenuItems}
+                    />
+                )}
             </div>
         </AgGridProvider>
     );

@@ -33,7 +33,6 @@ interface IAthlete {
         </div>
         <ag-grid-angular
             style="width: 100%; height: 100%;"
-            class="grid-wrapper"
             [columnDefs]="columnDefs"
             [rowData]="rowData"
             [activeOverlay]="activeOverlay()"
