@@ -410,6 +410,11 @@
         min-height: 75px;
     }
 
+    .ag-column-drop-vertical.ag-column-drop-empty-message-shown {
+        min-height: auto;
+        overflow: visible;
+    }
+
     .ag-column-drop-vertical-title-bar {
         padding: var(--ag-widget-container-vertical-padding) calc(var(--ag-grid-size) * 2) 0;
     }
@@ -429,8 +434,13 @@
         justify-content: center;
         border: dashed 1px;
         border-color: var(--ag-border-color);
-        margin: calc(var(--ag-grid-size) * 1.5) calc(var(--ag-grid-size) * 2);
-        padding: calc(var(--ag-grid-size) * 2);
+        flex: 1 1 auto;
+
+        // with the list's padding, these margins inset the box 1.5 grid sizes from the top and bottom and 2 from the sides
+        margin: calc(var(--ag-grid-size) * 1.5) var(--ag-grid-size) calc(var(--ag-grid-size) * 0.5);
+
+        // the box stretches to fill the list, so a small vertical padding keeps a single line from growing the zone
+        padding: calc(var(--ag-grid-size) * 0.5) calc(var(--ag-grid-size) * 2);
     }
 
     .ag-column-drop-empty-message {

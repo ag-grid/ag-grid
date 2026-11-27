@@ -1,7 +1,7 @@
 .ag-column-panel {
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    overflow: hidden auto;
     flex: 1 1 auto;
 }
 
@@ -31,6 +31,12 @@
 :where(.ag-column-panel) .ag-column-drop-vertical {
     min-height: 50px;
     flex: 1 1 0px;
+}
+
+/* an empty zone's automatic minimum height fits its hint, which can wrap with user text spacing or long translations */
+:where(.ag-column-panel) .ag-column-drop-vertical:where(.ag-column-drop-empty-message-shown) {
+    min-height: auto;
+    overflow: visible;
 }
 
 :where(.ag-column-panel) .ag-column-drop-vertical:where(:not(.ag-last-column-drop)) {

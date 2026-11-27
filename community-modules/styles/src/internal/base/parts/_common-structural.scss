@@ -586,7 +586,7 @@
     .ag-column-panel {
         display: flex;
         flex-direction: column;
-        overflow: hidden;
+        overflow: hidden auto;
         flex: 1 1 auto;
     }
 

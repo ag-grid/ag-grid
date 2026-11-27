@@ -174,8 +174,7 @@ export class AgPositionableFeature<
             }
 
             if (offsetParentComputedStyles.minHeight != null) {
-                const paddingHeight = boundaryEl.offsetHeight - this.element.offsetHeight;
-                computedMinHeight = Number.parseInt(offsetParentComputedStyles.minHeight, 10) - paddingHeight;
+                computedMinHeight = this.getCssMinHeight(boundaryEl);
             }
         }
 
@@ -644,7 +643,8 @@ export class AgPositionableFeature<
     }
 
     private onResizeStart(e: MouseEvent, side: ResizableSides) {
-        this.boundaryEl = this.findBoundaryElement();
+        const boundaryEl = this.findBoundaryElement();
+        this.boundaryEl = boundaryEl;
 
         if (!this.positioned) {
             this.initialisePosition();
@@ -663,11 +663,18 @@ export class AgPositionableFeature<
         const { popup, forcePopupParentAsOffsetParent } = this.config;
 
         if (!popup && !forcePopupParentAsOffsetParent) {
+            // the CSS minimum can follow the content (a drop zone's hint), which may have changed since positioning
+            this.minHeight = this.config.minHeight || this.getCssMinHeight(boundaryEl);
             this.applySizeToSiblings(this.currentResizer.isBottom || this.currentResizer.isTop);
         }
 
         this.isResizing = true;
         this.updateDragStartPosition(e.clientX, e.clientY);
+    }
+
+    private getCssMinHeight(boundaryEl: HTMLElement): number {
+        const paddingHeight = boundaryEl.offsetHeight - this.element.offsetHeight;
+        return parseMinHeight(boundaryEl, window.getComputedStyle(boundaryEl).minHeight) - paddingHeight;
     }
 
     private getSiblings(): HTMLElement[] | null {
@@ -701,7 +708,7 @@ export class AgPositionableFeature<
             if (isFlex) {
                 const computedStyle = window.getComputedStyle(currentEl);
                 if (computedStyle.minHeight) {
-                    nextHeight = Number.parseInt(computedStyle.minHeight, 10);
+                    nextHeight = parseMinHeight(currentEl, computedStyle.minHeight);
                 }
                 if (computedStyle.minWidth) {
                     nextWidth = Number.parseInt(computedStyle.minWidth, 10);
@@ -932,4 +939,20 @@ export class AgPositionableFeature<
         this.clearResizeListeners();
         this.removeResizers();
     }
+}
+
+/** A keyword min-height such as `auto` on a flex item is resolved to the element's content height. */
+function parseMinHeight(el: HTMLElement, minHeight: string): number {
+    const px = Number.parseInt(minHeight, 10);
+    return Number.isNaN(px) ? getContentHeight(el) : px;
+}
+
+function getContentHeight(el: HTMLElement): number {
+    const { flex, height } = el.style;
+    el.style.flex = '0 0 auto';
+    el.style.height = 'auto';
+    const contentHeight = el.offsetHeight;
+    el.style.flex = flex;
+    el.style.height = height;
+    return contentHeight;
 }
