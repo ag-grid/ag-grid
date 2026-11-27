@@ -14,6 +14,7 @@ import { REQUIREMENTS, SCENARIOS, evaluate } from './scenarios.mjs';
 import { startServer } from './serve.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
+const require = createRequire(import.meta.url);
 const resultsFile = join(here, 'results/results.json');
 const BANNER =
     '> **Indicative only.** Measured in headless Chromium on a shared CI/sandbox runner (software rendering, no real display). A frame-rate pass means the main thread kept up, not that a physical screen met the target. Re-run on the target hardware before quoting a number.';
@@ -29,7 +30,7 @@ const previous = existsSync(resultsFile) ? JSON.parse(readFileSync(resultsFile, 
 
 if (args.includes('--report-only')) {
     previous.gridVersion ??= gridVersion();
-    writeReports(previous);
+    await writeReports(previous);
     process.exit(0);
 }
 
@@ -37,7 +38,7 @@ const only = arg('only')?.split(',');
 const warmupMs = Number(arg('warmup', 3)) * 1000;
 const measureMs = Number(arg('measure', 10)) * 1000;
 
-const { chromium } = createRequire(import.meta.url)('playwright');
+const { chromium } = require('playwright');
 const browser = await launch();
 const server = await startServer(0);
 const base = `http://localhost:${server.address().port}/`;
@@ -79,10 +80,10 @@ try {
             repeats: runs.slice(1),
         };
         run.finishedAt = new Date().toISOString();
-        writeReports(run);
+        await writeReports(run);
     }
     await uiSmoke(run);
-    writeReports(run);
+    await writeReports(run);
 } finally {
     await browser.close();
     server.close();
@@ -110,14 +111,19 @@ async function runScenario(scenario) {
             errors.push(m.text());
         }
     });
-    const timeout = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error(`timed out after ${SCENARIO_TIMEOUT_MS / 1000} s`)), SCENARIO_TIMEOUT_MS)
-    );
+    let timer;
+    const timeout = new Promise((_, reject) => {
+        timer = setTimeout(
+            () => reject(new Error(`timed out after ${SCENARIO_TIMEOUT_MS / 1000} s`)),
+            SCENARIO_TIMEOUT_MS
+        );
+    });
     try {
         return await Promise.race([measure(page, scenario, errors), timeout]);
     } catch (e) {
         return { error: `unmeasured: ${e.message.split('\n')[0]}`, consoleErrors: errors };
     } finally {
+        clearTimeout(timer);
         await page.close();
     }
 }
@@ -265,9 +271,16 @@ function git(cmd) {
     }
 }
 
-function writeReports(data) {
+/** Writes through the repo's Prettier config, so regenerated files pass `nx format:check`. */
+async function writeFormatted(file, text) {
+    const prettier = require('prettier');
+    const options = await prettier.resolveConfig(file);
+    writeFileSync(file, await prettier.format(text, { ...options, filepath: file }));
+}
+
+async function writeReports(data) {
     data.verdicts = evaluate(data.scenarios);
-    writeFileSync(resultsFile, JSON.stringify(data, null, 2) + '\n');
+    await writeFormatted(resultsFile, JSON.stringify(data, null, 4));
     const table = verdictTable(data);
     const scenarioRows = SCENARIOS.map(({ id, title }) => {
         const r = data.scenarios[id];
@@ -306,7 +319,7 @@ function writeReports(data) {
         'Raw numbers for every scenario are in `results.json`.',
         '',
     ].join('\n');
-    writeFileSync(join(here, 'results/results.md'), md);
+    await writeFormatted(join(here, 'results/results.md'), md);
 
     const reportFile = join(here, 'REPORT.md');
     if (existsSync(reportFile)) {
@@ -316,7 +329,7 @@ function writeReports(data) {
         if (report.includes(begin) && report.includes(end)) {
             const head = report.slice(0, report.indexOf(begin) + begin.length);
             const tail = report.slice(report.indexOf(end));
-            writeFileSync(
+            await writeFormatted(
                 reportFile,
                 `${head}\n\n_Generated from results/results.json (run ${data.startedAt}; per-scenario provenance in results/results.md)._\n\n${table}\n\n${tail}`
             );
