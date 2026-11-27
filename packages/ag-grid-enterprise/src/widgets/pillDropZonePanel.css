@@ -40,6 +40,25 @@
     margin: 0 var(--ag-spacing);
 }
 
+:where(.ag-column-drop-cell) .ag-column-indicator-icon {
+    --ag-icon-size: calc(var(--ag-spacing) * 2.25);
+
+    display: flex;
+}
+
+:where(.ag-column-drop-cell) .ag-calculated-column-icon {
+    margin-inline: var(--ag-spacing) calc(var(--ag-spacing) * -0.75);
+}
+
+:where(.ag-column-drop-cell) .ag-show-values-as-icon {
+    flex-grow: 1;
+}
+
+:where(.ag-column-drop-cell) .ag-column-indicator-name {
+    flex-grow: 0;
+    margin-inline-end: calc(var(--ag-spacing) / 2);
+}
+
 .ag-column-drop-vertical {
     display: flex;
     flex-direction: column;

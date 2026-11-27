@@ -5,6 +5,7 @@ import type { AgColumn } from '../entities/agColumn';
 import type { ColDef, ColKey } from '../entities/colDef';
 import type { CalculatedColumnExpressionValidation, ColumnEventType } from '../events';
 import type { Column } from './iColumn';
+import type { ColumnIndicatorIcon } from './iColumnIndicatorIcon';
 import type { AgGridCommon } from './iCommon';
 import type { HeaderPosition } from './iHeaderPosition';
 
@@ -219,4 +220,6 @@ export interface ICalculatedColumnsService extends Bean {
     isEnabled(): boolean;
     isHighlightedColumn(column: AgColumn | null): boolean;
     getExpressionError(column: AgColumn): CalculatedExpressionError | undefined;
+    /** The ƒx icon shown before the column name outside the header. */
+    readonly indicatorIcon: ColumnIndicatorIcon;
 }

@@ -20,6 +20,7 @@ import type {
     ColDef,
     ColKey,
     ColumnEventType,
+    ColumnIndicatorIcon,
     ColumnState,
     ColumnTreeBuild,
     HeaderPosition,
@@ -163,6 +164,14 @@ type PendingLiveApplyUpdate = {
 
 export class CalculatedColumnsService extends BeanStub implements NamedBean, ICalculatedColumnsService {
     public readonly beanName = 'calculatedColsSvc' as const;
+
+    public readonly indicatorIcon: ColumnIndicatorIcon = {
+        position: 'before',
+        iconName: 'calculatedColumnsHeader',
+        cls: 'ag-calculated-column-icon',
+        addRefreshListeners: (bean, column, refresh) => bean.addManagedListeners(column, { colDefChanged: refresh }),
+        refresh: (column) => column.isCalculatedCol,
+    };
 
     /** Dynamic calc cols (API/dialog added), keyed by colId. Insertion order = tree append order. */
     private readonly dynamicColumns = new Map<string, DynamicCalculatedColumn>();

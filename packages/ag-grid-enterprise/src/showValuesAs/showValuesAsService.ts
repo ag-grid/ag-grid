@@ -7,6 +7,7 @@ import type {
     BeanCollection,
     ColDef,
     ColumnEventType,
+    ColumnIndicatorIcon,
     ColumnModel,
     ColumnState,
     ColumnStateParams,
@@ -288,6 +289,30 @@ export class ShowValuesAsService extends BeanStub implements NamedBean, IShowVal
         }
         return state;
     }
+
+    public readonly indicatorIcon: ColumnIndicatorIcon = {
+        position: 'after',
+        iconName: 'showValuesAs',
+        cls: 'ag-show-values-as-icon',
+        // Dormant (selected but not applying in this view) flips on grouping/pivot change without a column-state event.
+        addRefreshListeners: (bean, column, refresh) => {
+            bean.addManagedListeners(column, { columnStateUpdated: refresh, colDefChanged: refresh });
+            bean.addManagedEventListeners({
+                columnRowGroupChanged: refresh,
+                columnPivotChanged: refresh,
+                columnPivotModeChanged: refresh,
+            });
+        },
+        refresh: (column, eIcon) => {
+            const show = column.showValuesAs != null && !column.showValuesAsDef?.suppressHeaderIndicator;
+            if (show) {
+                eIcon.classList.toggle('ag-show-values-as-dormant', !this.isApplying(column));
+                // The icon can fill the rest of a list row, so the tooltip goes on the glyph alone.
+                (eIcon.firstElementChild ?? eIcon).setAttribute('title', this.getActiveModeTooltip(column) ?? '');
+            }
+            return show;
+        },
+    };
 
     public isApplying(column: AgColumn): boolean {
         const resolved = column.showValuesAs;

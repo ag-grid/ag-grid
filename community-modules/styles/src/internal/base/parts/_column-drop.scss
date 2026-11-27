@@ -16,6 +16,18 @@
         margin: 0 var(--ag-grid-size);
     }
 
+    :where(.ag-column-drop-cell) .ag-calculated-column-icon {
+        margin-inline: var(--ag-grid-size) calc(var(--ag-grid-size) * -0.75);
+    }
+
+    :where(.ag-column-drop-cell) .ag-show-values-as-icon {
+        flex-grow: 1;
+    }
+
+    :where(.ag-column-drop-cell) .ag-column-indicator-name {
+        margin-inline-end: calc(var(--ag-grid-size) / 2);
+    }
+
     .ag-column-drop-cell-button {
         min-width: calc(var(--ag-grid-size) * 4);
 

@@ -10,6 +10,7 @@ import type {
     ShowValuesAsType,
 } from '../entities/colDef-showValuesAs';
 import type { ColumnEventType } from '../events';
+import type { ColumnIndicatorIcon } from './iColumnIndicatorIcon';
 import type { IRowNode } from './iRowNode';
 import type { MenuItemDef } from './menuItem';
 
@@ -25,6 +26,8 @@ export interface IShowValuesAsService {
     toColState(column: AgColumn): ShowValuesAsStateValue;
     /** Whether the column's mode is currently applying (not dormant in the current view). */
     isApplying(column: AgColumn): boolean;
+    /** The indicator icon shown after the column name. */
+    readonly indicatorIcon: ColumnIndicatorIcon;
     /** Transforms a column's raw value at a node into the value to display, or `null` for a blank cell. Call only when {@link isApplying} is true. */
     transform(column: AgColumn, rowNode: IRowNode, rawValue: any): ShowValuesAsResult | null;
     /** Formats a transformed value with the mode's formatter. `notApplicable` (the mode is selected but dormant in

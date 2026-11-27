@@ -438,24 +438,10 @@ export class AgColumnHeader extends Component implements IHeaderComp {
         }
         const column = params.column as AgColumn;
         this.addInIcon('showValuesAs', eShowValuesAs, column);
-        // Three states: hidden (no active mode), active (applying), dormant (active but not meaningful in the
-        // current view — see ShowValuesAsService.isApplying). Dormancy flips on grouping/pivot change without a
-        // column-state event, so listen for those too.
-        const refresh = () => {
-            const resolved = column.showValuesAs;
-            const show = resolved != null && !column.showValuesAsDef?.suppressHeaderIndicator;
-            _setDisplayed(eShowValuesAs, show, { skipAriaHidden: true });
-            if (show) {
-                eShowValuesAs.classList.toggle('ag-show-values-as-dormant', !showValuesAsSvc.isApplying(column));
-                eShowValuesAs.title = showValuesAsSvc.getActiveModeTooltip(column) ?? '';
-            }
-        };
-        this.addManagedListeners(column, { columnStateUpdated: refresh });
-        this.addManagedEventListeners({
-            columnRowGroupChanged: refresh,
-            columnPivotChanged: refresh,
-            columnPivotModeChanged: refresh,
-        });
+        const { indicatorIcon } = showValuesAsSvc;
+        const refresh = () =>
+            _setDisplayed(eShowValuesAs, indicatorIcon.refresh(column, eShowValuesAs), { skipAriaHidden: true });
+        indicatorIcon.addRefreshListeners(this, column, refresh);
         refresh();
     }
 

@@ -313,6 +313,7 @@ export type {
     IRowGroupColsService,
     IValueColsService,
 } from './interfaces/iColsService';
+export type { ColumnIndicatorIcon } from './interfaces/iColumnIndicatorIcon';
 export type { IColumnStateUpdateStrategy } from './interfaces/iColumnStateUpdateStrategy';
 export type { IEventService } from './interfaces/iEventService';
 export type { IExpansionService } from './interfaces/iExpansionService';

@@ -34,6 +34,7 @@ import {
     _resolveHeaderTooltip,
 } from 'ag-grid-community';
 
+import { ColumnIndicatorIconsFeature } from '../widgets/columnIndicatorIconsFeature';
 import { _isContextMenuKey } from '../widgets/menuPopupUtils';
 import type { ColumnModelItem } from './columnModelItem';
 import type { ToolPanelColumnMove } from './columnMoveUtils';
@@ -115,6 +116,7 @@ export class ToolPanelColumnComp extends Component {
         } else {
             eLabel.textContent = this.displayName;
         }
+        this.createManagedBean(new ColumnIndicatorIconsFeature(column, eLabel));
 
         // if grouping, we add an extra level of indent, to cater for expand/contract icons we need to indent for
         if (groupsExist) {
@@ -195,7 +197,7 @@ export class ToolPanelColumnComp extends Component {
         this.addManagedPropertyListener('functionsReadOnly', this.onColumnStateChanged.bind(this));
 
         this.addManagedListeners(cbSelect, { fieldValueChanged: this.onCheckboxChanged.bind(this) });
-        _addManagedElementListeners(this, eLabel, { click: this.onLabelClicked.bind(this) });
+        _addManagedElementListeners(this, this.getGui(), { click: this.onNameAreaClicked.bind(this) });
         _addManagedElementListeners(this, checkboxInput, { mousedown: this.onCheckboxMouseDown.bind(this) });
 
         this.onColumnStateChanged();
@@ -249,6 +251,13 @@ export class ToolPanelColumnComp extends Component {
             if (this.isSelectable()) {
                 this.onSelectAllChanged(!this.isSelected());
             }
+        }
+    }
+
+    private onNameAreaClicked(e: MouseEvent): void {
+        const target = e.target as Element;
+        if (this.eLabel.contains(target) || target.closest('.ag-column-indicator-icon')) {
+            this.onLabelClicked();
         }
     }
 
