@@ -10,35 +10,26 @@ ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 function applyCaseInsensitive() {
     gridApi!.updateGridOptions({
-        columnDefs: [
-            {
-                field: 'code',
-                sort: 'asc',
-                headerName: 'Case-insensitive Sort',
-                accentedSort: { options: { sensitivity: 'accent' } },
-            },
-        ],
+        defaultColDef: { caseInsensitiveSort: true },
+        columnDefs: [{ field: 'code', sort: 'asc', headerName: 'Case-insensitive Sort' }],
     });
 }
 
 function applyDefault() {
     gridApi!.updateGridOptions({
-        columnDefs: [{ field: 'code', sort: 'asc', headerName: 'Default Sort', accentedSort: false }],
+        defaultColDef: { caseInsensitiveSort: false },
+        columnDefs: [{ field: 'code', sort: 'asc', headerName: 'Default Sort' }],
     });
 }
 
 let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
-    columnDefs: [
-        {
-            field: 'code',
-            sort: 'asc',
-            headerName: 'Case-insensitive Sort',
-            // compare strings ignoring case, so values that differ only in case keep their original order
-            accentedSort: { options: { sensitivity: 'accent' } },
-        },
-    ],
+    columnDefs: [{ field: 'code', sort: 'asc', headerName: 'Case-insensitive Sort' }],
+    defaultColDef: {
+        // compare strings ignoring case, so values that differ only in case keep their original order
+        caseInsensitiveSort: true,
+    },
     rowData: ['b', 'AA', 'az', 'aa', 'B', 'Aa', 'AZ'].map((code) => ({ code })),
 };
 

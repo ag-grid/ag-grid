@@ -68,7 +68,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
     public gridStringComparatorVersion = -1;
     /** Whether the `accentedSort` grid option changed since `stringComparatorsChanged` was last raised. */
     private gridAccentedSortChanged = false;
-    /** The columns whose colDef `accentedSort` changed since `stringComparatorsChanged` was last raised. */
+    /** The columns whose colDef `accentedSort` or `caseInsensitiveSort` changed since `stringComparatorsChanged` was last raised. */
     public accentedSortChangedCols: AgColumn[] = [];
     /** >0 between {@link beginColUpdate} and {@link endColUpdate}, queueing the column events raised and deferring the
      *  role changes staged. */

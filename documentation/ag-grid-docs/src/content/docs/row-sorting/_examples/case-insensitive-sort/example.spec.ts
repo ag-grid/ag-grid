@@ -31,7 +31,7 @@ test.agExample(import.meta, () => {
             await ensureGridReady(page);
             await waitForGridContent(page);
 
-            // sensitivity: 'accent' on load, so aa sorts before AZ, and AA, aa, Aa keep their row data order.
+            // caseInsensitiveSort on defaultColDef at load, so aa sorts before AZ, and AA, aa, Aa keep their row data order.
             await expect(async () => {
                 expect(await codeOrder(page)).toEqual(['AA', 'aa', 'Aa', 'az', 'AZ', 'b', 'B']);
             }).toPass();

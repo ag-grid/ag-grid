@@ -25,17 +25,35 @@ const createCollatorComparator = (
     }
 };
 
-/** Builds the comparator for an `accentedSort` value, or `undefined` when it is off. */
+/** `caseInsensitiveSort` without `accentedSort`: code point order of the lowercased strings. */
+const caseInsensitiveStringComparator: StringComparator = (valueA, valueB) => {
+    const a = valueA.toLowerCase();
+    const b = valueB.toLowerCase();
+    return a < b ? -1 : a > b ? 1 : 0;
+};
+
+/** The collator `sensitivity` that keeps the given one's accent handling and ignores case. */
+const toCaseInsensitive = (sensitivity: Intl.CollatorOptions['sensitivity']): Intl.CollatorOptions['sensitivity'] =>
+    sensitivity === 'base' || sensitivity === 'case' ? 'base' : 'accent';
+
+/** Builds the comparator for the `accentedSort` and `caseInsensitiveSort` values, or `undefined` when both are off. */
 const createStringComparator = (
-    accentedSort: boolean | AccentedSortOptions | undefined
+    accentedSort: boolean | AccentedSortOptions | undefined,
+    caseInsensitiveSort: boolean | undefined
 ): StringComparator | undefined => {
     if (!accentedSort) {
-        return undefined;
+        return caseInsensitiveSort ? caseInsensitiveStringComparator : undefined;
+    }
+    if (!caseInsensitiveSort) {
+        return accentedSort === true
+            ? localeStringComparator
+            : createCollatorComparator(accentedSort.locales, accentedSort.options);
     }
     if (accentedSort === true) {
-        return localeStringComparator;
+        return createCollatorComparator(undefined, { sensitivity: 'accent' });
     }
-    return createCollatorComparator(accentedSort.locales, accentedSort.options);
+    const { locales, options } = accentedSort;
+    return createCollatorComparator(locales, { ...options, sensitivity: toCaseInsensitive(options?.sensitivity) });
 };
 
 /** The comparator for the `accentedSort` grid option, held by the column model so the columns using it share one. */
@@ -43,7 +61,7 @@ const getGridStringComparator = (colModel: ColumnModel, gos: GridOptionsService)
     const version = colModel.accentedSortVersion;
     if (colModel.gridStringComparatorVersion !== version) {
         colModel.gridStringComparatorVersion = version;
-        colModel.gridStringComparator = createStringComparator(gos.get('accentedSort'));
+        colModel.gridStringComparator = createStringComparator(gos.get('accentedSort'), false);
     }
     return colModel.gridStringComparator;
 };
@@ -52,9 +70,10 @@ const getGridStringComparator = (colModel: ColumnModel, gos: GridOptionsService)
 const OWN_ACCENTED_SORT = -2;
 
 /**
- * The comparator used for a column's strings, from its effective `accentedSort`: the column's own, else the grid's.
- * Built on first use and kept on the column until its definition changes or, when it uses the grid's value, the grid
- * option changes. Both are checked where they are set, so reading is a version compare.
+ * The comparator used for a column's strings, from its effective `accentedSort` (the column's own, else the grid's)
+ * and its `caseInsensitiveSort`. Built on first use and kept on the column until its definition changes or, when it
+ * uses the grid's `accentedSort`, the grid option changes. Both are checked where they are set, so reading is a
+ * version compare.
  * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export function _getColumnStringComparator(
@@ -62,14 +81,14 @@ export function _getColumnStringComparator(
     colModel: ColumnModel,
     gos: GridOptionsService
 ): StringComparator | undefined {
-    const ownAccentedSort = column.colDef.accentedSort;
-    const version = ownAccentedSort === undefined ? colModel.accentedSortVersion : OWN_ACCENTED_SORT;
+    const { accentedSort, caseInsensitiveSort } = column.colDef;
+    const version = accentedSort === undefined ? colModel.accentedSortVersion : OWN_ACCENTED_SORT;
     if (column.stringComparatorVersion !== version) {
         column.stringComparatorVersion = version;
         column.stringComparator =
-            ownAccentedSort === undefined
+            accentedSort === undefined && !caseInsensitiveSort
                 ? getGridStringComparator(colModel, gos)
-                : createStringComparator(ownAccentedSort);
+                : createStringComparator(accentedSort ?? gos.get('accentedSort'), caseInsensitiveSort);
     }
     return column.stringComparator;
 }
