@@ -3,7 +3,8 @@ title: "SSRM Sorting"
 enterprise: true
 ---
 
-This section covers Server-Side Sorting using the Server-Side Row Model.
+With Sorting in the SSRM, the grid sends the sort model to the server, which returns the rows in that order. When the
+grid has all the rows of a group, it can also sort them on the client.
 
 ## Sorting
 
@@ -57,6 +58,8 @@ With this property enabled, if the grid has all of the rows belonging to a group
 The example below demonstrates client-side sorting using the SSRM. Note the following:
 
 - `serverSideEnableClientSideSort` is set to true
+- The **United States** group and its **Gymnastics** group open on load through the `isServerSideGroupOpenByDefault`
+  callback. See [Opening Groups by Default](./server-side-model-grouping/#opening-groups-by-default).
 - Any row group with fewer than 100 rows (the default `cacheBlockSize`) can be sorted via the client-side upon loading. Additionally, scrolling down through all of the blocks inside of a group until all rows are loaded will allow that row group to switch to using client-side sorting.
 - Sorting the Athlete column happens client-side - the rows are not replaced by loading rows, and a request to the server is not made. This is because the child rows for the expanded row group are all loaded and can be sorted client-side.
 - Sorting the Group column or any of the aggregated columns happens server-side - the rows are replaced by loading rows, and a request to the server is made. This is because the number of top-level rows exceeds the default `cacheBlockSize` value of 100 and the grid doesn’t have all the rows client-side in order to sort them.
@@ -68,7 +71,7 @@ The example below demonstrates client-side sorting using the SSRM. Note the foll
 
 By default, the SSRM will attempt to reduce the number of requests it will make to your server when a column is sorted. It does this by attempting to preserve groups where the grid does not expect the rows to contain any data, for example see the following two scenarios:
 
-- If a sort is applied to a column with an aggregation, all of the cells in this column are expected to have data, and so everything will be refreshed
+- If a sort is applied to a column with an [aggregation](./server-side-model-aggregation/), all of the cells in this column are expected to have data, and so everything will be refreshed
 - If a sort is applied to a column which is neither grouped, or aggregated, then the grid will only sort the leaf level groups. This is because it does not expect the group rows to have data for this column.
 
 In the SSRM it is possible to provide the grid with additional group row data which you may wish to be sorted. To disable this caching behaviour and instead always refresh from the server when a sort is attempted, enable the property `serverSideSortAllLevels: true`

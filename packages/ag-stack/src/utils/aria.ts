@@ -1,4 +1,5 @@
 import type { LocaleTextFunc } from '../interfaces/iLocaleService';
+import { _translateTokens } from './locale';
 
 /**
  * Per https://www.w3.org/TR/wai-aria/#aria-sort](https://www.w3.org/TR/wai-aria/#aria-sort:~:text=integer-,aria%2Dsort%20property,-Indicates%20if%20items
@@ -229,6 +230,14 @@ export function _getAriaCheckboxStateName(translate: LocaleTextFunc, state?: boo
         : state === true
           ? translate('ariaChecked', 'checked')
           : translate('ariaUnchecked', 'unchecked');
+}
+
+/**
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ * A control's instruction followed by its state, e.g. `Press SPACE to toggle visibility (visible)`.
+ */
+export function _getAriaLabelWithState(translate: LocaleTextFunc, label: string, state: string): string {
+    return _translateTokens(translate, 'ariaLabelWithState', '${label} (${state})', { label, state });
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */

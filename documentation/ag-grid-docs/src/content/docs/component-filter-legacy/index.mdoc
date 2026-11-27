@@ -3,7 +3,7 @@ title: "Filter Component - Legacy"
 ---
 
 {% warning %}
-This page describes the old way of declaring custom filter components when the grid option `enableFilterHandlers` is not set. It is strongly recommended to instead use the new behaviour described on the [Filter Component](./component-filter/) page.
+This page describes the old way of declaring custom filter components when the grid option `enableFilterHandlers` is not set. Legacy filter mode is deprecated in AG Grid 37 and will be removed in a major version after AG Grid 38, when `enableFilterHandlers` also becomes `true` by default. To migrate, see [Migrating to Filter Handlers](./enable-filter-handlers-migration/) on the [Filter Component](./component-filter/) page.
 {% /warning %}
 
 The example below shows two custom filters. The first is on the `Athlete` column and demonstrates a filter with "fuzzy" matching and the second is on the `Year` column with preset options.
@@ -39,6 +39,11 @@ will be additionally added to the params object, overriding items of the same na
 
 {% if isFramework("javascript", "angular", "vue") %}
 {% interfaceDocumentation interfaceName="IFilterParams" /%}
+
+The `IFilterParams` callbacks below are deprecated in AG Grid 37, but remain available in legacy filter mode. See [Migrating to Filter Handlers](./enable-filter-handlers-migration/).
+
+- `filterChangedCallback(additionalEventAttributes?)` - A function callback to be called when the filter changes. The grid will then respond by filtering the grid data. The callback takes one optional parameter which, if included, will get merged to the `FilterChangedEvent` object (useful for passing additional information to anyone listening to this event, however such extra attributes are not used by the grid).
+- `filterModifiedCallback(additionalEventAttributes?)` - A function callback, to be optionally called, when the filter UI changes. The grid will respond with emitting a `FilterModifiedEvent`. Apart from emitting the event, the grid takes no further action. The callback takes one optional parameter which, if included, will get merged to the `FilterModifiedEvent` object.
 {% /if %}
 
 {% if isFramework("javascript", "angular", "vue") %}

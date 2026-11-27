@@ -4,8 +4,7 @@ import { AgInputTextField } from '../../agWidgets/agInputTextField';
 import { _createElement } from '../../utils/element';
 import type { GridInputNumberField, GridInputTextField } from '../../widgets/gridWidgetTypes';
 import { installAllowedCharPattern } from './allowedCharPattern';
-import type { ISimpleFilterModel, Tuple } from './iSimpleFilter';
-import type { SimpleFilterDisplayParams } from './simpleFilter';
+import type { ISimpleFilterModel, SimpleFilterDisplayParams, Tuple } from './iSimpleFilter';
 import { SimpleFilter } from './simpleFilter';
 
 /** The value the filter wrote into an input; it stands for that input only while the text still matches. */
@@ -32,7 +31,7 @@ export abstract class TextInputSimpleFilter<
     V,
     E extends GridInputTextField | GridInputNumberField,
     /** Only the number and bigint filters extend this; `TextFilter` extends `SimpleFilter` directly. */
-    P extends SimpleFilterDisplayParams<M> & { allowedCharPattern?: string },
+    P extends SimpleFilterDisplayParams<any, M> & { allowedCharPattern?: string },
 > extends SimpleFilter<M, V, E, P> {
     /** Held by position: removing a condition shifts every later one. */
     protected readonly eValuesFrom: E[] = [];

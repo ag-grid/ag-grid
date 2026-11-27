@@ -4,7 +4,7 @@ description: "Legacy Floating Filter Component API for $framework Data Grid. For
 ---
 
 {% warning %}
-This page describes the old way of declaring custom floating filter components when the grid option `enableFilterHandlers` is not set. It is strongly recommended to instead use the new behaviour described on the [Floating Filter Component](./component-floating-filter/) page.
+This page describes the old way of declaring custom floating filter components when the grid option `enableFilterHandlers` is not set. Legacy filter mode is deprecated in AG Grid 37 and will be removed in a major version after AG Grid 38, when `enableFilterHandlers` also becomes `true` by default. To migrate, see [Migrating to Filter Handlers](./enable-filter-handlers-migration/) and the [Floating Filter Component](./component-floating-filter/) page.
 {% /warning %}
 
 Floating Filter Components allow you to add your own floating filter types to AG Grid. You can create a Custom Floating Filter Component to work alongside one of the grid's Provided Filters, or alongside a Custom Filter.
@@ -46,7 +46,7 @@ The Simple Filters (Text, Number, Date) provide methods that the corresponding p
 
 - **Set Filter:** The floating set filter is not editable, so no method is exposed on the parent filter for the floating filter to call.
 
-You could also call `setModel()` on the filters as an alternative. For example, you could build your own floating filter for the Set Filter that allows picking all European or Asian countries, or you could provide your own Number floating filter that allows selecting ranges (the provided Number floating filter does not allow editing ranges).
+You could also call `api.setColumnFilterModel()` and then `api.onFilterChanged()` as an alternative. For example, you could build your own floating filter for the Set Filter that allows picking all European or Asian countries, or you could provide your own Number floating filter that allows selecting ranges (the provided Number floating filter does not allow editing ranges).
 {% /if %}
 
 ## Example: Custom Filter And Custom Floating Filter

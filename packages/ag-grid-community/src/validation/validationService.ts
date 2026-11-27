@@ -1,5 +1,5 @@
 import type { AgPropertyChangedSource, IconValue } from 'ag-stack';
-import { _fuzzySuggestions } from 'ag-stack';
+import { _fuzzySuggestions, _isStaticCssTheme } from 'ag-stack';
 
 import type { ApiFunction, ApiFunctionName } from '../api/iApiFunction';
 import type { NamedBean } from '../context/bean';
@@ -7,8 +7,10 @@ import { BeanStub } from '../context/beanStub';
 import type { BeanCollection, DynamicBeanName, UserComponentName } from '../context/context';
 import type { ColDef, ColGroupDef } from '../entities/colDef';
 import type { GridOptions } from '../entities/gridOptions';
+import type { AgPublicEventType } from '../eventTypes';
 import { INITIAL_GRID_OPTION_KEYS } from '../gridOptionsInitial';
 import type { AdvancedFilterModel } from '../interfaces/advancedFilterModel';
+import { _PUBLIC_EVENT_HANDLERS_MAP } from '../publicEventHandlersMap';
 import type { IconName } from '../utils/icon';
 import { ICON_NAME_TO_VALUE } from '../utils/iconNameToValue';
 import { validateApiFunction } from './apiFunctionValidator';
@@ -18,7 +20,11 @@ import { COL_DEF_VALIDATORS } from './rules/colDefValidations';
 import { DYNAMIC_BEAN_MODULES } from './rules/dynamicBeanValidations';
 import { GRID_OPTIONS_VALIDATORS } from './rules/gridOptionsValidations';
 import { ICON_VALUES } from './rules/iconValidations';
-import { _findLegacyOnlyVariables } from './rules/themeValidations';
+import {
+    _findInvalidStaticCssThemeValues,
+    _findLegacyOnlyVariables,
+    _findMissingIconSetFile,
+} from './rules/themeValidations';
 import { USER_COMP_MODULES } from './rules/userCompValidations';
 import type { DependentValues, OptionsValidator, RequiredOptions, ValidationWarning } from './validationTypes';
 import { _createValidationWarning, _emitValidationWarning } from './validationTypes';
@@ -34,10 +40,20 @@ export class ValidationService extends BeanStub implements NamedBean {
      * Deprecation warnings and fuzzy suggestions are emitted once when first encountered.
      */
     private readonly propertyNameCache: Map<string, Map<string, boolean>> = new Map();
+    /** Event types already reported as deprecated via `api.addEventListener`, so each is reported once. */
+    private readonly deprecatedEventsReported = new Set<string>();
 
     public wireBeans(beans: BeanCollection): void {
         this.gridOptions = beans.gridOptions;
         provideValidationServiceLogger(getError);
+    }
+
+    public postConstruct(): void {
+        // validation is the last bean initialised, so the theme classes are already on the styled root for the first
+        // check, and the styled root's stylesChanged listener re-applies them before this one runs
+        const checkTheme = this.checkTheme.bind(this);
+        this.addManagedEventListeners({ stylesChanged: checkTheme });
+        checkTheme();
     }
 
     public warnOnInitialPropertyUpdate(source: AgPropertyChangedSource, key: string): void {
@@ -48,6 +64,31 @@ export class ValidationService extends BeanStub implements NamedBean {
 
     public processGridOptions(options: GridOptions): void {
         this.processOptions(options, GRID_OPTIONS_VALIDATORS());
+        if (options.enableFilterHandlers !== false) {
+            return;
+        }
+        this.beans.log.deprecated(348);
+    }
+
+    /**
+     * Warns once per event type when a listener is added via `api.addEventListener` for an event whose
+     * grid option (`on<Event>`) is deprecated. Reuses the grid option deprecation entries so the version
+     * and message are defined in one place, rewriting the `on<Event>` option names in the message to the
+     * event names `addEventListener` takes.
+     */
+    public validateEventListener(eventType: string): void {
+        const handlerName = _PUBLIC_EVENT_HANDLERS_MAP[eventType as AgPublicEventType];
+        const deprecation = handlerName && GRID_OPTIONS_VALIDATORS().deprecations[handlerName];
+        if (!deprecation || this.deprecatedEventsReported.has(eventType)) {
+            return;
+        }
+        this.deprecatedEventsReported.add(eventType);
+        const { version, message } = deprecation;
+        const eventMessage = message?.replace(
+            /\bon([A-Z]\w*)/g,
+            (_, name: string) => name[0].toLowerCase() + name.slice(1)
+        );
+        this.beans.log.deprecated(306, { version, name: eventType, message: eventMessage });
     }
 
     public validateApiFunction<TFunctionName extends ApiFunctionName>(
@@ -109,14 +150,46 @@ export class ValidationService extends BeanStub implements NamedBean {
             : undefined;
     }
 
-    /** Legacy theme variables are silently ignored under the Theming API, so setting one has no effect. */
-    public checkLegacyThemeVariables(eRootDiv: HTMLElement): void {
-        if (this.gos.get('theme') === 'legacy') {
+    /** Checks the CSS, classes and variables that the grid's theme depends on. */
+    private checkTheme(): void {
+        const { eRootDiv, environment } = this.beans;
+        const eMeasurementContainer = environment.getMeasurementContainer();
+        const theme = this.gos.get('theme');
+        const staticCssTheme = _isStaticCssTheme(theme) ? theme : undefined;
+        if (staticCssTheme) {
+            const invalidValues = _findInvalidStaticCssThemeValues(staticCssTheme.options);
+            for (let i = 0, len = invalidValues.length; i < len; ++i) {
+                this.warn(353, invalidValues[i]);
+            }
+        }
+        if (theme === 'legacy' || !eMeasurementContainer.isConnected) {
             return;
         }
-        const replacements = _findLegacyOnlyVariables(eRootDiv);
-        if (replacements.length > 0) {
-            this.warn(332, { replacements });
+        // the legacy and static CSS files each set a marker variable on .ag-measurement-container, showing which are loaded
+        const style = getComputedStyle(eMeasurementContainer);
+        const legacyStylesLoaded = !!style.getPropertyValue('--ag-legacy-styles-loaded');
+        if (staticCssTheme) {
+            const linked = !!staticCssTheme.options.useLinkedImages;
+            if (legacyStylesLoaded) {
+                this.error(349);
+            } else if (!style.getPropertyValue('--ag-static-css-loaded')) {
+                this.warn(350, { linked });
+            } else if (!!style.getPropertyValue('--ag-static-css-linked-loaded') !== linked) {
+                this.warn(354, { linked });
+            } else {
+                const missingIconSet = _findMissingIconSetFile(staticCssTheme.options, style);
+                if (missingIconSet) {
+                    this.warn(351, missingIconSet);
+                }
+            }
+        }
+        // when legacy CSS is loaded, skip reporting legacy variables: that CSS sets them, not the application
+        // (loading it is already reported by 106/239 or 343)
+        if (!legacyStylesLoaded) {
+            const replacements = _findLegacyOnlyVariables(eRootDiv);
+            if (replacements.length > 0) {
+                this.warn(332, { replacements });
+            }
         }
     }
 

@@ -1,4 +1,4 @@
-import { _removeFromParent, _toStringOrNull } from 'ag-stack';
+import { _removeFromParent, _toStringOrNull, _translateTokens } from 'ag-stack';
 
 import type {
     AgColumn,
@@ -64,7 +64,16 @@ export class ConditionPillWrapperComp extends Component<AdvancedFilterBuilderEve
     }
 
     public getAriaLabel(): string {
-        return `${this.advFilterExpSvc.translate('ariaAdvancedFilterBuilderFilterItem')} ${this.getDragName()}`;
+        // Built from the existing word so a localeText without this key reads as before.
+        const itemWord = this.advFilterExpSvc.translate('ariaAdvancedFilterBuilderFilterItem');
+        return _translateTokens(
+            this.getLocaleTextFunc(),
+            'ariaAdvancedFilterBuilderFilterItemName',
+            `${itemWord} \${condition}`,
+            {
+                condition: this.getDragName(),
+            }
+        );
     }
 
     public getValidationMessage(): string | null {

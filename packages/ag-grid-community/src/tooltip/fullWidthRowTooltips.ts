@@ -10,7 +10,7 @@ import type { TooltipCallbackParams } from './tooltipComponent';
 import type { ResolvedTooltip, TooltipFeature, TooltipSource } from './tooltipFeature';
 import {
     _getCellTooltipComponentDefinition,
-    _isShowTooltipWhenTruncated,
+    _isAutomaticTooltipEnabled,
     _resolveTextTooltip,
     getGroupTooltipTextElement,
 } from './tooltipFeature';
@@ -102,7 +102,8 @@ export class FullWidthRowTooltips extends BeanStub {
             eGui,
             () => {
                 const display =
-                    isGroupRow && (!this.gos.get('enableBrowserTooltips') || _isShowTooltipWhenTruncated(this.gos))
+                    isGroupRow &&
+                    (!this.gos.get('enableBrowserTooltips') || this.gos.get('tooltipShowMode') !== 'standard')
                         ? this.beans.valueSvc.getValueForDisplay({
                               node: rowNode,
                               includeValueFormatted: true,
@@ -144,7 +145,7 @@ export class FullWidthRowTooltips extends BeanStub {
         const hasTooltipValue = _isCellTooltipConfigured(colDef);
         const hasLegacyComponentOnlyTooltip =
             !hasTooltipValue && !!(colDef.tooltipComponent || colDef.tooltipComponentSelector);
-        if (!hasTooltipValue && !hasLegacyComponentOnlyTooltip && !_isShowTooltipWhenTruncated(gos)) {
+        if (!hasTooltipValue && !hasLegacyComponentOnlyTooltip && !_isAutomaticTooltipEnabled(gos)) {
             this.clearTooltip(eGui);
             return;
         }

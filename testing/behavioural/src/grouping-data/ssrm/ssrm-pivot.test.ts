@@ -8,7 +8,7 @@ import type {
     IServerSideGetRowsParams,
     IServerSideGetRowsRequest,
 } from 'ag-grid-community';
-import { getGridElement } from 'ag-grid-community';
+import { NumberFilterModule, TextFilterModule, getGridElement } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 
 import { createFakeServer, createServerSideDatasource } from '../../columnToolPanel/deferredPivotModeFakeServer';
@@ -355,5 +355,95 @@ describe('SSRM pivot (characterisation)', () => {
             after: { supplied: '2000 Gold', names: ['2000_gold: 2000 Gold'] },
             requests: 1,
         });
+    });
+});
+
+describe('SSRM pivot header height', () => {
+    const gridsManager = new TestGridsManager({
+        modules: [PivotModule, RowGroupingModule, ServerSideRowModelModule, TextFilterModule, NumberFilterModule],
+    });
+
+    beforeEach(() => gridsManager.reset());
+    afterEach(() => gridsManager.reset());
+
+    const rowClasses = (api: GridApi) =>
+        Array.from(TestGridsManager.getHTMLElement(api)!.querySelectorAll('.ag-header-row'), (row) =>
+            ['ag-header-row-group', 'ag-header-row-column', 'ag-header-row-filter'].find((cls) =>
+                row.classList.contains(cls)
+            )
+        );
+    const headerHeight = (api: GridApi) =>
+        parseFloat(TestGridsManager.getHTMLElement(api)!.querySelector<HTMLElement>('.ag-header')!.style.height);
+
+    test('header resizes when pivot mode swaps [column, floating filter] for [group, column] and back', async () => {
+        const years = [2020, 2024];
+        const countries = ['Ireland', 'France'];
+        const datasource: IServerSideDatasource = {
+            getRows: ({ request, success }) => {
+                setTimeout(() => {
+                    if (request.pivotMode && request.pivotCols.length && request.rowGroupCols.length) {
+                        const pivotResultFields = years.map((y) => `${y}_gold`);
+                        const rowData = countries.map((country) => {
+                            const row: Record<string, unknown> = { country };
+                            years.forEach((y) => (row[`${y}_gold`] = 1));
+                            return row;
+                        });
+                        success({ rowData, rowCount: rowData.length, pivotResultFields });
+                        return;
+                    }
+                    const rowData = countries.flatMap((country) => years.map((year) => ({ country, year, gold: 1 })));
+                    success({ rowData, rowCount: rowData.length });
+                }, 0);
+            },
+        };
+
+        const api: GridApi = await gridsManager.createGridAndWait('ssrm', {
+            headerHeight: 30,
+            groupHeaderHeight: 20,
+            floatingFiltersHeight: 40,
+            columnDefs: [
+                { field: 'country', enableRowGroup: true, filter: 'agTextColumnFilter', floatingFilter: true },
+                { field: 'year', enablePivot: true, filter: 'agNumberColumnFilter', floatingFilter: true },
+                {
+                    field: 'gold',
+                    enableValue: true,
+                    aggFunc: 'sum',
+                    filter: 'agNumberColumnFilter',
+                    floatingFilter: true,
+                },
+            ],
+            rowModelType: 'serverSide',
+            serverSideDatasource: datasource,
+            // Pivot result columns have no floating filter.
+            processPivotResultColDef: (colDef) => {
+                colDef.floatingFilter = false;
+            },
+        });
+        await waitForNoLoadingRows(api);
+
+        expect(rowClasses(api)).toEqual(['ag-header-row-column', 'ag-header-row-filter']);
+        // The header is sized for its rows plus the theme's header row border.
+        const border = headerHeight(api) - (30 + 40);
+        expect(border).toBeGreaterThanOrEqual(0);
+
+        api.setGridOption('pivotMode', true);
+        api.applyColumnState({
+            state: [
+                { colId: 'country', rowGroup: true, rowGroupIndex: 0 },
+                { colId: 'year', pivot: true, pivotIndex: 0 },
+                { colId: 'gold', aggFunc: 'sum' },
+            ],
+            applyOrder: true,
+        });
+
+        await waitFor(() => expect(rowClasses(api)).toEqual(['ag-header-row-group', 'ag-header-row-column']));
+        await waitForNoLoadingRows(api);
+        await waitFor(() => expect(headerHeight(api)).toBe(20 + 30 + border));
+
+        api.setGridOption('pivotMode', false);
+
+        await waitFor(() => expect(rowClasses(api)).toEqual(['ag-header-row-column', 'ag-header-row-filter']));
+        await waitForNoLoadingRows(api);
+        await waitFor(() => expect(headerHeight(api)).toBe(30 + 40 + border));
     });
 });

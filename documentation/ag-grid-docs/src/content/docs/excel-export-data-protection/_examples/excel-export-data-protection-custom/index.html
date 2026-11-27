@@ -1,15 +1,15 @@
 <div class="example-wrapper">
-    <div class="controls example-controls">
+    <div class="example-controls">
         <div class="controls-row">
-            <label class="option">
+            <label>
                 Worksheet password (optional):
                 <input type="text" id="worksheetPassword" value="secret" />
             </label>
-            <label class="option">
+            <label>
                 <input type="checkbox" id="allowAutoFilter" />
                 Allow filtering (autoFilter)
             </label>
-            <label class="option">
+            <label>
                 <input type="checkbox" id="allowFormatCells" />
                 Allow formatting cells (formatCells)
             </label>
@@ -18,7 +18,5 @@
             <button onclick="onBtExport()" class="primary">Export to Excel</button>
         </div>
     </div>
-    <div class="grid-wrapper">
-        <div id="myGrid"></div>
-    </div>
+    <div id="myGrid"></div>
 </div>

@@ -682,6 +682,21 @@ export class LazyStore extends BeanStub implements IServerSideStore {
     }
 
     /**
+     * Re-sorts the loaded rows of this store and its children, for when the sort comparators change but the sort model
+     * does not. Returns whether any store sorted.
+     */
+    public clientSideResort(): boolean {
+        let sorted = false;
+        if (this.gos.get('serverSideEnableClientSideSort') && this.cache.isStoreFullyLoaded()) {
+            sorted = this.cache.clientSideResortRows();
+        }
+        this.forEachChildStoreShallow((store) => {
+            sorted = store.clientSideResort() || sorted;
+        });
+        return sorted;
+    }
+
+    /**
      * Executes after a change to sorting, determines recursively whether this store or a child requires refreshed.
      *
      * If a purge refresh occurs, the row count is preserved.

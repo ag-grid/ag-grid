@@ -123,6 +123,10 @@ export function _getRowHeightForNode(
     allowEstimate = false,
     defaultRowHeight?: number
 ): { height: number; estimated: boolean } {
+    if (!isRowHeightPerRow(beans)) {
+        const height = getRowHeightOption(beans.gos, defaultRowHeight ?? beans.environment.getDefaultRowHeight());
+        return { height, estimated: false };
+    }
     const measuredHeight = beans.rowAutoHeight?.getMeasuredRowHeight(rowNode);
     if (measuredHeight != null) {
         return { height: measuredHeight, estimated: false };
@@ -135,6 +139,17 @@ export function _getRowHeightForNode(
         }
     }
     return _getConfiguredRowHeight(beans, rowNode, allowEstimate, defaultRowHeight);
+}
+
+/** The height `_getRowHeightForNode` gives every row when nothing sizes rows individually, otherwise `null`. */
+export function _getSharedRowHeight(beans: BeanCollection, defaultRowHeight: number): number | null {
+    return isRowHeightPerRow(beans) ? null : getRowHeightOption(beans.gos, defaultRowHeight);
+}
+
+/** Gates every per-row height source in `_getRowHeightForNode`, so `_getSharedRowHeight` cannot disagree with it. */
+function isRowHeightPerRow(beans: BeanCollection): boolean {
+    const gos = beans.gos;
+    return !!beans.rowAutoHeight?.active || _isGetRowHeightFunction(gos) || gos.get('masterDetail');
 }
 
 /** The height configuration gives a row: `getRowHeight`, the detail row settings, the `rowHeight` option or the theme. */
@@ -175,12 +190,12 @@ export function _getConfiguredRowHeight(
         return getMasterDetailRowHeight(gos);
     }
 
-    const gridOptionsRowHeight = gos.get('rowHeight');
+    return { height: getRowHeightOption(gos, defaultRowHeight), estimated: false };
+}
 
-    const rowHeight =
-        gridOptionsRowHeight && _isFiniteNumber(gridOptionsRowHeight) ? gridOptionsRowHeight : defaultRowHeight;
-
-    return { height: rowHeight, estimated: false };
+function getRowHeightOption(gos: GridOptionsService, defaultRowHeight: number): number {
+    const rowHeight = gos.get('rowHeight');
+    return rowHeight && _isFiniteNumber(rowHeight) ? rowHeight : defaultRowHeight;
 }
 
 function getMasterDetailRowHeight(gos: GridOptionsService): { height: number; estimated: boolean } {

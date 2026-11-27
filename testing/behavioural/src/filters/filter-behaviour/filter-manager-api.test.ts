@@ -193,16 +193,44 @@ describe('Filter Manager API — whole-grid model & external filters', () => {
         api.onFilterChanged();
         await asyncSetTimeout(0);
 
-        // instance.getModel() is deprecated (warns #285), so verify via getColumnFilterModel instead.
         const instance = await api.getColumnFilterInstance('age');
         expect(instance).toBeTruthy();
-        expect(typeof instance!.doesFilterPass).toBe('function');
         expect(api.getColumnFilterModel('age')).toEqual({ filterType: 'number', type: 'greaterThan', filter: 24 });
         await new GridRows(api, 'getColumnFilterInstance number filter').check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:1 athlete:"Natalie Coughlin" age:25 country:"United States"
             └── LEAF id:5 athlete:"Ryan Lochte" age:27 country:"United States"
         `);
+    });
+
+    test('removed instance methods on grid-provided filters do nothing and log their replacement', async () => {
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: threeFilterCols,
+            rowData: PEOPLE,
+        });
+        const ageModel = { filterType: 'number', type: 'greaterThan', filter: 24 };
+        await api.setColumnFilterModel('age', ageModel);
+        api.onFilterChanged();
+        await asyncSetTimeout(0);
+
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [355, 356, 357, 358] });
+        const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+        const age = (await api.getColumnFilterInstance('age'))!;
+        expect(age.getModel()).toBeNull();
+        expect(age.isFilterActive()).toBe(false);
+        expect(age.doesFilterPass({ node: api.getRowNode('0')!, data: PEOPLE[0] })).toBe(true);
+        await age.setModel(null);
+        const country = (await api.getColumnFilterInstance('country'))!;
+        country.getModel();
+
+        expect(api.getColumnFilterModel('age')).toEqual(ageModel);
+        const logged = errorSpy.mock.calls.flat().join(' ');
+        for (const id of [355, 356, 357, 358]) {
+            expect(logged).toContain(`error #${id}`);
+        }
+        expect(logged).toContain("api.getColumnFilterInstance<ISimpleFilter>('age')");
+        expect(logged).toContain("api.getColumnFilterInstance<SetFilterUi>('country')");
     });
 
     test('destroyFilter removes a single column filter and restores the rows it hid', async () => {
@@ -375,6 +403,7 @@ describe('Filter Manager API — whole-grid model & external filters', () => {
     test.each([false, true])(
         'setFilterModel with a condition its filter lacks filters again only to clear an applied model (enableFilterHandlers: %s)',
         async (enableFilterHandlers) => {
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [348] });
             const api: GridApi = await gridsManager.createGridAndWait('grid1', {
                 columnDefs: threeFilterCols,
                 enableFilterHandlers,
@@ -415,6 +444,7 @@ describe('Filter Manager API — whole-grid model & external filters', () => {
     test.each([false, true])(
         'setState with a filter model its filter completes filters the rows as the completed model does (enableFilterHandlers: %s)',
         async (enableFilterHandlers) => {
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [348] });
             const restore = async (filterModel: object) => {
                 const api: GridApi = await gridsManager.createGridAndWait('grid1', {
                     columnDefs: threeFilterCols,

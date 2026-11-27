@@ -285,6 +285,7 @@ describe('Set Filter preservePreviousValues - filter list', () => {
                     filterParams: {
                         preservePreviousValues: true,
                         preservePreviousValuesLabel: '(not in rows)',
+                        showTooltips: true,
                     },
                 },
             ],

@@ -1,4 +1,4 @@
-import type { LocaleTextFunc } from 'ag-stack';
+import type { LocaleTextFunc, LocaleTokenValues } from 'ag-stack';
 import { _hasOwn, _translate } from 'ag-stack';
 
 const FILTER_LOCALE_TEXT = {
@@ -73,7 +73,7 @@ const FILTER_LOCALE_TEXT = {
     last12Months: 'Last 12 Months',
     last24Months: 'Last 24 Months',
 
-    filterSummaryInRangeValues: (variableValues: string[]) => `(${variableValues[0]}, ${variableValues[1]})`,
+    filterSummaryInRangeValues: '(${from}, ${to})',
     filterSummaryTextQuote: (variableValues: string[]) => `"${variableValues[0]}"`,
     minDateValidation: (variableValues: string[]) => `Date must be after ${variableValues[0]}`,
     maxDateValidation: (variableValues: string[]) => `Date must be before ${variableValues[0]}`,
@@ -113,7 +113,7 @@ export function translateFilterOptionKey(
 export function translateForFilter(
     bean: { getLocaleTextFunc(): LocaleTextFunc },
     key: FilterLocaleTextKey,
-    variableValues?: string[]
+    variableValues?: string[] | LocaleTokenValues
 ): string {
     return _translate(bean, FILTER_LOCALE_TEXT, key, variableValues);
 }

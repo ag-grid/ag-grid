@@ -53,6 +53,6 @@ test.agExample(import.meta, () => {
         const nextPage = page.getByRole('button', { name: 'Next Page', exact: true });
         await nextPage.focus();
         await expect(nextPage).toBeFocused();
-        await expect(tooltip).toContainText('Next Page');
+        await expect(tooltip).toContainText('Go to next page');
     });
 });

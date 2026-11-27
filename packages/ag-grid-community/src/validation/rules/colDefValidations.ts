@@ -550,6 +550,7 @@ const colDefPropertyMap: Record<ColOrGroupKey, undefined> = {
     valueParser: undefined,
     comparator: undefined,
     accentedSort: undefined,
+    caseInsensitiveSort: undefined,
     equals: undefined,
     pivotComparator: undefined,
     suppressKeyboardEvent: undefined,

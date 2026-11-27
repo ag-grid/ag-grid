@@ -50,8 +50,8 @@ export class ChartCrossFilterService extends BeanStub implements NamedBean {
             return;
         }
 
-        void filterManager.getColumnFilterInstance(colId).then((filter) => {
-            const filterType = (filter as IProvidedFilter)?.filterType;
+        void filterManager.getColumnFilterInstance<IProvidedFilter>(colId).then((filter) => {
+            const filterType = filter?.filterType;
             let setFilter: SetFilter | undefined;
             let processModel = (model: any): any => model;
             if (filterType === 'multi') {
@@ -106,8 +106,8 @@ function extractFromMultiFilter(multiFilter: MultiFilterUi | MultiFilter): {
 } {
     const numFilters = multiFilter.getNumChildFilters();
     for (let i = 0; i < numFilters; i++) {
-        const childFilter = multiFilter.getChildFilterInstance(i);
-        if ((childFilter as IProvidedFilter)?.filterType === 'set') {
+        const childFilter = multiFilter.getChildFilterInstance(i) as IProvidedFilter | undefined;
+        if (childFilter?.filterType === 'set') {
             return {
                 setFilter: childFilter as any,
                 processModel: (model) => processMultiFilterModel(model, i, numFilters),

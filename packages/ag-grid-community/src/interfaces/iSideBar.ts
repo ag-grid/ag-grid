@@ -14,6 +14,7 @@ export interface ISideBar {
     refresh(): void;
     setDisplayed(show: boolean): void;
     setSideBarPosition(position?: 'left' | 'right'): void;
+    getSideBarPosition(): 'left' | 'right';
     isToolPanelShowing(): boolean;
     openToolPanel(
         key: string,

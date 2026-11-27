@@ -1,7 +1,13 @@
-import { _exists } from 'ag-stack';
+import type { LocaleTextFunc } from 'ag-stack';
+import { _exists, _translateTokens } from 'ag-stack';
 
 import type { AgColumn, ColAggFunc, IAggColumnNameService, NamedBean } from 'ag-grid-community';
 import { BeanStub } from 'ag-grid-community';
+
+/** A value column's name with its aggregation, e.g. `sum(Gold)`. */
+export function _getAggFuncColumnName(translate: LocaleTextFunc, aggFunc: string, column: string): string {
+    return _translateTokens(translate, 'aggFuncColumnName', '${aggFunc}(${column})', { aggFunc, column });
+}
 
 export class AggColumnNameService extends BeanStub implements NamedBean, IAggColumnNameService {
     beanName = 'aggColNameSvc' as const;
@@ -47,7 +53,7 @@ export class AggColumnNameService extends BeanStub implements NamedBean, IAggCol
             const aggFuncString = typeof aggFunc === 'string' ? aggFunc : 'func';
             const localeTextFunc = this.getLocaleTextFunc();
             const aggFuncStringTranslated = localeTextFunc(aggFuncString, aggFuncString);
-            return `${aggFuncStringTranslated}(${headerName})`;
+            return _getAggFuncColumnName(localeTextFunc, aggFuncStringTranslated, String(headerName));
         }
 
         return headerName;

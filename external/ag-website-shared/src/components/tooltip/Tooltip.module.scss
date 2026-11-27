@@ -1,0 +1,118 @@
+@use 'design-system' as *;
+
+// Hashed module class names can't be targeted from other modules, so hover is keyed off `.trigger`.
+.trigger {
+    position: relative;
+}
+
+.bubble {
+    --tooltip-background: var(--color-fg-primary);
+
+    position: absolute;
+    display: block;
+    color: var(--color-bg-primary);
+    left: 50%;
+    padding: $spacing-size-1 $spacing-size-4;
+    white-space: nowrap;
+    background-color: var(--tooltip-background);
+    border-radius: 6px;
+    transform: translate(-50%, $spacing-size-1);
+    opacity: 0;
+    pointer-events: none;
+    transition:
+        opacity 0.165s ease-in,
+        transform 0.165s ease-in;
+    z-index: 1;
+
+    &::before {
+        $pointer-size: 8px;
+
+        content: '';
+        position: absolute;
+        background-color: var(--tooltip-background);
+        width: $pointer-size * 2;
+        height: $pointer-size * 2;
+        transform: rotate(45deg);
+        bottom: -7px;
+        left: calc(50% - $pointer-size);
+        border-radius: 3px;
+        z-index: -1;
+    }
+
+    .trigger:hover &,
+    &.isVisible {
+        opacity: 1;
+        transform: translate(-50%, 0);
+        transition:
+            opacity 0.33s ease-in,
+            transform 0.33s ease-in;
+    }
+
+    #{$selector-darkmode} & {
+        --tooltip-background: var(--color-bg-secondary);
+
+        color: var(--color-fg-primary);
+        box-shadow: 0 -4px 16px 0 rgba(0, 0, 0, 0.4);
+    }
+}
+
+.bubbleSmall {
+    top: -38px;
+    font-size: var(--text-fs-sm);
+}
+
+.bubbleLarge {
+    top: -44px;
+    font-weight: 600;
+
+    .trigger:hover & {
+        transition-delay: 0.165s;
+    }
+}
+
+.bounce {
+    animation-name: bounce;
+    animation-duration: 0.25s;
+}
+
+@keyframes bounce {
+    0% {
+        transform: translate(-50%, 0);
+    }
+    50% {
+        transform: translate(-50%, -$spacing-size-1);
+    }
+    100% {
+        transform: translate(-50%, 0);
+    }
+}
+
+.popover {
+    position: absolute;
+    top: 100%;
+    z-index: 1000;
+    margin-top: $spacing-size-2;
+    background-color: var(--color-bg-primary);
+    border: 1px solid var(--color-border-secondary);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-sm);
+    opacity: 0;
+    transform: translateY(10px) scale(0.95);
+    transition:
+        opacity 0.15s ease,
+        transform 0.15s ease,
+        visibility 0s linear 0.15s;
+    pointer-events: none;
+    visibility: hidden;
+
+    &.isVisible {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        pointer-events: auto;
+        visibility: visible;
+        transition:
+            opacity 0.15s ease,
+            transform 0.15s ease,
+            visibility 0s linear;
+    }
+}

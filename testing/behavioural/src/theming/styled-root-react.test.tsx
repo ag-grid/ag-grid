@@ -1,8 +1,9 @@
 import '@testing-library/jest-dom/vitest';
 import { cleanup, render } from '@testing-library/react';
+import { ALL_SEVERITIES } from 'ag-test-utils';
 import React from 'react';
 
-import { ClientSideRowModelModule, ModuleRegistry, themeQuartz } from 'ag-grid-community';
+import { ClientSideRowModelModule, ModuleRegistry, enableDevValidations, themeQuartz } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
 
 describe('styled root themes (React)', () => {
@@ -15,6 +16,8 @@ describe('styled root themes (React)', () => {
     });
 
     test('does not re-apply a legacy theme class to the internal styled root', async () => {
+        // suppress the deprecation warning that theme: 'legacy' logs
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [306] });
         const rendered = render(
             <AgGridReact
                 className="ag-theme-sas"

@@ -202,6 +202,8 @@ If you are using the long form (providing a `SideBarDef` object) then it is poss
 
 With `TooltipModule` registered, the Columns tab defaults to "Configure columns" and both Filters panels default to "Configure filters". These defaults apply to shortcuts and explicit definitions using the provided tool panel components.
 
+By default, tooltips appear beside the tab towards the grid: to its left when the Side Bar is visually on the right, and to its right when visually on the left, including in RTL layouts. This leaves adjacent tabs available when moving between them. Use `tooltipPosition` to override this placement.
+
 Set `ToolPanelDef.tooltipKey` to a localisation key and `tooltipDefault` to its fallback text. Use `tooltipDefault` alone for fixed text. Custom tool panels have no tooltip unless configured; the tab label is not used as a fallback. The label remains the button's accessible name even when visually hidden.
 
 ```{% frameworkTransform=true %}

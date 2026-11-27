@@ -1,4 +1,15 @@
-export type Feature = 'colorScheme' | 'iconSet' | 'checkboxStyle' | 'inputStyle' | 'tabStyle';
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export const _themePartFeatures = [
+    'buttonStyle',
+    'checkboxStyle',
+    'colorScheme',
+    'columnDropStyle',
+    'iconSet',
+    'inputStyle',
+    'tabStyle',
+] as const;
+
+export type Feature = (typeof _themePartFeatures)[number];
 
 export type WithParamTypes<T> = {
     [K in keyof T]: K extends string ? ParamTypeForLowercaseKey<Lowercase<K>> : LengthValue;
@@ -18,6 +29,7 @@ type ParamTypeForLowercaseKey<K extends string> = K extends `${string}scrollbarw
     : K extends `${string}fontfamily` ? FontFamilyValue
     : K extends `${string}fontweight` ? FontWeightValue
     : K extends `${string}duration` ? DurationValue
+    : K extends `${string}backdropfilter` ? BackdropFilterValue
     : LengthValue;
 
 // string & {} used to preserve auto-complete from string union but allow any string
@@ -239,3 +251,25 @@ export type ImageValue =
  * @see https://developer.mozilla.org/en-US/docs/Web/CSS/animation-duration
  */
 export type DurationValue = number | string | { ref: string };
+
+/**
+ * A single CSS filter function e.g. `{ blur: 8 }` -> "blur(8px)". Numbers get pixel units for `blur` and none for
+ * the other functions, so `{ saturate: 1.5 }` -> "saturate(1.5)". Arguments also accept `{ref}` and `{calc}`.
+ */
+export type BackdropFilterFunction =
+    | { blur: LengthValue }
+    | { brightness: LengthValue }
+    | { contrast: LengthValue }
+    | { grayscale: LengthValue }
+    | { invert: LengthValue }
+    | { opacity: LengthValue }
+    | { saturate: LengthValue }
+    | { sepia: LengthValue };
+
+/**
+ * A CSS backdrop-filter value e.g. `"blur(4px) saturate(1.5)"`, a `{ref: "foo"}` to another param, or a list of
+ * filter functions applied in order, e.g. `[{ blur: 8 }, { saturate: "150%" }]`; an empty list is "none".
+ *
+ * @see https://developer.mozilla.org/en-US/docs/Web/CSS/backdrop-filter
+ */
+export type BackdropFilterValue = string | BackdropFilterFunction[] | { ref: string };

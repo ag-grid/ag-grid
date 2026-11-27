@@ -1,5 +1,11 @@
 import { waitFor } from '@testing-library/dom';
-import { ALL_SEVERITIES, ColumnFilterHarness, GridRows, asyncSetTimeout } from 'ag-test-utils';
+import {
+    ALL_SEVERITIES,
+    ColumnFilterHarness,
+    GridRows,
+    LEGACY_FILTER_WARNING_IDS,
+    asyncSetTimeout,
+} from 'ag-test-utils';
 
 import type {
     ColDef,
@@ -220,6 +226,10 @@ describe('Multi Filter — sub-filter combos & combined model (coverage)', () =>
     });
 
     describe.each([false, true])('display styles, with enableFilterHandlers %s', (enableFilterHandlers) => {
+        beforeEach(() => {
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [348] });
+        });
+
         const displayStyleCols: ColDef[] = [
             {
                 field: 'name',
@@ -491,6 +501,7 @@ describe('Multi Filter — sub-filter combos & combined model (coverage)', () =>
     });
 
     test("a child with an empty filter value getter reads through the Multi Filter's, with and without filter handlers or an object data type", async () => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [348] });
         for (const enableFilterHandlers of [true, false]) {
             for (const cellDataType of ['text', 'object']) {
                 const api: GridApi = await gridsManager.createGridAndWait(
@@ -618,6 +629,7 @@ describe('Multi Filter — sub-filter combos & combined model (coverage)', () =>
     });
 
     test("a values callback, a Multi Filter child's or a Set Filter's own, is not called again when unchanged column definitions are set back, with or without filter handlers", async () => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [348] });
         for (const enableFilterHandlers of [false, true]) {
             const calls = { multi: 0, set: 0 };
             const values = (colId: keyof typeof calls) => (params: { success: (values: string[]) => void }) => {
@@ -664,6 +676,7 @@ describe('Multi Filter — sub-filter combos & combined model (coverage)', () =>
     });
 
     test("a child filter component with its own filter value getter reads another column as that column's value", async () => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: LEGACY_FILTER_WARNING_IDS });
         let childParams: IFilterParams | undefined;
         class ProbeFilter implements IFilterComp {
             public init(params: IFilterParams): void {
@@ -709,7 +722,7 @@ describe('Multi Filter — sub-filter combos & combined model (coverage)', () =>
         'with enableFilterHandlers %s, a child filter component without isFilterActive filters nothing, is reported, and never throws',
         async (enableFilterHandlers) => {
             // with filter handlers, a custom child also reports the column's missing handler (#277)
-            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: enableFilterHandlers ? [67, 277] : [67] });
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: enableFilterHandlers ? [67, 277] : [67, 348] });
             const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
             class NoActiveStateFilter implements Omit<IFilterComp, 'isFilterActive'> {
                 private model: string | null = null;
@@ -766,6 +779,7 @@ describe('Multi Filter — sub-filter combos & combined model (coverage)', () =>
     );
 
     test('without filter handlers, an active child filter component filters the rows and reports its model', async () => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: LEGACY_FILTER_WARNING_IDS });
         class NameFilter implements IFilterComp {
             private model: string | null = null;
             public init(): void {}

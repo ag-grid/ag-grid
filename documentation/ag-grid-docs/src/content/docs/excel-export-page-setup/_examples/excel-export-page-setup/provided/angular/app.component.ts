@@ -13,7 +13,6 @@ import {
 import { ColumnMenuModule, ContextMenuModule, ExcelExportModule } from 'ag-grid-enterprise';
 
 import type { IOlympicData } from './interfaces';
-import './styles.css';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
@@ -36,69 +35,84 @@ ModuleRegistry.registerModules([
     template: `<div class="example-wrapper">
         <form class="example-controls" (submit)="onFormSubmit($event)">
             <div class="controls-row">
-                <label for="pageOrientation">
-                    Page Orientation
-                    <select id="pageOrientation">
-                        <option value="Portrait">Portrait</option>
-                        <option value="Landscape">Landscape</option>
-                    </select>
-                </label>
-                <label for="pageSize">
-                    Page Size
-                    <select id="pageSize">
-                        <option value="Letter">Letter</option>
-                        <option value="Letter Small">Letter Small</option>
-                        <option value="Tabloid">Tabloid</option>
-                        <option value="Ledger">Ledger</option>
-                        <option value="Legal">Legal</option>
-                        <option value="Statement">Statement</option>
-                        <option value="Executive">Executive</option>
-                        <option value="A3">A3</option>
-                        <option value="A4">A4</option>
-                        <option value="A4 Small">A4 Small</option>
-                        <option value="A5">A5</option>
-                        <option value="A6">A6</option>
-                        <option value="B4">B4</option>
-                        <option value="B5">B5</option>
-                        <option value="Folio">Folio</option>
-                        <option value="Envelope">Envelope</option>
-                        <option value="Envelope DL">Envelope DL</option>
-                        <option value="Envelope C5">Envelope C5</option>
-                        <option value="Envelope B5">Envelope B5</option>
-                        <option value="Envelope C3">Envelope C3</option>
-                        <option value="Envelope C4">Envelope C4</option>
-                        <option value="Envelope C6">Envelope C6</option>
-                        <option value="Envelope Monarch">Envelope Monarch</option>
-                        <option value="Japanese Postcard">Japanese Postcard</option>
-                        <option value="Japanese Double Postcard">Japanese Double Postcard</option>
-                    </select>
-                </label>
-            </div>
-            <div class="controls-row">
-                <span class="gap-right">Margins</span>
-                <label for="top">Top <input type="number" id="top" value="0.75" min="0" step="0.05" /></label>
-                <label for="right">Right <input type="number" id="right" value="0.7" min="0" step="0.05" /></label>
-                <label for="bottom">Bottom <input type="number" id="bottom" value="0.75" min="0" step="0.05" /></label>
-                <label for="left">Left <input type="number" id="left" value="0.7" min="0" step="0.05" /></label>
-            </div>
-            <div class="controls-row">
-                <label for="header">Header <input type="number" id="header" value="0.3" min="0" step="0.05" /></label>
-                <label for="footer">Footer <input type="number" id="footer" value="0.3" min="0" step="0.05" /></label>
+                <fieldset class="controls-section">
+                    <legend>Page</legend>
+                    <div class="controls-row">
+                        <label for="pageOrientation">
+                            Page Orientation
+                            <select id="pageOrientation">
+                                <option value="Portrait">Portrait</option>
+                                <option value="Landscape">Landscape</option>
+                            </select>
+                        </label>
+                    </div>
+                    <div class="controls-row">
+                        <label for="pageSize">
+                            Page Size
+                            <select id="pageSize">
+                                <option value="Letter">Letter</option>
+                                <option value="Letter Small">Letter Small</option>
+                                <option value="Tabloid">Tabloid</option>
+                                <option value="Ledger">Ledger</option>
+                                <option value="Legal">Legal</option>
+                                <option value="Statement">Statement</option>
+                                <option value="Executive">Executive</option>
+                                <option value="A3">A3</option>
+                                <option value="A4">A4</option>
+                                <option value="A4 Small">A4 Small</option>
+                                <option value="A5">A5</option>
+                                <option value="A6">A6</option>
+                                <option value="B4">B4</option>
+                                <option value="B5">B5</option>
+                                <option value="Folio">Folio</option>
+                                <option value="Envelope">Envelope</option>
+                                <option value="Envelope DL">Envelope DL</option>
+                                <option value="Envelope C5">Envelope C5</option>
+                                <option value="Envelope B5">Envelope B5</option>
+                                <option value="Envelope C3">Envelope C3</option>
+                                <option value="Envelope C4">Envelope C4</option>
+                                <option value="Envelope C6">Envelope C6</option>
+                                <option value="Envelope Monarch">Envelope Monarch</option>
+                                <option value="Japanese Postcard">Japanese Postcard</option>
+                                <option value="Japanese Double Postcard">Japanese Double Postcard</option>
+                            </select>
+                        </label>
+                    </div>
+                </fieldset>
+                <fieldset class="controls-section">
+                    <legend>Margins</legend>
+                    <div class="controls-row">
+                        <label for="top">Top <input type="number" id="top" value="0.75" min="0" step="0.05" /></label>
+                        <label for="right"
+                            >Right <input type="number" id="right" value="0.7" min="0" step="0.05"
+                        /></label>
+                        <label for="bottom"
+                            >Bottom <input type="number" id="bottom" value="0.75" min="0" step="0.05"
+                        /></label>
+                        <label for="left">Left <input type="number" id="left" value="0.7" min="0" step="0.05" /></label>
+                    </div>
+                    <div class="controls-row">
+                        <label for="header"
+                            >Header <input type="number" id="header" value="0.3" min="0" step="0.05"
+                        /></label>
+                        <label for="footer"
+                            >Footer <input type="number" id="footer" value="0.3" min="0" step="0.05"
+                        /></label>
+                    </div>
+                </fieldset>
             </div>
             <div class="controls-row">
                 <input type="submit" class="primary" value="Export to Excel" />
             </div>
         </form>
-        <div class="grid-wrapper">
-            <ag-grid-angular
-                style="width: 100%; height: 100%;"
-                [columnDefs]="columnDefs"
-                [defaultColDef]="defaultColDef"
-                [popupParent]="popupParent"
-                [rowData]="rowData"
-                (gridReady)="onGridReady($event)"
-            />
-        </div>
+        <ag-grid-angular
+            style="width: 100%; height: 100%;"
+            [columnDefs]="columnDefs"
+            [defaultColDef]="defaultColDef"
+            [popupParent]="popupParent"
+            [rowData]="rowData"
+            (gridReady)="onGridReady($event)"
+        />
     </div>`,
 })
 export class AppComponent {

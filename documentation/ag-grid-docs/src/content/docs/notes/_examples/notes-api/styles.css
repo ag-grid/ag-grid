@@ -1,12 +1,9 @@
-#note-author {
-    width: 140px;
-}
-
 #selection-status {
     color: var(--ag-secondary-foreground-color);
 }
 
 #note-text {
+    width: 100%;
     min-height: 72px;
     resize: vertical;
 }

@@ -1,4 +1,4 @@
-import type { BaseCssChangeKeys, CssVariable, ParamType, Theme, ThemeImpl } from 'ag-stack';
+import type { BaseCssChangeKeys, CssVariable, ParamType, StaticCssTheme, Theme, _ThemeHooks } from 'ag-stack';
 import { BaseEnvironment } from 'ag-stack';
 
 import type { NamedBean } from './context/bean';
@@ -30,7 +30,8 @@ const HEADER_ROW_BORDER_WIDTH = cssVariable('headerRowBorderWidth', 'border', 1)
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _addAdditionalCss(cssMap: Map<string, string[]>, modules: Module[]): void {
-    for (const module of modules.sort((a, b) => a.moduleName.localeCompare(b.moduleName))) {
+    // OPTIMIZATION: not localeCompare, whose first call in a page costs ~5ms of collator setup in Chrome.
+    for (const module of modules.sort((a, b) => (a.moduleName < b.moduleName ? -1 : 1))) {
         const moduleCss = module.css;
         if (moduleCss) {
             cssMap.set(`module-${module.moduleName}`, moduleCss);
@@ -133,11 +134,6 @@ export class Environment
         if (change === 'rowBorderWidth') {
             this.refreshRowBorderWidthVariable();
         }
-        // catches variables a class swap introduces after grid creation; 'theme' is covered by
-        // postProcessThemeChange, which runs after the new theme is in place
-        if (change !== 'theme') {
-            this.checkLegacyThemeVariables();
-        }
         super.fireStylesChangedEvent(change);
     }
 
@@ -147,13 +143,13 @@ export class Environment
     }
 
     protected override postProcessThemeChange(
-        newGridTheme: ThemeImpl | undefined,
-        themeGridOption?: Theme | 'legacy'
+        newGridTheme: _ThemeHooks | undefined,
+        themeGridOption?: Theme | StaticCssTheme | 'legacy'
     ): void {
         // --ag-legacy-styles-loaded is defined on .ag-measurement-container by the
         // legacy themes which shouldn't be used at the same time as Theming API
         if (
-            newGridTheme &&
+            newGridTheme?._injectsGridCss &&
             getComputedStyle(this.getMeasurementContainer()).getPropertyValue('--ag-legacy-styles-loaded')
         ) {
             if (themeGridOption) {
@@ -161,14 +157,7 @@ export class Environment
             } else {
                 this.beans.log.error(239);
             }
-        } else if (newGridTheme) {
-            this.checkLegacyThemeVariables();
         }
-    }
-
-    /** The reporting lives in the ValidationModule; without it registered, nothing is checked. */
-    private checkLegacyThemeVariables(): void {
-        this.beans.validation?.checkLegacyThemeVariables(this.eRootDiv);
     }
 
     protected override getAdditionalCss(): Map<string, string[]> {
@@ -186,7 +175,7 @@ export class Environment
         this.beans.log.warn(9, { variable: { cssName, defaultValue } });
     }
 
-    protected override themeError(theme: Theme | 'legacy'): void {
+    protected override themeError(theme: Theme | StaticCssTheme | 'legacy'): void {
         this.beans.log.error(240, { theme });
     }
 

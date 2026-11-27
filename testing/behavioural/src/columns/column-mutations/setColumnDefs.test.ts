@@ -21,6 +21,11 @@ import { PivotModule, RowGroupingModule, RowNumbersModule, TreeDataModule } from
 
 import { allowLegacyTooltipProperties, resetLegacyTooltipProperties } from '../../tooltip/legacyTooltipTestUtils';
 
+// Listening to a deprecated event raises deprecation #306, which the global throw-on-validation setup would throw on.
+beforeEach(() => {
+    enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [306] });
+});
+
 describe('Column Mutations', () => {
     const gridsManager = new TestGridsManager({
         modules: [
@@ -65,10 +70,12 @@ describe('Column Mutations', () => {
             const newColsLoadedEvents: any[] = [];
             const gridColsChangedEvents: any[] = [];
             const colEverythingEvents: any[] = [];
+            const displayedColsEvents: any[] = [];
             const colDefChangedEvents: any[] = [];
             api.addEventListener('newColumnsLoaded', (e) => newColsLoadedEvents.push(e));
             api.addEventListener('gridColumnsChanged', (e) => gridColsChangedEvents.push(e));
             api.addEventListener('columnEverythingChanged', (e) => colEverythingEvents.push(e));
+            api.addEventListener('displayedColumnsChanged', (e) => displayedColsEvents.push(e));
             (colA1 as any).__addEventListener('colDefChanged', (e: any) => colDefChangedEvents.push(e));
 
             // Update columnDefs with same colIds but different widths
@@ -93,6 +100,7 @@ describe('Column Mutations', () => {
 
             expect(newColsLoadedEvents.length).toBeGreaterThan(0);
             expect(colEverythingEvents.length).toBeGreaterThan(0);
+            expect(displayedColsEvents.length).toBeGreaterThan(0);
             expect(Array.isArray(gridColsChangedEvents)).toBe(true);
             expect(colDefChangedEvents.length).toBeGreaterThan(0);
 

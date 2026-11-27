@@ -456,9 +456,9 @@ export class CartesianAxisPanel extends Component {
             return chartOptions.setValue<number | undefined>('label.rotation', value);
         };
 
-        const degreesSymbol = String.fromCharCode(176);
-
-        const label = `${this.chartTranslation.translate(labelKey)} ${degreesSymbol}`;
+        const label = this.chartTranslation.translate('labelInDegrees', {
+            label: this.chartTranslation.translate(labelKey),
+        });
         const angleSelect = new AgAngleSelect({
             label,
             labelWidth: 'flex',

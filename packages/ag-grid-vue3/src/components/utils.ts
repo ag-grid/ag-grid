@@ -114,6 +114,7 @@ import type {
     SelectionColumnDef,
     SendToClipboard,
     SideBarDef,
+    StaticCssTheme,
     StatusBar,
     TabToNextCell,
     TabToNextGridContainer,
@@ -339,7 +340,7 @@ export interface Props<TData> {
          */
     tooltipTrigger?: 'hover' | 'focus' | 'hoverOrFocus',
     /** Preferred tooltip placement. Flips or shifts to stay within the available space.
-         * Return `undefined` from the callback to use the default placement: `top` for built-in controls, otherwise `top-start`.
+         * Return `undefined` from the callback to use the default placement: towards the grid for Side Bar tabs, `top` for other built-in controls, otherwise `top-start`.
          * Does not apply to browser tooltips.
          * @agModule `TooltipModule`
          */
@@ -392,14 +393,16 @@ export interface Props<TData> {
          */
     tooltipMouseTrack?: boolean,
     /** Controls tooltips for grid-rendered text, including cells, headers, Set Filter items and tool panel labels.
-         * - `whenTruncated` - Automatically shows displayed text when truncated. Configured tooltips that repeat
-         *   the raw or displayed value require truncation; different content does not.
+         * - `auto` - Automatically shows truncated text and configured tooltips with different content.
          * - `standard` - Shows only configured tooltips, without requiring truncation.
-         * Applies to browser tooltips too. Custom components must supply their own truncation check.
-         * @default 'whenTruncated'
+         * - `whenTruncated` - Shows only configured tooltips, and only when the target text is truncated.
+         * - `whenDifferent` - Shows only configured tooltips that differ from the default tooltip value:
+         *   the formatted value when available, otherwise the raw value.
+         * Applies to browser tooltips too. Custom components can supply their own display predicate.
+         * @default 'auto'
          * @agModule `TooltipModule`
          */
-    tooltipShowMode?: 'standard' | 'whenTruncated',
+    tooltipShowMode?: 'auto' | 'standard' | 'whenTruncated' | 'whenDifferent',
     /** Set to `true` for custom tooltip content containing focusable controls. Tab can enter the tooltip and
          * Escape closes it and returns focus to its source. All tooltips remain visible while hovered.
          * A callback receives the source parameters and decides separately each time a tooltip opens.
@@ -745,11 +748,6 @@ export interface Props<TData> {
          * @agModule `AdvancedFilterModule`
          */
     advancedFilterParams?: IAdvancedFilterParams,
-    /** @deprecated As of v34, advanced filter no longer uses function evaluation, so this option has no effect.
-         * @default true
-         * @agModule `AdvancedFilterModule`
-         */
-    suppressAdvancedFilterEval?: boolean,
     /** When using AG Grid Enterprise, the Set Filter is used by default when `filter: true` is set on column definitions.
          * Set to `true` to prevent this and instead use the Text Filter, Number Filter or Date Filter based on the cell data type,
          * the same as when using AG Grid Community.
@@ -763,6 +761,8 @@ export interface Props<TData> {
          *
          * Note that grid-provided filters (except for the Multi Filter) always use filter handlers.
          * The Multi Filter will also use a filter handler if this is enabled.
+         *
+         * The default becomes `true` in v38. Setting `false` (legacy filter mode) is deprecated in v37, and legacy filter mode and this option will be removed in a major version after v38. See [Migrating to Filter Handlers](https://www.ag-grid.com/javascript-data-grid/enable-filter-handlers-migration/).
          * @initial
          */
     enableFilterHandlers?: boolean,
@@ -1764,7 +1764,7 @@ export interface Props<TData> {
          * Provide an object to sort using a specific locale and collator options, such as `{ locales: 'de', options: { sensitivity: 'accent' } }`.
          * Only applies when both values are strings. Also orders the values in the Set Filter list.
          *
-         * Can be overridden per column with `colDef.accentedSort`.
+         * Equivalent to setting `accentedSort` on the `defaultColDef`, which is the recommended approach. Can be overridden per column with `colDef.accentedSort`.
          * @default false
          */
     accentedSort?: boolean | AccentedSortOptions,
@@ -1860,13 +1860,16 @@ export interface Props<TData> {
          * @agModule `GridStateModule`
          */
     initialState?: GridState,
-    /** Theme to apply to the grid, or the string "legacy" to opt back into the
-         * v32 style of theming where themes were imported as CSS files and applied
-         * by setting a class name on the parent element.
+    /** Theme to apply to the grid. Use a theme created with `staticCssTheme` to style the grid with static CSS
+         * files from `ag-grid-community/css` that your application loads itself, for applications whose Content
+         * Security Policy does not allow styles to be injected.
+         *
+         * The string "legacy" is deprecated, and opts back into the v32 style of theming
+         * using the CSS files in `ag-grid-community/styles`.
          *
          * @default themeQuartz
          */
-    theme?: Theme | 'legacy',
+    theme?: Theme | StaticCssTheme | 'legacy',
     /** If your theme uses a font that is available on Google Fonts, pass true to load it from Google's CDN.
          */
     loadThemeGoogleFonts?: boolean,
@@ -2371,7 +2374,6 @@ export function getProps() {
         advancedFilterParent: undefined,
         advancedFilterBuilderParams: undefined,
         advancedFilterParams: undefined,
-        suppressAdvancedFilterEval: undefined,
         suppressSetFilterByDefault: undefined,
         enableFilterHandlers: undefined,
         filterHandlers: undefined,

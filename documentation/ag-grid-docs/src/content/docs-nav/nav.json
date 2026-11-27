@@ -277,6 +277,11 @@
                         },
                         {
                             "type": "item",
+                            "title": "Static CSS Files",
+                            "path": "theming-static-css"
+                        },
+                        {
+                            "type": "item",
                             "title": "Migration from v32",
                             "path": "theming-migration"
                         },
@@ -1782,6 +1787,12 @@
                                     "type": "item",
                                     "title": "Row Grouping",
                                     "path": "server-side-model-grouping",
+                                    "isEnterprise": true
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "Aggregation",
+                                    "path": "server-side-model-aggregation",
                                     "isEnterprise": true
                                 },
                                 {

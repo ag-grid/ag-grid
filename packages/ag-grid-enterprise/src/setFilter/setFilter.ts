@@ -13,15 +13,12 @@ import type {
     AgPromise,
     ComponentSelector,
     ElementParams,
-    FilterDisplayParams,
     GridInputTextField,
     IAfterGuiAttachedParams,
-    ISetFilter,
     SetFilterHandler as ISetFilterHandler,
-    ISetFilterParams,
+    SetFilterDisplayParams,
     SetFilterModel,
     SetFilterModelValue,
-    SetFilterParams,
     SetFilterUi,
     TextFormatter,
 } from 'ag-grid-community';
@@ -61,10 +58,11 @@ type MiniFilterInputSource = 'ui' | 'api' | 'state';
 
 /** @param V type of value in the Set Filter */
 export class SetFilter<V = string>
-    extends ProvidedFilter<SetFilterModel, V, ISetFilterParams<any, V> & FilterDisplayParams<any, any, SetFilterModel>>
-    implements ISetFilter<V>, SetFilterUi<V>
+    extends ProvidedFilter<SetFilterModel, V, SetFilterDisplayParams<any, V>>
+    implements SetFilterUi<V>
 {
     public readonly filterType = 'set' as const;
+    protected readonly filterInstanceType = 'SetFilterUi';
 
     private readonly eMiniFilter: GridInputTextField = RefPlaceholder;
     private readonly eFilterLoading: HTMLElement = RefPlaceholder;
@@ -95,9 +93,7 @@ export class SetFilter<V = string>
         super('setFilter', 'set-filter');
     }
 
-    protected override setParams(
-        params: ISetFilterParams<any, V> & FilterDisplayParams<any, any, SetFilterModel>
-    ): void {
+    protected override setParams(params: SetFilterDisplayParams<any, V>): void {
         super.setParams(params);
 
         const handler = this.updateHandler(params.getHandler() as unknown as SetFilterHandler<V>);
@@ -137,22 +133,18 @@ export class SetFilter<V = string>
         this.initialiseFilterBodyUi();
     }
 
-    public override refresh(legacyNewParams: SetFilterParams<any, V>): boolean {
-        if (this.params.treeList !== legacyNewParams.treeList) {
+    public override refresh(newParams: SetFilterDisplayParams<any, V>): boolean {
+        if (this.params.treeList !== newParams.treeList) {
             // too hard to refresh when tree list changes, just destroy
             return false;
         }
-        this.updateHandler(
-            (
-                legacyNewParams as unknown as ISetFilterParams<any, V> & FilterDisplayParams<any, any, SetFilterModel>
-            ).getHandler() as unknown as SetFilterHandler<V>
-        );
-        return super.refresh(legacyNewParams);
+        this.updateHandler(newParams.getHandler() as unknown as SetFilterHandler<V>);
+        return super.refresh(newParams);
     }
 
     protected override updateParams(
-        newParams: ISetFilterParams<any, V> & FilterDisplayParams<any, any, SetFilterModel>,
-        oldParams: ISetFilterParams<any, V> & FilterDisplayParams<any, any, SetFilterModel>
+        newParams: SetFilterDisplayParams<any, V>,
+        oldParams: SetFilterDisplayParams<any, V>
     ): void {
         super.updateParams(newParams, oldParams);
 
@@ -431,9 +423,7 @@ export class SetFilter<V = string>
         this.createVirtualListModel(this.params);
     }
 
-    private createVirtualListModel(
-        params: ISetFilterParams<any, V> & FilterDisplayParams<any, any, SetFilterModel>
-    ): void {
+    private createVirtualListModel(params: SetFilterDisplayParams<any, V>): void {
         let model: VirtualListModel;
         if (params.suppressSelectAll) {
             model = new ModelWrapper(this.displayValueModel);
@@ -713,46 +703,8 @@ export class SetFilter<V = string>
         return this.params.excelMode ? model == null || model.values.length > 0 : true;
     }
 
-    /**
-     * @deprecated v34 Internal method - should only be called by the grid.
-     */
-    public override onNewRowsLoaded(): void {
-        // we don't warn here because the multi filter can call this
-    }
-
-    /**
-     * @deprecated v34 Use the same method on the filter handler (`api.getColumnFilterHandler()`) instead.
-     */
-    public setFilterValues(values: (V | null)[]): void {
-        this.beans.log.warn(283);
-        this.handler.setFilterValues(values);
-    }
-
-    /**
-     * @deprecated v34 Use the same method on the filter handler (`api.getColumnFilterHandler()`) instead.
-     */
-    public resetFilterValues(): void {
-        this.beans.log.warn(283);
-        this.handler.resetFilterValues();
-    }
-
-    /**
-     * @deprecated v34 Use the same method on the filter handler (`api.getColumnFilterHandler()`) instead.
-     */
-    public refreshFilterValues(): void {
-        this.beans.log.warn(283);
-        this.doRefreshFilterValues();
-    }
-
     private doRefreshFilterValues(): void {
         this.handler.refreshFilterValues();
-    }
-
-    /**
-     * @deprecated v34 Internal method - should only be called by the grid.
-     */
-    public onAnyFilterChanged(): void {
-        // we don't warn here because the multi filter can call this
     }
 
     private onMiniFilterInput(forceImmediate = false, source: MiniFilterInputSource = 'ui') {
@@ -962,22 +914,6 @@ export class SetFilter<V = string>
         if (this.hardRefreshVirtualList) {
             this.hardRefreshVirtualList = false;
         }
-    }
-
-    /**
-     * @deprecated v34 Use the same method on the filter handler (`api.getColumnFilterHandler()`) instead.
-     */
-    public getFilterKeys(): SetFilterModelValue {
-        this.beans.log.warn(283);
-        return this.handler.getFilterKeys();
-    }
-
-    /**
-     * @deprecated v34 Use the same method on the filter handler (`api.getColumnFilterHandler()`) instead.
-     */
-    public getFilterValues(): (V | null)[] {
-        this.beans.log.warn(283);
-        return this.handler.getFilterValues();
     }
 
     private refreshVirtualList(): void {

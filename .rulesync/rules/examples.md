@@ -24,7 +24,7 @@ documentation/ag-grid-docs/src/content/docs/feature-name/
         ├── main.ts          # Main example code
         ├── index.html       # HTML template
         ├── example.spec.ts  # Playwright test (required — see below)
-        ├── styles.css       # Optional — required when using a wrapper div
+        ├── styles.css       # Optional — example-specific styles
         └── data.ts          # Optional data file
 ```
 
@@ -154,33 +154,54 @@ Use a single div with `height: 100%`:
 
 ### Grid with buttons or controls
 
-Wrap everything in an `example-wrapper` div and add a `styles.css`:
+Put the controls in `.example-controls`, one `.controls-row` per line of controls, and wrap them and the grid in `.example-wrapper`:
 
-**index.html:**
 ```html
 <div class="example-wrapper">
-    <div style="margin-bottom: 1rem">
-        <button onclick="onDoSomething()">Do Something</button>
+    <div class="example-controls">
+        <div class="controls-row">
+            <button onclick="onDoSomething()">Do Something</button>
+        </div>
     </div>
+
     <div id="myGrid"></div>
 </div>
 ```
 
-**styles.css:**
-```css
-.example-wrapper {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-}
+The shared example stylesheet, linked into every example, styles these classes. The controls keep their natural height at the top, the grid fills the rest, and the gap between them is standard. A layout like this needs no `styles.css`. Don't add:
 
-#myGrid {
-    flex: 1 1 0px;
-    width: 100%;
-}
+- a wrapper div around the grid, such as `.grid-wrapper`, or layout CSS for `.example-wrapper` or `#myGrid`
+- inline spacing between the controls and the grid
+- a font override, such as `font-family: Verdana`
+- a width for a text input in the controls: the shared stylesheet makes them 200px. If an input needs another width, give it a class and size that.
+
+### Grid that sets its own height
+
+When the grid sizes itself to its rows (`domLayout: 'autoHeight'` or `'print'`), add `example-wrapper--auto-height`. The wrapper then takes its content's height instead of holding the grid at the iframe's height, and the controls keep their gap:
+
+```html
+<div class="example-wrapper example-wrapper--auto-height">
+    <div class="example-controls">...</div>
+    <div id="myGrid"></div>
+</div>
 ```
 
-The flexbox layout makes the controls sit at the top and the grid fills the remaining vertical space.
+### Grids side by side
+
+Add `example-wrapper--row` to the root and make each column its own `.example-wrapper`, so each column stacks its controls above its grid. The row doesn't size its columns, so give them a width in `styles.css`, such as `flex: 1 1 auto; min-width: 0`:
+
+```html
+<div class="example-wrapper example-wrapper--row">
+    <div class="grid-col example-wrapper">
+        <div class="example-controls">...</div>
+        <div id="eLeftGrid"></div>
+    </div>
+    <div class="grid-col example-wrapper">
+        <div class="example-controls">...</div>
+        <div id="eRightGrid"></div>
+    </div>
+</div>
+```
 
 ## Example Spec File (Required)
 

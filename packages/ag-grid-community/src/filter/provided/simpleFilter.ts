@@ -16,7 +16,6 @@ import { AgRadioButton } from '../../agWidgets/agRadioButton';
 import { AgSelect } from '../../agWidgets/agSelect';
 import type { AgColumn } from '../../entities/agColumn';
 import type { IAfterGuiAttachedParams } from '../../interfaces/iAfterGuiAttachedParams';
-import type { FilterDisplayParams } from '../../interfaces/iFilter';
 import type { ElementParams } from '../../utils/element';
 import { _createElement } from '../../utils/element';
 import type { Component, ComponentSelector } from '../../widgets/component';
@@ -34,7 +33,7 @@ import type {
     ISimpleFilterParams,
     JoinOperator,
     MapValuesFromSimpleFilterModel,
-    SimpleFilterParams,
+    SimpleFilterDisplayParams,
     Tuple,
 } from './iSimpleFilter';
 import { OptionsFactory } from './optionsFactory';
@@ -47,10 +46,6 @@ import {
     removeItems,
     validateAndUpdateConditions,
 } from './simpleFilterUtils';
-
-/** temporary type until `SimpleFilterParams` is updated as breaking change */
-export type SimpleFilterDisplayParams<M extends ISimpleFilterModel> = ISimpleFilterParams &
-    FilterDisplayParams<any, any, M | ICombinedSimpleModel<M>>;
 
 type FilterModelOrCombined<M extends ISimpleFilterModel> = M | ICombinedSimpleModel<M> | null;
 
@@ -65,12 +60,13 @@ export abstract class SimpleFilter<
     M extends ISimpleFilterModel,
     V,
     E = GridInputTextField,
-    P extends SimpleFilterDisplayParams<M> = SimpleFilterDisplayParams<M>,
+    P extends SimpleFilterDisplayParams<any, M> = SimpleFilterDisplayParams<any, M>,
 >
     extends ProvidedFilter<M | ICombinedSimpleModel<M>, V, P>
     implements ISimpleFilter
 {
     public abstract override readonly filterType: 'number' | 'bigint' | 'text' | 'date';
+    protected readonly filterInstanceType = 'ISimpleFilter';
 
     protected readonly eTypes: GridSelect[] = [];
     protected readonly eJoinPanels: HTMLElement[] = [];
@@ -87,7 +83,7 @@ export abstract class SimpleFilter<
     private maxNumConditions: number;
     private numAlwaysVisibleConditions: number;
     private defaultJoinOperator: JoinOperator;
-    private filterPlaceholder: SimpleFilterParams['filterPlaceholder'];
+    private filterPlaceholder: ISimpleFilterParams['filterPlaceholder'];
     private lastUiCompletePosition: number | null = null;
     private joinOperatorId = 0;
     private filterListOptions: ListOption[];

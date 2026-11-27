@@ -14,6 +14,8 @@ describe('isStockTheme', () => {
         'ag-material-dark',
         'ag-financial',
         'ag-financial-dark',
+        'ag-accessible',
+        'ag-accessible-dark',
     ])('%s is a stock theme', (themeName) => {
         expect(isStockTheme(themeName)).toBe(true);
     });

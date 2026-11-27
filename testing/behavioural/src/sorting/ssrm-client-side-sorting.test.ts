@@ -1,4 +1,4 @@
-import { GridColumns, GridRows, TestGridsManager, waitForEvent } from 'ag-test-utils';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, waitForEvent } from 'ag-test-utils';
 import { waitForNoLoadingRows } from 'ag-test-utils/ssrm-test-utils';
 
 import type { GridApi, GridOptions, IServerSideGetRowsParams } from 'ag-grid-community';
@@ -1488,5 +1488,129 @@ describe('SSRM Client-Side Sorting', () => {
 
         expect(getDisplayedValues(api, 'value')).toEqual([1, 2, 3, 5]);
         expect(getDisplayedValues(api, 'name')).toEqual(['Alice', 'Dora', 'Bob', 'Charlie']);
+    });
+
+    test('changing accentedSort re-sorts the loaded rows client-side', async () => {
+        const rowData = ['Zoe', 'Åsa', 'Anna', 'Örjan', 'Ola'].map((name) => ({ name }));
+        let getRowsCalls = 0;
+        const api = gridsManager.createGrid(null, {
+            columnDefs: [{ field: 'name', sort: 'asc' }],
+            rowModelType: 'serverSide',
+            serverSideEnableClientSideSort: true,
+            accentedSort: { locales: 'sv' },
+            serverSideDatasource: {
+                getRows: (params) => {
+                    getRowsCalls++;
+                    params.success({ rowData: [...rowData], rowCount: rowData.length });
+                },
+            },
+        });
+        await waitForNoLoadingRows(api);
+        expect(getDisplayedValues(api, 'name')).toEqual(['Anna', 'Ola', 'Zoe', 'Åsa', 'Örjan']);
+
+        api.setGridOption('accentedSort', { locales: 'de' });
+        expect(getDisplayedValues(api, 'name')).toEqual(['Anna', 'Åsa', 'Ola', 'Örjan', 'Zoe']);
+
+        api.setGridOption('columnDefs', [{ field: 'name', sort: 'asc', accentedSort: { locales: 'sv' } }]);
+        expect(getDisplayedValues(api, 'name')).toEqual(['Anna', 'Ola', 'Zoe', 'Åsa', 'Örjan']);
+        expect(getRowsCalls).toBe(1);
+    });
+
+    test('changing accentedSort without affecting a sorted column does not re-sort the loaded rows', async () => {
+        const rowData = ['Zoe', 'Åsa', 'Anna', 'Örjan', 'Ola'].map((name) => ({ name, city: name }));
+        let modelUpdatedCount = 0;
+        const api = gridsManager.createGrid(null, {
+            columnDefs: [{ field: 'name', sort: 'asc', accentedSort: { locales: 'sv' } }, { field: 'city' }],
+            rowModelType: 'serverSide',
+            serverSideEnableClientSideSort: true,
+            serverSideDatasource: {
+                getRows: (params) => params.success({ rowData: [...rowData], rowCount: rowData.length }),
+            },
+            onModelUpdated: () => modelUpdatedCount++,
+        });
+        await waitForNoLoadingRows(api);
+        await asyncSetTimeout(0);
+        expect(getDisplayedValues(api, 'name')).toEqual(['Anna', 'Ola', 'Zoe', 'Åsa', 'Örjan']);
+        modelUpdatedCount = 0;
+
+        // the sorted column has its own accentedSort, so the grid option does not apply to it
+        api.setGridOption('accentedSort', { locales: 'de' });
+        // the unsorted column's comparator is not used by the sort
+        api.setGridOption('columnDefs', [
+            { field: 'name', sort: 'asc', accentedSort: { locales: 'sv' } },
+            { field: 'city', accentedSort: { locales: 'de' } },
+        ]);
+        await asyncSetTimeout(0);
+        expect(modelUpdatedCount).toBe(0);
+        expect(getDisplayedValues(api, 'name')).toEqual(['Anna', 'Ola', 'Zoe', 'Åsa', 'Örjan']);
+
+        // a column comparator replaces the string comparator, so its accentedSort is not used by the sort
+        const comparator = (a: string, b: string) => (a === b ? 0 : a < b ? -1 : 1);
+        api.setGridOption('columnDefs', [
+            { field: 'name', sort: 'asc', comparator, accentedSort: { locales: 'sv' } },
+            { field: 'city', accentedSort: { locales: 'de' } },
+        ]);
+        await asyncSetTimeout(0);
+        modelUpdatedCount = 0;
+        api.setGridOption('columnDefs', [
+            { field: 'name', sort: 'asc', comparator },
+            { field: 'city', accentedSort: { locales: 'de' } },
+        ]);
+        // now inherited by the sorted column, still replaced by its comparator
+        api.setGridOption('accentedSort', { locales: 'sv' });
+        await asyncSetTimeout(0);
+        expect(modelUpdatedCount).toBe(0);
+    });
+
+    test('changing the auto group column accentedSort re-sorts the loaded tree rows client-side', async () => {
+        const rowData = ['Zoe', 'Åsa', 'Anna', 'Örjan', 'Ola'].map((name) => ({ name, group: false }));
+        let getRowsCalls = 0;
+        const api = gridsManager.createGrid(null, {
+            columnDefs: [{ field: 'name', hide: true }],
+            autoGroupColumnDef: { field: 'name', sort: 'asc', accentedSort: { locales: 'sv' } },
+            rowModelType: 'serverSide',
+            treeData: true,
+            serverSideEnableClientSideSort: true,
+            isServerSideGroup: (d) => d.group,
+            getServerSideGroupKey: (d) => d.name,
+            serverSideDatasource: {
+                getRows: (params) => {
+                    getRowsCalls++;
+                    params.success({ rowData: [...rowData], rowCount: rowData.length });
+                },
+            },
+        });
+        await waitForNoLoadingRows(api);
+        expect(getDisplayedValues(api, 'name')).toEqual(['Anna', 'Ola', 'Zoe', 'Åsa', 'Örjan']);
+
+        api.setGridOption('autoGroupColumnDef', { field: 'name', sort: 'asc', accentedSort: { locales: 'de' } });
+        expect(getDisplayedValues(api, 'name')).toEqual(['Anna', 'Åsa', 'Ola', 'Örjan', 'Zoe']);
+        expect(getRowsCalls).toBe(1);
+    });
+
+    test('changing the sort and accentedSort in one update sorts the loaded rows once', async () => {
+        const rowData = ['Zoe', 'Åsa', 'Anna', 'Örjan', 'Ola'].map((name) => ({ name, group: false }));
+        let modelUpdatedCount = 0;
+        const api = gridsManager.createGrid(null, {
+            columnDefs: [{ field: 'name', hide: true }],
+            autoGroupColumnDef: { field: 'name', sort: 'asc', accentedSort: { locales: 'sv' } },
+            rowModelType: 'serverSide',
+            treeData: true,
+            serverSideEnableClientSideSort: true,
+            isServerSideGroup: (d) => d.group,
+            getServerSideGroupKey: (d) => d.name,
+            serverSideDatasource: {
+                getRows: (params) => params.success({ rowData: [...rowData], rowCount: rowData.length }),
+            },
+            onModelUpdated: () => modelUpdatedCount++,
+        });
+        await waitForNoLoadingRows(api);
+        await asyncSetTimeout(0);
+        modelUpdatedCount = 0;
+
+        api.setGridOption('autoGroupColumnDef', { field: 'name', sort: 'desc', accentedSort: { locales: 'de' } });
+        await asyncSetTimeout(0);
+        expect(getDisplayedValues(api, 'name')).toEqual(['Zoe', 'Örjan', 'Ola', 'Åsa', 'Anna']);
+        expect(modelUpdatedCount).toBe(1);
     });
 });

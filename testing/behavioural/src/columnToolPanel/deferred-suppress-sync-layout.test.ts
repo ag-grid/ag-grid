@@ -1,9 +1,21 @@
 import { getByText, waitFor } from '@testing-library/dom';
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, nextAnimationFrame } from 'ag-test-utils';
+import {
+    ALL_SEVERITIES,
+    GridColumns,
+    GridRows,
+    TestGridsManager,
+    asyncSetTimeout,
+    nextAnimationFrame,
+} from 'ag-test-utils';
 
 import type { AgColumn, ColDef, GridApi, IColumnStateUpdateStrategy } from 'ag-grid-community';
-import { getGridElement, setupAgTestIds } from 'ag-grid-community';
+import { enableDevValidations, getGridElement, setupAgTestIds } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
+
+// Listening to a deprecated event raises deprecation #306, which the global throw-on-validation setup would throw on.
+beforeEach(() => {
+    enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [306] });
+});
 
 describe('deferred column tool panel with suppressSyncLayoutWithGrid', () => {
     const gridMgr = new TestGridsManager({
@@ -557,13 +569,16 @@ describe('deferred column tool panel with suppressSyncLayoutWithGrid', () => {
             const country = gridApi.getColumn('country')! as AgColumn;
             const sport = gridApi.getColumn('sport')! as AgColumn;
             const everything: any[] = [];
+            const displayed: any[] = [];
             gridApi.addEventListener('columnEverythingChanged', (e) => everything.push(e));
+            gridApi.addEventListener('displayedColumnsChanged', (e) => displayed.push(e));
 
             strategy.setRowGroupColumns(true, [country, sport], 'toolPanelUi');
             strategy.commit(true);
 
             await asyncSetTimeout(0);
             expect(everything.length).toBe(1);
+            expect(displayed.length).toBeGreaterThan(0);
             expect(gridApi.getRowGroupColumns().map((col) => col.getColId())).toEqual(['country', 'sport']);
             await new GridColumns(gridApi, 'batched add').checkColumns(`
                 CENTER

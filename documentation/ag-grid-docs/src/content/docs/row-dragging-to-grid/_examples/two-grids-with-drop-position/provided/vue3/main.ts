@@ -58,7 +58,7 @@ const VueExample = defineComponent({
     /* html */
     template: `<div class="example-wrapper example-wrapper--row">
 
-            <div class="inner-col">
+            <div class="inner-col example-wrapper">
                 <div class="toolbar example-controls">
                     <div class="controls-row">
                         <button class="factory factory-red" data-color="Red" data-side="left" @click="onFactoryButtonClick($event)">
@@ -94,7 +94,7 @@ const VueExample = defineComponent({
                 </span>
             </div>
 
-            <div class="inner-col">
+            <div class="inner-col example-wrapper">
                 <div class="toolbar example-controls">
                     <div class="controls-row">
                         <button class="factory factory-red" data-color="Red" data-side="right" @click="onFactoryButtonClick($event)">

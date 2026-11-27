@@ -4,6 +4,7 @@ import type { IRowNode } from './iRowNode';
 import type { IServerSideDatasource } from './iServerSideDatasource';
 import type { ServerSideTransaction, ServerSideTransactionResult } from './serverSideTransaction';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IServerSideRowModel<TData = any> extends IRowModel {
     refreshStore(params?: RefreshServerSideParams): void;
     getStoreState(): ServerSideGroupLevelState[];
@@ -17,6 +18,11 @@ export interface IServerSideRowModel<TData = any> extends IRowModel {
     getBlockStates(): void;
     setRowCount(rowCount: number, isLastRowIndexKnown?: boolean): void;
     applyRowData(rowDataParams: LoadSuccessParams<TData>, startRow: number, route: string[]): void;
+
+    /**
+     * @deprecated v33.1.0 - use `gridApi.onRowHeightChanged()` instead
+     */
+    onRowHeightChangedDebounced(): void;
 }
 
 export interface IServerSideTransactionManager<TData = any> {

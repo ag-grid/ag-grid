@@ -1,6 +1,6 @@
 import { waitFor } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
-import { TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
+import { ALL_SEVERITIES, LEGACY_FILTER_WARNING_IDS, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import type {
     ColDef,
@@ -21,9 +21,15 @@ import {
     CustomFilterModule,
     RowSelectionModule,
     ScrollApiModule,
+    enableDevValidations,
     getGridElement,
 } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule, RowNumbersModule, ShowValuesAsModule } from 'ag-grid-enterprise';
+
+// Listening to a deprecated event raises deprecation #306, which the global throw-on-validation setup would throw on.
+beforeEach(() => {
+    enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [306] });
+});
 
 /** Each displayed column as `colId@left`, failing where a column does not start where the one before it ends. */
 const contiguousLefts = (api: GridApi): string[] => {
@@ -1743,6 +1749,7 @@ describe('the column events of one call', () => {
     });
 
     test('a filter refresh throwing during a columnDefs update throws to the caller, and the next update raises its own grid events and refreshes every filter', async () => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [...LEGACY_FILTER_WARNING_IDS, 306] });
         const refreshed: string[] = [];
         let failing = true;
         class ThrowingFilter implements IFilterComp {

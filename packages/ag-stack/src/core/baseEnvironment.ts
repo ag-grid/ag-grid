@@ -6,12 +6,15 @@ import type { IPropertiesService } from '../interfaces/iProperties';
 import {
     _injectCoreAndModuleCSS,
     _injectGlobalCSS,
+    _isStyleInjectionDisabled,
     _unregisterInstanceUsingThemingAPI,
-    _useParamsCss,
 } from '../theming/inject';
+import type { StaticCssTheme } from '../theming/staticCssThemeTypes';
+import { _isStaticCssTheme } from '../theming/staticCssThemeTypes';
 import { _initStyledRootFromInnerOfThreeElements } from '../theming/styledRoot';
 import type { Theme } from '../theming/theme';
-import { ThemeImpl } from '../theming/themeImpl';
+import type { _ThemeHooks } from '../theming/themeHooks';
+import { ThemeImpl, uninstallLegacyCSS } from '../theming/themeImpl';
 import type { ParamType } from '../theming/themeTypeUtils';
 import { paramToVariableName } from '../theming/themeUtils';
 import { _createAgElement, _observeResize } from '../utils/dom';
@@ -58,17 +61,20 @@ export abstract class BaseEnvironment<
         this.eRootDiv = beans.eRootDiv;
     }
 
-    private theme: ThemeImpl | undefined;
-    private readonly globalCSS: [string, string][] = [];
+    private theme: _ThemeHooks | undefined;
+    private readonly globalCSS = new Map<string, string>();
 
     protected abstract initVariables(): void;
     protected abstract getAdditionalCss(): Map<string, string[]>;
 
-    protected abstract postProcessThemeChange(newTheme: ThemeImpl | undefined, themeProperty?: Theme | 'legacy'): void;
+    protected abstract postProcessThemeChange(
+        newTheme: _ThemeHooks | undefined,
+        themeProperty?: Theme | StaticCssTheme | 'legacy'
+    ): void;
 
     protected abstract getDefaultTheme(): Theme;
 
-    protected abstract themeError(theme: Theme | 'legacy'): void;
+    protected abstract themeError(theme: Theme | StaticCssTheme | 'legacy'): void;
 
     protected abstract shadowRootError(): void;
 
@@ -124,10 +130,10 @@ export abstract class BaseEnvironment<
         hasAncestorStyledRoot?: boolean,
         legacyThemeClassesInherited?: boolean
     ): [inheritClass: string, applyClass: string, directionClass: string] {
-        const { theme } = this;
-        const [inheritClass, applyClass] = theme
-            ? theme._getCssClasses()
-            : ['', this.useLegacyThemeClasses(legacyThemeClassesInherited)];
+        const [inheritClass, applyClass] = this.theme?._getCssClasses() ?? [
+            '',
+            this.useLegacyThemeClasses(legacyThemeClassesInherited),
+        ];
         const directionClass = this.gos.get('enableRtl') ? 'ag-rtl' : 'ag-ltr';
         // A grid nested within another grid's styled root inherits its theme, so its
         // own styled root must not re-apply the theme classes. Note it's intentional that
@@ -182,10 +188,9 @@ export abstract class BaseEnvironment<
     }
 
     public addGlobalCSS(css: string, debugId: string): void {
-        if (this.theme) {
+        this.globalCSS.set(css, debugId);
+        if (this.theme?._injectsGridCss) {
             _injectGlobalCSS(css, this.eStyleContainer, debugId, this.cssLayer, 0, this.styleNonce);
-        } else {
-            this.globalCSS.push([css, debugId]);
         }
     }
 
@@ -223,7 +228,7 @@ export abstract class BaseEnvironment<
         return newSize;
     }
 
-    protected getMeasurementContainer(): HTMLElement {
+    public getMeasurementContainer(): HTMLElement {
         let container = this.eMeasurementContainer;
         if (!container) {
             container = this.eMeasurementContainer = _createAgElement({ tag: 'div', cls: 'ag-measurement-container' });
@@ -299,53 +304,48 @@ export abstract class BaseEnvironment<
     }
 
     private handleThemeChange(): void {
-        const { gos, theme: oldTheme } = this;
-        const themeProperty = gos.get('theme');
-        let newTheme: ThemeImpl | undefined;
-        if (themeProperty === 'legacy') {
-            newTheme = undefined;
-        } else {
-            const themeOrDefault = themeProperty ?? this.getDefaultTheme();
-            if (themeOrDefault instanceof ThemeImpl) {
-                newTheme = themeOrDefault;
-            } else {
-                this.themeError(themeOrDefault);
-            }
-        }
-        if (newTheme !== oldTheme) {
+        const newTheme = this.resolveTheme();
+        if (newTheme !== this.theme) {
             this.handleNewTheme(newTheme);
         }
-        this.postProcessThemeChange(newTheme, themeProperty);
+        this.postProcessThemeChange(newTheme, this.gos.get('theme'));
     }
 
-    private handleNewTheme(newTheme: ThemeImpl | undefined): void {
-        const { gos, globalCSS } = this;
-        const additionalCss = this.getAdditionalCss();
-        if (newTheme) {
-            _injectCoreAndModuleCSS(this.eStyleContainer, this.cssLayer, this.styleNonce, additionalCss);
-            for (const [css, debugId] of globalCSS) {
-                _injectGlobalCSS(css, this.eStyleContainer, debugId, this.cssLayer, 0, this.styleNonce);
-            }
-            globalCSS.length = 0;
+    /** The theme set by the `theme` option or its default, or undefined for legacy themes or an invalid value. */
+    private resolveTheme(): _ThemeHooks | undefined {
+        const themeProperty = this.gos.get('theme');
+        if (themeProperty === 'legacy') {
+            return undefined;
         }
+        const theme = themeProperty ?? this.getDefaultTheme();
+        if (theme instanceof ThemeImpl || _isStaticCssTheme(theme)) {
+            return theme;
+        }
+        this.themeError(theme);
+        return undefined;
+    }
+
+    private handleNewTheme(newTheme: _ThemeHooks | undefined): void {
+        const { eStyleContainer, cssLayer, styleNonce, globalCSS } = this;
         this.theme = newTheme;
-        newTheme?._startUse({
-            loadThemeGoogleFonts: gos.get('loadThemeGoogleFonts'),
-            styleContainer: this.eStyleContainer,
-            cssLayer: this.cssLayer,
-            nonce: this.styleNonce,
-            moduleCss: additionalCss,
+        if (newTheme && !_isStyleInjectionDisabled()) {
+            uninstallLegacyCSS();
+        }
+        if (newTheme?._injectsGridCss) {
+            _injectCoreAndModuleCSS(eStyleContainer, cssLayer, styleNonce, this.getAdditionalCss());
+            for (const [css, debugId] of globalCSS) {
+                _injectGlobalCSS(css, eStyleContainer, debugId, cssLayer, 0, styleNonce);
+            }
+        } else {
+            _unregisterInstanceUsingThemingAPI(this);
+        }
+        newTheme?._startUse?.({
+            environment: this,
+            styleContainer: eStyleContainer,
+            cssLayer,
+            nonce: styleNonce,
+            loadThemeGoogleFonts: this.gos.get('loadThemeGoogleFonts'),
         });
-
-        _useParamsCss(
-            this,
-            newTheme?._getParamsCss() ?? null,
-            newTheme?._getParamsClassName() ?? null,
-            this.eStyleContainer,
-            this.cssLayer,
-            this.styleNonce
-        );
-
         this.fireStylesChangedEvent('theme');
     }
 

@@ -1,4 +1,4 @@
-import { KeyCode, RefPlaceholder, _getActiveDomElement, _setAriaDisabled } from 'ag-stack';
+import { KeyCode, RefPlaceholder, _getActiveDomElement, _setAriaDisabled, _translateTokens } from 'ag-stack';
 
 import type { BeanCollection } from '../context/context';
 import type { IRowModel } from '../interfaces/iRowModel';
@@ -73,10 +73,16 @@ export class PageNumbersComp extends Component {
         this.btNext.insertAdjacentElement('afterbegin', _createIconNoSpan(isRtl ? 'previous' : 'next', this.beans)!);
         this.btLast.insertAdjacentElement('afterbegin', _createIconNoSpan(isRtl ? 'first' : 'last', this.beans)!);
 
-        this.initNavButton(this.btFirst, () => this.onBtFirst(), 'firstPage', 'First Page');
-        this.initNavButton(this.btPrevious, () => this.onBtPrevious(), 'previousPage', 'Previous Page');
-        this.initNavButton(this.btNext, () => this.onBtNext(), 'nextPage', 'Next Page');
-        this.initNavButton(this.btLast, () => this.onBtLast(), 'lastPage', 'Last Page');
+        this.initNavButton(this.btFirst, () => this.onBtFirst(), 'firstPage', 'tooltipFirstPage', 'Go to first page');
+        this.initNavButton(
+            this.btPrevious,
+            () => this.onBtPrevious(),
+            'previousPage',
+            'tooltipPreviousPage',
+            'Go to previous page'
+        );
+        this.initNavButton(this.btNext, () => this.onBtNext(), 'nextPage', 'tooltipNextPage', 'Go to next page');
+        this.initNavButton(this.btLast, () => this.onBtLast(), 'lastPage', 'tooltipLastPage', 'Go to last page');
 
         this.addManagedListeners(this.eNumbers, {
             click: (e: MouseEvent) => this.onPageActivated(e.target as HTMLElement | null),
@@ -91,12 +97,18 @@ export class PageNumbersComp extends Component {
         this.refresh();
     }
 
-    private initNavButton(button: HTMLElement, action: () => void, control: string, defaultValue: string): void {
+    private initNavButton(
+        button: HTMLElement,
+        action: () => void,
+        control: string,
+        tooltipKey: string,
+        defaultValue: string
+    ): void {
         this.addTooltip({
             control,
             getGui: () => button,
             getLocation: () => 'pagination',
-            getTooltip: () => ({ value: this.getLocaleTextFunc()(control, defaultValue) }),
+            getTooltip: () => ({ value: this.getLocaleTextFunc()(tooltipKey, defaultValue) }),
         });
         this.activateTabIndex([button]);
         this.addManagedListeners(button, {
@@ -204,12 +216,19 @@ export class PageNumbersComp extends Component {
         button.classList.toggle('ag-disabled', disabled);
     }
 
+    private getPageButtonLabel(page: number, pageLabel: string): string {
+        // Built from the existing word so a localeText without this key reads as before.
+        return _translateTokens(this.getLocaleTextFunc(), 'ariaPaginationPageButton', `${pageLabel} \${page}`, {
+            page: String(page),
+        });
+    }
+
     private createPageButton(page: number, pageLabel: string): HTMLElement {
         const button = _createElement({
             tag: 'div',
             cls: 'ag-paging-page-number',
             role: 'button',
-            attrs: { [PAGE_ATTR]: String(page - 1), 'aria-label': `${pageLabel} ${page}` },
+            attrs: { [PAGE_ATTR]: String(page - 1), 'aria-label': this.getPageButtonLabel(page, pageLabel) },
         });
         button.textContent = this.formatNumber(page);
         this.activateTabIndex([button]);
@@ -223,7 +242,11 @@ export class PageNumbersComp extends Component {
             tag: 'div',
             cls: 'ag-paging-page-number ag-paging-page-number-current',
             role: 'button',
-            attrs: { 'aria-current': 'page', 'aria-disabled': 'true', 'aria-label': `${pageLabel} ${page}` },
+            attrs: {
+                'aria-current': 'page',
+                'aria-disabled': 'true',
+                'aria-label': this.getPageButtonLabel(page, pageLabel),
+            },
         });
         current.textContent = this.formatNumber(page);
         this.activateTabIndex([current]);

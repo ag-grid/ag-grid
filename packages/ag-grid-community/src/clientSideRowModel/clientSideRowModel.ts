@@ -1,3 +1,5 @@
+import { _debounce } from 'ag-stack';
+
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { GridOptions } from '../entities/gridOptions';
@@ -11,6 +13,7 @@ import {
     _getGroupSelectsDescendants,
     _getRowHeightAsNumber,
     _getRowHeightForNode,
+    _getSharedRowHeight,
     _isAnimateRows,
     _isClientSideLoadingRows,
 } from '../gridOptionsUtils';
@@ -448,13 +451,19 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         // be scrollable once it is, so estimate until we know - estimates are corrected on the next render.
         const allowEstimate = _canScrollVertically(beans) || !beans.environment.sizesMeasured;
 
+        const sharedRowHeight = _getSharedRowHeight(beans, defaultRowHeight);
+
         for (let i = 0, len = rowsToRender.length; i < len; ++i) {
             const rowNode = rowsToRender[i];
             positioned[i] = rowNode;
 
             if (rowNode.rowHeight == null) {
-                const rowHeight = _getRowHeightForNode(beans, rowNode, allowEstimate, defaultRowHeight);
-                rowNode.setRowHeight(rowHeight.height, rowHeight.estimated);
+                if (sharedRowHeight != null) {
+                    rowNode.setRowHeight(sharedRowHeight, false);
+                } else {
+                    const rowHeight = _getRowHeightForNode(beans, rowNode, allowEstimate, defaultRowHeight);
+                    rowNode.setRowHeight(rowHeight.height, rowHeight.estimated);
+                }
             }
 
             rowNode.setRowTop(nextRowTop);
@@ -1412,6 +1421,14 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         this.stages = null;
         this.stagesRefreshProps.clear();
         clearTimeout(this.asyncTransactionsTimer);
+    }
+
+    private readonly onRowHeightChanged_debounced = _debounce(this, this.onRowHeightChanged.bind(this), 100);
+    /**
+     * @deprecated v33.1
+     */
+    public onRowHeightChangedDebounced(): void {
+        this.onRowHeightChanged_debounced();
     }
 }
 

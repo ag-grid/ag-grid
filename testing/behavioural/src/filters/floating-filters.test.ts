@@ -1,5 +1,5 @@
 import { fireEvent, getByTestId, waitFor } from '@testing-library/dom';
-import { GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
+import { ALL_SEVERITIES, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import type {
     ColDef,
@@ -22,6 +22,7 @@ import {
     RowApiModule,
     TextFilterModule,
     agTestIdFor,
+    enableDevValidations,
     getGridElement,
     setupAgTestIds,
 } from 'ag-grid-community';
@@ -464,6 +465,10 @@ describe('Floating Filters', () => {
     describe.each([false, true])(
         'a custom filter giving its model as a string, with enableFilterHandlers %s',
         (enableFilterHandlers) => {
+            beforeEach(() => {
+                enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [348] });
+            });
+
             const describeModel = (model: number | null) => (model == null ? '' : `>${model}`);
             const passes = (value: number | null | undefined, model: number | null | undefined) =>
                 model == null || (value != null && value > model);
@@ -533,6 +538,7 @@ describe('Floating Filters', () => {
     test.each([false, true])(
         'with enableFilterHandlers %s, a floating filter replaced by another component shows the model set before',
         async (enableFilterHandlers) => {
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [348] });
             class ModelFloatingFilter implements IFloatingFilterComp {
                 private readonly eGui = document.createElement('input');
                 public init(): void {
@@ -662,6 +668,95 @@ describe('Floating Filters', () => {
 
             api.setGridOption('columnDefs', [{ field: 'x', headerStyle: { '--ff-test': 'two' } }]);
             await waitFor(() => expect(cells(api, 'x').floatingFilter.style.getPropertyValue('--ff-test')).toBe('two'));
+        });
+    });
+
+    describe('filter params carry no rowModel', () => {
+        const rowData = [{ x: 'a' }];
+
+        beforeEach(() => {
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [343, 344] });
+        });
+
+        test('legacy filter component init params', async () => {
+            let captured: IFilterParams | undefined;
+            class CapturingFilter implements IFilterComp {
+                private readonly eGui = document.createElement('div');
+                public init(params: IFilterParams): void {
+                    captured = params;
+                }
+                public getGui(): HTMLElement {
+                    return this.eGui;
+                }
+                public isFilterActive(): boolean {
+                    return false;
+                }
+                public doesFilterPass(): boolean {
+                    return true;
+                }
+                public getModel(): null {
+                    return null;
+                }
+                public setModel(): void {}
+            }
+            const api = await gridsManager.createGridAndWait('grid1', {
+                columnDefs: [{ field: 'x', filter: CapturingFilter }],
+                rowData,
+            });
+            await api.getColumnFilterInstance('x');
+
+            expect(captured!.column).toBeDefined();
+            expect('rowModel' in captured!).toBe(false);
+        });
+
+        test('filterParams function argument', async () => {
+            let captured: IFilterParams | undefined;
+            const api = await gridsManager.createGridAndWait('grid1', {
+                columnDefs: [
+                    {
+                        field: 'x',
+                        filter: 'agTextColumnFilter',
+                        filterParams: (p: IFilterParams) => {
+                            captured = p;
+                            return {};
+                        },
+                    },
+                ],
+                rowData,
+            });
+            await api.getColumnFilterInstance('x');
+
+            expect(captured!.column).toBeDefined();
+            expect('rowModel' in captured!).toBe(false);
+        });
+
+        test('floating filter component filterParams', async () => {
+            let captured: IFloatingFilterParams | undefined;
+            class CapturingFloatingFilter implements IFloatingFilterComp {
+                private readonly eGui = document.createElement('div');
+                public init(params: IFloatingFilterParams): void {
+                    captured = params;
+                }
+                public getGui(): HTMLElement {
+                    return this.eGui;
+                }
+                public onParentModelChanged(): void {}
+            }
+            await gridsManager.createGridAndWait('grid1', {
+                columnDefs: [
+                    {
+                        field: 'x',
+                        filter: 'agTextColumnFilter',
+                        floatingFilter: true,
+                        floatingFilterComponent: CapturingFloatingFilter,
+                    },
+                ],
+                rowData,
+            });
+            await waitFor(() => expect(captured).toBeDefined());
+
+            expect(captured!.filterParams.column).toBeDefined();
+            expect('rowModel' in captured!.filterParams).toBe(false);
         });
     });
 });

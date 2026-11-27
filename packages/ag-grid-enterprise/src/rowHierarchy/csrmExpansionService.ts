@@ -44,7 +44,12 @@ export class CsrmExpansionService
     private getInternalExpansionState(allowCollapsed = false) {
         const expandedRowGroupIds: string[] = [];
         const collapsedRowGroupIds: string[] = [];
-        this.beans.rowModel.forEachNode((node) => {
+        const rowModel = this.beans.rowModel as IClientSideRowModel;
+        // OPTIMIZATION: a flat grid without master rows has nothing expandable, so skip walking every row.
+        if (!rowModel.hierarchical && !this.gos.get('masterDetail')) {
+            return { expandedRowGroupIds, collapsedRowGroupIds };
+        }
+        rowModel.forEachNode((node) => {
             const id = node.id;
             if (!id) {
                 return;

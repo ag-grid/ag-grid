@@ -427,9 +427,9 @@
         "url": "./grouping-data/#grouping-on-object-data"
     },
     {
-        "errorIds": [283, 284, 285, 286],
-        "text": "Upgrading to AG Grid 34 - Filters",
-        "url": "./upgrading-to-ag-grid-34/#filters"
+        "errorIds": [355, 356, 357, 358],
+        "text": "Upgrading to AG Grid 37 - Removal of Deprecated APIs",
+        "url": "./upgrading-to-ag-grid-37/#removal-of-deprecated-apis"
     },
     {
         "errorIds": [291],
@@ -477,5 +477,11 @@
         "text": "Migrating to the Theming API",
         "url": "./theming-migration/",
         "description": "Moving from the v32 CSS themes to the Theming API."
+    },
+    {
+        "errorIds": [343, 344, 345, 346, 347, 348],
+        "text": "Migrating to Filter Handlers",
+        "url": "./enable-filter-handlers-migration/",
+        "description": "Moving from legacy filter mode to filter handlers, and opting out with `enableFilterHandlers: false`."
     }
 ]

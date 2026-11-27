@@ -1,4 +1,4 @@
-import { _TOOLTIP_POSITIONS, _isTooltipPosition } from 'ag-stack';
+import { _TOOLTIP_POSITIONS, _isStaticCssTheme, _isTooltipPosition } from 'ag-stack';
 
 import type { DomLayoutType, GridOptions } from '../../entities/gridOptions';
 import type { CalculatedColumnsOptions } from '../../interfaces/iCalculatedColumns';
@@ -14,6 +14,13 @@ import type {
 } from '../validationTypes';
 import { _createDeprecationWarning, _createValidationWarning, buildAllValidNames } from '../validationTypes';
 import { validateAccentedSort } from './accentedSortValidation';
+
+const STATIC_CSS_THEME_IGNORED_OPTIONS = [
+    'loadThemeGoogleFonts',
+    'styleNonce',
+    'themeCssLayer',
+    'themeStyleContainer',
+] as const satisfies (keyof GridOptions)[];
 
 /**
  * Deprecations have been kept separately for ease of removing them in the future.
@@ -67,11 +74,6 @@ const GRID_OPTION_DEPRECATIONS = (): Deprecations<GridOptions> => ({
         version: '32.2',
         message:
             'Either use `onDisplayedColumnsChanged` which is fired at the same time, or use one of the more specific column events.',
-    },
-
-    suppressAdvancedFilterEval: {
-        version: '34',
-        message: 'Advanced filter no longer uses function evaluation, so this option has no effect.',
     },
 
     suppressContentVisibilityAuto: { version: '36.1', message: 'Use `enableContentVisibilityAuto` instead.' },
@@ -791,6 +793,24 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                           value: scrollGestureMode,
                       })
                     : null;
+            },
+        },
+        theme: {
+            validate: (options) => {
+                const { theme } = options;
+                if (theme === 'legacy') {
+                    return _createDeprecationWarning(306, {
+                        version: '37.0',
+                        name: "theme: 'legacy'",
+                        message:
+                            'Use a Theming API theme like `themeQuartz`, or `staticCssTheme` to load its CSS from static files, e.g. for a strict Content Security Policy.',
+                    });
+                }
+                if (_isStaticCssTheme(theme)) {
+                    const ignored = STATIC_CSS_THEME_IGNORED_OPTIONS.filter((key) => options[key] != null);
+                    return ignored.length > 0 ? _createValidationWarning(352, { options: ignored }) : null;
+                }
+                return null;
             },
         },
         renderingMode: {

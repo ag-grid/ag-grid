@@ -36,6 +36,8 @@
     --controls-gap: 8px;
     /* Below `--row-gap`, so a wrapped control reads as attached to its own label text */
     --label-gap: 4px;
+    /* Above `--row-gap`, so the space between sections reads as wider than any inside one */
+    --section-gap: 12px;
 
     --select-chevron: url('data:image/svg+xml;utf8,<svg fill="none" stroke="%23667085" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M6 9L12 15L18 9"/></svg>');
     --checkbox-tick-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6L9 17L4 12'/%3E%3C/svg%3E");
@@ -91,7 +93,8 @@
 }
 
 /* Zero specificity, so an example that sizes its own element by class or tag keeps that size */
-:where(.example-wrapper:not(.example-wrapper--row)) > :where(:not(.example-controls, .example-header)) {
+:where(.example-wrapper:not(.example-wrapper--row, .example-wrapper--auto-height))
+    > :where(:not(.example-controls, .example-header)) {
     flex: 1 1 0;
     min-height: 0;
 }
@@ -100,6 +103,12 @@
    skips its children, so the example's own `flex` values govern them. */
 .example-wrapper--row {
     flex-direction: row;
+}
+
+/* For a grid that sets its own height, such as with auto-height or print layout. The wrapper takes
+   its content's height and the grow rule above skips its children, so the controls keep their gap. */
+.example-wrapper--auto-height {
+    height: auto;
 }
 
 /* Hide codesandbox highlighter */
@@ -145,9 +154,10 @@ body > #highlighter {
     appearance: none;
     display: inline-block;
     height: 36px;
-    /* Even padding centres the text in the 36px box, so it lines up with the text of a boxless
-       neighbour, such as a checkbox label, that `.controls-row` centres beside it. */
-    padding: 6px 14px;
+    /* A pixel more below than above: the line box keeps room for descenders, so text padded evenly
+       looks low in the 36px box. The cost is that text beside a boxless neighbour, such as a
+       checkbox label that `.controls-row` centres on the same line, sits a pixel above it. */
+    padding: 5px 14px 7px;
     white-space: nowrap;
     border-radius: 6px;
     color: var(--button-fg);
@@ -175,6 +185,17 @@ body > #highlighter {
 .example-controls textarea {
     height: auto;
     padding: 7px 14px;
+}
+
+/* A browser sizes a number input for about twenty characters. This fits four, such as 0.75, beside the spinner. */
+.example-controls input[type='number'] {
+    width: 80px;
+}
+
+/* A browser sizes a text input from its font, so its default width differs between browsers.
+   Zero-specificity `:where()` lets an example's own class still size its input. */
+.example-controls :where(input[type='text']) {
+    width: 200px;
 }
 
 .example-controls pre,
@@ -423,8 +444,29 @@ body > #highlighter {
     border: 0;
 }
 
+/* A titled, bordered set of rows, for controls that only make sense together, e.g. an export's
+   header settings beside its footer settings. Sections stack, or sit side by side in a `.controls-row`. */
+.example-controls fieldset.controls-section {
+    /* A fieldset is otherwise as wide as its content, so its rows could not wrap */
+    min-width: 0;
+    padding: 4px 12px 12px;
+    border: 1px solid var(--button-border);
+    border-radius: 8px;
+}
+
+.example-controls .controls-section > legend {
+    padding: 0 4px;
+    font-weight: 600;
+}
+
+.controls-row:has(> .controls-section) {
+    align-items: stretch;
+    gap: var(--section-gap);
+}
+
 /* Colour key; the example's own class colours the swatch, e.g. `legend-swatch locked-col` */
-.example-controls .legend-item {
+.example-controls .legend-item,
+.example-controls button:has(> .legend-swatch) {
     display: inline-flex;
     align-items: center;
     gap: var(--label-gap);
@@ -461,13 +503,19 @@ body > #highlighter {
     min-width: 0;
 }
 
-/* Each switch's label text would otherwise sit as close to the next control as to its own switch */
-.controls-row > label:has(> input[role='switch']):not(:last-child) {
+/* Each checkbox's or switch's label text would otherwise sit as close to the next control as to its
+   own box. A `gap-left` neighbour already brings its own wider gap. */
+.controls-row > label:has(> input[type='checkbox']):not(:last-child, :has(+ .gap-left)) {
     margin-right: calc(var(--row-gap) * 2);
 }
 
-.controls-row + .controls-row {
+:is(.controls-row, .controls-section) + :is(.controls-row, .controls-section) {
     margin-top: var(--row-gap);
+}
+
+/* Sections side by side are spaced by the row's gap instead */
+.controls-row > .controls-section {
+    margin-top: 0;
 }
 
 .controls-row.center {
@@ -486,6 +534,10 @@ body > #highlighter {
     margin-right: calc(var(--row-gap) * 6);
 }
 
-.controls-row .gap-left {
-    margin-left: calc(var(--row-gap) * 6);
+/* The gap goes on the end of the control before, so a row that wraps here starts its new line flush.
+   A control-group fieldset is `display: contents` and takes no margin, so the gap goes on the box beside it. */
+.controls-row > :has(+ .gap-left),
+.controls-row > :has(+ .control-group > .gap-left:first-child),
+.controls-row > .control-group:has(+ .gap-left) > :last-child {
+    margin-right: calc(var(--row-gap) * 6);
 }

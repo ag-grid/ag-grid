@@ -135,7 +135,8 @@ The function receives the same parameters as a `valueGetter`, plus:
 
 The returned value is used everywhere the grid reads the cell value, including export, the clipboard,
 `api.getCellValue`, and sorting and filtering in the Client-Side Row Model. With the Server-Side Row Model, the server
-sorts and filters group rows. The returned value is not stored, so parent groups aggregate the computed aggregates of
+sorts and filters group rows, see
+[Grouping and Aggregating the Same Column](./server-side-model-aggregation/#grouping-and-aggregating-the-same-column). The returned value is not stored, so parent groups aggregate the computed aggregates of
 their children, and the `avg` function still weights each child group by its row count.
 
 The grid cannot reverse an `aggValueGetter`, so its built-in distribution cannot turn a value typed into a group
@@ -172,7 +173,9 @@ The grid does not write the edited value into the group row's own data, as the f
 With `groupRowEditable` or `groupRowValueSetter` set but no function `groupRowValueSetter`, group cells in the
 column are not editable while it is aggregated, `setDataValue` on a group row leaves the data unchanged, and the grid
 logs a warning. Leaf rows stay editable. With neither set, `setDataValue` writes the cell's field as it does for a
-column with a `valueGetter`.
+column with a `valueGetter`, but `editable` does not open an editor on group or tree data parent cells the getter
+computes. Server-Side Row Model tree data parents and grand total rows are not group rows, so they stay read-only
+even with a function `groupRowValueSetter`.
 
 `aggValueGetter` is not called for leaf rows, group columns or pivot result columns. An open group whose aggregate is
 shown on its total row displays no value, so the getter is not called to display it.

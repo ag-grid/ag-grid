@@ -202,7 +202,6 @@ const GridExample = () => {
                             <input
                                 type="text"
                                 id="filter-text-box"
-                                style={{ width: '100px' }}
                                 onChange={(e) => onQuickFilterChanged(e.target.value)}
                                 placeholder="Filter..."
                             />
@@ -218,7 +217,8 @@ const GridExample = () => {
                                 Year to Jan
                             </span>
 
-                            <span className="legend-item gap-left">
+                            <span className="gap-left">Legend:</span>
+                            <span className="legend-item">
                                 <span className="legend-swatch cell-bud"></span>Actual
                             </span>
                             <span className="legend-item">

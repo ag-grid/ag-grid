@@ -3,6 +3,8 @@ import '@testing-library/jest-dom/vitest';
 import { userEvent } from '@testing-library/user-event';
 import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';
 import {
+    ALL_SEVERITIES,
+    LEGACY_FILTER_WARNING_IDS,
     TestGridsManager,
     asyncSetTimeout,
     canvasPolyfill,
@@ -11,7 +13,7 @@ import {
 } from 'ag-test-utils';
 
 import type { AgColumn, ColDef, GridApi } from 'ag-grid-community';
-import { getGridElement } from 'ag-grid-community';
+import { enableDevValidations, getGridElement } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
 /**
@@ -658,6 +660,9 @@ describe('Editable header name — labels follow a rename made in the UI', () =>
             ['multi', { field: 'athlete', filter: 'agMultiColumnFilter' }],
             ['read-only (custom filter)', { field: 'athlete', filter: ReadOnlyCustomFilter }],
         ])('%s floating filter', async (_name, colDef) => {
+            if (colDef.filter === ReadOnlyCustomFilter) {
+                enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: LEGACY_FILTER_WARNING_IDS });
+            }
             const api = await gridMgr.createGridAndWait('myGrid', {
                 columnDefs: [{ ...colDef, floatingFilter: true, headerNameEditable: true }],
                 rowData,

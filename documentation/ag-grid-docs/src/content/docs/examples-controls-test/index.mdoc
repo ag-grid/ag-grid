@@ -35,7 +35,7 @@ The `controls-row` div is a flexbox container. All elements within the `controls
 
 There are four classes you can apply to elements within a controls row to manipulate the row layout. See below for examples of these classes in use.
 
-The classes `gap-left` and `gap-right` can be added to create a gap on either side of the element to group elements within a row. Prefer gap-right for better wrapping within the row.
+The classes `gap-left` and `gap-right` can be added to create a gap on either side of the element to group elements within a row. With either class, a row that wraps at the gap starts its next line flush.
 
 The classes `push-left` and `push-right` can be added to push an element to the far side of a row. For example, a “Reset” button can be pushed to the far right of the row to separate it from other controls.
 
@@ -72,6 +72,37 @@ For a single option that is either on or off, use a button with `aria-pressed`. 
 <button aria-pressed="true" onclick="toggleTooltip(event)">Tooltip</button>
 ```
 
+### Grouping controls
+
+Where controls only make sense together, such as the settings for an export's header beside the same settings for its footer, wrap each set in a `controls-section` fieldset and title it with a `legend`. A section holds `controls-row` divs like `example-controls` does. Sections stack, or sit side by side when they share a `controls-row`, and wrap below one another when there isn't room.
+
+```html
+<div class="controls-row">
+    <fieldset class="controls-section">
+        <legend>Header</legend>
+        <div class="controls-row"><!-- Header controls... --></div>
+    </fieldset>
+    <fieldset class="controls-section">
+        <legend>Footer</legend>
+        <div class="controls-row"><!-- Footer controls... --></div>
+    </fieldset>
+</div>
+```
+
+Prefer a section over a `gap-right` span used as a heading, which reads as one more control and is separated from its controls when the row wraps. Keep controls that apply to everything, such as an Export button, in a row outside the sections.
+
+A `control-group` fieldset is different: it has no border or title, and only exists so that a set of controls can be disabled together.
+
+### Colour keys
+
+Where the grid colours something to match a control, such as a column group's header, put a `legend-swatch` span inside that control. The example's own class colours the swatch, so give it the same class as the grid uses.
+
+```html
+<button onclick="onMedalsInGroupOnly()"><span class="legend-swatch medals-group"></span>Medals in Group</button>
+```
+
+For a key that is not a control, wrap the swatch and its text in a `legend-item` span.
+
 ### Additional styles
 
 You should not need to apply any additional styles in an example’s `styles.css` file in order to style your example controls. CSS in `styles.css` should be reserved for code that is relevant to the function of the example.
@@ -88,5 +119,7 @@ What to test:
 - Button group segments share a single border, the checked segment is highlighted, and the arrow keys move the selection.
 - Two groups in one row hold their selections independently, and a group inside a disabled `control-group` keeps its own.
 - Disabled controls, disabled button group segments and disabled `control-group` fieldsets are all dimmed.
+- `controls-section` fieldsets show their border and title, sit side by side when there is room and wrap below one another when there is not.
+- A `legend-swatch` sits vertically centred beside its text, both inside a button and in a `legend-item`.
 
 {% gridExampleRunner title="Examples Controls Tester" name="examples-controls-tester" exampleHeight=2600 /%}

@@ -109,16 +109,14 @@ const GridExample = () => {
                     </div>
                 </div>
 
-                <div className="grid-wrapper">
-                    <AgGridReact
-                        ref={gridRef}
-                        rowData={rowData}
-                        columnDefs={columnDefs}
-                        defaultColDef={defaultColDef}
-                        rowSelection={rowSelection}
-                        statusBar={statusBar}
-                    />
-                </div>
+                <AgGridReact
+                    ref={gridRef}
+                    rowData={rowData}
+                    columnDefs={columnDefs}
+                    defaultColDef={defaultColDef}
+                    rowSelection={rowSelection}
+                    statusBar={statusBar}
+                />
             </div>
         </AgGridProvider>
     );

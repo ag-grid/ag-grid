@@ -80,6 +80,7 @@ export default {
             const builds = [
                 ['run-many', '-t', 'build:umd', '-p', UMD_PROJECTS],
                 ['run', 'ag-grid-vue3:build'],
+                ['run', 'ag-grid-community:build:static-css'],
             ];
             for (const args of builds) {
                 const built = await runLog.exec(bin('nx'), args, { cwd: rootDir });

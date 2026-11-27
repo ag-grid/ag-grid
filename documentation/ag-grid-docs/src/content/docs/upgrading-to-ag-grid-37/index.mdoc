@@ -36,6 +36,7 @@ To automate the upgrade, use the [`ag-update` AI skill](./skills), which reads t
 ### TypeScript
 
 - The minimum TypeScript version is now 5.9.3.
+- Error ids for warnings retired in AG Grid 37 are no longer part of the `ErrorId` type. Remove them from any `suppress` list passed to `enableDevValidations()` or `ValidationModule.with()`.
 
 ### Filtering
 
@@ -60,10 +61,10 @@ This does not reproduce the exact previous appearance. Focus and built-in contro
 
 ### Tooltips
 
-- `tooltipShowMode` now defaults to `'whenTruncated'`: grid-rendered cells, headers, Set Filter items, tool panel labels and drop-zone pills show automatic tooltips when truncated. Explicit `'standard'` disables these and preserves configured tooltips without truncation checks.
-- In `'whenTruncated'` mode, configured tooltips matching the raw or displayed text require truncation; different text and structured tooltip content do not. This also applies to native browser titles. Callbacks returning no content still suppress the tooltip.
+- `tooltipShowMode` now defaults to `'auto'`: grid-rendered cells, headers, Set Filter items, tool panel labels and drop-zone pills show automatic tooltips when truncated. Configured content appears when truncated or different from the default tooltip value (`valueFormatted` when available, otherwise `value` for cells). This also applies to native browser titles.
+- Explicit `'standard'` and `'whenTruncated'` still require configured tooltip content: `'standard'` shows it without truncation checks, and `'whenTruncated'` requires truncation. The new `'whenDifferent'` mode also requires configured content, showing it only when it differs from the default tooltip value. Callbacks returning no content suppress the tooltip in every mode.
 - Set Filter `showTooltips` now defaults to unset, following `tooltipShowMode`. Set it to `false` to disable item previews, or `true` to configure them explicitly.
-- Custom renderers receive no automatic text tooltip. For configured, repeated-text tooltips, use `setTooltip(value, shouldDisplay)` to provide a truncation check; unknown truncation no longer assumes the tooltip should show. Remove `headerTooltip` if your custom header already manages its own tooltip.
+- Custom renderers receive no automatic text tooltip. In `'auto'` mode, configured content matching the default tooltip value needs a truncation check through `setTooltip(value, shouldDisplay)`. The callback overrides the mode's display check. Explicit `'whenTruncated'` preserves the custom-renderer fallback when truncation cannot be measured. Remove `headerTooltip` if your custom header already manages its own tooltip.
 - Automatic text tooltips use the same component selection as configured tooltips at each location, including column/group custom components where supported. `builtInTooltipComponent` and `suppressBuiltInTooltips` only apply to control hints; `IBuiltInTooltipParams.control` is required. Ordinary `ITooltipParams` no longer includes `control`.
 - Built-in control tooltips are enabled by default with `TooltipModule`, replacing managed controls' native `title` hints. They always support hover and immediate keyboard focus, regardless of `tooltipTrigger` or `tooltipShowDelay`, and remain target-anchored. Set `suppressBuiltInTooltips: true` to hide them or use `builtInTooltipComponent` for custom rendering. See [Built-in Control Tooltips](./tooltips-built-in/).
 - `tooltipTrigger: 'focus'` now uses the same show-delay rules as hover for ordinary tooltips. Set `tooltipShowDelay: 0` for immediate display, except for filter Apply-button validation and Advanced Filter validation tooltips, which override it with 1 second. Pointer switching uses `tooltipSwitchShowDelay` instead (200 ms by default). Screen-reader descriptions remain available immediately on focus.
@@ -82,6 +83,7 @@ This does not reproduce the exact previous appearance. Focus and built-in contro
 
 - `headerClass` classes are now also added to the column's floating filter cell, and the `headerClass` callback receives `params.floatingFilter` (`true` for floating filter cells, `false` for column and column group header cells). To keep header-only styling, return classes only when `params.floatingFilter` is `false`, or narrow selectors with `.ag-header-cell:not(.ag-floating-filter)`.
 - A `headerClass` callback is now also called for every floating filter cell (every column has one when any column has a floating filter), including on pin and column definition changes, so callbacks with side effects run more often. See [Column Headers Styling](./column-headers-styling/#header-class).
+- In a multi-column sort, the sort index now shows on the far side of the sort icon from the header text, for example `Athlete ↑ 1`, where v36 showed `Athlete 1 ↑`. Right-aligned headers are unchanged. Set its colour with the `headerSortIndexTextColor` [theme parameter](./theming-parameters/). Custom header templates copied from the previous [Default Template](./column-headers-components/#default-template) keep the old order; move `eSortOrder` after the sort icons to match.
 
 ### Validation
 
@@ -95,6 +97,7 @@ This does not reproduce the exact previous appearance. Focus and built-in contro
 ### Server-Side Row Model
 
 - When rows are grouped, the provided full width loading row is now indented to the level of the rows being loaded, so its spinner lines up with the expand and collapse icons of the rows around it. To display loading rows without indentation, add `.ag-row-loading .ag-loading { padding-inline-start: var(--ag-cell-horizontal-padding); }` to your CSS. See [Full Width Loading Row](./server-side-model-loading-rows/#full-width-loading-row).
+- A grand total row with `grandTotalRow: 'top'` now sticks to the top of the viewport when scrolling, as it does with the Client-Side Row Model. To let it scroll with the rows as before, set `suppressStickyTotalRow: 'grand'`. See [Suppress Sticky Rows](./aggregation-total-rows/#suppress-sticky-rows).
 
 {% if isFramework("react") %}
 
@@ -130,6 +133,43 @@ The following deprecated APIs have now been removed.
 - `rowGroupingHierarchy` - removed, use `groupHierarchy` instead.
 - Rich Select Cell Editor: `colDef.keyCreator` is no longer used to build the search strings for object values - removed, please use `cellEditorParams.formatValue` (or a `valueFormatter`) instead. Columns with object values that only define a `keyCreator` no longer support typeahead search in the Rich Select Cell Editor. `colDef.keyCreator` itself is unchanged and is still used for grouping and the Set Filter.
 
+### Filtering
+
+- Set Filter instance methods `setFilterValues()`, `resetFilterValues()`, `refreshFilterValues()`, `getFilterKeys()` and `getFilterValues()` - removed, call them on the Set Filter handler instead, via `api.getColumnFilterHandler<SetFilterHandler>(colKey)`. For a Set Filter inside a Multi Filter, use `getChildFilterInstance<SetFilterUi>(index).getFilterHandler()`.
+- `ISetFilter` - removed, use `SetFilterUi` for the instance from `api.getColumnFilterInstance()` and `SetFilterHandler` for the handler from `api.getColumnFilterHandler()`. Its typed `getModel()` and `setModel()` go with it. For `getModelFromUi()`, use `api.getColumnFilterModel(key, true)` instead (requires `enableFilterHandlers`; in legacy filter mode the instance methods are still available on `IProvidedFilter`).
+- `onNewRowsLoaded()` on grid-provided filter instances and `onAnyFilterChanged()` on the Set Filter instance - removed, they were internal no-ops with no replacement. Custom legacy filters that implement them are still called.
+- `suppressAdvancedFilterEval` - removed, it had no effect.
+- `ScalarFilterParams` - removed, use `IScalarFilterParams & IFilterParams` instead.
+- `rowModel` in filter params (`IFilterParams`, `filterParams` functions and the React `CustomFilterProps`) - removed. Filter params were the only place the grid exposed its row model, so the row model is no longer available. Use the grid API via `params.api` instead.
+
+| Removed                  | Replacement                    |
+| ------------------------ | ------------------------------ |
+| `rowModel.forEachNode()` | `api.forEachNode()`            |
+| `rowModel.getRow()`      | `api.getDisplayedRowAtIndex()` |
+| `rowModel.getRowNode()`  | `api.getRowNode()`             |
+| `rowModel.getRowCount()` | `api.getDisplayedRowCount()`   |
+
+`api.forEachLeafNode()`, `api.forEachNodeAfterFilter()` and `api.forEachNodeAfterFilterAndSort()` are also available. Other `IRowModel` members have no API equivalent; raise an issue if you rely on one.
+
+- `getModel()`, `setModel()`, `isFilterActive()` and `doesFilterPass()` on grid-provided filter instances (Text, Number, BigInt, Date and Set Filters, including as Multi Filter children) - removed. Calling one does nothing and logs an error naming its replacement. Use the grid's filter model API instead. Custom legacy filter components and the legacy Multi Filter keep their own methods. The `ProvidedFilter`, `TextFilter`, `NumberFilter`, `BigIntFilter`, `DateFilter` and `SetFilter` classes no longer satisfy `IFilterComp`; type instances as `ISimpleFilter`, or `SetFilterUi` for the Set Filter.
+- `IProvidedFilter` - no longer extends `IFilter`, so it and `ISimpleFilter` no longer declare `getModel()`, `setModel()`, `isFilterActive()`, `doesFilterPass()`, `getModelAsString()` or `refresh()`. `IMultiFilter` still extends `IFilter`.
+- `FilterModifiedEvent.filterInstance` - now typed `IFilterComp | IProvidedFilter`.
+
+| Removed                                                                             | Replacement                                                                                                                                                          |
+| ----------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `api.getColumnFilterInstance(col).then((f) => f.getModel())`                        | `api.getColumnFilterModel(col)`                                                                                                                                      |
+| `f.isFilterActive()`                                                                | `api.getColumnFilterModel(col) != null`                                                                                                                              |
+| `f.setModel(model)`                                                                 | `api.setColumnFilterModel(col, model).then(() => api.onFilterChanged())`                                                                                             |
+| `event.filterInstance.getModel()` in a `filterModified` handler                     | `api.getColumnFilterModel(event.column)`                                                                                                                             |
+| `params.parentFilterInstance((p) => p.setModel(model))` in a legacy floating filter | `params.api.setColumnFilterModel(params.column, model).then(() => params.filterParams.filterChangedCallback())`                                                      |
+| `f.doesFilterPass({ node, data })`                                                  | `api.getColumnFilterHandler<FilterHandler>(col)?.doesFilterPass({ node, data, model: api.getColumnFilterModel(col), handlerParams: {} as FilterHandlerBaseParams })` |
+
+`api.setColumnFilterModel()` takes a column key, returns a native `Promise`, waits for data type inference to finish, and does nothing while the Advanced Filter is enabled. The grid-provided filter handlers do not read `handlerParams`, hence the cast.
+
+For a Multi Filter child, these replacements act on the whole Multi Filter, whose model is `{ filterType: 'multi', filterModels }`: read the child's model from `filterModels[index]`, and set it by setting the whole Multi Filter model. In legacy filter mode the Multi Filter has no handler, so call `doesFilterPass()` on the Multi Filter instance instead.
+
+`api.getColumnFilterInstance()`, `getChildFilterInstance()` and a floating filter's `parentFilterInstance` default to the deprecated `IFilter` type, so these calls still compile. On grid-provided filters they do nothing and log an error. Pass a type such as `getColumnFilterInstance<ISimpleFilter>()` or `IFloatingFilterParams<ISimpleFilter>` to find them.
+
 ### Row Node
 
 - `firstChild` - removed. With the Client-Side Row Model, use `rowNode.parent?.childrenAfterSort?.[0] === rowNode` instead.
@@ -144,6 +184,7 @@ In the Server-Side Row Model only `firstChild` was ever set, and it has no direc
 - `ChartType`, `CrossFilterChartType`: `'doughnut'` - removed, please use `'donut'` instead. This applies to `createRangeChart`, `createPivotChart`, `createCrossFilterChart`, `updateChart` and `chartGroupsDef.pieGroup`. Calling `createRangeChart`, `createPivotChart` or `createCrossFilterChart` with `chartType: 'doughnut'` now logs a warning and does not create a chart, and `updateChart` with `chartType: 'doughnut'` also logs a warning. Chart models saved before v37 with `'doughnut'` can still be restored with `restoreChart`.
 - `EditingCellPosition`: `column` and `colKey` - removed, please use `colId` instead. This affects the results of `api.getEditingCells()` and the `editorsState` entries passed to the `getFullRowEditValidationErrors` callback. `startEditingCell({ colKey })` is unchanged.
 - `ChartCreated`, `ChartRangeSelectionChanged`, `ChartOptionsChanged`, `ChartDestroyed` and `AsyncTransactionsFlushed` - removed, use `ChartCreatedEvent`, `ChartRangeSelectionChangedEvent`, `ChartOptionsChangedEvent`, `ChartDestroyedEvent` and `AsyncTransactionsFlushedEvent` instead.
+- `IRowModel`, `IClientSideRowModel` and `IServerSideRowModel` - now internal. They are still exported, but can change without notice.
 - `ExpandCollapseAllEvent` - removed, use `ExpandOrCollapseAllEvent` instead.
 - `ServerSideStoreParams` - removed, use `ServerSideGroupLevelParams` instead.
 - `IDetailCellRendererParams`: `agGridReact` and `frameworkComponentWrapper` - removed, they were not used.
@@ -190,5 +231,63 @@ The following icon keys have been removed. Setting them in the `icons` grid opti
 {% /if %}
 
 {% /expandingSection %}
+
+## Deprecations
+
+Legacy filter mode, which applies when the grid option `enableFilterHandlers` is not set or is `false`, is deprecated. The APIs below remain supported and continue to work in AG Grid 37, but the replacements are recommended. In AG Grid 38 `enableFilterHandlers` defaults to `true`, and legacy filter mode will be removed in a major version after AG Grid 38. See [Migrating to Filter Handlers](./enable-filter-handlers-migration/), and [Filter Component](./component-filter/#migrating-to-filter-handlers) for the features filter handlers enable.
+
+When `enableFilterHandlers` is not set, AG Grid 37 logs a warning for each of these cases that is in use: custom filter components, custom floating filters, `filterModified` listeners, and Multi Filter `buttons`, `closeOnApply` or legacy methods. The warnings are logged in production as well as in development. Setting `enableFilterHandlers: false` logs a deprecation in development only.
+
+Apps that use `enableDevValidations({ throwOn: ['warning'] })` with legacy filters and `enableFilterHandlers` unset will now throw where the legacy feature is first used: usually when the grid is created, or for Multi Filter buttons and methods, when the filter is created or the method is called.
+
+| Deprecated                                                                                  | Replacement                                                                                         |
+| ------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| `enableFilterHandlers: false` (legacy filter mode)                                          | `enableFilterHandlers: true`                                                                        |
+| `onFilterModified` / `filterModified` event                                                 | `onFilterUiChanged` / `filterUiChanged` and `onFloatingFilterUiChanged` / `floatingFilterUiChanged` |
+| `IFilter`, `IFilterComp`                                                                    | `FilterDisplayComp`, with the filter logic as a `doesFilterPass` callback or `handler`              |
+| `IFilterType`                                                                               | `ColumnFilter`                                                                                      |
+| `IFloatingFilter`, `IFloatingFilterComp`, `IFloatingFilterType`                             | `FloatingFilterDisplay`, `FloatingFilterDisplayComp`                                                |
+| `IFilterParams.filterChangedCallback`                                                       | `FilterDisplayParams.onModelChange`                                                                 |
+| `IFilterParams.filterModifiedCallback`                                                      | `FilterDisplayParams.onUiChange`                                                                    |
+| `IFloatingFilterParams.parentFilterInstance`, `IFloatingFilterParentCallback`               | `FloatingFilterDisplayParams.model` and `onModelChange`                                             |
+| `IFloatingFilterParams.currentParentModel`                                                  | `FloatingFilterDisplayParams.model`                                                                 |
+| `onFloatingFilterChanged()` on filter instances                                             | `onModelChange` in a `FloatingFilterDisplayComp`                                                    |
+| `applyModel()`, `getModelFromUi()` on filter instances                                      | `api.setColumnFilterModel`, `api.getColumnFilterModel(column, true)`                                |
+| The `getModel`, `setModel`, `isFilterActive` and `doesFilterPass` methods of `IMultiFilter` | `api.getColumnFilterModel` and `api.setColumnFilterModel`                                           |
+
+The types for the params the grid passes to the provided filters are replaced by display params types, which include `model`, `state` and `onModelChange`:
+
+| Deprecated             | Replacement                   |
+| ---------------------- | ----------------------------- |
+| `ProvidedFilterParams` | `ProvidedFilterDisplayParams` |
+| `SimpleFilterParams`   | `SimpleFilterDisplayParams`   |
+| `TextFilterParams`     | `TextFilterDisplayParams`     |
+| `NumberFilterParams`   | `NumberFilterDisplayParams`   |
+| `BigIntFilterParams`   | `BigIntFilterDisplayParams`   |
+| `DateFilterParams`     | `DateFilterDisplayParams`     |
+| `SetFilterParams`      | `SetFilterDisplayParams`      |
+| `MultiFilterParams`    | `MultiFilterDisplayParams`    |
+
+{% if isFramework("react") %}
+
+| Deprecated                  | Replacement                        |
+| --------------------------- | ---------------------------------- |
+| `useGridFilter`             | `useGridFilterDisplay`             |
+| `CustomFilterProps`         | `CustomFilterDisplayProps`         |
+| `CustomFilterCallbacks`     | `CustomFilterDisplayCallbacks`     |
+| `CustomFloatingFilterProps` | `CustomFloatingFilterDisplayProps` |
+
+{% /if %}
+
+{% if isFramework("angular") %}
+
+| Deprecated                   | Replacement                         |
+| ---------------------------- | ----------------------------------- |
+| `IFilterAngularComp`         | `IFilterDisplayAngularComp`         |
+| `IFloatingFilterAngularComp` | `IFloatingFilterDisplayAngularComp` |
+
+{% /if %}
+
+See [Migrating to Filter Handlers](./enable-filter-handlers-migration/).
 
 {% changelogSection version=$migrationVersion /%}

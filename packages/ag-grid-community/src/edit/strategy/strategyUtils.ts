@@ -98,6 +98,14 @@ export function isCellEditable(beans: BeanCollection, editPosition: Required<Edi
         return existingEditing(beans, editPosition);
     }
 
+    // Only a function `groupRowValueSetter` writes the getter's result back, and it is called only for group rows
+    if (
+        (!rowNode.group || typeof colDef.groupRowValueSetter !== 'function') &&
+        beans.valueSvc.appliesAggValueGetter(column, rowNode)
+    ) {
+        return existingEditing(beans, editPosition);
+    }
+
     if (column.isColumnFunc(rowNode, editable)) {
         return true;
     }

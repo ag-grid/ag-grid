@@ -151,4 +151,40 @@
             )
         );
     }
+
+    .ag-sort-order {
+        @include ag.unthemed-rtl(
+            (
+                padding-left: calc(var(--ag-grid-size) * 0.5),
+            )
+        );
+    }
+
+    .ag-header-cell .ag-sort-order {
+        color: var(--ag-header-sort-index-text-color);
+    }
+
+    // keep the sort index on the far side of the icon from the header text
+    .ag-right-aligned-header {
+        .ag-sort-indicator-container {
+            flex-direction: row-reverse;
+        }
+
+        .ag-sort-indicator-icon {
+            @include ag.unthemed-rtl(
+                (
+                    padding-left: 0,
+                    padding-right: var(--ag-grid-size),
+                )
+            );
+        }
+
+        .ag-sort-order {
+            @include ag.unthemed-rtl(
+                (
+                    padding-right: calc(var(--ag-grid-size) * 0.5),
+                )
+            );
+        }
+    }
 }

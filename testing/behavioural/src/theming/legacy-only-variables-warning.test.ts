@@ -65,12 +65,14 @@ describe('legacy-only theme variables under the Theming API', () => {
         setVariablesAndRefreshTheme(api, {
             '--ag-grid-size': '3px',
             '--ag-alpine-active-color': 'red',
+            '--ag-borders': 'solid 1px',
         });
 
         const warnings = warningsRaised();
         expect(warnings).toHaveLength(1);
         expect(String(warnings[0][1])).toContain('--ag-grid-size (use --ag-spacing)');
         expect(String(warnings[0][1])).toContain('--ag-alpine-active-color (use --ag-accent-color)');
+        expect(String(warnings[0][1])).toContain('--ag-borders (no equivalent)');
     });
 
     test('does not warn for Theming API variables, which the grid does read', () => {

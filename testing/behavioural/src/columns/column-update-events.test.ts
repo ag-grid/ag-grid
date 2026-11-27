@@ -1,5 +1,5 @@
 import { waitFor } from '@testing-library/dom';
-import { DragEventDispatcher, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
+import { ALL_SEVERITIES, DragEventDispatcher, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import type {
     AgColumn,
@@ -18,9 +18,15 @@ import {
     ColumnAutoSizeModule,
     GridStateModule,
     TextFilterModule,
+    enableDevValidations,
     getGridElement,
 } from 'ag-grid-community';
 import { AllEnterpriseModule, PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
+
+// Listening to a deprecated event raises deprecation #306, which the global throw-on-validation setup would throw on.
+beforeEach(() => {
+    enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [306] });
+});
 
 describe('the column events of a column tool panel apply', () => {
     const gridsManager = new TestGridsManager({ modules: [AllEnterpriseModule] });

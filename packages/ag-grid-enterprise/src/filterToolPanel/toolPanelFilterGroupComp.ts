@@ -107,6 +107,30 @@ export class ToolPanelFilterGroupComp extends Component {
             })
         );
 
+        for (const icon of filterGroupComp.getTitleBarGui().querySelectorAll<HTMLElement>('.ag-group-title-bar-icon')) {
+            const tooltip = this.addTooltip({
+                control: this.isColumnGroup() ? 'groupExpand' : 'filterExpand',
+                getGui: () => icon,
+                getLocation: () => 'filterToolPanelColumnGroup',
+                getTooltip: () => {
+                    const expanded = filterGroupComp.isExpanded();
+                    const action = expanded ? 'Collapse' : 'Expand';
+                    const target = this.isColumnGroup() ? 'Group' : 'Filter';
+                    return {
+                        value: this.getLocaleTextFunc()(
+                            `tooltip${action}${target}`,
+                            `${action} ${target.toLowerCase()}`
+                        ),
+                        params: { column: this.callbackColumn },
+                    };
+                },
+            });
+            this.addManagedListeners(filterGroupComp, {
+                expanded: () => tooltip?.refreshTooltip(),
+                collapsed: () => tooltip?.refreshTooltip(),
+            });
+        }
+
         this.refreshFilterClass();
         this.addExpandCollapseListeners();
         this.addFilterChangedListeners();

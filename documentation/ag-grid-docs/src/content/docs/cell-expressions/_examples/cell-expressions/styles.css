@@ -9,9 +9,10 @@
 }
 
 .item-header {
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
-    font-size: 13px;
+    font-size: 14px;
     padding-left: 15px;
+    /* Centre the right-hand note on the 36px controls row beside it */
+    align-self: center;
 }
 
 .grid-wrapper {

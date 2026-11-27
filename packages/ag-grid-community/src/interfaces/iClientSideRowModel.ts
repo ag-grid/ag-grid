@@ -14,6 +14,7 @@ export type ClientSideRowModelStep =
 export type ClientSideRowModelStage =
     'group' | 'filter' | 'sort' | 'map' | 'aggregate' | 'filter_aggregates' | 'pivot' | 'nothing';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IClientSideRowModel<TData = any> extends IRowModel {
     /** The root row containing all the rows */
     readonly rootNode: RowNode | null;
@@ -42,6 +43,11 @@ export interface IClientSideRowModel<TData = any> extends IRowModel {
     doAggregate(changedPath: ChangedPath | undefined): void;
     getTopLevelNodes(): RowNode[] | null;
     getFormulaRow(index: number): RowNode;
+
+    /**
+     * @deprecated v33.1.0 - use `gridApi.onRowHeightChanged()` instead
+     */
+    onRowHeightChangedDebounced(): void;
 }
 
 export interface RefreshModelParams<TData = any> {

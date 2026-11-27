@@ -1,29 +1,3 @@
-.controls {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-    align-items: center;
-}
-
-.option {
-    display: flex;
-    gap: 6px;
-    align-items: center;
-}
-
-.option input[type='text'] {
-    width: 160px;
-}
-
-.grid-wrapper {
-    display: flex;
-}
-
-.grid-wrapper > div {
-    width: 100%;
-    height: 100%;
-}
-
 .custom-color-cell-renderer.color-tag {
     overflow: 'hidden';
     text-overflow: 'ellipsis';

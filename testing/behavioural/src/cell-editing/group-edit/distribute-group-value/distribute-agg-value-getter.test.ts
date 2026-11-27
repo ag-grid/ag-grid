@@ -142,6 +142,28 @@ test('without a group row setter, setDataValue writes the field of a tree data p
     expect(events).toEqual([{ oldValue: 40, newValue: 40 }]);
 });
 
+test.each([
+    ['no group row setter', false, {}],
+    ['a function groupRowValueSetter', true, { groupRowValueSetter: reversingSetter('percentage') }],
+])('with plain editable and %s, a tree data parent is editable: %s', async (name, parentEditable, setterProps) => {
+    const api = await gridsManager.createGridAndWait(`distribute-agg-value-getter-tree-editable-${name}`, {
+        treeData: true,
+        treeDataChildrenField: undefined,
+        getDataPath: (data: any) => data.path,
+        columnDefs: [{ field: 'budget', aggFunc: 'sum', editable: true, aggValueGetter, ...setterProps }],
+        rowData: [
+            { id: 'hq', path: ['HQ'], budget: 5 },
+            { id: 'eng', path: ['HQ', 'Engineering'], budget: 40 },
+        ],
+        groupDefaultExpanded: -1,
+        getRowId: (params) => params.data.id,
+    });
+    const budget = api.getColumn('budget')!;
+
+    expect(budget.isCellEditable(api.getRowNode('hq')!)).toBe(parentEditable);
+    expect(budget.isCellEditable(api.getRowNode('eng')!)).toBe(true);
+});
+
 test('undo replays the shown value through the reversing setter', async () => {
     const api = await createGrid('distribute-agg-value-getter-undo', {
         aggValueGetter,

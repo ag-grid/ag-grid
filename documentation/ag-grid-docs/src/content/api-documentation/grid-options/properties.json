@@ -1671,7 +1671,7 @@
             "description": "(Server-side Row Model only) Controls whether expandAll / collapseAll operations apply to all rows (not just loaded ones), and whether group interactions override the default expansion state set by `isServerSideGroupOpenByDefault`. When true, users must provide a `getRowId` function to ensure proper row identification. Default: `false`.",
             "more": {
                 "name": "Row Grouping - Expand All / Collapse All",
-                "url": "./server-side-model-grouping/#expand-all--collapse-all"
+                "url": "./server-side-model-grouping/#expanding-and-collapsing-all-groups"
             }
         },
         "refreshAfterGroupEdit": {
@@ -1920,7 +1920,7 @@
         "serverSideOnlyRefreshFilteredGroups": {
             "more": {
                 "name": "Filters",
-                "url": "./server-side-model-grouping/#filters"
+                "url": "./server-side-model-grouping/#filtering-with-row-groups"
             }
         },
         "serverSideInitialRowCount": {
@@ -1932,14 +1932,14 @@
         "getChildCount": {
             "more": {
                 "name": "Providing Child Counts",
-                "url": "./server-side-model-grouping/#providing-child-counts"
+                "url": "./server-side-model-grouping/#showing-child-counts-on-group-rows"
             }
         },
         "getServerSideGroupLevelParams": {},
         "isServerSideGroupOpenByDefault": {
             "more": {
                 "name": "Open by Default",
-                "url": "./server-side-model-grouping/#open-by-default"
+                "url": "./server-side-model-grouping/#opening-groups-by-default"
             }
         },
         "isApplyServerSideTransaction": {},
@@ -2356,7 +2356,7 @@
         },
         "tooltipShowMode": {},
         "tooltipTrigger": {
-            "description": "Whether ordinary tooltips show on `hover`, `focus` or `hoverOrFocus`. Focus uses the configured show delay unless overridden by the source. Built-in control tooltips always support hover and immediate focus. Does not apply to browser tooltips.",
+            "description": "Whether ordinary tooltips show on `hover`, `focus` or `hoverOrFocus`. The `focus` trigger applies wherever ordinary grid tooltips are supported, including cells, headers, Set Filter values, menu items and tool panel items. Focus uses the configured show delay unless overridden by the source. Built-in control tooltips always support hover and immediate focus. Does not apply to browser tooltips.",
             "more": {
                 "name": "Tooltip Trigger",
                 "url": "./tooltips-show-hide/#tooltip-trigger"

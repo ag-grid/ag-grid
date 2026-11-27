@@ -1,4 +1,4 @@
-import { RefPlaceholder, _addManagedElementListeners } from 'ag-stack';
+import { RefPlaceholder, _addManagedElementListeners, _translateTokens } from 'ag-stack';
 
 import type {
     AgColumn,
@@ -22,6 +22,7 @@ import {
     _resolvePivotSort,
 } from 'ag-grid-community';
 
+import { _getAggFuncColumnName } from '../../aggregation/aggColumnNameService';
 import type { ColumnToolPanelChildParams } from '../../columnToolPanel/columnToolPanel';
 import { isDeferredMode, refreshDeferredToolPanelUi } from '../../columnToolPanel/toolPanelDeferredUiUtils';
 import { ColumnIndicatorIconsFeature } from '../../widgets/columnIndicatorIconsFeature';
@@ -199,13 +200,17 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
         };
         const columnSort = this.getCurrentSortDirection(this.column);
         const isSortSuppressed = this.gos.get('rowGroupPanelSuppressSort');
-        return [
-            aggFuncName && `${aggFuncName}${aggSeparator}`,
-            name,
-            this.isGroupingZone() && !isSortSuppressed && columnSort && `, ${sortDirection[columnSort]}`,
-        ]
-            .filter((part) => !!part)
-            .join('');
+        // Built from the existing separator so a localeText without this key reads as before.
+        const label = aggFuncName
+            ? _translateTokens(translate, 'ariaDropZoneColumnAggFunc', `\${aggFunc}${aggSeparator}\${column}`, {
+                  aggFunc: aggFuncName,
+                  column: name,
+              })
+            : name;
+        const sort = this.isGroupingZone() && !isSortSuppressed && columnSort ? sortDirection[columnSort] : null;
+        return sort
+            ? _translateTokens(translate, 'ariaDropZoneColumnSorted', '${column}, ${sort}', { column: label, sort })
+            : label;
     }
 
     private getColumnAndAggFuncName(): { name: string; aggFuncName: string } {
@@ -349,7 +354,7 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
 
     protected override getDisplayValue(): string {
         const { name, aggFuncName } = this.getColumnAndAggFuncName();
-        return this.isAggregationZone() ? `${aggFuncName}(${name})` : name;
+        return this.isAggregationZone() ? _getAggFuncColumnName(this.getLocaleTextFunc(), aggFuncName, name) : name;
     }
 
     private onShowAggFuncSelection(): void {

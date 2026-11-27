@@ -59,6 +59,10 @@ export class StickyRowFeature extends BeanStub implements IStickyRowFeature {
      * Get the last pixel of the group, this pixel is used to push the sticky node up out of the viewport.
      */
     private getLastPixelOfGroup(row: RowNode): number {
+        // grand total row at top, nothing can push it out of sticky.
+        if (row.footer && row.level === -1 && row.rowIndex === 0) {
+            return Number.MAX_SAFE_INTEGER;
+        }
         return this.isClientSide ? getClientSideLastPixelOfGroup(row) : getServerSideLastPixelOfGroup(row);
     }
 
@@ -541,12 +545,6 @@ function getServerSideLastPixelOfGroup(row: RowNode): number {
 
 function getClientSideLastPixelOfGroup(row: RowNode): number {
     if (row.isExpandable() || row.footer) {
-        // grand total row at top, nothing can push it out of sticky.
-        const grandTotalAtTop = row.footer && row.rowIndex === 0;
-        if (grandTotalAtTop) {
-            return Number.MAX_SAFE_INTEGER;
-        }
-
         // if no siblings, we search the children for the last displayed row, to get last px.
         // equally, if sibling but sibling is contiguous ('top') then sibling cannot be used
         // to find last px

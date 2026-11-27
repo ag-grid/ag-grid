@@ -8,6 +8,7 @@ import type { GridOptions } from './entities/gridOptions';
 import type { RowNode } from './entities/rowNode';
 import type { AgEventType, AgInternalEventType, AgPublicEventType, BuildEventTypeMap } from './eventTypes';
 import type { FilterRequestSource } from './filter/iColumnFilter';
+import type { IProvidedFilter } from './filter/provided/iProvidedFilter';
 import type { CellRange, CellRangeParams } from './interfaces/IRangeService';
 import type { GridState } from './interfaces/gridState';
 import type { CalculatedColumnProperty } from './interfaces/iCalculatedColumns';
@@ -199,8 +200,10 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         rowExpansionStateChanged: AgEvent<'rowExpansionStateChanged'>;
         showRowGroupColsSetChanged: AgEvent<'showRowGroupColsSetChanged'>;
         columnShowValuesAsChanged: AgEvent<'columnShowValuesAsChanged'>;
+        stringComparatorsChanged: StringComparatorsChangedEvent;
         rowDragVisibilityChanged: AgEvent<'rowDragVisibilityChanged'>;
         columnHeaderEditHighlightChanged: ColumnHeaderEditHighlightChangedEvent;
+        filterModifiedListened: AgEvent<'filterModifiedListened'>;
     }
 >;
 
@@ -440,12 +443,13 @@ export interface FilterChangedEvent<TData = any, TContext = any> extends AgGloba
     columns: Column[];
 }
 
+/** @deprecated v37 Use `FilterUiChangedEvent` and `FloatingFilterUiChangedEvent` with `enableFilterHandlers` instead. See [Migrating to Filter Handlers](https://www.ag-grid.com/javascript-data-grid/enable-filter-handlers-migration/). */
 export interface FilterModifiedEvent<TData = any, TContext = any> extends AgGlobalEvent<
     'filterModified',
     TData,
     TContext
 > {
-    filterInstance: IFilterComp;
+    filterInstance: IFilterComp | IProvidedFilter;
     column: Column;
 }
 
@@ -1018,6 +1022,13 @@ export interface ColumnHeaderNameChangedEvent<TData = any, TContext = any> exten
      * `null` for column renames or a bulk change (e.g. state reset).
      */
     columnGroup: ProvidedColumnGroup | null;
+}
+
+export interface StringComparatorsChangedEvent extends AgEvent<'stringComparatorsChanged'> {
+    /** Whether the `accentedSort` grid option changed, so every column without its own `accentedSort` is affected. */
+    gridOption: boolean;
+    /** The columns whose colDef `accentedSort` or `caseInsensitiveSort` changed. */
+    columns: Column[];
 }
 
 export interface ColumnHeaderEditHighlightChangedEvent extends AgEvent<'columnHeaderEditHighlightChanged'> {

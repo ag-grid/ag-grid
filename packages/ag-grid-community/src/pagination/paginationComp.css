@@ -41,10 +41,6 @@
     }
 }
 
-:where(.ag-number-field).ag-paging-number {
-    display: inline-block;
-}
-
 :where(.ag-number-field.ag-paging-number) .ag-input-field-input {
     text-align: end;
 }
@@ -56,8 +52,11 @@
 }
 
 .ag-paging-description {
-    /* avoids misalignment of buttons and text */
-    line-height: 0;
+    display: flex;
+    align-items: baseline;
+
+    /* simulate a text space */
+    column-gap: 0.5em;
 }
 
 .ag-paging-row-summary-panel {

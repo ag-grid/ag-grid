@@ -8,26 +8,23 @@ if (process.env.NODE_ENV !== 'production') {
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
-const columnDefs: ColDef[] = [{ headerName: 'Locale-specific Sort', field: 'letter', sort: 'asc' }];
+const columnDefs: ColDef[] = [{ headerName: 'Locale-specific Sort', field: 'letter', sort: 'asc', accentedSort: true }];
 
 function applyLocale() {
     gridApi!.updateGridOptions({
-        accentedSort: true,
-        columnDefs: [{ field: 'letter', sort: 'asc', headerName: 'Locale-specific Sort' }],
+        columnDefs: [{ field: 'letter', sort: 'asc', headerName: 'Locale-specific Sort', accentedSort: true }],
     });
 }
 
 function applySwedish() {
     gridApi!.updateGridOptions({
-        accentedSort: { locales: 'sv' },
-        columnDefs: [{ field: 'letter', sort: 'asc', headerName: 'Swedish Sort' }],
+        columnDefs: [{ field: 'letter', sort: 'asc', headerName: 'Swedish Sort', accentedSort: { locales: 'sv' } }],
     });
 }
 
 function applyDefault() {
     gridApi!.updateGridOptions({
-        accentedSort: false,
-        columnDefs: [{ field: 'letter', sort: 'asc', headerName: 'Default Sort' }],
+        columnDefs: [{ field: 'letter', sort: 'asc', headerName: 'Default Sort', accentedSort: false }],
     });
 }
 
@@ -35,7 +32,6 @@ let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
     columnDefs: columnDefs,
-    accentedSort: true,
     rowData: [...'bàacäz'].map((x) => ({ letter: x })),
 };
 

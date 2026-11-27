@@ -1,6 +1,8 @@
 import {
+    ALL_SEVERITIES,
     AdvancedFilterHarness,
     ColumnFilterHarness,
+    LEGACY_FILTER_WARNING_IDS,
     TestGridsManager,
     asyncSetTimeout,
     installFilterLayoutMock,
@@ -15,7 +17,7 @@ import type {
     GridApi,
     GridOptions,
 } from 'ag-grid-community';
-import { ClientSideRowModelModule, DateFilterModule, setupAgTestIds } from 'ag-grid-community';
+import { ClientSideRowModelModule, DateFilterModule, enableDevValidations, setupAgTestIds } from 'ag-grid-community';
 import { AdvancedFilterModule } from 'ag-grid-enterprise';
 
 import { MinimalFilter, PARITY_MODULES, getDisplayedIds } from './advanced-filter-parity-test-utils';
@@ -838,6 +840,7 @@ describe('Advanced Filter matches the column filter', () => {
         // `comparator` is the Date Filter's key; a custom component's `filterParams` are its own, and the
         // ordinary `(a, b)` sort shape is the inverse of `IDateComparatorFunc`, so reading it flips every option.
         test('a custom filter component column ignores its own `comparator`', async () => {
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: LEGACY_FILTER_WARNING_IDS });
             const columnDefs = timedDefs({ comparator: (a: any, b: any) => (a > b ? 1 : -1) }, MinimalFilter);
 
             expect(

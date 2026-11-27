@@ -1,4 +1,5 @@
 import { act, cleanup, fireEvent, render, waitFor } from '@testing-library/react';
+import { ALL_SEVERITIES, LEGACY_FILTER_WARNING_IDS } from 'ag-test-utils';
 import React, { useCallback } from 'react';
 import type { MockInstance } from 'vitest';
 
@@ -9,7 +10,9 @@ import {
     ModuleRegistry,
     RowApiModule,
     TextFilterModule,
+    enableDevValidations,
 } from 'ag-grid-community';
+import { MultiFilterModule } from 'ag-grid-enterprise';
 import type { CustomFilterProps, CustomFloatingFilterProps } from 'ag-grid-react';
 import { AgGridReact, useGridFilter } from 'ag-grid-react';
 
@@ -30,7 +33,6 @@ const AthleteFloatingFilter = ({ model, onModelChange }: CustomFloatingFilterPro
     );
 };
 
-// Fully-custom parent filter: its setModel is the user's own method, not the deprecated ProvidedFilter.setModel.
 const CustomAthleteFilter = ({ model, getValue }: CustomFilterProps) => {
     const doesFilterPass = useCallback(
         (params: IDoesFilterPassParams) =>
@@ -49,12 +51,18 @@ const StringFloatingFilter = ({ model, onModelChange }: CustomFloatingFilterProp
     />
 );
 
-const emitted286 = (warnSpy: MockInstance<typeof console.warn>) =>
-    warnSpy.mock.calls.some((call) => String(call[0]).includes('warning #286'));
+const unexpectedWarnings = (warnSpy: MockInstance<typeof console.warn>) =>
+    warnSpy.mock.calls
+        .map((call) => String(call[0]))
+        .filter((message) => !LEGACY_FILTER_WARNING_IDS.some((id) => message.includes(`warning #${id}`)));
 
 describe('Custom floating filter onModelChange (React)', () => {
     beforeAll(() => {
         ModuleRegistry.registerModules([ClientSideRowModelModule, TextFilterModule, CustomFilterModule, RowApiModule]);
+    });
+
+    beforeEach(() => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: LEGACY_FILTER_WARNING_IDS });
     });
 
     afterEach(() => {
@@ -62,10 +70,9 @@ describe('Custom floating filter onModelChange (React)', () => {
         vi.restoreAllMocks();
     });
 
-    // onModelChange is the documented, non-deprecated API; changing the model through it must not
-    // route through the parent filter's deprecated setModel() (which fires warning #286).
-    test('does not emit deprecation warning #286 when the model changes', async () => {
+    test('applies the model to a grid-provided parent filter and fires filterChangedCallback', async () => {
         const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        const onFilterChanged = vi.fn();
         let api: GridApi | undefined;
 
         const rendered = render(
@@ -73,45 +80,7 @@ describe('Custom floating filter onModelChange (React)', () => {
                 onGridReady={(e) => {
                     api = e.api;
                 }}
-                rowData={rowData}
-                columnDefs={[
-                    {
-                        field: 'athlete',
-                        filter: 'agTextColumnFilter',
-                        floatingFilter: true,
-                        floatingFilterComponent: AthleteFloatingFilter,
-                        suppressFloatingFilterButton: true,
-                    },
-                ]}
-            />
-        );
-
-        await rendered.findByText('Michael Phelps');
-        const input = await rendered.findByTestId('floating-filter-input');
-
-        fireEvent.change(input, { target: { value: 'Phelps' } });
-
-        // #286 would be emitted while the model is routed into the parent filter, so wait for the
-        // model to land there before asserting the warning was not produced.
-        await waitFor(() =>
-            expect(api!.getColumnFilterModel('athlete')).toEqual({
-                filterType: 'text',
-                type: 'contains',
-                filter: 'Phelps',
-            })
-        );
-
-        expect(emitted286(warnSpy)).toBe(false);
-    });
-
-    test('still applies the model to the provided parent filter', async () => {
-        let api: GridApi | undefined;
-
-        const rendered = render(
-            <AgGridReact
-                onGridReady={(e) => {
-                    api = e.api;
-                }}
+                onFilterChanged={onFilterChanged}
                 rowData={rowData}
                 columnDefs={[
                     {
@@ -136,12 +105,63 @@ describe('Custom floating filter onModelChange (React)', () => {
                 type: 'contains',
                 filter: 'Phelps',
             });
+            expect(onFilterChanged).toHaveBeenCalled();
             expect(api!.getDisplayedRowCount()).toBe(1);
         });
+        expect(unexpectedWarnings(warnSpy)).toEqual([]);
     });
 
-    // Scope guard: a fully-custom parent filter keeps its own setModel path (the instanceof
-    // ProvidedFilter branch is false), so the model is still applied and no warning fires.
+    // Pins existing, unintended behaviour: the child's params carry the Multi Filter column, so its model clears
+    // every child. Goes through FloatingFilterComponentWrapper, not FloatingFilterComponentProxy.
+    test('pins the model change of a floating filter over a grid-provided Multi Filter child', async () => {
+        const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        vi.spyOn(console, 'error').mockImplementation(() => {});
+        let api: GridApi | undefined;
+
+        const rendered = render(
+            <AgGridReact
+                modules={[MultiFilterModule]}
+                onGridReady={(e) => {
+                    api = e.api;
+                }}
+                rowData={rowData}
+                columnDefs={[
+                    {
+                        field: 'athlete',
+                        filter: 'agMultiColumnFilter',
+                        floatingFilter: true,
+                        suppressFloatingFilterButton: true,
+                        filterParams: {
+                            filters: [
+                                { filter: 'agTextColumnFilter', floatingFilterComponent: AthleteFloatingFilter },
+                                { filter: 'agTextColumnFilter' },
+                            ],
+                        },
+                    },
+                ]}
+            />
+        );
+
+        await rendered.findByText('Michael Phelps');
+        await act(async () => {
+            await api!.setColumnFilterModel('athlete', {
+                filterType: 'multi',
+                filterModels: [null, { filterType: 'text', type: 'contains', filter: 'Nemov' }],
+            });
+            api!.onFilterChanged();
+        });
+        await waitFor(() => expect(api!.getDisplayedRowCount()).toBe(1));
+
+        const input = await rendered.findByTestId('floating-filter-input');
+        fireEvent.change(input, { target: { value: 'Phelps' } });
+
+        await waitFor(() => {
+            expect(api!.getColumnFilterModel('athlete')).toBeNull();
+            expect(api!.getDisplayedRowCount()).toBe(2);
+        });
+        expect(unexpectedWarnings(warnSpy)).toEqual([]);
+    });
+
     test('leaves a fully-custom parent filter on its own path', async () => {
         const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
         let api: GridApi | undefined;
@@ -174,7 +194,7 @@ describe('Custom floating filter onModelChange (React)', () => {
         });
         await waitFor(() => expect(api!.getDisplayedRowCount()).toBe(1));
 
-        expect(emitted286(warnSpy)).toBe(false);
+        expect(unexpectedWarnings(warnSpy)).toEqual([]);
         expect(api!.getColumnFilterModel('athlete')).toBe('Phelps');
     });
 });

@@ -85,6 +85,7 @@ const GridExample = () => {
                     <AgGridReact<IOlympicData>
                         rowData={data}
                         loading={loading}
+                        enableFilterHandlers={false}
                         columnDefs={columnDefs}
                         defaultColDef={defaultColDef}
                     />

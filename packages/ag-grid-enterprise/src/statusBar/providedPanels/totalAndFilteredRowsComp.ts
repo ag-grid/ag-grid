@@ -1,3 +1,5 @@
+import { _translateTokens } from 'ag-stack';
+
 import type {
     IClientSideRowModel,
     IProvidedStatusPanelParams,
@@ -49,7 +51,13 @@ export class TotalAndFilteredRowsComp extends AgNameValue implements IStatusPane
                 }
 
                 const localeTextFunc = getLocaleTextFunc();
-                return `${rowCount} ${localeTextFunc('of', 'of')} ${totalRowCount}`;
+                return _translateTokens(
+                    localeTextFunc,
+                    'totalAndFilteredRowsValue',
+                    // Built from the existing word so a localeText without this key reads as before.
+                    `\${count} ${localeTextFunc('of', 'of')} \${total}`,
+                    { count: rowCount, total: totalRowCount }
+                );
             });
     }
 

@@ -73,9 +73,9 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
     private valuesType: SetFilterModelValuesType;
 
     private keyComparator: (a: string | null, b: string | null) => number;
-    /** The column's effective `accentedSort`, used when the values are sorted without a user comparator. */
+    /** The column's effective `accentedSort` and `caseInsensitiveSort`, used when the values are sorted without a user comparator. */
     private stringComparator: StringComparator | undefined;
-    /** The grid's default comparator, using the column's `accentedSort`. */
+    /** The grid's default comparator, using the column's `accentedSort` and `caseInsensitiveSort`. */
     private defaultComparator: (a: any, b: any) => number;
     private valueComparator: (a: TValue | null, b: TValue | null) => number;
     private compareByValue: boolean;
@@ -232,7 +232,7 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
         const treeDataOrGrouping = this.isTreeDataOrGrouping();
         let valueComparator: (a: TValue | null, b: TValue | null) => number;
         if (treeDataOrGrouping && !keyComparator) {
-            // without `accentedSort` the plain comparator is used as is, keeping the default path free of a wrapper
+            // without `accentedSort` or `caseInsensitiveSort` the plain comparator is used as is, keeping the default path free of a wrapper
             valueComparator = stringComparator
                 ? (a, b) => treeDataOrGroupingComparator(a as any, b as any, stringComparator)
                 : (treeDataOrGroupingComparator as any);

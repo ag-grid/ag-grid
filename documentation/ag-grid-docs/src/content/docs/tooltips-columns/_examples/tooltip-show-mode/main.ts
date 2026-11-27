@@ -18,6 +18,8 @@ const columnDefs: (ColDef | ColGroupDef)[] = [
     {
         field: 'athlete',
         width: 130,
+        tooltip: true,
+        headerTooltip: true,
     },
     {
         field: 'country',
@@ -26,6 +28,8 @@ const columnDefs: (ColDef | ColGroupDef)[] = [
     },
     {
         field: 'sport',
+        tooltip: ({ value }) => `Sport: ${value}`,
+        headerTooltip: 'Sport played by the athlete',
     },
 ];
 

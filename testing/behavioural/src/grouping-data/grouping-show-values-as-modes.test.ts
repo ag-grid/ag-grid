@@ -106,7 +106,7 @@ describe('showValuesAs built-in modes', () => {
         expect(api.getColumn('amount')!.isValueActive()).toBe(false);
         const reported: string[] = [];
         api.addEventListener('columnValueChanged', (e) => reported.push(e.columns!.map((c) => c.getColId()).join()));
-        api.addEventListener('columnEverythingChanged', () => reported.push('everything'));
+        api.addEventListener('displayedColumnsChanged', () => reported.push('displayed'));
 
         api.applyColumnState({ state: [{ colId: 'amount', showValuesAs: 'percentOfGrandTotal' }] });
 

@@ -381,6 +381,12 @@
                 "url": "./row-sorting/#locale-specific-sort"
             }
         },
+        "caseInsensitiveSort": {
+            "more": {
+                "name": "Case-insensitive Sort",
+                "url": "./row-sorting/#case-insensitive-sort"
+            }
+        },
         "unSortIcon": {}
     },
     "filtering": {

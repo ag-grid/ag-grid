@@ -10,7 +10,7 @@ import {
 
 import type { ColDef, ColGroupDef, IFiltersToolPanel } from 'ag-grid-community';
 import { ClientSideRowModelModule, NumberFilterModule, TextFilterModule, setupAgTestIds } from 'ag-grid-community';
-import type { ISetFilter } from 'ag-grid-enterprise';
+import type { SetFilterUi } from 'ag-grid-enterprise';
 import { FiltersToolPanelModule, SetFilterModule } from 'ag-grid-enterprise';
 
 import { FILTERS_SIDEBAR, openFiltersPanel } from './toolPanelHarness';
@@ -199,7 +199,7 @@ describe('Filters Tool Panel', () => {
         });
         const panel = await openFiltersPanel(api);
         await panel.expandGroup('Country');
-        const setFilter = await api.getColumnFilterInstance<ISetFilter>('country');
+        const setFilter = await api.getColumnFilterInstance<SetFilterUi>('country');
 
         setFilter!.setMiniFilter('zz');
         await waitFor(() => expect(panel.isNoMatchesShown('Country')).toBe(true));

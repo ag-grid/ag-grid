@@ -1,4 +1,12 @@
-import { _getOwn, _parseBigIntOrNull, _parseDateTimeFromString, _serialiseDate, _toStringOrNull } from 'ag-stack';
+import type { LocaleTokenValues } from 'ag-stack';
+import {
+    _getOwn,
+    _parseBigIntOrNull,
+    _parseDateTimeFromString,
+    _serialiseDate,
+    _toStringOrNull,
+    _translate,
+} from 'ag-stack';
 
 import type {
     AgColumn,
@@ -11,10 +19,10 @@ import type {
     IBigIntFilterParams,
     IDateFilterParams,
     IFilterOptionDef,
+    INumberFilterParams,
     ITextFilterParams,
     JoinAdvancedFilterModel,
     NamedBean,
-    NumberFilterParams,
     ResolvedFilter,
     SetAdvancedFilterModel,
     TextMatcherParams,
@@ -441,12 +449,11 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
         }
     }
 
-    public translate(key: keyof typeof ADVANCED_FILTER_LOCALE_TEXT, variableValues?: string[]): string {
-        let defaultValue = ADVANCED_FILTER_LOCALE_TEXT[key];
-        if (typeof defaultValue === 'function') {
-            defaultValue = defaultValue(variableValues!);
-        }
-        return this.getLocaleTextFunc()(key, defaultValue, variableValues);
+    public translate(
+        key: keyof typeof ADVANCED_FILTER_LOCALE_TEXT,
+        variableValues?: string[] | LocaleTokenValues
+    ): string {
+        return _translate(this, ADVANCED_FILTER_LOCALE_TEXT, key, variableValues);
     }
 
     public generateAutocompleteListParams(
@@ -662,14 +669,14 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
 
     private bindNumberParser(
         column: AgColumn | null | undefined,
-        params: NumberFilterParams | undefined
+        params: INumberFilterParams | undefined
     ): FilterOperandParser<number> {
         return _bindFilterCallback(params?.numberParser, this.gos, column, 'advancedFilter') ?? parseNumberOrNull;
     }
 
     /** Needs a parser and a formatter, as a parser alone would reinterpret the plain number the grid stored. */
-    private getCustomNumberParams(column: AgColumn | null | undefined): NumberFilterParams | undefined {
-        const filterParams: NumberFilterParams | undefined = this.getOwnFilterParams(
+    private getCustomNumberParams(column: AgColumn | null | undefined): INumberFilterParams | undefined {
+        const filterParams: INumberFilterParams | undefined = this.getOwnFilterParams(
             column,
             'agNumberColumnFilter',
             undefined

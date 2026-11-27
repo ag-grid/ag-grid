@@ -18,6 +18,11 @@ import {
 } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule, RowNumbersModule, TreeDataModule } from 'ag-grid-enterprise';
 
+// Listening to a deprecated event raises deprecation #306, which the global throw-on-validation setup would throw on.
+beforeEach(() => {
+    enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [306] });
+});
+
 /** The `providedId -> usedId` of each warning 273 among the console calls, in the order raised. */
 const warnings273 = (calls: unknown[][]): string[] =>
     calls.flatMap((call) => {

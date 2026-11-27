@@ -127,15 +127,20 @@ export class Registry
 
     /** Whether `getUserComponent` finds `name`, reporting it the same way when it does not. */
     public hasUserComponent(propertyName: string, name: string): boolean {
-        if (
-            this.jsComps[name] ||
-            this.agGridDefaults[name as UserComponentName] ||
-            this.beans.frameworkOverrides.frameworkComponent(name, this.gos.get('components'), propertyName) != null
-        ) {
+        if (this.isUserComponent(propertyName, name)) {
             return true;
         }
         this.beans.validation?.missingUserComponent(propertyName, name, this.agGridDefaults, this.jsComps);
         return false;
+    }
+
+    /** Whether `getUserComponent` finds `name`, without reporting it when it does not. */
+    public isUserComponent(propertyName: string, name: string): boolean {
+        return !!(
+            this.jsComps[name] ||
+            this.agGridDefaults[name as UserComponentName] ||
+            this.beans.frameworkOverrides.frameworkComponent(name, this.gos.get('components'), propertyName) != null
+        );
     }
 
     public getSelector<TComponent extends AgBaseComponent<BeanCollection>>(

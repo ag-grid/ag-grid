@@ -34,7 +34,7 @@ ModuleRegistry.registerModules([
     selector: 'my-app',
     template: `
         <div class="example-wrapper example-wrapper--row">
-            <div class="inner-col">
+            <div class="inner-col example-wrapper">
                 <div class="toolbar example-controls">
                     <div class="controls-row">
                         <button
@@ -84,7 +84,7 @@ ModuleRegistry.registerModules([
                 </span>
             </div>
 
-            <div class="inner-col">
+            <div class="inner-col example-wrapper">
                 <div class="toolbar example-controls">
                     <div class="controls-row">
                         <button

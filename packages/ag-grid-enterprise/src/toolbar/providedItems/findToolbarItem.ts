@@ -1,5 +1,5 @@
 import type { ITooltipFeature } from 'ag-stack';
-import { _addManagedElementListeners, _debounce, _getActiveDomElement, _setDisabled } from 'ag-stack';
+import { _addManagedElementListeners, _debounce, _getActiveDomElement, _setDisabled, _translateTokens } from 'ag-stack';
 
 import type {
     AgColumn,
@@ -102,13 +102,13 @@ export class FindToolbarItem extends Component implements IToolbarItemComp {
             getGui: () => this.ePrevButton,
             getLocation: () => 'toolbar',
             control: 'findPrevious',
-            getTooltip: () => ({ value: localeTextFunc('toolbarFindPreviousMatch', 'Previous Match') }),
+            getTooltip: () => ({ value: localeTextFunc('tooltipFindPreviousMatch', 'Go to previous match') }),
         });
         this.nextTooltip = this.addTooltip({
             getGui: () => this.eNextButton,
             getLocation: () => 'toolbar',
             control: 'findNext',
-            getTooltip: () => ({ value: localeTextFunc('toolbarFindNextMatch', 'Next Match') }),
+            getTooltip: () => ({ value: localeTextFunc('tooltipFindNextMatch', 'Go to next match') }),
         });
 
         const updateFindSearchValueDebounced = _debounce(this, flushFindSearchValue, INPUT_DEBOUNCE_MS);
@@ -235,16 +235,22 @@ export class FindToolbarItem extends Component implements IToolbarItemComp {
         const columnName = column ? beans.colNames.getDisplayNameForColumn(column as AgColumn, 'header') : null;
         const localeTextFunc = this.getLocaleTextFunc();
         if (!columnName) {
-            return localeTextFunc('ariaFindActiveMatchRow', `Match ${numOverall} of ${totalMatches}, row ${row}`, [
-                String(numOverall),
-                String(totalMatches),
-                String(row),
-            ]);
+            return _translateTokens(
+                localeTextFunc,
+                'ariaFindActiveMatchRow',
+                'Match ${match} of ${total}, row ${row}',
+                {
+                    match: String(numOverall),
+                    total: String(totalMatches),
+                    row: String(row),
+                }
+            );
         }
-        return localeTextFunc(
+        return _translateTokens(
+            localeTextFunc,
             'ariaFindActiveMatch',
-            `Match ${numOverall} of ${totalMatches}, ${columnName}, row ${row}`,
-            [String(numOverall), String(totalMatches), columnName, String(row)]
+            'Match ${match} of ${total}, ${column}, row ${row}',
+            { match: String(numOverall), total: String(totalMatches), column: columnName, row: String(row) }
         );
     }
 }

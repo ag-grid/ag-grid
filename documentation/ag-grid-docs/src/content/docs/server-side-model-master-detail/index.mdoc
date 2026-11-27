@@ -3,7 +3,7 @@ title: "SSRM Master Detail"
 enterprise: true
 ---
 
-This section shows how the Server-Side Row Model can be configured with a Master / Detail view.
+Master Detail in the SSRM nests a detail grid inside each master row, including when rows are grouped or shown as tree data.
 
 The ability to nest grids within grids is commonly referred to as Master / Detail.
 Here the top-level grid is referred to as the 'master grid' and the nested grid is referred to as the 'detail grid'.
@@ -110,7 +110,7 @@ const gridOptions = {
 }
 ```
 
-You can use `expandAll()` to expand all master rows along with their associated detail grids. To ensure that master rows not yet loaded in the viewport are also expanded, set `ssrmExpandAllAffectsAllRows` to true, just as you would with SSRM Row Grouping. For more information, see [SSRM Expand All / Collapse All](./server-side-model-grouping/#expand-all--collapse-all).
+You can use `expandAll()` to expand all master rows along with their associated detail grids. To ensure that master rows not yet loaded in the viewport are also expanded, set `ssrmExpandAllAffectsAllRows` to true, just as you would with SSRM Row Grouping. For more information, see [SSRM Expand All / Collapse All](./server-side-model-grouping/#expanding-and-collapsing-all-groups).
 
 {% note %}
 Note that `ssrmExpandAllAffectsAllRows` is not automatically propagated to nested detail grids. Even if set to `true` on the master grid, it only controls expansion at the master level. To expand all rows in nested detail grids (e.g., in a hierarchy of master-detail grids), you must explicitly set `ssrmExpandAllAffectsAllRows: true` on each detail grid’s `detailGridOptions`.

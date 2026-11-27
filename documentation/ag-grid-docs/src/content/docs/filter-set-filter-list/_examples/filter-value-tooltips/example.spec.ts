@@ -19,7 +19,8 @@ test.agExample(import.meta, () => {
         const value = (await item.innerText()).trim();
         await item.hover();
 
-        const tooltip = page.locator('.ag-tooltip');
+        // Target the value tooltip: the expand chevron's "Collapse filter" tooltip can still be fading out.
+        const tooltip = page.locator('.ag-set-filter-value-tooltip');
         await expect(tooltip).toBeVisible();
         await expect(tooltip).toContainText(value.slice(0, 8));
     });
