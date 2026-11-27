@@ -23,8 +23,8 @@ test.agExample(import.meta, () => {
         await itemCheckbox('Under 20').click();
         await page.keyboard.press('Escape');
 
-        await expect(agIdFor.cell('1', 'age')).toContainText('19');
         await expect(agIdFor.cell('0', 'age')).not.toBeVisible();
+        await expect(agIdFor.cell('1', 'age')).toContainText('19');
         await expect(page.locator('.ag-set-floating-filter-input input')).toHaveValue('(1) Under 20');
     });
 

@@ -1,5 +1,11 @@
 import type { DoesFilterPassParams, GridApi, GridOptions, SetFilterModel } from 'ag-grid-community';
-import { ClientSideRowModelModule, ModuleRegistry, createGrid, enableDevValidations } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    CustomFilterModule,
+    ModuleRegistry,
+    createGrid,
+    enableDevValidations,
+} from 'ag-grid-community';
 import { SetFilterModule } from 'ag-grid-enterprise';
 
 if (process.env.NODE_ENV !== 'production') {
@@ -7,7 +13,7 @@ if (process.env.NODE_ENV !== 'production') {
     enableDevValidations();
 }
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, SetFilterModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, CustomFilterModule, SetFilterModule]);
 
 function getAgeBand(age: number): string {
     if (age < 20) {
