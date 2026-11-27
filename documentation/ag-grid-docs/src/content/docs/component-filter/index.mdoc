@@ -178,7 +178,7 @@ const gridOptions = {
                 doesFilterPass: (params) => {
                     // params.model is the Set Filter Model, e.g. { filterType: 'set', values: ['Under 20'] }
                     const age = params.handlerParams.getValue(params.node);
-                    return params.model.values.includes(getAgeBand(age));
+                    return age != null && params.model.values.includes(getAgeBand(age));
                 },
             },
             filterParams: {
@@ -209,13 +209,15 @@ const gridOptions = {
 }
 ```
 
-The logic receives the same parameters as the [doesFilterPass Callback](#doesfilterpass-callback). `params.model` is the model the provided filter's UI produces, and `params.node` and `params.data` are the row being filtered. The logic is only called while the filter has a model. See the model of each provided filter:
+The logic receives the same parameters as the [doesFilterPass Callback](#doesfilterpass-callback). `params.model` is the model the provided filter's UI produces, and `params.node` and `params.data` are the row being filtered. The logic is only called while the filter has a model, apart from the [Group Filter](#group-filter). See the model of each provided filter:
 
-- [Set Filter Model](./filter-set-api/#set-filter-model). The values are strings, so convert the cell value before comparing it.
+- [Set Filter Model](./filter-set-api/#set-filter-model). The values are the Set Filter keys (strings, or `null` for blank cells), so convert the cell value before comparing it.
 - [Multi Filter Model](./filter-multi/#multi-filter-model).
 - [Text Filter Model](./filter-text/#text-filter-model), [Number Filter Model](./filter-number/#number-filter-model) and [Date Filter Model](./filter-date/#filter-model).
 
-The filter UI keeps working as normal. For the Set Filter this includes the list of values, the Mini Filter, Select All and the floating filter. Only the decision on which rows pass is replaced, so the provided filter's own matching (such as case sensitivity) no longer applies.
+For the Set Filter and Multi Filter, the filter UI keeps working as normal: the list of values, the Mini Filter, Select All and the floating filter. Only the decision on which rows pass is replaced, so the provided filter's own row matching (such as case sensitivity) no longer applies.
+
+For the Text, Number and Date Filters, the handler you supply replaces the grid's own. The floating filter only shows the model if your handler implements `getModelAsString`.
 
 `api.getColumnFilterHandler(colId)` returns the handler you supplied. For `doesFilterPass`, it returns a handler the grid builds around your callback.
 
@@ -236,7 +238,7 @@ Custom logic can be given to the [Multi Filter](./filter-multi/) itself, or to o
 
 #### Group Filter
 
-Custom logic can also be given to the [Group Filter](./grouping-single-group-column/#inherit-row-grouped-columns-filters) with `component: 'agGroupColumnFilter'`. Its UI is unchanged: it shows the filters of the grouped columns. The Group Filter has no model of its own, so your logic receives a `null` model. It is called while a grouped column's filter is active, and rows must pass both your logic and the grouped columns' own filters.
+Custom logic can also be given to the [Group Filter](./grouping-single-group-column/#inherit-row-grouped-columns-filters) with `autoGroupColumnDef.filter = { component: 'agGroupColumnFilter', doesFilterPass }`. Its UI is unchanged: it shows the filters of the grouped columns. The Group Filter has no model of its own, so your logic receives a `null` model. It is called while a grouped column's filter is active, and rows must pass both your logic and the grouped columns' own filters.
 
 ## Using Buttons
 

@@ -1,6 +1,6 @@
 import { ensureGridReady, expect, test, waitForGridContent } from '@utils/grid/test-utils';
 
-// Row-id 0 is Michael Phelps aged 23, row-id 1 is Michael Phelps aged 19.
+// Row-id 0 is Michael Phelps aged 23, row-id 1 is Michael Phelps aged 19, row-id 11 is Dara Torres aged 33.
 
 test.agExample(import.meta, () => {
     test.eachFramework('selecting the Under 20 band keeps only athletes younger than 20', async ({ agIdFor, page }) => {
@@ -27,6 +27,23 @@ test.agExample(import.meta, () => {
         await expect(agIdFor.cell('1', 'age')).toContainText('19');
         await expect(page.locator('.ag-set-floating-filter-input input')).toHaveValue('(1) Under 20');
     });
+
+    test.eachFramework(
+        'selecting the 30 and over band keeps only athletes aged 30 or more',
+        async ({ agIdFor, page }) => {
+            await ensureGridReady(page);
+            await waitForGridContent(page);
+
+            await agIdFor.floatingFilterButton('age').click();
+            const items = page.locator('.ag-set-filter .ag-set-filter-item');
+            await items.filter({ hasText: '(Select All)' }).locator('.ag-checkbox-input').click();
+            await items.filter({ hasText: '30 and over' }).locator('.ag-checkbox-input').click();
+            await page.keyboard.press('Escape');
+
+            await expect(agIdFor.cell('1', 'age')).not.toBeVisible();
+            await expect(agIdFor.cell('11', 'age')).toContainText('33');
+        }
+    );
 
     test.eachFramework('the Mini Filter searches the band labels', async ({ agIdFor, page }) => {
         await ensureGridReady(page);
