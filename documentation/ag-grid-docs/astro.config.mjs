@@ -320,6 +320,9 @@ export default defineConfig({
         },
         server: {
             https: httpsEnabled,
+            // PUBLIC_SITE_URL derives from PORT, so fail rather than drift to another port. A second
+            // server (e.g. in a worktree) sets its own PORT in .env.dev.local.
+            strictPort: true,
             cors: {
                 /**
                  * CORS allow list for opening examples on external sites

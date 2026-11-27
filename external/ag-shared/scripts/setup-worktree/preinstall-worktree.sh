@@ -318,6 +318,7 @@ try_cow_clone_nx_cache() {
 
     log_info "COW-cloning .nx cache from $source"
     if clone_directory "$source/.nx" "$REPO_ROOT/.nx"; then
+        reset_cloned_nx_state
         log_info "Successfully cloned .nx cache"
         return 0
     else
@@ -325,6 +326,32 @@ try_cow_clone_nx_cache() {
         rm -rf "$REPO_ROOT/.nx"
         return 1
     fi
+}
+
+# Otherwise the worktree's Nx uses the source checkout's daemon and attaches to its running tasks.
+reset_cloned_nx_state() {
+    local data="$REPO_ROOT/.nx/workspace-data"
+    local db
+
+    rm -rf "$data/d"
+
+    for db in "$data"/*.db; do
+        [[ -f "$db" ]] || continue
+        if ! clear_running_nx_tasks "$db"; then
+            log_info "Could not clear running Nx tasks from $(basename "$db"), removing it"
+            rm -f "$db" "$db-shm" "$db-wal"
+        fi
+    done
+}
+
+clear_running_nx_tasks() {
+    local db="$1"
+    local statements
+
+    command -v sqlite3 >/dev/null 2>&1 || return 1
+    statements=$(sqlite3 "$db" "SELECT group_concat('DELETE FROM ' || name || ';', ' ') FROM sqlite_master
+        WHERE type = 'table' AND name IN ('running_tasks', 'running_task_readiness', 'task_invocations')") || return 1
+    [[ -z "$statements" ]] || sqlite3 "$db" "$statements"
 }
 
 # Validate that every source plugin with a `build` target has a corresponding
