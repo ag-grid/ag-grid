@@ -155,6 +155,7 @@ export const HRExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quar
                             getDataPath={getDataPath}
                             treeData
                             autoGroupColumnDef={autoGroupColumnDef}
+                            tooltipShowMode="auto"
                         />
                     </div>
                 </div>

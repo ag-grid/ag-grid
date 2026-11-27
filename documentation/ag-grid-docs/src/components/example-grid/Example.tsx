@@ -104,6 +104,7 @@ const modules = [
 ];
 
 const staticGridOptions: GridOptions = {
+    tooltipShowMode: 'auto',
     statusBar: {
         statusPanels: [
             { statusPanel: 'agTotalAndFilteredRowCountComponent', key: 'totalAndFilter', align: 'left' },
