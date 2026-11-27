@@ -4,6 +4,8 @@
 export const SYMBOLS = Array.from({ length: 50 }, (_, i) => `SYM${String(i).padStart(2, '0')}`);
 export const FIXED_COLS = ['id', 'arrival', 'sym', 'qty', 'px'];
 export const GRAND_TOTAL_KEY = '__grandTotal';
+/** Aggregated value columns a group row carries, so the root store can be sorted by them. */
+export const GROUP_AGG_COLS = ['qty', 'px'];
 
 const MAX_MATERIALISE = 200_000;
 const MAX_AGGREGATE = 2_000_000;
@@ -174,8 +176,14 @@ export class Backend {
                 return { rowData: [], rowCount: 0, unsupported: 'grouping needs total <= 2m rows and no filter' };
             }
             const keys = [...SYMBOLS].filter((s) => this.groups.get(s).count > 0);
-            const sort = sortModel.find((s) => s.colId === 'sym' || s.colId === 'ag-Grid-AutoColumn');
-            if (sort?.sort === 'desc') {
+            const sort = sortModel.find(
+                (s) => s.colId === 'sym' || s.colId === 'ag-Grid-AutoColumn' || GROUP_AGG_COLS.includes(s.colId)
+            );
+            if (GROUP_AGG_COLS.includes(sort?.colId)) {
+                const dir = sort.sort === 'desc' ? -1 : 1;
+                const value = (s) => this.groupRow(s)[sort.colId];
+                keys.sort((a, b) => dir * (value(a) - value(b)) || a.localeCompare(b));
+            } else if (sort?.sort === 'desc') {
                 keys.reverse();
             }
             const rowData = keys.slice(startRow, endRow).map((s) => this.groupRow(s));

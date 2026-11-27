@@ -1,4 +1,4 @@
-import { Backend, FIXED_COLS, GRAND_TOTAL_KEY, valueColIds } from './backend.js';
+import { Backend, FIXED_COLS, GRAND_TOTAL_KEY, GROUP_AGG_COLS, valueColIds } from './backend.js';
 
 const { createGrid, GRAND_TOTAL_ROW_ID, themeQuartz } = window.agGrid;
 
@@ -110,6 +110,8 @@ export class LiveGrid {
         const arrivalDesc = !sortModel.length || (sortModel[0].colId === 'arrival' && sortModel[0].sort === 'desc');
         this.grouped = this.api.getRowGroupColumns().length > 0;
         this.defaultOrder = arrivalDesc && Object.keys(filterModel).length === 0;
+        // Group rows are sorted by their aggregates, which every insert and update changes.
+        this.groupAggregateOrder = this.grouped && GROUP_AGG_COLS.includes(sortModel[0]?.colId);
         if (this.grouped && !this.backend.groups) {
             this.backend.ensureGroups();
         }
@@ -160,7 +162,12 @@ export class LiveGrid {
                 }
             }
             if (this.api.getRowNode(`g-${droppedSym}`)?.expanded) {
-                this.apply({ route: [droppedSym], remove: [{ id: droppedId }] });
+                // The departing row is usually outside the cached blocks, so the grid cannot count it out itself.
+                this.apply({
+                    route: [droppedSym],
+                    remove: [{ id: droppedId }],
+                    rowCount: this.backend.groups.get(droppedSym).count,
+                });
             }
             this.applyGroupUpdates(new Set([sym, droppedSym]));
             return;
@@ -178,6 +185,10 @@ export class LiveGrid {
      */
     refreshLater(route) {
         this.stats.refreshInserts++;
+        this.scheduleRefresh(route);
+    }
+
+    scheduleRefresh(route) {
         this.refreshRoutes.set(route.join('/'), route);
         this.refreshTimer ??= setTimeout(() => this.runRefreshes(), 1000);
     }
@@ -229,6 +240,9 @@ export class LiveGrid {
             this.metrics.expectAgg(this, id, g.px.toFixed(2), t, id === GRAND_TOTAL_ROW_ID);
         }
         this.apply({ route: [], update });
+        if (this.groupAggregateOrder) {
+            this.scheduleRefresh([]);
+        }
     }
 
     apply(tx, insertedId) {

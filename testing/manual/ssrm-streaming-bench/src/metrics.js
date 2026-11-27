@@ -163,8 +163,9 @@ class GridTracker {
     }
 
     /**
-     * Under a non-default order: visible leaf rows of the same parent must follow the sort and pass the filter, and
-     * (ungrouped only) must be exactly the rows the backend returns for those indexes now.
+     * Under a non-default order: visible rows of the same parent (group rows included) must follow the sort, leaf rows
+     * must pass the filter, and (ungrouped only) the leaf rows must be exactly the rows the backend returns for those
+     * indexes now.
      */
     checkSortedView() {
         const t0 = performance.now();
@@ -174,7 +175,7 @@ class GridTracker {
         for (const rowEl of this.centre.children) {
             const id = rowEl.getAttribute('row-id');
             const rect = rowEl.getBoundingClientRect();
-            if (id && /^\d+$/.test(id) && rect.top >= top - 1 && rect.bottom <= bottom + 1) {
+            if (id && /^(\d+|g-.+)$/.test(id) && rect.top >= top - 1 && rect.bottom <= bottom + 1) {
                 rows.push({ index: +rowEl.getAttribute('row-index'), node: api.getRowNode(id) });
             }
         }
@@ -185,15 +186,16 @@ class GridTracker {
         rows.sort((a, b) => a.index - b.index);
         const { sortModel, filterModel } = this.grid.order();
         const sort = sortModel[0];
+        const lastSibling = new Map();
         let violation = false;
-        for (let i = 0; i < rows.length; i++) {
-            const { node } = rows[i];
-            if (!node?.data || !backend.passesFilter(+node.id, filterModel)) {
+        for (const { node } of rows) {
+            if (!node?.data || (!node.group && !backend.passesFilter(+node.id, filterModel))) {
                 violation = true;
                 break;
             }
-            const prev = rows[i - 1]?.node;
-            if (sort && prev?.data && prev.parent === node.parent) {
+            const prev = lastSibling.get(node.parent);
+            lastSibling.set(node.parent, node);
+            if (sort && prev && sort.colId in node.data) {
                 const a = prev.data[sort.colId];
                 const b = node.data[sort.colId];
                 if (sort.sort === 'asc' ? a > b : a < b) {
