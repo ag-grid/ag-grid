@@ -217,8 +217,6 @@ The logic receives the same parameters as the [doesFilterPass Callback](#doesfil
 
 For the Set Filter and Multi Filter, the filter UI keeps working as normal: the list of values, the Mini Filter, Select All and the floating filter. Only the decision on which rows pass is replaced, so the provided filter's own row matching (such as case sensitivity) no longer applies.
 
-For the Text, Number and Date Filters, the handler you supply replaces the grid's own. The floating filter only shows the model if your handler implements `getModelAsString`.
-
 `api.getColumnFilterHandler(colId)` returns the handler you supplied. For `doesFilterPass`, it returns a handler the grid builds around your callback.
 
 The example below uses the Set Filter on the **Age** column to list age bands instead of ages:
