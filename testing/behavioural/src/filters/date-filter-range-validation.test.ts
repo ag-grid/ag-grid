@@ -1,6 +1,13 @@
 import { getAllByTestId, getByTestId, waitFor } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
-import { ColumnFilterHarness, GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
+import {
+    ColumnFilterHarness,
+    GridColumns,
+    GridRows,
+    TestGridsManager,
+    asyncSetTimeout,
+    getVisibleTooltips,
+} from 'ag-test-utils';
 
 import type { DateFilterModel } from 'ag-grid-community';
 import {
@@ -235,7 +242,7 @@ describe('Date Range Filter', () => {
         );
     });
 
-    test('inRange validation tooltip reports once on re-open, with no debounced re-report', async () => {
+    test('inRange validation survives re-opening without a native validation bubble', async () => {
         const userSession = userEvent.setup();
 
         const api = await gridsManager.createGridAndWait('grid1', {
@@ -287,45 +294,23 @@ describe('Date Range Filter', () => {
 
         await asyncSetTimeout(0);
 
-        // Chrome/Safari focus the invalid control when reportValidity() is called, which
-        // fires `focusin` and re-triggers the (debounced) date validation report. happy-dom's
-        // reportValidity is a no-op that does not steal focus, so model that focus steal on
-        // the first report to exercise the same re-report path a real browser would take.
-        let stolenFocus = false;
-        const reportSpy = vi
-            .spyOn(HTMLInputElement.prototype, 'reportValidity')
-            .mockImplementation(function reportValidityWithFocusSteal(this: HTMLInputElement) {
-                if (!stolenFocus) {
-                    stolenFocus = true;
-                    this.dispatchEvent(new Event('focusin', { bubbles: true }));
-                }
-                return this.validity.valid;
-            });
+        const reportSpy = vi.spyOn(HTMLInputElement.prototype, 'reportValidity');
 
         try {
-            // Re-open the filter: afterGuiAttached reports validity immediately (once).
             await userSession.click(filterBtn);
-
             await asyncSetTimeout(0);
 
-            // The message survived the close, so re-opening must report it again rather than treat it as unchanged.
-            const reportsOnOpen = reportSpy.mock.calls.length;
-            expect(reportsOnOpen).toBeGreaterThan(0);
-
-            // Let the 500ms date-report debounce window elapse. The assertion below is negative (no
-            // second report was scheduled), so it can only be made once the window has closed.
-            // eslint-disable-next-line no-restricted-syntax -- samples past the date validity-report debounce window (dateCompWrapper.ts)
-            await asyncSetTimeout(50);
-
-            // The tooltip must render once and stay stable: the focusin from the focus steal recomputes
-            // the same validity message, so no second, conflicting report is scheduled.
-            expect(reportSpy.mock.calls.length).toBe(reportsOnOpen);
+            expect(document.activeElement).toBe(fromDateInput);
+            expect(toDateInput.validity.valid).toBe(false);
+            expect(toDateInput.getAttribute('aria-invalid')).toBe('true');
+            expect(toDateInput.validationMessage).toMatch(/^Date must be after /);
+            expect(reportSpy).not.toHaveBeenCalled();
         } finally {
             reportSpy.mockRestore();
         }
     });
 
-    test('inRange validation tooltip does not re-report when focus returns (e.g. switching browser tabs)', async () => {
+    test('inRange validation does not show a native bubble when focus returns', async () => {
         const userSession = userEvent.setup();
 
         const api = await gridsManager.createGridAndWait('grid1', {
@@ -367,32 +352,26 @@ describe('Date Range Filter', () => {
         toDateInput.dispatchEvent(new Event('input', { bubbles: true }));
         toDateInput.dispatchEvent(new Event('change', { bubbles: true }));
 
-        // Let the debounced report from typing land, so the invalid bubble is stably shown. The spy
-        // installed below must see zero calls, so the pending debounce has to drain first — there is
-        // no positive signal to poll for, only the absence of further reports.
-        // eslint-disable-next-line no-restricted-syntax -- samples past the date validity-report debounce window (dateCompWrapper.ts)
-        await asyncSetTimeout(50);
+        await asyncSetTimeout(0);
 
         expect(toDateInput.validity.valid).toBe(false);
 
         const reportSpy = vi.spyOn(HTMLInputElement.prototype, 'reportValidity');
 
         try {
-            // Switching browser tabs away and back re-focuses the invalid input, firing `focusin`.
-            // The validity message is unchanged, so no report should be scheduled - otherwise the
-            // native validation bubble blinks (disappears then reappears) on every tab return.
-            toDateInput.dispatchEvent(new Event('focusin', { bubbles: true }));
+            // Returning to a browser tab fires focus even when the value has not changed.
+            toDateInput.dispatchEvent(new Event('focus'));
+            await asyncSetTimeout(0);
 
-            // eslint-disable-next-line no-restricted-syntax -- samples past the date validity-report debounce window (dateCompWrapper.ts); the assertion below is negative
-            await asyncSetTimeout(50);
-
+            expect(toDateInput.validity.valid).toBe(false);
+            expect(toDateInput.getAttribute('aria-invalid')).toBe('true');
             expect(reportSpy).not.toHaveBeenCalled();
         } finally {
             reportSpy.mockRestore();
         }
     });
 
-    test('inRange validation bubble follows focus between the from and to inputs', async () => {
+    test('inRange validation and announcements follow focus without a native bubble', async () => {
         const userSession = userEvent.setup();
 
         const api = await gridsManager.createGridAndWait('grid1', {
@@ -435,11 +414,7 @@ describe('Date Range Filter', () => {
         toDateInput.dispatchEvent(new Event('input', { bubbles: true }));
         toDateInput.dispatchEvent(new Event('change', { bubbles: true }));
 
-        // Let the debounced report from typing land, so the invalid bubble is stably shown on `to`.
-        // The spy installed below must only see the report triggered by the focus change, so the
-        // pending debounce from typing has to drain first — nothing positive to poll for.
-        // eslint-disable-next-line no-restricted-syntax -- samples past the date validity-report debounce window (dateCompWrapper.ts)
-        await asyncSetTimeout(50);
+        await asyncSetTimeout(0);
 
         expect(toDateInput.validity.valid).toBe(false);
         // The message names the bound the focused input has to respect: `to` must come after `from`.
@@ -448,21 +423,103 @@ describe('Date Range Filter', () => {
         const reportSpy = vi.spyOn(HTMLInputElement.prototype, 'reportValidity');
 
         try {
-            // Focus the `from` input: the message now targets `from` (interpolating the other date),
-            // so the message changes and the bubble must follow focus by re-reporting on `from`.
-            fromDateInput.dispatchEvent(new Event('focusin', { bubbles: true }));
+            await userSession.click(toDateInput);
+            await waitFor(() =>
+                expect(gridDiv.querySelector('.ag-aria-description-container')?.textContent).toContain(
+                    toDateInput.validationMessage
+                )
+            );
+            await userSession.click(fromDateInput);
+            await waitFor(() =>
+                expect(gridDiv.querySelector('.ag-aria-description-container')?.textContent).toContain(
+                    fromDateInput.validationMessage
+                )
+            );
 
-            // Poll for the re-report (it lands after the 500ms debounce) rather than guessing a delay.
-            await waitFor(() => expect(reportSpy).toHaveBeenCalled(), { timeout: 2000 });
-
+            expect(document.activeElement).toBe(fromDateInput);
             expect(fromDateInput.validity.valid).toBe(false);
+            expect(fromDateInput.getAttribute('aria-invalid')).toBe('true');
             // Mirrored for the other input: `from` must come before `to`.
             expect(fromDateInput.validationMessage).toMatch(/^Date must be before /);
             expect(toDateInput.validationMessage).toBe('');
+            expect(toDateInput.getAttribute('aria-invalid')).toBe('false');
+            expect(reportSpy).not.toHaveBeenCalled();
         } finally {
             reportSpy.mockRestore();
         }
     });
+
+    test.each(['hover', 'focus'] as const)(
+        'date validation tooltips support focus and hover with tooltipTrigger=%s',
+        async (tooltipTrigger) => {
+            const user = userEvent.setup();
+            const api = await gridsManager.createGridAndWait('date-tooltips', {
+                columnDefs: [
+                    { field: 'date', filter: 'agDateColumnFilter', filterParams: { defaultOption: 'inRange' } },
+                ],
+                rowData: [{ date: '2026-06-10' }],
+                tooltipTrigger,
+                tooltipShowDelay: 0,
+                tooltipSwitchShowDelay: 0,
+                tooltipInteraction: true,
+                suppressBuiltInTooltips: true,
+            });
+            const grid = getGridElement(api)! as HTMLElement;
+            api.showColumnFilter('date');
+            const from = await waitFor(() =>
+                getByTestId<HTMLInputElement>(
+                    grid,
+                    agTestIdFor.dateFilterInstanceInput({ source: 'column-filter', index: 0 })
+                )
+            );
+            const to = getByTestId<HTMLInputElement>(
+                grid,
+                agTestIdFor.dateFilterInstanceInput({ source: 'column-filter', index: 1 })
+            );
+            from.value = '2026-06-10';
+            from.dispatchEvent(new Event('input', { bubbles: true }));
+            to.focus();
+            to.value = '2000-11-11';
+            to.dispatchEvent(new Event('input', { bubbles: true }));
+
+            await waitFor(() =>
+                expect(getVisibleTooltips().map((tooltip) => tooltip.textContent)).toEqual([to.validationMessage])
+            );
+            expect(document.activeElement).toBe(to);
+            expect(getVisibleTooltips()[0].getAttribute('role')).toBe('tooltip');
+            expect(to.getAttribute('aria-invalid')).toBe('true');
+            await waitFor(() =>
+                expect(grid.querySelector('.ag-aria-description-container')?.textContent).toContain(
+                    to.validationMessage
+                )
+            );
+
+            from.focus();
+            await waitFor(() =>
+                expect(getVisibleTooltips().map((tooltip) => tooltip.textContent)).toEqual([from.validationMessage])
+            );
+            expect(from.validationMessage).toMatch(/^Date must be before /);
+            from.blur();
+            await waitFor(() => expect(getVisibleTooltips()).toHaveLength(0));
+            await user.hover(from);
+            await waitFor(() => expect(getVisibleTooltips()).toHaveLength(1));
+            expect(document.activeElement).not.toBe(from);
+            await user.unhover(from);
+
+            to.focus();
+            to.value = '2026-11-11';
+            to.dispatchEvent(new Event('input', { bubbles: true }));
+            await waitFor(() => expect(getVisibleTooltips()).toHaveLength(0));
+            expect(to.getAttribute('aria-invalid')).toBe('false');
+            expect(to.validity.valid).toBe(true);
+
+            to.value = '2000-11-11';
+            to.dispatchEvent(new Event('input', { bubbles: true }));
+            await waitFor(() => expect(getVisibleTooltips()).toHaveLength(1));
+            api.hideColumnFilter();
+            await waitFor(() => expect(getVisibleTooltips()).toHaveLength(0));
+        }
+    );
 
     /**
      * The range check compares the parsed dates, so it is only as good as the parse. A year outside

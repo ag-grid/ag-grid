@@ -157,13 +157,12 @@ export class DateFloatingFilter extends SimpleFloatingFilter<IFloatingFilterPara
 
     private createDateComponent(): void {
         const {
-            beans: { context, userCompFactory },
+            beans,
             eDateWrapper,
             params: { column },
         } = this;
         this.dateComp = new DateCompWrapper(
-            context,
-            userCompFactory,
+            beans,
             column.getColDef(),
             this.getDateComponentParams(),
             eDateWrapper,
