@@ -641,20 +641,24 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
             return;
         }
         const missingLabel = this.getMissingLabel();
-        if (missingLabel) {
-            // Only the value is truncated, so a long one never hides the label.
-            const eValue = _createElement({ tag: 'span', cls: 'ag-set-filter-item-missing-value' });
-            eValue.append(content);
-            const eLabel = _createElement({ tag: 'span', cls: 'ag-set-filter-item-missing-content' });
-            eLabel.append(
-                eValue,
-                ' ',
-                _createElement({ tag: 'span', cls: 'ag-set-filter-item-missing-label', children: missingLabel })
-            );
-            this.eCheckbox.setLabel(eLabel);
-        } else {
-            this.eCheckbox.setLabel(content);
+        if (!missingLabel) {
+            this.applyCheckboxLabel(content);
+            return;
         }
+        // Only the value is truncated, so a long one never hides the label.
+        const eValue = _createElement({ tag: 'span', cls: 'ag-set-filter-item-missing-value' });
+        eValue.append(content);
+        const eLabel = _createElement({ tag: 'span', cls: 'ag-set-filter-item-missing-content' });
+        eLabel.append(
+            eValue,
+            ' ',
+            _createElement({ tag: 'span', cls: 'ag-set-filter-item-missing-label', children: missingLabel })
+        );
+        this.applyCheckboxLabel(eLabel);
+    }
+
+    private applyCheckboxLabel(label: HTMLElement | string): void {
+        this.eCheckbox.setLabel(label);
         if (!this.isTree) {
             // The checkbox stays named by the label through aria-labelledby; setLabel resets aria-hidden.
             _setAriaHidden(this.eCheckbox.getGui().querySelector('.ag-label')!, true);
