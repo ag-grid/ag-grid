@@ -1,7 +1,7 @@
 import { GridRows, TestGridsManager, waitForEvent, waitForNoLoadingRows } from 'ag-test-utils';
 
 import type { AggValueGetterParams, IServerSideGetRowsParams } from 'ag-grid-community';
-import { GRAND_TOTAL_ROW_ID } from 'ag-grid-community';
+import { GRAND_TOTAL_ROW_ID, TextEditorModule } from 'ag-grid-community';
 import { RowGroupingModule, ServerSideRowModelModule, TreeDataModule } from 'ag-grid-enterprise';
 
 interface MedalRow {
@@ -38,7 +38,7 @@ function getRows(params: IServerSideGetRowsParams<MedalRow>): void {
 
 describe('colDef.aggValueGetter with the Server-Side Row Model', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ServerSideRowModelModule, RowGroupingModule, TreeDataModule],
+        modules: [ServerSideRowModelModule, RowGroupingModule, TreeDataModule, TextEditorModule],
     });
 
     afterEach(() => {
@@ -107,7 +107,7 @@ describe('colDef.aggValueGetter with the Server-Side Row Model', () => {
             isServerSideGroup: (data: FileRow) => !!data.folder,
             getServerSideGroupKey: (data: FileRow) => data.name,
             getRowId: ({ data }) => data.name,
-            columnDefs: [{ field: 'size', aggFunc: 'sum', aggValueGetter: (params) => params.value * 2 }],
+            columnDefs: [{ field: 'size', aggFunc: 'sum', editable: true, aggValueGetter: (params) => params.value * 2 }],
             autoGroupColumnDef: { field: 'name' },
             serverSideDatasource: {
                 getRows: (params) => {
@@ -121,5 +121,9 @@ describe('colDef.aggValueGetter with the Server-Side Row Model', () => {
 
         expect(api.getCellValue({ rowNode: api.getRowNode('Documents')!, colKey: 'size' })).toBe(600);
         expect(api.getCellValue({ rowNode: api.getRowNode('notes.txt')!, colKey: 'size' })).toBe(5);
+        // the editor would show the getter's value while a field write stores the aggregate
+        const size = api.getColumn('size')!;
+        expect(size.isCellEditable(api.getRowNode('Documents')!)).toBe(false);
+        expect(size.isCellEditable(api.getRowNode('notes.txt')!)).toBe(true);
     });
 });
