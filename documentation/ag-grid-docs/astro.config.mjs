@@ -320,6 +320,10 @@ export default defineConfig({
         },
         server: {
             https: httpsEnabled,
+            // PUBLIC_SITE_URL and the URLs derived from it use PORT, so fail on a busy port rather
+            // than drift to the next one with stale URLs. To run another server alongside (e.g. in
+            // a worktree), give it its own PORT in documentation/ag-grid-docs/.env.dev.local.
+            strictPort: true,
             cors: {
                 /**
                  * CORS allow list for opening examples on external sites
