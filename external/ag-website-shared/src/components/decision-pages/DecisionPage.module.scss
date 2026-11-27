@@ -224,6 +224,8 @@ $product-bar-width: 3px;
     display: flex;
     flex-direction: column;
     gap: $spacing-size-1;
+    min-width: 0;
+    overflow-wrap: anywhere;
 }
 
 .keyFigureSuffix {
@@ -534,6 +536,8 @@ $product-bar-width: 3px;
 }
 
 .productReason {
+    min-width: 0;
+    overflow-wrap: anywhere;
     margin: 0;
     padding: $spacing-size-6;
     border: 1px solid var(--color-border-primary);

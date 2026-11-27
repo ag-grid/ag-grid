@@ -1,6 +1,13 @@
 import { AgChartsCommunityModule } from 'ag-charts-community';
 
-import type { GetDetailRowDataParams, GridApi, GridOptions, Module, ValueFormatterParams } from 'ag-grid-community';
+import type {
+    ColDef,
+    GetDetailRowDataParams,
+    GridApi,
+    GridOptions,
+    Module,
+    ValueFormatterParams,
+} from 'ag-grid-community';
 import { AllCommunityModule } from 'ag-grid-community';
 import {
     CellSelectionModule,
@@ -353,14 +360,16 @@ const spreadsheetEditing = (): SolutionExampleDefinition => {
                 editable: true,
                 flex: 1,
                 minWidth: 90,
-                valueFormatter: moneyWhole,
-                // Copy writes the formatted text ("$1,250"), so strip symbols and separators on paste
-                valueParser: ({ newValue }) => Number(String(newValue).replace(/[^0-9.-]/g, '')),
-                type: 'rightAligned',
             },
             columnDefs: [
-                { field: 'item', editable: false, valueFormatter: undefined, type: [], minWidth: 130 },
-                ...months.map((month) => ({ field: month })),
+                { field: 'item', editable: false, minWidth: 130 },
+                ...months.map((month): ColDef => ({
+                    field: month,
+                    valueFormatter: moneyWhole,
+                    // Copy writes the formatted text ("$1,250"), so strip symbols and separators on paste
+                    valueParser: ({ newValue }) => Number(String(newValue).replace(/[^0-9.-]/g, '')),
+                    type: 'rightAligned',
+                })),
             ],
             statusBar: { statusPanels: [{ statusPanel: 'agAggregationComponent' }] },
         },
