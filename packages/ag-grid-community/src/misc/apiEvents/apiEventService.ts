@@ -24,6 +24,9 @@ export class ApiEventService extends BeanStub<AgEventType> implements NamedBean 
             return; // ignoring non functions for compatibility
         }
         this.beans.validation?.validateEventListener(eventType);
+        if (eventType === 'filterModified') {
+            this.beans.colFilter?.warnFilterModifiedListened();
+        }
         const listener = this.wrapSvc?.wrap(eventType, userListener) ?? userListener;
 
         const async = !ALWAYS_SYNC_GLOBAL_EVENTS.has(eventType);

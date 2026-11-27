@@ -1,5 +1,4 @@
 import {
-    ALL_SEVERITIES,
     AdvancedFilterHarness,
     FilterDom,
     GridRows,
@@ -17,7 +16,6 @@ import {
     LocaleModule,
     NumberFilterModule,
     TextFilterModule,
-    enableDevValidations,
     getGridElement,
 } from 'ag-grid-community';
 import { AdvancedFilterModule, SetFilterModule } from 'ag-grid-enterprise';
@@ -210,41 +208,6 @@ describe('Advanced Filter — grid options', () => {
                 filter: 39,
             });
             await new GridRows(api, 'hidden column included after the option was turned on').check(`
-                ROOT id:ROOT_NODE_ID
-                └── LEAF id:1 athlete:"Ng" age:40
-            `);
-        });
-    });
-
-    describe('suppressAdvancedFilterEval (deprecated no-op since v34)', () => {
-        test('the option has no effect — the filter still evaluates client-side', async () => {
-            // This test deliberately sets the deprecated suppressAdvancedFilterEval option (deprecation #306).
-            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [306] });
-            // The deprecated option logs warning #306 on grid creation — assert it fires, don't leak it.
-            const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
-            const api = await gridsManager.createGridAndWait('grid1', {
-                columnDefs: [
-                    { field: 'athlete', filter: true },
-                    { field: 'age', filter: true },
-                ],
-                rowData: ROW_DATA,
-                enableAdvancedFilter: true,
-                suppressAdvancedFilterEval: true,
-            });
-            expect(warnSpy.mock.calls.some((c) => c.join(' ').includes('suppressAdvancedFilterEval'))).toBe(true);
-            warnSpy.mockRestore();
-
-            await AdvancedFilterHarness.get(api).applyExpression('[Age] > 30');
-            await asyncSetTimeout(0);
-
-            // No-op since v34 (advanced filter no longer uses function evaluation): the grid filters normally.
-            expect(api.getAdvancedFilterModel()).toEqual({
-                filterType: 'number',
-                colId: 'age',
-                type: 'greaterThan',
-                filter: 30,
-            });
-            await new GridRows(api, 'deprecated suppress-eval still filters').check(`
                 ROOT id:ROOT_NODE_ID
                 └── LEAF id:1 athlete:"Ng" age:40
             `);

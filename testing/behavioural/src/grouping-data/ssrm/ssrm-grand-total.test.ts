@@ -7,11 +7,11 @@ import {
     TestGridsManager,
     asyncSetTimeout,
     clickMenuOption,
-    polyfillOffsetParent,
     unindentText,
     waitForEvent,
     waitForNoLoadingRows,
 } from 'ag-test-utils';
+import { mockGridLayout } from 'ag-test-utils/polyfills/mockGridLayout';
 
 import type {
     GetRowIdParams,
@@ -936,27 +936,22 @@ describe('SSRM grand total row', () => {
         };
 
         test('when a context menu item pins it to the other side or unpins it', async () => {
-            const restoreOffsetParent = polyfillOffsetParent();
-            try {
-                const api = await createPinnedBottomGrid({ getContextMenuItems: () => ['pinTop', 'unpinRow'] });
-                const openMenuOnGrandTotal = () =>
-                    userEvent.pointer({
-                        keys: '[MouseRight]',
-                        target: pinnedRowElements(api, 'bottom')[0].querySelector<HTMLElement>('.ag-cell')!,
-                    });
+            const api = await createPinnedBottomGrid({ getContextMenuItems: () => ['pinTop', 'unpinRow'] });
+            const openMenuOnGrandTotal = () =>
+                userEvent.pointer({
+                    keys: '[MouseRight]',
+                    target: pinnedRowElements(api, 'bottom')[0].querySelector<HTMLElement>('.ag-cell')!,
+                });
 
-                await openMenuOnGrandTotal();
-                await clickMenuOption('Pin to Top');
-                await asyncSetTimeout(0);
-                expectPinnedBottomOnly(api);
+            await openMenuOnGrandTotal();
+            await clickMenuOption('Pin to Top');
+            await asyncSetTimeout(0);
+            expectPinnedBottomOnly(api);
 
-                await openMenuOnGrandTotal();
-                await clickMenuOption('Unpin Row');
-                await asyncSetTimeout(0);
-                expectPinnedBottomOnly(api);
-            } finally {
-                restoreOffsetParent();
-            }
+            await openMenuOnGrandTotal();
+            await clickMenuOption('Unpin Row');
+            await asyncSetTimeout(0);
+            expectPinnedBottomOnly(api);
         });
 
         test('when the row pinning state names it', async () => {
@@ -2940,5 +2935,85 @@ describe('SSRM grand total row', () => {
             ├── LEAF id:3 id:"3" value:30
             └─ footer id:rowGroupFooter_ROOT_NODE_ID id:"rowGroupFooter_ROOT_NODE_ID" value:50
         `);
+    });
+
+    describe('grandTotalRow top sticks to the top of the viewport', () => {
+        beforeAll(() => {
+            // sticky rows are capped to a share of the viewport, which is 0 without real offset sizes
+            mockGridLayout.useRealOffsetDimensions = true;
+        });
+
+        afterAll(() => {
+            mockGridLayout.useRealOffsetDimensions = false;
+        });
+
+        function stickyTopRowIds(api: GridApi<any>): string[] {
+            const root = TestGridsManager.getHTMLElement(api)!;
+            const rows = root.querySelectorAll('.ag-grid-sticky-top-rows-container .ag-row');
+            return Array.from(rows).map((row) => row.getAttribute('row-id') ?? '');
+        }
+
+        async function scrollAndExpectStickyGrandTotal(api: GridApi<any>): Promise<void> {
+            const viewport = TestGridsManager.getHTMLElement(api)!.querySelector<HTMLElement>('.ag-grid-viewport')!;
+            viewport.scrollTop = 5000;
+            await waitFor(() => expect(stickyTopRowIds(api)).toContain(GRAND_TOTAL_ID));
+            const grandTotalRow = TestGridsManager.getHTMLElement(api)!.querySelector<HTMLElement>(
+                `.ag-grid-sticky-top-rows-container .ag-row[row-id="${GRAND_TOTAL_ID}"]`
+            )!;
+            expect(grandTotalRow.style.transform).toBe('translateY(0px)');
+        }
+
+        test('flat grid', async () => {
+            const api = gridManager.createGrid(null, {
+                columnDefs: [{ field: 'id' }, { field: 'value' }],
+                rowModelType: 'serverSide',
+                grandTotalRow: 'top',
+                getRowId: (params) => params.data.id,
+                serverSideDatasource: {
+                    getRows(params) {
+                        const rowData: RowData[] = Array.from({ length: 300 }, (_, i) => ({ id: `${i}`, value: i }));
+                        if (params.needsGrandTotal) {
+                            rowData.push({ id: GRAND_TOTAL_ID, value: 44850 });
+                        }
+                        setTimeout(() => params.success({ rowData, rowCount: 300 }));
+                    },
+                },
+            });
+            await waitForNoLoadingRows(api);
+
+            await scrollAndExpectStickyGrandTotal(api);
+        });
+
+        test('grouped grid', async () => {
+            const api = gridManager.createGrid(null, {
+                columnDefs: [{ field: 'category', rowGroup: true, hide: true }, { field: 'value' }],
+                rowModelType: 'serverSide',
+                grandTotalRow: 'top',
+                isServerSideGroupOpenByDefault: () => true,
+                getRowId: (params) => params.data.id ?? `g-${params.data.category}`,
+                serverSideDatasource: {
+                    getRows(params) {
+                        const [category] = params.request.groupKeys;
+                        const rowData: any[] =
+                            category == null
+                                ? [{ category: 'A' }, { category: 'B' }]
+                                : Array.from({ length: 150 }, (_, i) => ({
+                                      id: `${category}-${i}`,
+                                      category,
+                                      value: i,
+                                  }));
+                        const rowCount = rowData.length;
+                        if (params.needsGrandTotal) {
+                            rowData.push({ id: GRAND_TOTAL_ID, value: 22350 });
+                        }
+                        setTimeout(() => params.success({ rowData, rowCount }));
+                    },
+                },
+            });
+            await waitForNoLoadingRows(api);
+
+            await scrollAndExpectStickyGrandTotal(api);
+            expect(stickyTopRowIds(api)).toContain('g-A');
+        });
     });
 });

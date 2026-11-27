@@ -148,3 +148,4 @@ jobs:
                   # See ag-dev-prompts docs/installation.md.
                   driver: ${{ inputs.driver || 'explore' }}
                   quiet: ${{ inputs.quiet || 'false' }}
+                  classification: 'true'

@@ -12,7 +12,8 @@ repo_name=$(git remote get-url origin 2>/dev/null \
     | sed -E 's|.*[:/]([^/]+)$|\1|; s|\.git$||')
 [ -n "$repo_name" ] || repo_name=$(basename "$PWD")
 
-# Sourced before every captured command: the title goes to the terminal, silently absent without one.
+# Sourced before every captured command: the title goes to the terminal, silently absent without one,
+# and the line always succeeds so a shell running with errexit still reaches the command.
 cat >> "$CLAUDE_ENV_FILE" <<ENVEOF
-{ printf '\033]0;${repo_name}: %s\007' "\$(git rev-parse --abbrev-ref HEAD 2>/dev/null || basename "\$PWD")" >/dev/tty; } 2>/dev/null
+{ printf '\033]0;${repo_name}: %s\007' "\$(git rev-parse --abbrev-ref HEAD 2>/dev/null || basename "\$PWD")" >/dev/tty; } 2>/dev/null || true
 ENVEOF

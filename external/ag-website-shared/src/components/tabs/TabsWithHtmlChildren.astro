@@ -25,7 +25,7 @@ const { tabItemIdPrefix, headerLinks, snippetTabs } = Astro.props as Props;
                     const tabId = getTabId({ id: id!, prefix: tabItemIdPrefix });
                     return (
                         <li id={tabId} class="tabs-nav-item" role="presentation">
-                            <button class:list={['button-style-none', 'tabs-nav-link']} role="tab">
+                            <button type="button" class:list={['button-style-none', 'tabs-nav-link']} role="tab">
                                 {label}
                             </button>
                         </li>
@@ -52,17 +52,22 @@ const { tabItemIdPrefix, headerLinks, snippetTabs } = Astro.props as Props;
 <script>
     import { TAB_ID_PROP } from './constants';
     import type { TabData } from './types';
+    import { getTabIndexForKey } from './tabKeyboard';
     import { getTabId } from './utils';
     import { navigate, browserHistory } from '@ag-website-shared/utils/navigation';
 
     const TAB_BUTTON_SELECTOR = '.tabs-nav-item button';
     const TABS_CONTENT_SELECTOR = '.tabs-content';
 
+    // Sibling groups share tab ids to stay in step, so ARIA ids are numbered per instance
+    let instanceCount = 0;
+
     class TabsWithHtmlChildren extends HTMLElement {
         tabsData: TabData[];
         selectedIndex: number;
         tabItemIdPrefix: string;
         unlistenToHashChanges: () => void;
+        ariaIdPrefix: string;
 
         constructor() {
             super();
@@ -72,7 +77,9 @@ const { tabItemIdPrefix, headerLinks, snippetTabs } = Astro.props as Props;
 
             const hashTabIndex = this.getTabIndexFromHash(window.location?.hash);
             this.selectedIndex = hashTabIndex >= 0 ? hashTabIndex : 0;
+            this.ariaIdPrefix = `tabs-${++instanceCount}`;
 
+            this.initAriaIds();
             this.initNavButtonHandlers();
             this.updateTabs();
 
@@ -101,32 +108,56 @@ const { tabItemIdPrefix, headerLinks, snippetTabs } = Astro.props as Props;
             return this.tabsData.findIndex((t) => hash.startsWith(`#${this.tabItemIdPrefix}${t.id}`));
         }
 
-        initNavButtonHandlers() {
+        initAriaIds() {
+            const panelId = `${this.ariaIdPrefix}-panel`;
             this.querySelectorAll(TAB_BUTTON_SELECTOR).forEach((button, index) => {
-                button.addEventListener('click', () => {
-                    this.selectedIndex = index;
-                    this.updateTabs();
+                button.id = `${this.ariaIdPrefix}-tab-${index}`;
+                button.setAttribute('aria-controls', panelId);
+            });
+            this.querySelector(TABS_CONTENT_SELECTOR)?.setAttribute('id', panelId);
+        }
 
-                    const tabId = getTabId({ id: this.selected.id, prefix: this.tabItemIdPrefix });
-                    // Pass the whole location: a bare hash is resolved against the `history`
-                    // package's cached location, which Astro's `<ClientRouter />` never
-                    // refreshes, leaving the pathname on whichever page loaded first. Keep
-                    // `navigate` rather than `replaceHistoryUrl` - the `browserHistory`
-                    // listener above syncs sibling tab groups, and only a push fires it.
-                    navigate({
-                        pathname: window.location.pathname,
-                        search: window.location.search,
-                        hash: tabId,
-                    });
+        initNavButtonHandlers() {
+            const buttons = this.querySelectorAll<HTMLElement>(TAB_BUTTON_SELECTOR);
+            buttons.forEach((button, index) => {
+                button.addEventListener('click', () => this.select(index));
+                button.addEventListener('keydown', (event) => {
+                    const next = getTabIndexForKey(event.key, index, buttons.length);
+                    if (next === undefined) {
+                        return;
+                    }
+                    event.preventDefault();
+                    this.select(next, { replace: true });
+                    buttons[next].focus();
                 });
             });
+        }
+
+        select(index: number, { replace = false } = {}) {
+            if (index === this.selectedIndex) {
+                return;
+            }
+            this.selectedIndex = index;
+            this.updateTabs();
+
+            const tabId = getTabId({ id: this.selected.id, prefix: this.tabItemIdPrefix });
+            // Pass the whole location: a bare hash is resolved against the `history`
+            // package's cached location, which Astro's `<ClientRouter />` never
+            // refreshes, leaving the pathname on whichever page loaded first. Keep
+            // `navigate` rather than `replaceHistoryUrl` - the `browserHistory`
+            // listener above syncs sibling tab groups, and only `navigate` fires it.
+            navigate({ pathname: window.location.pathname, search: window.location.search, hash: tabId }, { replace });
         }
 
         updateTabs() {
             // Nav item buttons
             const buttons = this.querySelectorAll(TAB_BUTTON_SELECTOR);
-            buttons.forEach((el) => (el as HTMLElement).classList.remove('active'));
-            buttons[this.selectedIndex].classList.add('active');
+            buttons.forEach((el, index) => {
+                const selected = index === this.selectedIndex;
+                el.classList.toggle('active', selected);
+                el.setAttribute('aria-selected', String(selected));
+                (el as HTMLElement).tabIndex = selected ? 0 : -1;
+            });
 
             // Nav content
             this.querySelectorAll(`[${TAB_ID_PROP}]`).forEach((el) => ((el as HTMLElement).style.display = 'none'));
@@ -136,8 +167,7 @@ const { tabItemIdPrefix, headerLinks, snippetTabs } = Astro.props as Props;
             }
 
             // Nav content labelledby
-            const label = `${this.selected.label} tab`;
-            this.querySelector(TABS_CONTENT_SELECTOR)?.setAttribute('aria-labelledby', label);
+            this.querySelector(TABS_CONTENT_SELECTOR)?.setAttribute('aria-labelledby', buttons[this.selectedIndex].id);
         }
     }
 

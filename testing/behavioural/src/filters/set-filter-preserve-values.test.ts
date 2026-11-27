@@ -1,5 +1,5 @@
 import { waitFor } from '@testing-library/dom';
-import { TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
+import { ALL_SEVERITIES, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import type {
     ColDef,
@@ -9,7 +9,7 @@ import type {
     SetFilterHandler,
     SetFilterValuesFuncParams,
 } from 'ag-grid-community';
-import { ClientSideRowModelModule, GridStateModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, GridStateModule, enableDevValidations } from 'ag-grid-community';
 import { SetFilterModule } from 'ag-grid-enterprise';
 
 interface Row {
@@ -71,6 +71,7 @@ describe('Set Filter preservePreviousValues', () => {
     };
 
     test('a checked value survives its rows leaving, and its rows pass again on return, with or without filter handlers', async () => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [348] });
         for (const enableFilterHandlers of [false, true]) {
             const api = createGrid(rows('A', 'B', 'C'), {}, {}, { enableFilterHandlers });
             await asyncSetTimeout(0);

@@ -1,7 +1,7 @@
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
-import type { ErrorId, LogArgs } from './errorMessages/errorText';
+import type { ErrorId, ErrorMap, LogArgs } from './errorMessages/errorText';
 import { _deprecatedForGrid, _errorForGrid, _errorToThrowForGrid, _warnForGrid } from './logging';
 
 /**
@@ -21,20 +21,36 @@ export class LogService extends BeanStub implements NamedBean {
         this.gridId = beans.context.getId();
     }
 
-    public override warn<TId extends ErrorId>(...args: LogArgs<TId>): void {
+    public override warn<
+        TId extends ErrorId,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        TShowMessageAtCallLocation = ErrorMap[TId],
+    >(...args: LogArgs<TId>): void {
         _warnForGrid(this.gridId, args[0], args[1] as any);
     }
 
-    public override deprecated<TId extends ErrorId>(...args: LogArgs<TId>): void {
+    public override deprecated<
+        TId extends ErrorId,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        TShowMessageAtCallLocation = ErrorMap[TId],
+    >(...args: LogArgs<TId>): void {
         _deprecatedForGrid(this.gridId, args[0], args[1] as any);
     }
 
-    public override error<TId extends ErrorId>(...args: LogArgs<TId>): void {
+    public override error<
+        TId extends ErrorId,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        TShowMessageAtCallLocation = ErrorMap[TId],
+    >(...args: LogArgs<TId>): void {
         _errorForGrid(this.gridId, args[0], args[1] as any);
     }
 
     /** Captures the error for this grid's overlay and returns it for the caller to throw. */
-    public errorToThrow<TId extends ErrorId>(...args: LogArgs<TId>): Error {
+    public errorToThrow<
+        TId extends ErrorId,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        TShowMessageAtCallLocation = ErrorMap[TId],
+    >(...args: LogArgs<TId>): Error {
         return _errorToThrowForGrid(this.gridId, args[0], args[1] as any);
     }
 }

@@ -1,4 +1,4 @@
-import { expect, gridApiHandle, test } from '@utils/grid/test-utils';
+import { ensureGridReady, expect, gridApiHandle, test, waitForGridContent } from '@utils/grid/test-utils';
 import type { Page } from 'playwright/test';
 
 test.agExample(import.meta, () => {
@@ -21,7 +21,52 @@ test.agExample(import.meta, () => {
 
         await performTest(agIdFor, page, miniFilterSearch);
     });
+
+    test.eachFramework('Typing logs the unapplied model before Apply applies it', async ({ page, agIdFor }) => {
+        const modelLogs = captureModelLogs(page);
+        await ensureGridReady(page);
+        await waitForGridContent(page);
+
+        await agIdFor.headerFilterButton('athlete').click();
+        const filterMenu = page.locator('.ag-filter-menu');
+        await filterMenu.locator('input[type="text"]').first().fill('Aaron Armstrong');
+
+        // onFilterUiChanged fires on typing: the UI model is the typed text while the applied model is still empty.
+        const typed = { filterType: 'text', type: 'contains', filter: 'Aaron Armstrong' };
+        await expect.poll(() => modelLogs('unapplied model =>')).toContainEqual(typed);
+        expect(await modelLogs('applied model =>')).toEqual(expect.not.arrayContaining([typed]));
+        await expect(agIdFor.cell('0', 'athlete')).toContainText('Michael Phelps');
+
+        await filterMenu.getByRole('button', { name: 'Apply', exact: true }).click();
+
+        // onFilterChanged fires on Apply with the applied model, and the grid filters.
+        await expect.poll(() => modelLogs('getFilterModel() =>')).toContainEqual({ athlete: typed });
+        await expect(agIdFor.cell('8041', 'athlete')).toContainText('Aaron Armstrong');
+        await expect(page.locator('.ag-row')).toHaveCount(1);
+    });
 });
+
+/** Collects the model arguments the example logs, resolved when read so the object handles are still alive. */
+function captureModelLogs(page: Page) {
+    // The generated frameworks log through their own grid reference, so `getFilterModel() =>` is matched anywhere.
+    const labels = ['applied model =>', 'unapplied model =>', 'getFilterModel() =>'];
+    const entries: Promise<{ label: string; value: unknown }>[] = [];
+    page.on('console', (msg) => {
+        const label = labels.find((l) =>
+            l === 'getFilterModel() =>' ? msg.text().includes(l) : msg.text().startsWith(l)
+        );
+        if (label) {
+            entries.push(
+                msg
+                    .args()[1]
+                    .jsonValue()
+                    .then((value) => ({ label, value }))
+            );
+        }
+    });
+    return async (label: string) => (await Promise.all(entries)).filter((e) => e.label === label).map((e) => e.value);
+}
+
 async function performTest(agIdFor: any, page: Page, miniFilterSearch: any) {
     const armstrongOption = agIdFor.setFilterInstanceItem({ source: 'column-filter' }, 'Aaron Armstrong');
     await expect(armstrongOption).toBeVisible();

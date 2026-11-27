@@ -20,9 +20,8 @@ import {
     TestGridsManager,
     asyncSetTimeout,
     mockGridLayout,
-    polyfillOffsetParent,
 } from 'ag-test-utils';
-import { installMockResizeObserver, triggerResizeObservers } from 'ag-test-utils/polyfills/mockResizeObserver';
+import { triggerResizeObservers } from 'ag-test-utils/polyfills/mockResizeObserver';
 
 import type {
     ColDef,
@@ -151,6 +150,54 @@ describe('Column Features', () => {
     });
 
     describe('column headers', () => {
+        describe('header height follows header row type changes', () => {
+            const rowClasses = (api: GridApi) =>
+                Array.from(TestGridsManager.getHTMLElement(api)!.querySelectorAll('.ag-header-row'), (row) =>
+                    ['ag-header-row-group', 'ag-header-row-column', 'ag-header-row-filter'].find((cls) =>
+                        row.classList.contains(cls)
+                    )
+                );
+            const heights = { headerHeight: 30, groupHeaderHeight: 20, floatingFiltersHeight: 40 };
+            const filteredColDefs = [
+                { field: 'a', filter: 'agTextColumnFilter', floatingFilter: true },
+                { field: 'b', filter: 'agTextColumnFilter', floatingFilter: true },
+            ];
+            const groupedColDefs = [{ headerName: 'Group', children: [{ field: 'a' }, { field: 'b' }] }];
+
+            test('[column, floating filter] -> [group, column]', async () => {
+                const api = await gridsManager.createGridAndWait(
+                    'myGrid',
+                    { ...heights, columnDefs: filteredColDefs, rowData: [{ a: 'a1', b: 'b1' }] },
+                    { modules: [TextFilterModule] }
+                );
+                expect(rowClasses(api)).toEqual(['ag-header-row-column', 'ag-header-row-filter']);
+                // The header is sized for its rows plus the theme's header row border.
+                const border = getHeaderHeight(api) - (30 + 40);
+                expect(border).toBeGreaterThanOrEqual(0);
+
+                api.setGridOption('columnDefs', groupedColDefs);
+
+                await waitFor(() => expect(rowClasses(api)).toEqual(['ag-header-row-group', 'ag-header-row-column']));
+                await waitFor(() => expect(getHeaderHeight(api)).toBe(20 + 30 + border));
+            });
+
+            test('[group, column] -> [column, floating filter]', async () => {
+                const api = await gridsManager.createGridAndWait(
+                    'myGrid',
+                    { ...heights, columnDefs: groupedColDefs, rowData: [{ a: 'a1', b: 'b1' }] },
+                    { modules: [TextFilterModule] }
+                );
+                expect(rowClasses(api)).toEqual(['ag-header-row-group', 'ag-header-row-column']);
+                const border = getHeaderHeight(api) - (20 + 30);
+                expect(border).toBeGreaterThanOrEqual(0);
+
+                api.setGridOption('columnDefs', filteredColDefs);
+
+                await waitFor(() => expect(rowClasses(api)).toEqual(['ag-header-row-column', 'ag-header-row-filter']));
+                await waitFor(() => expect(getHeaderHeight(api)).toBe(30 + 40 + border));
+            });
+        });
+
         test('headerValueGetter overrides headerName', async () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [
@@ -649,11 +696,7 @@ describe('Column Features', () => {
 
         test('a viewport resize in one grid leaves the flex columns of the other grid flexing', async () => {
             const originalGridWidth = mockGridLayout.gridWidth;
-            let uninstallResizeObserver: (() => void) | undefined;
-            let restoreOffsetParent: (() => void) | undefined;
             try {
-                restoreOffsetParent = polyfillOffsetParent();
-                uninstallResizeObserver = installMockResizeObserver();
                 const api1 = gridsManager.createGrid('grid1', {
                     columnDefs: ['a', 'b', 'c'].map((colId) => ({ colId, flex: 1 })),
                 });
@@ -675,8 +718,6 @@ describe('Column Features', () => {
                 expect(api2.getColumn('b')!.getActualWidth()).toBe(366);
             } finally {
                 mockGridLayout.gridWidth = originalGridWidth;
-                uninstallResizeObserver?.();
-                restoreOffsetParent?.();
             }
         });
 
@@ -756,11 +797,7 @@ describe('Column Features', () => {
 
         test('a resize or a viewport resize in one grid leaves a column flexing differently in the other grid flexing there', async () => {
             const originalGridWidth = mockGridLayout.gridWidth;
-            let uninstallResizeObserver: (() => void) | undefined;
-            let restoreOffsetParent: (() => void) | undefined;
             try {
-                restoreOffsetParent = polyfillOffsetParent();
-                uninstallResizeObserver = installMockResizeObserver();
                 const columnDefs = (flex: number) => [
                     { colId: 'a', width: 200 },
                     { colId: 'b', flex },
@@ -782,8 +819,6 @@ describe('Column Features', () => {
                 ]);
             } finally {
                 mockGridLayout.gridWidth = originalGridWidth;
-                uninstallResizeObserver?.();
-                restoreOffsetParent?.();
             }
         });
 
@@ -1595,7 +1630,6 @@ describe('Column Features', () => {
                 el.classList.contains('ag-cell-wrapper')
                     ? cellHeights.get(el.closest('.ag-cell')?.getAttribute('col-id') ?? '')
                     : undefined;
-            const uninstallResizeObserver = installMockResizeObserver();
             try {
                 const api = gridsManager.createGrid('myGrid', {
                     columnDefs: [
@@ -1614,7 +1648,6 @@ describe('Column Features', () => {
                 ]);
                 await waitFor(() => expect(row.rowHeight).toBe(60));
             } finally {
-                uninstallResizeObserver();
                 mockGridLayout.useRealOffsetDimensions = false;
                 mockGridLayout.elementHeightOverride = undefined;
             }

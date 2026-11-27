@@ -4,7 +4,7 @@ import { mockGridLayout } from 'ag-test-utils/polyfills/mockGridLayout';
 import React from 'react';
 import { afterEach, beforeAll, describe, expect, test } from 'vitest';
 
-import type { ColDef, GridApi } from 'ag-grid-community';
+import type { ColDef, ColGroupDef, GridApi } from 'ag-grid-community';
 import { ClientSideRowModelModule, ColumnApiModule } from 'ag-grid-community';
 import { PivotModule } from 'ag-grid-enterprise';
 import { AgGridReact } from 'ag-grid-react';
@@ -96,6 +96,46 @@ describe('rows drawing a column change (React)', () => {
             });
             await waitFor(() => expect(api!.getDisplayedCenterColumns().length).toBe(withSilver ? 5 : 3));
             await waitFor(() => expect(renderedCells()).toEqual(expectedCells(api!, 2)));
+        }
+        unmount();
+    });
+
+    // TODO: disabled due to AG-19353 - re-enable once fixed
+    test.skip('a column group shows its resize handle only while one of its columns is resizable, across columnDefs updates', async () => {
+        const columnDefs = (resizable: boolean): (ColDef | ColGroupDef)[] => [
+            {
+                groupId: 'medals',
+                headerName: 'Medals',
+                children: [
+                    { field: 'gold', resizable },
+                    { field: 'silver', resizable },
+                ],
+            },
+        ];
+        const grid = (resizable: boolean) => (
+            <React.StrictMode>
+                <AgGridReact
+                    suppressColumnVirtualisation
+                    columnDefs={columnDefs(resizable)}
+                    rowData={rowData}
+                    modules={[ClientSideRowModelModule, ColumnApiModule]}
+                />
+            </React.StrictMode>
+        );
+        const handleShown = () => {
+            const handle = document.querySelector('.ag-header-group-cell .ag-header-cell-resize');
+            return handle !== null && !handle.classList.contains('ag-hidden');
+        };
+
+        const { rerender, unmount } = render(grid(true));
+        await waitFor(() => expect(handleShown()).toBe(true));
+
+        for (const resizable of [false, true, false, true]) {
+            await act(async () => {
+                rerender(grid(resizable));
+                await asyncSetTimeout(0);
+            });
+            await waitFor(() => expect(handleShown()).toBe(resizable));
         }
         unmount();
     });

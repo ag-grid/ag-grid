@@ -7,7 +7,7 @@ import type {
     IComponent,
     IMultiFilterDef,
     IMultiFilterModel,
-    IMultiFilterParams,
+    MultiFilterDisplayParams,
     SharedFilterUi,
 } from 'ag-grid-community';
 import { AgPromise, _getFilterDetails, _isUseApplyButton, _refreshFilterUi, _resolveFilter } from 'ag-grid-community';
@@ -23,19 +23,16 @@ import {
 } from './multiFilterUtil';
 
 // This version of multi filter is only used when `enableFilterHandlers = true`
-export class MultiFilterUi
-    extends BaseMultiFilter<FilterDisplayComp>
-    implements IComponent<IMultiFilterParams & FilterDisplayParams<any, any, IMultiFilterModel>>
-{
+export class MultiFilterUi extends BaseMultiFilter<FilterDisplayComp> implements IComponent<MultiFilterDisplayParams> {
     public readonly filterType = 'multi' as const;
 
-    private params: IMultiFilterParams & FilterDisplayParams<any, any, IMultiFilterModel>;
+    private params: MultiFilterDisplayParams;
     private filters: (FilterDisplayComp | null)[] = [];
     private filterParams: FilterDisplayParams[] = [];
     private readonly validity: (boolean | undefined)[] = [];
     private allState: FilterDisplayState<IMultiFilterModel, any[]>;
 
-    public init(params: IMultiFilterParams & FilterDisplayParams<any, any, IMultiFilterModel>): AgPromise<void> {
+    public init(params: MultiFilterDisplayParams): AgPromise<void> {
         this.params = params;
         this.filterDefs = getMultiFilterDefs(params);
 
@@ -61,7 +58,7 @@ export class MultiFilterUi
         });
     }
 
-    public refresh(params: IMultiFilterParams & FilterDisplayParams<any, any, IMultiFilterModel>): boolean {
+    public refresh(params: MultiFilterDisplayParams): boolean {
         const { model, state, source } = params;
         if (source === 'colDef') {
             // rebuilt wholesale rather than diffed, so a change to any child's params, title or display applies
@@ -147,7 +144,7 @@ export class MultiFilterUi
 
     private updateParams(
         filterDef: IMultiFilterDef,
-        params: IMultiFilterParams & FilterDisplayParams<any, any, IMultiFilterModel>,
+        params: MultiFilterDisplayParams,
         index: number
     ): FilterDisplayParams {
         const {

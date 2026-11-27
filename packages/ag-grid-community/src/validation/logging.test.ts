@@ -599,4 +599,24 @@ describe('getErrorLink serialisation', () => {
 
         expect(queryParams(url).get('allSuggestions')).toBe('["a","b"]');
     });
+
+    test('formats params that JSON or string conversion cannot handle without throwing', () => {
+        const throwing = () => {
+            throw new Error('cannot convert');
+        };
+        const url = getErrorLink(333, {
+            callback: 'cb',
+            error: { code: 1n },
+            symbol: Symbol('thrown'),
+            badError: Object.defineProperties(new Error('x'), {
+                toString: { value: throwing },
+                [Symbol.toStringTag]: { get: throwing },
+            }),
+        } as any);
+
+        const params = queryParams(url);
+        expect(params.get('error')).toBe('[unformattable value]');
+        expect(params.get('symbol')).toBe('Symbol(thrown)');
+        expect(params.get('badError')).toBe('[unformattable value]');
+    });
 });

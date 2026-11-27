@@ -1,4 +1,4 @@
-import { _areEqual, _jsonEquals } from 'ag-stack';
+import { _areEqual, _debounce, _jsonEquals } from 'ag-stack';
 
 import type {
     AdvancedFilterModel,
@@ -91,6 +91,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
     }
 
     public rootNode: RowNode;
+    public refreshingData = false;
     private datasource: IServerSideDatasource | undefined;
 
     private storeParams: SSRMParams;
@@ -333,6 +334,12 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
         rootStore.refreshAfterSort(params);
 
         this.onStoreUpdated();
+    }
+
+    public clientSideResort(): void {
+        if (this.getRootStore()?.clientSideResort()) {
+            this.onStoreUpdated();
+        }
     }
 
     public generateSecondaryColumns(pivotFields: string[]) {
@@ -788,5 +795,13 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
         this.destroyDatasource();
         this.destroyRootStore();
         super.destroy();
+    }
+
+    private readonly onRowHeightChanged_debounced = _debounce(this, this.onRowHeightChanged.bind(this), 100);
+    /**
+     * @deprecated v33.1
+     */
+    public onRowHeightChangedDebounced(): void {
+        this.onRowHeightChanged_debounced();
     }
 }

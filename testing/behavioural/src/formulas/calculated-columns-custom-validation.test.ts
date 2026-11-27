@@ -14,6 +14,7 @@ import { GridStateModule, ModuleRegistry } from 'ag-grid-community';
 
 import {
     clickDialogButton,
+    closeDialog,
     createGrid,
     getCalculatedColumnDialog,
     getDialogButton,
@@ -21,6 +22,7 @@ import {
     openEditDialogViaMenu,
     selectDataType,
     setExpression,
+    setTitle,
     setupCalculatedColumnsSuite,
     showColumnMenu,
     updateCalculatedColumnDef,
@@ -44,12 +46,6 @@ describe('calculated columns - custom dialog validation', () => {
         referencedColumns.some((column) => column.getColId() === 'server-salary')
             ? { calculatedExpression: messages }
             : null;
-    const closeDialog = () => document.querySelector<HTMLElement>('.ag-dialog .ag-panel-title-bar-button')!.click();
-    const setTitle = (value: string) => {
-        const input = getCalculatedColumnDialog().querySelector('input')!;
-        input.value = value;
-        input.dispatchEvent(new Event('input', { bubbles: true }));
-    };
 
     test('deferred validation reports each field independently and applies only a valid draft', async () => {
         const getValidationErrors = vi.fn(({ colDef, internalErrors }: CalculatedColumnValidationParams) => ({

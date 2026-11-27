@@ -1,19 +1,10 @@
 import { getByRole, waitFor } from '@testing-library/dom';
 import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';
-import {
-    TestGridsManager,
-    clickMenuOption,
-    fireGridPointerDown,
-    openMenuEntries,
-    openMenuOption,
-    polyfillOffsetParent,
-} from 'ag-test-utils';
+import { TestGridsManager, clickMenuOption, fireGridPointerDown, openMenuEntries, openMenuOption } from 'ag-test-utils';
 
 import type { DefaultMenuItem, GridOptions, Module } from 'ag-grid-community';
 import { ClientSideRowModelModule, CsvExportModule, getGridElement } from 'ag-grid-community';
 import { AllEnterpriseModule, ContextMenuModule } from 'ag-grid-enterprise';
-
-let restoreOffsetParent: (() => void) | undefined;
 
 function cell(gridDiv: HTMLElement, rowIndex: number, colId: string): HTMLElement {
     const el = gridDiv.querySelector<HTMLElement>(`[row-index="${rowIndex}"] [col-id="${colId}"]`);
@@ -55,15 +46,9 @@ describe('Context menu default items', () => {
         modules: [ClientSideRowModelModule, ContextMenuModule, CsvExportModule],
     });
 
-    beforeEach(() => {
-        restoreOffsetParent = polyfillOffsetParent();
-    });
-
     afterEach(() => {
         enterpriseGrids.reset();
         communityGrids.reset();
-        restoreOffsetParent?.();
-        restoreOffsetParent = undefined;
     });
 
     /** Right-clicks the first athlete cell and resolves with the `defaultItems` the grid offered. */

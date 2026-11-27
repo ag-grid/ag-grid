@@ -1,4 +1,5 @@
-import { GridColumns, GridRows, TestGridsManager, cachedJSONObjects } from 'ag-test-utils';
+import { waitFor } from '@testing-library/dom';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, cachedJSONObjects } from 'ag-test-utils';
 
 import { ClientSideRowModelModule, NumberFilterModule, QuickFilterModule } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule, TreeDataModule } from 'ag-grid-enterprise';
@@ -461,6 +462,65 @@ describe('ag-grid filterAggregatesStage', () => {
             · └── LEAF id:2 country:"Italy" gold:10
         `);
     });
+
+    test('a value column change re-filters with a filter present only when groupAggFiltering is on', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'gold', aggFunc: 'sum', filter: 'agNumberColumnFilter' },
+            ],
+            autoGroupColumnDef: { headerName: 'Country' },
+            groupDefaultExpanded: -1,
+            rowData: cachedJSONObjects.array([
+                { country: 'Ireland', gold: 1 },
+                { country: 'Ireland', gold: 2 },
+                { country: 'Italy', gold: 10 },
+            ]),
+        });
+        api.setFilterModel({ gold: { filterType: 'number', type: 'greaterThanOrEqual', filter: 3 } });
+
+        let filterChanged = 0;
+        let valueChanged = 0;
+        api.addEventListener('filterChanged', () => ++filterChanged);
+        api.addEventListener('columnValueChanged', () => ++valueChanged);
+        // drains the queued events: the filter events follow the value change
+        const drain = async (valueChanges: number) => {
+            await waitFor(() => expect(valueChanged).toBe(valueChanges));
+            await asyncSetTimeout(0);
+        };
+        await drain(0);
+        filterChanged = 0;
+
+        // groupAggFiltering off: the filter tests the leaves, a re-aggregation changes nothing for it
+        api.setColumnAggFunc('gold', 'max');
+        await drain(1);
+        expect(filterChanged).toBe(0);
+
+        api.setColumnAggFunc('gold', 'sum');
+        await drain(2);
+        expect(filterChanged).toBe(0);
+
+        // groupAggFiltering on: the filter tests the aggregates, so a new aggregate re-filters once
+        api.setGridOption('groupAggFiltering', true);
+        await asyncSetTimeout(0);
+        await new GridRows(api, 'sum, groupAggFiltering=true').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland" gold:3
+            │ ├── LEAF id:0 country:"Ireland" gold:1
+            │ └── LEAF id:1 country:"Ireland" gold:2
+            └─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy" gold:10
+            · └── LEAF id:2 country:"Italy" gold:10
+        `);
+        filterChanged = 0;
+        api.setColumnAggFunc('gold', 'max');
+        await drain(3);
+        expect(filterChanged).toBe(1);
+        await new GridRows(api, 'max, groupAggFiltering=true').check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy" gold:10
+            · └── LEAF id:2 country:"Italy" gold:10
+        `);
+    });
 });
 
 describe('ag-grid filterAggregatesStage pivot mode', () => {
@@ -534,6 +594,49 @@ describe('ag-grid filterAggregatesStage pivot mode', () => {
             · ├── LEAF hidden id:0 athlete:"Michael Phelps" gold:8
             · └── LEAF hidden id:1 athlete:"Michael Phelps" gold:6
         `);
+    });
+
+    test('toggling pivot mode refilters the groups by their aggregates, telling filterChanged each time', async () => {
+        const filterChanged = vi.fn();
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'gold', aggFunc: 'sum', filter: 'agNumberColumnFilter' },
+            ],
+            groupAggFiltering: true,
+            groupDefaultExpanded: -1,
+            rowData: [
+                { country: 'Ireland', gold: 1 },
+                { country: 'Ireland', gold: 2 },
+                { country: 'Italy', gold: 10 },
+                { country: 'France', gold: 1 },
+            ],
+            onFilterChanged: filterChanged,
+        });
+        const displayedIds = () => {
+            const ids: string[] = [];
+            for (let i = 0; i < api.getDisplayedRowCount(); i++) {
+                ids.push(api.getDisplayedRowAtIndex(i)!.id!);
+            }
+            return ids;
+        };
+        await asyncSetTimeout(0);
+
+        api.setFilterModel({ gold: { filterType: 'number', type: 'greaterThan', filter: 2 } });
+        await waitFor(() => expect(filterChanged).toHaveBeenCalledTimes(1));
+        expect(displayedIds()).toEqual(['row-group-country-Ireland', '0', '1', 'row-group-country-Italy', '2']);
+
+        api.setGridOption('pivotMode', true);
+        await waitFor(() => expect(filterChanged).toHaveBeenCalledTimes(2));
+        await asyncSetTimeout(0);
+        expect(filterChanged).toHaveBeenCalledTimes(2);
+        expect(displayedIds()).toEqual(['row-group-country-Ireland', 'row-group-country-Italy']);
+
+        api.setGridOption('pivotMode', false);
+        await waitFor(() => expect(filterChanged).toHaveBeenCalledTimes(3));
+        await asyncSetTimeout(0);
+        expect(filterChanged).toHaveBeenCalledTimes(3);
+        expect(displayedIds()).toEqual(['row-group-country-Ireland', '0', '1', 'row-group-country-Italy', '2']);
     });
 });
 

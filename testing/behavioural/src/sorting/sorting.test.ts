@@ -2,12 +2,18 @@ import { getByTestId, waitFor } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
 import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
-import { ClientSideRowModelModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
+import {
+    CellStyleModule,
+    ClientSideRowModelModule,
+    agTestIdFor,
+    getGridElement,
+    setupAgTestIds,
+} from 'ag-grid-community';
 import { RowGroupingModule, RowGroupingPanelModule } from 'ag-grid-enterprise';
 
 describe('Sorting', () => {
     const gridMgr = new TestGridsManager({
-        modules: [ClientSideRowModelModule],
+        modules: [ClientSideRowModelModule, CellStyleModule],
     });
 
     test('user comparator returning undefined falls back to next column', async () => {
@@ -94,6 +100,30 @@ describe('Sorting', () => {
             expect(sortOrderEl('b')?.textContent).toBe('2');
         });
         expect(sortOrderEl('c')?.classList.contains('ag-hidden')).toBe(true);
+    });
+
+    test.each([
+        { name: 'left-aligned LTR', colId: 'a', enableRtl: false, index: '1', icon: 'ag-sort-ascending-icon' },
+        { name: 'left-aligned RTL', colId: 'a', enableRtl: true, index: '1', icon: 'ag-sort-ascending-icon' },
+        { name: 'right-aligned', colId: 'b', enableRtl: false, index: '2', icon: 'ag-sort-descending-icon' },
+    ])('$name header renders the sort index after the sort icon', async ({ colId, enableRtl, index, icon }) => {
+        const api = await gridMgr.createGridAndWait('sort-order-position', {
+            columnDefs: [
+                { field: 'a', sort: 'asc', sortIndex: 0 },
+                { field: 'b', type: 'rightAligned', sort: 'desc', sortIndex: 1 },
+            ],
+            rowData: [{ a: 1, b: 2 }],
+            enableRtl,
+        });
+        const gridDiv = getGridElement(api)! as HTMLElement;
+
+        await waitFor(() => {
+            const container = getByTestId(gridDiv, agTestIdFor.headerCell(colId)).querySelector(
+                '.ag-sort-indicator-container'
+            )!;
+            const visible = Array.from(container.children).filter((el) => !el.classList.contains('ag-hidden'));
+            expect(visible.map((el) => el.classList.contains(icon) || el.textContent)).toEqual([true, index]);
+        });
     });
 
     const columnDefs = [{ field: 'sport', sortable: false }, { field: 'year' }, { field: 'amount' }, { field: 'day' }];

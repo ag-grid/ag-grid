@@ -1,4 +1,4 @@
-import { _clearElement, _exists, _getActiveDomElement, _setAriaLabel } from 'ag-stack';
+import { _clearElement, _exists, _getActiveDomElement, _setAriaLabel, _translateTokens } from 'ag-stack';
 
 import type {
     AbstractColDef,
@@ -227,7 +227,13 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
 
         const totalVisibleItems = visibleItems.length;
 
-        _setAriaLabel(this.getAriaElement(), `${filterListName} ${totalVisibleItems} ${localeFilters}`);
+        _setAriaLabel(
+            this.getAriaElement(),
+            // Built from the existing words so a localeText without this key reads as before.
+            _translateTokens(translate, 'ariaFilterPanelListCount', `${filterListName} \${count} ${localeFilters}`, {
+                count: String(totalVisibleItems),
+            })
+        );
     }
 
     private recursivelyAddFilterGroupComps(
@@ -452,8 +458,10 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
             state = EXPAND_STATE.INDETERMINATE;
         } else if (notExpandedCount > 0) {
             state = EXPAND_STATE.COLLAPSED;
-        } else {
+        } else if (expandedCount > 0) {
             state = EXPAND_STATE.EXPANDED;
+        } else {
+            state = EXPAND_STATE.NO_GROUPS;
         }
 
         this.dispatchLocalEvent({ type: 'groupExpanded', state: state });

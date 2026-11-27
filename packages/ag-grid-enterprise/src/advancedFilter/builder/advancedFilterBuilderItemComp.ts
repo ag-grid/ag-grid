@@ -485,13 +485,13 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp<AdvancedFilterBu
         const validationMessage = this.ePillWrapper.getValidationMessage();
         let ariaLabel;
         if (validationMessage) {
-            ariaLabel = this.advFilterExpSvc.translate('ariaAdvancedFilterBuilderItemValidation', [
-                wrapperLabel,
+            ariaLabel = this.advFilterExpSvc.translate('ariaAdvancedFilterBuilderItemValidation', {
+                label: wrapperLabel,
                 level,
-                validationMessage,
-            ]);
+                error: validationMessage,
+            });
         } else {
-            ariaLabel = this.advFilterExpSvc.translate('ariaAdvancedFilterBuilderItem', [wrapperLabel, level]);
+            ariaLabel = this.advFilterExpSvc.translate('ariaAdvancedFilterBuilderItem', { label: wrapperLabel, level });
         }
         _setAriaLabel(this.focusWrapper, ariaLabel);
     }

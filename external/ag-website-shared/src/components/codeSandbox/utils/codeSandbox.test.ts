@@ -1,7 +1,8 @@
+// @vitest-environment jsdom
 import type { InternalFramework } from '@ag-grid-types';
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { getCodeSandboxFilesToSubmit } from './codeSandbox';
+import { getCodeSandboxFilesToSubmit, openCodeSandbox } from './codeSandbox';
 
 const getPayloadFiles = ({
     internalFramework,
@@ -66,5 +67,35 @@ describe('getCodeSandboxFilesToSubmit', () => {
         });
 
         expect(hasPackageJson(files)).toBe(false);
+    });
+});
+
+describe('openCodeSandbox', () => {
+    afterEach(() => {
+        vi.restoreAllMocks();
+    });
+
+    it('submits its fields in textareas, which Google Tag Manager does not scan for email addresses', () => {
+        let submitted: HTMLFormElement | undefined;
+        vi.spyOn(HTMLFormElement.prototype, 'submit').mockImplementation(function (this: HTMLFormElement) {
+            submitted = this;
+        });
+
+        openCodeSandbox({
+            title: 'Example',
+            files: { 'main.js': 'console.log("example");' },
+            internalFramework: 'vanilla',
+        });
+
+        expect(submitted?.querySelectorAll('input')).toHaveLength(0);
+        const fields = Object.fromEntries(new FormData(submitted));
+        expect(fields).toMatchObject({
+            'tags[0]': 'ag-grid',
+            'tags[1]': 'ag-charts',
+            'tags[2]': 'example',
+            published: 'false',
+            title: 'Example',
+        });
+        expect(fields.parameters).toEqual(expect.stringMatching(/^[\w-]+$/));
     });
 });

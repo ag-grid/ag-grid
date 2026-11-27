@@ -49,6 +49,7 @@ export const COLUMN_DEFINITION_MOD_VALIDATIONS: ModuleValidation<ColDef | ColGro
     calculatedExpression: 'CalculatedColumns',
     calculatedColumnReadOnly: 'CalculatedColumns',
     aggFunc: 'SharedAggregation',
+    aggValueGetter: 'SharedAggregation',
     showValuesAs: 'ShowValuesAs',
     initialShowValuesAs: 'ShowValuesAs',
     showValuesAsDef: 'ShowValuesAs',
@@ -301,6 +302,23 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
                 });
             },
         },
+        aggValueGetter: {
+            validate: ({
+                aggValueGetter,
+                aggFunc,
+                initialAggFunc,
+                enableValue,
+                groupRowEditable,
+                groupRowValueSetter,
+            }) => {
+                // only columns that can be aggregated, so a getter in `defaultColDef` warns for those alone
+                const aggregatable = aggFunc != null || initialAggFunc != null || !!enableValue;
+                if (aggValueGetter && aggregatable && groupRowEditable && typeof groupRowValueSetter !== 'function') {
+                    return '`colDef.groupRowEditable` has no effect with `colDef.aggValueGetter` unless `colDef.groupRowValueSetter` is a function. The built-in distribution cannot reverse the getter, so group cells in this column are not editable.';
+                }
+                return null;
+            },
+        },
         rowSpan: {
             validate: (_options, { suppressRowTransform }) => {
                 if (!suppressRowTransform) {
@@ -427,6 +445,7 @@ const colDefPropertyMap: Record<ColOrGroupKey, undefined> = {
     initialAggFunc: undefined,
     defaultAggFunc: undefined,
     aggFunc: undefined,
+    aggValueGetter: undefined,
     valueIndex: undefined,
     initialValueIndex: undefined,
     groupRowEditable: undefined,

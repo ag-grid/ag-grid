@@ -30,7 +30,6 @@ import { inputStyleBordered, inputStyleUnderlined } from '../input-style/input-s
 import type { TabStyleParams } from '../tab-style/tab-styles';
 import { tabStyleAlpine, tabStyleMaterial, tabStyleQuartz, tabStyleRolodex } from '../tab-style/tab-styles';
 import materialAdjustmentsCSS from './material-adjustments.css';
-import quartzAdjustmentsCSS from './quartz-adjustments.css';
 
 export type ThemeDefaultParams = CoreParams &
     ButtonStyleParams &
@@ -51,14 +50,6 @@ export const themeQuartzParams = () => ({
     fontFamily: [{ googleFont: 'IBM Plex Sans' }, ...defaultFontFamily()],
 });
 
-const makeStyleQuartzTreeShakeable = () =>
-    createPart({
-        feature: 'styleQuartz',
-        css: quartzAdjustmentsCSS,
-    });
-
-const styleQuartz = /*#__PURE__*/ makeStyleQuartzTreeShakeable();
-
 const makeThemeQuartzTreeShakeable = () =>
     createTheme()
         .withPart(buttonStyleQuartz)
@@ -68,7 +59,6 @@ const makeThemeQuartzTreeShakeable = () =>
         .withPart(tabStyleQuartz)
         .withPart(inputStyleBordered)
         .withPart(columnDropStyleBordered)
-        .withPart(styleQuartz)
         .withParams(themeQuartzParams());
 
 export const themeQuartz: Theme<ThemeDefaultParams> =
@@ -160,6 +150,7 @@ export const themeBalhamParams = () => ({
     checkboxIndeterminateShapeColor: foregroundBackgroundMix(0.5),
     focusShadow: { radius: 2, spread: 1, color: accentColor },
     headerTextColor: foregroundMix(0.6),
+    headerSortIndexTextColor: { ref: 'headerTextColor' },
     iconButtonHoverBackgroundColor: 'transparent',
     iconButtonActiveBackgroundColor: 'transparent',
     fontSize: 12,
@@ -256,6 +247,7 @@ const makeStyleMaterialTreeShakeable = () => {
         columnHoverColor: foregroundMix(0.08),
         headerCellHoverBackgroundColor: foregroundMix(0.05),
         headerTextColor: foregroundMix(0.615),
+        headerSortIndexTextColor: { ref: 'headerTextColor' },
         statusBarLabelColor: foregroundMix(0.63),
         statusBarLabelFontWeight: 600,
         statusBarValueFontWeight: 600,

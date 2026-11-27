@@ -257,7 +257,7 @@ export class AgPanel<
             closeButtonComp.addTooltip({
                 getLocation: () => 'dialog',
                 control: 'close',
-                getTooltip: () => ({ value: this.getLocaleTextFunc()('ariaLabelClose', 'Close') }),
+                getTooltip: () => ({ value: this.getLocaleTextFunc()('tooltipClose', 'Close') }),
             });
             const child = this.beans.iconSvc.createIconNoSpan('close', this.beans)!;
             child.classList.add('ag-panel-title-bar-button-icon');

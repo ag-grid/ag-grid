@@ -3,6 +3,7 @@ import {
     ALL_SEVERITIES,
     ColumnFilterHarness,
     FloatingFilterHarness,
+    LEGACY_FILTER_WARNING_IDS,
     TestGridsManager,
     asyncSetTimeout,
     installFilterLayoutMock,
@@ -60,6 +61,7 @@ describe('filter models set before rows load, applied once they do', () => {
     )(
         'a custom filter whose init fires filterChangedCallback takes a model set %s (enableFilterHandlers %s), as with rows',
         async (when, enableFilterHandlers) => {
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [348] });
             class CallbackInInitFilter implements IFilterComp {
                 private model: { value: string } | null = null;
                 public init(params: IFilterParams): void {
@@ -113,6 +115,7 @@ describe('filter models set before rows load, applied once they do', () => {
     );
 
     test('a custom filter cleared by its own UI after a column model is set for it ends unfiltered', async () => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: LEGACY_FILTER_WARNING_IDS });
         class ClearableFilter implements IFilterComp {
             private params!: IFilterParams;
             private model: { value: string } | null = null;
@@ -272,6 +275,7 @@ describe('filter models set before rows load, applied once they do', () => {
     });
 
     test('a grid destroyed while a custom filter takes a model set before rows as they load fires no filterChanged', async () => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: LEGACY_FILTER_WARNING_IDS });
         timeline.customSetModelSeen = [];
         let finishSetModel: () => void = () => {};
         class SlowFilter extends RecordingFilter {
@@ -346,7 +350,7 @@ describe('filter models set before rows load, applied once they do', () => {
         expect(api.getFilterModel()).toEqual({ age: AGE_LT_20 });
         expect(api.getDisplayedRowCount()).toBe(2);
         // the column's removal fires nothing, as no filter was built; the model set before it fires once the rows load
-        expect(events).toEqual(['after:columnFilter', 'after:api']);
+        expect(events).toEqual(['after:api']);
     });
 });
 
@@ -411,6 +415,7 @@ describe('filter models set before rows load are not lost before they apply', ()
     test.each([false, true])(
         'with enableFilterHandlers %s, removing a column whose filter is not built before rows load fires nothing, and the model set for it is kept for the column coming back',
         async (enableFilterHandlers) => {
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [348] });
             const events: string[] = [];
             const api: GridApi = gridsManager.createGrid('grid1', {
                 columnDefs: BASE_COLS,
@@ -436,6 +441,31 @@ describe('filter models set before rows load are not lost before they apply', ()
             expect(api.getDisplayedRowCount()).toBe(2);
         }
     );
+
+    test.each([
+        { when: 'no row has a value for the other column', rows: [{ country: 'Ireland' }, { country: 'Spain' }] },
+        {
+            when: 'the rows give a value for the other column to infer',
+            rows: [
+                { country: 'Ireland', notes: 'a' },
+                { country: 'Spain', notes: 'b' },
+            ],
+        },
+    ])('a model set before rows load applies once they do, when $when', async (scenario) => {
+        const api: GridApi = gridsManager.createGrid('grid1', {
+            columnDefs: [
+                { field: 'country', cellDataType: 'text', filter: 'agTextColumnFilter' },
+                { field: 'notes', filter: 'agTextColumnFilter' },
+            ],
+        });
+        await asyncSetTimeout(0);
+        api.setFilterModel({ country: { filterType: 'text', type: 'equals', filter: 'Ireland' } });
+
+        api.setGridOption('rowData', scenario.rows);
+        await asyncSetTimeout(0);
+        expect(api.getDisplayedRowCount()).toBe(1);
+        expect(api.isAnyFilterPresent()).toBe(true);
+    });
 
     test('with filter handlers, a model set before rows load on a handler refusing the definition its inferred type gives applies once they load', async () => {
         const events: string[] = [];
@@ -507,6 +537,7 @@ describe('a Multi Filter whose children the rows decide, built before they load'
     test.each([false, true])(
         'with enableFilterHandlers %s, a Selectable Filter choosing one applies a model set before rows load',
         async (enableFilterHandlers) => {
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [348] });
             const api: GridApi = gridsManager.createGrid('grid1', {
                 columnDefs: [
                     {
@@ -626,6 +657,7 @@ describe('a change before rows load to a filter that has not taken the model set
     test.each([false, true])(
         'a floating filter shows an edit made in its popup before rows load, with filter handlers %s',
         async (enableFilterHandlers) => {
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [348] });
             const api: GridApi = gridsManager.createGrid('grid1', {
                 columnDefs: [{ field: 'athlete', filter: true, floatingFilter: true, filterParams: { debounceMs: 0 } }],
                 enableFilterHandlers,

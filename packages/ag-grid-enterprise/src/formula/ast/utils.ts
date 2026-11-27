@@ -71,6 +71,7 @@ export class FormulaError extends Error {
         }
         return interpolateFormulaErrorMessage(
             translate(this.localeKey, this.defaultMessage, this.variableValues),
+            this.defaultMessage,
             this.variableValues
         );
     }

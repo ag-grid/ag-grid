@@ -1,6 +1,6 @@
 import { waitFor } from '@testing-library/dom';
 import '@testing-library/jest-dom/vitest';
-import { TestGridsManager, getVisibleTooltips, polyfillOffsetParent } from 'ag-test-utils';
+import { TestGridsManager, getVisibleTooltips } from 'ag-test-utils';
 
 import { AllCommunityModule, getGridElement } from 'ag-grid-community';
 import type { GetDetailRowDataParams, GridApi, ICellRendererComp } from 'ag-grid-community';
@@ -13,11 +13,9 @@ vi.mock(import('ag-stack'), async (importOriginal) => ({
 
 describe('Tooltip touch ownership', () => {
     const grids = new TestGridsManager({ modules: [AllCommunityModule, ContextMenuModule, MasterDetailModule] });
-    let restoreOffsetParent: (() => void) | undefined;
 
     afterEach(() => {
         grids.reset();
-        restoreOffsetParent?.();
         vi.clearAllTimers();
         vi.useRealTimers();
     });
@@ -52,6 +50,7 @@ describe('Tooltip touch ownership', () => {
             }
         }
         const api = await grids.createGridAndWait('shadow-renderer-tooltip', {
+            tooltipShowMode: 'standard',
             columnDefs: [{ field: 'value', tooltip: true, cellRenderer: ShadowRenderer }],
             rowData: [{ value: 'Cell tooltip' }],
             suppressContextMenu: true,
@@ -101,7 +100,6 @@ describe('Tooltip touch ownership', () => {
             expect(element).not.toBeNull();
             return element!;
         });
-        restoreOffsetParent = polyfillOffsetParent();
         vi.useFakeTimers();
         const root = childGrid!.getRootNode() as Document | ShadowRoot;
         touchEvent(child, 'touchstart');
@@ -162,6 +160,7 @@ describe('Tooltip touch ownership', () => {
         'a tap suppresses compatibility hover only for its source (shadow root: %s)',
         async (shadow) => {
             const api = await grids.createGridAndWait('tap-compatibility', {
+                tooltipShowMode: 'standard',
                 columnDefs: [
                     {
                         field: 'value',
@@ -226,7 +225,6 @@ describe('Tooltip touch ownership', () => {
             expect(element).not.toBeNull();
             return element!;
         });
-        restoreOffsetParent = polyfillOffsetParent();
         vi.useFakeTimers();
         touchEvent(cell, 'touchstart');
         await vi.advanceTimersByTimeAsync(600);
@@ -267,7 +265,6 @@ describe('Tooltip touch ownership', () => {
             tooltipTrigger: 'hover',
             getContextMenuItems: () => [{ name: 'Action', tooltip: 'Menu tooltip' }],
         });
-        restoreOffsetParent = polyfillOffsetParent();
         api.showContextMenu();
         const item = await waitFor(() => {
             const element = document.querySelector<HTMLElement>('.ag-menu-option');

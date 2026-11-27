@@ -7,6 +7,7 @@ import type {
     GridDraggingEvent,
     GridSelect,
     ListOption,
+    ResolvedTooltip,
 } from 'ag-grid-community';
 import { AgSelect, Component, DragSourceType } from 'ag-grid-community';
 
@@ -207,8 +208,8 @@ class PillSelectDragComp<TValue> extends PillDragComp<TValue> {
         return this.getDisplayName();
     }
 
-    protected getTooltip(): string | null | undefined {
-        return undefined;
+    protected getTooltip(): ResolvedTooltip {
+        return {};
     }
 
     protected createGetDragItem(): () => DragItem<TValue> {

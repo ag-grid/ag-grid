@@ -1,5 +1,5 @@
 import type { AgElementParams, LocaleTextFunc } from 'ag-stack';
-import { KeyCode, RefPlaceholder, _setAriaDisabled, _setAriaLabel, _setAriaRole } from 'ag-stack';
+import { KeyCode, RefPlaceholder, _setAriaDisabled, _setAriaLabel, _setAriaRole, _translateTokens } from 'ag-stack';
 
 import { AgInputNumberFieldSelector } from '../agWidgets/agInputNumberField';
 import type { BeanCollection } from '../context/context';
@@ -9,7 +9,12 @@ import type { AgComponentSelectorType } from '../widgets/component';
 import { Component } from '../widgets/component';
 import type { GridInputNumberField } from '../widgets/gridWidgetTypes';
 import type { PaginationService } from './paginationService';
-import { _formatPaginationNumber } from './paginationUtils';
+import {
+    _formatPaginationNumber,
+    _getPageAriaStatus,
+    _renderPaginationPhrase,
+    _splitPaginationTokens,
+} from './paginationUtils';
 
 export class PageSummaryComp extends Component {
     private rowModel: IRowModel;
@@ -22,6 +27,7 @@ export class PageSummaryComp extends Component {
     private readonly lbCurrentInput: GridInputNumberField = RefPlaceholder;
     private readonly lbCurrentStatic: HTMLElement = RefPlaceholder;
     private readonly lbTotal: HTMLElement = RefPlaceholder;
+    private readonly eDescription: HTMLElement = RefPlaceholder;
 
     private previousAndFirstButtonsDisabled = false;
     private nextButtonDisabled = false;
@@ -59,22 +65,41 @@ export class PageSummaryComp extends Component {
     private initNavButtons(): void {
         const { btFirst, btPrevious, btNext, btLast } = this;
         this.activateTabIndex([btFirst, btPrevious, btNext, btLast]);
-        for (const { el, fn, control, defaultValue } of [
-            { el: btFirst, fn: this.onBtFirst.bind(this), control: 'firstPage', defaultValue: 'First Page' },
+        for (const { el, fn, control, key, defaultValue } of [
+            {
+                el: btFirst,
+                fn: this.onBtFirst.bind(this),
+                control: 'firstPage',
+                key: 'tooltipFirstPage',
+                defaultValue: 'Go to first page',
+            },
             {
                 el: btPrevious,
                 fn: this.onBtPrevious.bind(this),
                 control: 'previousPage',
-                defaultValue: 'Previous Page',
+                key: 'tooltipPreviousPage',
+                defaultValue: 'Go to previous page',
             },
-            { el: btNext, fn: this.onBtNext.bind(this), control: 'nextPage', defaultValue: 'Next Page' },
-            { el: btLast, fn: this.onBtLast.bind(this), control: 'lastPage', defaultValue: 'Last Page' },
+            {
+                el: btNext,
+                fn: this.onBtNext.bind(this),
+                control: 'nextPage',
+                key: 'tooltipNextPage',
+                defaultValue: 'Go to next page',
+            },
+            {
+                el: btLast,
+                fn: this.onBtLast.bind(this),
+                control: 'lastPage',
+                key: 'tooltipLastPage',
+                defaultValue: 'Go to last page',
+            },
         ]) {
             this.addTooltip({
                 control,
                 getGui: () => el,
                 getLocation: () => 'pagination',
-                getTooltip: () => ({ value: this.getLocaleTextFunc()(control, defaultValue) }),
+                getTooltip: () => ({ value: this.getLocaleTextFunc()(key, defaultValue) }),
             });
             this.addManagedListeners(el, {
                 click: fn,
@@ -92,12 +117,6 @@ export class PageSummaryComp extends Component {
         const { lbCurrentInput, pagination } = this;
         const eInput = lbCurrentInput.getInputElement();
         _setAriaRole(eInput, 'spinbutton');
-        lbCurrentInput.addTooltip({
-            control: 'pageNumber',
-            getLocation: () => 'pagination',
-            getAriaElement: () => eInput,
-            getTooltip: () => ({ value: this.getLocaleTextFunc()('tooltipGoToPage', 'Go to page') }),
-        });
         this.addManagedListeners(eInput, {
             keydown: (e: KeyboardEvent) => {
                 const { key } = e;
@@ -236,9 +255,7 @@ export class PageSummaryComp extends Component {
 
         const lbCurrentValue = this.getDisplayPageNumber();
         const lbCurrent = this.formatNumber(lbCurrentValue);
-        const strPage = localeTextFunc('page', 'Page');
-        // An unknown total is left out rather than read as "of more".
-        const strOfTotal = lastPageFound ? ` ${localeTextFunc('of', 'of')} ${lbTotalStr}` : '';
+        this.renderDescription(localeTextFunc, lastPageFound, lbCurrent, lbTotalStr);
         if (this.suppressPageInput) {
             lbCurrentStatic.textContent = lbCurrent;
         } else {
@@ -251,13 +268,57 @@ export class PageSummaryComp extends Component {
             lbCurrentInput.getInputElement().style.width = `${Math.floor(Math.log10(Math.max(1, maxPage))) + 3.5}ch`;
             lbCurrentInput.setValue(lbCurrentValue.toString());
             const eInput = lbCurrentInput.getInputElement();
-            _setAriaLabel(eInput, `${strPage} ${localeTextFunc('number', 'number')}, ${lbCurrentValue}${strOfTotal}`);
+            _setAriaLabel(
+                eInput,
+                this.getPageInputLabel(localeTextFunc, String(lbCurrentValue), lastPageFound ? lbTotalStr : null)
+            );
             eInput.setAttribute('aria-valuenow', String(lbCurrentValue));
             eInput.setAttribute('aria-valuemin', String(Math.min(1, lbCurrentValue)));
             eInput.setAttribute('aria-valuemax', String(maxPage));
         }
 
-        this.ariaStatus = `${strPage} ${lbCurrent}${strOfTotal}`;
+        this.ariaStatus = _getPageAriaStatus(localeTextFunc, lbCurrent, lastPageFound ? lbTotalStr : null);
+    }
+
+    /**
+     * Places the page number and total where the phrase puts them. The phrase is read without values, so it stays the
+     * same from page to page and the page input is not moved; a repeated token is filled with the current value.
+     */
+    private renderDescription(
+        localeTextFunc: LocaleTextFunc,
+        lastPageFound: boolean,
+        page: string,
+        total: string
+    ): void {
+        const pageWord = localeTextFunc('page', 'Page');
+        // Built from the existing words so a localeText without these keys reads as before.
+        const template = localeTextFunc(
+            lastPageFound ? 'paginationPageSummary' : 'paginationPageSummaryUnknownTotal',
+            `${pageWord} \${page} ${localeTextFunc('of', 'of')} \${total}`
+        );
+        const { suppressPageInput, lbCurrentStatic, lbCurrentInput, lbTotal } = this;
+        const ePage = suppressPageInput ? lbCurrentStatic : lbCurrentInput.getGui();
+        _renderPaginationPhrase(
+            this.eDescription,
+            _splitPaginationTokens(template),
+            { page: ePage, total: lbTotal },
+            { page, total }
+        );
+    }
+
+    private getPageInputLabel(localeTextFunc: LocaleTextFunc, page: string, total: string | null): string {
+        const prefix = `${localeTextFunc('page', 'Page')} ${localeTextFunc('number', 'number')},`;
+        if (total == null) {
+            return _translateTokens(localeTextFunc, 'ariaPaginationPageInputLabelUnknownTotal', `${prefix} \${page}`, {
+                page,
+            });
+        }
+        return _translateTokens(
+            localeTextFunc,
+            'ariaPaginationPageInputLabel',
+            `${prefix} \${page} ${localeTextFunc('of', 'of')} \${total}`,
+            { page, total }
+        );
     }
 
     private formatNumber(value: number): string {
@@ -298,19 +359,10 @@ function buildPageSummaryTemplate(
             },
             {
                 tag: 'span',
+                ref: 'eDescription',
                 cls: 'ag-paging-description',
                 children: [
-                    {
-                        tag: 'span',
-                        attrs: { id: `${idPrefix}-start-page` },
-                        children: localeTextFunc('page', 'Page'),
-                    },
                     pageNumberChild,
-                    {
-                        tag: 'span',
-                        attrs: { id: `${idPrefix}-of-page` },
-                        children: localeTextFunc('of', 'of'),
-                    },
                     {
                         tag: 'span',
                         ref: 'lbTotal',

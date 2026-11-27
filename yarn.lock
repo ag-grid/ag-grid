@@ -7112,9 +7112,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nx/devkit@npm:24.0.2":
-  version: 24.0.2
-  resolution: "@nx/devkit@npm:24.0.2"
+"@nx/devkit@npm:24.0.6":
+  version: 24.0.6
+  resolution: "@nx/devkit@npm:24.0.6"
   dependencies:
     ejs: "npm:5.0.1"
     minimatch: "npm:10.2.5"
@@ -7123,7 +7123,7 @@ __metadata:
     yargs-parser: "npm:21.1.1"
   peerDependencies:
     nx: ">= 23 <= 25 || ^24.0.0-0"
-  checksum: 10c0/9f5544b83dd1e8af40ed935109e66a2bf5ed6f97f2f5c1a70180c1138f778bbd4c499433bab51df9cec649d6cef42b9af2475b0e4f263bf24f2624fe4f949406
+  checksum: 10c0/40ba328acfb7045d1be33b237e862c5c4ae24bcdba6e36b6841e283ccd8a5e34ad4c5ba30d386ece61afe2ec9f7ee492157c971f21f999d25e70685048b6713f
   languageName: node
   linkType: hard
 
@@ -7145,12 +7145,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nx/esbuild@npm:24.0.2":
-  version: 24.0.2
-  resolution: "@nx/esbuild@npm:24.0.2"
+"@nx/esbuild@npm:24.0.6":
+  version: 24.0.6
+  resolution: "@nx/esbuild@npm:24.0.6"
   dependencies:
-    "@nx/devkit": "npm:24.0.2"
-    "@nx/js": "npm:24.0.2"
+    "@nx/devkit": "npm:24.0.6"
+    "@nx/js": "npm:24.0.6"
     picocolors: "npm:^1.1.0"
     tinyglobby: "npm:^0.2.12"
     tsconfig-paths: "npm:^4.1.2"
@@ -7160,16 +7160,16 @@ __metadata:
   peerDependenciesMeta:
     esbuild:
       optional: true
-  checksum: 10c0/ddb1595e287c43e0b1e8217d0b061a4f7010f2c0d1b5d1d3381ef1ad79d6ef809c739479167db6311451a5bc5cee32b2240c7edd45df02047915ef546eaf2232
+  checksum: 10c0/47cb4da7c7ce75b2d1dff997ffafdce55ecc159bff8dd71a907c8f40c2e848d1d59f6064f9ec987107ba91fab100f72723d129f65305440a0103e7ebe950998d
   languageName: node
   linkType: hard
 
-"@nx/eslint-plugin@npm:24.0.2":
-  version: 24.0.2
-  resolution: "@nx/eslint-plugin@npm:24.0.2"
+"@nx/eslint-plugin@npm:24.0.6":
+  version: 24.0.6
+  resolution: "@nx/eslint-plugin@npm:24.0.6"
   dependencies:
-    "@nx/devkit": "npm:24.0.2"
-    "@nx/js": "npm:24.0.2"
+    "@nx/devkit": "npm:24.0.6"
+    "@nx/js": "npm:24.0.6"
     "@phenomnomnominal/tsquery": "npm:~6.2.0"
     "@typescript-eslint/type-utils": "npm:^8.0.0"
     "@typescript-eslint/utils": "npm:^8.0.0"
@@ -7187,21 +7187,21 @@ __metadata:
       optional: true
     eslint-config-prettier:
       optional: true
-  checksum: 10c0/9bcbec793142a7d61de9440bd99ec874706a4ecb16afa90f503e990e4a70b72a067d6694040419edf734a7da8ab5b5b07950926f2b207544c46917cbfe75abc4
+  checksum: 10c0/0aaa87c57b5a0151bdff9e0f0c70cbbccee2fd1ec18927c70fa59e19c3ee61955f7b19b36a2bd434f498366551bdb8156474165cb86bd5f04859d849ca08cbd0
   languageName: node
   linkType: hard
 
-"@nx/eslint@npm:24.0.2":
-  version: 24.0.2
-  resolution: "@nx/eslint@npm:24.0.2"
+"@nx/eslint@npm:24.0.6":
+  version: 24.0.6
+  resolution: "@nx/eslint@npm:24.0.6"
   dependencies:
-    "@nx/devkit": "npm:24.0.2"
-    "@nx/js": "npm:24.0.2"
+    "@nx/devkit": "npm:24.0.6"
+    "@nx/js": "npm:24.0.6"
     semver: "npm:^7.6.3"
     tslib: "npm:^2.3.0"
     typescript: "npm:~6.0.3"
   peerDependencies:
-    "@nx/jest": 24.0.2
+    "@nx/jest": 24.0.6
     "@zkochan/js-yaml": 0.0.7
     eslint: ^9.0.0 || ^10.0.0
   peerDependenciesMeta:
@@ -7209,13 +7209,13 @@ __metadata:
       optional: true
     "@zkochan/js-yaml":
       optional: true
-  checksum: 10c0/736c6adeb8716260fb724d58cb806a2882f4307df94ba836b4a50115cf12828481a235283ad5a95ce5f8129d4e0da0474022d2109639477003a49474b7917ca1
+  checksum: 10c0/134aec77d3d8a8c3b493f5ca213a08bf140a186dee812c191ebe87a9319bf73f8ee98f887f486836a92894bda1dd21e0d74caa007250f24cdf27bbe528771454
   languageName: node
   linkType: hard
 
-"@nx/js@npm:24.0.2":
-  version: 24.0.2
-  resolution: "@nx/js@npm:24.0.2"
+"@nx/js@npm:24.0.6":
+  version: 24.0.6
+  resolution: "@nx/js@npm:24.0.6"
   dependencies:
     "@babel/core": "npm:^7.29.6"
     "@babel/plugin-proposal-decorators": "npm:^7.22.7"
@@ -7227,8 +7227,8 @@ __metadata:
     "@babel/preset-env": "npm:^7.23.2"
     "@babel/preset-typescript": "npm:^7.22.5"
     "@babel/runtime": "npm:^7.22.6"
-    "@nx/devkit": "npm:24.0.2"
-    "@nx/workspace": "npm:24.0.2"
+    "@nx/devkit": "npm:24.0.6"
+    "@nx/workspace": "npm:24.0.6"
     "@zkochan/js-yaml": "npm:0.0.7"
     babel-plugin-const-enum: "npm:^1.0.1"
     babel-plugin-macros: "npm:^3.1.0"
@@ -7241,9 +7241,9 @@ __metadata:
     jsonc-parser: "npm:^3.2.0"
     npm-run-path: "npm:^4.0.1"
     picocolors: "npm:^1.1.0"
-    picomatch: "npm:4.0.4"
+    picomatch: "npm:^4.0.7"
     semver: "npm:^7.6.3"
-    source-map-support: "npm:0.5.19"
+    source-map-support: "npm:0.5.21"
     tinyglobby: "npm:^0.2.12"
     tslib: "npm:^2.3.0"
   peerDependencies:
@@ -7254,90 +7254,90 @@ __metadata:
       optional: true
     verdaccio:
       optional: true
-  checksum: 10c0/bc2d08bb888e5e199b2a6418e56c056a398c0052fb8049187d561783d737595273cb649a544632e54e6e40dea1326e47a7150f34a6c06621aa316c44f75fec0b
+  checksum: 10c0/d3b2245b956cece8eca3bbc999e00f72285e23a59ac1c3f253a3d8dce300a8bd35e1d31cdebe47af18fdee8b249baf54a87d54430a365b81c7db25de718b34a4
   languageName: node
   linkType: hard
 
-"@nx/nx-darwin-arm64@npm:24.0.2":
-  version: 24.0.2
-  resolution: "@nx/nx-darwin-arm64@npm:24.0.2"
+"@nx/nx-darwin-arm64@npm:24.0.6":
+  version: 24.0.6
+  resolution: "@nx/nx-darwin-arm64@npm:24.0.6"
   conditions: os=darwin & cpu=arm64
   languageName: node
   linkType: hard
 
-"@nx/nx-darwin-x64@npm:24.0.2":
-  version: 24.0.2
-  resolution: "@nx/nx-darwin-x64@npm:24.0.2"
+"@nx/nx-darwin-x64@npm:24.0.6":
+  version: 24.0.6
+  resolution: "@nx/nx-darwin-x64@npm:24.0.6"
   conditions: os=darwin & cpu=x64
   languageName: node
   linkType: hard
 
-"@nx/nx-freebsd-x64@npm:24.0.2":
-  version: 24.0.2
-  resolution: "@nx/nx-freebsd-x64@npm:24.0.2"
+"@nx/nx-freebsd-x64@npm:24.0.6":
+  version: 24.0.6
+  resolution: "@nx/nx-freebsd-x64@npm:24.0.6"
   conditions: os=freebsd & cpu=x64
   languageName: node
   linkType: hard
 
-"@nx/nx-linux-arm-gnueabihf@npm:24.0.2":
-  version: 24.0.2
-  resolution: "@nx/nx-linux-arm-gnueabihf@npm:24.0.2"
+"@nx/nx-linux-arm-gnueabihf@npm:24.0.6":
+  version: 24.0.6
+  resolution: "@nx/nx-linux-arm-gnueabihf@npm:24.0.6"
   conditions: os=linux & cpu=arm
   languageName: node
   linkType: hard
 
-"@nx/nx-linux-arm64-gnu@npm:24.0.2":
-  version: 24.0.2
-  resolution: "@nx/nx-linux-arm64-gnu@npm:24.0.2"
+"@nx/nx-linux-arm64-gnu@npm:24.0.6":
+  version: 24.0.6
+  resolution: "@nx/nx-linux-arm64-gnu@npm:24.0.6"
   conditions: os=linux & cpu=arm64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@nx/nx-linux-arm64-musl@npm:24.0.2":
-  version: 24.0.2
-  resolution: "@nx/nx-linux-arm64-musl@npm:24.0.2"
+"@nx/nx-linux-arm64-musl@npm:24.0.6":
+  version: 24.0.6
+  resolution: "@nx/nx-linux-arm64-musl@npm:24.0.6"
   conditions: os=linux & cpu=arm64 & libc=musl
   languageName: node
   linkType: hard
 
-"@nx/nx-linux-x64-gnu@npm:24.0.2":
-  version: 24.0.2
-  resolution: "@nx/nx-linux-x64-gnu@npm:24.0.2"
+"@nx/nx-linux-x64-gnu@npm:24.0.6":
+  version: 24.0.6
+  resolution: "@nx/nx-linux-x64-gnu@npm:24.0.6"
   conditions: os=linux & cpu=x64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@nx/nx-linux-x64-musl@npm:24.0.2":
-  version: 24.0.2
-  resolution: "@nx/nx-linux-x64-musl@npm:24.0.2"
+"@nx/nx-linux-x64-musl@npm:24.0.6":
+  version: 24.0.6
+  resolution: "@nx/nx-linux-x64-musl@npm:24.0.6"
   conditions: os=linux & cpu=x64 & libc=musl
   languageName: node
   linkType: hard
 
-"@nx/nx-win32-arm64-msvc@npm:24.0.2":
-  version: 24.0.2
-  resolution: "@nx/nx-win32-arm64-msvc@npm:24.0.2"
+"@nx/nx-win32-arm64-msvc@npm:24.0.6":
+  version: 24.0.6
+  resolution: "@nx/nx-win32-arm64-msvc@npm:24.0.6"
   conditions: os=win32 & cpu=arm64
   languageName: node
   linkType: hard
 
-"@nx/nx-win32-x64-msvc@npm:24.0.2":
-  version: 24.0.2
-  resolution: "@nx/nx-win32-x64-msvc@npm:24.0.2"
+"@nx/nx-win32-x64-msvc@npm:24.0.6":
+  version: 24.0.6
+  resolution: "@nx/nx-win32-x64-msvc@npm:24.0.6"
   conditions: os=win32 & cpu=x64
   languageName: node
   linkType: hard
 
-"@nx/react@npm:24.0.2":
-  version: 24.0.2
-  resolution: "@nx/react@npm:24.0.2"
+"@nx/react@npm:24.0.6":
+  version: 24.0.6
+  resolution: "@nx/react@npm:24.0.6"
   dependencies:
     "@babel/preset-react": "npm:^7.22.5"
-    "@nx/devkit": "npm:24.0.2"
-    "@nx/eslint": "npm:24.0.2"
-    "@nx/js": "npm:24.0.2"
-    "@nx/vite": "npm:24.0.2"
-    "@nx/web": "npm:24.0.2"
+    "@nx/devkit": "npm:24.0.6"
+    "@nx/eslint": "npm:24.0.6"
+    "@nx/js": "npm:24.0.6"
+    "@nx/vite": "npm:24.0.6"
+    "@nx/web": "npm:24.0.6"
     "@phenomnomnominal/tsquery": "npm:~6.2.0"
     minimatch: "npm:10.2.5"
     semver: "npm:^7.6.3"
@@ -7352,16 +7352,16 @@ __metadata:
   peerDependenciesMeta:
     babel-plugin-react-compiler:
       optional: true
-  checksum: 10c0/dd1954e2598a31de1ed596229386bfe576b72f3ae5eefaa08c19d06f9a282f534a477bcdaa461430c36ec40008096f7e0798a5c5a29918f6f9cc2cf9a4ce6fdc
+  checksum: 10c0/2e183a9604f9b1af0217043e2e7d3da7009d40ba756acfffa45126858581fc09b72161a59b955599251bf3d7edb9f05b32c68549dd8cfa64d25ec1a4a3012437
   languageName: node
   linkType: hard
 
-"@nx/rollup@npm:24.0.2":
-  version: 24.0.2
-  resolution: "@nx/rollup@npm:24.0.2"
+"@nx/rollup@npm:24.0.6":
+  version: 24.0.6
+  resolution: "@nx/rollup@npm:24.0.6"
   dependencies:
-    "@nx/devkit": "npm:24.0.2"
-    "@nx/js": "npm:24.0.2"
+    "@nx/devkit": "npm:24.0.6"
+    "@nx/js": "npm:24.0.6"
     "@phenomnomnominal/tsquery": "npm:~6.2.0"
     "@rollup/plugin-babel": "npm:^6.0.4"
     "@rollup/plugin-commonjs": "npm:^25.0.7"
@@ -7372,7 +7372,7 @@ __metadata:
     autoprefixer: "npm:^10.4.9"
     concat-with-sourcemaps: "npm:^1.1.0"
     picocolors: "npm:^1.1.0"
-    picomatch: "npm:4.0.4"
+    picomatch: "npm:^4.0.7"
     postcss: "npm:^8.4.38"
     postcss-modules: "npm:^6.0.1"
     tslib: "npm:^2.3.0"
@@ -7381,39 +7381,39 @@ __metadata:
   peerDependenciesMeta:
     rollup:
       optional: true
-  checksum: 10c0/5e9e071a5429d2072db8ad63df1ec13fc6179d3a021b12acdbc48c21cc081073295320db10145dba5b9b05786f28ab9d9ab1b7a5e9a9cc084ad7cbbace8dbf9d
+  checksum: 10c0/9cd4ec873da48acf28e49249bb3696d1642f14c5a731f169b14aabb27c382650ee3b862fef082548a5ebcf3fdfadc46840129b3308ec8d229e5ae72a539c372c
   languageName: node
   linkType: hard
 
-"@nx/vite@npm:24.0.2":
-  version: 24.0.2
-  resolution: "@nx/vite@npm:24.0.2"
+"@nx/vite@npm:24.0.6":
+  version: 24.0.6
+  resolution: "@nx/vite@npm:24.0.6"
   dependencies:
-    "@nx/devkit": "npm:24.0.2"
-    "@nx/js": "npm:24.0.2"
-    "@nx/vitest": "npm:24.0.2"
+    "@nx/devkit": "npm:24.0.6"
+    "@nx/js": "npm:24.0.6"
+    "@nx/vitest": "npm:24.0.6"
     "@phenomnomnominal/tsquery": "npm:~6.2.0"
     ajv: "npm:^8.0.0"
-    picomatch: "npm:4.0.4"
+    picomatch: "npm:^4.0.7"
     semver: "npm:^7.6.3"
     tslib: "npm:^2.3.0"
   peerDependencies:
     vite: ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0
-  checksum: 10c0/0407a88a894724dd362d561ac3934e17689a2c696fd751300cc9df6416146e33fce2eed3801810b602cf4efe3081d51f8ea6c78f2162059eeb2ac7cf1100feb2
+  checksum: 10c0/51dba7b9d6d3cc0c60204110483fc4919219ab0521fc339d207e1ed438542268e28b81d388bccfb138b66668be877f05dd3b32e5a8c46815d736159250c68f72
   languageName: node
   linkType: hard
 
-"@nx/vitest@npm:24.0.2":
-  version: 24.0.2
-  resolution: "@nx/vitest@npm:24.0.2"
+"@nx/vitest@npm:24.0.6":
+  version: 24.0.6
+  resolution: "@nx/vitest@npm:24.0.6"
   dependencies:
-    "@nx/devkit": "npm:24.0.2"
-    "@nx/js": "npm:24.0.2"
+    "@nx/devkit": "npm:24.0.6"
+    "@nx/js": "npm:24.0.6"
     "@phenomnomnominal/tsquery": "npm:~6.2.0"
     semver: "npm:^7.6.3"
     tslib: "npm:^2.3.0"
   peerDependencies:
-    "@nx/eslint": 24.0.2
+    "@nx/eslint": 24.0.6
     vite: ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0
     vitest: ^3.0.0 || ^4.0.0 || ^5.0.0
   peerDependenciesMeta:
@@ -7423,27 +7423,27 @@ __metadata:
       optional: true
     vitest:
       optional: true
-  checksum: 10c0/2037196132464c717c8f81252770c65d57280a5bff4e3d89835ade684fccbc7660ca626d0cda36d4d2f95b3d23f3511b66dc0cfde7f32ab98f794aff4a24556c
+  checksum: 10c0/77beebdbdbeb6cc96c9860a52f22d7e5567a2dab2c22db82476339f5a2c328e155663f00fc4110ec3ca4954f9d3035a672f867876ab3a149deb4392e20d85b01
   languageName: node
   linkType: hard
 
-"@nx/web@npm:24.0.2":
-  version: 24.0.2
-  resolution: "@nx/web@npm:24.0.2"
+"@nx/web@npm:24.0.6":
+  version: 24.0.6
+  resolution: "@nx/web@npm:24.0.6"
   dependencies:
-    "@nx/devkit": "npm:24.0.2"
-    "@nx/js": "npm:24.0.2"
+    "@nx/devkit": "npm:24.0.6"
+    "@nx/js": "npm:24.0.6"
     detect-port: "npm:^2.1.0"
     http-server: "npm:^14.1.0"
     picocolors: "npm:^1.1.0"
     tslib: "npm:^2.3.0"
   peerDependencies:
-    "@nx/cypress": 24.0.2
-    "@nx/eslint": 24.0.2
-    "@nx/jest": 24.0.2
-    "@nx/playwright": 24.0.2
-    "@nx/vite": 24.0.2
-    "@nx/webpack": 24.0.2
+    "@nx/cypress": 24.0.6
+    "@nx/eslint": 24.0.6
+    "@nx/jest": 24.0.6
+    "@nx/playwright": 24.0.6
+    "@nx/vite": 24.0.6
+    "@nx/webpack": 24.0.6
   peerDependenciesMeta:
     "@nx/cypress":
       optional: true
@@ -7457,23 +7457,23 @@ __metadata:
       optional: true
     "@nx/webpack":
       optional: true
-  checksum: 10c0/fd4443a2d4b25d2786553f1dca7fd9a187afff9a4cec044c628dfed29cd104a6510fc577a7c41683366a81f99ca2323b2f02c65e6b05017cf312b75a8a8fdd5b
+  checksum: 10c0/9848f1487e9c989896bccc20367a47fdfbb80a3ec814f97f21e3823006de2658e257af1e8f803e6300330ca93dd83d382fd78aee5092f9bb3985b19dd61336c8
   languageName: node
   linkType: hard
 
-"@nx/workspace@npm:24.0.2":
-  version: 24.0.2
-  resolution: "@nx/workspace@npm:24.0.2"
+"@nx/workspace@npm:24.0.6":
+  version: 24.0.6
+  resolution: "@nx/workspace@npm:24.0.6"
   dependencies:
-    "@nx/devkit": "npm:24.0.2"
+    "@nx/devkit": "npm:24.0.6"
     "@zkochan/js-yaml": "npm:0.0.7"
     chalk: "npm:^4.1.0"
-    nx: "npm:24.0.2"
-    picomatch: "npm:4.0.4"
+    nx: "npm:24.0.6"
+    picomatch: "npm:^4.0.7"
     semver: "npm:^7.6.3"
     tslib: "npm:^2.3.0"
     yargs-parser: "npm:21.1.1"
-  checksum: 10c0/c70c15bc6b5e9107a624e4c074e6d7586a4c79fe2458d9319bf42e6da89b9b2205045347f5f8c44375bcbd3e299464e2471228ebf9ffe4a2720cc4491fb63c89
+  checksum: 10c0/91e00d0e70796b9699ae039193bbde1abc2311714b471f63757b9e841b54cdf455df352605e681f213464e86989a07a0fb453e46fdec78b1637e2fac907b1e49
   languageName: node
   linkType: hard
 
@@ -13407,9 +13407,9 @@ __metadata:
     "@testing-library/user-event": "npm:^14.6.12"
     "@types/react": "npm:^18.3.31"
     "@types/react-dom": "npm:^18.3.7"
-    ag-grid-community: "npm:36.3.0-beta.20261119.1424"
-    ag-grid-enterprise: "npm:36.3.0-beta.20261119.1424"
-    ag-grid-react: "npm:36.3.0-beta.20261119.1424"
+    ag-grid-community: "npm:36.3.0-beta.20261126.1116"
+    ag-grid-enterprise: "npm:36.3.0-beta.20261126.1116"
+    ag-grid-react: "npm:36.3.0-beta.20261126.1116"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
     tslib: "npm:^2.9.1"
@@ -13417,82 +13417,82 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"ag-charts-angular@npm:14.3.0-beta.20261115":
-  version: 14.3.0-beta.20261115
-  resolution: "ag-charts-angular@npm:14.3.0-beta.20261115"
+"ag-charts-angular@npm:14.3.0-beta.20261122":
+  version: 14.3.0-beta.20261122
+  resolution: "ag-charts-angular@npm:14.3.0-beta.20261122"
   dependencies:
-    ag-charts-community: "npm:14.3.0-beta.20261115"
+    ag-charts-community: "npm:14.3.0-beta.20261122"
     tslib: "npm:^2.8.1"
   peerDependencies:
     "@angular/common": ">= 21.0.0"
     "@angular/core": ">= 21.0.0"
-  checksum: 10c0/fb8a1bb03efb19b256b9998423620a03c099f2d2e6c76c8aa646b4fdc57d8b5b1e71ed754f83b5285118bde9c8764d7e48ac8322f649b583bc06eb025cf09ea6
+  checksum: 10c0/9c5c6512b07bf821d9a9afd1acb9ad005ad80bb02768c999ffef510e84913a02abfcebae4e1cefdce2b14fd872f185c38f4bd2750408213752a776ffcb503a76
   languageName: node
   linkType: hard
 
-"ag-charts-community@npm:14.3.0-beta.20261115":
-  version: 14.3.0-beta.20261115
-  resolution: "ag-charts-community@npm:14.3.0-beta.20261115"
+"ag-charts-community@npm:14.3.0-beta.20261122":
+  version: 14.3.0-beta.20261122
+  resolution: "ag-charts-community@npm:14.3.0-beta.20261122"
   dependencies:
-    ag-charts-core: "npm:14.3.0-beta.20261115"
-    ag-charts-locale: "npm:14.3.0-beta.20261115"
-    ag-charts-types: "npm:14.3.0-beta.20261115"
-  checksum: 10c0/99ea2dc29c310a9899293071b20e68a098338d245a36be5dc2d508262eba61a1b3e1e45dc6f06ba333d0dfc0b8aac7fa40eeeaecd32f33e3a8f624b8c549fc22
+    ag-charts-core: "npm:14.3.0-beta.20261122"
+    ag-charts-locale: "npm:14.3.0-beta.20261122"
+    ag-charts-types: "npm:14.3.0-beta.20261122"
+  checksum: 10c0/4b1d48a3ea65693a333bbebaa646620dd46607b8de48bee3ffc03eb6b1ffb2f281637b65f8558bc29949c77886007af9d92f035e86312cd4dba24469973b3412
   languageName: node
   linkType: hard
 
-"ag-charts-core@npm:14.3.0-beta.20261115":
-  version: 14.3.0-beta.20261115
-  resolution: "ag-charts-core@npm:14.3.0-beta.20261115"
+"ag-charts-core@npm:14.3.0-beta.20261122":
+  version: 14.3.0-beta.20261122
+  resolution: "ag-charts-core@npm:14.3.0-beta.20261122"
   dependencies:
-    ag-charts-types: "npm:14.3.0-beta.20261115"
-  checksum: 10c0/d4d3bda455366f361f9028ed0ec712db12e3a38f1f35ca957ddc6251b774437342f2d41a785e0153a4a27ae7dee6e0a0a846959c76728b48f2c5cebfdc478bd2
+    ag-charts-types: "npm:14.3.0-beta.20261122"
+  checksum: 10c0/c9cc53e8a454164c354613c1b4266187bdb2da44d13d920465e387a184f873228cd53d8c70cad02d584e4716ecde77c5bef9a5f8fc11096555f25c42d9c28d9a
   languageName: node
   linkType: hard
 
-"ag-charts-enterprise@npm:14.3.0-beta.20261115":
-  version: 14.3.0-beta.20261115
-  resolution: "ag-charts-enterprise@npm:14.3.0-beta.20261115"
+"ag-charts-enterprise@npm:14.3.0-beta.20261122":
+  version: 14.3.0-beta.20261122
+  resolution: "ag-charts-enterprise@npm:14.3.0-beta.20261122"
   dependencies:
-    ag-charts-community: "npm:14.3.0-beta.20261115"
-    ag-charts-core: "npm:14.3.0-beta.20261115"
-  checksum: 10c0/eab4b86b706ecc66caf43d5474c66b41fa38c3faba8b8294d478b8ea415afc470a11ba2a416af3c106f56cc23bb69ae48017b6381fae80bdacf1cfe407e1dba9
+    ag-charts-community: "npm:14.3.0-beta.20261122"
+    ag-charts-core: "npm:14.3.0-beta.20261122"
+  checksum: 10c0/b1ecbf3551f26360f065ce16e6fc99dea97724c96235ced50b48dc4f4325d4e44046df9dde5dc46e6b259bd2c83c76b870a7e70a324d0e4ab4192c5992e6e039
   languageName: node
   linkType: hard
 
-"ag-charts-locale@npm:14.3.0-beta.20261115":
-  version: 14.3.0-beta.20261115
-  resolution: "ag-charts-locale@npm:14.3.0-beta.20261115"
-  checksum: 10c0/5bb71f4ff14f94bd6538261b0ad9f9bb165d377cb5d9b835dcd9d28c2de008f2faa79313cbdebb027472a5ee08e445f3f1b8689e7639bc85e4f0887c3e48154e
+"ag-charts-locale@npm:14.3.0-beta.20261122":
+  version: 14.3.0-beta.20261122
+  resolution: "ag-charts-locale@npm:14.3.0-beta.20261122"
+  checksum: 10c0/c630203da76f0d8a18114697f5855493ef7c5edd6185fbab2bf40d402e7bf78caf094edd2e53dd8221e0afe72e4636290ea8424efe4219918821867d7b83b0f5
   languageName: node
   linkType: hard
 
-"ag-charts-react@npm:14.3.0-beta.20261115":
-  version: 14.3.0-beta.20261115
-  resolution: "ag-charts-react@npm:14.3.0-beta.20261115"
+"ag-charts-react@npm:14.3.0-beta.20261122":
+  version: 14.3.0-beta.20261122
+  resolution: "ag-charts-react@npm:14.3.0-beta.20261122"
   dependencies:
-    ag-charts-community: "npm:14.3.0-beta.20261115"
+    ag-charts-community: "npm:14.3.0-beta.20261122"
   peerDependencies:
     react: ^18.0.0 || ^19.0.0
-  checksum: 10c0/c62c904ce264e807993f612d4092080f06989878875f6c54cacbb59ca1eccfa9ca36e74cf69a56590becda7069391e79091bf15b9a2ba3c332932230affb33ce
+  checksum: 10c0/117292f19e231cc038f6398f597b3ce3695e900a3b9d643dd891b2aeea447fcf01d76bcb44c76c4b71668e0a354db810acd670212c5439dc418ac27b93fade80
   languageName: node
   linkType: hard
 
-"ag-charts-types@npm:14.3.0-beta.20261115":
-  version: 14.3.0-beta.20261115
-  resolution: "ag-charts-types@npm:14.3.0-beta.20261115"
-  checksum: 10c0/ab94642e44393e047ea143de8679ef9721b66a1f1a66ed0094afa29f3df476f3014b83d7b3fd1db6491ebb2e084fab4585a5472ffdcbaa09f4212de4fc8d9938
+"ag-charts-types@npm:14.3.0-beta.20261122":
+  version: 14.3.0-beta.20261122
+  resolution: "ag-charts-types@npm:14.3.0-beta.20261122"
+  checksum: 10c0/9ff8f5c2b4ae90648d5d55d284dda4d7da970eaddaaf3f4e680ae739fb44de020f1d00227a5192c6c62b69632c281543e16189c3171134b747f4ad2915faa1c8
   languageName: node
   linkType: hard
 
-"ag-charts-vue3@npm:14.3.0-beta.20261115":
-  version: 14.3.0-beta.20261115
-  resolution: "ag-charts-vue3@npm:14.3.0-beta.20261115"
+"ag-charts-vue3@npm:14.3.0-beta.20261122":
+  version: 14.3.0-beta.20261122
+  resolution: "ag-charts-vue3@npm:14.3.0-beta.20261122"
   dependencies:
-    ag-charts-community: "npm:14.3.0-beta.20261115"
+    ag-charts-community: "npm:14.3.0-beta.20261122"
   peerDependencies:
     vue: ^3.5.0
-  checksum: 10c0/a17e287a5215da63dabb51a1d31b894a2cbd37f67f4da7218b8999feb40e0afdf7707147c05162f9a0c16f8f25f797fb5826bb2c81c638d5559f62bede8a39d3
+  checksum: 10c0/bc74e381e569b4c6f3b5e65d995c77f4176e402c1bbc9453d15dc2b737caaaefcd2d73107750ca1f834ccfd87c9a0a9da5fc79bc0a067f3f4bec231fe762ce5d
   languageName: node
   linkType: hard
 
@@ -13502,8 +13502,8 @@ __metadata:
   dependencies:
     "@playwright/test": "npm:^1.64.1"
     "@types/node": "npm:^24.19.2"
-    ag-grid-community: "npm:36.3.0-beta.20261119.1424"
-    ag-grid-enterprise: "npm:36.3.0-beta.20261119.1424"
+    ag-grid-community: "npm:36.3.0-beta.20261126.1116"
+    ag-grid-enterprise: "npm:36.3.0-beta.20261126.1116"
     playwright-ctrf-json-reporter: "npm:0.2.0"
   languageName: unknown
   linkType: soft
@@ -13521,11 +13521,11 @@ __metadata:
     "@angular/platform-browser-dynamic": "npm:^21.2.25"
     "@angular/router": "npm:^21.2.25"
     "@playwright/test": "npm:^1.64.1"
-    ag-charts-community: "npm:14.3.0-beta.20261115"
-    ag-charts-enterprise: "npm:14.3.0-beta.20261115"
-    ag-grid-angular: "npm:36.3.0-beta.20261119.1424"
-    ag-grid-community: "npm:36.3.0-beta.20261119.1424"
-    ag-grid-enterprise: "npm:36.3.0-beta.20261119.1424"
+    ag-charts-community: "npm:14.3.0-beta.20261122"
+    ag-charts-enterprise: "npm:14.3.0-beta.20261122"
+    ag-grid-angular: "npm:36.3.0-beta.20261126.1116"
+    ag-grid-community: "npm:36.3.0-beta.20261126.1116"
+    ag-grid-enterprise: "npm:36.3.0-beta.20261126.1116"
     playwright: "npm:^1.64.1"
     rxjs: "npm:~7.8.2"
     tslib: "npm:^2.8.1"
@@ -13544,8 +13544,8 @@ __metadata:
     "@angular/platform-browser": "npm:^21.2.25"
     "@angular/platform-browser-dynamic": "npm:^21.2.25"
     "@types/jest": "npm:^30.0.0"
-    ag-grid-angular: "npm:36.3.0-beta.20261119.1424"
-    ag-grid-community: "npm:36.3.0-beta.20261119.1424"
+    ag-grid-angular: "npm:36.3.0-beta.20261126.1116"
+    ag-grid-community: "npm:36.3.0-beta.20261126.1116"
     jest: "npm:^30.5.2"
     jest-environment-jsdom: "npm:^30.5.2"
     jest-preset-angular: "npm:^17.0.3"
@@ -13556,7 +13556,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"ag-grid-angular@npm:36.3.0-beta.20261119.1424, ag-grid-angular@workspace:packages/ag-grid-angular":
+"ag-grid-angular@npm:36.3.0-beta.20261126.1116, ag-grid-angular@workspace:packages/ag-grid-angular":
   version: 0.0.0-use.local
   resolution: "ag-grid-angular@workspace:packages/ag-grid-angular"
   dependencies:
@@ -13572,7 +13572,7 @@ __metadata:
     "@angular/platform-browser-dynamic": "npm:^21.2.25"
     "@types/jasmine": "npm:~6.0.0"
     "@types/node": "npm:^24.19.2"
-    ag-grid-community: "npm:36.3.0-beta.20261119.1424"
+    ag-grid-community: "npm:36.3.0-beta.20261126.1116"
     jasmine-core: "npm:~5.13.0"
     karma: "npm:~6.4.4"
     karma-chrome-launcher: "npm:~3.2.0"
@@ -13589,12 +13589,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"ag-grid-community@npm:36.3.0-beta.20261119.1424, ag-grid-community@workspace:packages/ag-grid-community":
+"ag-grid-community@npm:36.3.0-beta.20261126.1116, ag-grid-community@workspace:packages/ag-grid-community":
   version: 0.0.0-use.local
   resolution: "ag-grid-community@workspace:packages/ag-grid-community"
   dependencies:
-    ag-charts-types: "npm:14.3.0-beta.20261115"
-    ag-stack: "npm:36.3.0-beta.20261119.1424"
+    ag-charts-types: "npm:14.3.0-beta.20261122"
+    ag-stack: "npm:36.3.0-beta.20261126.1116"
   languageName: unknown
   linkType: soft
 
@@ -13640,17 +13640,17 @@ __metadata:
     "@types/he": "npm:^1.2.3"
     "@types/react": "npm:^18.3.31"
     "@types/react-dom": "npm:^18.3.7"
-    ag-charts-angular: "npm:14.3.0-beta.20261115"
-    ag-charts-community: "npm:14.3.0-beta.20261115"
-    ag-charts-enterprise: "npm:14.3.0-beta.20261115"
-    ag-charts-react: "npm:14.3.0-beta.20261115"
-    ag-charts-types: "npm:14.3.0-beta.20261115"
-    ag-charts-vue3: "npm:14.3.0-beta.20261115"
-    ag-grid-angular: "npm:36.3.0-beta.20261119.1424"
-    ag-grid-community: "npm:36.3.0-beta.20261119.1424"
-    ag-grid-enterprise: "npm:36.3.0-beta.20261119.1424"
-    ag-grid-react: "npm:36.3.0-beta.20261119.1424"
-    ag-grid-vue3: "npm:36.3.0-beta.20261119.1424"
+    ag-charts-angular: "npm:14.3.0-beta.20261122"
+    ag-charts-community: "npm:14.3.0-beta.20261122"
+    ag-charts-enterprise: "npm:14.3.0-beta.20261122"
+    ag-charts-react: "npm:14.3.0-beta.20261122"
+    ag-charts-types: "npm:14.3.0-beta.20261122"
+    ag-charts-vue3: "npm:14.3.0-beta.20261122"
+    ag-grid-angular: "npm:36.3.0-beta.20261126.1116"
+    ag-grid-community: "npm:36.3.0-beta.20261126.1116"
+    ag-grid-enterprise: "npm:36.3.0-beta.20261126.1116"
+    ag-grid-react: "npm:36.3.0-beta.20261126.1116"
+    ag-grid-vue3: "npm:36.3.0-beta.20261126.1116"
     algoliasearch: "npm:^5.60.0"
     astro: "npm:7.4.2"
     cheerio: "npm:^1.2.0"
@@ -13685,14 +13685,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"ag-grid-enterprise@npm:36.3.0-beta.20261119.1424, ag-grid-enterprise@workspace:packages/ag-grid-enterprise":
+"ag-grid-enterprise@npm:36.3.0-beta.20261126.1116, ag-grid-enterprise@workspace:packages/ag-grid-enterprise":
   version: 0.0.0-use.local
   resolution: "ag-grid-enterprise@workspace:packages/ag-grid-enterprise"
   dependencies:
-    ag-charts-community: "npm:14.3.0-beta.20261115"
-    ag-charts-enterprise: "npm:14.3.0-beta.20261115"
-    ag-grid-community: "npm:36.3.0-beta.20261119.1424"
-    ag-stack: "npm:36.3.0-beta.20261119.1424"
+    ag-charts-community: "npm:14.3.0-beta.20261122"
+    ag-charts-enterprise: "npm:14.3.0-beta.20261122"
+    ag-grid-community: "npm:36.3.0-beta.20261126.1116"
+    ag-stack: "npm:36.3.0-beta.20261126.1116"
     canvas: "npm:^3.2.3"
   dependenciesMeta:
     ag-charts-community:
@@ -13706,7 +13706,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "ag-grid-generate-code-reference-files@workspace:plugins/ag-grid-generate-code-reference-files"
   dependencies:
-    "@nx/devkit": "npm:24.0.2"
+    "@nx/devkit": "npm:24.0.6"
     "@swc/helpers": "npm:0.5.23"
     ag-shared: "npm:0.0.1"
     typescript: "npm:~5.9.3"
@@ -13717,9 +13717,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "ag-grid-generate-example-files@workspace:plugins/ag-grid-generate-example-files"
   dependencies:
-    "@nx/devkit": "npm:24.0.2"
+    "@nx/devkit": "npm:24.0.6"
     "@swc/helpers": "npm:0.5.23"
-    ag-grid-community: "npm:36.3.0-beta.20261119.1424"
+    ag-grid-community: "npm:36.3.0-beta.20261126.1116"
     ag-shared: "npm:0.0.1"
     cheerio: "npm:^1.2.0"
     json5: "npm:2.2.3"
@@ -13745,11 +13745,11 @@ __metadata:
     "@angular/platform-browser": "npm:^21.2.25"
     "@angular/platform-browser-dynamic": "npm:^21.2.25"
     "@angular/router": "npm:^21.2.25"
-    ag-charts-community: "npm:14.3.0-beta.20261115"
-    ag-charts-enterprise: "npm:14.3.0-beta.20261115"
-    ag-grid-angular: "npm:36.3.0-beta.20261119.1424"
-    ag-grid-community: "npm:36.3.0-beta.20261119.1424"
-    ag-grid-enterprise: "npm:36.3.0-beta.20261119.1424"
+    ag-charts-community: "npm:14.3.0-beta.20261122"
+    ag-charts-enterprise: "npm:14.3.0-beta.20261122"
+    ag-grid-angular: "npm:36.3.0-beta.20261126.1116"
+    ag-grid-community: "npm:36.3.0-beta.20261126.1116"
+    ag-grid-enterprise: "npm:36.3.0-beta.20261126.1116"
     rxjs: "npm:~7.8.2"
     tslib: "npm:^2.8.1"
     typescript: "npm:~5.9.3"
@@ -13763,9 +13763,9 @@ __metadata:
   dependencies:
     "@eslint/js": "npm:^10.0.1"
     "@vitejs/plugin-react": "npm:^6.2.1"
-    ag-grid-community: "npm:36.3.0-beta.20261119.1424"
-    ag-grid-enterprise: "npm:36.3.0-beta.20261119.1424"
-    ag-grid-react: "npm:36.3.0-beta.20261119.1424"
+    ag-grid-community: "npm:36.3.0-beta.20261126.1116"
+    ag-grid-enterprise: "npm:36.3.0-beta.20261126.1116"
+    ag-grid-react: "npm:36.3.0-beta.20261126.1116"
     esbuild-loader: "npm:^4.3.0"
     eslint: "npm:^10.13.0"
     globals: "npm:^17.13.0"
@@ -13787,11 +13787,11 @@ __metadata:
     "@types/react": "npm:^18.3.31"
     "@types/react-dom": "npm:^18.3.7"
     "@vitejs/plugin-react": "npm:^4.3.1"
-    ag-charts-community: "npm:14.3.0-beta.20261115"
-    ag-charts-enterprise: "npm:14.3.0-beta.20261115"
-    ag-grid-community: "npm:36.3.0-beta.20261119.1424"
-    ag-grid-enterprise: "npm:36.3.0-beta.20261119.1424"
-    ag-grid-react: "npm:36.3.0-beta.20261119.1424"
+    ag-charts-community: "npm:14.3.0-beta.20261122"
+    ag-charts-enterprise: "npm:14.3.0-beta.20261122"
+    ag-grid-community: "npm:36.3.0-beta.20261126.1116"
+    ag-grid-enterprise: "npm:36.3.0-beta.20261126.1116"
+    ag-grid-react: "npm:36.3.0-beta.20261126.1116"
     eslint: "npm:^10.13.0"
     globals: "npm:^17.13.0"
     npm-run-all: "npm:4.1.5"
@@ -13811,12 +13811,12 @@ __metadata:
   dependencies:
     "@playwright/test": "npm:^1.64.1"
     "@types/node": "npm:^24.19.2"
-    ag-grid-community: "npm:36.3.0-beta.20261119.1424"
+    ag-grid-community: "npm:36.3.0-beta.20261126.1116"
     playwright: "npm:^1.64.1"
   languageName: unknown
   linkType: soft
 
-"ag-grid-react@npm:36.3.0-beta.20261119.1424, ag-grid-react@workspace:packages/ag-grid-react":
+"ag-grid-react@npm:36.3.0-beta.20261126.1116, ag-grid-react@workspace:packages/ag-grid-react":
   version: 0.0.0-use.local
   resolution: "ag-grid-react@workspace:packages/ag-grid-react"
   dependencies:
@@ -13825,7 +13825,7 @@ __metadata:
     "@babel/runtime": "npm:^8.0.7"
     "@types/react": "npm:^18.3.31"
     "@types/react-dom": "npm:^18.3.7"
-    ag-grid-community: "npm:36.3.0-beta.20261119.1424"
+    ag-grid-community: "npm:36.3.0-beta.20261126.1116"
     babel-preset-react-app: "npm:^10.1.0"
     prop-types: "npm:^15.6.2"
     react: "npm:^17.0.2"
@@ -13842,8 +13842,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "ag-grid-task-autogen@workspace:plugins/ag-grid-task-autogen"
   dependencies:
-    "@nx/devkit": "npm:24.0.2"
-    nx: "npm:24.0.2"
+    "@nx/devkit": "npm:24.0.6"
+    nx: "npm:24.0.6"
     tslib: "npm:^2.8.1"
   languageName: unknown
   linkType: soft
@@ -13864,9 +13864,9 @@ __metadata:
     "@mobileaction/action-kit": "npm:^1.61.3"
     "@playwright/test": "npm:^1.64.1"
     "@vitejs/plugin-vue": "npm:^6.0.10"
-    ag-grid-community: "npm:36.3.0-beta.20261119.1424"
-    ag-grid-enterprise: "npm:36.3.0-beta.20261119.1424"
-    ag-grid-vue3: "npm:36.3.0-beta.20261119.1424"
+    ag-grid-community: "npm:36.3.0-beta.20261126.1116"
+    ag-grid-enterprise: "npm:36.3.0-beta.20261126.1116"
+    ag-grid-vue3: "npm:36.3.0-beta.20261126.1116"
     decimal.js: "npm:^10.6.0"
     npm-run-all: "npm:^4.1.5"
     playwright: "npm:^1.64.1"
@@ -13878,7 +13878,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"ag-grid-vue3@npm:36.3.0-beta.20261119.1424, ag-grid-vue3@workspace:packages/ag-grid-vue3":
+"ag-grid-vue3@npm:36.3.0-beta.20261126.1116, ag-grid-vue3@workspace:packages/ag-grid-vue3":
   version: 0.0.0-use.local
   resolution: "ag-grid-vue3@workspace:packages/ag-grid-vue3"
   dependencies:
@@ -13888,7 +13888,7 @@ __metadata:
     "@vitejs/plugin-vue-jsx": "npm:^5.1.6"
     "@vue/test-utils": "npm:^2.5.1"
     "@vue/tsconfig": "npm:^0.9.1"
-    ag-grid-community: "npm:36.3.0-beta.20261119.1424"
+    ag-grid-community: "npm:36.3.0-beta.20261126.1116"
     npm-run-all2: "npm:^9.0.4"
     replace-in-file: "npm:9.0.0"
     typescript: "npm:~5.9.3"
@@ -13910,15 +13910,15 @@ __metadata:
     "@eslint/js": "npm:^10.0.1"
     "@lavamoat/allow-scripts": "npm:^5.1.0"
     "@modelcontextprotocol/server-sequential-thinking": "npm:^2.0.0"
-    "@nx/devkit": "npm:24.0.2"
-    "@nx/esbuild": "npm:24.0.2"
-    "@nx/eslint": "npm:24.0.2"
-    "@nx/eslint-plugin": "npm:24.0.2"
-    "@nx/js": "npm:24.0.2"
-    "@nx/react": "npm:24.0.2"
-    "@nx/rollup": "npm:24.0.2"
-    "@nx/web": "npm:24.0.2"
-    "@nx/workspace": "npm:24.0.2"
+    "@nx/devkit": "npm:24.0.6"
+    "@nx/esbuild": "npm:24.0.6"
+    "@nx/eslint": "npm:24.0.6"
+    "@nx/eslint-plugin": "npm:24.0.6"
+    "@nx/js": "npm:24.0.6"
+    "@nx/react": "npm:24.0.6"
+    "@nx/rollup": "npm:24.0.6"
+    "@nx/web": "npm:24.0.6"
+    "@nx/workspace": "npm:24.0.6"
     "@playwright/test": "npm:^1.64.1"
     "@swc-node/register": "npm:1.12.1"
     "@swc/cli": "npm:0.8.1"
@@ -13956,7 +13956,7 @@ __metadata:
     js-yaml: "npm:^5.5.0"
     knip: "npm:6.43.0"
     node-fetch: "npm:2.7.0"
-    nx: "npm:24.0.2"
+    nx: "npm:24.0.6"
     octokit: "npm:^5.0.5"
     patch-package: "npm:^8.0.1"
     postcss-import: "npm:^17.0.1"
@@ -13996,7 +13996,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"ag-stack@npm:36.3.0-beta.20261119.1424, ag-stack@workspace:packages/ag-stack":
+"ag-stack@npm:36.3.0-beta.20261126.1116, ag-stack@workspace:packages/ag-stack":
   version: 0.0.0-use.local
   resolution: "ag-stack@workspace:packages/ag-stack"
   languageName: unknown
@@ -25323,9 +25323,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nx@npm:24.0.2":
-  version: 24.0.2
-  resolution: "nx@npm:24.0.2"
+"nx@npm:24.0.6":
+  version: 24.0.6
+  resolution: "nx@npm:24.0.6"
   dependencies:
     "@clack/core": "npm:1.4.3"
     "@clack/prompts": "npm:1.7.0"
@@ -25334,16 +25334,16 @@ __metadata:
     "@emnapi/wasi-threads": "npm:1.0.4"
     "@jest/diff-sequences": "npm:30.0.1"
     "@napi-rs/wasm-runtime": "npm:0.2.4"
-    "@nx/nx-darwin-arm64": "npm:24.0.2"
-    "@nx/nx-darwin-x64": "npm:24.0.2"
-    "@nx/nx-freebsd-x64": "npm:24.0.2"
-    "@nx/nx-linux-arm-gnueabihf": "npm:24.0.2"
-    "@nx/nx-linux-arm64-gnu": "npm:24.0.2"
-    "@nx/nx-linux-arm64-musl": "npm:24.0.2"
-    "@nx/nx-linux-x64-gnu": "npm:24.0.2"
-    "@nx/nx-linux-x64-musl": "npm:24.0.2"
-    "@nx/nx-win32-arm64-msvc": "npm:24.0.2"
-    "@nx/nx-win32-x64-msvc": "npm:24.0.2"
+    "@nx/nx-darwin-arm64": "npm:24.0.6"
+    "@nx/nx-darwin-x64": "npm:24.0.6"
+    "@nx/nx-freebsd-x64": "npm:24.0.6"
+    "@nx/nx-linux-arm-gnueabihf": "npm:24.0.6"
+    "@nx/nx-linux-arm64-gnu": "npm:24.0.6"
+    "@nx/nx-linux-arm64-musl": "npm:24.0.6"
+    "@nx/nx-linux-x64-gnu": "npm:24.0.6"
+    "@nx/nx-linux-x64-musl": "npm:24.0.6"
+    "@nx/nx-win32-arm64-msvc": "npm:24.0.6"
+    "@nx/nx-win32-x64-msvc": "npm:24.0.6"
     "@tybys/wasm-util": "npm:0.9.0"
     "@yarnpkg/lockfile": "npm:1.1.0"
     "@zkochan/js-yaml": "npm:0.0.7"
@@ -25415,7 +25415,7 @@ __metadata:
     tmp: "npm:0.2.7"
     tsconfig-paths: "npm:4.2.0"
     tslib: "npm:2.8.1"
-    undici: "npm:7.29.0"
+    undici: "npm:7.30.1"
     util-deprecate: "npm:1.0.2"
     wcwidth: "npm:1.0.1"
     which: "npm:3.0.1"
@@ -25457,7 +25457,7 @@ __metadata:
   bin:
     nx: ./dist/bin/nx.js
     nx-cloud: ./dist/bin/nx-cloud.js
-  checksum: 10c0/4682110c55faa282658d709a8779f5b4c6c95b66e6d8e6883757247bcc0d441fb29e5f3f5703c00fe204c6a9860f1c7c4e1255f9ba44af7167b0ce9cc417a7f2
+  checksum: 10c0/ae1c389c0832e977474dc25c2a77b5616205b4d63dc4167caeec81095739c238cbbe2aa9c3dbc70d06c7ff7b52bd154ad80db5844db957965dddf8bcc6337e27
   languageName: node
   linkType: hard
 
@@ -30063,16 +30063,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"source-map-support@npm:0.5.19":
-  version: 0.5.19
-  resolution: "source-map-support@npm:0.5.19"
-  dependencies:
-    buffer-from: "npm:^1.0.0"
-    source-map: "npm:^0.6.0"
-  checksum: 10c0/a232cb02dc5c2c048460dff3ca1a4c2aa44488822028932daff99b8707c8e4f87d2535dae319d65691c905096f2c06a2517793472634efb01f8a095661b9aa93
-  languageName: node
-  linkType: hard
-
 "source-map-support@npm:0.5.21, source-map-support@npm:^0.5.21, source-map-support@npm:~0.5.20":
   version: 0.5.21
   resolution: "source-map-support@npm:0.5.21"
@@ -31877,13 +31867,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"undici@npm:7.29.0, undici@npm:^7.16.0, undici@npm:^7.19.0":
-  version: 7.29.0
-  resolution: "undici@npm:7.29.0"
-  checksum: 10c0/85ea96e91e7f3de24de678cbbc54230fdd641a3b0643005f2aef044af1f1a2db8fbecb88b28e6fa78bb41ffeafda4479b57075b6b6ab92beac4b7b5ab53f9b10
-  languageName: node
-  linkType: hard
-
 "undici@npm:7.30.1":
   version: 7.30.1
   resolution: "undici@npm:7.30.1"
@@ -31895,6 +31878,13 @@ __metadata:
   version: 6.28.0
   resolution: "undici@npm:6.28.0"
   checksum: 10c0/3029a70df06b38b5b2f30732932a1e92544c753cd82c8abdf0d35afad48e0ba91612e79fe3a442dbbb9434d6a9eba2b714d5ea28984c903dda2b5d5444f38354
+  languageName: node
+  linkType: hard
+
+"undici@npm:^7.16.0, undici@npm:^7.19.0":
+  version: 7.29.0
+  resolution: "undici@npm:7.29.0"
+  checksum: 10c0/85ea96e91e7f3de24de678cbbc54230fdd641a3b0643005f2aef044af1f1a2db8fbecb88b28e6fa78bb41ffeafda4479b57075b6b6ab92beac4b7b5ab53f9b10
   languageName: node
   linkType: hard
 

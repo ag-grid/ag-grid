@@ -169,7 +169,7 @@ describe('Cell editing validation + batch editing', () => {
 
             api.startBatchEdit();
             // rows render asynchronously: poll until the cell lookup succeeds
-            await waitFor(() => cell(api, 0, 'age'));
+            await waitFor(() => cell(api, 0, 'age'), { interval: 5 });
 
             await userEvent.dblClick(cell(api, 0, 'age'));
             const popup = await waitForPopup(gridDiv);
@@ -228,7 +228,7 @@ describe('Cell editing validation + batch editing', () => {
 
             api.startBatchEdit();
             // rows render asynchronously: poll until the cell lookup succeeds
-            await waitFor(() => cell(api, 0, 'age'));
+            await waitFor(() => cell(api, 0, 'age'), { interval: 5 });
 
             const ageCell = cell(api, 0, 'age');
             await userEvent.dblClick(ageCell);
@@ -267,7 +267,7 @@ describe('Cell editing validation + batch editing', () => {
 
             api.startBatchEdit();
             // rows render asynchronously: poll until the cell lookup succeeds
-            await waitFor(() => cell(api, 0, 'age'));
+            await waitFor(() => cell(api, 0, 'age'), { interval: 5 });
 
             const ageCell = cell(api, 0, 'age');
             await userEvent.dblClick(ageCell);
@@ -305,7 +305,7 @@ describe('Cell editing validation + batch editing', () => {
 
             api.startBatchEdit();
             // rows render asynchronously: poll until the cell lookup succeeds
-            await waitFor(() => cell(api, 0, 'age'));
+            await waitFor(() => cell(api, 0, 'age'), { interval: 5 });
 
             const ageCell = cell(api, 0, 'age');
             await userEvent.dblClick(ageCell);
@@ -313,7 +313,7 @@ describe('Cell editing validation + batch editing', () => {
             await userEvent.clear(ageInput);
             await userEvent.type(ageInput, '999');
             await userEvent.keyboard('{Enter}');
-            await waitFor(() => expect(api.getEditValidationErrors()?.length ?? 0).toBeGreaterThan(0));
+            await waitFor(() => expect(api.getEditValidationErrors()?.length ?? 0).toBeGreaterThan(0), { interval: 5 });
 
             // block mode keeps the invalid editor open rather than staging it
             expect(editorCount(api)).toBeGreaterThan(0);
@@ -347,7 +347,7 @@ describe('Cell editing validation + batch editing', () => {
             await userEvent.type(ageInputAgain, '55{Enter}');
 
             api.commitBatchEdit();
-            await waitFor(() => expect(stopped).toHaveLength(1));
+            await waitFor(() => expect(stopped).toHaveLength(1), { interval: 5 });
 
             expect(rowData[0].age).toBe(55);
             expect(api.isBatchEditing()).toBe(false);
@@ -372,14 +372,14 @@ describe('Cell editing validation + batch editing', () => {
 
             api.startBatchEdit();
             // rows render asynchronously: poll until the cell lookup succeeds
-            await waitFor(() => cell(api, 0, 'age'));
+            await waitFor(() => cell(api, 0, 'age'), { interval: 5 });
 
             const ageCell = cell(api, 0, 'age');
             await userEvent.dblClick(ageCell);
             const ageInput = await waitForInput(gridDiv, ageCell);
             await userEvent.clear(ageInput);
             await userEvent.type(ageInput, '999');
-            await waitFor(() => expect(api.getEditValidationErrors()?.length ?? 0).toBeGreaterThan(0));
+            await waitFor(() => expect(api.getEditValidationErrors()?.length ?? 0).toBeGreaterThan(0), { interval: 5 });
 
             api.stopEditing();
 
@@ -428,14 +428,14 @@ describe('Cell editing validation + batch editing', () => {
 
             api.startBatchEdit();
             // rows render asynchronously: poll until the cell lookup succeeds
-            await waitFor(() => cell(api, 0, 'age'));
+            await waitFor(() => cell(api, 0, 'age'), { interval: 5 });
 
             const ageCell = cell(api, 0, 'age');
             await userEvent.dblClick(ageCell);
             const ageInput = await waitForInput(gridDiv, ageCell);
             await userEvent.clear(ageInput);
             await userEvent.type(ageInput, '999');
-            await waitFor(() => expect(api.getEditValidationErrors()?.length ?? 0).toBeGreaterThan(0));
+            await waitFor(() => expect(api.getEditValidationErrors()?.length ?? 0).toBeGreaterThan(0), { interval: 5 });
 
             await userEvent.click(document.body);
 
@@ -457,14 +457,14 @@ describe('Cell editing validation + batch editing', () => {
 
             api.startBatchEdit();
             // rows render asynchronously: poll until the cell lookup succeeds
-            await waitFor(() => cell(api, 0, 'age'));
+            await waitFor(() => cell(api, 0, 'age'), { interval: 5 });
 
             const ageCell = cell(api, 0, 'age');
             await userEvent.dblClick(ageCell);
             const ageInput = await waitForInput(gridDiv, ageCell);
             await userEvent.clear(ageInput);
             await userEvent.type(ageInput, '999');
-            await waitFor(() => expect(api.getEditValidationErrors()?.length ?? 0).toBeGreaterThan(0));
+            await waitFor(() => expect(api.getEditValidationErrors()?.length ?? 0).toBeGreaterThan(0), { interval: 5 });
 
             api.stopEditing();
 
@@ -487,7 +487,7 @@ describe('Cell editing validation + batch editing', () => {
 
             api.startBatchEdit();
             // rows render asynchronously: poll until the cell lookup succeeds
-            await waitFor(() => cell(api, 0, 'age'));
+            await waitFor(() => cell(api, 0, 'age'), { interval: 5 });
 
             const ageCell = cell(api, 0, 'age');
             await userEvent.dblClick(ageCell);
@@ -502,7 +502,7 @@ describe('Cell editing validation + batch editing', () => {
             `);
 
             api.commitBatchEdit();
-            await waitFor(() => expect(stopped).toHaveLength(1));
+            await waitFor(() => expect(stopped).toHaveLength(1), { interval: 5 });
 
             expect(rowData[0].age).toBe(55);
             expect(stopped[0].changes).toEqual([
@@ -525,7 +525,7 @@ describe('Cell editing validation + batch editing', () => {
 
             api.startBatchEdit();
             // rows render asynchronously: poll until the cell lookup succeeds
-            await waitFor(() => cell(api, 0, 'athlete'));
+            await waitFor(() => cell(api, 0, 'athlete'), { interval: 5 });
 
             // Stage a valid athlete edit first.
             const athleteCell = cell(api, 0, 'athlete');
@@ -550,7 +550,7 @@ describe('Cell editing validation + batch editing', () => {
             `);
 
             api.commitBatchEdit();
-            await waitFor(() => expect(stopped).toHaveLength(1));
+            await waitFor(() => expect(stopped).toHaveLength(1), { interval: 5 });
 
             expect(rowData[0].athlete).toBe('Amy');
             expect(rowData[0].age).toBe(23);
@@ -574,7 +574,7 @@ describe('Cell editing validation + batch editing', () => {
 
             api.startBatchEdit();
             // rows render asynchronously: poll until the cell lookup succeeds
-            await waitFor(() => cell(api, 0, 'athlete'));
+            await waitFor(() => cell(api, 0, 'athlete'), { interval: 5 });
 
             // Stage a valid athlete edit.
             const athleteCell = cell(api, 0, 'athlete');
@@ -589,7 +589,7 @@ describe('Cell editing validation + batch editing', () => {
             const ageInput = await waitForInput(gridDiv, ageCell);
             await userEvent.clear(ageInput);
             await userEvent.type(ageInput, '999');
-            await waitFor(() => expect(editorCount(api)).toBeGreaterThan(0));
+            await waitFor(() => expect(editorCount(api)).toBeGreaterThan(0), { interval: 5 });
 
             // Mid-edit: athlete staged, age editor open holding the invalid 999 (🖍️ + ❌).
             await new GridRows(api, 'revert: athlete staged, invalid age held open').check(`
@@ -601,7 +601,7 @@ describe('Cell editing validation + batch editing', () => {
             // Revert mode: the commit discards the invalid value, commits the valid one, and ends the
             // batch — it must NOT be rejected like block mode.
             api.commitBatchEdit();
-            await waitFor(() => expect(stopped).toHaveLength(1));
+            await waitFor(() => expect(stopped).toHaveLength(1), { interval: 5 });
 
             expect(api.isBatchEditing()).toBe(false);
             expect(editorCount(api)).toBe(0);
@@ -627,7 +627,7 @@ describe('Cell editing validation + batch editing', () => {
 
             api.startBatchEdit();
             // rows render asynchronously: poll until the cell lookup succeeds
-            await waitFor(() => cell(api, 0, 'age'));
+            await waitFor(() => cell(api, 0, 'age'), { interval: 5 });
 
             // Stage a valid age (50) as the previous pending value.
             const ageCell = cell(api, 0, 'age');
@@ -647,7 +647,7 @@ describe('Cell editing validation + batch editing', () => {
             ageInput = await waitForInput(gridDiv, ageCell);
             await userEvent.clear(ageInput);
             await userEvent.type(ageInput, '999');
-            await waitFor(() => expect(editorCount(api)).toBeGreaterThan(0));
+            await waitFor(() => expect(editorCount(api)).toBeGreaterThan(0), { interval: 5 });
 
             await new GridRows(api, 'revert: invalid 999 held open over previous pending 50').check(`
                 ROOT id:ROOT_NODE_ID
@@ -657,7 +657,7 @@ describe('Cell editing validation + batch editing', () => {
 
             // Commit: the invalid attempt is discarded back to the previous pending 50, which commits.
             api.commitBatchEdit();
-            await waitFor(() => expect(stopped).toHaveLength(1));
+            await waitFor(() => expect(stopped).toHaveLength(1), { interval: 5 });
 
             expect(api.isBatchEditing()).toBe(false);
             expect(editorCount(api)).toBe(0);
@@ -682,7 +682,7 @@ describe('Cell editing validation + batch editing', () => {
 
             api.startBatchEdit();
             // rows render asynchronously: poll until the cell lookup succeeds
-            await waitFor(() => cell(api, 0, 'age'));
+            await waitFor(() => cell(api, 0, 'age'), { interval: 5 });
 
             const ageCell = cell(api, 0, 'age');
             await userEvent.dblClick(ageCell);
@@ -697,7 +697,7 @@ describe('Cell editing validation + batch editing', () => {
             `);
 
             api.cancelBatchEdit();
-            await waitFor(() => expect(stopped).toHaveLength(1));
+            await waitFor(() => expect(stopped).toHaveLength(1), { interval: 5 });
 
             expect(rowData[0].age).toBe(23);
             expect(api.isBatchEditing()).toBe(false);
@@ -718,7 +718,7 @@ describe('Cell editing validation + batch editing', () => {
 
             api.startBatchEdit();
             // rows render asynchronously: poll until the cell lookup succeeds
-            await waitFor(() => expect(api.isBatchEditing()).toBe(true));
+            await waitFor(() => expect(api.isBatchEditing()).toBe(true), { interval: 5 });
 
             // No edits staged: the commit has nothing to reject, so it must not be mistaken for a
             // validation hold — the batch ends cleanly rather than being stranded open.
@@ -742,7 +742,7 @@ describe('Cell editing validation + batch editing', () => {
 
             api.startBatchEdit();
             // rows render asynchronously: poll until the cell lookup succeeds
-            await waitFor(() => cell(api, 0, 'age'));
+            await waitFor(() => cell(api, 0, 'age'), { interval: 5 });
 
             // Stage a valid age (50) as the previous pending value.
             const ageCell = cell(api, 0, 'age');
@@ -763,11 +763,11 @@ describe('Cell editing validation + batch editing', () => {
             ageInput = await waitForInput(gridDiv, ageCell);
             await userEvent.clear(ageInput);
             await userEvent.type(ageInput, '999');
-            await waitFor(() => expect(api.getEditValidationErrors()?.length ?? 0).toBeGreaterThan(0));
+            await waitFor(() => expect(api.getEditValidationErrors()?.length ?? 0).toBeGreaterThan(0), { interval: 5 });
 
             // Block-mode commit is rejected: batch held, editor stays open, nothing written.
             api.commitBatchEdit();
-            await waitFor(() => expect(api.isBatchEditing()).toBe(true));
+            await waitFor(() => expect(api.isBatchEditing()).toBe(true), { interval: 5 });
 
             // The rejected commit must NOT persist the invalid 999 over the staged pending 50: the
             // previous valid value survives the hold (⏳50), so it can still commit once corrected.
@@ -782,7 +782,7 @@ describe('Cell editing validation + batch editing', () => {
             await userEvent.type(ageInput, '60{Enter}');
 
             api.commitBatchEdit();
-            await waitFor(() => expect(rowData[0].age).toBe(60));
+            await waitFor(() => expect(rowData[0].age).toBe(60), { interval: 5 });
             expect(api.isBatchEditing()).toBe(false);
 
             await new GridRows(api, 'block: corrected value committed').check(`
@@ -813,7 +813,7 @@ describe('Cell editing validation + batch editing', () => {
 
             api.startBatchEdit();
             // rows render asynchronously: poll until the cell lookup succeeds
-            await waitFor(() => cell(api, 0, 'age'));
+            await waitFor(() => cell(api, 0, 'age'), { interval: 5 });
 
             const ageCell = cell(api, 0, 'age');
             await userEvent.dblClick(ageCell);
@@ -821,7 +821,7 @@ describe('Cell editing validation + batch editing', () => {
             await userEvent.clear(ageInput);
             await userEvent.type(ageInput, '999');
             await userEvent.keyboard('{Enter}');
-            await waitFor(() => expect(api.getEditValidationErrors()?.length ?? 0).toBeGreaterThan(0));
+            await waitFor(() => expect(api.getEditValidationErrors()?.length ?? 0).toBeGreaterThan(0), { interval: 5 });
 
             // block mode keeps the invalid editor open rather than staging it
             expect(editorCount(api)).toBeGreaterThan(0);
@@ -855,7 +855,7 @@ describe('Cell editing validation + batch editing', () => {
             await userEvent.type(ageInputAgain, '55{Enter}');
 
             api.commitBatchEdit();
-            await waitFor(() => expect(stopped).toHaveLength(1));
+            await waitFor(() => expect(stopped).toHaveLength(1), { interval: 5 });
 
             expect(rowData[0].age).toBe(55);
             expect(api.isBatchEditing()).toBe(false);
@@ -880,7 +880,7 @@ describe('Cell editing validation + batch editing', () => {
 
             api.startBatchEdit();
             // rows render asynchronously: poll until the cell lookup succeeds
-            await waitFor(() => cell(api, 0, 'age'));
+            await waitFor(() => cell(api, 0, 'age'), { interval: 5 });
 
             const ageCell = cell(api, 0, 'age');
             await userEvent.dblClick(ageCell);
@@ -895,7 +895,7 @@ describe('Cell editing validation + batch editing', () => {
             `);
 
             api.commitBatchEdit();
-            await waitFor(() => expect(stopped).toHaveLength(1));
+            await waitFor(() => expect(stopped).toHaveLength(1), { interval: 5 });
 
             expect(rowData[0].age).toBe(55);
             expect(stopped[0].changes).toEqual([
@@ -918,7 +918,7 @@ describe('Cell editing validation + batch editing', () => {
 
             api.startBatchEdit();
             // rows render asynchronously: poll until the cell lookup succeeds
-            await waitFor(() => cell(api, 0, 'athlete'));
+            await waitFor(() => cell(api, 0, 'athlete'), { interval: 5 });
 
             // Stage a valid athlete edit first.
             const athleteCell = cell(api, 0, 'athlete');
@@ -943,7 +943,7 @@ describe('Cell editing validation + batch editing', () => {
             `);
 
             api.commitBatchEdit();
-            await waitFor(() => expect(stopped).toHaveLength(1));
+            await waitFor(() => expect(stopped).toHaveLength(1), { interval: 5 });
 
             expect(rowData[0].athlete).toBe('Amy');
             expect(rowData[0].age).toBe(23);
@@ -967,7 +967,7 @@ describe('Cell editing validation + batch editing', () => {
 
             api.startBatchEdit();
             // rows render asynchronously: poll until the cell lookup succeeds
-            await waitFor(() => cell(api, 0, 'athlete'));
+            await waitFor(() => cell(api, 0, 'athlete'), { interval: 5 });
 
             // Stage a valid athlete edit.
             const athleteCell = cell(api, 0, 'athlete');
@@ -982,7 +982,7 @@ describe('Cell editing validation + batch editing', () => {
             const ageInput = await waitForInput(gridDiv, ageCell);
             await userEvent.clear(ageInput);
             await userEvent.type(ageInput, '999');
-            await waitFor(() => expect(editorCount(api)).toBeGreaterThan(0));
+            await waitFor(() => expect(editorCount(api)).toBeGreaterThan(0), { interval: 5 });
 
             // Mid-edit: athlete staged, age editor open holding the invalid 999 (🖍️ + ❌).
             await new GridRows(api, 'revert: athlete staged, invalid age held open').check(`
@@ -994,7 +994,7 @@ describe('Cell editing validation + batch editing', () => {
             // Revert mode: the commit discards the invalid value, commits the valid one, and ends the
             // batch — it must NOT be rejected like block mode.
             api.commitBatchEdit();
-            await waitFor(() => expect(stopped).toHaveLength(1));
+            await waitFor(() => expect(stopped).toHaveLength(1), { interval: 5 });
 
             expect(api.isBatchEditing()).toBe(false);
             expect(editorCount(api)).toBe(0);
@@ -1020,7 +1020,7 @@ describe('Cell editing validation + batch editing', () => {
 
             api.startBatchEdit();
             // rows render asynchronously: poll until the cell lookup succeeds
-            await waitFor(() => cell(api, 0, 'age'));
+            await waitFor(() => cell(api, 0, 'age'), { interval: 5 });
 
             // Stage a valid age (50) as the previous pending value.
             const ageCell = cell(api, 0, 'age');
@@ -1040,7 +1040,7 @@ describe('Cell editing validation + batch editing', () => {
             ageInput = await waitForInput(gridDiv, ageCell);
             await userEvent.clear(ageInput);
             await userEvent.type(ageInput, '999');
-            await waitFor(() => expect(editorCount(api)).toBeGreaterThan(0));
+            await waitFor(() => expect(editorCount(api)).toBeGreaterThan(0), { interval: 5 });
 
             await new GridRows(api, 'revert: invalid 999 held open over previous pending 50').check(`
                 ROOT id:ROOT_NODE_ID
@@ -1050,7 +1050,7 @@ describe('Cell editing validation + batch editing', () => {
 
             // Commit: the invalid attempt is discarded back to the previous pending 50, which commits.
             api.commitBatchEdit();
-            await waitFor(() => expect(stopped).toHaveLength(1));
+            await waitFor(() => expect(stopped).toHaveLength(1), { interval: 5 });
 
             expect(api.isBatchEditing()).toBe(false);
             expect(editorCount(api)).toBe(0);
@@ -1075,7 +1075,7 @@ describe('Cell editing validation + batch editing', () => {
 
             api.startBatchEdit();
             // rows render asynchronously: poll until the cell lookup succeeds
-            await waitFor(() => cell(api, 0, 'age'));
+            await waitFor(() => cell(api, 0, 'age'), { interval: 5 });
 
             const ageCell = cell(api, 0, 'age');
             await userEvent.dblClick(ageCell);
@@ -1090,7 +1090,7 @@ describe('Cell editing validation + batch editing', () => {
             `);
 
             api.cancelBatchEdit();
-            await waitFor(() => expect(stopped).toHaveLength(1));
+            await waitFor(() => expect(stopped).toHaveLength(1), { interval: 5 });
 
             expect(rowData[0].age).toBe(23);
             expect(api.isBatchEditing()).toBe(false);
@@ -1111,7 +1111,7 @@ describe('Cell editing validation + batch editing', () => {
 
             api.startBatchEdit();
             // rows render asynchronously: poll until the cell lookup succeeds
-            await waitFor(() => expect(api.isBatchEditing()).toBe(true));
+            await waitFor(() => expect(api.isBatchEditing()).toBe(true), { interval: 5 });
 
             // No edits staged: the commit has nothing to reject, so it must not be mistaken for a
             // validation hold — the batch ends cleanly rather than being stranded open.
@@ -1142,7 +1142,7 @@ describe('Cell editing validation + batch editing', () => {
 
         api.startBatchEdit();
         // rows render asynchronously: poll until the cell lookup succeeds
-        await waitFor(() => cell(api, 0, 'age'));
+        await waitFor(() => cell(api, 0, 'age'), { interval: 5 });
 
         // Stage age = 50 (valid) as the previous pending value.
         const ageCell = cell(api, 0, 'age');
@@ -1200,7 +1200,7 @@ describe('Cell editing validation + batch editing', () => {
 
         api.startBatchEdit();
         // rows render asynchronously: poll until the cell lookup succeeds
-        await waitFor(() => cell(api, 0, 'age'));
+        await waitFor(() => cell(api, 0, 'age'), { interval: 5 });
 
         // Open an invalid age editor and leave it open (no Enter) — cellEditingStarted has fired.
         const ageCell = cell(api, 0, 'age');
@@ -1208,7 +1208,7 @@ describe('Cell editing validation + batch editing', () => {
         const ageInput = await waitForInput(gridDiv, ageCell);
         await userEvent.clear(ageInput);
         await userEvent.type(ageInput, '999');
-        await waitFor(() => expect(started).toEqual(['age']));
+        await waitFor(() => expect(started).toEqual(['age']), { interval: 5 });
         expect(stoppedCells).toEqual([]);
 
         await new GridRows(api, 'singleCell revert: invalid 999 held open before commit').check(`
@@ -1218,7 +1218,7 @@ describe('Cell editing validation + batch editing', () => {
         `);
 
         api.commitBatchEdit();
-        await waitFor(() => expect(stoppedCells).toEqual(['age']));
+        await waitFor(() => expect(stoppedCells).toEqual(['age']), { interval: 5 });
 
         // The discarded invalid editor must balance its start with exactly one cellEditingStopped.
         expect(api.isBatchEditing()).toBe(false);
@@ -1249,14 +1249,14 @@ describe('Cell editing validation + batch editing', () => {
 
         api.startBatchEdit();
         // rows render asynchronously: poll until the cell lookup succeeds
-        await waitFor(() => cell(api, 0, 'age'));
+        await waitFor(() => cell(api, 0, 'age'), { interval: 5 });
 
         // fullRow opens the whole row; make age invalid and leave the row's editors open.
         await userEvent.dblClick(cell(api, 0, 'age'));
         const ageInput = await waitForInput(gridDiv, cell(api, 0, 'age'));
         await userEvent.clear(ageInput);
         await userEvent.type(ageInput, '999');
-        await waitFor(() => expect(started).toContain('age'));
+        await waitFor(() => expect(started).toContain('age'), { interval: 5 });
         expect(stoppedCells).not.toContain('age');
 
         await new GridRows(api, 'fullRow revert: invalid 999 held open before commit').check(`
@@ -1266,7 +1266,7 @@ describe('Cell editing validation + batch editing', () => {
         `);
 
         api.commitBatchEdit();
-        await waitFor(() => expect(stoppedCells.filter((c) => c === 'age')).toEqual(['age']));
+        await waitFor(() => expect(stoppedCells.filter((c) => c === 'age')).toEqual(['age']), { interval: 5 });
 
         // The discarded invalid age editor must balance its start with exactly one cellEditingStopped.
         expect(api.isBatchEditing()).toBe(false);
@@ -1302,7 +1302,7 @@ describe('Cell editing validation + batch editing', () => {
 
         api.startBatchEdit();
         // rows render asynchronously: poll until the cell lookup succeeds
-        await waitFor(() => cell(api, 0, 'athlete'));
+        await waitFor(() => cell(api, 0, 'athlete'), { interval: 5 });
 
         // fullRow opens both editors; athlete makes the ROW invalid, age is individually valid.
         await userEvent.dblClick(cell(api, 0, 'athlete'));
@@ -1353,7 +1353,7 @@ describe('Cell editing validation + batch editing', () => {
 
         api.startBatchEdit();
         // rows render asynchronously: poll until the cell lookup succeeds
-        await waitFor(() => cell(api, 0, 'athlete'));
+        await waitFor(() => cell(api, 0, 'athlete'), { interval: 5 });
 
         // fullRow opens the whole row; edit athlete (valid) and age (invalid) in the same row.
         const athleteCell = cell(api, 0, 'athlete');
@@ -1365,7 +1365,7 @@ describe('Cell editing validation + batch editing', () => {
         const ageInput = await waitForInput(gridDiv, cell(api, 0, 'age'));
         await userEvent.clear(ageInput);
         await userEvent.type(ageInput, '999');
-        await waitFor(() => expect(api.getEditValidationErrors()?.length ?? 0).toBeGreaterThan(0));
+        await waitFor(() => expect(api.getEditValidationErrors()?.length ?? 0).toBeGreaterThan(0), { interval: 5 });
 
         api.commitBatchEdit();
 
@@ -1400,7 +1400,7 @@ describe('Cell editing validation + batch editing', () => {
 
         api.startBatchEdit();
         // rows render asynchronously: poll until the cell lookup succeeds
-        await waitFor(() => cell(api, 0, 'athlete'));
+        await waitFor(() => cell(api, 0, 'athlete'), { interval: 5 });
 
         const athleteCell = cell(api, 0, 'athlete');
         await userEvent.dblClick(athleteCell);
@@ -1411,14 +1411,14 @@ describe('Cell editing validation + batch editing', () => {
         const ageInput = await waitForInput(gridDiv, cell(api, 0, 'age'));
         await userEvent.clear(ageInput);
         await userEvent.type(ageInput, '999');
-        await waitFor(() => expect(api.getEditValidationErrors()?.length ?? 0).toBeGreaterThan(0));
+        await waitFor(() => expect(api.getEditValidationErrors()?.length ?? 0).toBeGreaterThan(0), { interval: 5 });
 
         api.commitBatchEdit();
 
         // The blocked commit produced no undo action, so redo cannot resurrect the rejected value.
         expect(api.getCurrentUndoSize()).toBe(0);
         api.redoCellEditing();
-        await waitFor(() => expect(rowData[0].athlete).toBe('Alice'));
+        await waitFor(() => expect(rowData[0].athlete).toBe('Alice'), { interval: 5 });
         expect(rowData[0].age).toBe(23);
     });
 
@@ -1445,7 +1445,7 @@ describe('Cell editing validation + batch editing', () => {
 
         api.startBatchEdit();
         // rows render asynchronously: poll until the cell lookup succeeds
-        await waitFor(() => cell(api, 0, 'c0'));
+        await waitFor(() => cell(api, 0, 'c0'), { interval: 5 });
 
         // Open the row, make the first column invalid, then scroll it far out of the viewport.
         await userEvent.dblClick(cell(api, 0, 'c0'));
@@ -1482,10 +1482,10 @@ describe('Cell editing validation + batch editing', () => {
 
         api.startBatchEdit();
         // rows render asynchronously: poll until the cell lookup succeeds
-        await waitFor(() => cell(api, 0, 'athlete'));
+        await waitFor(() => cell(api, 0, 'athlete'), { interval: 5 });
 
         await userEvent.dblClick(cell(api, 0, 'athlete'));
-        await waitFor(() => expect(editorCount(api)).toBe(1));
+        await waitFor(() => expect(editorCount(api)).toBe(1), { interval: 5 });
 
         await userEvent.click(getByTestId(gridDiv, 'done-button'));
 
@@ -1514,7 +1514,7 @@ describe('Cell editing validation + batch editing', () => {
 
         api.startBatchEdit();
         // rows render asynchronously: poll until the cell lookup succeeds
-        await waitFor(() => cell(api, 0, 'age'));
+        await waitFor(() => cell(api, 0, 'age'), { interval: 5 });
 
         const ageCell = cell(api, 0, 'age');
         await userEvent.dblClick(ageCell);
@@ -1522,7 +1522,7 @@ describe('Cell editing validation + batch editing', () => {
         await userEvent.clear(ageInput);
         await userEvent.type(ageInput, '999');
         await userEvent.keyboard('{Enter}');
-        await waitFor(() => expect(api.getEditValidationErrors()?.length ?? 0).toBeGreaterThan(0));
+        await waitFor(() => expect(api.getEditValidationErrors()?.length ?? 0).toBeGreaterThan(0), { interval: 5 });
 
         api.commitBatchEdit();
 
@@ -1559,7 +1559,7 @@ describe('Cell editing validation + batch editing', () => {
 
         api.startBatchEdit();
         // rows render asynchronously: poll until the cell lookup succeeds
-        await waitFor(() => cell(api, 1, 'age'));
+        await waitFor(() => cell(api, 1, 'age'), { interval: 5 });
 
         // Stage a valid edit on Bob first — once Alice is invalid, block mode refuses to open any editor.
         const ageCell = cell(api, 1, 'age');
@@ -1642,7 +1642,7 @@ describe('Cell editing validation + batch editing', () => {
 
         api.startBatchEdit();
         // rows render asynchronously: poll until the cell lookup succeeds
-        await waitFor(() => cell(api, 0, 'age'));
+        await waitFor(() => cell(api, 0, 'age'), { interval: 5 });
 
         const ageCell = cell(api, 0, 'age');
         await userEvent.dblClick(ageCell);

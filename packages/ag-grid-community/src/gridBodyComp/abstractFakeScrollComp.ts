@@ -1,4 +1,5 @@
 import {
+    FAST_TEST_TIMINGS,
     RefPlaceholder,
     _addManagedElementListeners,
     _isIOSUserAgent,
@@ -16,6 +17,8 @@ import type { ScrollPartner } from './gridBodyScrollFeature';
  * scrollbars, e.g. macOS): the fake scrollbar is always drawn, so it still occupies space.
  */
 export const INVISIBLE_SCROLLBAR_SIZE = 16;
+
+const SCROLLING_CSS_HIDE_DELAY = FAST_TEST_TIMINGS ? 0 : 400;
 
 export abstract class AbstractFakeScrollComp extends Component implements ScrollPartner {
     public readonly eViewport: HTMLElement = RefPlaceholder;
@@ -107,7 +110,7 @@ export abstract class AbstractFakeScrollComp extends Component implements Scroll
                 this.hideTimeout = window.setTimeout(() => {
                     this.toggleCss('ag-scrollbar-scrolling', false);
                     this.hideTimeout = 0;
-                }, 400);
+                }, SCROLLING_CSS_HIDE_DELAY);
             },
         });
     }

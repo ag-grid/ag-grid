@@ -68,9 +68,9 @@ describe('Built-in control tooltips', () => {
 
             next.focus();
             await vi.advanceTimersByTimeAsync(0);
-            expect(tooltipTexts()).toEqual(['Next Page']);
+            expect(tooltipTexts()).toEqual(['Go to next page']);
             expect(next).toHaveAccessibleName('Next Page');
-            expect(next).not.toHaveAttribute('aria-describedby');
+            expect(next).toHaveAccessibleDescription('Go to next page');
 
             await user.keyboard('{Escape}');
             expect(tooltipTexts()).toEqual([]);
@@ -110,7 +110,7 @@ describe('Built-in control tooltips', () => {
         expect(tooltipTexts()).toEqual([]);
         next.focus();
         await vi.advanceTimersByTimeAsync(0);
-        expect(tooltipTexts()).toEqual(['Next Page']);
+        expect(tooltipTexts()).toEqual(['Go to next page']);
 
         await user.keyboard('{Escape}');
         await vi.advanceTimersByTimeAsync(800);
@@ -169,14 +169,14 @@ describe('Built-in control tooltips', () => {
         await vi.advanceTimersByTimeAsync(399);
         expect(tooltipTexts()).toEqual([]);
         await vi.advanceTimersByTimeAsync(1);
-        expect(tooltipTexts()).toEqual(['Next Page']);
+        expect(tooltipTexts()).toEqual(['Go to next page']);
         await user.unhover(next);
         await vi.advanceTimersByTimeAsync(100);
         await user.hover(last);
         await vi.advanceTimersByTimeAsync(119);
         expect(tooltipTexts()).toEqual([]);
         await vi.advanceTimersByTimeAsync(1);
-        expect(tooltipTexts()).toEqual(['Last Page']);
+        expect(tooltipTexts()).toEqual(['Go to last page']);
 
         api.setGridOption('suppressBuiltInTooltips', true);
         expect(tooltipTexts()).toEqual([]);
@@ -190,7 +190,7 @@ describe('Built-in control tooltips', () => {
         api.setGridOption('suppressBuiltInTooltips', false);
         next.focus();
         await vi.advanceTimersByTimeAsync(0);
-        expect(tooltipTexts()).toEqual(['Next Page']);
+        expect(tooltipTexts()).toEqual(['Go to next page']);
     });
 
     test('native titles follow suppression without suppressing an ordinary cell title', async () => {
@@ -209,7 +209,7 @@ describe('Built-in control tooltips', () => {
         const grid = getGridElement(api)! as HTMLElement;
         const next = getByRole(grid, 'button', { name: 'Next Page' });
         const cell = grid.querySelector('.ag-cell')!;
-        expect(next).toHaveAttribute('title', 'Next Page');
+        expect(next).toHaveAttribute('title', 'Go to next page');
         expect(cell).toHaveAttribute('title', 'Cell detail');
 
         vi.useFakeTimers();
@@ -221,7 +221,7 @@ describe('Built-in control tooltips', () => {
         expect(next).not.toHaveAttribute('title');
         expect(cell).toHaveAttribute('title', 'Cell detail');
         api.setGridOption('suppressBuiltInTooltips', false);
-        expect(next).toHaveAttribute('title', 'Next Page');
+        expect(next).toHaveAttribute('title', 'Go to next page');
     });
 
     test('header, filter, sort, resize, selection and drag sources carry their own context and current state', async () => {
@@ -239,10 +239,11 @@ describe('Built-in control tooltips', () => {
             { modules: [ColumnMenuModule, TextFilterModule, RowSelectionModule, RowDragModule] }
         );
         const grid = getGridElement(api)! as HTMLElement;
-        const user = userEvent.setup();
+        vi.useFakeTimers();
+        const user = userEvent.setup({ delay: null });
         const sources = [
-            ['.ag-header-cell[col-id="value"] .ag-header-cell-menu-button', 'columnMenu', 'Column Menu', 'header'],
-            ['.ag-header-cell[col-id="value"] .ag-header-cell-filter-button', 'filter', 'Filter', 'header'],
+            ['.ag-header-cell[col-id="value"] .ag-header-cell-menu-button', 'columnMenu', 'Open column menu', 'header'],
+            ['.ag-header-cell[col-id="value"] .ag-header-cell-filter-button', 'filter', 'Open filter', 'header'],
             ['.ag-header-cell[col-id="value"] .ag-sort-ascending-icon', 'sort', 'Sorted ascending', 'header'],
             ['.ag-header-cell[col-id="value"] .ag-header-cell-resize', 'resizeColumn', 'Resize column', 'header'],
             ['.ag-header-select-all', 'selectAll', 'Select all rows', 'header'],
@@ -255,7 +256,8 @@ describe('Built-in control tooltips', () => {
             // user-event enters descendants before ancestors; enter the containing cell first, as a browser does.
             await user.hover(source.closest<HTMLElement>('.ag-header-cell, .ag-cell')!);
             await user.hover(source);
-            await waitFor(() => expect(tooltipTexts()).toEqual([text]));
+            await vi.advanceTimersByTimeAsync(0);
+            expect(tooltipTexts()).toEqual([text]);
             expect(position).toHaveBeenLastCalledWith(expect.objectContaining({ control, location, value: text }));
             if (control === 'rowDrag') {
                 expect(position).toHaveBeenLastCalledWith(
@@ -263,21 +265,25 @@ describe('Built-in control tooltips', () => {
                 );
             }
             await user.unhover(source);
-            await waitFor(() => expect(tooltipTexts()).toEqual([]));
+            await vi.advanceTimersByTimeAsync(100);
+            expect(tooltipTexts()).toEqual([]);
         }
 
         api.getDisplayedRowAtIndex(0)!.setSelected(true);
         const checkbox = grid.querySelector<HTMLElement>('.ag-selection-checkbox')!;
         await user.hover(checkbox.closest<HTMLElement>('.ag-cell')!);
         await user.hover(checkbox);
-        await waitFor(() => expect(tooltipTexts()).toEqual(['Deselect row']));
+        await vi.advanceTimersByTimeAsync(0);
+        expect(tooltipTexts()).toEqual(['Deselect row']);
         await user.unhover(checkbox);
-        await waitFor(() => expect(tooltipTexts()).toEqual([]));
+        await vi.advanceTimersByTimeAsync(100);
+        expect(tooltipTexts()).toEqual([]);
         api.applyColumnState({ state: [{ colId: 'value', sort: 'desc' }] });
         const descending = grid.querySelector<HTMLElement>('.ag-header-cell[col-id="value"] .ag-sort-descending-icon')!;
         await user.hover(descending.closest<HTMLElement>('.ag-header-cell')!);
         await user.hover(descending);
-        await waitFor(() => expect(tooltipTexts()).toEqual(['Sorted descending']));
+        await vi.advanceTimersByTimeAsync(0);
+        expect(tooltipTexts()).toEqual(['Sorted descending']);
     });
 
     test('native dndSource handles show the row-drag hint with their row context', async () => {
@@ -349,6 +355,7 @@ describe('Built-in control tooltips', () => {
                     {
                         field: 'value',
                         tooltip: 'Cell detail',
+                        headerTooltip: false,
                         tooltipComponent: ColumnTooltip,
                         tooltipComponentParams: { columnOnly: true },
                     },
@@ -366,10 +373,10 @@ describe('Built-in control tooltips', () => {
         const user = userEvent.setup();
         await user.hover(menu.closest<HTMLElement>('.ag-header-cell')!);
         await user.hover(menu);
-        await waitFor(() => expect(tooltipTexts()).toEqual(['Hint: Column Menu']));
+        await waitFor(() => expect(tooltipTexts()).toEqual(['Hint: Open column menu']));
         const params = builtInInit.mock.lastCall![0] as IBuiltInTooltipParams;
         expect(params).toMatchObject({
-            text: 'Column Menu',
+            text: 'Open column menu',
             control: 'columnMenu',
             location: 'header',
             column: api.getColumn('value'),
@@ -423,16 +430,19 @@ describe('Built-in control tooltips', () => {
                 { modules: [ColumnsToolPanelModule, FiltersToolPanelModule] }
             );
             const grid = getGridElement(api)! as HTMLElement;
+            vi.useFakeTimers();
             for (const [name, text] of [
                 ['Columns', 'Configure columns'],
                 ['Filters', 'Configure filters'],
             ]) {
                 const button = getByRole(grid, 'tab', { name });
                 button.focus();
-                await waitFor(() => expect(tooltipTexts()).toEqual([text]));
+                await vi.advanceTimersByTimeAsync(0);
+                expect(tooltipTexts()).toEqual([text]);
                 expect(button).toHaveAccessibleDescription(text);
                 button.blur();
-                await waitFor(() => expect(tooltipTexts()).toEqual([]));
+                await vi.advanceTimersByTimeAsync(100);
+                expect(tooltipTexts()).toEqual([]);
             }
         }
     );
@@ -576,30 +586,34 @@ describe('Built-in control tooltips', () => {
             }
         );
         const grid = getGridElement(api)! as HTMLElement;
-        const user = userEvent.setup();
+        vi.useFakeTimers();
+        const user = userEvent.setup({ delay: null });
         const sources: [HTMLElement, string][] = [
             [grid.querySelector<HTMLElement>('.ag-pivot-mode-select')!, 'Turn on pivot mode'],
             [grid.querySelector<HTMLElement>('.ag-column-drop-cell-drag-handle')!, 'Drag to move'],
             [grid.querySelector<HTMLElement>('.ag-column-drop-cell-button')!, 'Remove'],
             [getByRole(grid, 'button', { name: 'Refresh' }), 'Refresh'],
             [getByRole(grid, 'button', { name: 'Actions' }), 'Actions'],
-            [getByRole(grid, 'button', { name: 'Next Match' }), 'Next Match'],
+            [getByRole(grid, 'button', { name: 'Next Match' }), 'Go to next match'],
             [getByRole(grid.querySelector<HTMLElement>('.ag-toolbar-find')!, 'button', { name: 'Clear' }), 'Clear'],
         ];
         for (const [source, text] of sources) {
             expect(source).not.toBeNull();
             await user.hover(source.closest<HTMLElement>('.ag-column-drop-cell') ?? source.parentElement!);
             await user.hover(source);
-            await waitFor(() => expect(tooltipTexts()).toEqual([text]));
+            await vi.advanceTimersByTimeAsync(0);
+            expect(tooltipTexts()).toEqual([text]);
             await user.unhover(source);
-            await waitFor(() => expect(tooltipTexts()).toEqual([]));
+            await vi.advanceTimersByTimeAsync(100);
+            expect(tooltipTexts()).toEqual([]);
         }
 
         const pill = grid.querySelector<HTMLElement>('.ag-column-drop-horizontal .ag-column-drop-cell')!;
         const sortIcon = pill.querySelector<HTMLElement>('.ag-sort-ascending-icon')!;
         await user.hover(pill);
         await user.hover(sortIcon);
-        await waitFor(() => expect(tooltipTexts()).toEqual(['Sorted ascending']));
+        await vi.advanceTimersByTimeAsync(0);
+        expect(tooltipTexts()).toEqual(['Sorted ascending']);
         expect(position).toHaveBeenLastCalledWith(
             expect.objectContaining({
                 control: 'sort',
@@ -608,7 +622,8 @@ describe('Built-in control tooltips', () => {
             })
         );
         await user.unhover(sortIcon);
-        await waitFor(() => expect(tooltipTexts()).toEqual([]));
+        await vi.advanceTimersByTimeAsync(100);
+        expect(tooltipTexts()).toEqual([]);
 
         const refresh = getByRole(grid, 'button', { name: 'Refresh' });
         expect(refresh).not.toHaveAttribute('title');
@@ -622,25 +637,32 @@ describe('Built-in control tooltips', () => {
         expect(refresh).toHaveAccessibleName('Reload data');
         expect(refresh).not.toHaveAttribute('title');
         await user.hover(refresh);
-        await waitFor(() => expect(tooltipTexts()).toEqual(['Reload data']));
+        await vi.advanceTimersByTimeAsync(0);
+        expect(tooltipTexts()).toEqual(['Reload data']);
         await user.unhover(refresh);
-        await waitFor(() => expect(tooltipTexts()).toEqual([]));
+        await vi.advanceTimersByTimeAsync(100);
+        expect(tooltipTexts()).toEqual([]);
 
         api.setGridOption('pivotMode', true);
         const pivot = grid.querySelector<HTMLInputElement>('.ag-pivot-mode-select input')!;
-        await waitFor(() => expect(pivot).toBeChecked());
+        await vi.advanceTimersByTimeAsync(0);
+        expect(pivot).toBeChecked();
         pivot.focus();
-        await waitFor(() => expect(tooltipTexts()).toEqual(['Turn off pivot mode']));
+        await vi.advanceTimersByTimeAsync(0);
+        expect(tooltipTexts()).toEqual(['Turn off pivot mode']);
         expect(pivot).toHaveFocus();
         expect(pivot).toHaveAttribute('aria-describedby');
         expect(pivot).toHaveAccessibleDescription('Turn off pivot mode');
         pivot.blur();
-        await waitFor(() => expect(tooltipTexts()).toEqual([]));
+        await vi.advanceTimersByTimeAsync(100);
+        expect(tooltipTexts()).toEqual([]);
 
         api.showColumnChooser();
-        const close = await waitFor(() => getByRole(document.body, 'button', { name: /^Close$/ }));
+        await vi.advanceTimersByTimeAsync(0);
+        const close = getByRole(document.body, 'button', { name: /^Close$/ });
         close.focus();
-        await waitFor(() => expect(tooltipTexts()).toEqual(['Close']));
+        await vi.advanceTimersByTimeAsync(0);
+        expect(tooltipTexts()).toEqual(['Close']);
         expect(close).not.toHaveAttribute('aria-describedby');
     });
 
@@ -706,8 +728,12 @@ describe('Built-in control tooltips', () => {
                 ['Restore', 'Maximize'],
             ]) {
                 toggle.focus();
-                await waitFor(() => expect(tooltipTexts()).toEqual([text]));
-                expect(toggle).not.toHaveAttribute('aria-describedby');
+                await waitFor(() => expect(tooltipTexts()).toEqual([text === 'Maximize' ? 'Maximise' : text]));
+                if (text === 'Maximize') {
+                    expect(toggle).toHaveAccessibleDescription('Maximise');
+                } else {
+                    expect(toggle).not.toHaveAttribute('aria-describedby');
+                }
                 toggle.click();
                 expect(toggle).toHaveAccessibleName(nextAction);
                 await waitFor(() => expect(tooltipTexts()).toEqual([]));

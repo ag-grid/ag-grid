@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-community",
-  "version": "36.3.0-beta.20261119.1424",
+  "version": "36.3.0-beta.20261126.1116",
   "description": "Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue",
   "main": "./dist/package/main.cjs.js",
   "types": "./dist/types/src/main.d.ts",
@@ -42,9 +42,33 @@
     "./styles/agGridMaterialFont.min.css": "./styles/agGridMaterialFont.min.css",
     "./styles/agGridQuartzFont.css": "./styles/agGridQuartzFont.css",
     "./styles/agGridQuartzFont.min.css": "./styles/agGridQuartzFont.min.css",
-    "./styles": "./styles/_index.scss"
+    "./styles": "./styles/_index.scss",
+    "./css/ag-grid.css": "./css/ag-grid.css",
+    "./css/ag-grid-linked.css": "./css/ag-grid-linked.css",
+    "./css/icon-set-alpine.css": "./css/icon-set-alpine.css",
+    "./css/icon-set-alpine-linked.css": "./css/icon-set-alpine-linked.css",
+    "./css/icon-set-balham.css": "./css/icon-set-balham.css",
+    "./css/icon-set-balham-linked.css": "./css/icon-set-balham-linked.css",
+    "./css/icon-set-material.css": "./css/icon-set-material.css",
+    "./css/icon-set-material-linked.css": "./css/icon-set-material-linked.css",
+    "./css/icon-set-quartz-bold.css": "./css/icon-set-quartz-bold.css",
+    "./css/icon-set-quartz-bold-linked.css": "./css/icon-set-quartz-bold-linked.css",
+    "./css/icon-set-quartz-light.css": "./css/icon-set-quartz-light.css",
+    "./css/icon-set-quartz-light-linked.css": "./css/icon-set-quartz-light-linked.css"
   },
   "sideEffects": [
+    "./css/ag-grid.css",
+    "./css/ag-grid-linked.css",
+    "./css/icon-set-alpine.css",
+    "./css/icon-set-alpine-linked.css",
+    "./css/icon-set-balham.css",
+    "./css/icon-set-balham-linked.css",
+    "./css/icon-set-material.css",
+    "./css/icon-set-material-linked.css",
+    "./css/icon-set-quartz-bold.css",
+    "./css/icon-set-quartz-bold-linked.css",
+    "./css/icon-set-quartz-light.css",
+    "./css/icon-set-quartz-light-linked.css",
     "./styles/ag-grid-no-native-widgets.css",
     "./styles/ag-grid-no-native-widgets.min.css",
     "./styles/ag-grid.css",
@@ -119,7 +143,7 @@
   ],
   "homepage": "https://www.ag-grid.com/",
   "dependencies": {
-    "ag-charts-types": "14.3.0-beta.20261115",
-    "ag-stack": "36.3.0-beta.20261119.1424"
+    "ag-charts-types": "14.3.0-beta.20261122",
+    "ag-stack": "36.3.0-beta.20261126.1116"
   }
 }

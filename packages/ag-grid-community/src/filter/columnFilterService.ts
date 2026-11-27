@@ -71,6 +71,7 @@ import type {
     IFloatingFilterParentCallback,
 } from './floating/floatingFilter';
 import { _getDefaultFloatingFilterType } from './floating/floatingFilterMapper';
+import { _legacyFilterMethods, _warnLegacyFilterMode } from './legacyFilterMode';
 import {
     STATEFUL_UI_FILTER_HANDLERS,
     _createPairedFilterHandler,
@@ -204,6 +205,39 @@ const getAuthorHandler = (
     return typeof filter === 'string' ? filter : undefined;
 };
 
+const GRID_FILTER_NAMES = new Set<unknown>([...Object.keys(FILTER_HANDLER_MAP), 'agSelectableColumnFilter']);
+
+const FILTER_NAMES_WITH_CHILDREN = new Set<unknown>(['agMultiColumnFilter', 'agSelectableColumnFilter']);
+
+type IsRegisteredFilter = (name: string) => boolean;
+
+/** Whether `filter` builds an author's filter component, which runs in legacy filter mode. */
+const isAuthorFilter = (filter: unknown, isRegistered: IsRegisteredFilter): boolean => {
+    if (isColumnFilterComp(filter)) {
+        return !filter.handler && !filter.doesFilterPass && isAuthorFilter(filter.component, isRegistered);
+    }
+    if (typeof filter === 'string') {
+        // a name nothing is registered under builds the default filter
+        return !GRID_FILTER_NAMES.has(filter) && isRegistered(filter);
+    }
+    return !!filter && filter !== true;
+};
+
+/** Whether a definition, or a child of its Multi or Selectable Filter given as an object, builds an author's filter. */
+const hasAuthorFilter = (filterDef: IFilterDef, isRegistered: IsRegisteredFilter): boolean => {
+    const filter = filterDef.filter;
+    if (isAuthorFilter(filter, isRegistered)) {
+        return true;
+    }
+    const name = isColumnFilterComp(filter) ? filter.component : filter;
+    const filterParams = filterDef.filterParams;
+    if (!FILTER_NAMES_WITH_CHILDREN.has(name) || typeof filterParams === 'function') {
+        return false;
+    }
+    const children: IFilterDef[] | undefined = filterParams?.filters;
+    return !!children?.some((child) => hasAuthorFilter(child, isRegistered));
+};
+
 type QueuedModelUpdate =
     | { model: FilterModel | null; source: FilterChangedEventSourceType; resolve?: undefined }
     | { key: string | AgColumn; model: any; resolve: () => void };
@@ -247,6 +281,9 @@ export class ColumnFilterService
     // 100,000 rows and group by country. then do some filtering. all the cells flash, which is silly.
     private processingFilterChange = false;
 
+    /** Above zero while the API sets a model: a filter rewriting that model is part of the call, not its own change. */
+    private applyingModelDepth = 0;
+
     /** Model updates deferred until cell data types are inferred, in call order. */
     private modelUpdates: QueuedModelUpdate[] = [];
 
@@ -269,9 +306,14 @@ export class ColumnFilterService
                 this.beans.setFilterSvc?.createPreservingFilters();
                 this.processFilterModelUpdateQueue();
             },
+            newColumnsLoaded: this.warnIfAuthorFilters.bind(this),
+            filterModifiedListened: this.warnFilterModifiedListened.bind(this),
         });
 
         this.addManagedPropertyListener('pivotMode', this.onPivotModeChanged.bind(this));
+        const warnIfFilterModifiedHandler = this.warnIfFilterModifiedHandler.bind(this);
+        this.addManagedPropertyListener('onFilterModified', warnIfFilterModifiedHandler);
+        warnIfFilterModifiedHandler();
 
         const gos = this.gos;
         const initialFilterModel = {
@@ -305,43 +347,48 @@ export class ColumnFilterService
         const allPromises: AgPromise<void>[] = [];
         const previousModel = this.getModel(true);
 
-        if (model) {
-            // mark the filters as we set them, so any active filters left over we stop
-            const modelKeys = new Set(Object.keys(model));
+        ++this.applyingModelDepth;
+        try {
+            if (model) {
+                // mark the filters as we set them, so any active filters left over we stop
+                const modelKeys = new Set(Object.keys(model));
 
-            this.allColumnFilters.forEach((filterWrapper, colId) => {
-                const newModel = model[colId];
+                this.allColumnFilters.forEach((filterWrapper, colId) => {
+                    const newModel = model[colId];
 
-                allPromises.push(this.setModelOnFilterWrapper(filterWrapper, newModel));
-                modelKeys.delete(colId);
-            });
+                    allPromises.push(this.setModelOnFilterWrapper(filterWrapper, newModel));
+                    modelKeys.delete(colId);
+                });
 
-            // at this point, processedFields contains data for which we don't have a filter working yet
-            modelKeys.forEach((colId) => {
-                const column = colModel.colsById[colId];
+                // at this point, processedFields contains data for which we don't have a filter working yet
+                modelKeys.forEach((colId) => {
+                    const column = colModel.colsById[colId];
 
-                if (!column) {
-                    this.warn(62, { colId });
-                    return;
-                }
+                    if (!column) {
+                        this.warn(62, { colId });
+                        return;
+                    }
 
-                if (!column.isFilterAllowed()) {
-                    this.warn(63, { colId });
-                    return;
-                }
+                    if (!column.isFilterAllowed()) {
+                        this.warn(63, { colId });
+                        return;
+                    }
 
-                const filterWrapper = this.getOrCreateFilterWrapper(column, true);
-                if (!filterWrapper) {
-                    this.warn(64, { colId });
-                    return;
-                }
-                allPromises.push(this.setModelOnFilterWrapper(filterWrapper, model[colId], true));
-            });
-        } else {
-            this.model = {};
-            this.allColumnFilters.forEach((filterWrapper) => {
-                allPromises.push(this.setModelOnFilterWrapper(filterWrapper, null));
-            });
+                    const filterWrapper = this.getOrCreateFilterWrapper(column, true);
+                    if (!filterWrapper) {
+                        this.warn(64, { colId });
+                        return;
+                    }
+                    allPromises.push(this.setModelOnFilterWrapper(filterWrapper, model[colId], true));
+                });
+            } else {
+                this.model = {};
+                this.allColumnFilters.forEach((filterWrapper) => {
+                    allPromises.push(this.setModelOnFilterWrapper(filterWrapper, null));
+                });
+            }
+        } finally {
+            --this.applyingModelDepth;
         }
 
         AgPromise.all(allPromises).then(() => {
@@ -483,7 +530,7 @@ export class ColumnFilterService
                 return null;
             }
 
-            return filter.getModel();
+            return _legacyFilterMethods(filter).getModel();
         }
         // filter still being created. return initial state if it exists and hasn't been applied yet
         return _getFilterModel(this.initialModel, colId);
@@ -640,7 +687,7 @@ export class ColumnFilterService
                     continue;
                 }
 
-                if (!comp.doesFilterPass({ node, data: targetedData })) {
+                if (!_legacyFilterMethods(comp).doesFilterPass({ node, data: targetedData })) {
                     return false;
                 }
             }
@@ -952,9 +999,6 @@ export class ColumnFilterService
             doesRowPassOtherFilter: forFloatingFilter
                 ? () => true
                 : this.createDoesRowPassOtherFilter(column, undefined),
-            // to avoid breaking changes to `filterParams` defined as functions
-            // we need to provide the below options even though they are not valid for handlers
-            rowModel: this.beans.rowModel,
         });
     }
 
@@ -1110,7 +1154,7 @@ export class ColumnFilterService
             }
         }
         if (!filterHandler) {
-            return this.getMissingHandlerFunc(column, enableFilterHandlers);
+            return this.getMissingHandlerFunc(column, enableFilterHandlers, filter);
         }
         // pairing wraps the author's logic in a new function, so the logic itself is compared
         const handlerGenerator = doesFilterPass ?? handlerName ?? filterHandler;
@@ -1134,9 +1178,13 @@ export class ColumnFilterService
     /** No handler without filter handlers; with them, a dummy, as server-side or a custom filter missing its logic. */
     private getMissingHandlerFunc(
         column: AgColumn,
-        enableFilterHandlers: boolean | undefined
+        enableFilterHandlers: boolean | undefined,
+        filter: unknown
     ): HandlerFunc | undefined {
         if (!enableFilterHandlers) {
+            if (isAuthorFilter(filter, this.isRegisteredFilter)) {
+                _warnLegacyFilterMode(this.beans, 343);
+            }
             return undefined;
         }
         if (_isClientSideRowModel(this.gos)) {
@@ -1244,6 +1292,42 @@ export class ColumnFilterService
         });
     }
 
+    private readonly isRegisteredFilter: IsRegisteredFilter = (name) =>
+        this.beans.registry.isUserComponent('filter', name);
+
+    private warnIfAuthorFilters(): void {
+        const beans = this.beans;
+        if (beans.gos.exists('enableFilterHandlers')) {
+            return;
+        }
+        const { colDefList, colsList } = beans.colModel;
+        // `colsList` adds the service columns, but holds pivot result columns instead of `colDefList` when pivoting
+        if (this.hasAuthorFilterIn(colDefList) || this.hasAuthorFilterIn(colsList)) {
+            _warnLegacyFilterMode(beans, 343);
+        }
+    }
+
+    private hasAuthorFilterIn(columns: AgColumn[]): boolean {
+        for (let i = 0, len = columns.length; i < len; ++i) {
+            if (hasAuthorFilter(columns[i].colDef, this.isRegisteredFilter)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private warnIfFilterModifiedHandler(): void {
+        if (!this.gos.exists('onFilterModified')) {
+            return;
+        }
+        this.warnFilterModifiedListened();
+    }
+
+    /** Called when the application listens to `filterModified`. */
+    public warnFilterModifiedListened(): void {
+        _warnLegacyFilterMode(this.beans, 345);
+    }
+
     private onColumnsChanged(): void {
         const columns: AgColumn[] = [];
         const disposals: AgPromise<boolean>[] = [];
@@ -1341,7 +1425,7 @@ export class ColumnFilterService
             displayParams.source = 'init';
         }
 
-        return _getFloatingFilterCompDetails(userCompFactory, colDef, params, defaultFloatingFilterType);
+        return _getFloatingFilterCompDetails(beans, colDef, params, defaultFloatingFilterType);
     }
 
     public getCurrentFloatingFilterParentModel(column: AgColumn): any {
@@ -1463,9 +1547,16 @@ export class ColumnFilterService
         const filterChangedCallback = this.filterChangedCallbackFactory(column);
         return (model, additionalEventAttributes) => {
             this.updateStoredModel(colId, model);
-            this.refreshHandlerAndUi(column, model, source, source === 'floating', additionalEventAttributes).then(() =>
-                filterChangedCallback({ ...additionalEventAttributes, source: 'columnFilter' })
+            const refreshed = this.refreshHandlerAndUi(
+                column,
+                model,
+                source,
+                source === 'floating',
+                additionalEventAttributes
             );
+            if (this.applyingModelDepth === 0) {
+                refreshed.then(() => filterChangedCallback({ ...additionalEventAttributes, source: 'columnFilter' }));
+            }
         };
     }
 
@@ -1718,7 +1809,7 @@ export class ColumnFilterService
         return gridColumns.some((col) => col.getColDef().floatingFilter);
     }
 
-    public getFilterInstance<TFilter extends IFilter>(key: string | AgColumn): Promise<TFilter | null | undefined> {
+    public getFilterInstance<TFilter = IFilter>(key: string | AgColumn): Promise<TFilter | null | undefined> {
         const column = this.beans.colModel.getCol(key);
 
         if (!column) {
@@ -1801,7 +1892,7 @@ export class ColumnFilterService
         );
     }
 
-    public setModelForColumnLegacy(key: string | AgColumn, model: any): AgPromise<void> {
+    private setModelForColumnLegacy(key: string | AgColumn, model: any): AgPromise<void> {
         const column = this.beans.colModel.getNonPivotCol(key);
         const filterWrapper = column ? this.getOrCreateFilterWrapper(column, true) : null;
         return filterWrapper ? this.setModelOnFilterWrapper(filterWrapper, model) : AgPromise.resolve();
@@ -1867,7 +1958,7 @@ export class ColumnFilterService
             applied();
             return;
         }
-        const modelApplied: unknown = filter.setModel(newModel);
+        const modelApplied: unknown = _legacyFilterMethods(filter).setModel(newModel);
         if (modelApplied != null && _isPromise(modelApplied)) {
             void modelApplied.then(() => applied());
         } else {

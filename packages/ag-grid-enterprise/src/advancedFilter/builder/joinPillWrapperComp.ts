@@ -1,3 +1,5 @@
+import { _translateTokens } from 'ag-stack';
+
 import type { BeanCollection, JoinAdvancedFilterModel } from 'ag-grid-community';
 import { Component } from 'ag-grid-community';
 
@@ -54,7 +56,16 @@ export class JoinPillWrapperComp extends Component<AdvancedFilterBuilderEvents> 
     }
 
     public getAriaLabel(): string {
-        return `${this.advFilterExpSvc.translate('ariaAdvancedFilterBuilderGroupItem')} ${this.getDragName()}`;
+        // Built from the existing word so a localeText without this key reads as before.
+        const itemWord = this.advFilterExpSvc.translate('ariaAdvancedFilterBuilderGroupItem');
+        return _translateTokens(
+            this.getLocaleTextFunc(),
+            'ariaAdvancedFilterBuilderGroupItemName',
+            `${itemWord} \${operator}`,
+            {
+                operator: this.getDragName(),
+            }
+        );
     }
 
     public getValidationMessage(): string | null {

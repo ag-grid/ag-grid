@@ -1,18 +1,9 @@
 import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { definePropertyForFile } from 'ag-test-utils';
 import React from 'react';
 
 import { ClientSideRowModelModule, ColumnMenuModule, ContextMenuModule, ValidationModule } from 'ag-grid-enterprise';
 import { AgGridReact } from 'ag-grid-react';
-
-// Enables testing the context menu with async data
-definePropertyForFile(HTMLElement.prototype, 'offsetParent', {
-    configurable: true,
-    get() {
-        return this.parentNode;
-    },
-});
 
 const dispatchTouchStart = (target: HTMLElement) => {
     const touch = { identifier: 1, target, clientX: 5, clientY: 5 };

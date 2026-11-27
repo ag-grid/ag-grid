@@ -25,14 +25,16 @@ const GridExample = () => {
         <AgGridProvider modules={modules}>
             <div className="example-wrapper">
                 <div className="example-controls">
-                    <label>
-                        <input
-                            type="checkbox"
-                            checked={debounceVerticalScrollbar}
-                            onChange={(event) => setDebounceVerticalScrollbar(event.target.checked)}
-                        />
-                        Debounce vertical scroll
-                    </label>
+                    <div className="controls-row">
+                        <label>
+                            <input
+                                type="checkbox"
+                                checked={debounceVerticalScrollbar}
+                                onChange={(event) => setDebounceVerticalScrollbar(event.target.checked)}
+                            />
+                            Debounce vertical scroll
+                        </label>
+                    </div>
                 </div>
                 <div id="myGrid">
                     {/* This initial-only option requires a new grid when toggled. */}

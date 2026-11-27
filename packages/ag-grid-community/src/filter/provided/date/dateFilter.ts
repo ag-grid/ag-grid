@@ -3,24 +3,19 @@ import { _isBrowserFirefox, _parseDateTimeFromString, _serialiseDate } from 'ag-
 import { _addGridCommonParams } from '../../../gridOptionsUtils';
 import type { IDateParams } from '../../../interfaces/dateComponent';
 import type { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
-import type { FilterDisplayParams } from '../../../interfaces/iFilter';
 import { _createElement } from '../../../utils/element';
 import type { FilterLocaleTextKey } from '../../filterLocaleText';
-import type { ICombinedSimpleModel, Tuple } from '../iSimpleFilter';
+import type { Tuple } from '../iSimpleFilter';
 import { SimpleFilter } from '../simpleFilter';
 import { getValidityMessageKey, removeItems } from '../simpleFilterUtils';
 import { DateCompWrapper } from './dateCompWrapper';
 import type { ValidationReportMode } from './dateCompWrapper';
 import { DEFAULT_DATE_FILTER_OPTIONS } from './dateFilterConstants';
 import { mapValuesFromDateFilterModel } from './dateFilterUtils';
-import type { DateFilterModel, IDateFilterParams } from './iDateFilter';
+import type { DateFilterDisplayParams, DateFilterModel } from './iDateFilter';
 
 const DEFAULT_MIN_YEAR = 1000;
 const DEFAULT_MAX_YEAR = Infinity;
-
-/** temporary type until `DateFilterParams` is updated as breaking change */
-type DateFilterDisplayParams = IDateFilterParams &
-    FilterDisplayParams<any, any, DateFilterModel | ICombinedSimpleModel<DateFilterModel>>;
 
 export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrapper, DateFilterDisplayParams> {
     private readonly eConditionPanelsFrom: HTMLElement[] = [];

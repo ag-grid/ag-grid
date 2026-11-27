@@ -2,7 +2,7 @@
  * If you change the GridOptions interface, you must also update PropertyKeys to be consistent. *
  ************************************************************************************************/
 import type { AgChartTheme, AgChartThemeOverrides } from 'ag-charts-types';
-import type { Theme } from 'ag-stack';
+import type { StaticCssTheme, Theme } from 'ag-stack';
 
 import type { IsRowValidDropPositionCallback } from '../dragAndDrop/rowDragTypes';
 import type { AgPublicEventType } from '../eventTypes';
@@ -292,13 +292,14 @@ export interface GridOptions<TData = any> {
      */
     enableBrowserTooltips?: boolean;
     /**
-     * Hide built-in control tooltips without affecting cell, header or validation tooltips.
+     * Hide built-in control hints only.
+     * Automatic text tooltips, explicitly configured tooltips and validation tooltips are unaffected.
      * @default false
      * @agModule `TooltipModule`
      */
     suppressBuiltInTooltips?: boolean;
     /**
-     * Custom component for built-in control tooltips, separate from a column's `tooltipComponent`.
+     * Custom component for built-in control hints only, separate from a column's `tooltipComponent`.
      * Receives `IBuiltInTooltipParams`.
      * @agModule `TooltipModule`
      */
@@ -320,7 +321,7 @@ export interface GridOptions<TData = any> {
     tooltipTrigger?: 'hover' | 'focus' | 'hoverOrFocus';
     /**
      * Preferred tooltip placement. Flips or shifts to stay within the available space.
-     * Return `undefined` from the callback to use the default placement: `top` for built-in controls, otherwise `top-start`.
+     * Return `undefined` from the callback to use the default placement: towards the grid for Side Bar tabs, `top` for other built-in controls, otherwise `top-start`.
      * Does not apply to browser tooltips.
      * @agModule `TooltipModule`
      */
@@ -380,13 +381,17 @@ export interface GridOptions<TData = any> {
      */
     tooltipMouseTrack?: boolean;
     /**
-     * This defines when tooltip will show up for Cells, Headers and SetFilter Items.
-     *  - `standard` - The tooltip always shows up when the items configured with Tooltips are hovered.
-     * - `whenTruncated` - The tooltip will only be displayed when the items hovered have truncated (showing ellipsis) values. This property does not work when `enableBrowserTooltips={true}`.
-     * @default `standard`
+     * Controls tooltips for grid-rendered text, including cells, headers, Set Filter items and tool panel labels.
+     * - `auto` - Automatically shows truncated text and configured tooltips with different content.
+     * - `standard` - Shows only configured tooltips, without requiring truncation.
+     * - `whenTruncated` - Shows only configured tooltips, and only when the target text is truncated.
+     * - `whenDifferent` - Shows only configured tooltips that differ from the default tooltip value:
+     *   the formatted value when available, otherwise the raw value.
+     * Applies to browser tooltips too. Custom components can supply their own display predicate.
+     * @default 'auto'
      * @agModule `TooltipModule`
      */
-    tooltipShowMode?: 'standard' | 'whenTruncated';
+    tooltipShowMode?: 'auto' | 'standard' | 'whenTruncated' | 'whenDifferent';
     /**
      * Set to `true` for custom tooltip content containing focusable controls. Tab can enter the tooltip and
      * Escape closes it and returns focus to its source. All tooltips remain visible while hovered.
@@ -837,12 +842,6 @@ export interface GridOptions<TData = any> {
      */
     advancedFilterParams?: IAdvancedFilterParams;
     /**
-     * @deprecated As of v34, advanced filter no longer uses function evaluation, so this option has no effect.
-     * @default true
-     * @agModule `AdvancedFilterModule`
-     */
-    suppressAdvancedFilterEval?: boolean;
-    /**
      * When using AG Grid Enterprise, the Set Filter is used by default when `filter: true` is set on column definitions.
      * Set to `true` to prevent this and instead use the Text Filter, Number Filter or Date Filter based on the cell data type,
      * the same as when using AG Grid Community.
@@ -857,6 +856,8 @@ export interface GridOptions<TData = any> {
      *
      * Note that grid-provided filters (except for the Multi Filter) always use filter handlers.
      * The Multi Filter will also use a filter handler if this is enabled.
+     *
+     * The default becomes `true` in v38. Setting `false` (legacy filter mode) is deprecated in v37, and legacy filter mode and this option will be removed in a major version after v38. See [Migrating to Filter Handlers](https://www.ag-grid.com/javascript-data-grid/enable-filter-handlers-migration/).
      * @initial
      */
     enableFilterHandlers?: boolean;
@@ -2132,7 +2133,7 @@ export interface GridOptions<TData = any> {
      * Provide an object to sort using a specific locale and collator options, such as `{ locales: 'de', options: { sensitivity: 'accent' } }`.
      * Only applies when both values are strings. Also orders the values in the Set Filter list.
      *
-     * Can be overridden per column with `colDef.accentedSort`.
+     * Equivalent to setting `accentedSort` on the `defaultColDef`, which is the recommended approach. Can be overridden per column with `colDef.accentedSort`.
      * @default false
      */
     accentedSort?: boolean | AccentedSortOptions;
@@ -2257,16 +2258,6 @@ export interface GridOptions<TData = any> {
     initialState?: GridState;
 
     /**
-     * **React only**.
-     *
-     * @deprecated As of v32 custom components are created reactively by default.
-     * Set this property to `false` to switch to the legacy way of declaring custom components imperatively.
-     * @initial
-     * @default true
-     */
-    reactiveCustomComponents?: boolean;
-
-    /**
      *
      * ** React only**.
      *
@@ -2278,13 +2269,16 @@ export interface GridOptions<TData = any> {
     renderingMode?: 'default' | 'legacy';
 
     /**
-     * Theme to apply to the grid, or the string "legacy" to opt back into the
-     * v32 style of theming where themes were imported as CSS files and applied
-     * by setting a class name on the parent element.
+     * Theme to apply to the grid. Use a theme created with `staticCssTheme` to style the grid with static CSS
+     * files from `ag-grid-community/css` that your application loads itself, for applications whose Content
+     * Security Policy does not allow styles to be injected.
+     *
+     * The string "legacy" is deprecated, and opts back into the v32 style of theming
+     * using the CSS files in `ag-grid-community/styles`.
      *
      * @default themeQuartz
      */
-    theme?: Theme | 'legacy';
+    theme?: Theme | StaticCssTheme | 'legacy';
 
     /**
      * If your theme uses a font that is available on Google Fonts, pass true to load it from Google's CDN.
@@ -2928,6 +2922,7 @@ export interface GridOptions<TData = any> {
     onFilterChanged?(event: FilterChangedEvent<TData>): void;
     /**
      * Filter was modified but not applied  (when using `enableFilterHandlers = false`). Used when filters have 'Apply' buttons.
+     * @deprecated v37 Use `onFilterUiChanged` and `onFloatingFilterUiChanged` with `enableFilterHandlers` instead. See [Migrating to Filter Handlers](https://www.ag-grid.com/javascript-data-grid/enable-filter-handlers-migration/).
      */
     onFilterModified?(event: FilterModifiedEvent<TData>): void;
     /**
@@ -3456,6 +3451,8 @@ interface CommonRowSelectionOptions<TData = any, TValue = any, TContext = any> {
     hideDisabledCheckboxes?: boolean;
     /**
      * Callback to be used to determine which rows are selectable. By default rows are selectable, so return `false` to make a row non-selectable.
+     * The grand total row (`footer` is `true`) is passed too, except to the Client-Side Row Model with `groupSelects`
+     * set to `'descendants'` or `'filteredDescendants'`. With the Client-Side Row Model it has no `data`.
      */
     isRowSelectable?: IsRowSelectable<TData>;
     /**

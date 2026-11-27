@@ -48,6 +48,13 @@ export default {
                 state.forward.push('--ui', '--standalone', '--watch');
             },
         },
+        '--large': {
+            takes: NONE,
+            apply() {
+                // Includes the *.large.bench.ts files (1M rows, seconds per call), left out of a plain run.
+                process.env.AG_BENCH_LARGE = '1';
+            },
+        },
         '--profile': {
             takes: NONE,
             apply(state) {
@@ -128,6 +135,8 @@ Modes:
   --headed, --interactive  Visible Chromium, single run — watch the grid render.
   --ui                   Visible Chromium + the Vitest dashboard at a localhost URL; starts WITHOUT
                          running (pick benches from the dashboard), and stays open.
+  --large                Also runs the *.large.bench.ts benches (1M rows, seconds per call), left out of a
+                         plain run. With --bench-compare, set AG_BENCH_LARGE=1 in the environment instead.
   --profile              CPU-profiles each bench's measured run in Chromium (CDP) for method-cost analysis.
                          Writes one .cpuprofile per bench under benchmarks/tmp/profiles/ (printed after the
                          run); open them in Chrome DevTools or speedscope. Not for timings.

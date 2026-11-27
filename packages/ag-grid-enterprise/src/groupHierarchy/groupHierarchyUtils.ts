@@ -1,4 +1,4 @@
-import { MONTHS, _getDateParts, _parseDateTimeFromString } from 'ag-stack';
+import { MONTHS, _getDateParts, _getLocaleTextFunc, _parseDateTimeFromString, _translateTokens } from 'ag-stack';
 
 import type { AgColumn, BeanCollection, HeaderValueGetterParams, IRowNode, ValueGetterParams } from 'ag-grid-community';
 
@@ -31,11 +31,19 @@ export const getDatePartValueGetter =
     };
 
 export const getHeaderValueGetter =
-    ({ colNames }: BeanCollection, col: AgColumn, part: string) =>
+    ({ colNames, localeSvc }: BeanCollection, col: AgColumn, part: string) =>
     (params: HeaderValueGetterParams) => {
         const sourceName = colNames.getDisplayNameForColumn(col, params.location);
         if (sourceName) {
-            return `${sourceName} (${part})`;
+            return _translateTokens(
+                _getLocaleTextFunc(localeSvc),
+                'groupHierarchyColumnHeader',
+                '${column} (${part})',
+                {
+                    column: sourceName,
+                    part,
+                }
+            );
         }
         return '';
     };

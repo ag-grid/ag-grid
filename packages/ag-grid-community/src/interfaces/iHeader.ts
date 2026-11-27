@@ -80,7 +80,7 @@ export interface IHeaderParams<TData = any, TContext = any> extends AgGridCommon
     /**
      * Sets a tooltip to the main element of this component.
      * @param value The value to be displayed by the tooltip
-     * @param shouldDisplayTooltip A function returning a boolean that allows the tooltip to be displayed conditionally. This option does not work when `enableBrowserTooltips={true}`.
+     * @param shouldDisplayTooltip A function returning a boolean that allows the tooltip to be displayed conditionally.
      */
     setTooltip: (value: string, shouldDisplayTooltip?: () => boolean) => void;
 }

@@ -170,10 +170,10 @@ export class ChartSettingsPanel extends Component {
             return null;
         }
 
-        return this.chartTranslation.translate('ariaChartPalettePage', [
-            String(this.activePaletteIndex + 1),
-            String(this.palettes.length),
-        ]);
+        return this.chartTranslation.translate('ariaChartPalettePage', {
+            page: String(this.activePaletteIndex + 1),
+            total: String(this.palettes.length),
+        });
     }
 
     private addCardLink(index: number): void {

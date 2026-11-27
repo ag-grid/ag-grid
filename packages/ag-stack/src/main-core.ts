@@ -32,6 +32,8 @@ export type { Part } from './theming/part';
 export type { SharedThemeParams } from './theming/shared/shared-css';
 export type { Theme } from './theming/theme';
 export type {
+    BackdropFilterFunction,
+    BackdropFilterValue,
     BorderValue,
     ColorSchemeValue,
     ColorValue,

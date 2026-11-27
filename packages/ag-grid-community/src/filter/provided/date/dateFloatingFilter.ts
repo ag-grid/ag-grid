@@ -17,7 +17,7 @@ import { DateCompWrapper } from './dateCompWrapper';
 import type { DateFilter } from './dateFilter';
 import { DEFAULT_DATE_FILTER_OPTIONS } from './dateFilterConstants';
 import { DateFilterModelFormatter } from './dateFilterModelFormatter';
-import type { DateFilterModel, DateFilterParams, IDateFilterParams } from './iDateFilter';
+import type { DateFilterModel, IDateFilterParams } from './iDateFilter';
 
 const DateFloatingFilterElement: ElementParams = {
     tag: 'div',
@@ -137,14 +137,14 @@ export class DateFloatingFilter extends SimpleFloatingFilter<IFloatingFilterPara
 
     private getDateComponentParams(): IDateParams {
         const { filterParams } = this.params;
-        const debounceMs = getDebounceMs(this.beans.log, filterParams as DateFilterParams, this.defaultDebounceMs);
+        const debounceMs = getDebounceMs(this.beans.log, filterParams as IDateFilterParams, this.defaultDebounceMs);
         const debouncedDateChanged = _debounce(this, this.onDateChanged.bind(this), debounceMs);
         let debounceTimeout: ReturnType<typeof setTimeout> | undefined;
         return _addGridCommonParams(this.gos, {
             onDateChanged: () => {
                 debounceTimeout = debouncedDateChanged();
             },
-            onDateCleared: _isUseApplyButton(filterParams as DateFilterParams)
+            onDateCleared: _isUseApplyButton(filterParams as IDateFilterParams)
                 ? undefined
                 : () => {
                       clearTimeout(debounceTimeout);

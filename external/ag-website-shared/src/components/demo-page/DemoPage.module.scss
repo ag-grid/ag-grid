@@ -9,6 +9,9 @@ $demo-gutter-base: $spacing-size-12;
 $demo-gutter-wide: 100px;
 // Where the demo first fits between the wide gutters; derived so it tracks its parts.
 $breakpoint-demo-fits: $demo-held-width + $hero-max-width + $demo-column-gap + $demo-gutter-wide * 2;
+// Narrowest page the phone layouts fit: below about 330px the dashboards scroll sideways, and charts
+// run short of room for their axes a little above that.
+$breakpoint-demo-phone-fits: 360px;
 
 // Deliberately uncapped, unlike every other page: until the demo fits, the card
 // takes the right-hand gutter and runs off the edge of the screen.
@@ -459,6 +462,37 @@ $breakpoint-demo-fits: $demo-held-width + $hero-max-width + $demo-column-gap + $
 // switcher. Pin it to the container instead.
 .stageViewport > :global(*) {
     height: 100% !important;
+}
+
+// For a demo with its own phone layout. Without the held width demo-page.js sees no cut-off, so it runs inline.
+.demoPageSmallDevices {
+    @media screen and (max-width: #{$breakpoint-docs-search-medium - 0.02px}) {
+        --demo-phone-layout: 1;
+
+        .demoCard {
+            display: block;
+            height: 70svh;
+        }
+
+        .stageViewport {
+            min-width: 0;
+        }
+    }
+
+    // Too narrow even for the phone layout, so the mobile notice stands in, as on any other demo page.
+    @media screen and (max-width: #{$breakpoint-demo-phone-fits - 0.02px}) {
+        .demoCard {
+            display: none;
+        }
+    }
+}
+
+.smallDevicesNotice {
+    display: contents;
+
+    @media screen and (min-width: $breakpoint-demo-phone-fits) {
+        display: none;
+    }
 }
 
 // Hit layer that, with the `inert` viewport, makes the preview non-interactive.

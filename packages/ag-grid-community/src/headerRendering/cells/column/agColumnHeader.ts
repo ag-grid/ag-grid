@@ -115,6 +115,10 @@ export class AgColumnHeader extends Component implements IHeaderComp {
 
     private mouseListener?: HeaderCellMouseListenerFeature;
 
+    public getTooltipTextElement(): HTMLElement | undefined {
+        return this.innerHeaderComponent || this.isLoadingInnerComponent ? undefined : this.eText;
+    }
+
     public refresh(params: IHeaderParams): boolean {
         const oldParams = this.params;
         this.params = params;
@@ -274,7 +278,7 @@ export class AgColumnHeader extends Component implements IHeaderComp {
             getGui: () => eMenu,
             getLocation: () => 'header',
             getTooltip: () => ({
-                value: this.getLocaleTextFunc()('ariaLabelColumnMenu', 'Column Menu'),
+                value: this.getLocaleTextFunc()('tooltipColumnMenu', 'Open column menu'),
                 params: { column: this.params.column },
             }),
         });
@@ -502,7 +506,7 @@ export class AgColumnHeader extends Component implements IHeaderComp {
             getGui: () => element,
             getLocation: () => 'header',
             getTooltip: () => ({
-                value: this.getLocaleTextFunc()('tooltipFilter', 'Filter'),
+                value: this.getLocaleTextFunc()('tooltipFilter', 'Open filter'),
                 params: { column: this.params.column },
             }),
         });

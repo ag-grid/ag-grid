@@ -11,7 +11,7 @@ export const DEFAULT_LOCALE_TEXT = {
     filterSummaryListInactive: 'is (All)',
     filterSummaryListSeparator: ', ',
     filterSummaryListShort: (variableValues: string[]) => `is (${variableValues[0]})`,
-    filterSummaryListLong: (variableValues: string[]) => `is (${variableValues[0]}) and ${variableValues[1]} more`,
+    filterSummaryListLong: 'is (${values}) and ${count} more',
 } as const;
 
 export type SetFilterLocaleTextKey = keyof typeof DEFAULT_LOCALE_TEXT;

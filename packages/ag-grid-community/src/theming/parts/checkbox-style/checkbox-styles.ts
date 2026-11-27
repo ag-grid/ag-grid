@@ -68,6 +68,46 @@ export type CheckboxStyleParams = {
      * An image defining the shape of the mark on checked radio buttons
      */
     radioCheckedShapeImage: ImageValue;
+
+    /**
+     * Background color of a checked checkbox within selected grid rows
+     */
+    selectedRowCheckboxCheckedBackgroundColor: ColorValue;
+
+    /**
+     * Border color of a checked checkbox within selected grid rows
+     */
+    selectedRowCheckboxCheckedBorderColor: ColorValue;
+
+    /**
+     * The color of the check mark on checked checkboxes within selected grid rows
+     */
+    selectedRowCheckboxCheckedShapeColor: ColorValue;
+
+    /**
+     * Background color of an unchecked checkbox within selected grid rows
+     */
+    selectedRowCheckboxUncheckedBackgroundColor: ColorValue;
+
+    /**
+     * Border color of an unchecked checkbox within selected grid rows
+     */
+    selectedRowCheckboxUncheckedBorderColor: ColorValue;
+
+    /**
+     * Background color of an indeterminate checkbox within selected grid rows
+     */
+    selectedRowCheckboxIndeterminateBackgroundColor: ColorValue;
+
+    /**
+     * Border color of an indeterminate checkbox within selected grid rows
+     */
+    selectedRowCheckboxIndeterminateBorderColor: ColorValue;
+
+    /**
+     * The color of the dash on indeterminate checkboxes within selected grid rows
+     */
+    selectedRowCheckboxIndeterminateShapeColor: ColorValue;
 };
 
 const makeCheckboxStyleDefaultTreeShakeable = () =>
@@ -95,6 +135,14 @@ const makeCheckboxStyleDefaultTreeShakeable = () =>
             radioCheckedShapeImage: {
                 svg: '<svg xmlns="http://www.w3.org/2000/svg" width="6" height="6" fill="none"><circle cx="3" cy="3" r="3" fill="#000"/></svg>',
             },
+            selectedRowCheckboxCheckedBackgroundColor: { ref: 'checkboxCheckedBackgroundColor' },
+            selectedRowCheckboxCheckedBorderColor: { ref: 'checkboxCheckedBorderColor' },
+            selectedRowCheckboxCheckedShapeColor: { ref: 'checkboxCheckedShapeColor' },
+            selectedRowCheckboxUncheckedBackgroundColor: { ref: 'checkboxUncheckedBackgroundColor' },
+            selectedRowCheckboxUncheckedBorderColor: { ref: 'checkboxUncheckedBorderColor' },
+            selectedRowCheckboxIndeterminateBackgroundColor: { ref: 'checkboxIndeterminateBackgroundColor' },
+            selectedRowCheckboxIndeterminateBorderColor: { ref: 'checkboxIndeterminateBorderColor' },
+            selectedRowCheckboxIndeterminateShapeColor: { ref: 'checkboxIndeterminateShapeColor' },
         },
         css: checkboxStyleDefaultCSS,
     });

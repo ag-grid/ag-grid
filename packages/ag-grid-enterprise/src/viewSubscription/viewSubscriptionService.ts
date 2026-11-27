@@ -1,4 +1,4 @@
-import { _areEqual, _getDocument, _observeIntersection } from 'ag-stack';
+import { _areEqual, _getDocument, _observeIntersection, _throwErrors } from 'ag-stack';
 
 import {
     BeanStub,
@@ -33,8 +33,6 @@ interface ActiveSubscription {
     timer: ReturnType<typeof setTimeout> | undefined;
     /** The view at the last flush or scroll. */
     view: ViewEnds;
-    /** Set once a failed `subscribeRows` call has scheduled a retry, so a handler that keeps throwing is retried once. */
-    retried: boolean;
 }
 
 interface ViewEnds {
@@ -166,14 +164,13 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean {
             stopped: false,
             timer: undefined,
             view: this.getViewEnds(),
-            retried: false,
         };
         this.sub = sub;
 
         const rows: ViewRow[] = [];
         this.getViewportRows().forEach((node, id) => rows.push(this.addRow(sub, id, node)));
         if (rows.length) {
-            this.callSubscribeRows(sub, rows, options);
+            options.subscribeRows(rows, this.createParams());
         }
     }
 
@@ -263,16 +260,21 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean {
             }
         });
 
+        // The rows now in view are subscribed even when unsubscribeRows throws, then both errors are thrown.
+        const errors: unknown[] = [];
         if (removed.length) {
             try {
                 this.getOptions()?.unsubscribeRows(removed, this.createParams());
-            } catch (e) {
-                // The added rows are not subscribed yet, and no change may come to schedule them.
-                this.schedule();
-                throw e;
+            } catch (error) {
+                errors.push(error);
             }
         }
-        this.subscribeNodes(sub, added);
+        try {
+            this.subscribeNodes(sub, added);
+        } catch (error) {
+            errors.push(error);
+        }
+        _throwErrors(errors);
     }
 
     /** Schedules another flush when rows are no longer in view, before calling the handler, which can throw. */
@@ -297,31 +299,7 @@ export class ViewSubscriptionService extends BeanStub implements NamedBean {
             this.schedule();
         }
         if (rows.length) {
-            this.callSubscribeRows(sub, rows, this.getOptions());
-        }
-    }
-
-    /** Rows passed to a `subscribeRows` call that throws are not subscribed, so they are not passed to `unsubscribeRows`. */
-    private callSubscribeRows(
-        sub: ActiveSubscription,
-        rows: ViewRow[],
-        options: ViewSubscriptionOptions | undefined
-    ): void {
-        // Read before the call, as the handler owns the array and can change it.
-        const ids = rows.map((row) => row.id);
-        try {
-            options?.subscribeRows(rows, this.createParams());
-            sub.retried = false;
-        } catch (e) {
-            for (const id of ids) {
-                sub.rows.delete(id);
-            }
-            if (!sub.retried) {
-                // Try the rows in view once more, as no other change may come to subscribe them.
-                sub.retried = true;
-                this.schedule();
-            }
-            throw e;
+            this.getOptions()?.subscribeRows(rows, this.createParams());
         }
     }
 

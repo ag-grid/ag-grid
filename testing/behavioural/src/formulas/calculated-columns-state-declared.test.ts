@@ -14,7 +14,7 @@ import {
     createGrid,
     editViaDialog,
     entryOf,
-    getDialog,
+    getCalculatedColumnDialog,
     order,
     propertiesOf,
     removeViaMenu,
@@ -37,7 +37,7 @@ describe('calculated columns - grid state persistence - overrides of columnDefs-
 
         api.showColumnMenu('a');
         await clickMenuOption('Add Calculated Column');
-        await waitFor(() => getDialog());
+        await waitFor(() => getCalculatedColumnDialog());
         setExpression('[A] * 2');
         // Typing does not commit under deferred mode, so nothing is persisted yet.
         expect(order(api)).toEqual(['a', 'b']);
@@ -58,7 +58,7 @@ describe('calculated columns - grid state persistence - overrides of columnDefs-
 
         api.showColumnMenu('a');
         await clickMenuOption('Add Calculated Column');
-        await waitFor(() => getDialog());
+        await waitFor(() => getCalculatedColumnDialog());
         setExpression('[A] * 2');
         clickDialogButton('Cancel');
 
@@ -78,14 +78,14 @@ describe('calculated columns - grid state persistence - overrides of columnDefs-
 
         api.showColumnMenu('a');
         await clickMenuOption('Add Calculated Column');
-        await waitFor(() => getDialog());
+        await waitFor(() => getCalculatedColumnDialog());
         setExpression('[A] * 2');
         clickDialogButton('Apply');
         await waitFor(() => expect(api.getColumn('calculated_1')).toBeTruthy());
 
         api.showColumnMenu('calculated_1');
         await clickMenuOption('Edit Calculated Column');
-        await waitFor(() => getDialog());
+        await waitFor(() => getCalculatedColumnDialog());
         setExpression('[A] * 3');
         clickDialogButton('Cancel');
 

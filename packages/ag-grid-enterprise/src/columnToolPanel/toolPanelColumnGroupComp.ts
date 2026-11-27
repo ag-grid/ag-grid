@@ -1,10 +1,14 @@
+import type { ITooltipFeature } from 'ag-stack';
 import {
     RefPlaceholder,
     _addManagedElementListeners,
+    _getAriaLabelWithState,
+    _setAriaChecked,
     _setAriaDescribedBy,
     _setAriaExpanded,
     _setAriaLabel,
     _setDisplayed,
+    _translateTokens,
 } from 'ag-stack';
 
 import type {
@@ -31,11 +35,9 @@ import {
     _addGridCommonParams,
     _createIcon,
     _createIconNoSpan,
-    _getHeaderTooltipComponentDefinition,
-    _getShouldDisplayTooltip,
     _getToolPanelClassesFromColDef,
     _isHeaderNameChangeForGroup,
-    _resolveHeaderTooltipValue,
+    _resolveHeaderTooltip,
 } from 'ag-grid-community';
 
 import { getGridColumnGroup } from '../columns/providedColumnGroupUtils';
@@ -75,7 +77,7 @@ export class ToolPanelColumnGroupComp extends Component {
 
     private readonly eGroupOpenedIcon: Element = RefPlaceholder;
     private readonly eGroupClosedIcon: Element = RefPlaceholder;
-    private readonly eColumnGroupIcons: Element = RefPlaceholder;
+    private readonly eColumnGroupIcons: HTMLElement = RefPlaceholder;
 
     private eDragHandle: Element;
 
@@ -84,6 +86,7 @@ export class ToolPanelColumnGroupComp extends Component {
 
     private processingColumnStateChange = false;
     private tooltipFeature?: TooltipFeature;
+    private expandTooltip?: ITooltipFeature;
     private labelRendererFeature?: ColumnSelectionLabelRendererFeature;
 
     constructor(
@@ -145,6 +148,17 @@ export class ToolPanelColumnGroupComp extends Component {
             eLabel.textContent = this.displayName ?? '';
         }
         this.setupExpandContract();
+        this.expandTooltip = this.addTooltip({
+            control: 'groupExpand',
+            getGui: () => this.eColumnGroupIcons,
+            getLocation: () => 'columnToolPanelColumnGroup',
+            getTooltip: () => ({
+                value: this.modelItem.expanded
+                    ? this.getLocaleTextFunc()('tooltipCollapseGroup', 'Collapse group')
+                    : this.getLocaleTextFunc()('tooltipExpandGroup', 'Expand group'),
+                params: { column: this.gridColumnGroup },
+            }),
+        });
 
         this.addCss('ag-column-select-indent-' + columnDepth);
         this.getGui().style.setProperty('--ag-indentation-level', String(columnDepth));
@@ -162,19 +176,15 @@ export class ToolPanelColumnGroupComp extends Component {
                         value: displayName,
                         valueFormatted: displayName,
                     };
-                    return {
-                        value: _resolveHeaderTooltipValue(
-                            colDef,
-                            _addGridCommonParams<HeaderTooltipCallbackParams>(gos, {
-                                location: 'columnToolPanelColumnGroup',
-                                ...params,
-                            })
-                        ),
-                        params,
-                        componentDefinition: _getHeaderTooltipComponentDefinition(colDef),
-                    };
+                    return _resolveHeaderTooltip(
+                        gos,
+                        _addGridCommonParams<HeaderTooltipCallbackParams>(gos, {
+                            location: 'columnToolPanelColumnGroup',
+                            ...params,
+                        })
+                    );
                 },
-                shouldDisplayTooltip: _getShouldDisplayTooltip(gos, () => eLabel),
+                getTextElement: () => (this.labelRendererFeature?.hasRenderer() ? undefined : eLabel),
             })
         );
 
@@ -182,6 +192,7 @@ export class ToolPanelColumnGroupComp extends Component {
 
         _addManagedElementListeners(this, eLabel, { click: this.onLabelClicked.bind(this) });
         this.addManagedListeners(cbSelect, { fieldValueChanged: this.onCheckboxChanged.bind(this) });
+        _addManagedElementListeners(this, checkboxInput, { mousedown: this.onCheckboxMouseDown.bind(this) });
         this.addManagedListeners(modelItem, { expandedChanged: this.onExpandChanged.bind(this) });
         // Grid-level, not the grid group's own event: a custom layout keeps this copy while the grid's group is
         // replaced, and a child's rename can change the name a group headerValueGetter returns.
@@ -204,6 +215,7 @@ export class ToolPanelColumnGroupComp extends Component {
         this.addVisibilityListenersToAllChildren();
         this.refreshAriaExpanded();
         this.refreshAriaLabel();
+        this.refreshAriaChecked();
         this.setupTooltip();
 
         const classes = _getToolPanelClassesFromColDef(
@@ -397,7 +409,14 @@ export class ToolPanelColumnGroupComp extends Component {
         this.onChangeCommon(nextState);
     }
 
+    private onCheckboxMouseDown(e: MouseEvent): void {
+        // Keeps focus on the tree item, as a label click does, so both expose the same selected state.
+        e.preventDefault();
+        this.focusWrapper.focus();
+    }
+
     private onCheckboxChanged(event: any): void {
+        this.refreshAriaChecked();
         this.onChangeCommon(event.selected);
     }
 
@@ -456,9 +475,17 @@ export class ToolPanelColumnGroupComp extends Component {
                   : translate('ariaHidden', 'hidden');
         const visibilityLabel = translate('ariaToggleVisibility', 'Press SPACE to toggle visibility');
 
-        _setAriaLabel(focusWrapper, `${displayName} ${columnLabel}`);
-        cbSelect.setInputAriaLabel(`${visibilityLabel} (${state})`);
+        _setAriaLabel(
+            focusWrapper,
+            // Built from the existing word so a localeText without this key reads as before.
+            _translateTokens(translate, 'ariaColumnGroupItem', `\${name} ${columnLabel}`, { name: displayName ?? '' })
+        );
+        cbSelect.setInputAriaLabel(_getAriaLabelWithState(translate, visibilityLabel, state));
         _setAriaDescribedBy(focusWrapper, cbSelect.getInputElement().id);
+    }
+
+    private refreshAriaChecked(): void {
+        _setAriaChecked(this.focusWrapper, this.cbSelect.getValue());
     }
 
     public onColumnStateChanged(): void {
@@ -531,6 +558,7 @@ export class ToolPanelColumnGroupComp extends Component {
     }
 
     private onExpandChanged() {
+        this.expandTooltip?.refreshTooltip();
         this.setOpenClosedIcons();
         this.refreshAriaExpanded();
     }

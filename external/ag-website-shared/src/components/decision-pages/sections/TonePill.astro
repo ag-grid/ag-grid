@@ -1,0 +1,25 @@
+---
+import styles from '../DecisionPage.module.scss';
+import type { FeatureCellTone } from '../decisionPageText';
+
+interface Props {
+    tone: FeatureCellTone;
+    /** Decorative: the label carries the meaning. */
+    symbol?: string;
+    label: string;
+}
+
+const { tone, symbol, label } = Astro.props;
+
+const TONE_CLASS: Record<FeatureCellTone, string> = {
+    free: styles.pillFree,
+    paid: styles.pillPaid,
+    limited: styles.pillLimited,
+    none: styles.pillNone,
+};
+---
+
+<span class:list={[styles.pill, TONE_CLASS[tone]]}>
+    {symbol && <span aria-hidden="true">{symbol}</span>}
+    {label}
+</span>

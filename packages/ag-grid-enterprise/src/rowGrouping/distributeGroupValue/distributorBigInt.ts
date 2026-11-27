@@ -8,7 +8,7 @@ import type {
 } from 'ag-grid-community';
 
 import type { AggFuncInput, DistributionStrategy } from './valueConversion';
-import { isNumericLike, resolveStrategy, toBigInt } from './valueConversion';
+import { isNumericLike, readStoredValue, readsStoredAggregates, resolveStrategy, toBigInt } from './valueConversion';
 
 /** Distributes a BigInt value to children using integer-safe arithmetic. */
 export class DistributorBigInt {
@@ -22,6 +22,7 @@ export class DistributorBigInt {
     private readonly strategy: DistributionStrategy;
     private readonly getVal: ((params: DistributionGetValueParams) => unknown) | undefined;
     private readonly setVal: ((params: DistributionSetValueParams) => boolean) | undefined;
+    private readonly storedAggregates: boolean;
 
     constructor(
         private readonly params: GroupRowValueSetterParams,
@@ -35,6 +36,7 @@ export class DistributorBigInt {
         const bigCount = BigInt(count);
         this.children = children;
         this.column = column;
+        this.storedAggregates = readsStoredAggregates(params.colDef, column);
         this.count = count;
         this.bigCount = bigCount;
         this.newValue = newValue;
@@ -92,7 +94,9 @@ export class DistributorBigInt {
             const { colDef, api, context } = this.params;
             return toBigInt(getVal({ node, data: node.data, column, colDef, api, context, groupParams: this.params }));
         }
-        return toBigInt(node.getDataValue(column, 'value'));
+        return toBigInt(
+            this.storedAggregates ? readStoredValue(node, column, 'value') : node.getDataValue(column, 'value')
+        );
     }
 
     /** Writes a value to a single child. */

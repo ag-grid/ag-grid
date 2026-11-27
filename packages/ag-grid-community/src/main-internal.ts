@@ -154,6 +154,8 @@ export {
     _isGridSuppliedFilterParam,
 } from './filter/filterDataTypeUtils';
 export { _getDefaultFilter, _getFilterKey, _resolveFilter } from './filter/filterDefResolver';
+export { _legacyFilterMethods, _reportFilterModifiedListened, _warnLegacyFilterMode } from './filter/legacyFilterMode';
+export type { LegacyFilterMethods } from './filter/legacyFilterMode';
 export type { ResolvedFilter } from './filter/filterDefResolver';
 export { _getDisplayHandler, _getRowHandler } from './filter/pairedFilterHandler';
 export { translateForFilter as _translateForFilter } from './filter/filterLocaleText';
@@ -301,6 +303,7 @@ export type { IAggFuncService } from './interfaces/iAggFuncService';
 export type { IAggregatedChildrenSvc as _IAggregatedChildrenSvc } from './interfaces/iAggregatedChildrenSvc';
 export type { ICellRangeFeature } from './interfaces/iCellRangeFeature';
 export type { IAutoColService } from './interfaces/iAutoColService';
+export type { IClientSideRowModel } from './interfaces/iClientSideRowModel';
 export type { IClipboardService } from './interfaces/iClipboardService';
 export type {
     ColumnChangedEventType as _ColumnChangedEventType,
@@ -345,6 +348,7 @@ export type { IPivotColDefService } from './interfaces/iPivotColDefService';
 export type { IPivotResultColsService } from './interfaces/iPivotResultColsService';
 export type { IRangeService } from './interfaces/IRangeService';
 export type { IRowChildrenService } from './interfaces/iRowChildrenService';
+export type { IRowModel } from './interfaces/iRowModel';
 
 export type {
     IRowNodeAggregationStage as _IRowNodeAggregationStage,
@@ -357,6 +361,7 @@ export type {
     NestedDataGetter,
 } from './interfaces/iRowNodeStage';
 export type { ISelectionService, ISetNodesSelectedParams } from './interfaces/iSelectionService';
+export type { IServerSideRowModel } from './interfaces/iServerSideRowModel';
 export type { IShowRowGroupColsService } from './interfaces/iShowRowGroupColsService';
 export type { GroupValueResult, IShowRowGroupColsValueService } from './interfaces/iShowRowGroupColsValueService';
 export type { IShowValuesAsService } from './interfaces/iShowValuesAsService';
@@ -418,8 +423,8 @@ export {
 export {
     _getCellTooltipComponentDefinition,
     _getHeaderTooltipComponentDefinition,
-    _getShouldDisplayTooltip,
-    _isShowTooltipWhenTruncated,
+    _isAutomaticTooltipEnabled,
+    _resolveTextTooltip,
     type TooltipFeature,
     type TooltipSource,
     type TooltipSourceParams,
@@ -431,6 +436,7 @@ export {
     _resolveCellTooltipValue,
     _resolveGroupTooltipValue,
     _resolveHeaderTooltipValue,
+    _resolveHeaderTooltip,
     type LegacyTooltipFieldResolution,
 } from './tooltip/tooltipValueUtils';
 export type { ChangedCellsPath, ChangedPath, ChangedRowsPath, IChangedPathFactory } from './utils/changedPath';
@@ -470,6 +476,7 @@ export {
     _warnForGrid,
     _warnWithoutAttribution,
 } from './validation/logging';
+export { _STATIC_CSS_THEME_PARTS } from './validation/rules/themeValidations';
 export { _emitValidationWarning, _createValidationWarning } from './validation/validationTypes';
 export type { ValidationWarning } from './validation/validationTypes';
 export type { ExpressionService } from './valueService/expressionService';

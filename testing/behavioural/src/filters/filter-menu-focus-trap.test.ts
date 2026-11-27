@@ -1,10 +1,15 @@
 import { waitFor } from '@testing-library/dom';
 import '@testing-library/jest-dom/vitest';
 import { userEvent } from '@testing-library/user-event';
-import { TestGridsManager } from 'ag-test-utils';
+import { ALL_SEVERITIES, LEGACY_FILTER_WARNING_IDS, TestGridsManager } from 'ag-test-utils';
 
 import type { IFilterComp } from 'ag-grid-community';
-import { ClientSideRowModelModule, CustomFilterModule, TextFilterModule } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    CustomFilterModule,
+    TextFilterModule,
+    enableDevValidations,
+} from 'ag-grid-community';
 import { MultiFilterModule } from 'ag-grid-enterprise';
 
 function createInput(className: string): HTMLInputElement {
@@ -101,6 +106,10 @@ class RadioGroupFirstFilter extends StaticPanelFilter {
 describe('Filter menu focus trap', () => {
     const gridsManager = new TestGridsManager({
         modules: [ClientSideRowModelModule, CustomFilterModule],
+    });
+
+    beforeEach(() => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: LEGACY_FILTER_WARNING_IDS });
     });
 
     afterEach(() => {
@@ -412,6 +421,10 @@ describe('Simple filter AND/OR join operator keyboard navigation', () => {
 describe('Multi filter radio group entry', () => {
     const gridsManager = new TestGridsManager({
         modules: [ClientSideRowModelModule, CustomFilterModule, TextFilterModule, MultiFilterModule],
+    });
+
+    beforeEach(() => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: LEGACY_FILTER_WARNING_IDS });
     });
 
     afterEach(() => {

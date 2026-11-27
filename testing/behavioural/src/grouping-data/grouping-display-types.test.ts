@@ -1,15 +1,16 @@
 import { waitFor } from '@testing-library/dom';
 import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, cachedJSONObjects } from 'ag-test-utils';
 
-import type { ColumnPinnedType, GridApi } from 'ag-grid-community';
+import type { ColumnPinnedType, GridApi, GridOptions } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     ColumnApiModule,
     GRAND_TOTAL_ROW_ID,
     GROUP_TOTAL_ROW_ID_PREFIX,
+    LocaleModule,
     getGridElement,
 } from 'ag-grid-community';
-import { RowGroupingModule } from 'ag-grid-enterprise';
+import { PivotModule, RowGroupingModule, TreeDataModule } from 'ag-grid-enterprise';
 
 describe('ag-grid grouping display types and footers', () => {
     const gridsManager = new TestGridsManager({
@@ -336,6 +337,43 @@ describe('ag-grid grouping display types and footers', () => {
         const grandTotalNode = api.getRowNode(GRAND_TOTAL_ROW_ID);
         expect(grandTotalNode?.footer).toBe(true);
         expect(grandTotalNode?.aggData?.gold).toBe(6);
+    });
+
+    test('the grand total row shows the total word alone, not the group total phrase without a value', async () => {
+        const rowData = cachedJSONObjects.array([
+            { id: '1', country: 'Ireland', gold: 1 },
+            { id: '2', country: 'Italy', gold: 3 },
+        ]);
+
+        const api = gridsManager.createGrid(
+            'myGrid',
+            {
+                columnDefs: [
+                    { field: 'country', rowGroup: true, hide: true },
+                    { field: 'gold', aggFunc: 'sum' },
+                ],
+                autoGroupColumnDef: { headerName: 'Country' },
+                animateRows: false,
+                groupDefaultExpanded: -1,
+                groupTotalRow: 'bottom',
+                grandTotalRow: 'bottom',
+                localeText: { footerTotal: 'Összesen', footerTotalValue: '${value} összesen' },
+                rowData,
+                getRowId: (params) => params.data.id,
+            },
+            { modules: [LocaleModule] }
+        );
+
+        await new GridRows(api, 'localised group and grand total rows').check(`
+            ROOT id:ROOT_NODE_ID gold:4
+            ├─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+            │ ├── LEAF id:1 country:"Ireland" gold:1
+            │ └─ footer id:rowGroupFooter_row-group-country-Ireland ag-Grid-AutoColumn:"Ireland összesen" gold:1
+            ├─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            │ ├── LEAF id:2 country:"Italy" gold:3
+            │ └─ footer id:rowGroupFooter_row-group-country-Italy ag-Grid-AutoColumn:"Italy összesen" gold:3
+            └─ footer id:rowGroupFooter_ROOT_NODE_ID ag-Grid-AutoColumn:"Összesen " gold:4
+        `);
     });
 
     test('grouping with custom group ordering', async () => {
@@ -767,3 +805,72 @@ describe('ag-grid grouping display types and footers', () => {
         `);
     });
 });
+
+describe('ag-grid auto group columns by display type, tree data and pivot', () => {
+    const gridsManager = new TestGridsManager({
+        modules: [ClientSideRowModelModule, RowGroupingModule, TreeDataModule, PivotModule],
+    });
+
+    beforeEach(() => {
+        gridsManager.reset();
+    });
+
+    afterEach(() => {
+        gridsManager.reset();
+    });
+
+    const groupedColumnDefs = [
+        { field: 'country', rowGroup: true },
+        { field: 'year', rowGroup: true },
+        { field: 'gold', aggFunc: 'sum' },
+    ];
+    const pivotedColumnDefs = [
+        { field: 'country', rowGroup: true },
+        { field: 'year', pivot: true },
+        { field: 'gold', aggFunc: 'sum' },
+    ];
+    const treeOptions: GridOptions = {
+        columnDefs: [{ field: 'gold' }],
+        treeData: true,
+        getDataPath: (data) => data.path,
+        rowData: [
+            { path: ['Ireland'], gold: 1 },
+            { path: ['Ireland', 'John'], gold: 2 },
+        ],
+    };
+    const rowData = [
+        { country: 'Ireland', year: '2020', gold: 1 },
+        { country: 'Italy', year: '2021', gold: 2 },
+    ];
+
+    test.each<[string, GridOptions, string[]]>([
+        ['tree data', treeOptions, ['ag-Grid-AutoColumn']],
+        ['tree data, custom', { ...treeOptions, treeDataDisplayType: 'custom' }, []],
+        ['pivot mode', { columnDefs: pivotedColumnDefs, rowData, pivotMode: true }, ['ag-Grid-AutoColumn']],
+        [
+            'pivot, multiple columns',
+            { columnDefs: pivotedColumnDefs, rowData, pivotMode: true, groupDisplayType: 'multipleColumns' },
+            ['ag-Grid-AutoColumn-country'],
+        ],
+        [
+            'pivot, suppressed',
+            { columnDefs: pivotedColumnDefs, rowData, pivotMode: true, pivotSuppressAutoColumn: true },
+            [],
+        ],
+        [
+            'suppressed, no pivot mode',
+            { columnDefs: groupedColumnDefs, rowData, pivotSuppressAutoColumn: true },
+            ['ag-Grid-AutoColumn'],
+        ],
+    ])('%s: the auto group columns are %j', (_title, options, autoColumnIds) => {
+        const api = gridsManager.createGrid('myGrid', options);
+
+        expect({
+            all: api.getAllGridColumns().filter(isAutoColumn).map(colId),
+            displayed: api.getAllDisplayedColumns().filter(isAutoColumn).map(colId),
+        }).toEqual({ all: autoColumnIds, displayed: autoColumnIds });
+    });
+});
+
+const colId = (col: { getColId(): string }) => col.getColId();
+const isAutoColumn = (col: { getColId(): string }) => col.getColId().startsWith('ag-Grid-AutoColumn');

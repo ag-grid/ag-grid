@@ -744,6 +744,7 @@ const certificateValidationExemptions = `    RewriteCond %{REQUEST_URI} !^/\\.we
 // "host:port" pattern: http on www (port 80, as the https upgrade tests it), and any port on an
 // alias host. Must list the same hosts as those rules. An archive build also sends the blog host
 // there; the live site leaves it to the blog redirects, whose targets are not docs pages.
+// angulargrid.com is not here: its own CloudFront distribution redirects it, so it never reaches us.
 const getCanonicalisedHostPortPattern = (withBlog = isArchiveBuild()): string => {
     const aliases = [
         'ag-grid\\.com',
@@ -751,8 +752,6 @@ const getCanonicalisedHostPortPattern = (withBlog = isArchiveBuild()): string =>
         'angular-grid\\.ag-grid\\.com',
         'javascript-grid\\.ag-grid\\.com',
         'react-grid\\.ag-grid\\.com',
-        'angulargrid\\.com',
-        'www\\.angulargrid\\.com',
         ...(withBlog ? ['blog\\.ag-grid\\.com'] : []),
     ];
     return `^(?:www\\.ag-grid\\.com:80|(?:${aliases.join('|')}):[0-9]+)$`;
@@ -846,11 +845,6 @@ ${certificateValidationExemptions}
     RewriteCond %{HTTP_HOST} ^javascript-grid\\.ag-grid\\.com$ [NC]
     RewriteRule ^(.*)$ ${getHostCanonicalTarget()} [R=301,L]
     RewriteCond %{HTTP_HOST} ^react-grid\\.ag-grid\\.com$ [NC]
-    RewriteRule ^(.*)$ ${getHostCanonicalTarget()} [R=301,L]
-
-    # Redirect angulargrid.com to www.ag-grid.com
-    RewriteCond %{HTTP_HOST} ^angulargrid\\.com$ [OR]
-    RewriteCond %{HTTP_HOST} ^www\\.angulargrid\\.com$
     RewriteRule ^(.*)$ ${getHostCanonicalTarget()} [R=301,L]
 
 ${unlessArchiveBuild(legacyPhpArchiveRules)}

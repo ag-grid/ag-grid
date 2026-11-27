@@ -7,6 +7,7 @@ import classnames from 'classnames';
 import { type AllHTMLAttributes, useEffect, useRef, useState } from 'react';
 
 import ctaStyles from '../open-in-cta/OpenInCTA.module.scss';
+import tooltipStyles from '../tooltip/Tooltip.module.scss';
 import linkStyles from './LinkIcon.module.scss';
 
 export function LinkIcon({
@@ -53,7 +54,13 @@ export function LinkIcon({
     }, []);
 
     const aStyles = exampleLink ? ctaStyles.cta : [linkStyles.docsHeaderIcon, 'button-secondary'];
-    const tooltipStyles = exampleLink ? ctaStyles.tooltip : linkStyles.tooltip;
+    const bubbleStyles = exampleLink
+        ? [tooltipStyles.bubble, tooltipStyles.bubbleLarge]
+        : [
+              tooltipStyles.bubble,
+              tooltipStyles.bubbleSmall,
+              { [tooltipStyles.isVisible]: linkActive, [tooltipStyles.bounce]: linkActive },
+          ];
     const copyLabel = copyFrameworkAgnosticLinks ? 'Copy Redirect Link' : 'Copy Link';
 
     return (
@@ -61,10 +68,16 @@ export function LinkIcon({
             aria-label="Heading link"
             tabIndex={0}
             {...props}
-            className={classnames(linkStyles.linkIcon, aStyles, { [linkStyles.active]: linkActive }, className)}
+            className={classnames(
+                linkStyles.linkIcon,
+                tooltipStyles.trigger,
+                aStyles,
+                { [linkStyles.active]: linkActive },
+                className
+            )}
             onClick={onClick}
         >
-            <span className={tooltipStyles}>{linkCopied ? 'Link copied!' : copyLabel}</span>
+            <span className={classnames(bubbleStyles)}>{linkCopied ? 'Link copied!' : copyLabel}</span>
             <Icon name="link" />
         </a>
     );

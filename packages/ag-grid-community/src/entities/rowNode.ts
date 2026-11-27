@@ -78,7 +78,7 @@ export class RowNode<TData = any>
 
     /**
      * The data as provided by the application.
-     * Can be `undefined` when using row grouping or during grid initialisation.
+     * Can be `undefined` when using row grouping, on total rows, or during grid initialisation.
      */
     public data: TData | undefined;
 
@@ -117,10 +117,6 @@ export class RowNode<TData = any>
 
     /** `true` if this node is a group and the group is the bottom level in the tree. */
     public leafGroup: boolean | undefined;
-
-    public firstChild: boolean;
-    public lastChild: boolean;
-    public childIndex: number;
 
     /** The current row index. If the row is filtered out or in a collapsed group, this value is set to `null`. */
     public rowIndex: number | null = null;
@@ -446,14 +442,14 @@ export class RowNode<TData = any>
     }
 
     public setDataAndId(data: TData, id: string | undefined): void {
-        const selectionSvc = this.beans.selectionSvc;
-        const oldNode = selectionSvc?.createDaemonNode?.(this);
+        const oldId = this.id;
         const oldData = this.data;
 
         this.data = data;
         this.updateDataOnDetailNode();
         this.setId(id);
-        selectionSvc?.syncInRowNode(this, oldNode);
+        // Client-side selection skips this when nothing is selected; server-side still syncs every row.
+        this.beans.selectionSvc?.syncInRowNode(this, oldId, oldData);
 
         const localEventService = this.__localEventService;
         if (localEventService) {
@@ -846,7 +842,6 @@ export class RowNode<TData = any>
      * PUBLIC USE ONLY: for internal use within AG Grid use the `__addEventListener` and `__removeEventListener` methods.
      */
     public addEventListener<T extends RowNodeEventType>(eventType: T, userListener: AgRowNodeEventListener<T>): void {
-        this.beans.validation?.checkRowEvents(eventType);
         if (typeof userListener !== 'function') {
             return; // ignoring non functions for compatibility
         }
@@ -877,25 +872,6 @@ export class RowNode<TData = any>
         if (localEventService.noRegisteredListenersExist()) {
             this.__localEventService = null;
         }
-    }
-
-    /**
-     * @deprecated v32.2.0 Check `node.detail` then user provided callback `isFullWidthRow` instead.
-     *
-     * Returns:
-     * - `true` if the node is a full width cell
-     * - `false` if the node is not a full width cell
-     */
-    public isFullWidthCell(): boolean {
-        // log deprecation
-        this.beans.log.warn(61);
-
-        if (this.detail) {
-            return true;
-        }
-
-        const isFullWidthCellFunc = this.beans.gos.getCallback('isFullWidthRow');
-        return isFullWidthCellFunc ? isFullWidthCellFunc({ rowNode: this }) : false;
     }
 
     /**

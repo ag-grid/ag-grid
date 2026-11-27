@@ -1,7 +1,9 @@
 import { waitFor } from '@testing-library/dom';
 import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';
 import {
+    ALL_SEVERITIES,
     ColumnFilterHarness,
+    LEGACY_FILTER_WARNING_IDS,
     TestGridsManager,
     asyncSetTimeout,
     canvasPolyfill,
@@ -29,6 +31,7 @@ import {
     CustomFilterModule,
     GridStateModule,
     TextFilterModule,
+    enableDevValidations,
     setupAgTestIds,
 } from 'ag-grid-community';
 import {
@@ -138,7 +141,7 @@ describe('Set Filter preservePreviousValues - integration', () => {
             const api = createGrid(rows('A', 'B', 'C'), {
                 filter: 'agSetColumnFilter',
                 filterParams: (params: IFilterParams) => ({
-                    preservePreviousValues: params.rowModel.getType() === 'clientSide',
+                    preservePreviousValues: typeof params.getValue === 'function',
                 }),
             });
             await asyncSetTimeout(0);
@@ -342,6 +345,7 @@ describe('Set Filter preservePreviousValues - integration', () => {
         });
 
         test('for a column recreated while the filter it replaces is still loading', async () => {
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: LEGACY_FILTER_WARNING_IDS });
             let finishLoading!: () => void;
             class LoadingFilter implements IFilterComp {
                 private readonly eGui = document.createElement('div');

@@ -32,9 +32,13 @@ This sets the nonce attribute on the style tag, so the grid will now work with t
 
 CSP nonces are global to a page, so when a page has multiple grids, all grids must have the same styleNonce set. Consider using [global grid options](./grid-interface/#global-grid-options) to set the styleNonce property to all grids.
 
+If your CSP cannot allow injected styles even with a nonce, load the grid's styles from [Static CSS Files](./theming-static-css/) instead.
+
 ### img-src
 
-The `img-src data:` directive is required because the grid uses data urls to embed SVG images in CSS files.
+By default the `img-src data:` directive is required because the grid uses data urls to embed SVG images in CSS files.
+
+If your CSP cannot allow `img-src data:` then load the grid's styles using [Static CSS Files with linked images](./theming-static-css/#linked-images) instead.
 
 ### font-src
 

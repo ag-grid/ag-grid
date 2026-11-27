@@ -4,7 +4,7 @@ import type { MockInstance } from 'vitest';
 import type { GetRowIdParams, GridOptions, IGetRowsParams } from 'ag-grid-community';
 import { InfiniteRowModelModule, RowSelectionModule } from 'ag-grid-community';
 
-// The "daemon" mechanism (selectionService.createDaemonNode/syncInRowNode) only fires when a live
+// The "daemon" mechanism (the daemon node built in selectionService.syncInRowNode) only fires when a live
 // RowNode object has its id changed while selected. That happens in the infinite row model, where a
 // block reuses the same RowNode instances across reloads (setDataAndId), so a re-sort/refresh with
 // getRowId can repurpose a selected node for different data.

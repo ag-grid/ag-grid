@@ -1,4 +1,4 @@
-import { _fuzzySuggestions } from 'ag-stack';
+import { _fuzzySuggestions, _staticCssGridFile } from 'ag-stack';
 
 import type { DynamicBeanName, UserComponentName } from '../../context/context';
 import type { Column } from '../../interfaces/iColumn';
@@ -9,7 +9,7 @@ import type {
     ValidationModuleName,
 } from '../../interfaces/iModule';
 import type { RowModelType } from '../../interfaces/iRowModel';
-import type { RowNodeEventType, RowPinnedType } from '../../interfaces/iRowNode';
+import type { RowPinnedType } from '../../interfaces/iRowNode';
 import { ENTERPRISE_MODULE_NAMES } from '../enterpriseModuleNames';
 import { getErrorLink, getValidationDocLink, toStringWithNullUndefined } from '../logging';
 import { resolveModuleNames } from '../resolvableModuleNames';
@@ -74,6 +74,11 @@ const moduleImportMsg = (moduleNames: ModuleName[], usesAgGridProvider?: boolean
 
 For more info see: ${getValidationDocLink()}/modules/`;
 };
+
+const legacyFilterMigrationLink = () => `${getValidationDocLink()}/enable-filter-handlers-migration/`;
+
+const legacyFilterModeAdvice = () =>
+    `Legacy filter mode stops being the default in v38, when \`enableFilterHandlers\` defaults to \`true\`. Migrate to filter handlers: ${legacyFilterMigrationLink()} . Or, to keep legacy filter mode for now, set \`enableFilterHandlers: false\`.`;
 
 function convertToUserModuleName(moduleName: ModuleName, inModuleRegistration = false) {
     if (inModuleRegistration && (moduleName === 'IntegratedCharts' || moduleName === 'Sparklines')) {
@@ -219,10 +224,19 @@ const missingChartsWithModule = (gridModule: 'IntegratedChartsModule' | 'Sparkli
 import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';
 import { ModuleRegistry } from 'ag-grid-community';
 import { ${gridModule} } from 'ag-grid-enterprise';
-    
+
 ModuleRegistry.registerModules([${gridModule}.with(AgChartsEnterpriseModule)]);
     ` as const;
 };
+
+type RemovedFilterInstanceMethodParams = { colId: string; filterInstanceType: string };
+
+const removedFilterInstanceMethod = (
+    method: string,
+    replacement: string,
+    { colId, filterInstanceType }: RemovedFilterInstanceMethodParams
+) =>
+    `\`${method}()\` was removed from grid-provided filter instances in v37, so this call does nothing. Use ${replacement} instead. To have TypeScript flag these calls, pass the filter type: \`api.getColumnFilterInstance<${filterInstanceType}>('${colId}')\`.`;
 
 const clipboardApiError = (method: string) =>
     `Unable to use the Clipboard API (\`navigator.clipboard.${method}()\`). ` +
@@ -255,8 +269,7 @@ export const AG_GRID_ERRORS = {
     8: ({ key }: { key: string }) => `Unknown key for navigation \`${key}\`` as const,
     9: ({ variable }: { variable: { cssName: string; defaultValue: number } }) =>
         `No value for \`${variable?.cssName}\`. This usually means that the grid has been initialised before styles have been loaded. The default value of \`${variable?.defaultValue}\` will be used and updated when styles load.` as const,
-    10: ({ eventType }: { eventType: RowNodeEventType }) =>
-        `As of v33, the \`${eventType}\` event is deprecated. Use the global \`modelUpdated\` event to determine when row children have changed.`,
+    // 10: retired (deprecated row node event warning)
     11: () => 'No gridOptions provided to `createGrid`' as const,
     12: ({ colKey }: { colKey: string | Column }) => ['column ', colKey, ' not found'] as const,
     13: () =>
@@ -350,8 +363,7 @@ export const AG_GRID_ERRORS = {
     58: () => 'no values found for select cellEditor' as const,
     59: () => 'cannot select pinned rows' as const,
     60: () => 'cannot select node until it has finished loading' as const,
-    61: () =>
-        'since version v32.2.0, `rowNode.isFullWidthCell()` has been deprecated. Instead check `rowNode.detail` followed by the user provided `isFullWidthRow` grid option.' as const,
+    // 61: retired (deprecated rowNode.isFullWidthCell warning)
     62: ({ colId }: { colId: string }) => `\`setFilterModel()\` - no column found for colId: ${colId}` as const,
     63: ({ colId }: { colId: string }) =>
         `\`setFilterModel()\` - unable to fully apply model, filtering disabled for colId: ${colId}` as const,
@@ -684,8 +696,7 @@ export const AG_GRID_ERRORS = {
     // 229: ({ index }: { index: number }) => ['invalid row index for ensureIndexVisible: ', index] as const,
     230: () =>
         '`detailCellRendererParams.template` is not supported by AG Grid React. To change the template, provide a Custom Detail Cell Renderer. See https://www.ag-grid.com/react-data-grid/master-detail-custom-detail/' as const,
-    // @deprecated v32 mark for removal as part of v32 deprecated features
-    231: () => 'As of v32, using custom components with `reactiveCustomComponents = false` is deprecated.' as const,
+    // 231: retired (`reactiveCustomComponents` deprecation warning)
     233: ({ methodName }: { methodName: string }) =>
         `Framework component is missing the method \`${methodName}()\`` as const,
     234: () =>
@@ -698,9 +709,9 @@ export const AG_GRID_ERRORS = {
         'Group Column Filter does not work with Tree Data enabled. Please disable Tree Data, or use a different filter.' as const,
     238: () => '`setRowCount` can only accept a positive row count.' as const,
     239: () =>
-        'Theming API and CSS File Themes are both used in the same page. In v33 we released the Theming API as the new default method of styling the grid. See the migration docs https://www.ag-grid.com/react-data-grid/theming-migration/. Because no value was provided to the `theme` grid option it defaulted to themeQuartz. But the file (`ag-grid.css`) is also included and will cause styling issues. Either pass the string `legacy` to the theme grid option to use v32 style themes, or remove `ag-grid.css` from the page to use Theming API.' as const,
+        'Theming API and Legacy Themes are both used in the same page. In v33 we released the Theming API as the new default method of styling the grid. See the migration docs https://www.ag-grid.com/react-data-grid/theming-migration/. Because no value was provided to the `theme` grid option it defaulted to themeQuartz. But the file (`ag-grid.css`) is also included and will cause styling issues. Use a Theming API theme like `themeQuartz`, or `staticCssTheme` to load its CSS from static files, e.g. for a strict Content Security Policy.' as const,
     240: ({ theme }: { theme: any }) =>
-        `theme grid option must be a Theming API theme object or the string \`legacy\`, received: ${theme}` as const,
+        `theme grid option must be a Theming API theme object, a theme created with \`staticCssTheme\`, or the deprecated string \`legacy\`, received: ${theme}` as const,
     // 241: () => `cannot select multiple rows when rowSelection.mode is set to 'singleRow'` as const,
     // 242: () => 'cannot select multiple rows when using rangeSelect' as const,
     243: () => 'Failed to deserialize state - each provided state object must be an object.' as const,
@@ -765,21 +776,7 @@ export const AG_GRID_ERRORS = {
     // 272: () => NoModulesRegisteredError(),
     273: ({ providedId, usedId }: { providedId: string; usedId: string }) =>
         `Provided column id \`${providedId}\` was already in use, ensure all column and group ids are unique. Using \`${usedId}\` instead.` as const,
-    274: ({ prop }: { prop: string }) => {
-        let msg = `Since v33, \`${prop}\` has been deprecated.`;
-        switch (prop) {
-            case 'maxComponentCreationTimeMs':
-                msg += ' This property is no longer required and so will be removed in a future version.';
-                break;
-            case 'setGridApi':
-                msg += ` This method is not called by AG Grid. To access the GridApi see: https://ag-grid.com/react-data-grid/grid-interface/#grid-api `;
-                break;
-            case 'children':
-                msg += ` For multiple versions AgGridReact does not support children.`;
-                break;
-        }
-        return msg;
-    },
+    // 274: retired (deprecated `AgGridReact` props warning)
     // 275: missingRowModelTypeError,
     276: () => 'Row Numbers Row Resizer cannot be used when Grid Columns have `autoHeight` enabled.' as const,
     277: ({ colId }: { colId: string }) =>
@@ -791,12 +788,7 @@ export const AG_GRID_ERRORS = {
     281: ({ colId }: { colId: string }) =>
         `Filter for column \`${colId}\` does not have \`filterParams.buttons\`, but the new Filters Tool Panel has buttons configured. Either configure buttons for the filter, or disable buttons on the Filters Tool Panel.` as const,
     282: () => 'New filter tool panel requires `enableFilterHandlers: true`.' as const,
-    283: () =>
-        'As of v34, use the same method on the filter handler (`api.getColumnFilterHandler(colKey)`) instead.' as const,
-    284: () =>
-        'As of v34, filters are active when they have a model. Use `api.getColumnFilterModel()` instead.' as const,
-    285: () => 'As of v34, use (`api.getColumnFilterModel()`) instead.' as const,
-    286: () => 'As of v34, use (`api.setColumnFilterModel()`) instead.' as const,
+    // 283-286: retired (deprecated grid-provided filter instance method warnings)
     287: () => '`api.doFilterAction()` requires `enableFilterHandlers = true' as const,
     288: () => '`api.getColumnFilterModel(key, true)` requires `enableFilterHandlers = true' as const,
     289: ({ rowModelType }: { rowModelType: string }) =>
@@ -954,8 +946,8 @@ export const AG_GRID_ERRORS = {
     331: ({ rowId }: { rowId: string }) =>
         `Row ID \`${rowId}\` is reserved by AG Grid and should not be returned from \`getRowId\`.` as const,
     332: ({ replacements }: { replacements: string[] }) =>
-        `Legacy theme CSS variables are set on the grid, but the Theming API is in use and ignores them, so they have no effect: ${(replacements ?? []).join(', ')}. Either set the equivalent Theming API variable, or pass the string \`legacy\` to the \`theme\` grid option to keep using v32 style themes. See the migration guide: ${getValidationDocLink()}/theming-migration/` as const,
-    333: ({ error }: { error: unknown }) => ['`onIssueRaised` threw:', error],
+        `Legacy theme CSS variables are set on the grid, but Theming API themes (including static CSS themes) ignore them, so they have no effect: ${(replacements ?? []).join(', ')}. Set the equivalent Theming API variable where there is one. See the migration guide: ${getValidationDocLink()}/theming-migration/` as const,
+    333: ({ callback, error }: { callback: string; error: unknown }) => [`\`${callback}\` threw:`, error],
     // 334: retired (`GridChartsModule` warning)
     335: ({ colId }: { colId: string }) =>
         `Column \`${colId}\` sets \`filter.handler\` or \`filter.doesFilterPass\`, which need \`enableFilterHandlers\`, so the default filter is used, as \`filter: true\` does.` as const,
@@ -973,6 +965,46 @@ export const AG_GRID_ERRORS = {
         `Advanced Filter model names colId \`${colId}\`, but no column has this id, so that condition cannot be applied.` as const,
     342: ({ colId }: { colId: string }) =>
         `Advanced Filter model names column \`${colId}\`, which is not available in the Advanced Filter, so that condition cannot be applied. A column is available when filtering is enabled on it and it is visible, grouped, or \`includeHiddenColumnsInAdvancedFilter\` is set.` as const,
+    343: () =>
+        `A custom filter component is used without \`enableFilterHandlers\` set, so it runs in legacy filter mode. ${legacyFilterModeAdvice()}` as const,
+    344: () =>
+        `A custom floating filter component is used without \`enableFilterHandlers\` set, so it runs in legacy filter mode. ${legacyFilterModeAdvice()}` as const,
+    345: () =>
+        `The \`filterModified\` event is listened to without \`enableFilterHandlers\` set. It is deprecated and does not fire with filter handlers; use \`filterUiChanged\` or \`floatingFilterUiChanged\` instead. ${legacyFilterModeAdvice()}` as const,
+    346: () =>
+        `A Multi Filter sets \`buttons\` or \`closeOnApply\` without \`enableFilterHandlers\` set. With filter handlers, buttons on the child filters are ignored and buttons on the Multi Filter apply to all of its children. ${legacyFilterModeAdvice()}` as const,
+    347: () =>
+        `A legacy Multi Filter method (\`getModel\`, \`setModel\`, \`isFilterActive\`, \`doesFilterPass\`, \`applyModel\` or \`getModelFromUi\`) was called without \`enableFilterHandlers\` set. With filter handlers, the Multi Filter instance does not have these methods; use the grid's filter model API instead. ${legacyFilterModeAdvice()}` as const,
+    348: () =>
+        `\`enableFilterHandlers: false\` is deprecated. Legacy filter mode will be removed in a major version after v38. See ${legacyFilterMigrationLink()}` as const,
+    349: () =>
+        `The \`theme\` grid option is a static CSS theme, but legacy theme CSS from \`ag-grid-community/styles\` is loaded. Static CSS themes use the CSS files in \`ag-grid-community/css\`, which cannot be combined with the legacy files. See ${getValidationDocLink()}/theming-static-css/` as const,
+    350: ({ linked }: { linked: boolean }) =>
+        `The \`theme\` grid option is a static CSS theme, but \`ag-grid-community/css/${_staticCssGridFile(linked)}.css\` has not loaded, so the grid is unstyled. Load it before creating the grid. See ${getValidationDocLink()}/theming-static-css/` as const,
+    351: ({ iconSet, linked, file }: { iconSet: string; linked: boolean; file: string }) =>
+        `The grid's static CSS theme uses the \`${iconSet}\`${linked ? ' (linked)' : ''} icon set, but its CSS has not loaded, so the grid has no icons. Load \`ag-grid-community/css/${file}.css\` after \`${_staticCssGridFile(linked)}.css\`. See ${getValidationDocLink()}/theming-static-css/#loading-icon-sets` as const,
+    352: ({ options }: { options: string[] }) =>
+        `\`${(options ?? []).join('`, `')}\` have no effect with a static CSS theme, because the grid injects no styles. See ${getValidationDocLink()}/theming-static-css/` as const,
+    353: ({ option, value, valid }: { option: string; value: string; valid: string }) =>
+        `\`staticCssTheme\` was given an unknown ${option}: \`${value}\`, so it has no effect. Valid values are ${valid}. See ${getValidationDocLink()}/theming-static-css/` as const,
+    354: ({ linked }: { linked: boolean }) =>
+        `The grid's static CSS theme ${linked ? 'sets' : 'does not set'} \`useLinkedImages\`, but \`${_staticCssGridFile(!linked)}.css\` is loaded. Load \`ag-grid-community/css/${_staticCssGridFile(linked)}.css\` instead, and the matching icon set file. See ${getValidationDocLink()}/theming-static-css/#linked-images` as const,
+    355: (params: RemovedFilterInstanceMethodParams) =>
+        removedFilterInstanceMethod('getModel', `\`api.getColumnFilterModel('${params.colId}')\``, params),
+    356: (params: RemovedFilterInstanceMethodParams) =>
+        removedFilterInstanceMethod('setModel', `\`api.setColumnFilterModel('${params.colId}', model)\``, params),
+    357: (params: RemovedFilterInstanceMethodParams) =>
+        removedFilterInstanceMethod(
+            'isFilterActive',
+            `\`api.getColumnFilterModel('${params.colId}') != null\``,
+            params
+        ),
+    358: (params: RemovedFilterInstanceMethodParams) =>
+        removedFilterInstanceMethod(
+            'doesFilterPass',
+            `\`doesFilterPass()\` on the handler from \`api.getColumnFilterHandler('${params.colId}')\``,
+            params
+        ),
     // When adding a code above this line, raise `MAX_ERROR_ID` below to match.
 };
 
@@ -988,7 +1020,7 @@ export type ErrorId = keyof ErrorMap;
  *
  * @knipIgnore Read by the docs site's error-page route
  */
-export const MAX_ERROR_ID = 342;
+export const MAX_ERROR_ID = 358;
 
 type ErrorValue<TId extends ErrorId | null> = TId extends ErrorId ? ErrorMap[TId] : never;
 export type GetErrorParams<TId extends ErrorId> =

@@ -1,8 +1,16 @@
-import type { FilterAction, IFilter, IFilterParams } from '../../interfaces/iFilter';
+import type { FilterAction, FilterDisplayParams, IFilterParams, SharedFilterUi } from '../../interfaces/iFilter';
+
+/**
+ * Parameters provided by the grid to the `init` and `refresh` methods of a `ProvidedFilter`.
+ * For the properties you configure in `colDef.filterParams`, use `IProvidedFilterParams`.
+ */
+export type ProvidedFilterDisplayParams<TData = any, TModel = any> = IProvidedFilterParams &
+    FilterDisplayParams<TData, any, TModel>;
 
 /**
  * Parameters provided by the grid to the `init` method of a `ProvidedFilter`.
- * Do not use in `colDef.filterParams` - see `IProvidedFilterParams` instead.
+ * For the properties you configure in `colDef.filterParams`, use `IProvidedFilterParams`.
+ * @deprecated v37 Use `ProvidedFilterDisplayParams` instead.
  */
 export type ProvidedFilterParams<TData = any> = IProvidedFilterParams & IFilterParams<TData>;
 /**
@@ -43,18 +51,22 @@ export interface IProvidedFilterParams {
 }
 /** Interface contract for the public aspects of the ProvidedFilter implementation(s). */
 
-export interface IProvidedFilter extends IFilter {
+export interface IProvidedFilter extends SharedFilterUi {
     /** The type of filter. Matches the `filterType` property in the filter model */
     readonly filterType: 'text' | 'number' | 'bigint' | 'date' | 'set' | 'multi';
     /**
-     * Applies the model shown in the UI (so that `getModel()` will now return what was in the UI
+     * Applies the model shown in the UI (so that `api.getColumnFilterModel()` will now return what was in the UI
      * when `applyModel()` was called).
      * @param source The source of the method call. Default 'api'.
+     *
+     * @deprecated v37 Use `enableFilterHandlers` and the grid filter model API (`api.setColumnFilterModel`) instead. See [Migrating to Filter Handlers](https://www.ag-grid.com/javascript-data-grid/enable-filter-handlers-migration/).
      */
     applyModel(source?: 'api' | 'ui' | 'rowDataUpdated'): boolean;
     /**
      * Returns the filter model from the UI. If changes have been made to the UI but not yet
      * applied, this model will reflect those changes.
+     *
+     * @deprecated v37 Use `enableFilterHandlers` and the grid filter model API (`api.getColumnFilterModel`) instead. See [Migrating to Filter Handlers](https://www.ag-grid.com/javascript-data-grid/enable-filter-handlers-migration/).
      */
     getModelFromUi(): any;
 }

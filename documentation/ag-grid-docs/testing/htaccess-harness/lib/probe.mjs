@@ -4,8 +4,7 @@ import http from 'node:http';
 const agent = new http.Agent({ keepAlive: true, maxSockets: 16 });
 
 /** Hosts the harness serves (so their redirects are followed locally rather than to production). */
-export const isHarnessHost = (host, extraHosts) =>
-    /(^|\.)ag-grid\.com$/i.test(host) || /^(www\.)?angulargrid\.com$/i.test(host) || extraHosts.includes(host);
+export const isHarnessHost = (host, extraHosts) => /(^|\.)ag-grid\.com$/i.test(host) || extraHosts.includes(host);
 
 /** The listener a request goes to: the https stand-in, or the plain-http one. */
 const portFor = (scheme, ctx) => (scheme === 'http' ? ctx.httpPort : ctx.port);

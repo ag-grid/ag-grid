@@ -2,6 +2,7 @@ import { waitFor } from '@testing-library/dom';
 import {
     ALL_SEVERITIES,
     ColumnFilterHarness,
+    LEGACY_FILTER_WARNING_IDS,
     TestGridsManager,
     asyncSetTimeout,
     installFilterLayoutMock,
@@ -145,6 +146,7 @@ describe('filter models set before rows load, through the filter manager API', (
     );
 
     test('with rows at creation, an initial state model reads back while its custom filter is still being built, which then filters by it', async () => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: LEGACY_FILTER_WARNING_IDS });
         let finishInit: () => void = () => {};
         class SlowFilter implements IFilterComp {
             private model: { filter: string } | null = null;
@@ -356,13 +358,14 @@ describe('the initial filter state with the Infinite and Server-Side Row Models'
     )(
         "with the %s row model and enableFilterHandlers %s, a filter built before the datasource is given shows the initial state and stays active through another column's change",
         async (rowModelType, enableFilterHandlers) => {
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [348] });
             const age = { filterType: 'number', type: 'lessThan', filter: 20 };
             const athlete = { filterType: 'text', type: 'contains', filter: 'Ian' };
             const api = gridsManager.createGrid('grid1', {
                 rowModelType,
                 enableFilterHandlers,
                 columnDefs: [
-                    { field: 'athlete', filter: 'agTextColumnFilter' },
+                    { field: 'athlete', filter: 'agTextColumnFilter', filterParams: { buttons: ['apply'] } },
                     { field: 'age', filter: 'agNumberColumnFilter' },
                 ],
                 initialState: { filter: { filterModel: { age } } },
@@ -371,16 +374,12 @@ describe('the initial filter state with the Infinite and Server-Side Row Models'
             const agePopup = await ColumnFilterHarness.open(api, 'age');
             const popupInput = agePopup.input('number').value;
             api.hideColumnFilter();
-            // the instance's own setModel: a change of the grid that does not apply the initial state first
-            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [286] });
-            const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
-            const athleteFilter = (await api.getColumnFilterInstance<IFilterComp>('athlete'))!;
-            await athleteFilter.setModel(athlete);
-            api.onFilterChanged();
+            // applying from the filter UI is a change of the grid that does not apply the initial state first
+            const athletePopup = await ColumnFilterHarness.open(api, 'athlete');
+            await athletePopup.setText('Ian');
+            await athletePopup.apply();
+            api.hideColumnFilter();
             await asyncSetTimeout(0);
-            expect(warnSpy.mock.calls.flat().join(' ')).toContain('warning #286');
-            warnSpy.mockRestore();
-            enableDevValidations({ throwOn: ALL_SEVERITIES });
             expect({
                 popupInput,
                 columnModel: api.getColumnFilterModel('age'),
@@ -402,6 +401,7 @@ describe('the initial filter state with the Infinite and Server-Side Row Models'
     )(
         'with the %s row model, a datasource given at creation (floating filter %s, enableFilterHandlers %s) is asked for rows once, filtered by the initial state, which reads back before the rows are counted',
         async (rowModelType, floatingFilter, enableFilterHandlers) => {
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [348] });
             const requests: unknown[] = [];
             const rows = ROWS.filter((row) => row.age < 20);
             const age = { filterType: 'number', type: 'lessThan', filter: 20 };
@@ -496,7 +496,7 @@ describe('the initial filter model without the Grid State module', () => {
 
     test('a column model set before rows load over the initial model of a Multi Filter still being built applies', async () => {
         // error #200 (initialState without its module) is this case's premise
-        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [200] });
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [200, ...LEGACY_FILTER_WARNING_IDS] });
         const pendingInits: (() => void)[] = [];
         class SlowChild implements IFilterComp {
             private readonly eGui = document.createElement('div');

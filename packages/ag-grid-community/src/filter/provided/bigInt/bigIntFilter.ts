@@ -1,16 +1,10 @@
-import type { FilterDisplayParams } from '../../../interfaces/iFilter';
 import type { GridInputTextField } from '../../../widgets/gridWidgetTypes';
-import type { ICombinedSimpleModel } from '../iSimpleFilter';
 import { _bindFilterCallback, getValidityMessageKey } from '../simpleFilterUtils';
 import type { RenderChange } from '../textInputSimpleFilter';
 import { TextInputSimpleFilter } from '../textInputSimpleFilter';
 import { DEFAULT_BIGINT_FILTER_OPTIONS } from './bigIntFilterConstants';
 import { getAllowedCharPattern, mapValuesFromBigIntFilterModel, stringToBigInt } from './bigIntFilterUtils';
-import type { BigIntFilterModel, IBigIntFilterParams } from './iBigIntFilter';
-
-/** temporary type until `BigIntFilterParams` is updated as breaking change */
-type BigIntFilterDisplayParams = IBigIntFilterParams &
-    FilterDisplayParams<any, any, BigIntFilterModel | ICombinedSimpleModel<BigIntFilterModel>>;
+import type { BigIntFilterDisplayParams, BigIntFilterModel } from './iBigIntFilter';
 
 export class BigIntFilter extends TextInputSimpleFilter<
     BigIntFilterModel,

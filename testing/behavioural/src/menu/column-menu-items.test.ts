@@ -1,6 +1,6 @@
 import { getByRole, waitFor } from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
-import { TestGridsManager, clickMenuOption, menuOption, openMenuOption, polyfillOffsetParent } from 'ag-test-utils';
+import { TestGridsManager, clickMenuOption, menuOption, openMenuOption } from 'ag-test-utils';
 import type { Mock } from 'vitest';
 
 import type {
@@ -12,8 +12,6 @@ import type {
 } from 'ag-grid-community';
 import { ClientSideRowModelModule, ValidationModule } from 'ag-grid-community';
 import { AllEnterpriseModule, ColumnMenuModule, ColumnsToolPanelModule } from 'ag-grid-enterprise';
-
-let restoreOffsetParent: (() => void) | undefined;
 
 function fireContextMenu(element: HTMLElement): void {
     element.dispatchEvent(new MouseEvent('contextmenu', { bubbles: true, cancelable: true, clientX: 10, clientY: 10 }));
@@ -37,8 +35,6 @@ describe('getColumnMenuItems / columnMenuItems on the column menu', () => {
 
     afterEach(() => {
         gridMgr.reset();
-        restoreOffsetParent?.();
-        restoreOffsetParent = undefined;
         vi.resetAllMocks();
     });
 
@@ -51,7 +47,6 @@ describe('getColumnMenuItems / columnMenuItems on the column menu', () => {
             getColumnMenuItems: () => [{ name: 'Custom' }],
         });
 
-        restoreOffsetParent = polyfillOffsetParent();
         api.showColumnMenu('athlete');
         await openMenuOption('Custom');
 
@@ -74,7 +69,6 @@ describe('getColumnMenuItems / columnMenuItems on the column menu', () => {
             },
         });
 
-        restoreOffsetParent = polyfillOffsetParent();
         api.showColumnMenu('athlete');
         await openMenuOption('Custom');
 
@@ -92,7 +86,6 @@ describe('getColumnMenuItems / columnMenuItems on the column menu', () => {
             getMainMenuItems,
         });
 
-        restoreOffsetParent = polyfillOffsetParent();
         api.showColumnMenu('athlete');
         await openMenuOption('FromNewGrid');
 
@@ -113,7 +106,6 @@ describe('getColumnMenuItems / columnMenuItems on the column menu', () => {
             rowData,
         });
 
-        restoreOffsetParent = polyfillOffsetParent();
         api.showColumnMenu('athlete');
         await openMenuOption('FromNewCol');
 
@@ -127,7 +119,6 @@ describe('getColumnMenuItems / columnMenuItems on the column menu', () => {
             getMainMenuItems: (params) => [...params.defaultItems, { name: 'LegacyStillWorks' }],
         });
 
-        restoreOffsetParent = polyfillOffsetParent();
         api.showColumnMenu('athlete');
         await openMenuOption('LegacyStillWorks');
     });
@@ -139,7 +130,6 @@ describe('getColumnMenuItems / columnMenuItems on the column menu', () => {
             getColumnMenuItems: () => ['scrollIntoView', 'value'],
         });
 
-        restoreOffsetParent = polyfillOffsetParent();
         api.showColumnMenu('age');
         await openMenuOption('Scroll Age into View');
         await userEvent.click(await openMenuOption('Add Age to values'));
@@ -154,7 +144,6 @@ describe('getColumnMenuItems / columnMenuItems on the column menu', () => {
             getColumnMenuItems: () => ['value', 'pivot'],
         });
 
-        restoreOffsetParent = polyfillOffsetParent();
         api.showColumnMenu('age');
         await openMenuOption('Add Age to values');
 
@@ -172,7 +161,6 @@ describe('getColumnMenuItems / columnMenuItems on the column menu', () => {
         });
         const valueCols = () => api.getValueColumns().map((column) => `${column.getColId()}:${column.getAggFunc()}`);
 
-        restoreOffsetParent = polyfillOffsetParent();
         api.showColumnMenu('age');
         await clickMenuOption('Value Aggregation');
         await clickMenuOption('Average');
@@ -228,13 +216,10 @@ describe('column menu item action params', () => {
             initialState: { columnOrder: { orderedColIds: ['athlete', 'age', 'country', 'year', 'gold', 'silver'] } },
             getColumnMenuItems: (params) => [...params.defaultItems, { name: 'Log Params', action }],
         });
-        restoreOffsetParent = polyfillOffsetParent();
     });
 
     afterEach(() => {
         gridMgr.reset();
-        restoreOffsetParent?.();
-        restoreOffsetParent = undefined;
         action.mockReset();
     });
 
@@ -292,13 +277,10 @@ describe('column menu item action params from filler group headers', () => {
             suppressColumnVirtualisation: true,
             getColumnMenuItems: (params) => [...params.defaultItems, { name: 'Log Params', action }],
         });
-        restoreOffsetParent = polyfillOffsetParent();
     });
 
     afterEach(() => {
         gridMgr.reset();
-        restoreOffsetParent?.();
-        restoreOffsetParent = undefined;
         action.mockReset();
     });
 
@@ -474,8 +456,6 @@ describe('checkable column menu items aria', () => {
 
     afterEach(() => {
         gridMgr.reset();
-        restoreOffsetParent?.();
-        restoreOffsetParent = undefined;
     });
 
     /** Each option of the open menu that contains `optionName`, keyed by its text, as `role aria-checked`. */
@@ -501,7 +481,6 @@ describe('checkable column menu items aria', () => {
             getColumnMenuItems: () => ['pinSubMenu'],
         });
 
-        restoreOffsetParent = polyfillOffsetParent();
         api.showColumnMenu('age');
         await clickMenuOption('Pin Column');
         await openMenuOption('Pin Left');
@@ -532,7 +511,6 @@ describe('checkable column menu items aria', () => {
             getColumnMenuItems: () => ['valueAggSubMenu'],
         });
 
-        restoreOffsetParent = polyfillOffsetParent();
         api.showColumnMenu('age');
         await clickMenuOption('Value Aggregation');
         await openMenuOption('Sum');
@@ -553,7 +531,6 @@ describe('checkable column menu items aria', () => {
             getColumnMenuItems: () => ['showValuesAsSubMenu'],
         });
 
-        restoreOffsetParent = polyfillOffsetParent();
         api.showColumnMenu('age');
         await clickMenuOption('Show Values As');
         await openMenuOption('% of Grand Total');
@@ -575,7 +552,6 @@ describe('checkable column menu items aria', () => {
             ],
         });
 
-        restoreOffsetParent = polyfillOffsetParent();
         api.showColumnMenu('athlete');
         await openMenuOption('Plain');
         expect(menuOptionsAria('Plain')).toEqual({
@@ -595,7 +571,6 @@ describe('checkable column menu items aria', () => {
             ],
         });
 
-        restoreOffsetParent = polyfillOffsetParent();
         api.showColumnMenu('athlete');
         await openMenuOption('Checked');
         expect(menuOptionsAria('Checked')).toEqual({
@@ -621,7 +596,6 @@ describe('checkable column menu items aria', () => {
             ],
         });
 
-        restoreOffsetParent = polyfillOffsetParent();
         api.showColumnMenu('athlete');
         await clickMenuOption('Size');
         await openMenuOption('Small');

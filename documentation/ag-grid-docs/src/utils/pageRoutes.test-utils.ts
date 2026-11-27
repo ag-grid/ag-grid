@@ -15,6 +15,8 @@ import type { DocsPage } from './pages';
 const PAGES_DIR = join(__dirname, '../pages');
 const DOCS_CONTENT_DIR = join(__dirname, '../content/docs');
 const CAMPAIGN_CONTENT_DIR = join(__dirname, '../content/campaigns/bryntum-products');
+const COMPARE_CONTENT_DIR = join(__dirname, '../content/compare');
+const ALTERNATIVES_CONTENT_DIR = join(__dirname, '../content/alternatives');
 
 type Params = Record<string, string>;
 
@@ -39,6 +41,9 @@ const isDocsRoute = (framework: string, pageName: string) => DOCS_ROUTES.has(`${
 const isBryntumCampaign = (product: string) =>
     /^bryntum-/.test(product) &&
     existsSync(join(CAMPAIGN_CONTENT_DIR, `${product.replace(/^bryntum-/, '').replaceAll('-', '')}.json`));
+const isComparePage = (comparePage: string) => existsSync(join(COMPARE_CONTENT_DIR, `${comparePage}.json`));
+const isAlternativePage = (alternativePage: string) =>
+    existsSync(join(ALTERNATIVES_CONTENT_DIR, `${alternativePage}.json`));
 const isRecordedSession = (slug: string) =>
     SESSIONS.some((session) => session.youtubeUrl && sessionSlug(session.title) === slug);
 
@@ -53,6 +58,10 @@ const DYNAMIC_ROUTE_PARAMS: Record<string, (params: Params) => boolean> = {
     '[framework]-data-grid.md.ts': ({ framework }) => FRAMEWORK_LANDING_HUBS.some((hub) => hub === framework),
     'campaigns/[bryntumProduct].astro': ({ bryntumProduct }) => isBryntumCampaign(bryntumProduct),
     'campaigns/[bryntumProduct].md.ts': ({ bryntumProduct }) => isBryntumCampaign(bryntumProduct),
+    'compare/[comparePage].astro': ({ comparePage }) => isComparePage(comparePage),
+    'compare/[comparePage].md.ts': ({ comparePage }) => isComparePage(comparePage),
+    'alternatives/[alternativePage].astro': ({ alternativePage }) => isAlternativePage(alternativePage),
+    'alternatives/[alternativePage].md.ts': ({ alternativePage }) => isAlternativePage(alternativePage),
     'session/[slug].astro': ({ slug }) => isRecordedSession(slug),
     'session/[slug].md.ts': ({ slug }) => isRecordedSession(slug),
 };

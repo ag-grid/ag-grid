@@ -1,0 +1,106 @@
+{
+    "meta": {
+        "title": "The Syncfusion alternative with a free MIT-licensed core | AG Grid",
+        "description": "Looking for a Syncfusion Data Grid alternative? AG Grid is a JavaScript data grid for React, Angular, Vue and JavaScript with a free MIT-licensed core. Compare features, pricing and licensing.",
+        "targetTerm": "syncfusion alternative"
+    },
+    "analyticsPrefix": "alternative-syncfusion",
+    "technicalReviewer": "james",
+    "lastUpdated": "2026-11-23",
+    "competitor": {
+        "name": "Syncfusion Data Grid",
+        "shortName": "Syncfusion",
+        "slug": "syncfusion",
+        "url": "https://www.syncfusion.com/javascript-ui-controls/js-data-grid",
+        "logo": "/images/compare/logos/syncfusion.png"
+    },
+    "hero": {
+        "heading": "A Syncfusion alternative",
+        "subHeading": "Looking for a Syncfusion alternative? AG Grid is a JavaScript data grid for React, Angular, Vue and plain JavaScript. AG Grid Community is free under the MIT licence for organisations of any size."
+    },
+    "whySwitch": {
+        "heading": "Why teams look for a Syncfusion Data Grid alternative",
+        "reasons": [
+            "Syncfusion's free Community License only applies to organisations with under $1M annual gross revenue, 5 or fewer developers and 10 or fewer employees that have never received more than $3M in outside capital. Government bodies funded by taxes are not eligible.",
+            "Above those limits, the Grid SDK is an annual subscription per developer.",
+            "Pivoting and tree data are separate Syncfusion components rather than features of the grid."
+        ]
+    },
+    "whyProduct": [
+        {
+            "title": "One grid for every framework",
+            "body": "Official packages for React, Angular and Vue, plus plain JavaScript, with the same grid features in each."
+        },
+        {
+            "title": "Large datasets in the free version",
+            "body": "Row and column virtualisation are on by default in AG Grid Community, and the Infinite Row Model loads data from the server as users scroll."
+        },
+        {
+            "title": "Analysis built into the grid",
+            "body": "AG Grid Enterprise adds row grouping, aggregation, pivoting, master/detail, Excel export and integrated charts to the same component."
+        },
+        {
+            "title": "Clear licensing",
+            "body": "AG Grid Community is MIT licensed. AG Grid Enterprise is a perpetual licence with one year of updates and support."
+        }
+    ],
+    "features": [
+        "Frameworks",
+        "Row virtualisation",
+        "Server-side data",
+        "Row grouping",
+        "Pivoting",
+        "Tree data",
+        "Integrated charts",
+        "Excel (.xlsx) export"
+    ],
+    "faq": [
+        {
+            "question": "What is the best alternative to Syncfusion Data Grid?",
+            "answer": "AG Grid is a JavaScript data grid with official support for React, Angular, Vue and plain JavaScript. AG Grid Community is free under the MIT licence for any organisation, and AG Grid Enterprise adds row grouping, pivoting, Excel export and integrated charts with a perpetual licence."
+        },
+        {
+            "question": "Is there a free alternative to Syncfusion?",
+            "answer": "Yes. AG Grid Community is free and open source under the MIT licence, including for commercial use, with no revenue or headcount limits."
+        },
+        {
+            "question": "How much does Syncfusion cost?",
+            "answer": "The Syncfusion Grid SDK and the UI Component Suite are annual subscriptions per developer, with a minimum term of one year, and Syncfusion publishes their prices on its pricing page. A free Community License is available to organisations with under $1M annual gross revenue, 5 or fewer developers and 10 or fewer employees that have never received more than $3M in outside capital. Government bodies funded by taxes are not eligible."
+        },
+        {
+            "question": "What is Syncfusion used for?",
+            "answer": "Syncfusion sells UI component libraries, including a data grid, for web, desktop and mobile platforms such as JavaScript, React, Angular, Vue, Blazor and .NET."
+        },
+        {
+            "question": "How much does an AG Grid licence cost?",
+            "answer": "AG Grid Community is free. AG Grid Enterprise, and the Enterprise Bundle with AG Charts Enterprise, are paid perpetual licences that include one year of updates and support. See [AG Grid pricing](/license-pricing/) for prices."
+        }
+    ],
+    "proseClaims": [
+        {
+            "claim": "Syncfusion's free Community License is limited to organisations with under $1M annual gross revenue, 5 or fewer developers and 10 or fewer employees that have never received more than $3M in outside capital; government bodies funded by taxes are not eligible; eligible organisations apply and are validated.",
+            "sourceUrl": "https://www.syncfusion.com/products/communitylicense",
+            "checkedOn": "2026-11-11"
+        },
+        {
+            "claim": "Organisations outside the Community License limits need a paid licence; the Grid SDK and UI Component Suite are annual subscriptions per developer with a minimum term of one year, and their prices are on the Syncfusion pricing page.",
+            "sourceUrl": "https://www.syncfusion.com/sales/pricing",
+            "checkedOn": "2026-11-19"
+        },
+        {
+            "claim": "In Syncfusion, pivoting and tree data are separate Pivot Table and Tree Grid components, included in the Grid SDK.",
+            "sourceUrl": "https://help.syncfusion.com/grid-sdk/overview",
+            "checkedOn": "2026-11-11"
+        },
+        {
+            "claim": "Syncfusion sells UI component libraries for web, desktop and mobile applications, including a data grid.",
+            "sourceUrl": "https://www.syncfusion.com/sales/pricing",
+            "checkedOn": "2026-11-11"
+        },
+        {
+            "claim": "Syncfusion Data Grid supports JavaScript, React, Angular, Vue, Blazor and other .NET platforms.",
+            "sourceUrl": "https://help.syncfusion.com/grid-sdk/overview",
+            "checkedOn": "2026-11-19"
+        }
+    ]
+}

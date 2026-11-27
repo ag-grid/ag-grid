@@ -208,7 +208,13 @@ jobs:
         id: setup
         uses: ./.github/actions/setup-nx
         with:
+          # The only rw job, so the only one that saves node_modules and the yarn download cache.
+          # A PR's node_modules copy (saved only when it changes the files the key hashes) gives its
+          # later jobs and runs an exact hit, so they never need the yarn cache; saving that too
+          # stored about 0.6 GB per run of such a PR against the repo's 10 GB Actions cache budget.
           cache_mode: 'rw'
+          save_yarn_cache: ${{ github.event_name != 'pull_request' }}
+          nx_cache_scheme: merged
 
       - name: Prepare Snapshot Branch
         uses: ./.github/actions/snapshot-prepare
@@ -260,6 +266,12 @@ jobs:
           echo "pkg_matrix=${pkg_matrix}" >> $GITHUB_OUTPUT
           echo "Package test matrix determined to be: ${pkg_matrix}"
 
+      - name: Upload Nx cache part
+        if: ${{ !cancelled() }}
+        uses: ./external/ag-shared/github/actions/nx-cache-part
+        with:
+          name: init
+
   test:
     runs-on: ubuntu-24.04
     timeout-minutes: 45
@@ -302,6 +314,7 @@ jobs:
           # consumer job below.
           yarn_postinstall: no-install
           cache_mode: ro
+          nx_cache_scheme: merged
 
       - name: Unit tests (Vitest workspace, sharded)
         # Runs the affected Vitest workspace unit projects (ag-stack/community/enterprise/locale/behavioural)
@@ -336,6 +349,12 @@ jobs:
         id: assertNoDebugger
         run: |
           ./scripts/assertNoDebugger.sh
+      - name: Upload Nx cache part
+        if: ${{ !cancelled() }}
+        uses: ./external/ag-shared/github/actions/nx-cache-part
+        with:
+          name: test-${{ matrix.shard }}
+
       - name: Persist test results
         # Shards 1-3 emit reports/workspace.xml (a subset each); shard 0 emits the tooling projects' JUnit
         # XMLs. Artifact names are keyed by shard; the report job merges by basename across shard artifacts.
@@ -376,11 +395,18 @@ jobs:
         with:
           yarn_postinstall: no-install
           cache_mode: ro
+          nx_cache_scheme: merged
 
       - name: nx test:e2e
         id: tests
         run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t test:e2e -c
           staging --exclude 'tag:module-size' --exclude all
+
+      - name: Upload Nx cache part
+        if: ${{ !cancelled() }}
+        uses: ./external/ag-shared/github/actions/nx-cache-part
+        with:
+          name: e2e-${{ matrix.shard }}
 
       - name: Persist test results
         if: always() && matrix.shard != 0
@@ -413,6 +439,7 @@ jobs:
         with:
           yarn_postinstall: no-install
           cache_mode: ro
+          nx_cache_scheme: merged
 
       - name: nx format:check
         id: format
@@ -428,6 +455,12 @@ jobs:
         id: lint
         run: |
           yarn nx lint
+
+      - name: Upload Nx cache part
+        if: ${{ !cancelled() }}
+        uses: ./external/ag-shared/github/actions/nx-cache-part
+        with:
+          name: lint
 
   build:
     runs-on: ubuntu-latest
@@ -451,6 +484,7 @@ jobs:
         with:
           yarn_postinstall: no-install
           cache_mode: ro
+          nx_cache_scheme: merged
 
       - name: nx build
         id: build
@@ -489,6 +523,50 @@ jobs:
           # Already staged in the layout it is published at, UMD bundles included. ag-grid UMD
           # builds with sourcemap:false, so there are no .map files.
           path: dist/pr-preview
+
+      - name: Upload Nx cache part
+        if: ${{ !cancelled() }}
+        uses: ./external/ag-shared/github/actions/nx-cache-part
+        with:
+          name: build
+
+  # Merges the Nx cache parts the jobs above uploaded into one cache for this PR or branch, so
+  # parallel jobs never save over each other. Runs when they fail too: Nx caches only successful
+  # tasks. Docs uploads no part (the docs site build is too large to be worth caching; Build
+  # contributes the packages it needs), and Framework Package Tests none either: they run only on
+  # latest and release branches, with --configuration=update.
+  nx-cache:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    name: Nx Cache
+    needs: [ detect-changes, init, test, e2e, lint, build ]
+    if: ${{ !cancelled() && needs.init.result != 'skipped' &&
+      (github.event.pull_request.draft == false || startsWith(github.head_ref, 'ghabot-ag-')) }}
+    steps:
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 1 # shallow copy
+
+      - name: Setup
+        id: setup
+        uses: ./.github/actions/setup-nx
+        with:
+          cache_mode: ro
+          fetch_base: skip
+          # Merging needs only the nx binary, so skip the repo postinstall (plugin builds).
+          yarn_postinstall: no-install
+          nx_cache_scheme: merged
+          # Parts leave base entries out, so this saves only the PR's own.
+          nx_cache_merge_base: 'false'
+
+      - name: Save Nx cache
+        uses: ./external/ag-shared/github/actions/nx-cache-save
+        with:
+          # Uncompressed; ag-studio's 4 GB default stores about 1.1 GB per save. Every push to
+          # latest saves a new entry, so keep each one small against the 10 GB Actions cache budget.
+          max_size_mb: '2048'
 
   pr_preview:
     runs-on: ubuntu-latest
@@ -618,6 +696,7 @@ jobs:
         with:
           yarn_postinstall: no-install
           cache_mode: ro
+          nx_cache_scheme: merged
 
       - name: update base url
         run: node scripts/deployments/prep_and_archive/updateBaseUrl.js staging
@@ -696,6 +775,7 @@ jobs:
         with:
           yarn_postinstall: no-install
           cache_mode: ro
+          nx_cache_scheme: merged
 
       - name: nx package:test
         id: package-test
@@ -765,6 +845,8 @@ jobs:
         if: needs.test.result == 'success' || needs.test.result == 'failure' ||
           needs.e2e.result == 'success' || needs.e2e.result == 'failure'
         with:
+          # Only the test reports: the run's other artifacts include the Nx cache parts.
+          pattern: test-results-*
           path: test-results/
 
       - name: Merge JUnit Report XMLs

@@ -2,11 +2,11 @@
 title: "Tooltip Positioning"
 ---
 
-Tooltips appear above the cell or header they describe. Use `tooltipPosition`, `tooltipAnchor` and `tooltipOffset` to change where they are placed.
+Tooltips prefer a position above the cell or header they describe, and can flip or shift to fit the available space. Use `tooltipPosition`, `tooltipAnchor` and `tooltipOffset` to change where they are placed.
 
 ## Position, Anchor and Offset
 
-By default, tooltips are anchored to their target element (`tooltipAnchor: 'target'`) at `top-start`. [Built-in control tooltips](./tooltips-built-in/) default to centred `top` placement and always use the target, even with pointer anchoring or mouse tracking enabled.
+By default, tooltips are anchored to their target element (`tooltipAnchor: 'target'`) at `top-start`. [Built-in control tooltips](./tooltips-built-in/) default to centred `top` placement, except Side Bar tabs, whose tooltips appear beside the tab towards the grid. Built-in control tooltips always use the target, even with pointer anchoring or mouse tracking enabled.
 
 - `tooltipPosition` accepts `top`, `bottom`, `left` or `right`, each optionally suffixed with `-start` or `-end`. Start/end alignment follows text direction for top/bottom placements and means top/bottom for left/right placements.
 - `tooltipAnchor: 'pointer'` anchors ordinary hover tooltips to the pointer. Focus and built-in control tooltips always use the target element.
@@ -28,6 +28,8 @@ Change the controls below, then hover a cell or header, or focus it and navigate
 
 If the preferred side has insufficient space, the grid tries the opposite side, then uses whichever has more room, shifting the tooltip to stay within the viewport and `popupParent`. If neither side fits, clamping can overlap the target; use a larger `popupParent`, such as `document.body`, if more space is needed.
 
+By default, the popup boundary is the grid itself. Built-in header control tooltips therefore usually appear below the header: their preferred position is above, but there is no room above the header inside the grid. Setting `popupParent: document.body` allows them to appear outside the grid, while still staying within the viewport.
+
 ## Per-Source Placement
 
 For per-source placement, provide a callback. `TooltipPositionParams` extends `TooltipCallbackParams` with `trigger` (`'hover'` or `'focus'`). Returning `undefined` uses the source's default placement.
@@ -37,6 +39,25 @@ const gridOptions = {
     tooltipPosition: (params) => params.trigger === 'focus' ? 'bottom-start' : undefined,
 };
 ```
+
+For a built-in control, `location` identifies its area, such as `'pagination'` or `'header'`, and `control` identifies the button, such as `'nextPage'` or `'columnMenu'`. Ordinary text tooltips have no `control`. The following places pagination tooltips below their buttons and the column menu hint to the left of its button, leaving other sources at their default placement. `popupParent` allows the pagination tooltips to extend below the grid.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    popupParent: document.body,
+    tooltipPosition: (params) => {
+        if (params.location === 'pagination') {
+            return 'bottom';
+        }
+        if (params.location === 'header' && params.control === 'columnMenu') {
+            return 'left';
+        }
+        return undefined;
+    },
+};
+```
+
+These positions remain preferences: the tooltip can flip or shift to fit the available space.
 
 Use `postProcessPopup`'s `tooltipPosition` to inspect the resolved placement.
 

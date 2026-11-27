@@ -98,7 +98,9 @@ The following example demonstrates applying the `AG_GRID_LOCALE_DE_DE` locale to
 {% gridExampleRunner title="Localisation" name="localisation"  exampleHeight=650 /%}
 
 {% note %}
-Some localisation variables have `${variable}` in them. When this occurs, it means that part of the string will be replaced by a variable value.
+Some localisation variables have placeholders in them, which are replaced by a value. Most use named placeholders such as `${count}` or `${page}`, which a translation can place in any order, for example `'全${count}件中 ${first}～${last}件'` for the pagination row summary. Keep each placeholder's name as it is in the `en-US` value. Other keys use `${variable}`, which is filled in order. A custom value can still use `${variable}` in place of named placeholders; they are filled in the order the `en-US` value lists them.
+
+The pagination row and page summaries put the highlighted numbers and the page number input where their placeholders are. A row summary written with `${variable}` shows as plain text without the highlighted numbers, and a page summary (`paginationPageSummary`, `paginationPageSummaryUnknownTotal`) must include `${page}`, where the page number input goes. In the `...UnknownTotal` keys, `${count}` and `${total}` show the `more` text, so most provided locales leave them out and say that the total is unknown instead. When customising a provided locale, change these whole-phrase keys rather than `to`, `of`, `page` and `number`, which the provided locales no longer use for pagination text.
 {% /note %}
 
 ## Customising a Provided Locale

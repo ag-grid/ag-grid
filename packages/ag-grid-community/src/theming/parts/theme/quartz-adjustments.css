@@ -1,4 +1,0 @@
-:where(.ag-number-field.ag-paging-number) .ag-input-field-input {
-    /* Input text was vertically off by 1px; corrected here */
-    padding-bottom: 1px;
-}

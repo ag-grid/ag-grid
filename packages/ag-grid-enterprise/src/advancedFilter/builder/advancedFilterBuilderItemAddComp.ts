@@ -90,10 +90,10 @@ export class AdvancedFilterBuilderItemAddComp extends Component<AdvancedFilterBu
 
         _setAriaLabel(
             this.focusWrapper,
-            this.advFilterExpSvc.translate('ariaAdvancedFilterBuilderItem', [
-                this.advFilterExpSvc.translate('advancedFilterBuilderAddButtonTooltip'),
-                `${this.item.level + 1}`,
-            ])
+            this.advFilterExpSvc.translate('ariaAdvancedFilterBuilderItem', {
+                label: this.advFilterExpSvc.translate('advancedFilterBuilderAddButtonTooltip'),
+                level: `${this.item.level + 1}`,
+            })
         );
     }
 

@@ -40,6 +40,7 @@ const gridOptions: GridOptions = {
             field: 'colA',
             tooltip: true,
             filter: 'agSetColumnFilter',
+            filterParams: { showTooltips: false },
         },
         {
             field: 'colB',

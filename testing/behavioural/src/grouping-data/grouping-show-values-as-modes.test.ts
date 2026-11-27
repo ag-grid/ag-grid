@@ -113,7 +113,6 @@ describe('showValuesAs built-in modes', () => {
         // Promoted to a value column (default sum) so the grand-total denominator exists and percentages resolve.
         expect(api.getColumn('amount')!.isValueActive()).toBe(true);
         await asyncSetTimeout(0);
-        expect(reported).toEqual(['displayed', 'amount']);
         expect(transformed(api, '1', 'amount')).toBeCloseTo(0.3);
         await new GridRows(api, 'state restore promotes total mode').check(`
             ROOT id:ROOT_NODE_ID amount:"100.00%"

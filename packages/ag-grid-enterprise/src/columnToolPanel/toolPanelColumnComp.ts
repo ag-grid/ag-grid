@@ -2,9 +2,12 @@ import type { ITooltipFeature } from 'ag-stack';
 import {
     RefPlaceholder,
     _addManagedElementListeners,
+    _getAriaLabelWithState,
+    _setAriaChecked,
     _setAriaDescribedBy,
     _setAriaLabel,
     _setDisplayed,
+    _translateTokens,
 } from 'ag-stack';
 
 import type {
@@ -27,10 +30,8 @@ import {
     TouchListener,
     _addGridCommonParams,
     _createIconNoSpan,
-    _getHeaderTooltipComponentDefinition,
-    _getShouldDisplayTooltip,
     _getToolPanelClassesFromColDef,
-    _resolveHeaderTooltipValue,
+    _resolveHeaderTooltip,
 } from 'ag-grid-community';
 
 import { _isContextMenuKey } from '../widgets/menuPopupUtils';
@@ -63,6 +64,7 @@ export class ToolPanelColumnComp extends Component {
     private processingColumnStateChange = false;
     private tooltipFeature?: TooltipFeature;
     private dragTooltip?: ITooltipFeature;
+    private selectionTooltip?: ITooltipFeature;
     private labelRendererFeature?: ColumnSelectionLabelRendererFeature;
 
     constructor(
@@ -134,23 +136,39 @@ export class ToolPanelColumnComp extends Component {
                         value: displayName,
                         valueFormatted: displayName,
                     };
-                    return {
-                        value: _resolveHeaderTooltipValue(
-                            colDef,
-                            _addGridCommonParams<HeaderTooltipCallbackParams>(gos, {
-                                location: 'columnToolPanelColumn',
-                                ...params,
-                            })
-                        ),
-                        params,
-                        componentDefinition: _getHeaderTooltipComponentDefinition(colDef),
-                    };
+                    return _resolveHeaderTooltip(
+                        gos,
+                        _addGridCommonParams<HeaderTooltipCallbackParams>(gos, {
+                            location: 'columnToolPanelColumn',
+                            ...params,
+                        })
+                    );
                 },
-                shouldDisplayTooltip: _getShouldDisplayTooltip(gos, () => eLabel),
+                getTextElement: () => (this.labelRendererFeature?.hasRenderer() ? undefined : eLabel),
             })
         );
 
         this.setupDragging();
+        this.selectionTooltip = cbSelect.addTooltip({
+            control: 'columnSelect',
+            getLocation: () => 'columnToolPanelColumn',
+            getAriaElement: () => checkboxInput,
+            getTooltip: () => {
+                const pivotMode = beans.columnStateUpdateStrategy.getPivotMode(isDeferredMode(this.params));
+                const translate = this.getLocaleTextFunc();
+                let value: string;
+                if (pivotMode) {
+                    value = cbSelect.getValue()
+                        ? translate('tooltipDisableColumn', 'Disable column')
+                        : translate('tooltipEnableColumn', 'Enable column');
+                } else {
+                    value = cbSelect.getValue()
+                        ? translate('tooltipHideColumn', 'Hide column')
+                        : translate('tooltipShowColumn', 'Show column');
+                }
+                return { value, params: { column } };
+            },
+        });
 
         const onColStateChanged = this.onColumnStateChanged.bind(this);
         this.addManagedEventListeners({ columnPivotModeChanged: onColStateChanged });
@@ -178,9 +196,11 @@ export class ToolPanelColumnComp extends Component {
 
         this.addManagedListeners(cbSelect, { fieldValueChanged: this.onCheckboxChanged.bind(this) });
         _addManagedElementListeners(this, eLabel, { click: this.onLabelClicked.bind(this) });
+        _addManagedElementListeners(this, checkboxInput, { mousedown: this.onCheckboxMouseDown.bind(this) });
 
         this.onColumnStateChanged();
         this.refreshAriaLabel();
+        this.refreshAriaChecked();
 
         this.setupTooltip();
 
@@ -241,7 +261,14 @@ export class ToolPanelColumnComp extends Component {
         this.onChangeCommon(nextState);
     }
 
+    private onCheckboxMouseDown(e: MouseEvent): void {
+        // Keeps focus on the tree item, as a label click does, so both expose the same selected state.
+        e.preventDefault();
+        this.focusWrapper.focus();
+    }
+
     private onCheckboxChanged(event: any): void {
+        this.refreshAriaChecked();
         this.onChangeCommon(event.selected);
     }
 
@@ -278,9 +305,17 @@ export class ToolPanelColumnComp extends Component {
         const state = cbSelect.getValue() ? translate('ariaVisible', 'visible') : translate('ariaHidden', 'hidden');
         const visibilityLabel = translate('ariaToggleVisibility', 'Press SPACE to toggle visibility');
 
-        _setAriaLabel(focusWrapper, `${displayName} ${columnLabel}`);
-        this.cbSelect.setInputAriaLabel(`${visibilityLabel} (${state})`);
+        _setAriaLabel(
+            focusWrapper,
+            // Built from the existing word so a localeText without this key reads as before.
+            _translateTokens(translate, 'ariaColumnItem', `\${name} ${columnLabel}`, { name: displayName ?? '' })
+        );
+        this.cbSelect.setInputAriaLabel(_getAriaLabelWithState(translate, visibilityLabel, state));
         _setAriaDescribedBy(focusWrapper, cbSelect.getInputElement().id);
+    }
+
+    private refreshAriaChecked(): void {
+        _setAriaChecked(this.focusWrapper, this.cbSelect.getValue());
     }
 
     private setupDragging(): void {
@@ -405,6 +440,7 @@ export class ToolPanelColumnComp extends Component {
         this.cbSelect.setReadOnly(!canBeToggled);
         this.eDragHandle.classList.toggle('ag-column-select-column-readonly', !canBeDragged);
         this.dragTooltip?.refreshTooltip();
+        this.selectionTooltip?.refreshTooltip();
         this.toggleCss('ag-column-select-column-readonly', !canBeDragged && !canBeToggled);
 
         this.cbSelect.setPassive(false);

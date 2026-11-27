@@ -12,10 +12,8 @@ import {
     Component,
     _addGridCommonParams,
     _createIconNoSpan,
-    _getHeaderTooltipComponentDefinition,
-    _getShouldDisplayTooltip,
     _isHeaderNameChangeForGroup,
-    _resolveHeaderTooltipValue,
+    _resolveHeaderTooltip,
     isProvidedColumnGroup,
 } from 'ag-grid-community';
 
@@ -96,24 +94,42 @@ export class ToolPanelFilterGroupComp extends Component {
                         value: displayName,
                         valueFormatted: displayName,
                     };
-                    return {
-                        value: _resolveHeaderTooltipValue(
-                            colDef,
-                            _addGridCommonParams<HeaderTooltipCallbackParams>(gos, {
-                                location: 'filterToolPanelColumnGroup',
-                                ...params,
-                            })
-                        ),
-                        params,
-                        componentDefinition: _getHeaderTooltipComponentDefinition(colDef),
-                    };
+                    return _resolveHeaderTooltip(
+                        gos,
+                        _addGridCommonParams<HeaderTooltipCallbackParams>(gos, {
+                            location: 'filterToolPanelColumnGroup',
+                            ...params,
+                        })
+                    );
                 },
-                shouldDisplayTooltip: _getShouldDisplayTooltip(
-                    gos,
-                    () => filterGroupComp.getGui().querySelector('.ag-group-title') as HTMLElement | undefined
-                ),
+                getTextElement: () =>
+                    filterGroupComp.getGui().querySelector<HTMLElement>('.ag-group-title') ?? undefined,
             })
         );
+
+        for (const icon of filterGroupComp.getTitleBarGui().querySelectorAll<HTMLElement>('.ag-group-title-bar-icon')) {
+            const tooltip = this.addTooltip({
+                control: this.isColumnGroup() ? 'groupExpand' : 'filterExpand',
+                getGui: () => icon,
+                getLocation: () => 'filterToolPanelColumnGroup',
+                getTooltip: () => {
+                    const expanded = filterGroupComp.isExpanded();
+                    const action = expanded ? 'Collapse' : 'Expand';
+                    const target = this.isColumnGroup() ? 'Group' : 'Filter';
+                    return {
+                        value: this.getLocaleTextFunc()(
+                            `tooltip${action}${target}`,
+                            `${action} ${target.toLowerCase()}`
+                        ),
+                        params: { column: this.callbackColumn },
+                    };
+                },
+            });
+            this.addManagedListeners(filterGroupComp, {
+                expanded: () => tooltip?.refreshTooltip(),
+                collapsed: () => tooltip?.refreshTooltip(),
+            });
+        }
 
         this.refreshFilterClass();
         this.addExpandCollapseListeners();

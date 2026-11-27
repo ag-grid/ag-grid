@@ -38,6 +38,8 @@ describe('editable column header name (react)', () => {
 
         const headerText = () => document.querySelector('.ag-header-cell-text')?.textContent;
         await waitFor(() => expect(headerText()).toBe('Athlete'));
+        // `onGridReady` is dispatched asynchronously, so the header can render before the api is captured
+        await waitFor(() => expect(gridApi).toBeDefined());
 
         act(() => {
             gridApi!.applyColumnState({ state: [{ colId: 'athlete', headerName: 'Competitor' }] });
@@ -45,7 +47,7 @@ describe('editable column header name (react)', () => {
 
         await waitFor(() => expect(headerText()).toBe('Competitor'));
     });
-    function renderGroupGrid(groupDef: ColGroupDef): () => GridApi {
+    async function renderGroupGrid(groupDef: ColGroupDef): Promise<() => GridApi> {
         let gridApi: GridApi | undefined;
         render(
             <AgGridReact
@@ -56,13 +58,15 @@ describe('editable column header name (react)', () => {
                 }}
             />
         );
+        // `onGridReady` is dispatched asynchronously, so the header can render before the api is captured
+        await waitFor(() => expect(gridApi).toBeDefined());
         return () => gridApi!;
     }
 
     const groupHeaderText = () => document.querySelector('.ag-header-group-cell .ag-header-group-text')?.textContent;
 
     test('renaming a column group refreshes the React group header', async () => {
-        const getApi = renderGroupGrid({ groupId: 'athleteGroup', headerName: 'Group', children: columnDefs });
+        const getApi = await renderGroupGrid({ groupId: 'athleteGroup', headerName: 'Group', children: columnDefs });
         await waitFor(() => expect(groupHeaderText()).toBe('Group'));
 
         act(() => {
@@ -78,7 +82,7 @@ describe('editable column header name (react)', () => {
     });
 
     test('renaming a child column refreshes a React group header built from its name', async () => {
-        const getApi = renderGroupGrid({
+        const getApi = await renderGroupGrid({
             groupId: 'athleteGroup',
             headerValueGetter: (params: HeaderValueGetterParams) =>
                 `${params.api.getDisplayNameForColumn(params.api.getColumn('athlete')!, 'header')} Group`,

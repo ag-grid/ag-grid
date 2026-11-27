@@ -7,13 +7,14 @@ import { GridStateModule, ModuleRegistry, ValidationModule } from 'ag-grid-commu
 
 import {
     clickDialogButton,
+    closeDialog,
     createGrid,
-    getCalculatedColumnDialog,
     getDialogButton,
     getExpressionInput,
     openEditDialogViaMenu,
     selectDataType,
     setExpression,
+    setTitle,
     setupCalculatedColumnsSuite,
     showColumnMenu,
     updateCalculatedColumnDef,
@@ -31,7 +32,6 @@ describe('calculated columns - blocked live expressions', () => {
     const calculatedColumns: CalculatedColumnsOptions = {
         isColumnReferenceable: ({ colDef }) => colDef.field !== 'salary',
     };
-    const closeDialog = () => document.querySelector<HTMLElement>('.ag-dialog .ag-panel-title-bar-button')!.click();
 
     test.each([
         { expression: '[Salary]', progressively: false },
@@ -64,9 +64,7 @@ describe('calculated columns - blocked live expressions', () => {
         await openEditDialogViaMenu(api, 'calculated_1');
         expect(getExpressionInput().value).toBe(expression);
         expect(getExpressionInput().validationMessage).toContain('cannot be used');
-        const title = getCalculatedColumnDialog().querySelector('input')!;
-        title.value = 'Reward';
-        title.dispatchEvent(new Event('input', { bubbles: true }));
+        setTitle('Reward');
         await selectDataType('Number');
         closeDialog();
         expect(api.getColumn('calculated_1')!.getColDef()).toMatchObject({

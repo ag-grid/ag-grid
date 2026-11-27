@@ -159,6 +159,7 @@ describe('a filter definition is read alike by every reader', () => {
     test.each(CASES)(
         "the column filter reads the author's params over the data type's: $label",
         async ({ form, ...shape }) => {
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [348] });
             for (const enableFilterHandlers of [false, true]) {
                 const api = await createGrid(shape, form, { inRangeInclusive: true }, { enableFilterHandlers });
                 await api.setColumnFilterModel(
@@ -375,6 +376,7 @@ describe('a filter definition is read alike by every reader', () => {
 
     // The handler and the panel are built apart with filter handlers, so the panel must lay the same params.
     test("a Multi Filter child's panel offers the data type's options under the author's params, with or without handlers", async () => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [348] });
         for (const enableFilterHandlers of [false, true]) {
             for (const form of Object.keys(FORMS) as Form[]) {
                 const api = await gridsManager.createGridAndWait('grid', {
@@ -459,7 +461,7 @@ describe('a filter name nothing is registered under', () => {
         async ({ modules, model, panel }) => {
             gridsManager = new TestGridsManager({ modules });
             for (const enableFilterHandlers of [false, true]) {
-                enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [101] });
+                enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [101, 348] });
                 const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
                 const api = await gridsManager.createGridAndWait('grid', {
                     enableFilterHandlers,

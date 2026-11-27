@@ -1,7 +1,7 @@
 import { waitFor } from '@testing-library/dom';
 import { GridColumns, GridRows, assertSelectedRowsById, assertSelectedRowsByIndex } from 'ag-test-utils';
 
-import type { GetRowIdParams, GridOptions } from 'ag-grid-community';
+import type { GetRowIdParams, GridOptions, IRowNode } from 'ag-grid-community';
 import { _createInternalFeatureFlagsModule } from 'ag-grid-community';
 
 import { fakeFetch } from './group-data';
@@ -320,6 +320,65 @@ describe('Row Selection Grid Options', () => {
                 });
             });
 
+            test('with groupSelects descendants a group turning selectable keeps its rows selected', async () => {
+                let groupCount = 0;
+                const rows = [
+                    { country: 'X', name: 'A' },
+                    { country: 'X', name: 'B' },
+                ];
+                const [api] = await createGridAndWait({
+                    columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'name' }],
+                    autoGroupColumnDef: { headerName: 'Athlete', cellRenderer: 'agGroupCellRenderer' },
+                    rowModelType: 'serverSide',
+                    getRowId: (params) => (params.data.name ?? params.data.country) as string,
+                    serverSideDatasource: {
+                        getRows(params) {
+                            const rowData = params.request.groupKeys.length
+                                ? [...rows]
+                                : [{ country: 'X', count: groupCount }];
+                            return params.success({ rowData, rowCount: rowData.length });
+                        },
+                    },
+                    rowSelection: {
+                        mode: 'multiRow',
+                        groupSelects: 'descendants',
+                        isRowSelectable: (node) => !node.group || node.data.count > 0,
+                    },
+                });
+                api.getRowNode('X')!.setExpanded(true);
+                await waitFor(() => expect(api.getRowNode('B')?.data.name).toBe('B'));
+                expect(api.getRowNode('X')!.selectable).toBe(false);
+                api.setNodesSelected({ nodes: [api.getRowNode('A')!, api.getRowNode('B')!], newValue: true });
+                expect(api.getRowNode('A')!.isSelected()).toBe(true);
+                const selectionState = api.getServerSideSelectionState();
+
+                groupCount = 2;
+                api.refreshServerSide({ purge: false });
+                await waitFor(() => expect(api.getRowNode('X')!.data.count).toBe(2));
+
+                expect(api.getRowNode('X')!.selectable).toBe(true);
+                expect(api.getServerSideSelectionState()).toEqual(selectionState);
+                expect(api.getRowNode('A')!.isSelected()).toBe(true);
+            });
+
+            test('a group row follows isRowSelectable when one of its cells is edited', async () => {
+                const [api] = await createGridAndWait({
+                    columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'count' }],
+                    rowModelType: 'serverSide',
+                    getRowId: (params) => params.data.country as string,
+                    serverSideDatasource: {
+                        getRows: (params) => params.success({ rowData: [{ country: 'X', count: 0 }], rowCount: 1 }),
+                    },
+                    rowSelection: { mode: 'multiRow', isRowSelectable: (node) => node.data.count > 0 },
+                });
+                const group = api.getRowNode('X')!;
+                expect(group.selectable).toBe(false);
+
+                group.setDataValue('count', 2);
+
+                expect(group.selectable).toBe(true);
+            });
+
             test('Cannot select group rows where `isRowSelectable` returns false and `groupSelects` = "self"', async () => {
                 const [api, actions] = await createGridAndWait({
                     ...groupGridOptions,
@@ -403,6 +462,187 @@ describe('Row Selection Grid Options', () => {
                     ├── GROUP 🚫 collapsed id:':{"country":"Zimbabwe"}' ag-Grid-AutoColumn:"Zimbabwe" country:"Zimbabwe"
                     └── GROUP 🚫 collapsed id:':{"country":"Netherlands"}' ag-Grid-AutoColumn:"Netherlands" country:"Netherlands"
                 `);
+            });
+
+            test('with groupSelects descendants, a group whose only selected row turns un-selectable shows unselected', async () => {
+                const [api, actions] = await createGridAndWait({
+                    ...groupGridOptions,
+                    rowSelection: { mode: 'multiRow', groupSelects: 'descendants' },
+                });
+                await actions.expandGroupRowByIndex(0);
+                const swimming = api.getRowNode(
+                    getRowIdRaw({ parentKeys: ['United States'], data: { sport: 'Swimming' }, api })
+                )!;
+                await actions.expandGroupRowByIndex(swimming.rowIndex!);
+                const athlete = api.getDisplayedRowAtIndex(swimming.rowIndex! + 1)!;
+                athlete.setSelected(true);
+                expect(swimming.isSelected()).toBe(undefined);
+
+                api.setGridOption('rowSelection', {
+                    mode: 'multiRow',
+                    groupSelects: 'descendants',
+                    isRowSelectable: (node) => node.group === true,
+                });
+
+                expect(athlete.isSelected()).toBe(false);
+                expect(swimming.isSelected()).toBe(false);
+            });
+
+            test('after select all, a group isRowSelectable rejects shows unselected once reloaded', async () => {
+                const [api] = await createGridAndWait({
+                    ...groupGridOptions,
+                    rowSelection: { mode: 'multiRow', isRowSelectable: (node) => !node.group },
+                });
+                api.selectAll();
+                const groupBeforeReload = api.getDisplayedRowAtIndex(0);
+
+                api.refreshServerSide({ purge: true });
+
+                await waitFor(() => {
+                    const group = api.getDisplayedRowAtIndex(0);
+                    expect(group !== groupBeforeReload && group?.stub === false).toBe(true);
+                });
+                expect(api.getDisplayedRowAtIndex(0)!.selectable).toBe(false);
+                expect(api.getDisplayedRowAtIndex(0)!.isSelected()).toBe(false);
+            });
+
+            test('with groupSelects descendants, a group isRowSelectable rejects shows its rows selection, before and after a reload', async () => {
+                const [api] = await createGridAndWait({
+                    ...groupGridOptions,
+                    rowSelection: {
+                        mode: 'multiRow',
+                        groupSelects: 'descendants',
+                        isRowSelectable: (node) => !node.group,
+                    },
+                });
+                const groupBeforeReload = api.getDisplayedRowAtIndex(0)!;
+
+                api.selectAll();
+
+                expect(groupBeforeReload.isSelected()).toBe(true);
+                api.refreshServerSide({ purge: true });
+                await waitFor(() => {
+                    const group = api.getDisplayedRowAtIndex(0);
+                    expect(group !== groupBeforeReload && group?.stub === false).toBe(true);
+                });
+                expect(api.getDisplayedRowAtIndex(0)!.selectable).toBe(false);
+                expect(api.getDisplayedRowAtIndex(0)!.isSelected()).toBe(true);
+            });
+
+            test('with groupSelects descendants, a selected group isRowSelectable rejects can be deselected, but not selected again, through the API', async () => {
+                let groupsAccepted = true;
+                const rowSelection = {
+                    mode: 'multiRow',
+                    groupSelects: 'descendants',
+                    isRowSelectable: (node: IRowNode) => groupsAccepted || !node.group,
+                } as const;
+                const [api] = await createGridAndWait({ ...groupGridOptions, rowSelection });
+                const unitedStates = api.getDisplayedRowAtIndex(0)!;
+                const emptyState = api.getServerSideSelectionState();
+                api.setNodesSelected({ nodes: [unitedStates], newValue: true });
+                groupsAccepted = false;
+                api.setGridOption('rowSelection', {
+                    ...rowSelection,
+                    isRowSelectable: (node) => groupsAccepted || !node.group,
+                });
+                expect(unitedStates.selectable).toBe(false);
+                expect(unitedStates.isSelected()).toBe(true);
+
+                api.setNodesSelected({ nodes: [unitedStates], newValue: false });
+
+                expect(unitedStates.isSelected()).toBe(false);
+                expect(api.getServerSideSelectionState()).toEqual(emptyState);
+
+                const sources: string[] = [];
+                api.addEventListener('selectionChanged', (event) => sources.push(event.source));
+                api.setNodesSelected({ nodes: [unitedStates], newValue: true });
+
+                expect(unitedStates.isSelected()).toBe(false);
+                expect(api.getServerSideSelectionState()).toEqual(emptyState);
+                api.selectAll(); // its event lands after any the refused selection raised
+                await waitFor(() => expect(sources).toEqual(['apiSelectAll']));
+            });
+
+            test('with groupSelects descendants, deselecting a group isRowSelectable rejects after select all deselects all its rows', async () => {
+                const [api, actions] = await createGridAndWait({
+                    ...groupGridOptions,
+                    rowSelection: {
+                        mode: 'multiRow',
+                        groupSelects: 'descendants',
+                        isRowSelectable: (node) => !node.group,
+                    },
+                });
+                await actions.expandGroupRowByIndex(0);
+                const unitedStates = api.getDisplayedRowAtIndex(0)!;
+                const swimming = api.getRowNode(
+                    getRowIdRaw({ parentKeys: ['United States'], data: { sport: 'Swimming' }, api })
+                )!;
+                await actions.expandGroupRowByIndex(swimming.rowIndex!);
+                const athlete = api.getDisplayedRowAtIndex(swimming.rowIndex! + 1)!;
+                api.selectAll();
+                athlete.setSelected(false);
+
+                unitedStates.setSelected(false);
+
+                expect([unitedStates, swimming, athlete].map((node) => node.isSelected())).toEqual([
+                    false,
+                    false,
+                    false,
+                ]);
+                expect(api.getDisplayedRowAtIndex(swimming.rowIndex! + 2)!.isSelected()).toBe(false);
+            });
+
+            test('with groupSelects descendants, a transaction removing the one row deselected in a selected nested group leaves the group alone selected', async () => {
+                const [api, actions] = await createGridAndWait({
+                    ...groupGridOptions,
+                    rowSelection: { mode: 'multiRow', groupSelects: 'descendants' },
+                });
+                await actions.expandGroupRowByIndex(0);
+                const swimming = api.getRowNode(
+                    getRowIdRaw({ parentKeys: ['United States'], data: { sport: 'Swimming' }, api })
+                )!;
+                await actions.expandGroupRowByIndex(swimming.rowIndex!);
+                const athlete = api.getDisplayedRowAtIndex(swimming.rowIndex! + 1)!;
+                swimming.setSelected(true);
+                const groupAloneSelected = api.getServerSideSelectionState();
+                athlete.setSelected(false);
+                const sources: string[] = [];
+                api.addEventListener('selectionChanged', (event) => sources.push(event.source));
+
+                const result = api.applyServerSideTransaction({
+                    route: ['United States', 'Swimming'],
+                    remove: [athlete.data],
+                });
+
+                expect(result?.remove).toEqual([athlete]);
+                await waitFor(() => expect(sources).toEqual(['rowDataChanged']));
+                expect(api.getServerSideSelectionState()).toEqual(groupAloneSelected);
+                expect(swimming.isSelected()).toBe(true);
+            });
+
+            test('with groupSelects descendants, a range selection across a group isRowSelectable rejects selects only the rows in the range', async () => {
+                const [api, actions] = await createGridAndWait({
+                    ...groupGridOptions,
+                    rowSelection: {
+                        mode: 'multiRow',
+                        groupSelects: 'descendants',
+                        isRowSelectable: (node) => !node.group,
+                    },
+                });
+                await actions.expandGroupRowByIndex(0);
+                const sportId = (sport: string) => getRowIdRaw({ parentKeys: ['United States'], data: { sport }, api });
+                await actions.expandGroupRowByIndex(api.getRowNode(sportId('Swimming'))!.rowIndex!);
+                const gymnastics = api.getRowNode(sportId('Gymnastics'))!;
+                await actions.expandGroupRowByIndex(gymnastics.rowIndex!);
+                const rangeEnd = gymnastics.rowIndex! + 1;
+                const afterRange = api.getDisplayedRowAtIndex(rangeEnd + 1)!;
+                expect(afterRange.parent).toBe(gymnastics);
+
+                actions.toggleCheckboxByIndex(gymnastics.rowIndex! - 1);
+                actions.toggleCheckboxByIndex(rangeEnd, { shiftKey: true });
+
+                expect(api.getDisplayedRowAtIndex(rangeEnd)!.isSelected()).toBe(true);
+                expect(afterRange.isSelected()).toBe(false);
             });
 
             test('Selection state does not change when `isRowSelectable` changes', async () => {

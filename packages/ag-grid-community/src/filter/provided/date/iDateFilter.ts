@@ -1,9 +1,10 @@
 import type { AdvancedFilterOnlyOptionKey } from '../../../interfaces/advancedFilterModel';
-import type { IFilterParams } from '../../../interfaces/iFilter';
+import type { FilterDisplayParams, IFilterParams } from '../../../interfaces/iFilter';
 import type { IScalarFilterParams } from '../iScalarFilter';
 import type {
     CustomFilterOptionKey,
     DateFilterOptionKey,
+    ICombinedSimpleModel,
     IFilterOptionDef,
     ISimpleFilterModel,
     ISimpleFilterModelPresetType,
@@ -51,10 +52,17 @@ export interface PresetDateRangeFilterModel extends DateFilterModel {
 }
 
 /**
- * Parameters provided by the grid to the `init` method of a `DateFilter`.
- * Do not use in `colDef.filterParams` - see `IDateFilterParams` instead.
+ * Parameters provided by the grid to the `init` and `refresh` methods of a `DateFilter`.
+ * For the properties you configure in `colDef.filterParams`, use `IDateFilterParams`.
  */
+export type DateFilterDisplayParams<TData = any> = IDateFilterParams &
+    FilterDisplayParams<TData, any, DateFilterModel | ICombinedSimpleModel<DateFilterModel>>;
 
+/**
+ * Parameters provided by the grid to the `init` method of a `DateFilter`.
+ * For the properties you configure in `colDef.filterParams`, use `IDateFilterParams`.
+ * @deprecated v37 Use `DateFilterDisplayParams` instead.
+ */
 export type DateFilterParams<TData = any> = IDateFilterParams & IFilterParams<TData>;
 /**
  * Parameters used in `colDef.filterParams` to configure a Date Filter (`agDateColumnFilter`).

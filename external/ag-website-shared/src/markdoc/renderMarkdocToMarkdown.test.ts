@@ -526,6 +526,42 @@ describe('renderMarkdocToMarkdown', () => {
         expect(output).toContain('![Chrome](https://example.test/supported-browsers/resources/chrome.svg?hashed)');
     });
 
+    it('renders a studioIcon as its label, and a decorative one as nothing', async () => {
+        const body = [
+            '| Name | Icon |',
+            '| --- | --- |',
+            '| CSV | {% studioIcon name="widgetToolbarExport" alt="CSV export" /%} |',
+            '| Delete | {% studioIcon name="widgetToolbarDelete" /%} |',
+        ].join('\n');
+
+        const output = await render(body);
+
+        expect(output).toContain('| CSV | CSV export |\n| Delete |  |');
+        expect(await render('{% studioIcon name="widgetToolbarExport" alt="CSV export" /%}')).toContain('CSV export');
+    });
+
+    it('renders a studioIcon label as literal text, not Markdown', async () => {
+        const inline = await render('| Icon |\n| --- |\n| {% studioIcon name="save" alt="*Draft* [v2]" /%} |');
+        const block = await render('{% studioIcon name="save" alt="# Draft_copy" /%}');
+        const listLike = await render('{% studioIcon name="save" alt="- Draft" /%}');
+
+        expect(inline).toContain('| \\*Draft\\* \\[v2\\] |');
+        expect(block).toContain('\n\\# Draft\\_copy\n');
+        expect(listLike).toContain('\n\\- Draft\n');
+    });
+
+    it.each([
+        ['a thematic break', '---', '\\-\\-\\-'],
+        ['an ordered list item', '1) Draft', '1\\) Draft'],
+        ['a character reference', 'R&D &copy;', 'R\\&D \\&copy\\;'],
+        ['a line break', 'Save\n    as', 'Save as'],
+    ])('renders a studioIcon label that would parse as %s as literal text', async (_, alt, escaped) => {
+        const icon = `{% studioIcon name="save" alt=${JSON.stringify(alt)} /%}`;
+
+        expect(await render(`| Icon |\n| --- |\n| ${icon} |`)).toContain(`| ${escaped} |`);
+        expect(await render(icon)).toContain(`\n${escaped}\n`);
+    });
+
     it('renders a videoSection as its header prose followed by a link to the video', async () => {
         const body = [
             '{% videoSection id="98JVaTcoexc" title="Custom Filter Components" showHeader=true %}',
