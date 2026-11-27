@@ -1,5 +1,6 @@
 import { getByRole, waitFor } from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
+import { asyncSetTimeout } from 'ag-test-utils';
 
 import type { GridApi, GridOptions } from 'ag-grid-community';
 import { getGridElement } from 'ag-grid-community';
@@ -31,24 +32,10 @@ const pivotKeyOrder = (api: GridApi) => [
     ...new Set(api.getPivotResultColumns()!.flatMap((col) => col.getColDef().pivotKeys?.[1] ?? [])),
 ];
 
-const deferredSideBar: GridOptions['sideBar'] = {
-    toolPanels: [
-        {
-            id: 'columns',
-            labelDefault: 'Columns',
-            labelKey: 'columns',
-            iconKey: 'columnsToolPanel',
-            toolPanel: 'agColumnsToolPanel',
-            toolPanelParams: { buttons: ['apply', 'cancel'] },
-        },
-    ],
-    defaultToolPanel: 'columns',
-};
-
 const pivotRowData = [5, 2, 9].map((b) => ({ a: 1, b, c: 3, value: 4 }));
 
 describe('drop zone chip menu sort items', () => {
-    const { create } = setupDropZoneMoveMenuSuite();
+    const { create, createDeferred } = setupDropZoneMoveMenuSuite();
 
     async function clickItem(api: GridApi, zone: Zone, horizontal: boolean, name: string) {
         const menu = await open(api, zone, horizontal);
@@ -94,6 +81,19 @@ describe('drop zone chip menu sort items', () => {
         expect(pivotKeyOrder(api)).toEqual(['2', '5', '9']);
     });
 
+    test('Column Labels Sort Ascending on an unset pivot sort is a no-op, Sort Descending fires columnPivotChanged', async () => {
+        const api = await create('pivot', { rowData: pivotRowData });
+        const listener = vi.fn();
+        api.addEventListener('columnPivotChanged', listener);
+
+        await clickItem(api, 'pivot', false, 'Sort Ascending');
+        await asyncSetTimeout(0);
+        expect(listener).not.toHaveBeenCalled();
+
+        await clickItem(api, 'pivot', false, 'Sort Descending');
+        await waitFor(() => expect(listener).toHaveBeenCalledTimes(1));
+    });
+
     test.each<{ zone: Zone; option: 'rowGroupPanelSuppressSort' | 'pivotPanelSuppressSort' }>([
         { zone: 'rowGroup', option: 'rowGroupPanelSuppressSort' },
         { zone: 'pivot', option: 'pivotPanelSuppressSort' },
@@ -129,7 +129,7 @@ describe('drop zone chip menu sort items', () => {
     });
 
     test('deferred Sort Descending updates the chip and applies on Apply', async () => {
-        const api = await create('rowGroup', { sideBar: deferredSideBar });
+        const api = await createDeferred('rowGroup');
 
         await clickItem(api, 'rowGroup', false, 'Sort Descending');
         expect(visibleSortIcon(pill(api, 'rowGroup'))).toBe('descending');
@@ -140,7 +140,7 @@ describe('drop zone chip menu sort items', () => {
     });
 
     test('deferred Column Labels Sort Descending updates the chip and applies on Apply', async () => {
-        const api = await create('pivot', { sideBar: deferredSideBar });
+        const api = await createDeferred('pivot');
 
         await clickItem(api, 'pivot', false, 'Sort Descending');
         expect(visibleSortIcon(pill(api, 'pivot'))).toBe('descending');

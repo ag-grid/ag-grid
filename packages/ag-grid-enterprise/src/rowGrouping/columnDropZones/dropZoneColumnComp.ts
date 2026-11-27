@@ -175,20 +175,16 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
     }
 
     protected override isDraggable(): boolean {
-        return this.isReadOnly();
+        return this.isEditable();
     }
 
     protected override isRemovable(): boolean {
-        return this.isReadOnly();
-    }
-
-    private isReadOnly(): boolean {
-        return !this.isGroupingAndLocked() && !this.gos.get('functionsReadOnly');
+        return this.isEditable();
     }
 
     /** Whether the chip can be moved or removed: not under `functionsReadOnly` and not a locked group column. */
     public isEditable(): boolean {
-        return this.isReadOnly();
+        return !this.isGroupingAndLocked() && !this.gos.get('functionsReadOnly');
     }
 
     /** The sort direction the chip's sort indicator shows: the pivot sort on Column Labels chips, else the sort. */

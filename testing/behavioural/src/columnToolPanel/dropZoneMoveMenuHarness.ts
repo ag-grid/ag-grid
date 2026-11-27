@@ -99,6 +99,10 @@ export const menuEntries = (menu: HTMLElement) =>
 export const disabledEntries = (menu: HTMLElement) =>
     Array.from(menu.querySelectorAll('[role="menuitem"][aria-disabled="true"]'), (el) => el.textContent!);
 
+/** The trimmed texts of the chips in a drop zone panel. */
+export const chips = (container: HTMLElement) =>
+    Array.from(container.querySelectorAll('.ag-column-drop-cell-text'), (el) => el.textContent!.trim());
+
 const SORT_ENTRIES: Record<Zone, string[]> = {
     rowGroup: ['Sort Ascending', 'Sort Descending'],
     pivot: ['Sort Ascending', 'Sort Descending', 'Clear Sort'],

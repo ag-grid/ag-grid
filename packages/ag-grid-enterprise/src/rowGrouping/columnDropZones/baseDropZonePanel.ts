@@ -6,7 +6,7 @@ import type {
     GridDraggingEvent,
     SortDirection,
 } from 'ag-grid-community';
-import { DragSourceType, _shouldUpdateColVisibilityAfterGroup } from 'ag-grid-community';
+import { DragSourceType, _resolvePivotSort, _shouldUpdateColVisibilityAfterGroup } from 'ag-grid-community';
 
 import type { ColumnToolPanelChildParams } from '../../columnToolPanel/columnToolPanel';
 import { isDeferredMode, refreshDeferredToolPanelUi } from '../../columnToolPanel/toolPanelDeferredUiUtils';
@@ -201,6 +201,10 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
         const strategy = beans.columnStateUpdateStrategy;
         const deferMode = isDeferredMode(updateParams);
         if (this.dropZonePurpose === 'pivot') {
+            // An explicit pivotSort switches pivot columns to strict ordering, so don't set the direction already shown.
+            if (_resolvePivotSort(beans, strategy.getPivotSort(deferMode, column)) === direction) {
+                return;
+            }
             strategy.applyColumnState(
                 deferMode,
                 [{ colId: column.getColId(), pivotSort: direction }],

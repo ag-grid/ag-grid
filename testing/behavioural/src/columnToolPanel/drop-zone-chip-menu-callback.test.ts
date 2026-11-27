@@ -14,12 +14,7 @@ import {
 } from 'ag-grid-enterprise';
 
 import type { Zone } from './dropZoneMoveMenuHarness';
-import { open, pill, setupDropZoneMoveMenuSuite } from './dropZoneMoveMenuHarness';
-
-const entries = (menu: HTMLElement) =>
-    Array.from(menu.querySelectorAll('[role="menuitem"], .ag-menu-separator'), (el) =>
-        el.classList.contains('ag-menu-separator') ? 'separator' : el.textContent!
-    );
+import { menuEntries, open, pill, setupDropZoneMoveMenuSuite } from './dropZoneMoveMenuHarness';
 
 const queryMenu = (api: Parameters<typeof getGridElement>[0]) =>
     queryByRole(getGridElement(api) as HTMLElement, 'menu');
@@ -159,7 +154,7 @@ describe('drop zone chip menu callback, modules and refresh', () => {
                 ],
             });
             const menu = await open(api, 'rowGroup', horizontal);
-            expect(entries(menu)).toEqual(
+            expect(menuEntries(menu)).toEqual(
                 horizontal
                     ? ['Custom', 'separator', 'Sort Ascending', 'Move to Values', 'separator', 'Remove Field']
                     : [
@@ -189,7 +184,7 @@ describe('drop zone chip menu callback, modules and refresh', () => {
 
         api.setGridOption('getColumnDropZoneMenuItems', undefined);
         expect(pill(api, 'rowGroup').getAttribute('aria-haspopup')).toBe('menu');
-        expect(entries(await open(api, 'rowGroup'))).toEqual([
+        expect(menuEntries(await open(api, 'rowGroup'))).toEqual([
             'Sort Ascending',
             'Sort Descending',
             'separator',
@@ -203,7 +198,7 @@ describe('drop zone chip menu callback, modules and refresh', () => {
     test('works without the column and context menu modules', async () => {
         const api = await create('rowGroup', {}, minimalGrids);
         const menu = await open(api, 'rowGroup');
-        expect(entries(menu)).toEqual([
+        expect(menuEntries(menu)).toEqual([
             'Sort Ascending',
             'Sort Descending',
             'separator',
@@ -231,11 +226,11 @@ describe('drop zone chip menu callback, modules and refresh', () => {
             'separator',
             'Remove Field',
         ];
-        expect(entries(await open(api, 'aggregation'))).toEqual(nonPivotItems);
+        expect(menuEntries(await open(api, 'aggregation'))).toEqual(nonPivotItems);
         await userEvent.keyboard('{Escape}');
 
         api.setGridOption('pivotMode', true);
-        expect(entries(await open(api, 'aggregation'))).toEqual([
+        expect(menuEntries(await open(api, 'aggregation'))).toEqual([
             'Move to Row Groups',
             'Move to Column Labels',
             'separator',
@@ -247,7 +242,7 @@ describe('drop zone chip menu callback, modules and refresh', () => {
         await userEvent.keyboard('{Escape}');
 
         api.setGridOption('pivotMode', false);
-        expect(entries(await open(api, 'aggregation'))).toEqual(nonPivotItems);
+        expect(menuEntries(await open(api, 'aggregation'))).toEqual(nonPivotItems);
     });
 
     test('openChipMenu opens the menu of a chip in the panel', async () => {

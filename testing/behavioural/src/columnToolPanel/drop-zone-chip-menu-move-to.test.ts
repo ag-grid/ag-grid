@@ -7,16 +7,17 @@ import { getGridElement } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule, RowGroupingPanelModule, ToolbarModule } from 'ag-grid-enterprise';
 
 import type { Zone } from './dropZoneMoveMenuHarness';
-import { open, order, panel, pill, setupDropZoneMoveMenuSuite } from './dropZoneMoveMenuHarness';
+import {
+    chips,
+    disabledEntries,
+    menuEntries,
+    open,
+    order,
+    panel,
+    pill,
+    setupDropZoneMoveMenuSuite,
+} from './dropZoneMoveMenuHarness';
 
-const entries = (menu: HTMLElement) =>
-    Array.from(menu.querySelectorAll('[role="menuitem"], .ag-menu-separator'), (el) =>
-        el.classList.contains('ag-menu-separator') ? 'separator' : el.textContent!
-    );
-const disabled = (menu: HTMLElement) =>
-    Array.from(menu.querySelectorAll('[role="menuitem"][aria-disabled="true"]'), (el) => el.textContent!);
-const chips = (container: HTMLElement) =>
-    Array.from(container.querySelectorAll('.ag-column-drop-cell-text'), (el) => el.textContent!.trim());
 const aggFuncOf = (api: GridApi, colId: string) => api.getColumnState().find((state) => state.colId === colId)!.aggFunc;
 
 async function activateByKeyboard(menu: HTMLElement, name: string) {
@@ -95,7 +96,7 @@ describe('drop zone chip menu move to and remove', () => {
     ])('Row Groups chip menu $name', async ({ prepare, expected }) => {
         const api = await create('rowGroup');
         prepare(api);
-        expect(entries(await open(api, 'rowGroup'))).toEqual(expected);
+        expect(menuEntries(await open(api, 'rowGroup'))).toEqual(expected);
     });
 
     test.each([
@@ -122,8 +123,8 @@ describe('drop zone chip menu move to and remove', () => {
     ])('disables Remove Field and moves, and offers no Move to, for $name', async ({ options, chip }) => {
         const api = await create('rowGroup', options);
         const menu = await open(api, 'rowGroup', false, chip);
-        expect(entries(menu)).toEqual([...SORT, ...MOVE_REMOVE]);
-        expect(disabled(menu)).toEqual(['Move Up', 'Move Down', 'Remove Field']);
+        expect(menuEntries(menu)).toEqual([...SORT, ...MOVE_REMOVE]);
+        expect(disabledEntries(menu)).toEqual(['Move Up', 'Move Down', 'Remove Field']);
     });
 
     test.each([
@@ -150,7 +151,7 @@ describe('drop zone chip menu move to and remove', () => {
     test('RTL horizontal chips offer Move Left and Right, flipped', async () => {
         const api = await create('rowGroup', { enableRtl: true, sideBar: false });
         const menu = await open(api, 'rowGroup', true, 'A');
-        expect(entries(menu)).toEqual([
+        expect(menuEntries(menu)).toEqual([
             ...SORT,
             'Move to Values',
             'separator',
@@ -159,7 +160,7 @@ describe('drop zone chip menu move to and remove', () => {
             'separator',
             'Remove Field',
         ]);
-        expect(disabled(menu)).toEqual(['Move Right']);
+        expect(disabledEntries(menu)).toEqual(['Move Right']);
         await userEvent.click(getByRole(menu, 'menuitem', { name: 'Move Left' }));
         expect(order(api, 'rowGroup')).toEqual(['b', 'a', 'c']);
     });

@@ -654,7 +654,7 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
         const draftColIds = new Set(columns.map((col) => col.colId));
         for (const colId of aggFuncs.values.keys()) {
             // Commit replays each entry through `setColumnAggFunc`, which would make the column a value again.
-            if (!draftColIds.has(colId) && !liveValueColIds.has(colId)) {
+            if (!draftColIds.has(colId)) {
                 aggFuncs.values.delete(colId);
             }
         }
