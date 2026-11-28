@@ -98,6 +98,12 @@ This does not reproduce the exact previous appearance. Focus and built-in contro
 
 - The Aggregation Panel (`agAggregationComponent`) no longer converts string values to numbers. String values are still included in `count`, but numeric-looking strings such as `'1001'` no longer contribute to `sum`, `min`, `max` or `avg`. To aggregate numbers supplied as strings, convert them to numbers in the row data or with a [Value Getter](./value-getters/). See [Status Bar Configuration](./status-bar/#configuration).
 
+### Column Drop Zones
+
+- The `defaultItems` passed to `getColumnDropZoneMenuItems` now include sort, Move to and Remove Field items as well as the move items, so apps that return `defaultItems` as they are get the new items. To restore the previous menu, filter `defaultItems` to the `moveUp`, `moveDown`, `moveLeft`, `moveRight` and `separator` tokens. See [Drop Zone Menus](./tool-panel-columns-customising/#drop-zone-menus).
+- Move Up and Move Down (Move Left and Move Right in horizontal panels) are now always shown, and are disabled when the pill cannot move, where previously they were left out for pills that could not move. To hide them, filter them out of `defaultItems`.
+- Pills under `functionsReadOnly`, and pills of locked group columns (`groupLockGroupColumns`), now open a menu with sort items, and disabled Move and Remove Field items, where previously no menu opened. To restore this, return `[]` from `getColumnDropZoneMenuItems` for those pills.
+
 ### Server-Side Row Model
 
 - When rows are grouped, the provided full width loading row is now indented to the level of the rows being loaded, so its spinner lines up with the expand and collapse icons of the rows around it. To display loading rows without indentation, add `.ag-row-loading .ag-loading { padding-inline-start: var(--ag-cell-horizontal-padding); }` to your CSS. See [Full Width Loading Row](./server-side-model-loading-rows/#full-width-loading-row).

@@ -5,7 +5,55 @@ import type { UserEvent } from '@testing-library/user-event';
 import { getGridElement } from 'ag-grid-community';
 
 import type { Zone } from './dropZoneMoveMenuHarness';
-import { open, order, pill, setupDropZoneMoveMenuSuite } from './dropZoneMoveMenuHarness';
+import {
+    defaultMenuEntries,
+    disabledEntries,
+    menuEntries,
+    moveLabels,
+    open,
+    order,
+    pill,
+    setupDropZoneMoveMenuSuite,
+} from './dropZoneMoveMenuHarness';
+
+const DEFAULT_TOKENS: Record<Zone, string[]> = {
+    rowGroup: [
+        'sortAscending',
+        'sortDescending',
+        'separator',
+        'moveToValues',
+        'separator',
+        'moveUp',
+        'moveDown',
+        'separator',
+        'removeField',
+    ],
+    pivot: [
+        'sortAscending',
+        'sortDescending',
+        'sortUnSort',
+        'separator',
+        'moveToRowGroups',
+        'moveToValues',
+        'separator',
+        'moveUp',
+        'moveDown',
+        'separator',
+        'removeField',
+    ],
+    aggregation: [
+        'sortAscending',
+        'sortDescending',
+        'separator',
+        'moveToRowGroups',
+        'separator',
+        'moveUp',
+        'moveDown',
+        'separator',
+        'removeField',
+    ],
+};
+const toHorizontal = (token: string) => ({ moveUp: 'moveLeft', moveDown: 'moveRight' })[token] ?? token;
 
 describe('drop zone move menus', () => {
     const create = setupDropZoneMoveMenuSuite().create;
@@ -29,7 +77,8 @@ describe('drop zone move menus', () => {
             const beforeLabel = horizontal ? 'Move Left' : 'Move Up';
             const afterLabel = horizontal ? 'Move Right' : 'Move Down';
             let menu = await open(api, zone, horizontal);
-            expect(menu.querySelectorAll('.ag-menu-separator')).toHaveLength(0);
+            expect(menuEntries(menu)).toEqual(defaultMenuEntries(zone, horizontal));
+            expect(disabledEntries(menu)).toEqual([]);
             await user.click(getByRole(menu, 'menuitem', { name: beforeLabel }));
             expect(order(api, zone)).toEqual(horizontal && enableRtl ? ['a', 'c', 'b'] : ['b', 'a', 'c']);
             expect(document.activeElement).toBe(pill(api, zone, horizontal));
@@ -41,27 +90,37 @@ describe('drop zone move menus', () => {
             expect(document.activeElement).toBe(pill(api, zone, horizontal));
         });
 
-        test.each([false, true])('disables first/last moves and hides read-only moves, RTL=%s', async (enableRtl) => {
+        test.each([false, true])('disables first/last moves, RTL=%s', async (enableRtl) => {
             const api = await create(zone, { ...onlyPanelUnderTest, enableRtl });
-            const labels = horizontal ? ['Move Left', 'Move Right'] : ['Move Up', 'Move Down'];
+            const labels = moveLabels(horizontal);
             if (horizontal && enableRtl) {
                 labels.reverse();
             }
             for (const [index, name] of ['A', 'C'].entries()) {
                 const menu = await open(api, zone, horizontal, name);
                 expect(getByRole(menu, 'menuitem', { name: labels[index] }).getAttribute('aria-disabled')).toBe('true');
-                expect(getByRole(menu, 'menuitem', { name: labels[1 - index] })).toBeTruthy();
+                expect(getByRole(menu, 'menuitem', { name: labels[1 - index] }).getAttribute('aria-disabled')).not.toBe(
+                    'true'
+                );
                 await userEvent.keyboard('{Escape}');
             }
+        });
+
+        test('opens read-only chips with sort items and disabled moves and Remove Field, without Move to', async () => {
+            const api = await create(zone, onlyPanelUnderTest);
             api.setGridOption('functionsReadOnly', true);
             const item = pill(api, zone, horizontal);
-            fireEvent.contextMenu(item);
-            expect(getGridElement(api)!.querySelector('[role="menu"]')).toBeNull();
-            expect(item.hasAttribute('aria-haspopup')).toBe(false);
-            expect(order(api, zone)).toEqual(['a', 'b', 'c']);
-            api.setGridOption('functionsReadOnly', false);
+            expect(item.getAttribute('aria-haspopup')).toBe('menu');
             const menu = await open(api, zone, horizontal);
-            expect(getByRole(menu, 'menuitem', { name: labels[0] }).getAttribute('aria-disabled')).not.toBe('true');
+            expect(menuEntries(menu)).toEqual(defaultMenuEntries(zone, horizontal, false));
+            expect(disabledEntries(menu)).toEqual([...moveLabels(horizontal), 'Remove Field']);
+            await user.click(getByRole(menu, 'menuitem', { name: moveLabels(horizontal)[0] }));
+            await user.click(getByRole(menu, 'menuitem', { name: 'Remove Field' }));
+            expect(order(api, zone)).toEqual(['a', 'b', 'c']);
+            await userEvent.keyboard('{Escape}');
+
+            api.setGridOption('functionsReadOnly', false);
+            expect(disabledEntries(await open(api, zone, horizontal))).toEqual([]);
         });
 
         test('shows disabled moves for a single item', async () => {
@@ -77,51 +136,60 @@ describe('drop zone move menus', () => {
             item.focus();
             fireEvent.keyDown(item, { key: 'F10', shiftKey: true });
             const menu = await findByRole(getGridElement(api) as HTMLElement, 'menu');
-            const moves = menu.querySelectorAll('[role="menuitem"]');
-            expect(moves).toHaveLength(2);
-            for (const move of moves) {
-                expect(move.getAttribute('aria-disabled')).toBe('true');
-                await user.click(move);
+            expect(menuEntries(menu)).toEqual(defaultMenuEntries(zone, horizontal));
+            expect(disabledEntries(menu)).toEqual(moveLabels(horizontal));
+            for (const name of moveLabels(horizontal)) {
+                await user.click(getByRole(menu, 'menuitem', { name }));
             }
+            expect(order(api, zone)).toEqual(['b']);
             expect(item.getAttribute('aria-haspopup')).toBe('menu');
             await userEvent.keyboard('{Escape}');
             expect(document.activeElement).toBe(item);
         });
 
-        test('hides read-only moves, even when explicitly requested', async () => {
+        test('keeps only the applicable explicitly requested items under read-only', async () => {
             const api = await create(zone, {
                 ...onlyPanelUnderTest,
                 functionsReadOnly: true,
-                getColumnDropZoneMenuItems: () => ['moveUp', 'moveDown', 'moveLeft', 'moveRight'],
+                getColumnDropZoneMenuItems: () => [
+                    'moveToRowGroups',
+                    'moveToValues',
+                    'moveToColumnLabels',
+                    'moveUp',
+                    'moveDown',
+                    'moveLeft',
+                    'moveRight',
+                    'removeField',
+                    'sortAscending',
+                ],
             });
             const item = pill(api, zone, horizontal);
-            fireEvent.contextMenu(item);
-            expect(getGridElement(api)!.querySelector('[role="menu"]')).toBeNull();
-            expect(item.hasAttribute('aria-haspopup')).toBe(false);
+            expect(item.getAttribute('aria-haspopup')).toBe('menu');
+            const menu = await open(api, zone, horizontal);
+            expect(menuEntries(menu)).toEqual([...moveLabels(horizontal), 'Remove Field', 'Sort Ascending']);
+            expect(disabledEntries(menu)).toEqual([...moveLabels(horizontal), 'Remove Field']);
         });
 
-        test.each([false, undefined])('hides moves when the function permission is %s', async (enabled) => {
-            const api = await create(zone, {
-                ...onlyPanelUnderTest,
-                getColumnDropZoneMenuItems: () => ['moveUp', 'moveDown', 'moveLeft', 'moveRight'],
-            });
-            const permission = {
-                rowGroup: 'enableRowGroup',
-                pivot: 'enablePivot',
-                aggregation: 'enableValue',
-            }[zone];
-            api.setGridOption(
-                'columnDefs',
-                api.getColumnDefs()!.map((colDef) => ({ ...colDef, [permission]: enabled }))
-            );
-            const item = pill(api, zone, horizontal);
-            expect(item.hasAttribute('aria-haspopup')).toBe(false);
-            fireEvent.contextMenu(item);
-            expect(getGridElement(api)!.querySelector('[role="menu"]')).toBeNull();
-            item.focus();
-            fireEvent.keyDown(item, { key: horizontal ? 'ArrowLeft' : 'ArrowUp', shiftKey: true });
-            expect(order(api, zone)).toEqual(['a', 'b', 'c']);
-        });
+        test.each([false, undefined])(
+            'omits Move to and disables moves when the function permissions are %s',
+            async (enabled) => {
+                const api = await create(zone, onlyPanelUnderTest);
+                api.setGridOption(
+                    'columnDefs',
+                    api.getColumnDefs()!.map((colDef) => ({
+                        ...colDef,
+                        enableRowGroup: enabled,
+                        enablePivot: enabled,
+                        enableValue: enabled,
+                    }))
+                );
+                const item = pill(api, zone, horizontal);
+                expect(item.getAttribute('aria-haspopup')).toBe('menu');
+                const menu = await open(api, zone, horizontal);
+                expect(menuEntries(menu)).toEqual(defaultMenuEntries(zone, horizontal, false));
+                expect(disabledEntries(menu)).toEqual(moveLabels(horizontal));
+            }
+        );
 
         test.each(['suppressMovableColumns', 'suppressMovable', 'lockPosition'] as const)(
             'allows panel reordering when %s prevents grid column reordering',
@@ -189,7 +257,7 @@ describe('drop zone move menus', () => {
                     context,
                     column: api.getColumn('b'),
                     source: zone,
-                    defaultItems: horizontal ? ['moveLeft', 'moveRight'] : ['moveUp', 'moveDown'],
+                    defaultItems: DEFAULT_TOKENS[zone].map((token) => (horizontal ? toHorizontal(token) : token)),
                 })
             );
             expect(getColumnMenuItems).not.toHaveBeenCalled();

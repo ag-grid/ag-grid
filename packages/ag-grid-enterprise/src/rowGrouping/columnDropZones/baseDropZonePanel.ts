@@ -1,20 +1,20 @@
 import type {
     AgColumn,
     ColumnEventType,
-    DefaultColumnDropZoneMenuItem,
     DragItem,
     DropTarget,
     GridDraggingEvent,
-    MenuItemDef,
+    SortDirection,
 } from 'ag-grid-community';
-import { DragSourceType, _createIconNoSpan, _shouldUpdateColVisibilityAfterGroup } from 'ag-grid-community';
+import { DragSourceType, _resolvePivotSort, _shouldUpdateColVisibilityAfterGroup } from 'ag-grid-community';
 
 import type { ColumnToolPanelChildParams } from '../../columnToolPanel/columnToolPanel';
-import { isDeferredMode } from '../../columnToolPanel/toolPanelDeferredUiUtils';
-import { MENU_ITEM_SEPARATOR, _normaliseSeparators } from '../../menu/menuSeparators';
+import { isDeferredMode, refreshDeferredToolPanelUi } from '../../columnToolPanel/toolPanelDeferredUiUtils';
 import { _isContextMenuKey, _showMenuListPopup } from '../../widgets/menuPopupUtils';
 import type { PillDropZonePanelParams } from '../../widgets/pillDropZonePanel';
 import { PillDropZonePanel } from '../../widgets/pillDropZonePanel';
+import type { ChipMenuActions, ChipMenuParams } from './dropZoneChipMenu';
+import { createChipMenuItemDefs, resolveChipMenuItems } from './dropZoneChipMenu';
 import { DropZoneColumnComp } from './dropZoneColumnComp';
 
 export type TDropZone = 'rowGroup' | 'pivot' | 'aggregation';
@@ -22,6 +22,7 @@ export type TDropZone = 'rowGroup' | 'pivot' | 'aggregation';
 export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumnComp, AgColumn> {
     protected readonly embedded: boolean;
     private hideMoveMenu?: () => void;
+    private readonly chipComps = new Map<AgColumn, DropZoneColumnComp>();
 
     constructor(
         horizontal: boolean,
@@ -38,11 +39,18 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
         super.init(params);
         this.addDestroyFunc(() => this.hideMoveMenu?.());
 
-        this.addManagedEventListeners({ newColumnsLoaded: this.refreshGui.bind(this) });
+        const refreshGui = this.refreshGui.bind(this);
+        this.addManagedEventListeners({ newColumnsLoaded: refreshGui, columnPivotModeChanged: refreshGui });
 
         this.addManagedPropertyListeners(
-            ['functionsReadOnly', 'rowGroupPanelSuppressSort', 'groupLockGroupColumns', 'getColumnDropZoneMenuItems'],
-            this.refreshGui.bind(this)
+            [
+                'functionsReadOnly',
+                'rowGroupPanelSuppressSort',
+                'pivotPanelSuppressSort',
+                'groupLockGroupColumns',
+                'getColumnDropZoneMenuItems',
+            ],
+            refreshGui
         );
     }
 
@@ -81,92 +89,166 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
 
     public override refreshGui(): void {
         this.hideMoveMenu?.();
+        this.chipComps.clear();
         super.refreshGui();
     }
 
     protected override createItemComponent(column: AgColumn, ghost: boolean): DropZoneColumnComp {
         const comp = super.createItemComponent(column, ghost);
         if (!ghost) {
-            if (this.getMenuConfig(comp).menuItems.length) {
+            this.chipComps.set(column, comp);
+            if (resolveChipMenuItems(this.getChipMenuParams(comp)).length) {
                 comp.getGui().setAttribute('aria-haspopup', 'menu');
             }
-            comp.addGuiEventListener('contextmenu', (event: MouseEvent) => this.showMoveMenu(comp, event));
+            comp.addGuiEventListener('contextmenu', (event: MouseEvent) => this.openChipMenu(column, event));
             comp.addGuiEventListener('keydown', (event: KeyboardEvent) => {
                 if (_isContextMenuKey(event)) {
-                    this.showMoveMenu(comp, event);
+                    this.openChipMenu(column, event);
                 }
             });
         }
         return comp;
     }
 
-    private getMenuConfig(comp: DropZoneColumnComp) {
-        const { horizontal, gos } = this;
-        const column = comp.getItem();
-        const isRtlHorizontal = horizontal && gos.get('enableRtl');
-        const directions = horizontal ? (['Left', 'Right'] as const) : (['Up', 'Down'] as const);
-        const moveItems = new Map<
-            DefaultColumnDropZoneMenuItem,
-            { direction: (typeof directions)[number]; isPrevious: boolean }
-        >();
-        const canMove = comp.isMovable();
-        for (let index = 0; canMove && index < directions.length; ++index) {
-            const direction = directions[index];
-            const isTowardStart = index === 0;
-            const isPrevious = isTowardStart !== isRtlHorizontal;
-            moveItems.set(`move${direction}`, { direction, isPrevious });
-        }
-        const defaultItems = Array.from(moveItems.keys());
-        const items =
-            gos.getCallback('getColumnDropZoneMenuItems')?.({
-                column,
-                source: this.dropZonePurpose,
-                defaultItems,
-            }) ?? defaultItems;
-        const menuItems = items.filter(
-            (item) => typeof item !== 'string' || item === MENU_ITEM_SEPARATOR || moveItems.has(item)
-        );
-        _normaliseSeparators(menuItems, MENU_ITEM_SEPARATOR);
-        return { menuItems, moveItems };
-    }
-
-    private showMoveMenu(comp: DropZoneColumnComp, event: MouseEvent | KeyboardEvent): void {
+    /**
+     * Opens the menu of `column`'s chip, positioned by the mouse event or else under `anchor` or the chip.
+     * Returns whether a menu opened.
+     */
+    public openChipMenu(column: AgColumn, anchor?: MouseEvent | KeyboardEvent | HTMLElement): boolean {
         this.hideMoveMenu?.();
-        const { menuItems, moveItems } = this.getMenuConfig(comp);
-        if (!menuItems.length) {
-            return;
+        const comp = this.getChipComp(column);
+        if (!comp) {
+            return false;
         }
-        event.preventDefault();
-        event.stopPropagation();
+        const params = this.getChipMenuParams(comp);
+        const menuItems = resolveChipMenuItems(params);
+        if (!menuItems.length) {
+            return false;
+        }
+        if (anchor instanceof Event) {
+            anchor.preventDefault();
+            anchor.stopPropagation();
+        }
         const translate = this.getLocaleTextFunc();
-        const column = comp.getItem();
         this.hideMoveMenu = _showMenuListPopup(this, this.beans, {
-            menuItems: menuItems.map<MenuItemDef | 'separator'>((item) => {
-                if (typeof item !== 'string' || item === MENU_ITEM_SEPARATOR) {
-                    return item;
-                }
-                const { direction, isPrevious } = moveItems.get(item)!;
-                return {
-                    name: translate(item, `Move ${direction}`),
-                    icon: _createIconNoSpan(`menuMove${direction}`, this.beans, column),
-                    disabled: this.getItemMoveIndex(comp, isPrevious) === null,
-                    action: () => {
-                        this.hideMoveMenu?.();
-                        this.moveItem(comp, isPrevious);
-                    },
-                };
-            }),
+            menuItems: createChipMenuItemDefs(menuItems, params, this.createChipMenuActions(params), translate),
             menuContext: { column, columnGroup: null, node: null, value: null },
-            positionBy: event instanceof MouseEvent ? event : comp.getGui(),
-            restoreFocus: () => {
-                if (comp.isAlive()) {
-                    comp.getGui().focus({ preventScroll: true });
-                }
-            },
+            positionBy: anchor instanceof MouseEvent || anchor instanceof HTMLElement ? anchor : comp.getGui(),
+            restoreFocus: () => this.focusChip(column),
             onClosed: () => {
                 this.hideMoveMenu = undefined;
             },
         });
+        return !!this.hideMoveMenu;
+    }
+
+    private getChipComp(column: AgColumn): DropZoneColumnComp | undefined {
+        const comp = this.chipComps.get(column);
+        return comp?.isAlive() ? comp : undefined;
+    }
+
+    private focusChip(column: AgColumn): void {
+        this.getChipComp(column)?.getGui().focus({ preventScroll: true });
+    }
+
+    private getChipMenuParams(comp: DropZoneColumnComp): ChipMenuParams {
+        return {
+            beans: this.beans,
+            column: comp.getItem(),
+            zone: this.dropZonePurpose,
+            horizontal: this.horizontal,
+            deferMode: isDeferredMode(this.updateParams),
+            isEditable: comp.isEditable(),
+            sortDirection: comp.getSortDirection(),
+        };
+    }
+
+    private createChipMenuActions({ column }: ChipMenuParams): ChipMenuActions {
+        // Closing the menu first and refocusing the chip lets the zone's refresh move focus to a neighbouring chip.
+        const closeMenuOntoChip = () => {
+            this.hideMoveMenu?.();
+            this.focusChip(column);
+        };
+        return {
+            sort: (direction) => {
+                closeMenuOntoChip();
+                this.sortColumn(column, direction);
+            },
+            moveTo: (target) => {
+                closeMenuOntoChip();
+                this.moveColumnToZone(column, target);
+            },
+            canMove: (isPrevious) => {
+                const comp = this.getChipComp(column);
+                return !!comp && this.getItemMoveIndex(comp, isPrevious) !== null;
+            },
+            move: (isPrevious) => {
+                closeMenuOntoChip();
+                const comp = this.getChipComp(column);
+                if (comp) {
+                    this.moveItem(comp, isPrevious);
+                }
+            },
+            remove: () => {
+                closeMenuOntoChip();
+                this.getChipComp(column)?.dispatchLocalEvent({ type: 'columnRemove' });
+            },
+        };
+    }
+
+    private sortColumn(column: AgColumn, direction: SortDirection): void {
+        const { beans, updateParams } = this;
+        const strategy = beans.columnStateUpdateStrategy;
+        const deferMode = isDeferredMode(updateParams);
+        if (this.dropZonePurpose === 'pivot') {
+            // An explicit pivotSort switches pivot columns to strict ordering, so don't set the direction already shown.
+            if (_resolvePivotSort(beans, strategy.getPivotSort(deferMode, column)) === direction) {
+                return;
+            }
+            strategy.applyColumnState(
+                deferMode,
+                [{ colId: column.getColId(), pivotSort: direction }],
+                'uiColumnSorted'
+            );
+        } else {
+            strategy.setColumnSort(deferMode, column, direction, 'uiColumnSorted');
+        }
+        refreshDeferredToolPanelUi(beans, updateParams);
+    }
+
+    /** Moves `column` to the end of `target`, with the same model and visibility updates as dragging its chip there. */
+    private moveColumnToZone(column: AgColumn, target: TDropZone): void {
+        const { beans, gos, updateParams } = this;
+        const strategy = beans.columnStateUpdateStrategy;
+        const deferMode = isDeferredMode(updateParams);
+
+        this.removeItemsFromModel(
+            [column],
+            this.getExistingItems().filter((item) => item !== column)
+        );
+        if (this.isRowGroupPanel() && _shouldUpdateColVisibilityAfterGroup(gos, false)) {
+            this.setColumnsVisible([column], true, 'uiColumnDragged');
+        }
+
+        switch (target) {
+            case 'rowGroup':
+                if (_shouldUpdateColVisibilityAfterGroup(gos, true)) {
+                    this.setColumnsVisible([column], false, 'uiColumnDragged');
+                }
+                strategy.setRowGroupColumns(
+                    deferMode,
+                    [...strategy.getRowGroupColumns(deferMode), column],
+                    'toolPanelUi'
+                );
+                break;
+            case 'aggregation':
+                strategy.setValueColumns(deferMode, [...strategy.getValueColumns(deferMode), column], 'toolPanelUi');
+                break;
+            case 'pivot':
+                strategy.setPivotColumns(deferMode, [...strategy.getPivotColumns(deferMode), column], 'toolPanelUi');
+                break;
+        }
+        refreshDeferredToolPanelUi(beans, updateParams);
     }
 
     private shouldToggleColumnVisibility(draggingEvent: GridDraggingEvent, isGrouped: boolean): boolean {
