@@ -218,11 +218,11 @@
                 },
                 {
                     "question": "AG Grid vs. MUI",
-                    "answer": "AG Grid is a feature-rich data grid offering advanced capabilities, while MUI (Material-UI) provides a simpler table component as part of its UI library."
+                    "answer": "AG Grid is a feature-rich data grid offering advanced capabilities, while [MUI (Material-UI)](/compare/ag-grid-vs-mui-x/) provides a simpler table component as part of its UI library."
                 },
                 {
                     "question": "Why use AG Grid over TanStack React Table?",
-                    "answer": "TanStack React Table is for building bespoke data grids from scratch, whereas AG Grid comes with a UI and broader feature set, which just requires configuration."
+                    "answer": "[TanStack React Table](/compare/ag-grid-vs-tanstack-table/) is for building bespoke data grids from scratch, whereas AG Grid comes with a UI and broader feature set, which just requires configuration."
                 },
                 {
                     "question": "How Many Rows Can AG Grid Handle?",

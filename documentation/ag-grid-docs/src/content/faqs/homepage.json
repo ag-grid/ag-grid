@@ -33,7 +33,7 @@
     },
     {
         "question": "How is AG Grid different from Tanstacks' React Table",
-        "answer": "We like to say AG Grid 'comes with batteries included'. Tanstack Table is headless, meaning you need to build the UI from scratch, where-as AG Grid can be used out-of-the-box."
+        "answer": "We like to say AG Grid 'comes with batteries included'. [Tanstack Table](/compare/ag-grid-vs-tanstack-table/) is headless, meaning you need to build the UI from scratch, where-as AG Grid can be used out-of-the-box."
     },
     {
         "question": "What is the difference between AG Grid Community and Enterprise?",

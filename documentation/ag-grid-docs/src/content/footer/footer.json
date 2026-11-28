@@ -49,6 +49,10 @@
                 "url": "/license-pricing/"
             },
             {
+                "name": "Compare Data Grids",
+                "url": "/compare/"
+            },
+            {
                 "name": "Support via Zendesk",
                 "url": "https://ag-grid.zendesk.com/",
                 "newTab": true
