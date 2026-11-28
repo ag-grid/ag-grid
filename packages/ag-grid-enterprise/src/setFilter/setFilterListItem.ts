@@ -5,6 +5,7 @@ import {
     _setAriaChecked,
     _setAriaDescribedBy,
     _setAriaExpanded,
+    _setAriaHidden,
     _setAriaLabel,
     _setAriaLabelledBy,
     _setAriaLevel,
@@ -388,8 +389,15 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
             _setAriaLabel(ariaEl, null);
             _setAriaDescribedBy(ariaEl);
         } else {
-            _setAriaLabel(ariaEl, isMissing ? this.getMissingAriaLabel() : null);
+            this.refreshFlatAriaLabel();
         }
+    }
+
+    /** Named explicitly, as browsers differ on naming an option from content through its labelled checkbox. */
+    private refreshFlatAriaLabel(): void {
+        const content = this.labelContent;
+        const textLabel = typeof content === 'string' && content !== '' ? content : null;
+        _setAriaLabel(this.getAriaElement(), this.isMissing ? this.getMissingAriaLabel() : textLabel);
     }
 
     /** The configured label replaces `ariaNotInCurrentData`, so the name holds the text shown. */
@@ -634,7 +642,7 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
         }
         const missingLabel = this.getMissingLabel();
         if (!missingLabel) {
-            this.eCheckbox.setLabel(content);
+            this.applyCheckboxLabel(content);
             return;
         }
         // Only the value is truncated, so a long one never hides the label.
@@ -646,7 +654,16 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
             ' ',
             _createElement({ tag: 'span', cls: 'ag-set-filter-item-missing-label', children: missingLabel })
         );
-        this.eCheckbox.setLabel(eLabel);
+        this.applyCheckboxLabel(eLabel);
+    }
+
+    private applyCheckboxLabel(label: HTMLElement | string): void {
+        this.eCheckbox.setLabel(label);
+        if (!this.isTree) {
+            // The checkbox stays named by the label through aria-labelledby; setLabel resets aria-hidden.
+            _setAriaHidden(this.eCheckbox.getGui().querySelector('.ag-label')!, true);
+            this.refreshFlatAriaLabel();
+        }
     }
 
     public override destroy(): void {
