@@ -1,4 +1,6 @@
 *
 !template/**/*
 !template
+!ssrm-streaming-bench/**/*
+!ssrm-streaming-bench
 !.gitignore

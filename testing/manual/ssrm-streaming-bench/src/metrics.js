@@ -1,0 +1,529 @@
+// Measures what the browser actually rendered, not what was sent: cell text sampled per frame by row id + col id,
+// DOM row element churn in the centre container, frame timing and transaction timing.
+import { valueColIds } from './backend.js';
+
+const LONG_FRAME_MS = 50;
+
+function stats(values) {
+    if (!values.length) {
+        return { n: 0 };
+    }
+    const sorted = [...values].sort((a, b) => a - b);
+    const at = (q) => sorted[Math.min(sorted.length - 1, Math.floor(q * sorted.length))];
+    const avg = sorted.reduce((s, v) => s + v, 0) / sorted.length;
+    return { n: sorted.length, avg: r2(avg), p50: r2(at(0.5)), p95: r2(at(0.95)), max: r2(sorted[sorted.length - 1]) };
+}
+
+function r2(n) {
+    return Math.round(n * 100) / 100;
+}
+
+class GridTracker {
+    constructor(grid, sampleCols) {
+        this.grid = grid;
+        this.root = grid.el;
+        this.centre = this.root.querySelector('.ag-grid-scrolling-rows .ag-grid-scrolling-container');
+        this.viewport = this.root.querySelector('.ag-grid-viewport');
+        this.header = this.root.querySelector('.ag-header');
+        this.sampleCols = sampleCols;
+        this.observer = new MutationObserver((records) => this.onMutations(records));
+        this.observer.observe(this.centre, {
+            childList: true,
+            subtree: true,
+            attributeFilter: ['row-id'],
+            attributeOldValue: true,
+        });
+        this.reset();
+    }
+
+    reset() {
+        this.cells = new Map();
+        this.rows = new Map();
+        this.refreshFrames = 0;
+        this.cellRefreshFrames = 0;
+        this.rowRefreshFrames = 0;
+        this.lastVisible = null;
+        this.added = 0;
+        this.removed = 0;
+        this.rowIdChanges = 0;
+        this.orderChecks = 0;
+        this.orderMismatches = 0;
+        this.pendingHeads = [];
+        this.headLag = [];
+        this.pendingAgg = new Map();
+        this.aggLag = { group: [], total: [] };
+        this.aggSuperseded = 0;
+        this.aggNotRendered = { group: 0, total: 0 };
+        this.pendingNew = new Map();
+        this.newRowLag = [];
+        this.sortChecks = 0;
+        this.sortViolations = 0;
+        this.viewChecks = 0;
+        this.viewMatches = 0;
+        this.checkMs = 0;
+        this.txSync = [];
+        this.txQueue = [];
+        this.statuses = {};
+        this.insertsApplied = 0;
+    }
+
+    onMutations(records) {
+        for (const rec of records) {
+            if (rec.type === 'attributes') {
+                if (rec.target.classList.contains('ag-row') && rec.oldValue !== null) {
+                    this.rowIdChanges++;
+                }
+                continue;
+            }
+            if (rec.target !== this.centre) {
+                continue;
+            }
+            for (const n of rec.addedNodes) {
+                this.added += n.classList?.contains('ag-row') ? 1 : 0;
+            }
+            for (const n of rec.removedNodes) {
+                this.removed += n.classList?.contains('ag-row') ? 1 : 0;
+            }
+        }
+    }
+
+    sampleFrame(now, checkOrder) {
+        let cellsChanged = false;
+        const ordered = checkOrder ? [] : null;
+        const visible = [];
+        const { top, bottom } = this.visibleBand();
+        for (const rowEl of this.centre.children) {
+            const rowId = rowEl.getAttribute('row-id');
+            if (!rowId || rowEl.classList.contains('ag-opacity-zero')) {
+                continue;
+            }
+            if (ordered && /^\d+$/.test(rowId)) {
+                ordered.push([+rowEl.getAttribute('row-index'), +rowId]);
+            }
+            const rect = rowEl.getBoundingClientRect();
+            if (rect.top < top - 1 || rect.bottom > bottom + 1) {
+                continue;
+            }
+            // The row's target position, not its painted one, so a row sliding under animateRows counts once.
+            visible.push([+rowEl.getAttribute('row-index'), `${rowId}@${rowEl.style.transform || rowEl.style.top}`]);
+            const sentAt = this.pendingNew.get(rowId);
+            if (sentAt != null) {
+                this.newRowLag.push(now - sentAt);
+                this.pendingNew.delete(rowId);
+            }
+            let rowChanged = false;
+            for (const col of this.sampleCols) {
+                const cell = rowEl.querySelector(`[col-id="${col}"]`);
+                if (!cell) {
+                    continue;
+                }
+                const key = `${rowId}|${col}`;
+                const text = cell.textContent;
+                const entry = this.cells.get(key);
+                if (!entry) {
+                    this.cells.set(key, { text, first: now, last: now, changes: 0 });
+                } else {
+                    entry.last = now;
+                    if (entry.text !== text) {
+                        entry.text = text;
+                        entry.changes++;
+                        rowChanged = true;
+                    }
+                }
+            }
+            const row = this.rows.get(rowId);
+            if (!row) {
+                this.rows.set(rowId, { first: now, last: now, changes: 0 });
+            } else {
+                row.last = now;
+                row.changes += rowChanged ? 1 : 0;
+            }
+            cellsChanged ||= rowChanged;
+        }
+        // A row entering, leaving or moving within the view changes the screen even when no sampled cell text did.
+        const visibleKey = visible
+            .sort((a, b) => a[0] - b[0])
+            .map(([, key]) => key)
+            .join(',');
+        const rowsChanged = this.lastVisible != null && visibleKey !== this.lastVisible;
+        this.lastVisible = visibleKey;
+        this.cellRefreshFrames += cellsChanged ? 1 : 0;
+        this.rowRefreshFrames += rowsChanged ? 1 : 0;
+        this.refreshFrames += cellsChanged || rowsChanged ? 1 : 0;
+        if (ordered?.length) {
+            this.orderChecks++;
+            const k = ordered[0][0] + ordered[0][1];
+            if (ordered.some(([idx, id]) => idx + id !== k)) {
+                this.orderMismatches++;
+            }
+        }
+        const settled = performance.now();
+        this.resolveHeads(settled);
+        this.resolveAgg(settled);
+    }
+
+    /**
+     * Under a non-default order: visible rows of the same parent (group rows included) must follow the sort, leaf rows
+     * must pass the filter, and (ungrouped only) the leaf rows must be exactly the rows the backend returns for those
+     * indexes now.
+     */
+    checkSortedView() {
+        const t0 = performance.now();
+        const { api, backend } = this.grid;
+        const { top, bottom } = this.visibleBand();
+        const rows = [];
+        for (const rowEl of this.centre.children) {
+            const id = rowEl.getAttribute('row-id');
+            const rect = rowEl.getBoundingClientRect();
+            if (id && /^(\d+|g-.+)$/.test(id) && rect.top >= top - 1 && rect.bottom <= bottom + 1) {
+                rows.push({ index: +rowEl.getAttribute('row-index'), node: api.getRowNode(id) });
+            }
+        }
+        if (!rows.length) {
+            this.checkMs += performance.now() - t0;
+            return;
+        }
+        rows.sort((a, b) => a.index - b.index);
+        const { sortModel, filterModel } = this.grid.order();
+        const sort = sortModel[0];
+        const lastSibling = new Map();
+        let violation = false;
+        for (const { node } of rows) {
+            if (!node?.data || (!node.group && !backend.passesFilter(+node.id, filterModel))) {
+                violation = true;
+                break;
+            }
+            const prev = lastSibling.get(node.parent);
+            lastSibling.set(node.parent, node);
+            if (sort && prev && sort.colId in node.data) {
+                const a = prev.data[sort.colId];
+                const b = node.data[sort.colId];
+                if (sort.sort === 'asc' ? a > b : a < b) {
+                    violation = true;
+                    break;
+                }
+            }
+        }
+        this.sortChecks++;
+        this.sortViolations += violation ? 1 : 0;
+        if (!this.grid.grouped) {
+            const expected = backend.query({
+                startRow: rows[0].index,
+                endRow: rows.at(-1).index + 1,
+                rowGroupCols: [],
+                groupKeys: [],
+                sortModel,
+                filterModel,
+            }).rowData;
+            this.viewChecks++;
+            this.viewMatches += rows.every((r) => expected[r.index - rows[0].index]?.id === r.node?.id) ? 1 : 0;
+        }
+        this.checkMs += performance.now() - t0;
+    }
+
+    resolveHeads(now) {
+        if (!this.pendingHeads.length) {
+            return;
+        }
+        const top = this.centre.querySelector('.ag-row[row-index="0"]')?.getAttribute('row-id');
+        if (!top) {
+            return;
+        }
+        const topId = +top;
+        while (this.pendingHeads.length && this.pendingHeads[0].id <= topId) {
+            this.headLag.push(now - this.pendingHeads.shift().t);
+        }
+    }
+
+    /**
+     * Each expected value's lag runs until it, or a later value for the same row, is on screen. Values for a row that is
+     * not rendered (a group scrolled out of view) are counted as not rendered, not dropped silently.
+     */
+    resolveAgg(now) {
+        for (const [rowId, queue] of this.pendingAgg) {
+            const cell = this.root.querySelector(`.ag-row[row-id="${rowId}"] [col-id="px"]`);
+            if (!cell) {
+                for (const p of queue) {
+                    this.aggNotRendered[p.total ? 'total' : 'group']++;
+                }
+                this.pendingAgg.delete(rowId);
+                continue;
+            }
+            const shown = queue.findLastIndex((p) => p.text === cell.textContent);
+            for (const p of queue.splice(0, shown + 1)) {
+                this.aggLag[p.total ? 'total' : 'group'].push(now - p.t);
+            }
+            this.aggSuperseded += Math.max(0, shown);
+        }
+    }
+
+    /** Rows wholly between the header and the bottom of the viewport; rendered buffer rows outside it are not in view. */
+    visibleBand() {
+        return {
+            top: this.header.getBoundingClientRect().bottom,
+            bottom: this.viewport.getBoundingClientRect().bottom,
+        };
+    }
+
+    visibleCounts() {
+        const vp = this.viewport.getBoundingClientRect();
+        const { top, bottom } = this.visibleBand();
+        let rows = 0;
+        for (const rowEl of this.centre.children) {
+            const r = rowEl.getBoundingClientRect();
+            rows += r.top >= top - 1 && r.bottom <= bottom + 1 && r.height > 0 ? 1 : 0;
+        }
+        let cols = 0;
+        for (const h of this.header.querySelectorAll('.ag-header-row-column .ag-header-cell')) {
+            const r = h.getBoundingClientRect();
+            cols += r.left >= vp.left - 1 && r.right <= vp.right + 1 && r.width > 0 ? 1 : 0;
+        }
+        return { rows, cols };
+    }
+
+    /**
+     * Resolved lags, plus values still not on screen at their age so far when that age is above the resolved p95: their
+     * real lag is at least that, so they can only raise the p95, never lower it.
+     */
+    aggSummary(kind, now) {
+        const pending = [];
+        for (const queue of this.pendingAgg.values()) {
+            for (const p of queue) {
+                if (!!p.total === (kind === 'total')) {
+                    pending.push(now - p.t);
+                }
+            }
+        }
+        const resolvedP95 = stats(this.aggLag[kind]).p95 ?? 0;
+        return {
+            ...stats([...this.aggLag[kind], ...pending.filter((age) => age > resolvedP95)]),
+            rendered: this.aggLag[kind].length,
+            stillPending: pending.length,
+            stillPendingMaxAgeMs: pending.length ? r2(Math.max(...pending)) : 0,
+            rowNotRendered: this.aggNotRendered[kind],
+        };
+    }
+
+    onScreen() {
+        const r = this.root.getBoundingClientRect();
+        return r.bottom > 0 && r.top < window.innerHeight && r.right > 0 && r.left < window.innerWidth;
+    }
+
+    summary(seconds) {
+        const now = performance.now();
+        const cellRates = [];
+        for (const c of this.cells.values()) {
+            const span = (c.last - c.first) / 1000;
+            if (span >= 1) {
+                cellRates.push(c.changes / span);
+            }
+        }
+        let rowsObserved = 0;
+        let rowsAtLeast1 = 0;
+        for (const r of this.rows.values()) {
+            const span = (r.last - r.first) / 1000;
+            if (span >= 2) {
+                rowsObserved++;
+                rowsAtLeast1 += r.changes / span >= 1 ? 1 : 0;
+            }
+        }
+        const cellStats = stats(cellRates);
+        const sortedRates = [...cellRates].sort((a, b) => a - b);
+        return {
+            index: this.grid.index,
+            contentRefreshPerS: r2(this.refreshFrames / seconds),
+            cellRefreshPerS: r2(this.cellRefreshFrames / seconds),
+            rowMoveRefreshPerS: r2(this.rowRefreshFrames / seconds),
+            perCellRenderedRate: { ...cellStats, p10: r2(sortedRates[Math.floor(0.1 * sortedRates.length)] ?? 0) },
+            rowsObserved,
+            pctRowsChangedAtLeast1PerS: rowsObserved ? r2((100 * rowsAtLeast1) / rowsObserved) : null,
+            domRowsAddedPerS: r2(this.added / seconds),
+            domRowsRemovedPerS: r2(this.removed / seconds),
+            rowIdAttributeChanges: this.rowIdChanges,
+            insertsAppliedPerS: r2(this.insertsApplied / seconds),
+            orderChecks: this.orderChecks,
+            orderMismatches: this.orderMismatches,
+            headRenderLagMs: stats(this.headLag),
+            aggLagMs: {
+                group: this.aggSummary('group', now),
+                total: this.aggSummary('total', now),
+                superseded: this.aggSuperseded,
+            },
+            sortedView: this.sortChecks
+                ? {
+                      checks: this.sortChecks,
+                      orderOrFilterViolations: this.sortViolations,
+                      viewChecks: this.viewChecks,
+                      viewMatchesBackend: this.viewMatches,
+                      newRowInViewLagMs: stats(this.newRowLag),
+                      newRowsNotSeenInView: this.pendingNew.size,
+                      checkMsPerS: r2(this.checkMs / seconds),
+                  }
+                : undefined,
+            txSyncApplyMs: stats(this.txSync),
+            txAsyncQueueMs: stats(this.txQueue),
+            txStatuses: this.statuses,
+            subscribedRows: this.grid.subscribed.size,
+            onScreen: this.onScreen(),
+            ...this.visibleCounts(),
+            feed: {
+                ...this.grid.stats,
+                backendMs: r2(this.grid.stats.backendMs),
+                insertsEmittedPerS: r2(this.grid.stats.insertsEmitted / seconds),
+                updateTicksPerS: r2(this.grid.stats.updateTicks / seconds),
+                refreshesPerS: r2(this.grid.stats.refreshes / seconds),
+                backendMsPerS: r2(this.grid.stats.backendMs / seconds),
+            },
+        };
+    }
+}
+
+export class Metrics {
+    constructor(cfg) {
+        this.cfg = cfg;
+        this.trackers = new Map();
+        this.cellUpdatesSent = 0;
+        this.reset();
+        new PerformanceObserver((list) => {
+            for (const e of list.getEntries()) {
+                this.longTasks++;
+                this.longTaskMs += e.duration;
+            }
+        }).observe({ entryTypes: ['longtask'] });
+        requestAnimationFrame((t) => this.frame(t));
+    }
+
+    reset() {
+        this.startedAt = performance.now();
+        this.frames = [];
+        this.lastFrame = null;
+        this.longTasks = 0;
+        this.longTaskMs = 0;
+        this.cellUpdatesSent = 0;
+        this.nodeCounts = [];
+        this.frameNo = 0;
+        this.trackers.forEach((t) => {
+            t.reset();
+            t.grid.resetStats();
+        });
+    }
+
+    attach(grid) {
+        const sampleCols = this.sampleColsFor(grid);
+        this.trackers.set(grid.index, new GridTracker(grid, sampleCols));
+    }
+
+    sampleColsFor(grid) {
+        const valueCols = valueColIds(grid.cfg.cols).length;
+        if (this.cfg.grids > 1) {
+            return valueCols ? ['c0'] : ['px'];
+        }
+        const picks = [0, 1, 10, 25, 44].filter((i) => i < valueCols).map((i) => `c${i}`);
+        return grid.cfg.group ? ['px', ...picks.slice(0, 2)] : picks;
+    }
+
+    /** Visible value columns whose value an update changes. */
+    visibleValueCols(grid) {
+        const vis = grid.backend.visibleCols;
+        const { changedCols } = grid.backend;
+        return vis
+            ? [...vis].filter((c) => /^c\d+$/.test(c) && !(changedCols > 0 && +c.slice(1) >= changedCols)).length
+            : 0;
+    }
+
+    frame(now) {
+        if (this.lastFrame != null) {
+            this.frames.push(now - this.lastFrame);
+        }
+        this.lastFrame = now;
+        this.frameNo++;
+        const checkOrder = this.frameNo % 15 === 0;
+        for (const t of this.trackers.values()) {
+            t.sampleFrame(now, checkOrder && !t.grid.grouped && t.grid.defaultOrder);
+            if (this.frameNo % 30 === 0 && !t.grid.defaultOrder) {
+                t.checkSortedView();
+            }
+        }
+        if (this.frameNo % 60 === 0) {
+            const g = [...this.trackers.values()][0]?.grid;
+            if (g) {
+                let n = 0;
+                g.api.forEachNode(() => n++);
+                this.nodeCounts.push({ t: now, n });
+            }
+        }
+        requestAnimationFrame((t) => this.frame(t));
+    }
+
+    txApplied(grid, ms, status, insertedId) {
+        const t = this.trackers.get(grid.index);
+        if (!t) {
+            return;
+        }
+        if (ms != null) {
+            t.txSync.push(ms);
+        }
+        this.onApplied(t, status, insertedId);
+    }
+
+    txQueued(grid, ms, status, insertedId) {
+        const t = this.trackers.get(grid.index);
+        if (!t) {
+            return;
+        }
+        t.txQueue.push(ms);
+        this.onApplied(t, status, insertedId);
+    }
+
+    onApplied(t, status, insertedId) {
+        t.statuses[status] = (t.statuses[status] ?? 0) + 1;
+        if (insertedId != null && status === 'Applied') {
+            t.insertsApplied++;
+            if (!t.grid.grouped) {
+                t.pendingHeads.push({ id: +insertedId, t: performance.now() });
+            }
+        }
+    }
+
+    /** A row inserted under a non-default order: how long until it is in view, if it ever is. */
+    expectNewRow(grid, rowId) {
+        this.trackers.get(grid.index)?.pendingNew.set(rowId, performance.now());
+    }
+
+    expectAgg(grid, rowId, text, t, total) {
+        const tracker = this.trackers.get(grid.index);
+        if (!tracker) {
+            return;
+        }
+        const queue = tracker.pendingAgg.get(rowId) ?? tracker.pendingAgg.set(rowId, []).get(rowId);
+        queue.push({ text, t, total });
+    }
+
+    snapshot() {
+        const now = performance.now();
+        const seconds = (now - this.startedAt) / 1000;
+        const frameStats = stats(this.frames);
+        const nodes = this.nodeCounts;
+        const tail = nodes.slice(Math.floor(nodes.length / 2));
+        const slope = tail.length >= 2 ? r2((tail.at(-1).n - tail[0].n) / ((tail.at(-1).t - tail[0].t) / 1000)) : null;
+        const grids = [...this.trackers.values()].map((t) => t.summary(seconds));
+        return {
+            seconds: r2(seconds),
+            fps: r2(this.frames.length / seconds),
+            frameMs: frameStats,
+            longFrames: this.frames.filter((f) => f > LONG_FRAME_MS).length,
+            framesOver1000ms: this.frames.filter((f) => f > 1000).length,
+            longTasks: this.longTasks,
+            longTaskMs: r2(this.longTaskMs),
+            cellUpdatesSentPerS: r2(this.cellUpdatesSent / seconds),
+            loadedNodes: {
+                first: nodes[0]?.n ?? null,
+                last: nodes.at(-1)?.n ?? null,
+                max: Math.max(0, ...nodes.map((x) => x.n)),
+                slopePerSSecondHalf: slope,
+            },
+            gridsAttached: grids.length,
+            grids,
+        };
+    }
+}
