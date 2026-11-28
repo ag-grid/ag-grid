@@ -891,13 +891,10 @@ export const AG_GRID_LOCALE_NB_NO = {
     ariaDropZoneColumnValueItemDescription: 'Trykk ENTER for å endre aggregeringstype',
     ariaDropZoneColumnGroupItemDescription: 'Trykk ENTER for å sortere',
 
-    // used for aggregate drop zone, format: {aggregation}{ariaDropZoneColumnComponentAggFuncSeparator}{column name}
-    ariaDropZoneColumnComponentAggFuncSeparator: ' av ',
     ariaDropZoneColumnComponentSortAscending: 'stigende',
     ariaDropZoneColumnComponentSortDescending: 'synkende',
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'absolutt stigende',
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'absolutt synkende',
-    ariaDropZoneColumnAggFunc: '${aggFunc} av ${column}',
     ariaDropZoneColumnSorted: '${column}, ${sort}',
     ariaLabelDialog: 'Dialog',
     ariaLabelClose: 'Lukk',

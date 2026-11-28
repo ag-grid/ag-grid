@@ -894,13 +894,10 @@ export const AG_GRID_LOCALE_EN_US = {
     ariaDropZoneColumnComponentDescription: 'Press DELETE to remove',
     ariaDropZoneColumnValueItemDescription: 'Press ENTER to change the aggregation type',
     ariaDropZoneColumnGroupItemDescription: 'Press ENTER to sort',
-    // used for aggregate drop zone, format: {aggregation}{ariaDropZoneColumnComponentAggFuncSeparator}{column name}
-    ariaDropZoneColumnComponentAggFuncSeparator: ' of ',
     ariaDropZoneColumnComponentSortAscending: 'ascending',
     ariaDropZoneColumnComponentSortDescending: 'descending',
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'absolute ascending',
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'absolute descending',
-    ariaDropZoneColumnAggFunc: '${aggFunc} of ${column}',
     ariaDropZoneColumnSorted: '${column}, ${sort}',
 
     ariaLabelDialog: 'Dialog',

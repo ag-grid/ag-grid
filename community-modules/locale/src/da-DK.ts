@@ -892,13 +892,10 @@ export const AG_GRID_LOCALE_DA_DK = {
     ariaDropZoneColumnValueItemDescription: 'Tryk ENTER for at ændre aggregattypen',
     ariaDropZoneColumnGroupItemDescription: 'Tryk ENTER for at sortere',
 
-    // used for aggregate drop zone, format: {aggregation}{ariaDropZoneColumnComponentAggFuncSeparator}{column name}
-    ariaDropZoneColumnComponentAggFuncSeparator: ' of ',
     ariaDropZoneColumnComponentSortAscending: 'stigende',
     ariaDropZoneColumnComponentSortDescending: 'faldende',
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'absolut stigende',
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'absolut faldende',
-    ariaDropZoneColumnAggFunc: '${aggFunc} af ${column}',
     ariaDropZoneColumnSorted: '${column}, ${sort}',
     ariaLabelDialog: 'Dialog',
     ariaLabelClose: 'Luk',

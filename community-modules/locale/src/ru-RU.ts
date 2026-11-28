@@ -907,13 +907,10 @@ export const AG_GRID_LOCALE_RU_RU = {
     ariaDropZoneColumnComponentDescription: 'Нажмите DELETE, чтобы удалить',
     ariaDropZoneColumnValueItemDescription: 'Нажмите ENTER, чтобы изменить тип агрегирования',
     ariaDropZoneColumnGroupItemDescription: 'Нажмите ENTER для сортировки',
-    // used for aggregate drop zone, format: {aggregation}{ariaDropZoneColumnComponentAggFuncSeparator}{column name}
-    ariaDropZoneColumnComponentAggFuncSeparator: ' от ',
     ariaDropZoneColumnComponentSortAscending: 'по возрастанию',
     ariaDropZoneColumnComponentSortDescending: 'по убыванию',
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'по абсолютному возрастанию',
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'по абсолютному убыванию',
-    ariaDropZoneColumnAggFunc: '${aggFunc} от ${column}',
     ariaDropZoneColumnSorted: '${column}, ${sort}',
 
     ariaLabelDialog: 'Диалог',

@@ -905,13 +905,10 @@ export const AG_GRID_LOCALE_SL_SI = {
     ariaDropZoneColumnComponentDescription: 'Pritisnite DELETE za odstranitev',
     ariaDropZoneColumnValueItemDescription: 'Pritisnite ENTER za spremembo tipa agregacije',
     ariaDropZoneColumnGroupItemDescription: 'Pritisnite ENTER za razvrščanje',
-    // used for aggregate drop zone, format: {aggregation}{ariaDropZoneColumnComponentAggFuncSeparator}{column name}
-    ariaDropZoneColumnComponentAggFuncSeparator: ' od ',
     ariaDropZoneColumnComponentSortAscending: 'naraščajoče',
     ariaDropZoneColumnComponentSortDescending: 'padajoče',
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'absolutno naraščajoče',
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'absolutno padajoče',
-    ariaDropZoneColumnAggFunc: '${aggFunc} od ${column}',
     ariaDropZoneColumnSorted: '${column}, ${sort}',
 
     ariaLabelDialog: 'Pogovorno okno',

@@ -906,13 +906,10 @@ export const AG_GRID_LOCALE_HI_IN = {
     ariaDropZoneColumnComponentDescription: 'हटाने के लिए DELETE दबाएं',
     ariaDropZoneColumnValueItemDescription: 'एग्रीगेशन प्रकार बदलने के लिए ENTER दबाएं',
     ariaDropZoneColumnGroupItemDescription: 'क्रमबद्ध करने के लिए ENTER दबाएं',
-    // used for aggregate drop zone, format: {aggregation}{ariaDropZoneColumnComponentAggFuncSeparator}{column name}
-    ariaDropZoneColumnComponentAggFuncSeparator: ' का ',
     ariaDropZoneColumnComponentSortAscending: 'आरोही',
     ariaDropZoneColumnComponentSortDescending: 'अवरोही',
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'एब्सोल्यूट आरोही',
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'एब्सोल्यूट अवरोही',
-    ariaDropZoneColumnAggFunc: '${column} का ${aggFunc}',
     ariaDropZoneColumnSorted: '${column}, ${sort}',
 
     ariaLabelDialog: 'डायलॉग',

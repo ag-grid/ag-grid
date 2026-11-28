@@ -889,13 +889,10 @@ export const AG_GRID_LOCALE_ZH_CN = {
     ariaDropZoneColumnValueItemDescription: '按 ENTER 键更改聚合类型',
     ariaDropZoneColumnGroupItemDescription: '按 ENTER 键排序',
 
-    // used for aggregate drop zone, format: {aggregation}{ariaDropZoneColumnComponentAggFuncSeparator}{column name}
-    ariaDropZoneColumnComponentAggFuncSeparator: ' 的 ',
     ariaDropZoneColumnComponentSortAscending: '升序',
     ariaDropZoneColumnComponentSortDescending: '降序',
     ariaDropZoneColumnComponentSortAbsoluteAscending: '绝对升序',
     ariaDropZoneColumnComponentSortAbsoluteDescending: '绝对降序',
-    ariaDropZoneColumnAggFunc: '${column} 的 ${aggFunc}',
     ariaDropZoneColumnSorted: '${column}, ${sort}',
     ariaLabelDialog: '对话框',
     ariaLabelClose: '关闭',

@@ -889,13 +889,10 @@ export const AG_GRID_LOCALE_HE_IL = {
     ariaDropZoneColumnValueItemDescription: 'לחץ ENTER כדי לשנות את סוג האגרגציה',
     ariaDropZoneColumnGroupItemDescription: 'לחץ ENTER כדי למיין',
 
-    // used for aggregate drop zone, format: {aggregation}{ariaDropZoneColumnComponentAggFuncSeparator}{column name}
-    ariaDropZoneColumnComponentAggFuncSeparator: ' של ',
     ariaDropZoneColumnComponentSortAscending: 'עולה',
     ariaDropZoneColumnComponentSortDescending: 'יורד',
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'עלייה מוחלטת',
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'ירידה מוחלטת',
-    ariaDropZoneColumnAggFunc: '${aggFunc} של ${column}',
     ariaDropZoneColumnSorted: '${column}, ${sort}',
     ariaLabelDialog: 'דיאלוג',
     ariaLabelClose: 'סגור',

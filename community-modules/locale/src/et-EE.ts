@@ -905,13 +905,10 @@ export const AG_GRID_LOCALE_ET_EE = {
     ariaDropZoneColumnComponentDescription: 'Vajuta DELETE eemaldamiseks',
     ariaDropZoneColumnValueItemDescription: 'Vajuta ENTER agregeerimise tüübi muutmiseks',
     ariaDropZoneColumnGroupItemDescription: 'Vajuta ENTER sortimiseks',
-    // used for aggregate drop zone, format: {aggregation}{ariaDropZoneColumnComponentAggFuncSeparator}{column name}
-    ariaDropZoneColumnComponentAggFuncSeparator: ' veeru ',
     ariaDropZoneColumnComponentSortAscending: 'kasvavalt',
     ariaDropZoneColumnComponentSortDescending: 'kahanevalt',
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'absoluutväärtuse järgi kasvavalt',
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'absoluutväärtuse järgi kahanevalt',
-    ariaDropZoneColumnAggFunc: '${aggFunc}, veerg ${column}',
     ariaDropZoneColumnSorted: '${column}, ${sort}',
 
     ariaLabelDialog: 'Dialoog',

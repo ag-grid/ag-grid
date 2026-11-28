@@ -891,13 +891,10 @@ export const AG_GRID_LOCALE_SK_SK = {
     ariaDropZoneColumnValueItemDescription: 'Stlačte ENTER pre zmenu typu agregácie',
     ariaDropZoneColumnGroupItemDescription: 'Stlačte ENTER pre zoradenie',
 
-    // used for aggregate drop zone, format: {aggregation}{ariaDropZoneColumnComponentAggFuncSeparator}{column name}
-    ariaDropZoneColumnComponentAggFuncSeparator: ' z ',
     ariaDropZoneColumnComponentSortAscending: 'vzostupne',
     ariaDropZoneColumnComponentSortDescending: 'zostupne',
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'absolútne vzostupne',
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'absolútne zostupne',
-    ariaDropZoneColumnAggFunc: '${aggFunc} z ${column}',
     ariaDropZoneColumnSorted: '${column}, ${sort}',
     ariaLabelDialog: 'Dialóg',
     ariaLabelClose: 'Zavrieť',

@@ -895,13 +895,10 @@ export const AG_GRID_LOCALE_PT_PT = {
     ariaDropZoneColumnValueItemDescription: 'Pressione ENTER para mudar o tipo de agregação',
     ariaDropZoneColumnGroupItemDescription: 'Pressione ENTER para classificar',
 
-    // used for aggregate drop zone, format: {aggregation}{ariaDropZoneColumnComponentAggFuncSeparator}{column name}
-    ariaDropZoneColumnComponentAggFuncSeparator: ' de ',
     ariaDropZoneColumnComponentSortAscending: 'ascendente',
     ariaDropZoneColumnComponentSortDescending: 'descendente',
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'ascendente absoluto',
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'descendente absoluto',
-    ariaDropZoneColumnAggFunc: '${aggFunc} de ${column}',
     ariaDropZoneColumnSorted: '${column}, ${sort}',
     ariaLabelDialog: 'Diálogo',
     ariaLabelClose: 'Fechar',

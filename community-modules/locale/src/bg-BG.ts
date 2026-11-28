@@ -894,13 +894,10 @@ export const AG_GRID_LOCALE_BG_BG = {
     ariaDropZoneColumnValueItemDescription: 'Натиснете ENTER, за да промените типа на агрегация',
     ariaDropZoneColumnGroupItemDescription: 'Натиснете ENTER, за да сортирате',
 
-    // used for aggregate drop zone, format: {aggregation}{ariaDropZoneColumnComponentAggFuncSeparator}{column name}
-    ariaDropZoneColumnComponentAggFuncSeparator: ' от ',
     ariaDropZoneColumnComponentSortAscending: 'възходящо',
     ariaDropZoneColumnComponentSortDescending: 'низходящо',
     ariaDropZoneColumnComponentSortAbsoluteAscending: '„абсолютно възходящо“',
     ariaDropZoneColumnComponentSortAbsoluteDescending: '„абсолютно низходящо“',
-    ariaDropZoneColumnAggFunc: '${aggFunc} от ${column}',
     ariaDropZoneColumnSorted: '${column}, ${sort}',
     ariaLabelDialog: 'Диалог',
     ariaLabelClose: 'Затвори',

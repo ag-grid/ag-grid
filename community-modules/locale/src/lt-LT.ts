@@ -909,13 +909,10 @@ export const AG_GRID_LOCALE_LT_LT = {
     ariaDropZoneColumnComponentDescription: 'Spauskite DELETE, kad pašalintumėte',
     ariaDropZoneColumnValueItemDescription: 'Spauskite ENTER, kad pakeistumėte agregavimo tipą',
     ariaDropZoneColumnGroupItemDescription: 'Spauskite ENTER, kad rikiuotumėte',
-    // used for aggregate drop zone, format: {aggregation}{ariaDropZoneColumnComponentAggFuncSeparator}{column name}
-    ariaDropZoneColumnComponentAggFuncSeparator: ' iš ',
     ariaDropZoneColumnComponentSortAscending: 'didėjančiai',
     ariaDropZoneColumnComponentSortDescending: 'mažėjančiai',
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'absoliučiai didėjančiai',
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'absoliučiai mažėjančiai',
-    ariaDropZoneColumnAggFunc: '${aggFunc} iš ${column}',
     ariaDropZoneColumnSorted: '${column}, ${sort}',
 
     ariaLabelDialog: 'Dialogas',

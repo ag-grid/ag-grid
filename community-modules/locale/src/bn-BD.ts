@@ -903,13 +903,10 @@ export const AG_GRID_LOCALE_BN_BD = {
     ariaDropZoneColumnComponentDescription: 'সরাতে DELETE চাপুন',
     ariaDropZoneColumnValueItemDescription: 'সমষ্টির ধরন পরিবর্তন করতে ENTER চাপুন',
     ariaDropZoneColumnGroupItemDescription: 'সাজাতে ENTER চাপুন',
-    // used for aggregate drop zone, format: {aggregation}{ariaDropZoneColumnComponentAggFuncSeparator}{column name}
-    ariaDropZoneColumnComponentAggFuncSeparator: ' এর ',
     ariaDropZoneColumnComponentSortAscending: 'ঊর্ধ্বক্রম',
     ariaDropZoneColumnComponentSortDescending: 'অধঃক্রম',
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'পরম ঊর্ধ্বক্রম',
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'পরম অধঃক্রম',
-    ariaDropZoneColumnAggFunc: '${column} এর ${aggFunc}',
     ariaDropZoneColumnSorted: '${column}, ${sort}',
 
     ariaLabelDialog: 'ডায়ালগ',

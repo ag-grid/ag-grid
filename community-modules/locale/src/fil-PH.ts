@@ -913,13 +913,10 @@ export const AG_GRID_LOCALE_FIL_PH = {
     ariaDropZoneColumnComponentDescription: 'Pindutin ang DELETE para alisin',
     ariaDropZoneColumnValueItemDescription: 'Pindutin ang ENTER para baguhin ang uri ng aggregation',
     ariaDropZoneColumnGroupItemDescription: 'Pindutin ang ENTER para mag-sort',
-    // used for aggregate drop zone, format: {aggregation}{ariaDropZoneColumnComponentAggFuncSeparator}{column name}
-    ariaDropZoneColumnComponentAggFuncSeparator: ' ng ',
     ariaDropZoneColumnComponentSortAscending: 'pataas',
     ariaDropZoneColumnComponentSortDescending: 'pababa',
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'absolute pataas',
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'absolute pababa',
-    ariaDropZoneColumnAggFunc: '${aggFunc} ng ${column}',
     ariaDropZoneColumnSorted: '${column}, ${sort}',
 
     ariaLabelDialog: 'Dialog',

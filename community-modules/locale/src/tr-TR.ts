@@ -894,13 +894,10 @@ export const AG_GRID_LOCALE_TR_TR = {
     ariaDropZoneColumnValueItemDescription: 'Toplama türünü değiştirmek için ENTER tuşuna basın',
     ariaDropZoneColumnGroupItemDescription: 'Sıralamak için ENTER tuşuna basın',
 
-    // used for aggregate drop zone, format: {aggregation}{ariaDropZoneColumnComponentAggFuncSeparator}{column name}
-    ariaDropZoneColumnComponentAggFuncSeparator: ' of ',
     ariaDropZoneColumnComponentSortAscending: 'artan',
     ariaDropZoneColumnComponentSortDescending: 'azalan',
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'mutlak artan',
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'mutlak azalan',
-    ariaDropZoneColumnAggFunc: '${column} için ${aggFunc}',
     ariaDropZoneColumnSorted: '${column}, ${sort}',
     ariaLabelDialog: 'Diyalog',
     ariaLabelClose: 'Kapat',

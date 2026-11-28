@@ -898,13 +898,10 @@ export const AG_GRID_LOCALE_HU_HU = {
     ariaDropZoneColumnValueItemDescription: 'Nyomja meg az ENTER-t, hogy megváltoztassa az aggregáció típusát',
     ariaDropZoneColumnGroupItemDescription: 'Nyomja meg az ENTER-t, hogy rendezze',
 
-    // used for aggregate drop zone, format: {aggregation}{ariaDropZoneColumnComponentAggFuncSeparator}{column name}
-    ariaDropZoneColumnComponentAggFuncSeparator: ' közül ',
     ariaDropZoneColumnComponentSortAscending: 'növekvő',
     ariaDropZoneColumnComponentSortDescending: 'csökkenő',
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'abszolút növekvő',
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'abszolút csökkenő',
-    ariaDropZoneColumnAggFunc: '${aggFunc} (${column})',
     ariaDropZoneColumnSorted: '${column}, ${sort}',
     ariaLabelDialog: 'Párbeszédpanel',
     ariaLabelClose: 'Bezárás',

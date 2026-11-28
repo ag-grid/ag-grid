@@ -892,13 +892,10 @@ export const AG_GRID_LOCALE_HR_HR = {
     ariaDropZoneColumnValueItemDescription: 'Pritisnite ENTER za promjenu tipa agregacije',
     ariaDropZoneColumnGroupItemDescription: 'Pritisnite ENTER za sortiranje',
 
-    // used for aggregate drop zone, format: {aggregation}{ariaDropZoneColumnComponentAggFuncSeparator}{column name}
-    ariaDropZoneColumnComponentAggFuncSeparator: ' od ',
     ariaDropZoneColumnComponentSortAscending: 'uzlazno',
     ariaDropZoneColumnComponentSortDescending: 'silazno',
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'apsolutni uzlazno',
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'apsolutni silazno',
-    ariaDropZoneColumnAggFunc: '${aggFunc} od ${column}',
     ariaDropZoneColumnSorted: '${column}, ${sort}',
     ariaLabelDialog: 'Dijalog',
     ariaLabelClose: 'Zatvori',

@@ -2,7 +2,7 @@ import { waitFor } from '@testing-library/dom';
 import { TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import type { GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
+import { ClientSideRowModelModule, LocaleModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
 import { ColumnsToolPanelModule, PivotModule, RowGroupingModule, RowGroupingPanelModule } from 'ag-grid-enterprise';
 
 const COLUMN_DEFS = [
@@ -113,5 +113,110 @@ describe('Column drop zone aria', () => {
             expect(el.getAttribute('role')).toBe('listbox');
             expect(el.getAttribute('aria-label')).toBe('Row Groups');
         }
+    });
+});
+
+describe('Values pill accessible name contains its visible text (WCAG 2.5.3 Label in Name)', () => {
+    const gridsManager = new TestGridsManager({
+        modules: [
+            ClientSideRowModelModule,
+            ColumnsToolPanelModule,
+            LocaleModule,
+            PivotModule,
+            RowGroupingModule,
+            RowGroupingPanelModule,
+        ],
+    });
+
+    beforeEach(() => {
+        gridsManager.reset();
+    });
+
+    afterEach(() => {
+        gridsManager.reset();
+    });
+
+    const normalise = (text: string) =>
+        text
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, ' ')
+            .trim();
+
+    function createValuesGrid(options: Partial<GridOptions> = {}) {
+        return gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { field: 'country', rowGroup: true, enableRowGroup: true },
+                { field: 'gold', enableValue: true, aggFunc: 'sum' },
+            ],
+            rowData: [{ country: 'Russia', gold: 2 }],
+            rowGroupPanelShow: 'always',
+            sideBar: { toolPanels: ['columns'], defaultToolPanel: 'columns' },
+            ...options,
+        });
+    }
+
+    function getValuePills(api: ReturnType<typeof createValuesGrid>): { text: string; label: string }[] {
+        const pills = getGridElement(api)!.querySelectorAll<HTMLElement>(
+            '.ag-column-drop-aggregation .ag-column-drop-cell'
+        );
+        return Array.from(pills).map((pill) => ({
+            text: pill.querySelector('.ag-column-drop-cell-text')!.textContent!,
+            label: pill.getAttribute('aria-label')!,
+        }));
+    }
+
+    async function expectValuePillsNamedByVisibleText(api: ReturnType<typeof createValuesGrid>, visibleText: string) {
+        await waitFor(() => {
+            const texts = getValuePills(api).map(({ text }) => text);
+            expect(texts.length).toBeGreaterThan(0);
+            expect(new Set(texts)).toEqual(new Set([visibleText]));
+        });
+
+        for (const { text, label } of getValuePills(api)) {
+            const visibleWords = normalise(text);
+            expect(normalise(label).slice(0, visibleWords.length)).toBe(visibleWords);
+        }
+    }
+
+    test('default configuration: the aria-label starts with the visible text', async () => {
+        const api = createValuesGrid();
+
+        await expectValuePillsNamedByVisibleText(api, 'sum(Gold)');
+        expect(getValuePills(api)[0].label).toBe(
+            'sum(Gold). Press ENTER to change the aggregation type. Press DELETE to remove'
+        );
+    });
+
+    test('localised pill text: the accessible name starts with the localised visible text', async () => {
+        const api = createValuesGrid({ localeText: { sum: 'Summe', aggFuncColumnName: '${column} [${aggFunc}]' } });
+
+        await expectValuePillsNamedByVisibleText(api, 'Gold [Summe]');
+    });
+
+    test('functionsReadOnly: the accessible name is exactly the visible text', async () => {
+        const api = createValuesGrid({ functionsReadOnly: true });
+
+        await expectValuePillsNamedByVisibleText(api, 'sum(Gold)');
+        expect(getValuePills(api)[0].label).toBe('sum(Gold)');
+    });
+
+    test('the accessible name follows an aggregation change', async () => {
+        const api = createValuesGrid();
+        await expectValuePillsNamedByVisibleText(api, 'sum(Gold)');
+
+        api.setColumnAggFunc('gold', 'avg');
+
+        await expectValuePillsNamedByVisibleText(api, 'avg(Gold)');
+    });
+
+    test('a function aggFunc: the accessible name starts with the visible text', async () => {
+        const api = createValuesGrid({
+            columnDefs: [
+                { field: 'country', rowGroup: true, enableRowGroup: true },
+                { field: 'gold', enableValue: true, aggFunc: (params) => params.values.length },
+            ],
+        });
+
+        await expectValuePillsNamedByVisibleText(api, 'agg(Gold)');
     });
 });

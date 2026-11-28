@@ -889,13 +889,10 @@ export const AG_GRID_LOCALE_ZH_HK = {
     ariaDropZoneColumnValueItemDescription: '按 ENTER 以更改聚合類型',
     ariaDropZoneColumnGroupItemDescription: '按 ENTER 以排序',
 
-    // used for aggregate drop zone, format: {aggregation}{ariaDropZoneColumnComponentAggFuncSeparator}{column name}
-    ariaDropZoneColumnComponentAggFuncSeparator: ' 的 ',
     ariaDropZoneColumnComponentSortAscending: '升序',
     ariaDropZoneColumnComponentSortDescending: '降序',
     ariaDropZoneColumnComponentSortAbsoluteAscending: '「絕對升序」',
     ariaDropZoneColumnComponentSortAbsoluteDescending: '「絕對降序」',
-    ariaDropZoneColumnAggFunc: '${column} 的 ${aggFunc}',
     ariaDropZoneColumnSorted: '${column}, ${sort}',
     ariaLabelDialog: '對話框',
     ariaLabelClose: '關閉',

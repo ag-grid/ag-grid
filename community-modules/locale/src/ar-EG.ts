@@ -889,13 +889,10 @@ export const AG_GRID_LOCALE_AR_EG = {
     ariaDropZoneColumnValueItemDescription: 'اضغط على ENTER لتغيير نوع التجميع',
     ariaDropZoneColumnGroupItemDescription: 'اضغط على ENTER للفرز',
 
-    // used for aggregate drop zone, format: {aggregation}{ariaDropZoneColumnComponentAggFuncSeparator}{column name}
-    ariaDropZoneColumnComponentAggFuncSeparator: ' من ',
     ariaDropZoneColumnComponentSortAscending: 'تصاعدي',
     ariaDropZoneColumnComponentSortDescending: 'تنازلي',
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'تصاعدي مطلق',
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'تنازلي مطلق',
-    ariaDropZoneColumnAggFunc: '${aggFunc} من ${column}',
     ariaDropZoneColumnSorted: '${column}، ${sort}',
     ariaLabelDialog: 'حوار',
     ariaLabelClose: 'إغلاق',

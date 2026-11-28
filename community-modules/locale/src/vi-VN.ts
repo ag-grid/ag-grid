@@ -891,13 +891,10 @@ export const AG_GRID_LOCALE_VI_VN = {
     ariaDropZoneColumnValueItemDescription: 'Nhấn ENTER để thay đổi loại tổng hợp',
     ariaDropZoneColumnGroupItemDescription: 'Nhấn ENTER để sắp xếp',
 
-    // used for aggregate drop zone, format: {aggregation}{ariaDropZoneColumnComponentAggFuncSeparator}{column name}
-    ariaDropZoneColumnComponentAggFuncSeparator: ' của ',
     ariaDropZoneColumnComponentSortAscending: 'tăng dần',
     ariaDropZoneColumnComponentSortDescending: 'giảm dần',
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'tăng dần tuyệt đối',
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'giảm dần tuyệt đối',
-    ariaDropZoneColumnAggFunc: '${aggFunc} của ${column}',
     ariaDropZoneColumnSorted: '${column}, ${sort}',
     ariaLabelDialog: 'Hộp thoại',
     ariaLabelClose: 'Đóng',

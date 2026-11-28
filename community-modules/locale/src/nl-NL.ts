@@ -893,13 +893,10 @@ export const AG_GRID_LOCALE_NL_NL = {
     ariaDropZoneColumnValueItemDescription: 'Druk op ENTER om het aggregatietype te wijzigen',
     ariaDropZoneColumnGroupItemDescription: 'Druk op ENTER om te sorteren',
 
-    // used for aggregate drop zone, format: {aggregation}{ariaDropZoneColumnComponentAggFuncSeparator}{column name}
-    ariaDropZoneColumnComponentAggFuncSeparator: ' of ',
     ariaDropZoneColumnComponentSortAscending: 'oplopend',
     ariaDropZoneColumnComponentSortDescending: 'aflopend',
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'absoluut oplopend',
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'absoluut aflopend',
-    ariaDropZoneColumnAggFunc: '${aggFunc} van ${column}',
     ariaDropZoneColumnSorted: '${column}, ${sort}',
     ariaLabelDialog: 'Dialoog',
     ariaLabelClose: 'Sluiten',
